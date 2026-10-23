@@ -11,6 +11,7 @@ of the module. The committed registry itself is checked in
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -176,8 +177,30 @@ def make_registry(entries: list[dict], complete=False) -> dict:
     }
 
 
-def validate(current, repository=None):
-    return registry.validate(current, repository, vocabulary=VOCABULARY)
+#: The invented scored runs and historical-import gates, in place of the
+#: module's controlled lists. Without a repository no pin is checked.
+SCORED_RUNS = {
+    run_path(f"s{index}"): (f"gate_{index}", "0" * 64) for index in range(12)
+}
+IMPORT_GATES = frozenset(f"gate_{index}" for index in range(12))
+#: The legal transitions, specified independently of the module.
+EXPECTED_TRANSITIONS = {
+    "candidate": {"frozen", "withdrawn"},
+    "frozen": {"used", "withdrawn"},
+    "used": set(),
+    "withdrawn": set(),
+}
+
+
+def validate(current, repository=None, scored_runs=None, commit="HEAD"):
+    return registry.validate(
+        current,
+        repository,
+        vocabulary=VOCABULARY,
+        commit=commit,
+        scored_runs=SCORED_RUNS if scored_runs is None else scored_runs,
+        import_gates=IMPORT_GATES,
+    )
 
 
 entry_specs = st.lists(
@@ -556,8 +579,9 @@ def test_repeated_ids_and_shared_gate_identifiers_are_refused():
     [
         ({"equals": "gate_other"}, "does not identify this gate"),
         ({"field": "title"}, "not an identity field"),
-        ({"path": "docs/design/registry.json"}, "is not runs/"),
-        ({"path": "../outside.json"}, "is not runs/"),
+        ({"path": "docs/design/registry.json"}, "not a listed scored run"),
+        ({"path": "../outside.json"}, "not a listed scored run"),
+        ({"path": run_path("s1")}, "'gate_1''s scored run"),
     ],
 )
 def test_scored_evidence_must_be_a_run_artifact_naming_this_gate(
@@ -569,6 +593,44 @@ def test_scored_evidence_must_be_a_run_artifact_naming_this_gate(
     entry["scored_evidence"] = []
     problems = validate(make_registry([entry]))
     assert any("needs scored_evidence" in p for p in problems)
+
+
+def test_the_transitions_are_as_specified():
+    assert {
+        status: set(following)
+        for status, following in registry.TRANSITIONS.items()
+    } == EXPECTED_TRANSITIONS
+
+
+@pytest.mark.parametrize(
+    "statuses",
+    [
+        ["candidate", "frozen", "used", "withdrawn"],
+        ["candidate", "withdrawn", "frozen"],
+        ["candidate", "frozen", "used", "frozen"],
+        ["candidate", "frozen", "frozen"],
+    ],
+)
+def test_terminal_and_repeated_statuses_are_refused(statuses):
+    entry = make_entry(0, ["s_a:2020"])
+    entry["history"] = [
+        {"date": "2026-10-21", "status": s, "note": "n"} for s in statuses
+    ]
+    entry["status"] = statuses[-1]
+    entry["scored_evidence"] = [
+        {"path": run_path("s0"), "field": "gate", "equals": "gate_0"}
+    ]
+    assert any(
+        "not a legal transition" in p for p in validate(make_registry([entry]))
+    )
+
+
+def test_only_listed_gates_may_be_imported():
+    entry = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
+    entry["gate"] = "gate_99"
+    entry["gate_identifiers"] = ["gate_99"]
+    problems = validate(make_registry([entry]))
+    assert any("scored before the registry existed" in p for p in problems)
 
 
 def test_a_review_must_name_an_earlier_entry():
@@ -639,7 +701,7 @@ def test_any_json_in_any_field_is_reported_not_raised(key, value, append):
     assert isinstance(registry.append_only_problems(base, current), list)
 
 
-# Committed trees and base commits, through git ----------------------------
+# Committed trees, scored runs and base commits, through git ----------------
 
 
 def git(repository: Path, *args: str) -> str:
@@ -664,22 +726,30 @@ def init_repository(tmp_path: Path) -> Path:
         "gates:\n  gate_0:\n    id: zero_gate\n"
         "    registration_id: reg-zero\n",
     )
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "start")
+    commit_all(repository, "start")
     return repository
 
 
 def write(repository: Path, relative: str, document) -> None:
     path = repository / relative
     path.parent.mkdir(parents=True, exist_ok=True)
+    if isinstance(document, bytes):
+        path.write_bytes(document)
+        return
     text = document if isinstance(document, str) else json.dumps(document)
     path.write_text(text, encoding="utf-8")
 
 
 def commit_all(repository: Path, message: str) -> str:
     git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", message)
+    git(repository, "commit", "-q", "--allow-empty", "-m", message)
     return git(repository, "rev-parse", "HEAD").strip()
+
+
+def pin(document, gate: str = "gate_0") -> dict:
+    """The scored-run list for one artifact holding ``document``."""
+    text = json.dumps(document).encode("utf-8")
+    return {run_path("s0"): (gate, hashlib.sha256(text).hexdigest())}
 
 
 @pytest.fixture
@@ -688,7 +758,10 @@ def no_ci_env(monkeypatch):
         monkeypatch.delenv(name, raising=False)
 
 
-def scored_registry() -> dict:
+SCORE = {"gate": "gate_0"}
+
+
+def imported(document=SCORE) -> dict:
     entry = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
     entry["gate_identifiers"] = ["gate_0", "zero_gate", "reg-zero"]
     return make_registry([entry])
@@ -696,93 +769,248 @@ def scored_registry() -> dict:
 
 def test_scored_evidence_is_read_from_the_committed_tree(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
-    current = scored_registry()
+    current = imported()
     evidence = current["entries"][0]["scored_evidence"][0]
-    write(repository, evidence["path"], {"gate": "gate_0"})
+    runs = pin(SCORE)
+    write(repository, evidence["path"], SCORE)
     assert any(
-        "not a committed file" in p for p in validate(current, repository)
+        "not a committed file" in p
+        for p in validate(current, repository, runs)
     )
     git(repository, "add", "-A")
     assert any(
-        "not a committed file" in p for p in validate(current, repository)
+        "not a committed file" in p
+        for p in validate(current, repository, runs)
     )
     git(repository, "commit", "-q", "-m", "score")
-    assert validate(current, repository) == []
+    assert validate(current, repository, runs) == []
     write(repository, evidence["path"], {"gate": "gate_9"})
-    assert validate(current, repository) == []
+    assert validate(current, repository, runs) == []
     for field, equals in (
         ("registration_id", "reg-zero"),
         ("gate", "zero_gate"),
     ):
         evidence.update(field=field, equals=equals)
-        assert any("does not have" in p for p in validate(current, repository))
+        assert any(
+            "does not have" in p for p in validate(current, repository, runs)
+        )
+
+
+def test_a_scored_run_must_keep_its_pinned_bytes(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    current = imported()
+    path = current["entries"][0]["scored_evidence"][0]["path"]
+    write(repository, path, {"gate": "gate_0", "floor": True})
+    commit_all(repository, "a floor, not the scored run")
+    problems = validate(current, repository, pin(SCORE))
+    assert any("differs from the listed scored run" in p for p in problems)
 
 
 def test_identifiers_must_be_authoritative(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
-    current = scored_registry()
+    current = imported()
     entry = current["entries"][0]
-    write(repository, entry["scored_evidence"][0]["path"], {"title": "x"})
+    document = {"gate": "x"}
+    write(repository, entry["scored_evidence"][0]["path"], document)
     commit_all(repository, "score")
     entry["gate_identifiers"].append("x")
     entry["scored_evidence"][0].update(field="gate", equals="x")
     assert any(
         "does not identify this gate" in p
-        for p in validate(current, repository)
+        for p in validate(current, repository, pin(document))
     )
     entry["gate"] = "gate_unknown"
     entry["gate_identifiers"] = ["gate_unknown"]
     entry["scored_evidence"][0]["equals"] = "gate_unknown"
+    runs = pin(document, "gate_unknown")
     assert any(
-        "neither a gates.yaml gate" in p for p in validate(current, repository)
+        "neither a gates.yaml gate" in p
+        for p in validate(current, repository, runs)
     )
 
 
 def test_a_symlinked_or_non_json_artifact_is_refused(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
-    current = scored_registry()
-    evidence = current["entries"][0]["scored_evidence"][0]
+    current = imported()
+    path = current["entries"][0]["scored_evidence"][0]["path"]
     outside = tmp_path / "outside.json"
-    outside.write_text(json.dumps({"gate": "gate_0"}), encoding="utf-8")
-    link = repository / evidence["path"]
+    outside.write_text(json.dumps(SCORE), encoding="utf-8")
+    link = repository / path
     link.parent.mkdir(parents=True)
     link.symlink_to(outside)
     commit_all(repository, "link")
     assert any(
-        "not a committed file" in p for p in validate(current, repository)
+        "not a committed file" in p
+        for p in validate(current, repository, pin(SCORE))
     )
     link.unlink()
-    write(repository, evidence["path"], "not json")
-    commit_all(repository, "text")
-    assert any("not JSON" in p for p in validate(current, repository))
-
-
-def test_imports_need_evidence_older_than_the_registry(tmp_path, no_ci_env):
-    repository = init_repository(tmp_path)
-    current = scored_registry()
-    evidence = current["entries"][0]["scored_evidence"][0]
-    write(repository, evidence["path"], {"gate": "gate_0"})
-    commit_all(repository, "score before the registry")
-    write(repository, registry.REGISTRY, current)
-    commit_all(repository, "registry")
-    assert validate(current, repository) == []
-    late = make_entry(1, ["s_c:2099"], ("historical_import", "used"))
-    late["gate"] = "gate_0"
-    late["gate_identifiers"] = ["gate_0"]
-    late["scored_evidence"][0].update(path=run_path("late"), equals="gate_0")
-    write(repository, late["scored_evidence"][0]["path"], {"gate": "gate_0"})
-    commit_all(repository, "score after the registry")
-    current["entries"].append(late)
+    write(repository, path, b"\xff\xfe not json")
+    commit_all(repository, "bytes")
+    runs = {path: ("gate_0", hashlib.sha256(b"\xff\xfe not json").hexdigest())}
     assert any(
-        "after the registry existed" in p
-        for p in validate(current, repository)
+        "does not have" in p for p in validate(current, repository, runs)
     )
 
 
-def test_review_citations_must_name_committed_lines(tmp_path, no_ci_env):
+def registered(statuses) -> dict:
+    """A registration of gate_0 at ``statuses``, citing s0 once used."""
+    entry = make_entry(0, ["s_a:2020"])
+    entry["gate_identifiers"] = ["gate_0", "zero_gate", "reg-zero"]
+    entry["history"] = [
+        {"date": f"2026-10-{21 + step:02d}", "status": s, "note": "n"}
+        for step, s in enumerate(statuses)
+    ]
+    entry["status"] = statuses[-1]
+    if statuses[-1] == "used":
+        entry["scored_evidence"] = [
+            {"path": run_path("s0"), "field": "gate", "equals": "gate_0"}
+        ]
+    return make_registry([entry])
+
+
+def commit_registry(repository: Path, current: dict, message: str) -> str:
+    write(repository, registry.REGISTRY, current)
+    return commit_all(repository, message)
+
+
+@pytest.mark.parametrize("registered_first", [True, False])
+def test_a_registration_must_precede_its_scored_run(
+    tmp_path, no_ci_env, registered_first
+):
+    repository = init_repository(tmp_path)
+    if not registered_first:
+        write(repository, run_path("s0"), SCORE)
+        commit_all(repository, "score first")
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    if registered_first:
+        write(repository, run_path("s0"), SCORE)
+        commit_all(repository, "score")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    problems = validate(used, repository, pin(SCORE))
+    if registered_first:
+        assert problems == []
+    else:
+        assert any("already committed when" in p for p in problems)
+
+
+def test_a_used_registration_must_already_be_registered(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "score")
+    used = registered(["candidate", "frozen", "used"])
+    problems = validate(used, repository, pin(SCORE))
+    assert any("before it is registered" in p for p in problems)
+
+
+def test_each_snapshot_is_validated_against_its_own_tree(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    base = git(repository, "rev-parse", "HEAD").strip()
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used before its score is committed")
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "the score, one commit late")
+    runs = pin(SCORE)
+    assert validate(used, repository, runs) == []
+    problems = registry.history_problems(
+        repository, base, scored_runs=runs, import_gates=IMPORT_GATES
+    )
+    assert any("not a committed file" in p for p in problems)
+
+
+def test_a_new_registry_is_admitted_against_an_empty_one(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    base = git(repository, "rev-parse", "HEAD").strip()
+    commit_registry(
+        repository, registered(["candidate", "frozen"]), "arrives frozen"
+    )
+    problems = registry.history_problems(
+        repository, base, import_gates=IMPORT_GATES
+    )
+    assert any("lone candidate" in p for p in problems)
+
+
+def test_a_clean_history_has_no_problems(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    base = git(repository, "rev-parse", "HEAD").strip()
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "score")
+    commit_registry(
+        repository, registered(["candidate", "frozen", "used"]), "used"
+    )
+    assert (
+        registry.history_problems(
+            repository,
+            base,
+            scored_runs=pin(SCORE),
+            import_gates=IMPORT_GATES,
+        )
+        == []
+    )
+
+
+@pytest.mark.parametrize("undo", ["append_then_remove", "edit_then_restore"])
+@pytest.mark.parametrize("full", [True, False])
+def test_a_run_of_commits_cannot_hide_a_change_it_undoes(
+    tmp_path, no_ci_env, undo, full
+):
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    base = commit_registry(repository, first, "registry")
+    changed = copy.deepcopy(first)
+    if undo == "append_then_remove":
+        changed["entries"].append(make_entry(1, ["s_c:2099"]))
+    else:
+        changed["entries"][0]["unit_keys"] = ["s_c:2199"]
+    commit_registry(repository, changed, "change")
+    commit_registry(repository, first, "undo")
+    assert registry.append_only_problems(first, first) == []
+    assert registry.history_problems(
+        repository, base, full=full, import_gates=IMPORT_GATES
+    )
+
+
+def test_a_pull_request_head_is_read_from_its_event(tmp_path, monkeypatch):
+    event = tmp_path / "event.json"
+    sha = "a" * 40
+    event.write_text(
+        json.dumps({"pull_request": {"head": {"sha": sha}}}), encoding="utf-8"
+    )
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    assert registry.pull_request_head() == sha
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    assert registry.pull_request_head() is None
+
+
+def test_malformed_snapshots_are_reported_not_raised(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    base = commit_registry(repository, registered(["candidate"]), "registry")
+    for bad in ("not json", [], {"entries": None}):
+        write(
+            repository,
+            registry.REGISTRY,
+            bad if isinstance(bad, str) else json.dumps(bad),
+        )
+        commit_all(repository, "a malformed snapshot")
+    commit_registry(repository, registered(["candidate"]), "repaired")
+    problems = registry.history_problems(
+        repository, base, import_gates=IMPORT_GATES
+    )
+    assert len(problems) >= 3
+    assert registry.append_only_problems(registered(["candidate"]), None)
+
+
+def test_review_citations_must_name_committed_text_lines(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
     write(repository, "docs/note.md", "one\ntwo\nthree\n")
-    commit_all(repository, "note")
+    write(repository, "docs/binary.md", b"\xff\xfe\x00\x01")
+    commit_all(repository, "notes")
     entries = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_b:2025"])]
     entries[1]["overlap_review"].append(review("H001"))
     current = make_registry(entries)
@@ -791,6 +1019,9 @@ def test_review_citations_must_name_committed_lines(tmp_path, no_ci_env):
         ("docs/note.md:2-3", True),
         ("docs/note.md:4", False),
         ("docs/missing.md:1", False),
+        ("docs/binary.md:1", False),
+        ("docs/note.md:12345678", False),
+        ("docs/../docs/note.md:2", False),
     ):
         entries[1]["overlap_review"][0]["evidence"] = [citation]
         assert (validate(current, repository) == []) == ok, citation
@@ -803,11 +1034,10 @@ def test_complete_needs_its_committed_record(tmp_path, no_ci_env):
     write(repository, current["completion_record"], {})
     commit_all(repository, "inventory")
     assert validate(current, repository) == []
-
-
-def commit_registry(repository: Path, current: dict, message: str) -> str:
-    write(repository, registry.REGISTRY, current)
-    return commit_all(repository, message)
+    for path in ("docs/a\x00b.json", "docs/../docs/design/inventory.json"):
+        current["completion_record"] = path
+        problems = validate(current, repository)
+        assert any("is not a path" in p for p in problems), path
 
 
 def test_a_pull_request_compares_with_its_merge_base(tmp_path, no_ci_env):
@@ -817,7 +1047,7 @@ def test_a_pull_request_compares_with_its_merge_base(tmp_path, no_ci_env):
     commit_all(repository, "feature work")
     assert registry.base_registry(repository) is None
     git(repository, "checkout", "-q", "master")
-    first = build([(["s_a:2020"], ("historical_import", "used"))])
+    first = registered(["candidate"])
     commit_registry(repository, first, "registry")
     git(repository, "checkout", "-q", "-b", "feature-2")
     second = copy.deepcopy(first)
@@ -828,7 +1058,7 @@ def test_a_pull_request_compares_with_its_merge_base(tmp_path, no_ci_env):
 
 def test_the_base_branch_compares_with_its_parent(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
-    first = build([(["s_a:2020"], ("historical_import", "used"))])
+    first = registered(["candidate"])
     commit_registry(repository, first, "registry")
     emptied = copy.deepcopy(first)
     emptied["entries"] = []
@@ -842,7 +1072,7 @@ def test_a_push_compares_with_its_before_commit(
     tmp_path, no_ci_env, monkeypatch
 ):
     repository = init_repository(tmp_path)
-    first = build([(["s_a:2020"], ("historical_import", "used"))])
+    first = registered(["candidate"])
     before = commit_registry(repository, first, "registry")
     middle = copy.deepcopy(first)
     middle["entries"].append(make_entry(1, ["s_c:2099"]))
@@ -860,35 +1090,6 @@ def test_a_push_compares_with_its_before_commit(
     )
     event.write_text(json.dumps({"before": "0" * 40}), encoding="utf-8")
     assert registry.base_registry(repository) == middle
-
-
-@pytest.mark.parametrize("undo", ["append_then_remove", "edit_then_restore"])
-def test_a_push_cannot_hide_a_change_a_later_commit_undoes(
-    tmp_path, no_ci_env, undo
-):
-    repository = init_repository(tmp_path)
-    first = build([(["s_a:2020"], ("historical_import", "used"))])
-    base = commit_registry(repository, first, "registry")
-    changed = copy.deepcopy(first)
-    if undo == "append_then_remove":
-        changed["entries"].append(make_entry(1, ["s_c:2099"]))
-        commit_registry(repository, changed, "append")
-    else:
-        changed["entries"][0]["unit_keys"] = ["s_c:2199"]
-        commit_registry(repository, changed, "edit a key")
-    commit_registry(repository, first, "undo")
-    assert registry.append_only_problems(first, first) == []
-    assert registry.history_problems(repository, base)
-
-
-def test_a_clean_history_has_no_problems(tmp_path, no_ci_env):
-    repository = init_repository(tmp_path)
-    first = build([(["s_a:2020"], ("historical_import", "used"))])
-    base = commit_registry(repository, first, "registry")
-    second = copy.deepcopy(first)
-    second["entries"].append(make_entry(1, ["s_c:2099"]))
-    commit_registry(repository, second, "append a candidate")
-    assert registry.history_problems(repository, base) == []
 
 
 def test_no_base_raises_rather_than_passing(tmp_path, monkeypatch):

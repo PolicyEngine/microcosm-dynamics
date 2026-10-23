@@ -25,15 +25,20 @@ This module enforces its rules:
 - unique entry ids, which are never removed, reordered or reused;
 - histories with legal transitions only. A registration starts as a lone
   ``candidate`` in a commit of its own, so it reaches the base branch
-  before its gate freezes. A historical import is a gate that scored
-  before the registry existed: it starts as ``used``, and its scored
-  evidence must have been committed before the registry was;
-- a ``used`` entry cites scored-run artifacts under ``runs/``, read from
-  the committed tree, whose identity field equals one of the gate's
-  identifiers in ``gates.yaml`` or :data:`REGISTRATIONS_OUTSIDE_GATES_YAML`;
-- entries only grow: against the base registry, and between every pair
-  of consecutive first-parent commits since it, an entry's identity and
-  units never change, and its lists only extend;
+  before its gate freezes, and its scored run must not yet be committed
+  when it is registered. A historical import is a gate that scored before
+  the registry existed: it starts as ``used``, and its gate must be in
+  :data:`HISTORICAL_IMPORT_GATES`;
+- a ``used`` entry cites scored-run artifacts listed in
+  :data:`SCORED_RUNS`, which pins each one's gate and the SHA-256 of its
+  bytes, read from the committed tree; each citation's identity field
+  names the gate in ``gates.yaml`` or in
+  :data:`REGISTRATIONS_OUTSIDE_GATES_YAML`;
+- entries only grow: against the base registry, between every pair of
+  consecutive first-parent commits since it (each snapshot validated
+  against its own commit's tree), and between a pull request's own
+  commits, an entry's identity and units never change and its lists only
+  extend. A newly created registry is admitted against an empty one;
 - the registry stays incomplete until its completion record, B0.2's
   mechanical exposure inventory, exists.
 
@@ -51,6 +56,7 @@ keeps the rules.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import os
 import re
@@ -155,6 +161,61 @@ SOURCES: Mapping[str, Mapping[str, str]] = MappingProxyType(
 REGISTRATIONS_OUTSIDE_GATES_YAML: Mapping[str, tuple[str, ...]] = (
     MappingProxyType({"B2": ("B2", "6252388925")})
 )
+#: Each scored-run artifact a ``used`` entry may cite: its gate and the
+#: SHA-256 of its committed bytes. A gate's scored run is added here when
+#: it scores, as a reviewed code change, so a floor, candidate file or
+#: dry run cannot stand in for a score, and a reused path cannot carry
+#: another gate's run.
+SCORED_RUNS: Mapping[str, tuple[str, str]] = MappingProxyType(
+    {
+        "runs/gate_m6_candidate1_v1.json": (
+            "gate_m6",
+            "546a9739f8d1c7d21a91a07eb902c8af9bda92cdaa8f7917f312894f6a861b24",
+        ),
+        "runs/gate_m6_candidate2_v1.json": (
+            "gate_m6",
+            "f217b0dc3b17b0a2c2926b1e9299ba2144be4b8a69ac880566d19fd4cd6c2917",
+        ),
+        "runs/gate_m6_candidate3_v1.json": (
+            "gate_m6",
+            "caf254925f44b27c1bd1131336055e27fbc311daec00b0050b2f9293a74e82cf",
+        ),
+        "runs/track_b_b2_score.json": (
+            "B2",
+            "df82a102a2b4c40c34f0e36b4333dbe7b90d13bfb3658b60b3f6d3f3e2dd8489",
+        ),
+        "runs/epuf_fill_gate_test_v1.json": (
+            "gate_epuf_fill",
+            "9fa726be90134546c54148d681209ccf4a33939a7d6e2cfe5c2e384832dace03",
+        ),
+        "runs/gate_m4_hazard_v1.json": (
+            "gate_m4",
+            "6493fda8207e743b3b6cbe1c80eb5ab5fb9646aa6f10fad4e77aa8d84c6b889c",
+        ),
+        "runs/gate_w1_candidate1_v1.json": (
+            "gate_w1",
+            "01130c512ddba545e11dcf83364387a6c8df307041ac199ce3703cc4a00d6725",
+        ),
+        "runs/gate_w1_candidate2_v1.json": (
+            "gate_w1",
+            "3baf097284b793fa4968d9b0b935ec3d16cf2770b16fb1fc1e3fb591ad490f40",
+        ),
+        "runs/gate_w1_candidate3_v1.json": (
+            "gate_w1",
+            "b532f2b75d96e876af2e65400439a2f6c832ea45eecf83c1b4431b026ab7e688",
+        ),
+        "runs/gate_w1_candidate4_v1.json": (
+            "gate_w1",
+            "ce4f9c9ab0b78bbb4dfe7dcb2a6b34892a80ea74760e0a00c4d60aa35e2d6e65",
+        ),
+    }
+)
+#: The gates that scored before the registry existed and may enter it as
+#: historical imports. B0.2's mechanical inventory adds any it finds, as a
+#: reviewed code change; no other gate can import itself.
+HISTORICAL_IMPORT_GATES = frozenset(
+    {"gate_m6", "B2", "gate_epuf_fill", "gate_m4", "gate_w1"}
+)
 STATUSES = ("candidate", "frozen", "used", "withdrawn")
 TRANSITIONS = {
     "candidate": frozenset({"frozen", "withdrawn"}),
@@ -226,9 +287,11 @@ SCOPE_RX = re.compile(r"[a-z0-9][a-z0-9_.\-]*")
 #: Scored-run artifacts live here.
 RUNS_DIR = "runs"
 RUN_PATH_RX = re.compile(rf"{RUNS_DIR}/[A-Za-z0-9_.\-]+\.json")
+#: A repository-relative path: no leading slash, no NUL, no ``..``.
+PATH_RX = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_./\-]*")
 CITATION_RX = re.compile(
-    r"(?P<path>[A-Za-z0-9_][A-Za-z0-9_./\-]*):(?P<start>[0-9]+)"
-    r"(?:-(?P<end>[0-9]+))?"
+    r"(?P<path>[A-Za-z0-9_][A-Za-z0-9_./\-]*):(?P<start>[0-9]{1,7})"
+    r"(?:-(?P<end>[0-9]{1,7}))?"
 )
 URL_RX = re.compile(r"https://\S+")
 SHA_RX = re.compile(r"[0-9a-f]{40}")
@@ -313,42 +376,83 @@ def _git(repository: Path, *args: str) -> subprocess.CompletedProcess:
     )
 
 
+def _git_bytes(repository: Path, *args: str) -> bytes | None:
+    found = subprocess.run(
+        ["git", "-C", str(repository), *args],
+        capture_output=True,
+        check=False,
+    )
+    return found.stdout if found.returncode == 0 else None
+
+
+def safe_path(path: Any) -> bool:
+    """Whether ``path`` is a plain repository-relative path."""
+    return (
+        isinstance(path, str)
+        and PATH_RX.fullmatch(path) is not None
+        and ".." not in path.split("/")
+    )
+
+
+def _parse_registry(text: str | None) -> Any:
+    """A registry document, or ``None`` when ``text`` is not JSON."""
+    if text is None:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+
 class Committed:
     """Read-only access to one commit of ``repository``, cached."""
 
     def __init__(self, repository: Path, commit: str = "HEAD") -> None:
         self.repository = repository
         self.commit = commit
-        self._files: dict[str, str | None] = {}
+        self._files: dict[str, bytes | None] = {}
         self._gates: Mapping[str, Any] | None = None
-        self._first_added: dict[str, str | None] = {}
+        self._registered: dict[str, str | None] | None = None
+
+    def blob(self, path: str, commit: str | None = None) -> bytes | None:
+        """A regular committed file's bytes at ``commit`` (by default this
+        one's), or ``None`` for a symlink, a directory, a missing path or
+        an unsafe one."""
+        commit = commit or self.commit
+        key = f"{commit}:{path}"
+        if key not in self._files:
+            content = None
+            if safe_path(path):
+                listed = _git(self.repository, "ls-tree", commit, "--", path)
+                fields = listed.stdout.split()
+                if (
+                    listed.returncode == 0
+                    and len(fields) >= 4
+                    and fields[0] in ("100644", "100755")
+                    and fields[1] == "blob"
+                ):
+                    content = _git_bytes(self.repository, "show", key)
+            self._files[key] = content
+        return self._files[key]
 
     def text(self, path: str) -> str | None:
-        """A regular committed file's text, or ``None``."""
-        if path not in self._files:
-            listed = _git(self.repository, "ls-tree", self.commit, "--", path)
-            fields = listed.stdout.split()
-            regular = (
-                listed.returncode == 0
-                and len(fields) >= 4
-                and fields[0] in ("100644", "100755")
-                and fields[1] == "blob"
-            )
-            shown = (
-                _git(self.repository, "show", f"{self.commit}:{path}")
-                if regular
-                else None
-            )
-            self._files[path] = (
-                shown.stdout if shown and shown.returncode == 0 else None
-            )
-        return self._files[path]
+        """A regular committed UTF-8 file's text, or ``None``."""
+        content = self.blob(path)
+        if content is None:
+            return None
+        try:
+            return content.decode("utf-8")
+        except UnicodeDecodeError:
+            return None
 
     def identifiers(self, gate: str) -> set[str]:
         """Every identifier that may name ``gate`` in scored evidence."""
         if self._gates is None:
             text = self.text(GATES)
-            document = yaml.safe_load(text) if text else {}
+            try:
+                document = yaml.safe_load(text) if text else {}
+            except yaml.YAMLError:
+                document = {}
             gates = (
                 document.get("gates") if isinstance(document, dict) else None
             )
@@ -362,56 +466,101 @@ class Committed:
                     names.add(declared[key])
         return names
 
-    def first_added(self, path: str) -> str | None:
-        """The oldest commit before ``self.commit`` that added ``path``."""
-        if path not in self._first_added:
+    def registered_at(self, entry_id: str) -> str | None:
+        """The oldest commit on this commit's first-parent chain whose
+        registry holds ``entry_id``, or ``None``."""
+        if self._registered is None:
+            self._registered = {}
             log = _git(
                 self.repository,
                 "log",
-                "--diff-filter=A",
+                "--first-parent",
+                "--reverse",
                 "--format=%H",
                 self.commit,
                 "--",
-                path,
+                REGISTRY,
             )
-            commits = log.stdout.split() if log.returncode == 0 else []
-            self._first_added[path] = commits[-1] if commits else None
-        return self._first_added[path]
+            for commit in log.stdout.split() if log.returncode == 0 else []:
+                document = _parse_registry(
+                    _decode(
+                        _git_bytes(
+                            self.repository, "show", f"{commit}:{REGISTRY}"
+                        )
+                    )
+                )
+                entries = (
+                    document.get("entries")
+                    if isinstance(document, Mapping)
+                    else None
+                )
+                for entry in entries if isinstance(entries, list) else []:
+                    name = (
+                        entry.get("id") if isinstance(entry, Mapping) else None
+                    )
+                    if isinstance(name, str):
+                        self._registered.setdefault(name, commit)
+        return self._registered.get(entry_id)
 
-    def is_ancestor(self, older: str, newer: str) -> bool:
-        return (
-            _git(
-                self.repository, "merge-base", "--is-ancestor", older, newer
-            ).returncode
-            == 0
-        )
+
+def _decode(content: bytes | None) -> str | None:
+    if content is None:
+        return None
+    try:
+        return content.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
 
 
 def _evidence_problems(
-    entry: Mapping[str, Any], committed: Committed | None
+    entry: Mapping[str, Any],
+    committed: Committed | None,
+    scored_runs: Mapping[str, tuple[str, str]],
+    import_gates: frozenset[str],
 ) -> list[str]:
-    """Problems with an entry's scored-evidence citations."""
-    if not entry["scored_evidence"]:
-        return []
+    """Problems with an entry's scored-evidence citations and, for a
+    historical import, with its gate."""
     name = entry["id"]
     problems: list[str] = []
+    if (
+        entry["provenance"] == "historical_import"
+        and entry["gate"] not in import_gates
+    ):
+        problems.append(
+            f"{name}: {entry['gate']!r} is not a gate that scored before the "
+            "registry existed"
+        )
+    if not entry["scored_evidence"]:
+        return problems
     allowed = set(entry["gate_identifiers"])
     if committed is not None:
         authoritative = committed.identifiers(entry["gate"])
         if not authoritative:
             return [
+                *problems,
                 f"{name}: {entry['gate']!r} is neither a gates.yaml gate nor "
-                "a registration this module lists"
+                "a registration this module lists",
             ]
         allowed &= authoritative
-    cutoff = None
-    if committed is not None and entry["provenance"] == "historical_import":
-        cutoff = committed.first_added(REGISTRY)
+    registered = None
+    if committed is not None and entry["provenance"] == "registration":
+        registered = committed.registered_at(name)
+        if registered is None:
+            problems.append(
+                f"{name}: a registration cites scored evidence before it is "
+                "registered on the base branch"
+            )
     for item in entry["scored_evidence"]:
         path, field, equals = item["path"], item["field"], item["equals"]
-        if not RUN_PATH_RX.fullmatch(path):
+        run = scored_runs.get(path)
+        if run is None:
             problems.append(
-                f"{name}: scored evidence {path!r} is not runs/*.json"
+                f"{name}: scored evidence {path!r} is not a listed scored run"
+            )
+            continue
+        if run[0] != entry["gate"]:
+            problems.append(
+                f"{name}: scored evidence {path!r} is {run[0]!r}'s scored run"
             )
             continue
         if field not in IDENTITY_FIELDS:
@@ -425,29 +574,33 @@ def _evidence_problems(
             continue
         if committed is None:
             continue
-        text = committed.text(path)
-        if text is None:
+        content = committed.blob(path)
+        if content is None:
             problems.append(
                 f"{name}: scored evidence {path!r} is not a committed file"
             )
             continue
-        try:
-            document = json.loads(text)
-        except json.JSONDecodeError:
-            problems.append(f"{name}: scored evidence {path!r} is not JSON")
+        if hashlib.sha256(content).hexdigest() != run[1]:
+            problems.append(
+                f"{name}: scored evidence {path!r} differs from the listed "
+                "scored run's bytes"
+            )
             continue
+        document = _parse_registry(_decode(content))
         if lookup(document, field) != equals:
             problems.append(
                 f"{name}: scored evidence {path!r} does not have "
                 f"{field} == {equals!r}"
             )
             continue
-        if cutoff is not None:
-            added = committed.first_added(path)
-            if added is None or not committed.is_ancestor(added, cutoff):
+        if registered is not None:
+            earlier = committed.blob(path, registered)
+            if earlier is not None and (
+                hashlib.sha256(earlier).hexdigest() == run[1]
+            ):
                 problems.append(
-                    f"{name}: a historical import's evidence {path!r} was "
-                    "committed after the registry existed"
+                    f"{name}: its scored run {path!r} was already committed "
+                    "when the entry was registered"
                 )
     return problems
 
@@ -546,6 +699,8 @@ def _entry_problems(
     entry: Mapping[str, Any],
     sources: Mapping[str, Any],
     committed: Committed | None,
+    scored_runs: Mapping[str, tuple[str, str]],
+    import_gates: frozenset[str],
 ) -> list[str]:
     """Problems inside one well-shaped entry."""
     name = entry["id"]
@@ -605,7 +760,9 @@ def _entry_problems(
         )
     if entry["status"] == "used" and not entry["scored_evidence"]:
         problems.append(f"{name}: a used entry needs scored_evidence")
-    problems.extend(_evidence_problems(entry, committed))
+    problems.extend(
+        _evidence_problems(entry, committed, scored_runs, import_gates)
+    )
     problems.extend(_review_problems(entry, committed))
     return problems
 
@@ -639,11 +796,17 @@ def validate(
     registry: Any,
     repository: Path | None = None,
     vocabulary: Mapping[str, Mapping[str, str]] = SOURCES,
+    *,
+    commit: str = "HEAD",
+    scored_runs: Mapping[str, tuple[str, str]] = SCORED_RUNS,
+    import_gates: frozenset[str] = HISTORICAL_IMPORT_GATES,
 ) -> list[str]:
     """Every rule one registry must keep on its own. ``vocabulary`` is the
-    controlled source list the registry's copy must equal. With
-    ``repository``, scored evidence, citations and the completion record
-    are checked against its ``HEAD`` commit."""
+    controlled source list the registry's copy must equal;
+    ``scored_runs`` and ``import_gates`` are the controlled lists of
+    scored runs and historical-import gates. With ``repository``, scored
+    evidence, citations and the completion record are checked against its
+    ``commit``."""
     if not isinstance(registry, Mapping):
         return ["registry: not a mapping"]
     missing = [key for key in TOP_LEVEL if key not in registry]
@@ -673,7 +836,9 @@ def validate(
     if not isinstance(registry["complete"], bool):
         problems.append("registry: complete must be true or false")
     problems.extend(_vocabulary_problems(vocabulary))
-    if registry["sources"] != dict(vocabulary):
+    if not isinstance(vocabulary, Mapping) or registry["sources"] != dict(
+        vocabulary
+    ):
         problems.append(
             "registry: sources must equal the controlled vocabulary"
         )
@@ -686,18 +851,26 @@ def validate(
         problems.extend(_shape_problems(entry))
     if problems:
         return problems
-    committed = Committed(repository) if repository is not None else None
+    committed = (
+        Committed(repository, commit) if repository is not None else None
+    )
     record = registry["completion_record"]
+    if not safe_path(record):
+        return [f"registry: completion_record {record!r} is not a path"]
     if (
         committed is not None
         and registry["complete"]
-        and committed.text(record) is None
+        and committed.blob(record) is None
     ):
         problems.append(
             f"registry: marked complete, but {record} is not committed"
         )
     for entry in entries:
-        problems.extend(_entry_problems(entry, vocabulary, committed))
+        problems.extend(
+            _entry_problems(
+                entry, vocabulary, committed, scored_runs, import_gates
+            )
+        )
     if problems:
         return problems
     ids = [entry["id"] for entry in entries]
@@ -770,11 +943,27 @@ def _extends(base: Any, current: Any) -> bool:
     )
 
 
+def empty_like(registry: Mapping[str, Any]) -> dict[str, Any]:
+    """The registry as it stood before its first entry: the base a newly
+    created registry is admitted against."""
+    return {
+        "schema": registry.get("schema"),
+        "status_values": registry.get("status_values"),
+        "completion_record": registry.get("completion_record"),
+        "rules": [],
+        "sources": {},
+        "complete": False,
+        "entries": [],
+    }
+
+
 def append_only_problems(
     base: Mapping[str, Any], current: Mapping[str, Any]
 ) -> list[str]:
     """How ``current`` breaks the append-only rule against ``base``, an
     earlier registry that kept the rules."""
+    if not isinstance(base, Mapping) or not isinstance(current, Mapping):
+        return ["registry: an append-only comparison needs two mappings"]
     problems: list[str] = []
     for key in ("schema", "status_values", "completion_record"):
         if current.get(key) != base.get(key):
@@ -784,17 +973,21 @@ def append_only_problems(
     sources = current.get("sources")
     if not isinstance(sources, Mapping):
         sources = {}
-    for source, declared in base.get("sources", {}).items():
+    base_sources = base.get("sources")
+    if not isinstance(base_sources, Mapping):
+        base_sources = {}
+    for source, declared in base_sources.items():
         if sources.get(source) != declared:
             problems.append(f"source {source!r}: changed or removed")
     if base.get("complete") is True and current.get("complete") is not True:
         problems.append("registry: a complete registry became incomplete")
-    old = base.get("entries", [])
+    old = base.get("entries")
     new = current.get("entries")
-    if not isinstance(new, list) or not all(
-        isinstance(entry, Mapping) for entry in new
-    ):
-        return [*problems, "registry: entries are malformed"]
+    for entries in (old, new):
+        if not isinstance(entries, list) or not all(
+            isinstance(entry, Mapping) for entry in entries
+        ):
+            return [*problems, "registry: entries are malformed"]
     old_ids = [entry.get("id") for entry in old]
     new_ids = [entry.get("id") for entry in new]
     if new_ids[: len(old_ids)] != old_ids:
@@ -878,50 +1071,115 @@ def base_commit(repository: Path) -> str:
     return base
 
 
-def registry_at(repository: Path, commit: str) -> dict[str, Any] | None:
-    """The registry at ``commit``, or ``None`` where it does not exist.
-    Raises ``LookupError`` when ``commit`` cannot be read."""
+def registry_at(repository: Path, commit: str) -> Any:
+    """The registry document at ``commit``, or ``None`` where it does not
+    exist. Raises ``LookupError`` when ``commit`` cannot be read and
+    ``ValueError`` when the registry there is not JSON."""
     listed = _git(repository, "ls-tree", "--name-only", commit, REGISTRY)
     if listed.returncode != 0:
         raise LookupError(f"cannot list {REGISTRY} at {commit}")
     if not listed.stdout.strip():
         return None
-    shown = _git(repository, "show", f"{commit}:{REGISTRY}")
-    if shown.returncode != 0:
-        raise LookupError(f"cannot read {REGISTRY} at {commit}")
-    return json.loads(shown.stdout)
+    document = _parse_registry(
+        _decode(_git_bytes(repository, "show", f"{commit}:{REGISTRY}"))
+    )
+    if document is None:
+        raise ValueError(f"{REGISTRY} at {commit} is not JSON")
+    return document
 
 
-def base_registry(repository: Path) -> dict[str, Any] | None:
+def base_registry(repository: Path) -> Any:
     """The registry at :func:`base_commit`, or ``None`` when the base has
     no registry yet. Raises ``LookupError`` when no base resolves."""
     return registry_at(repository, base_commit(repository))
 
 
-def history_problems(repository: Path, base: str) -> list[str]:
-    """Append-only problems between every pair of consecutive first-parent
-    commits from ``base`` to ``HEAD``, so a push of several commits cannot
-    hide a change that a later commit undoes."""
+def pull_request_head() -> str | None:
+    """The pull request's head commit, on a ``pull_request`` event."""
+    if os.environ.get("GITHUB_EVENT_NAME") != "pull_request":
+        return None
+    event = os.environ.get("GITHUB_EVENT_PATH")
+    if not event or not Path(event).is_file():
+        return None
+    try:
+        payload = json.loads(Path(event).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    head = (payload.get("pull_request") or {}).get("head") or {}
+    sha = head.get("sha") if isinstance(head, Mapping) else None
+    return sha if isinstance(sha, str) and SHA_RX.fullmatch(sha) else None
+
+
+def history_problems(
+    repository: Path,
+    base: str,
+    head: str = "HEAD",
+    *,
+    full: bool = True,
+    scored_runs: Mapping[str, tuple[str, str]] = SCORED_RUNS,
+    import_gates: frozenset[str] = HISTORICAL_IMPORT_GATES,
+) -> list[str]:
+    """Problems across every first-parent commit from ``base`` to
+    ``head``, so a run of commits cannot hide a change a later commit
+    undoes.
+
+    With ``full``, each snapshot is validated against its own commit's
+    tree. A snapshot that fails is reported and is not used as the next
+    one's predecessor. Each valid snapshot must append only to the last
+    valid one; a newly created registry is admitted against an empty
+    registry. Without ``full``, as for a pull request's own commits, only
+    the append-only rule is checked."""
     listed = _git(
-        repository, "rev-list", "--first-parent", "--reverse", f"{base}..HEAD"
+        repository,
+        "rev-list",
+        "--first-parent",
+        "--reverse",
+        f"{base}..{head}",
     )
     if listed.returncode != 0:
-        raise LookupError(f"cannot list commits from {base} to HEAD")
+        raise LookupError(f"cannot list commits from {base} to {head}")
     problems: list[str] = []
+    try:
+        previous = registry_at(repository, base)
+    except ValueError as error:
+        problems.append(f"{base[:12]}: {error}")
+        previous = None
+    if not isinstance(previous, Mapping):
+        previous = None
     previous_commit = base
-    previous = registry_at(repository, base)
     for commit in listed.stdout.split():
-        current = registry_at(repository, commit)
-        if current is not None:
-            shape = validate(current, vocabulary=current.get("sources", {}))
+        label = commit[:12]
+        try:
+            current = registry_at(repository, commit)
+        except ValueError as error:
+            problems.append(f"{label}: {error}")
+            continue
+        if current is None:
+            if previous is not None:
+                problems.append(f"{label}: the registry was deleted")
+            continue
+        if not isinstance(current, Mapping):
+            problems.append(f"{label}: registry: not a mapping")
+            continue
+        if full:
+            sources = current.get("sources")
+            shape = validate(
+                current,
+                repository,
+                vocabulary=sources if isinstance(sources, Mapping) else {},
+                commit=commit,
+                scored_runs=scored_runs,
+                import_gates=import_gates,
+            )
             if shape:
-                problems.extend(f"{commit[:12]}: {p}" for p in shape)
-            elif previous is not None:
-                problems.extend(
-                    f"{previous_commit[:12]}..{commit[:12]}: {p}"
-                    for p in append_only_problems(previous, current)
-                )
-        elif previous is not None:
-            problems.append(f"{commit[:12]}: the registry was deleted")
+                problems.extend(f"{label}: {p}" for p in shape)
+                continue
+        before = previous if previous is not None else empty_like(current)
+        changes = append_only_problems(before, current)
+        if changes:
+            problems.extend(
+                f"{previous_commit[:12]}..{label}: {p}" for p in changes
+            )
+            continue
         previous_commit, previous = commit, current
     return problems

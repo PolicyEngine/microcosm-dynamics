@@ -3,15 +3,15 @@
   "title": "Held-out data registry for Track B and the open-population lane",
   "purpose": "The single registry of the data that every Track B gate and every open-population gate holds out, set up by the dynamics coordinator on 2026-10-21. It is part of Track B's B0.2 exposure record (design revision 3, section 5.2, elements 4 and 5). Cite it by path, commit and SHA-256. src/populace_dynamics/track_b/holdout_registry.py states and enforces its rules, and tests/test_track_b_holdout_registry.py runs them on every commit.",
   "rules": [
-    "A gate registers what it holds out here, as a lone candidate entry in a commit of its own, before its record freezes. It moves to frozen, used or withdrawn only in later commits.",
+    "A gate registers what it holds out here, as a lone candidate entry in a commit of its own, before its record freezes and before its scored run is committed. It moves to frozen, used or withdrawn only in later commits.",
     "J's candidate holdouts are registered first, because J is on Track B's critical path. OP0.2 registers its picks for OP12's gate_ssa_totals here before it freezes them, and picks from the years J has not taken.",
     "Every unit key names a source from the controlled vocabulary in src/populace_dynamics/track_b/holdout_registry.py (SOURCES), then its years (a year, an inclusive range, or 'undated'), then optional scope segments. The registry's sources must equal that vocabulary. Each source declares a family, a title, a catalog reference no other source shares, and what its key year means. Adding a source is a reviewed code change, and a new source must not be another name for a declared one.",
     "Two unit keys share a unit when their source is the same and their years intersect; scope segments describe the unit and never narrow the overlap. Live entries that share a unit, or whose relation is unresolved, list each other in disclosed_overlaps, and both gates' registrations name the overlap. No unit is held out by two gates silently.",
     "The overlap rule cannot see two sources that share underlying data, or two editions of a publication that report the same data years. So an entry reviews every earlier live entry of the same source family that it neither shares a unit with nor discloses. A review records the outcome 'disjoint', a substantive reason and citations (path:line or https URLs); an unresolved relation is disclosed instead.",
     "Reference years are recorded separately from interview or publication availability (design section 5.2, element 10): a unit key's year is what its source declares (for PSID, the interview wave; for EPUF, the file's vintage year), and each entry's units state the reference or event years.",
-    "An entry whose gate has scored has status 'used'. Its scored_evidence cites committed scored-run artifacts under runs/, each with an identity field (gate, gate.name or registration_id) whose value identifies the gate in gates.yaml or in the module's REGISTRATIONS_OUTSIDE_GATES_YAML. Its units are exposure for every later gate and never again an unused holdout (design section 5.2).",
-    "Entries are only appended. An entry's id, provenance, gate, lane, source, units and unit_keys never change; its gate identifiers, evidence, scored evidence, disclosures, reviews and history only extend. Ids are never reused. These rules hold against the base commit and between every pair of consecutive first-parent commits since it.",
-    "A historical import records a gate that scored before this registry existed: it starts as used, and its scored evidence must have been committed before the registry was. Imports are allowed only while the registry is incomplete.",
+    "An entry whose gate has scored has status 'used'. Its scored_evidence cites scored-run artifacts listed in the module's SCORED_RUNS, which pins each artifact's gate and the SHA-256 of its bytes; an artifact joins that list, as a reviewed code change, when its gate scores. Each citation also names an identity field (gate, gate.name or registration_id) whose value identifies the gate in gates.yaml or in the module's REGISTRATIONS_OUTSIDE_GATES_YAML. A registration's scored run must not have been committed when the entry was registered. Its units are exposure for every later gate and never again an unused holdout (design section 5.2).",
+    "Entries are only appended. An entry's id, provenance, gate, lane, source, units and unit_keys never change; its gate identifiers, evidence, scored evidence, disclosures, reviews and history only extend. Ids are never reused. These rules hold against the base commit, between every pair of consecutive first-parent commits on the base branch (each snapshot also validated against its own commit's tree), and between consecutive commits of a pull request's branch. A newly created registry is admitted against an empty one.",
+    "A historical import records a gate that scored before this registry existed. It starts as used, and its gate must be in the module's HISTORICAL_IMPORT_GATES, which B0.2's mechanical inventory may extend by a reviewed code change. Imports are allowed only while the registry is incomplete.",
     "The registry is incomplete until completion_record, B0.2's mechanical exposure inventory, exists. It starts with the prior uses verified below; the inventory adds the rest before any B0.2 gate record freezes."
   ],
   "status_values": {
@@ -232,7 +232,7 @@
         {
           "date": "2026-10-21",
           "status": "used",
-          "note": "seeded from gates.yaml at 1e739d32; its relation to the DI ASR 2023 (H004, H005) is unresolved and disclosed; open_population.md rev 2 plans gate_young_earn on a new salt of the same file, which shares this unit and must disclose it"
+          "note": "seeded from gates.yaml at 1e739d32; its relation to the DI ASR 2023 (H004, H005) is unresolved and disclosed; the open-population design (PR #557, draft) plans gate_young_earn on a new salt of the same file, which shares this unit and must disclose it"
         }
       ]
     },
@@ -331,7 +331,8 @@
       ],
       "evidence": [
         "gates.yaml:3735-3736 (holdout_basis)",
-        "gates.yaml:4582-4584 (sources)"
+        "gates.yaml:4582-4584 (sources)",
+        "gates.yaml:4311-4327 (the Census HH-4 and AD-3 2023 sources, recorded as report-only)"
       ],
       "scored_evidence": [
         {

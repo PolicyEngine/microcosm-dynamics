@@ -11,6 +11,7 @@ registries in ``test_track_b_holdout_registry.py``.
 
 from __future__ import annotations
 
+import hashlib
 import os
 from pathlib import Path
 
@@ -65,6 +66,26 @@ EXPECTED_FAMILIES = {
     "mermin_smith_anchors": "literature",
 }
 EXPECTED_OUTSIDE_GATES_YAML = {"B2": ("B2", "6252388925")}
+#: Every listed scored run and its gate, specified here independently.
+EXPECTED_SCORED_RUN_GATES = {
+    "runs/gate_m6_candidate1_v1.json": "gate_m6",
+    "runs/gate_m6_candidate2_v1.json": "gate_m6",
+    "runs/gate_m6_candidate3_v1.json": "gate_m6",
+    "runs/track_b_b2_score.json": "B2",
+    "runs/epuf_fill_gate_test_v1.json": "gate_epuf_fill",
+    "runs/gate_m4_hazard_v1.json": "gate_m4",
+    "runs/gate_w1_candidate1_v1.json": "gate_w1",
+    "runs/gate_w1_candidate2_v1.json": "gate_w1",
+    "runs/gate_w1_candidate3_v1.json": "gate_w1",
+    "runs/gate_w1_candidate4_v1.json": "gate_w1",
+}
+EXPECTED_IMPORT_GATES = {
+    "gate_m6",
+    "B2",
+    "gate_epuf_fill",
+    "gate_m4",
+    "gate_w1",
+}
 
 
 def committed() -> dict:
@@ -91,9 +112,31 @@ def resolved_base():
 def test_the_committed_registry_only_appends_to_its_base():
     base_commit = resolved_base()
     base = registry.registry_at(ROOT, base_commit)
-    if base is not None:
+    current = committed()
+    if base is None:
+        assert (
+            registry.append_only_problems(
+                registry.empty_like(current), current
+            )
+            == []
+        )
+    else:
         assert registry.validate(base, vocabulary=base["sources"]) == []
-        assert registry.append_only_problems(base, committed()) == []
+        assert registry.append_only_problems(base, current) == []
+
+
+def test_a_pull_requests_own_commits_append_only():
+    head = registry.pull_request_head()
+    if head is None:
+        pytest.skip("not a pull_request event")
+    base_commit = resolved_base()
+    if registry.registry_at(ROOT, base_commit) is None:
+        pytest.skip(
+            "the registry is new in this pull request, which is merged with "
+            "a merge commit; its endpoint is admitted against an empty "
+            "registry above"
+        )
+    assert registry.history_problems(ROOT, base_commit, head, full=False) == []
 
 
 def test_every_first_parent_commit_since_the_base_appends_only():
@@ -142,6 +185,16 @@ def test_the_vocabulary_and_registrations_are_as_specified():
     assert committed()["sources"] == {
         source: dict(declared) for source, declared in registry.SOURCES.items()
     }
+
+
+def test_the_scored_runs_and_import_gates_are_as_specified():
+    assert {
+        path: gate for path, (gate, _) in registry.SCORED_RUNS.items()
+    } == EXPECTED_SCORED_RUN_GATES
+    assert set(registry.HISTORICAL_IMPORT_GATES) == EXPECTED_IMPORT_GATES
+    for path, (_, digest) in registry.SCORED_RUNS.items():
+        content = (ROOT / path).read_bytes()
+        assert hashlib.sha256(content).hexdigest() == digest, path
 
 
 def test_every_used_entry_cites_committed_run_artifacts():
