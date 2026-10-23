@@ -15,21 +15,40 @@ import numpy as np
 import pandas as pd
 
 from . import forward_earnings as v1
+from . import refit as v1_refit
 from .candidates import (
-    CANDIDATE_S1,
-    PARTICIPATION_GATE_OPERATION_ID,
+    CANDIDATE_3,
     CandidateSpec,
+    OperationSpec,
 )
 
 __all__ = [
+    "CANDIDATE_S1",
     "ForwardEarningsGenerator",
+    "PARTICIPATION_GATE_OPERATION_ID",
+    "PARTICIPATION_GATE_OPERATION_KIND",
     "PARTICIPATION_GATE_SPEC",
     "SPEC_REGISTRATION",
     "adapter_spec_sha256",
     "fit_forward_earnings",
     "gate_fitting_view",
+    "refit_earnings_chained_generator",
 ]
 
+PARTICIPATION_GATE_OPERATION_KIND = "forward_earnings.participation_gate"
+PARTICIPATION_GATE_OPERATION_ID = "wage_relative.v1"
+CANDIDATE_S1 = CandidateSpec(
+    candidate_id="m6_candidate3_engine_s1_v1",
+    contract_revision="track_b_s1_frozen_2026_10_21_d1803",
+    operations=(
+        *CANDIDATE_3.operations,
+        OperationSpec(
+            kind=PARTICIPATION_GATE_OPERATION_KIND,
+            implementation_id=PARTICIPATION_GATE_OPERATION_ID,
+            params={},
+        ),
+    ),
+)
 SPEC_REGISTRATION = "docs/design/track_b_s1_spec.md"
 PARTICIPATION_GATE_SPEC = {
     "implementation_id": PARTICIPATION_GATE_OPERATION_ID,
@@ -207,4 +226,72 @@ def fit_forward_earnings(
     fitted = replace(fitted, generator=ForwardEarningsGenerator(**values))
     return replace(
         fitted, q_invariant_fit_signature_sha256=_fit_signature(fitted)
+    )
+
+
+def refit_earnings_chained_generator(
+    panel: pd.DataFrame,
+    nawi: Mapping[int, float],
+    *,
+    seed: int,
+    boundary_year: int = v1_refit.BOUNDARY_YEAR,
+    qrf_factory: v1.QRFModelFactory | None = None,
+    candidate_spec: CandidateSpec | None = None,
+) -> v1_refit.EarningsChainedRefit:
+    """Refit S1 with v1's support and provenance, and S1's own identity.
+
+    The result construction mirrors the protected v1 refit entry point.
+    Keeping the fitting call here leaves that entry point and the registered
+    candidate-3 path unchanged.
+    """
+    spec = CANDIDATE_S1 if candidate_spec is None else candidate_spec
+    fitted = fit_forward_earnings(
+        panel,
+        nawi,
+        seed=seed,
+        boundary_year=boundary_year,
+        qrf_factory=qrf_factory or v1_refit._default_qrf_factory,
+        candidate_spec=spec,
+    )
+    v1.validate_rank_refresh_fit(fitted.generator)
+    provenance = v1_refit.RefitProvenance(
+        boundary_year=boundary_year,
+        estimation_rule=(
+            "forward earnings income-reference period <=T*; age 25-64; "
+            "calendar-invariant NAWI-normalized marginal"
+        ),
+        n_rows={
+            "estimation_panel": len(fitted.estimation_panel),
+            "forward_pairs": len(fitted.forward_pairs),
+            "zero_anchor_pairs": fitted.n_zero_anchor_pairs,
+        },
+        max_year={
+            "earnings_reference_year": v1_refit._max_year(
+                fitted.estimation_panel, "period"
+            )
+        },
+    )
+    return v1_refit.EarningsChainedRefit(
+        generator=fitted.generator,
+        shared_gate=fitted.generator.shared_gate,
+        zero_anchor_gate=fitted.generator.zero_anchor_gate,
+        estimation_panel=fitted.estimation_panel,
+        forward_pairs=fitted.forward_pairs,
+        anchors=fitted.anchors,
+        n_zero_anchor_pairs=fitted.n_zero_anchor_pairs,
+        u_w_diagnostics=fitted.u_w_diagnostics,
+        seed=int(seed),
+        spec_registration=SPEC_REGISTRATION,
+        adapter_spec_sha256=adapter_spec_sha256(v1_refit.EARNINGS_SPEC_SHA256),
+        provenance=provenance,
+        engine_candidate_id=spec.candidate_id,
+        engine_candidate_spec_sha256=spec.sha256,
+        q_invariant_fit_signature_sha256=(
+            fitted.q_invariant_fit_signature_sha256
+        ),
+        rank_refresh_fit_audit=(
+            None
+            if fitted.rank_refresh_fit_audit is None
+            else fitted.rank_refresh_fit_audit.as_dict()
+        ),
     )

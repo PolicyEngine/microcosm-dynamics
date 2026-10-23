@@ -21,7 +21,6 @@ import populace_dynamics.harness.m6_runner as m6_runner
 from populace_dynamics.engine.candidates import (
     CANDIDATE_2,
     CANDIDATE_3,
-    CANDIDATE_S1,
     CORRELATED_REFRESH_OPERATION_ID,
     CORRELATED_REFRESH_OPERATION_KIND,
     RANK_REFRESH_OPERATION_ID,
@@ -190,11 +189,7 @@ def _projection_bytes(result) -> bytes:
 
 
 def test_engine_registry_binds_additive_candidate3_without_changing_prior_laws():
-    assert dict(REGISTRY) == {
-        2: CANDIDATE_2,
-        3: CANDIDATE_3,
-        "s1": CANDIDATE_S1,
-    }
+    assert dict(REGISTRY) == {2: CANDIDATE_2, 3: CANDIDATE_3}
     assert engine.CANDIDATE_3 is CANDIDATE_3
     operation = CANDIDATE_2.operation(RANK_REFRESH_OPERATION_KIND)
     assert operation is not None

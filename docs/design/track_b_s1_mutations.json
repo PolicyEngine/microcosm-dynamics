@@ -4,7 +4,10 @@
   "admitted_scope": "Invented panels only; no population forecast claim.",
   "mutation_method": "One deliberate production-line change per check; targeted pytest must fail; original bytes restored in finally before writing this record.",
   "restored_source_sha256": {
-    "src/populace_dynamics/engine/forward_earnings_s1_v1.py": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+    "src/populace_dynamics/engine/forward_earnings_s1_v1.py": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515",
+    "src/populace_dynamics/engine/candidates.py": "c8ffa5b861bade166e32c5475a25e225ba7eac67a09280f9e649e902aadb45bd",
+    "src/populace_dynamics/engine/refit.py": "9601a0cfe68b783d38dfd82f7058b0d74415005385abc406efa6d0993a10d014",
+    "tests/test_m6_engine_rank_refresh.py": "133f728fcf4ba440d446172eb1cb9571d3ac59f27a708cd0f910e1b602cc875e"
   },
   "checks": [
     {
@@ -13,14 +16,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "self.fitted, current_level / source_index, target_age, uniforms",
       "new": "self.fitted, current_level / source_index + 1.0, target_age, uniforms",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T1 tests/test_track_b_s1_invariants.py::test_t1_unit_index_features_probabilities_and_draws_equal_v1",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T1 tests/test_track_b_s1_invariants.py::test_t1_unit_index_features_probabilities_and_draws_equal_v1",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_invariants.py::test_t1_unit_index_features_probabilities_and_draws_equal_v1"
       ],
-      "summary": "1 failed in 43.05s",
+      "summary": "1 failed in 80.68s (0:01:20)",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T2",
@@ -28,14 +31,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "frame[\"earnings\"].to_numpy(dtype=np.float64) / source_index",
       "new": "frame[\"earnings\"].to_numpy(dtype=np.float64) * source_index",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T2 tests/test_track_b_s1_invariants.py::test_t2_period_rescaling_preserves_gate_features_and_probabilities",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T2 tests/test_track_b_s1_invariants.py::test_t2_period_rescaling_preserves_gate_features_and_probabilities",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_invariants.py::test_t2_period_rescaling_preserves_gate_features_and_probabilities"
       ],
-      "summary": "1 failed in 91.71s (0:01:31)",
+      "summary": "1 failed in 74.70s (0:01:14)",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T3",
@@ -43,14 +46,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "frame[\"earnings\"].to_numpy(dtype=np.float64) / source_index",
       "new": "frame[\"earnings\"].to_numpy(dtype=np.float64) / (2.0 * source_index)",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T3 tests/test_track_b_s1_experiments.py::test_t3_relative_stationary_participation_recovery",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T3 tests/test_track_b_s1_experiments.py::test_t3_relative_stationary_participation_recovery",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_experiments.py::test_t3_relative_stationary_participation_recovery"
       ],
-      "summary": "1 failed in 31.03s",
+      "summary": "1 failed in 66.99s (0:01:06)",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T4",
@@ -58,14 +61,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "    return view\n",
       "new": "    return view.assign(earnings_tp2=view[\"earnings_tp2\"] / source_index)\n",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T4 tests/test_track_b_s1_invariants.py::test_t4_only_gate_fitting_predictor_changes",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T4 tests/test_track_b_s1_invariants.py::test_t4_only_gate_fitting_predictor_changes",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_invariants.py::test_t4_only_gate_fitting_predictor_changes"
       ],
-      "summary": "1 failed in 56.52s",
+      "summary": "1 failed in 65.73s (0:01:05)",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T5",
@@ -73,14 +76,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "    base = fitted.generator\n",
       "new": "    base = replace(fitted.generator, wage_index=replace(fitted.generator.wage_index, intercept=fitted.generator.wage_index.intercept + float(nawi[max(nawi)]) / 10000.0))\n",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T5 tests/test_track_b_s1_invariants.py::test_t5_post_boundary_inputs_cannot_change_fit_or_draws",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T5 tests/test_track_b_s1_invariants.py::test_t5_post_boundary_inputs_cannot_change_fit_or_draws",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_invariants.py::test_t5_post_boundary_inputs_cannot_change_fit_or_draws"
       ],
-      "summary": "1 failed in 80.28s (0:01:20)",
+      "summary": "1 failed in 50.62s",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T6",
@@ -88,14 +91,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "float(nawi[int(year)])",
       "new": "float(nawi[max(nawi)])",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T6 tests/test_track_b_s1_experiments.py::test_t6_fixed_nominal_threshold_counterexample",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T6 tests/test_track_b_s1_experiments.py::test_t6_fixed_nominal_threshold_counterexample",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_experiments.py::test_t6_fixed_nominal_threshold_counterexample"
       ],
-      "summary": "1 failed in 38.04s",
+      "summary": "1 failed in 43.49s",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     },
     {
       "test_id": "T7",
@@ -103,14 +106,14 @@
       "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
       "old": "normalization_index(int(self.year) - 2)",
       "new": "normalization_index(int(self.year))",
-      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-mutation-T7 tests/test_track_b_s1_invariants.py::test_t7_source_year_query_features_and_exact_restart",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -m pytest -p no:cacheprovider -q -s --basetemp=/private/tmp/s1-revision-mutation-T7 tests/test_track_b_s1_invariants.py::test_t7_source_year_query_features_and_exact_restart",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_s1_invariants.py::test_t7_source_year_query_features_and_exact_restart"
       ],
-      "summary": "1 failed in 49.68s",
+      "summary": "1 failed in 62.42s (0:01:02)",
       "restored": true,
-      "restored_source_sha256": "9ed4933571d0c1b1f4261eb62391eba6d60f0ec0dc8a4b1df4293d43daaea056"
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     }
   ]
 }

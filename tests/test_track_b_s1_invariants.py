@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import pickle
-from dataclasses import replace
+from collections.abc import Mapping
+from dataclasses import fields, is_dataclass, replace
 
 import numpy as np
 import pandas as pd
@@ -17,7 +18,6 @@ from populace_dynamics.engine import forward_earnings as v1
 from populace_dynamics.engine import forward_earnings_s1_v1 as s1
 from populace_dynamics.engine.candidates import (
     CANDIDATE_3,
-    CANDIDATE_S1,
     REGISTRY,
 )
 from populace_dynamics.engine.loop import PeriodContext
@@ -92,7 +92,7 @@ def _fit(panel, nawi, *, successor=True, factory=None):
         seed=37,
         boundary_year=BOUNDARY,
         qrf_factory=factory,
-        candidate_spec=CANDIDATE_S1 if successor else CANDIDATE_3,
+        candidate_spec=s1.CANDIDATE_S1 if successor else CANDIDATE_3,
     )
 
 
@@ -138,6 +138,33 @@ def _probabilities(gate, features):
 
 def _assert_frames(left, right):
     pd.testing.assert_frame_equal(left, right, check_exact=True)
+
+
+def _assert_exact_state(left, right):
+    """Compare every nested fitted field, including array dtypes and slots."""
+    assert type(left) is type(right)
+    if isinstance(left, pd.DataFrame):
+        _assert_frames(left, right)
+    elif isinstance(left, np.ndarray):
+        np.testing.assert_array_equal(left, right, strict=True)
+    elif isinstance(left, Mapping):
+        assert left.keys() == right.keys()
+        for key in left:
+            _assert_exact_state(left[key], right[key])
+    elif is_dataclass(left):
+        for field in fields(left):
+            _assert_exact_state(
+                getattr(left, field.name), getattr(right, field.name)
+            )
+    elif isinstance(left, list | tuple):
+        assert len(left) == len(right)
+        for before, after in zip(left, right, strict=True):
+            _assert_exact_state(before, after)
+    elif isinstance(left, v1.CellMarginal):
+        for name in left.__slots__:
+            _assert_exact_state(getattr(left, name), getattr(right, name))
+    else:
+        np.testing.assert_equal(left, right)
 
 
 def _observe_queries(monkeypatch):
@@ -443,23 +470,23 @@ def test_t7_source_year_query_features_and_exact_restart(
     assert saw_current_status_switch
 
 
-def test_registered_s1_refit_dispatch_preserves_candidate3():
+def test_s1_owns_its_refit_and_preserves_registered_candidate3():
     panel, nawi = _history()
-    assert REGISTRY["s1"] is CANDIDATE_S1
-    assert CANDIDATE_S1.operations[:-1] == CANDIDATE_3.operations
+    assert set(REGISTRY) == {2, 3}
+    assert REGISTRY[3] is CANDIDATE_3
+    assert s1.CANDIDATE_S1.operations[:-1] == CANDIDATE_3.operations
     old = refit_earnings_chained_generator(
         panel,
         nawi,
         seed=37,
         boundary_year=BOUNDARY,
-        candidate_spec=CANDIDATE_3,
+        candidate_spec=REGISTRY[3],
     )
-    new = refit_earnings_chained_generator(
+    new = s1.refit_earnings_chained_generator(
         panel,
         nawi,
         seed=37,
         boundary_year=BOUNDARY,
-        candidate_spec=CANDIDATE_S1,
     )
     assert type(old.generator) is v1.ForwardEarningsGenerator
     assert type(new.generator) is s1.ForwardEarningsGenerator
@@ -467,10 +494,66 @@ def test_registered_s1_refit_dispatch_preserves_candidate3():
     assert new.adapter_spec_sha256 == s1.adapter_spec_sha256(
         EARNINGS_SPEC_SHA256
     )
-    assert new.engine_candidate_id == CANDIDATE_S1.candidate_id
-    assert new.engine_candidate_spec_sha256 == CANDIDATE_S1.sha256
+    assert old.engine_candidate_id == CANDIDATE_3.candidate_id
+    assert old.engine_candidate_spec_sha256 == CANDIDATE_3.sha256
+    assert new.engine_candidate_id == s1.CANDIDATE_S1.candidate_id
+    assert new.engine_candidate_spec_sha256 == s1.CANDIDATE_S1.sha256
     assert new.spec_registration == s1.SPEC_REGISTRATION
-    with pytest.raises(ValueError, match="exact frozen candidate"):
-        s1.fit_forward_earnings(
-            panel, nawi, seed=37, candidate_spec=CANDIDATE_3
-        )
+    for entry_point in (
+        s1.fit_forward_earnings,
+        s1.refit_earnings_chained_generator,
+    ):
+        with pytest.raises(ValueError, match="exact frozen candidate"):
+            entry_point(panel, nawi, seed=37, candidate_spec=CANDIDATE_3)
+
+
+def test_s1_refit_every_non_gate_field_equals_v1_for_identical_inputs():
+    panel, nawi = _history()
+    inputs = {
+        "seed": 37,
+        "boundary_year": BOUNDARY,
+        "candidate_spec": s1.CANDIDATE_S1,
+    }
+    # The unchanged v1 fitter ignores the additional participation operation.
+    # Identical declarations keep candidate id/spec metadata comparable too.
+    old = refit_earnings_chained_generator(panel, nawi, **inputs)
+    new = s1.refit_earnings_chained_generator(panel, nawi, **inputs)
+    own_identity = {
+        "spec_registration": s1.SPEC_REGISTRATION,
+        "adapter_spec_sha256": s1.adapter_spec_sha256(EARNINGS_SPEC_SHA256),
+    }
+    gate_fields = {"shared_gate", "zero_anchor_gate"}
+    assert fields(old.generator) == fields(new.generator)
+    for field in fields(old):
+        before, after = getattr(old, field.name), getattr(new, field.name)
+        if field.name in own_identity:
+            assert after == own_identity[field.name]
+        elif field.name in gate_fields:
+            assert before is getattr(old.generator, field.name)
+            assert after is getattr(new.generator, field.name)
+            assert before is not after
+        elif field.name == "generator":
+            assert type(before) is v1.ForwardEarningsGenerator
+            assert type(after) is s1.ForwardEarningsGenerator
+            for component in fields(before):
+                if component.name not in gate_fields:
+                    _assert_exact_state(
+                        getattr(before, component.name),
+                        getattr(after, component.name),
+                    )
+        elif field.name == "q_invariant_fit_signature_sha256":
+            # This hash contains the participation-gate fingerprint. Check
+            # each complete digest and its exactly equal non-gate component.
+            assert before == v1._q_invariant_fit_signature(
+                old.generator,
+                old.estimation_panel,
+                old.forward_pairs,
+                old.anchors,
+                old.u_w_diagnostics,
+            )
+            assert after == s1._fit_signature(new)
+            assert _non_gate_signature(old) == _non_gate_signature(new)
+        else:
+            _assert_exact_state(before, after)
+    assert new.engine_candidate_id == old.engine_candidate_id
+    assert new.engine_candidate_spec_sha256 == old.engine_candidate_spec_sha256

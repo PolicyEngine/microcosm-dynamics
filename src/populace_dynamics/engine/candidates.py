@@ -18,13 +18,10 @@ from typing import Any
 __all__ = [
     "CANDIDATE_2",
     "CANDIDATE_3",
-    "CANDIDATE_S1",
     "CORRELATED_REFRESH_OPERATION_ID",
     "CORRELATED_REFRESH_OPERATION_KIND",
     "RANK_REFRESH_OPERATION_ID",
     "RANK_REFRESH_OPERATION_KIND",
-    "PARTICIPATION_GATE_OPERATION_ID",
-    "PARTICIPATION_GATE_OPERATION_KIND",
     "REGISTRY",
     "CandidateSpec",
     "OperationSpec",
@@ -34,8 +31,6 @@ RANK_REFRESH_OPERATION_KIND = "forward_earnings.rank_refresh"
 RANK_REFRESH_OPERATION_ID = "stable_coordinate_exact_age_weighted_knn.v1"
 CORRELATED_REFRESH_OPERATION_KIND = "forward_earnings.correlated_refresh"
 CORRELATED_REFRESH_OPERATION_ID = "stationary_markov_reset_on_gap.v1"
-PARTICIPATION_GATE_OPERATION_KIND = "forward_earnings.participation_gate"
-PARTICIPATION_GATE_OPERATION_ID = "wage_relative.v1"
 
 
 def _freeze(value: Any) -> Any:
@@ -155,21 +150,8 @@ CANDIDATE_3 = CandidateSpec(
     ),
 )
 
-CANDIDATE_S1 = CandidateSpec(
-    candidate_id="m6_candidate3_engine_s1_v1",
-    contract_revision="track_b_s1_frozen_2026_10_21_d1803",
-    operations=(
-        *CANDIDATE_3.operations,
-        OperationSpec(
-            kind=PARTICIPATION_GATE_OPERATION_KIND,
-            implementation_id=PARTICIPATION_GATE_OPERATION_ID,
-            params={},
-        ),
-    ),
-)
-
 # Candidate 1 has no additive engine operation and deliberately has no entry.
 # Its existing family and earnings specs remain the only incumbent authority.
-REGISTRY: Mapping[int | str, CandidateSpec] = MappingProxyType(
-    {2: CANDIDATE_2, 3: CANDIDATE_3, "s1": CANDIDATE_S1}
+REGISTRY: Mapping[int, CandidateSpec] = MappingProxyType(
+    {2: CANDIDATE_2, 3: CANDIDATE_3}
 )
