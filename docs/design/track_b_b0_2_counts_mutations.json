@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "verification_class": "structural-count protocol conformance",
+  "admitted_scope": "Invented frames only; no real-data run.",
+  "mutation_method": "One deliberate production-source change per check; targeted pytest run serially; original source bytes restored and SHA-256 verified after every check, including failures. No mutated implementation is committed.",
+  "protocol_sha256": "94e22e3fff7b8ec541f87abe9890270a9893e0ec1653ce7b91fb0170b2732cb9",
+  "restored_source_sha256": {
+    "scripts/track_b_b0_2_counts.py": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb"
+  },
+  "result": "10/10 mutations killed",
+  "checks": [
+    {
+      "mutation": "band edges",
+      "old": "OLDER_BANDS = ((\"62_64\", 62, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+      "new": "OLDER_BANDS = ((\"62_64\", 63, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted"
+      ],
+      "summary": "1 failed in 26.99s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-01.log",
+      "elapsed_seconds": 41.794
+    },
+    {
+      "mutation": "lag set",
+      "old": "LAGS = (2, 4)",
+      "new": "LAGS = (2, 6)",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band"
+      ],
+      "summary": "1 failed in 8.08s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-02.log",
+      "elapsed_seconds": 11.5
+    },
+    {
+      "mutation": "R_TA_PROXY age threshold",
+      "old": "    proxy = proxy[proxy[\"age\"] >= 30]",
+      "new": "    proxy = proxy[proxy[\"age\"] > 30]",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages"
+      ],
+      "summary": "1 failed in 7.17s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-03.log",
+      "elapsed_seconds": 9.096
+    },
+    {
+      "mutation": "outside-B2 household exclusion",
+      "old": "    outside = full[~full[\"interview\"].isin(domain[\"interview\"])]",
+      "new": "    outside = full[~full[\"person_id\"].isin(domain[\"person_id\"])]",
+      "anchor_occurrences": 2,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units"
+      ],
+      "summary": "1 failed in 15.74s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-04.log",
+      "elapsed_seconds": 19.557
+    },
+    {
+      "mutation": "valid-row rule",
+      "old": "        rows[\"valid\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+      "new": "        rows[\"weight_positive\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity"
+      ],
+      "summary": "1 failed in 8.79s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-05.log",
+      "elapsed_seconds": 10.805
+    },
+    {
+      "mutation": "B3L origin wave",
+      "old": "B3L_ORIGIN_WAVE = 2007",
+      "new": "B3L_ORIGIN_WAVE = 2009",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support"
+      ],
+      "summary": "1 failed in 14.51s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-06.log",
+      "elapsed_seconds": 20.153
+    },
+    {
+      "mutation": "disclosure threshold changed from 10 to 9",
+      "old": "DISCLOSURE_THRESHOLD = 10",
+      "new": "DISCLOSURE_THRESHOLD = 9",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q 'tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]"
+      ],
+      "summary": "1 failed in 7.53s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-07.log",
+      "elapsed_seconds": 8.845
+    },
+    {
+      "mutation": "complementary suppression skipped",
+      "old": "    equations = [_equation(relation) for relation in relations]",
+      "new": "    equations = [_equation(relation) for relation in relations]\n    equations = []  # Deliberately skip complements.",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part"
+      ],
+      "summary": "1 failed in 26.43s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-08.log",
+      "elapsed_seconds": 42.835
+    },
+    {
+      "mutation": "effective sizes on small sets left unsuppressed",
+      "old": "elif key != \"origin_wave\":  # geometry, not a count",
+      "new": "elif key != \"origin_wave\" and not key.endswith(\"_n_eff\"):  # MUTANT",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[0.0-persons]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[0.0-valid_rows]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[8.125-persons]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[8.125-valid_rows]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[12.0-persons]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[12.0-valid_rows]"
+      ],
+      "summary": "6 failed in 32.28s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-09.log",
+      "elapsed_seconds": 35.882
+    },
+    {
+      "mutation": "local copy allowed inside repository",
+      "old": "raise SystemExit(\"local copy must be outside the repository\")",
+      "new": "pass  # Deliberately permit repository-local copies.",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[False]",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[True]"
+      ],
+      "summary": "2 failed in 13.59s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
+      "log_path": "/private/tmp/b02-disclosure-revision/mutation-10.log",
+      "elapsed_seconds": 16.765
+    }
+  ]
+}

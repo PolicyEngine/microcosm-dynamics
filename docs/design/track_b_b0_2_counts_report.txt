@@ -1,0 +1,122 @@
+Track B B0.2 counts: disclosure revision, protocol version 1
+
+Changes
+  Updated the four pre-existing uncommitted files: count script, tests,
+  mutations JSON, and this report. Raw structural definitions/readers and
+  existing tests are retained. No commit or push was made.
+  After counting, counts 1-9 and effective sizes on nonempty sets below
+  ten are replaced by "<10". Positive effective sizes below ten are also
+  suppressed conservatively even on larger sets. Zero counts and empty-set
+  effective sizes remain zero. Complementary person suppression also hides
+  that set's effective sizes, which could otherwise reveal its count.
+  Complementary suppression repeats to a fixed point. Exact rational
+  elimination also checks recovery from combined equations; it chooses
+  one smallest relevant published cell before recomputing that closure.
+  The public payload has only suppressed counts, plus a disclosure block
+  with threshold, rule, primary cell count, each complementary pass's cell
+  count, and the complementary total. It contains no private unit sets,
+  unsuppressed copy, or local path.
+  Default public destination: docs/design/track_b_b0_2_counts.json.
+  Required --local-copy supplies an external evidence-folder destination
+  for unsuppressed JSON. Repository-local paths (including symlink aliases)
+  are refused before input resolution. Relative external paths work.
+  Both files use exclusive creation, refusing existing files and dangling
+  symlinks. If the local path appears during reading, its bytes survive
+  and the newly reserved empty public file is removed.
+
+Encoded total/parts and duplicate-cell relations
+  Every output count is registered as a private set of its counting units.
+  Exact incidence identities encode all additive relations among these
+  cells; unit sets and coefficients are never written to either output.
+  Explicit table registrations cover:
+  - Overall versus eight age bands for R_FULL, R_B2, R_TA_PROXY,
+    R2006_FULL, D2006, and outside-B2. A sum partition is recorded only
+    when parts cover the total without overlap. This applies to persons,
+    households, strata and composite design clusters; missing ages do not
+    create an assumed exhaustive partition.
+  - R_FULL overall households = R_B2 overall households + outside-B2
+    overall households, at the 2011 anchor. Persons are not assumed to
+    have that partition: non-B2 co-residents can occupy B2 households.
+  - B3 pooled distinct persons versus the union of wave counts for each
+    older band, together with lag intersections. Overlaps use exact
+    inclusion/exclusion identities, never an assumed sum across waves.
+  - Roster/subset overlaps, accuracy-positive subsets of valid rows,
+    both lag sets, origin/later D2006 support, and later B2-household
+    counts. No unreported remainder count is added to the output.
+  - B3 valid_rows = persons; R_B2 older-band unit counts = B3 2011;
+    D2006 older-band unit counts = B3 2007; D2006 support at 2009 and
+    2011 = the respective 2007-origin lag-2 and lag-4 person counts.
+  Household identities include collection wave, and design clusters
+  include stratum. Distinct unit unions may overlap. Effective sizes
+  are not added across cells, and differing weight definitions remain
+  separate.
+
+Protocol pin
+  94e22e3fff7b8ec541f87abe9890270a9893e0ec1653ce7b91fb0170b2732cb9
+  SHA-256 covers exact bytes from <!-- protocol:begin --> through
+  <!-- protocol:end --> inclusive, excluding the following newline.
+  The protocol itself is unchanged. No freeze or real-data run occurred.
+
+Validation (serial; commands omit log-only tee wrappers)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py tests/test_track_b_b0_1_counts.py
+    81 passed in 200.55s (0:03:20)
+    59 B0.2 cases and 22 unchanged B0.1 cases, exit 0.
+    Includes threshold boundaries, small/empty effective sizes, smallest
+    complement, second-pass chain, combined-equation recovery, overlapping
+    pools, exact identities, no positive published statistic below ten,
+    path guards, exclusive-file races, and the revised protocol pin.
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black --version
+    python -m black, 26.5.1 (compiled: yes)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black --check -l 79 scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py
+    2 files would be left unchanged.
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m ruff check scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py
+    All checks passed!
+
+Mutation checks (six existing plus four disclosure mutations)
+  1. band edges: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted
+       1 failed in 26.99s
+  2. lag set: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band
+       1 failed in 8.08s
+  3. R_TA_PROXY age threshold: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages
+       1 failed in 7.17s
+  4. outside-B2 household exclusion: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units
+       1 failed in 15.74s
+  5. valid-row rule: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity
+       1 failed in 8.79s
+  6. B3L origin wave: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support
+       1 failed in 14.51s
+  7. disclosure threshold changed from 10 to 9: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q 'tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]'
+       1 failed in 7.53s
+  8. complementary suppression skipped: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part
+       1 failed in 26.43s
+  9. effective sizes on small sets left unsuppressed: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets
+       6 failed in 32.28s
+  10. local copy allowed inside repository: detected, exit 1.
+     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read
+       2 failed in 13.59s
+  Final runner line: 10/10 mutations killed
+  Every mutation restored the exact production bytes, SHA-256 verified:
+    15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb
+  The effective-size mutation leaves effective sizes raw in the final
+  published payload. The local-copy mutation reaches only mocked refusal
+  tests. Old/new text, failed nodes, exit codes, commands, final lines and
+  restoration digests are recorded in the mutations JSON.
+
+No-data and integrity declaration
+  No data file or codebook was opened. No real-data count, power quantity,
+  or default counts JSON was generated. All numerical tests used invented
+  frames; reader IO and B0.1 consistency counts were mocked.
+  No restricted evidence directory, restricted file, or other Track B
+  workspace was opened. No package was installed. No protocol, gates.yaml,
+  runs/, tests/tier_counts.json, existing src/ file, or other tracked file
+  was edited. The assigned branch remains trackb-b0-2-20261021 at
+  6e6deb9356e5e346ef87b52ece9089ee9e8e9713. All four files remain uncommitted.
