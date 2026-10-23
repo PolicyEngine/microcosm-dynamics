@@ -11,12 +11,16 @@ answer. It is the first count step the landscape synthesis identifies
 A later version, recorded as such, will cover the other sources (HRS,
 SIPP, SSA tables) once Max chooses them.
 
-The protocol is frozen by the commit that adds the counting script
-`scripts/track_b_b0_2_counts.py`, its tests, and this file with the
-block below unchanged. The unit test `tests/test_track_b_b0_2_counts.py`
+The counting script `scripts/track_b_b0_2_counts.py` and its tests
+arrived in `be7d4f42`. The unit test `tests/test_track_b_b0_2_counts.py`
 pins the block's SHA-256, taken over the text from the begin marker
-through the end marker. The script then runs once, from a clean worktree
-at that commit.
+through the end marker. Adding the script did not freeze the protocol.
+The freeze is a later commit that changes only the status line above
+to FROZEN and states the pinned SHA-256. It follows an independent
+review of the block and the script that leaves no blocking finding. The
+script then runs once, from a clean worktree at that commit. If the
+review changes the block, the pin and the script change with it before
+the freeze.
 
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
