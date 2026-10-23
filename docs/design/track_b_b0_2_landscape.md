@@ -292,3 +292,52 @@ Questions for Max, gathered from a2 and a5, go to him through
 - B2's medians;
 - J's estimands and limits;
 - the percentage-error conventions.
+
+## 7. A decision needed now: restricted linked data
+
+Design Q4 (line 606, approved in d515) sets the order: evaluate public
+HRS and SSA sources first, and request restricted linked data "only if
+B0 shows that public sources cannot supply the risk denominator, the
+timing observations or the withholding observations".
+
+The landscape shows that condition is met for three of those needs:
+- **No verified public source supplies B6a's risk denominator:** an
+  insured, unclaimed person-month risk set with entitlement dates.
+  Public HRS does not observe insured status (a2, section 2.1).
+- **No verified public source supplies observed withholding or annual
+  deductions for B5-empirical.** Supplement table 6.E4 is a December
+  status diagnostic (design line 224), and BEPUF 2020 is synthetic
+  (section 5).
+- **No verified public source supplies J's joint holdout,** with
+  observed payment and recipient denominators.
+
+Restricted access is slow:
+- HRS linked to SSA records: about 2-4 months, through a named
+  person's virtual desktop in an enclave, probably with an institutional
+  sponsor (UNVERIFIED);
+- an FSRDC: 6-12 months and $15,000-20,000 a year per project, with a
+  person holding Special Sworn Status working on site (verified on the
+  RDC pages).
+
+These lead times would fall on the path to B6a and J, and so to B7.
+Neither route can be worked by an agent lane: a person has to do the
+analysis inside the enclave or data center.
+
+The options:
+1. **Apply for HRS-SSA access now,** in parallel with B0.2. It supplies
+   insured status, entitlement dates and administrative earnings. It
+   leaves B5's withholding UNVERIFIED (it depends on the benefit file's
+   detail).
+2. **Apply for an FSRDC project now.** This is the only verified route to
+   Master Beneficiary Record payment data. Whether that data carries
+   work-deduction fields is UNVERIFIED.
+3. **Both.**
+4. **Neither, and accept the design's fallbacks:**
+   - B5 publishes statutory conformance and sensitivities only;
+   - B6a keeps a marginal claiming distribution (`NO_RISK_DENOMINATOR`);
+   - J is narrowed to what PSID or public HRS can observe, or stays
+     blocked, and B7 is limited accordingly.
+
+Public HRS registration is cheap, takes about a week, and is needed
+under every option. Whether an agent lane may work on files a person
+registers is UNVERIFIED and should be confirmed with HRS.
