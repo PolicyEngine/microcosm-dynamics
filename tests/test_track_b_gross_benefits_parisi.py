@@ -14,7 +14,7 @@ import dataclasses
 from fractions import Fraction as F
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
@@ -445,6 +445,7 @@ def method_c_cases(draw):
 
 
 @given(method_c_cases())
+@example((F(600), F("99.90"), 36, 0))
 @settings(deadline=None)
 def test_method_c_own_rib_age_reduction_does_not_change_redistributed_rates(
     case,
@@ -455,7 +456,7 @@ def test_method_c_own_rib_age_reduction_does_not_change_redistributed_rates(
     computations over their shared semantics. Own RIB payment changes;
     auxiliary payable and the non-deductee shares remain identical.
     A positive before-age excess rounded to zero after age reduction is
-    explicitly refused in both computations pending the source reading.
+    counted whole, as GN 02603.045's before-age amount.
     """
     pia, own_pia, spouse_months, worker_months = case
     state = _retired(pia, _floor_dime(pia * F(3, 2)))
@@ -479,12 +480,6 @@ def test_method_c_own_rib_age_reduction_does_not_change_redistributed_rates(
         0, spouse_months - 36
     ) * F(1, 240)
     auxiliary = _floor_dime(excess * (1 - reduction))
-    if auxiliary == 0:
-        for member in (spouse, reduced_spouse):
-            with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-                _family(state, [member, *children])
-            assert caught.value.reason is g.UnsupportedReason.PARISI_AMBIGUOUS
-        return
     unchanged = _family(state, [spouse, *children])
     reduced = _family(state, [reduced_spouse, *children])
     counted = excess
@@ -509,16 +504,17 @@ def test_method_c_own_rib_age_reduction_does_not_change_redistributed_rates(
     )
 
 
-def test_method_b_zero_only_after_age_is_refused_and_kept_in_denominator():
-    """Pinned reading requiring judgment: GN .050A.2 versus .045/.050C.
+def test_method_b_zero_only_after_age_counts_the_before_age_amount():
+    """Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction.
 
     Invented PIA500/max750; B36months ownRIB64, method B. Share83.30
-    reduces to62.40, then offsets to0. A.2 disregards B: children125 each.
-    Keeping the20.90 age term under C instead gives114.50 each; the record
-    totals are750 versus729. G refuses this reading pending judgment; both
-    reference amounts and their exact supporting quotes remain pinned.
-    A before-age-only reading of .045 counts83.30-64=19.30 instead,
-    giving children115.30 each and record total730.60.
+    reduces to62.40, then offsets to0. GN 02603.050A applies its
+    exceptions under .045, which counts the dual rate before age
+    reduction: 83.30-64=19.30 is a partial rate (.050A.3), so the
+    children receive115.30 each and the record total is730.60. The
+    rejected readings stay pinned as diagnostics: A.2's disregard
+    (125 each, total750) and the full20.90 age term under C (114.50
+    each, total729).
     """
     spouse = g.Beneficiary(
         "B",
@@ -533,17 +529,14 @@ def test_method_b_zero_only_after_age_is_refused_and_kept_in_denominator():
         g.Beneficiary("C1", g.Role.CHILD),
         g.Beneficiary("C2", g.Role.CHILD),
     ]
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        _family(state, members)
-    assert caught.value.reason is g.UnsupportedReason.PARISI_AMBIGUOUS
-    outcome = g.evaluate_family(
-        "zero-after-age", F(3, 2), lambda: _family(state, members)
-    )
-    counts = g.count_family_outcomes([outcome])
-    assert (counts.rows, counts.weight) == (1, F(3, 2))
-    assert counts.unsupported_by_reason == {
-        g.UnsupportedReason.PARISI_AMBIGUOUS: (1, F(3, 2))
-    }
+    rows = _family(state, members).by_id()
+    assert rows["B"].age_adjusted_rate == F("62.40")
+    assert rows["B"].auxiliary_payable == 0
+    assert rows["B"].counted_against_maximum == F("19.30")
+    assert rows["C1"].auxiliary_payable == rows["C2"].auxiliary_payable
+    assert rows["C1"].auxiliary_payable == F("115.30")
+    total = sum((row.auxiliary_payable for row in rows.values()), F(0))
+    assert F(500) + total == F("730.60")
     zero_rate_exception = g.maximum_redistribution_rates(
         {"B": F(250), "C1": F(250), "C2": F(250)},
         F(250),
@@ -551,37 +544,80 @@ def test_method_b_zero_only_after_age_is_refused_and_kept_in_denominator():
     )
     assert dict(zero_rate_exception) == {"C1": F(125), "C2": F(125)}
     assert F(500) + sum(zero_rate_exception.values(), F(0)) == 750
-    alternative = g.maximum_redistribution_rates(
+    full_age_term = g.maximum_redistribution_rates(
         {"B": F(250), "C1": F(250), "C2": F(250)},
         F(250),
         deductee_payables={"B": F(0)},
         age_reductions={"B": F("20.90")},
     )
-    assert dict(alternative) == {"C1": F("114.50"), "C2": F("114.50")}
-    assert F(500) + sum(alternative.values(), F(0)) == 729
-    before_age_only = g.maximum_redistribution_rates(
-        {"B": F(250), "C1": F(250), "C2": F(250)},
-        F(250),
-        deductee_payables={"B": F("19.30")},
-    )
-    assert dict(before_age_only) == {"C1": F("115.30"), "C2": F("115.30")}
-    assert F(500) + sum(before_age_only.values(), F(0)) == F("730.60")
-    assert (
-        sum(zero_rate_exception.values(), F(0))
-        - sum(alternative.values(), F(0))
-        == 21
-    )
+    assert dict(full_age_term) == {"C1": F("114.50"), "C2": F("114.50")}
+    assert F(500) + sum(full_age_term.values(), F(0)) == 729
     assert (
         "The benefit payable to the dually entitled person is the amount before any applicable reduction for age"
         in source_text("poms_gn_02603_045")
     )
-    assert "Age reduction amount for all workers or deductees" in source_text(
-        "poms_gn_02603_050"
+    rule = " ".join(source_text("poms_gn_02603_050").split())
+    for quote in (
+        "exceptions 2 and 3 apply only for cases processed under the new "
+        "rule as explained in GN 02603.045",
+        "If dual entitlement reduces a beneficiary's rate to $0.00 "
+        "(technically entitled)",
+        "If dual entitlement reduces a beneficiary's rate to a partial "
+        "payable rate and no other deduction is involved for any other "
+        "beneficiary, subtract the partial payable rate",
+        "Age reduction amount for all workers or deductees",
+    ):
+        assert quote in rule
+
+
+@settings(deadline=None)
+@example(F(64), 36)
+@example(F("83.20"), 36)
+@example(F("83.30"), 36)
+@example(F(50), 60)
+@given(
+    st.integers(1, 1000).map(lambda dimes: F(dimes, 10)),
+    st.integers(0, 60),
+)
+def test_method_b_counted_amount_is_the_before_age_amount(own, months):
+    """Method B counts max(0, standard - own) whether or not age zeroes it.
+
+    The counted amount is continuous and nonincreasing in the own benefit,
+    meets GN 02603.050A.2's disregard exactly when the own benefit reaches
+    the standard rate, and equals payable plus age reduction whenever the
+    payable is positive. Children never fall when the own benefit rises.
+    """
+    spouse = g.Beneficiary(
+        "B",
+        g.Role.SPOUSE,
+        reduction_months=months,
+        own_benefit=g.OwnBenefit(OLD_AGE, own),
+        own_benefit_first=False,
     )
-    assert (
-        "If dual entitlement reduces a beneficiary's rate to $0.00 (technically entitled)"
-        in source_text("poms_gn_02603_050")
-    )
+    state = _retired(500, 750)
+    children = [g.Beneficiary(key, g.Role.CHILD) for key in ("C1", "C2")]
+    rows = _family(state, [spouse, *children]).by_id()
+    standard = F("83.30")
+    before_age = max(F(0), standard - own)
+    assert rows["B"].counted_against_maximum == before_age
+    if rows["B"].auxiliary_payable:
+        assert rows["B"].auxiliary_payable == rows["B"].age_adjusted_rate - own
+        assert before_age == rows["B"].auxiliary_payable + (
+            standard - rows["B"].age_adjusted_rate
+        )
+    child = min(F(250), _floor_dime((F(250) - before_age) / 2))
+    assert rows["C1"].auxiliary_payable == rows["C2"].auxiliary_payable
+    assert rows["C1"].auxiliary_payable == child
+    richer = _family(
+        state,
+        [
+            dataclasses.replace(
+                spouse, own_benefit=g.OwnBenefit(OLD_AGE, own + F(1, 10))
+            ),
+            *children,
+        ],
+    ).by_id()
+    assert richer["C1"].auxiliary_payable >= rows["C1"].auxiliary_payable
 
 
 @pytest.mark.parametrize(

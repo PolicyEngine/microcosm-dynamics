@@ -346,7 +346,15 @@ def test_aged_widow_can_carry_pre_1978_dwb_history_after_conversion(role):
     ) in source_text("poms_rs_00615_310")
 
 
-def test_historical_dwb_specific_fixed_rate_alternative_is_explicit():
+def test_historical_dwb_under_60_takes_the_specific_fixed_rate():
+    """Source conflict us:oasdi-dwb-1984-pre-1978-history.
+
+    RS 00615.301B.1.e fixes every DWB month under age 60 from January 1984
+    at .715 of the unreduced WIB, whatever the entitlement date, so a
+    cohort that could have been entitled before 1978 is paid like a later
+    one in those months. From the year the cohort can attain 60, .005C.2's
+    money history governs and the row stays refused.
+    """
     text = source_text("poms_rs_00615_301")
     assert (
         "all disabled widow(er)s under age 60 receive .715 of the full "
@@ -354,25 +362,66 @@ def test_historical_dwb_specific_fixed_rate_alternative_is_explicit():
     ) in text
     state, member = _case(g.Role.DISABLED_WIDOW, cohort=1927)
 
-    # January 1984 keeps both cohorts under 60, matching the specific
-    # captured instruction rather than relying on an aged DWB snapshot.
-    def at_reset(beneficiary):
+    def at(beneficiary, year):
         return g.family_benefits(
             state,
             [beneficiary],
-            payment_month=g.YearMonth(1984, 1),
+            payment_month=g.YearMonth(year, 1),
             params=PARAMS,
             standalone=True,
         )
 
-    historical = g.evaluate_family("case", F(7, 3), lambda: at_reset(member))
-    assert not historical.supported
-    assert historical.unsupported.reason.value == REASON
-    # Explicit alternative reading of the specific rule, not an imputed
-    # historical award in production. Needs Max's judgment against .005C.2.
-    assert F(1000) * F(715, 1000) == F(715)
-    modern = at_reset(replace(member, birth_year=1928))
-    assert modern.by_id()["member"].auxiliary_payable == F(715)
+    for year in (1984, 1986):
+        historical = at(member, year).by_id()["member"]
+        modern = at(replace(member, birth_year=1928), year).by_id()["member"]
+        assert historical.auxiliary_payable == F(715)
+        assert historical.age_adjusted_rate == modern.age_adjusted_rate
+        assert historical.auxiliary_payable == modern.auxiliary_payable
+    reached_60 = g.evaluate_family("case", F(7, 3), lambda: at(member, 1987))
+    assert not reached_60.supported
+    assert reached_60.unsupported.reason.value == REASON
+    counts = g.count_family_outcomes([reached_60])
+    assert (counts.rows, counts.weight) == (1, F(7, 3))
+
+
+@given(st.integers(1912, 1927), st.integers(1984, 2000), st.integers(1, 5000))
+@settings(deadline=None)
+def test_historical_dwb_is_settled_exactly_before_the_cohort_can_attain_60(
+    cohort, year, dollars
+):
+    """Under 60 throughout the year: identical to a post-1977 cohort."""
+    state, member = _case(g.Role.DISABLED_WIDOW, cohort=cohort, pia=F(dollars))
+    month = g.YearMonth(year, 6)
+    outcome = g.evaluate_family(
+        "case",
+        F(1),
+        lambda: g.family_benefits(
+            state,
+            [member],
+            payment_month=month,
+            params=PARAMS,
+            standalone=True,
+        ),
+    )
+    if year <= cohort + 59:
+        later = g.family_benefits(
+            state,
+            [replace(member, birth_year=1928)],
+            payment_month=month,
+            params=PARAMS,
+            standalone=True,
+        )
+        assert outcome.supported
+        row = outcome.benefits.by_id()["member"]
+        assert (
+            row.auxiliary_payable == later.by_id()["member"].auxiliary_payable
+        )
+        assert row.auxiliary_payable == g.survivor_age_reduced(
+            row.family_maximum_rate, 60, 60, PARAMS
+        )
+    else:
+        assert not outcome.supported
+        assert outcome.unsupported.reason.value == REASON
 
 
 def test_historical_rounding_can_defeat_a_nominal_75_percent_care_floor():

@@ -969,6 +969,7 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
         _input_type(getattr(params, name), int, name)
         if getattr(params, name) != 36:
             raise InvalidFamilyInput(f"{name} must be 36 (402(q))")
+    # Source conflict us:oasdi-reduction-exact-fractions
     return _construct_declared(
         StatutoryRates,
         worker_first=_STATUTE["worker_first"],
@@ -1075,6 +1076,7 @@ def disability_family_maximum(pia: object, aime: object) -> Fraction:
     earnings = _exact(aime, "AIME")
     if earnings < 0 or earnings.denominator != 1:
         raise InvalidFamilyInput("AIME must be a nonnegative whole dollar")
+    # Source conflict us:oasdi-disability-family-maximum-rounding
     return _floor_dime_validated(
         min(max(_DI_AIME_SHARE * earnings, amount), _DI_PIA_CAP * amount)
     )
@@ -2838,10 +2840,25 @@ class _Row:
     counted: Fraction = Fraction(0)
     mother_father_rate: Fraction = Fraction(0)
     note: str = ""
+    dwb_under_60: bool = False
 
     @property
     def dual(self) -> bool:
         return self.own_mba is not None
+
+
+def _dwb_under_60(beneficiary: Beneficiary, payment_month: YearMonth) -> bool:
+    """A DWB month in which the SSA birth cohort cannot yet have attained 60.
+
+    Cohort Y (born January 2, Y through January 1, Y+1) attains 60 during
+    Y+60, so every month of Y+59 and earlier is under 60. Months of Y+60
+    depend on the unsupplied birth month and are not treated as under 60.
+    """
+    return (
+        beneficiary.role is Role.DISABLED_WIDOW
+        and beneficiary.birth_year is not None
+        and payment_month.year <= beneficiary.birth_year + 59
+    )
 
 
 def _is_entitled(
@@ -2973,8 +2990,9 @@ def _parisi_counted(
 
     The own-RIB reduction is not an auxiliary age reduction (GN
     02603.060B.2: $2.40 payable + $0.90 reduction, not the $16 own-RIB
-    reduction). GN 02603.050A.2 disregards a dual rate reduced to zero.
-    Own delayed credits and redistribution with an actually limiting
+    reduction). Together they are the .045 amount "before any applicable
+    reduction for age"; GN 02603.050A.2 disregards a dual rate whose
+    before-age amount is zero. Own delayed credits and redistribution with an actually limiting
     RIB-LIM remain refused: none of the captured worked cases settles
     those interacting amounts. A considered but nonlimiting RIB-LIM
     changes no rate (RS 00615.320A.3).
@@ -3017,16 +3035,12 @@ def _parisi_counted(
     if payable == 0:
         before_age = row.standard - (own.pia if method_c else row.own_mba)
         # Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction
-        if before_age > 0:
-            raise _computed(
-                FamilyConfigurationUnsupported,
-                UnsupportedReason.PARISI_AMBIGUOUS,
-                "dual payable reaches zero only after auxiliary age reduction: "
-                "GN 02603.045's before-age rule and GN 02603.050A.2's zero-rate "
-                "exception do not settle whether the age amount stays in PTAP",
-                beneficiary_id=beneficiary.beneficiary_id,
-            )
-        return Fraction(0), Fraction(0)
+        # GN 02603.050A applies its exceptions 2 and 3 under .045, which
+        # counts the dual rate "before any applicable reduction for age".
+        # A before-age zero is disregarded (.050A.2); a positive before-age
+        # amount is a partial rate (.050A.3), counted whole as the age term.
+        # A positive payable below counts the same total.
+        return Fraction(0), max(Fraction(0), before_age)
     if method_c:
         excess = max(Fraction(0), row.standard - own.pia)
         age_reduction = excess - _spouse_age_reduced_validated(
@@ -3070,6 +3084,12 @@ def _refuse_historical_auxiliary(
         if isinstance(beneficiary.child_in_care, str):
             return
     elif role is Role.DISABLED_WIDOW:
+        # Source conflict us:oasdi-dwb-1984-pre-1978-history
+        # RS 00615.301B.1.e: "all disabled widow(er)s under age 60 receive
+        # .715 of the full unreduced WIB for 1/84 and later", whatever the
+        # entitlement date; .005C.2's money history governs only from 60.
+        if row.dwb_under_60:
+            return
         first_age = 50
     elif role in _AGED_WIDOW_ROLES:
         first_age = 50
@@ -3089,6 +3109,7 @@ def _refuse_historical_auxiliary(
     own = beneficiary.own_benefit
     low, high = Fraction(0), row.rate
     if role in (Role.SPOUSE, Role.DIVORCED_SPOUSE):
+        # Source conflict us:oasdi-dual-entitlement-pre-1978-history
         if own is not None and beneficiary.own_benefit_first:
             excess = max(Fraction(0), row.rate - own.pia)
             high = max(Fraction(0), row.rate - (own.pia - row.own_base))
@@ -3348,12 +3369,17 @@ def _entitled_parent_count(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
     params: SSAParameters,
-) -> int:
-    """Resolve 402(h)(2)'s count, refusing the circular RIB threshold.
+) -> tuple[int, frozenset[str]]:
+    """Resolve 402(h)(2)'s count and the parents (h)(1)(D) excludes.
 
-    RS 00209.001 excludes a parent whose own RIB is not less than the
-    parent's benefit; RS 00209.015 counts an own-DIB parent as technically
-    entitled. More than two declared parents needs a separate rule.
+    402(h)(1)(D) tests an own RIB against 82.5 percent of the PIA when the
+    parent's benefit "is determinable under paragraph (2)(A)", and against
+    75 percent "in any other case". The entitled set must satisfy that test
+    for every parent at once: each entitled parent at its own rate, and
+    each excluded potential parent at the rate it would share. RS
+    00209.015 counts an own-DIB parent as technically entitled. Returns
+    the count and the ids excluded at the two-parent rate. More than two
+    declared parents needs a separate rule.
     """
     parents = [b for b in beneficiaries if b.role is Role.PARENT]
     if len(parents) > 2:
@@ -3381,23 +3407,28 @@ def _entitled_parent_count(
             if own_mba >= one_ob:
                 continue
         potential.append((parent, own_mba))
-    if len(potential) == 2:
-        for parent, own_mba in potential:
-            # Source conflict us:oasdi-parent-entitlement-count-interval
-            if (
-                parent.own_benefit is not None
-                and parent.own_benefit.kind is OwnBenefitKind.OLD_AGE
-                and own_mba >= two_ob
-            ):
-                raise _computed(
-                    FamilyConfigurationUnsupported,
-                    UnsupportedReason.PARENT_BENEFIT,
-                    "two potential parents with own RIB between the "
-                    "75% and 82.5% OBs have a circular entitlement count "
-                    "under RS 00209.001 and .015",
-                    beneficiary_id=parent.beneficiary_id,
-                )
-    return max(1, len(potential))
+    in_band = [
+        parent
+        for parent, own_mba in potential
+        if parent.own_benefit is not None
+        and parent.own_benefit.kind is OwnBenefitKind.OLD_AGE
+        and own_mba >= two_ob
+    ]
+    if len(potential) < 2 or not in_band:
+        return max(1, len(potential)), frozenset()
+    # Source conflict us:oasdi-parent-entitlement-count-interval
+    # A RIB in [75%, 82.5%) fails beside an entitled parent and passes
+    # alone. With one such parent, only "the other parent alone" satisfies
+    # 402(h)(1)(D) for both; with two, either parent alone does.
+    if len(in_band) == 2:
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.PARENT_BENEFIT,
+            "two parents with own RIB between the 75% and 82.5% OBs: "
+            "402(h)(1)(D) is satisfied by either parent alone",
+            beneficiary_id=in_band[0].beneficiary_id,
+        )
+    return 1, frozenset({in_band[0].beneficiary_id})
 
 
 def _mother_father_care_rate(
@@ -3530,7 +3561,16 @@ def _family_benefits(
             "IEDS before January 1985, or on a WEP-affected worker record "
             "before January 2024, is not implemented (RS 00202.100)",
         )
-    parent_count = _entitled_parent_count(state, beneficiaries, params)
+    parent_count, excluded_parents = _entitled_parent_count(
+        state, beneficiaries, params
+    )
+    two_parent_ob = (
+        _original_benefit_validated(
+            Role.PARENT, FamilyKind.SURVIVOR, state.pia, parent_count=2
+        )
+        if excluded_parents
+        else None
+    )
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
     if state.kind is FamilyKind.RETIREMENT and not ieds:
@@ -3557,7 +3597,14 @@ def _family_benefits(
             ),
         )
         entitled, note = _is_entitled(
-            beneficiary, state.pia, own_mba, parent_ob=ob
+            beneficiary,
+            state.pia,
+            own_mba,
+            parent_ob=(
+                two_parent_ob
+                if beneficiary.beneficiary_id in excluded_parents
+                else ob
+            ),
         )
         rows.append(
             _Row(
@@ -3568,6 +3615,7 @@ def _family_benefits(
                 own_base=own_base,
                 own_mba=own_mba,
                 note=note,
+                dwb_under_60=_dwb_under_60(beneficiary, payment_month),
             )
         )
 
@@ -3948,6 +3996,7 @@ def _after_deductions(
     }
     if not events:
         return baseline
+    # Source conflict us:oasdi-nh-charge-age-reduction-interaction
     if any(worker_deductions.values()) and any(
         row.age_reduction_factor != 1 for row in baseline.beneficiaries
     ):
@@ -4079,6 +4128,7 @@ def _after_deductions(
                 standard=old.standard_rate,
                 rate=rate,
                 counted=rate,
+                dwb_under_60=_dwb_under_60(member, payment_month),
             )
             if (
                 isinstance(member.child_in_care, str)
@@ -4701,6 +4751,7 @@ def _savings_payment(
         row for row in result.beneficiaries if row.subject_to_family_maximum
     ]
     reduced = [row for row in subject if row.age_reduction_factor < 1]
+    # Source conflict us:oasdi-saving-clause-procedure-gaps
     if (
         result.kind is FamilyKind.SURVIVOR
         or any(row.own_benefit is not None for row in subject)
@@ -5020,6 +5071,7 @@ class SavingsClauseGuard:
         total: Fraction,
     ) -> FamilyBenefits:
         membership = _savings_membership(result)
+        # Source conflict us:oasdi-saving-clause-procedure-gaps
         if (
             self._protected_membership is not None
             and membership != self._protected_membership

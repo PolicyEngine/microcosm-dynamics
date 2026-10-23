@@ -84,12 +84,16 @@ class GraceKind(Enum):
 
 
 class DisabilityGraceReading(Enum):
-    """Explicit money-changing CFR/POMS reading for concurrent disability.
+    """Explicit money-changing reading for concurrent RIB and DIB.
 
-    404.435(b)(3) excludes any month entitled to disability benefits; POMS
-    RS 02501.030B.4/.021B.5.a explicitly excepts simultaneous RIB/DIB when
-    RIB is elected. The default preserves the CFR's conservative exclusion.
-    The POMS alternative is necessary to reproduce its election example.
+    404.435(b)(3) excludes a month "while the beneficiary was entitled to
+    disability benefits under section 223". Act 202(k)(4) makes a person
+    entitled to both "entitled to only the larger of such benefits for such
+    month", or, on election, "only the smaller": a month RIB is paid is a
+    month of entitlement to RIB alone, so the default counts its NSMs, as
+    RS 02501.030B.4 does. CFR_ENTITLEMENT_EXCLUSION keeps the former
+    technical-entitlement exclusion as an explicit alternative. DWB and CDB
+    months stay excluded under either value.
     """
 
     CFR_ENTITLEMENT_EXCLUSION = "cfr_entitlement_exclusion"
@@ -387,7 +391,7 @@ def grace_year(
     fra_month: int | None = None,
     termination_events: Sequence[TerminationEvent] = (),
     disability_reading: DisabilityGraceReading = (
-        DisabilityGraceReading.CFR_ENTITLEMENT_EXCLUSION
+        DisabilityGraceReading.POMS_RIB_ELECTION
     ),
 ) -> GraceYearDecision:
     """Apply RS 02501.030B-D for one person's calendar entitlement year.
@@ -449,6 +453,7 @@ def grace_year(
         if month.received_types - DISABILITY_TYPES
         and (fra_month is None or index < fra_month)
         and (
+            # 202(k)(4): a month RIB is paid is entitlement to RIB alone.
             # Source conflict us:oasdi-ret-grace-simultaneous-rib-dib
             not month.entitled_types & DISABILITY_TYPES
             or (

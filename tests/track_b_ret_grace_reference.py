@@ -87,7 +87,7 @@ def _eligible(
 def reference_grace_history(
     history: tuple[HistoryYear, ...],
     reading: DisabilityGraceReading = (
-        DisabilityGraceReading.CFR_ENTITLEMENT_EXCLUSION
+        DisabilityGraceReading.POMS_RIB_ELECTION
     ),
 ) -> tuple[ReferenceDecision, ...]:
     """Find every year's grace decisions directly from the entire timeline.

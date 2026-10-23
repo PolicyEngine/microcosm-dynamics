@@ -242,22 +242,144 @@ def test_parent_original_benefit_uses_the_entitled_count_and_dime_floor(
 
 @given(st.integers(100, 1_000_000), st.integers(0, 100))
 @settings(deadline=None)
-def test_two_potential_parents_refuse_the_own_rib_entitlement_cycle(
-    dimes, position
-):
+def test_one_parent_in_the_band_yields_to_the_other_parent(dimes, position):
+    """Source conflict us:oasdi-parent-entitlement-count-interval.
+
+    An own RIB in [75%, 82.5%) of the PIA fails 402(h)(1)(D) beside an
+    entitled parent and passes alone. The other parent (no own RIB) is
+    entitled either way, so the only entitled set satisfying (h)(1)(D) for
+    both parents is the other parent alone, paid at 82.5 percent.
+    """
     low, high = dimes * 750 // 1000, dimes * 825 // 1000
     own_dimes = low + (high - low - 1) * position // 100
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(own_dimes, 10))
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+    rows = _rows(
         _family(
             _survivor(F(dimes, 10), F(dimes, 5)),
             [_parent("p1", own_benefit=own), _parent("p2")],
         )
+    )
+    assert not rows["p1"].entitled
+    assert rows["p1"].auxiliary_payable == 0
+    assert rows["p1"].own_benefit == F(own_dimes, 10)
+    assert rows["p2"].entitled
+    assert rows["p2"].original_benefit == F(high, 10)
+    assert rows["p2"].auxiliary_payable == F(high, 10)
+
+
+@given(st.integers(100, 1_000_000), st.integers(0, 100), st.integers(0, 100))
+@settings(deadline=None)
+def test_two_parents_in_the_band_refuse_because_either_alone_qualifies(
+    dimes, first, second
+):
+    low, high = dimes * 750 // 1000, dimes * 825 // 1000
+    members = [
+        _parent(
+            bid,
+            own_benefit=g.OwnBenefit(
+                g.OwnBenefitKind.OLD_AGE,
+                F(low + (high - low - 1) * position // 100, 10),
+            ),
+        )
+        for bid, position in (("p1", first), ("p2", second))
+    ]
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        _family(_survivor(F(dimes, 10), F(dimes, 5)), members)
     assert caught.value.reason is g.UnsupportedReason.PARENT_BENEFIT
 
 
+def _consistent_parent_sets(pia, own):
+    """Every entitled set satisfying 402(h)(1)(D) for every parent.
+
+    ``own`` maps a parent id to None, ("DIB", amount) or ("RIB", amount).
+    A member's RIB must be below the rate of the set; an excluded parent's
+    RIB must reach the rate it would share by joining the set.
+    """
+    one = g.floor_dime(pia * F(825, 1000))
+    two = g.floor_dime(pia * F(3, 4))
+    ids = sorted(own)
+    found = []
+    for size in range(len(ids) + 1):
+        for chosen in (
+            [frozenset()]
+            if size == 0
+            else (
+                [frozenset({i}) for i in ids]
+                if size == 1
+                else [frozenset(ids)]
+            )
+        ):
+
+            def passes(parent, count):
+                kind, amount = own[parent] or (None, None)
+                return kind != "RIB" or amount < (one if count == 1 else two)
+
+            if all(passes(p, len(chosen)) for p in chosen) and not any(
+                passes(p, len(chosen) + 1) for p in ids if p not in chosen
+            ):
+                found.append(chosen)
+    return found
+
+
+own_benefits = st.one_of(
+    st.none(),
+    st.tuples(
+        st.sampled_from(["RIB", "DIB"]),
+        st.integers(1, 30_000).map(lambda dimes: F(dimes, 10)),
+    ),
+)
+
+
+@given(st.integers(100, 20_000), own_benefits, own_benefits)
+@settings(deadline=None)
+def test_parent_entitlement_satisfies_402h1d_for_every_parent(
+    dimes, first, second
+):
+    """Exact differential against brute-force consistency of 402(h)(1)(D)."""
+    pia = F(dimes, 10)
+    own = {"p1": first, "p2": second}
+    members = [
+        _parent(
+            bid,
+            own_benefit=(
+                None
+                if value is None
+                else g.OwnBenefit(
+                    (
+                        g.OwnBenefitKind.OLD_AGE
+                        if value[0] == "RIB"
+                        else g.OwnBenefitKind.DISABILITY
+                    ),
+                    value[1],
+                )
+            ),
+        )
+        for bid, value in own.items()
+    ]
+    consistent = _consistent_parent_sets(pia, own)
+    assert consistent
+    outcome = g.evaluate_family(
+        "parents",
+        F(1),
+        lambda: _family(_survivor(pia, pia * 2), members),
+    )
+    if len(consistent) > 1:
+        assert not outcome.supported
+        assert outcome.unsupported.reason is g.UnsupportedReason.PARENT_BENEFIT
+        return
+    assert outcome.supported
+    rows = _rows(outcome.benefits)
+    entitled = frozenset(bid for bid, row in rows.items() if row.entitled)
+    assert entitled == consistent[0]
+    rate = g.floor_dime(
+        pia * (F(825, 1000) if len(entitled) == 1 else F(3, 4))
+    )
+    for bid in entitled:
+        assert rows[bid].original_benefit == rate
+
+
 def test_parent_entitlement_count_counterfactual_changes_payment_by_75():
-    """Invented $780 own RIB executes both orders behind the refusal."""
+    """Invented $780 own RIB: both one-pass orders, and the reading taken."""
     pia, maximum, own_rib = F(1000), F(1750), F(780)
     count_two_first = _parent_count_order_counterfactual(
         pia, maximum, own_rib, initial_parent_count=2
@@ -282,13 +404,24 @@ def test_parent_entitlement_count_counterfactual_changes_payment_by_75():
     assert count_two_first["other_parent_payable"] - test_at_one_parent_rate[
         "other_parent_payable"
     ] == F(75)
+    # Only the count-two-first state satisfies 402(h)(1)(D) for both
+    # parents: p1's $780 reaches the $750 it would share beside p2, and p2
+    # alone takes $825. The other one-pass state pays p2 at the two-parent
+    # rate while p1 is excluded, which (h)(2)(A) contradicts.
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, own_rib)
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+    rows = _rows(
         _family(
             _survivor(pia, maximum),
             [_parent("p1", own_benefit=own), _parent("p2")],
         )
-    assert caught.value.reason is g.UnsupportedReason.PARENT_BENEFIT
+    )
+    assert not rows["p1"].entitled
+    assert (
+        rows["p2"].auxiliary_payable == count_two_first["other_parent_payable"]
+    )
+    assert _consistent_parent_sets(
+        pia, {"p1": ("RIB", own_rib), "p2": None}
+    ) == [frozenset({"p2"})]
 
 
 @given(st.integers(100, 1_000_000), st.integers(0, 100))
@@ -669,10 +802,11 @@ def test_parent_and_ieds_refusals_remain_in_the_denominator():
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(780))
     outcomes = [
         g.evaluate_family(
-            "parent-cycle",
+            "parent-two-in-band",
             2,
             lambda: _family(
-                _survivor(), [_parent(own_benefit=own), _parent("p2")]
+                _survivor(),
+                [_parent(own_benefit=own), _parent("p2", own_benefit=own)],
             ),
         ),
         g.evaluate_family(

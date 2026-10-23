@@ -418,8 +418,16 @@ Its sealed delayed-credit function agrees through `min(48, window)`;
 the new statutory float function agrees over the whole FRA-to-70 window,
 including months past 48 for births 1917–1942 (#494). A named pin preserves
 the sealed legacy result rather than treating that retained convention as
-an open bug. These are invariant 10 below. The exact monetary
-reimplementation needs Max's ratification, because §6 asked for reuse.
+an open bug. These are invariant 10 below.
+
+Reading taken (October 23, 2026), logged as
+`us:oasdi-reduction-exact-fractions`: this is not a conflict between
+sources. Act 202(q)(1) states the reductions as fractions ("5/9 of 1
+percent", "25/36 of 1 percent", "19/40 of 1 percent"), and RS 00615.005B
+says "only fractions can be used when computing reduced benefits". The
+design's §6 suggestion to reuse the float primitives was a design
+preference, not a source; the law requires the exact arithmetic, and the
+float oracle stays a differential.
 
 ## Delayed credits
 
@@ -470,9 +478,17 @@ dime on two sources, both in the Social Security Bulletin 75(3) capture:
 After that, 215(i)(2)(A)(ii) floors every COLA increase of the maximum to the
 dime. The captured POMS sections on the disability maximum (RS 00615.740 and
 .742) say nothing about rounding. Both quotes are pinned by
-`test_worked_example_figures_are_quoted_from_the_captures`. The Bulletin is
-an SSA research publication, not a program instruction, so resting the
-rounding on it needs Max's acceptance.
+`test_worked_example_figures_are_quoted_from_the_captures`.
+
+Reading taken (October 23, 2026), logged as
+`us:oasdi-disability-family-maximum-rounding`: floor to the dime. The Act's
+403(a)(6) and 20 CFR 404.403(d-1) are silent, so nothing in a statute or
+regulation competes. The Act rounds the regular maximum "to the next lower
+multiple of $0.10" (403(a)(2)) and dime-floors every later increase of this
+maximum (215(i)(2)(A)(ii)), so an undimed initial maximum would be the only
+one of its kind; SSA's own description, the Bulletin, floors it. That is
+consistent usage within the Act, with the agency's reading breaking what
+remains of the tie (P3).
 
 ## Households and the entry point
 
@@ -621,23 +637,19 @@ rate:
 RS 00630.400's summary also requires "at least one beneficiary is reduced for
 age". G does not require it, which can only add refusals.
 
-Needs Max's judgment: the literal 203(a)(5) guarantee that totals "for any
-such subsequent month will not be less" reaches later composition changes.
-RS 00630.400's operational condition instead states "Total family payment
-is less after the PIA increase than it was before." Its additional condition
-is "Benefits for that month are reduced for the MAX and at least one
-beneficiary is reduced for age;". In the invented three-child case above,
-two children leaving in the COLA month lowers the total from $1,750.00 to
-$1,537.50. The literal reading refuses; the operational reading admits that
-$1,537.50 total when no beneficiary is reduced for age. This module keeps
-the literal refusal.
-
-Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
-population target needs it.
-
-Ruling d1338 (2026-10-12): adopt SSA's operational reading (RS 00630.400),
-keeping the literal reading behind a switch; implemented in G part 2.
-Until then this module applies the literal refusal.
+Reading taken by Max, ruling d1338 (2026-10-12), logged as
+`us:oasdi-family-maximum-saving-clause`: SSA's operational reading is the
+default and the literal one stays selectable as `LITERAL_REFUSAL`. The
+literal 203(a)(5) guarantee that totals "for any such subsequent month will
+not be less" reaches later composition changes. RS 00630.400's operational
+condition instead states "Total family payment is less after the PIA
+increase than it was before." Its additional condition is "Benefits for
+that month are reduced for the MAX and at least one beneficiary is reduced
+for age;". In the invented three-child case above, two children leaving in
+the COLA month lowers the total from $1,750.00 to $1,537.50. The literal
+reading refuses; the operational reading admits that $1,537.50 total when
+no beneficiary is reduced for age. "Operational saving clause, October 23,
+2026" below implements the default.
 
 ## Supported and refused configurations
 
@@ -1180,25 +1192,45 @@ limiting RIB-LIM remain
 interaction with the PTAP age-reduction and partial-payable terms.
 
 
-### Zero reached after auxiliary age reduction
+### Reading taken: zero reached after auxiliary age reduction
 
-This reading needs Max's judgment. GN 02603.045 says the counted amount is
-"before any applicable reduction for age". GN 02603.050C requires the
-"Age reduction amount for all workers or deductees". GN 02603.050A.2
-instead says "If dual entitlement reduces a beneficiary's rate to $0.00
-(technically entitled)" to disregard that beneficiary. A method-B spouse
-with PIA $500, maximum $750, own RIB $64 and 36 auxiliary reduction months
-has standard rate $83.30, age-adjusted $62.40, and zero auxiliary payable.
-Disregarding the spouse pays children $125 each; retaining the $20.90 age
-term pays $114.50 each, a $21 record-total difference. A reading of the
-before-age text alone counts $83.30 minus $64, or $19.30, paying children
-$115.30 each and a record total of $730.60. G refuses this
-case as `parisi_redistribution_ambiguous`, rather than selecting the higher
-payment. Zero before auxiliary age reduction is supported, including A.5
-and A.8. The alternatives and the refusal are executed by the Parisi tests.
+Source conflict `us:oasdi-dual-entitlement-zero-after-age-reduction`,
+decided October 23, 2026 (definitions control; P3). Ruling d1418 had kept
+it refused. GN 02603.045 says the counted amount is "before any applicable
+reduction for age". GN 02603.050C requires the "Age reduction amount for
+all workers or deductees". GN 02603.050A.2 says "If dual entitlement
+reduces a beneficiary's rate to $0.00 (technically entitled)" to disregard
+that beneficiary, and A.3 says to "subtract the partial payable rate" when
+the rate is partial. A method-B spouse with PIA $500, maximum $750, own RIB
+$64 and 36 auxiliary reduction months has standard rate $83.30,
+age-adjusted $62.40, and zero auxiliary payable.
 
-Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
-population target needs it.
+GN 02603.050A states that "exceptions 2 and 3 apply only for cases
+processed under the new rule as explained in GN 02603.045", so A.2 and A.3
+measure the dual rate as .045 defines it, before age reduction. Before age
+reduction the spouse's rate is $83.30 minus $64, or $19.30: a partial rate,
+not zero. G counts it whole (A.3), paying the children $115.30 each, a
+record total of $730.60. This is also the amount G already counts whenever
+the dual payable is positive: payable plus age reduction is $83.30 minus
+the own benefit. The count therefore runs continuously from a positive
+payable through the zero clamp to A.2's disregard, which applies exactly
+when the own benefit reaches the standard rate (and covers A.5 and A.8,
+where the zero arises before age reduction). It is consistent with 20 CFR
+404.403(a)(5) and with every captured SSA example (A.5, A.8, A.9, B.2).
+
+The two rejected readings stay pinned as diagnostics. Disregarding the
+spouse here (A.2 applied to the after-age rate) pays $125 each. Retaining
+the full $20.90 age term under C pays $114.50 each; it would count less
+than the before-age amount and, extended to an own benefit at or above the
+standard rate, would contradict the supported A.2 disregard.
+`test_method_b_zero_only_after_age_counts_the_before_age_amount` pins the
+quotes and all three amounts; the Hypothesis property
+`test_method_b_counted_amount_is_the_before_age_amount` checks the counted
+amount equals max(0, standard minus own benefit) for every own benefit and
+reduction period, matches payable plus age reduction whenever the payable
+is positive, and never lowers the children as the own benefit rises. The
+method-C property now also executes a positive excess that rounds to zero
+after age reduction.
 
 
 ## Disabled widow(er) benefits
@@ -1279,9 +1311,10 @@ remains technically entitled even if no parent benefit is payable (RS
 declared parents is refused as `parent_benefit`: the captured one/two-parent
 rules do not settle that configuration.
 
-Needs Max's judgment: the parent entitlement count can be circular. RS
-00209.001 requires "not be entitled to retirement insurance benefit (RIB)
-equal to or exceeding
+Reading taken (October 23, 2026), source conflict
+`us:oasdi-parent-entitlement-count-interval` (P1, the Act's operative
+words). Ruling d1418 had kept it refused. RS 00209.001 requires "not be
+entitled to retirement insurance benefit (RIB) equal to or exceeding
 the amount of the parent's original benefit (One parent = 82 1/2%; Two parents
 = 75%);". RS 00209.015 distinguishes "2. One parent entitled" from
 "3. Two parents entitled". For PIA $1,000 and maximum $1,750, two potential
@@ -1289,27 +1322,37 @@ parents, one with own RIB $780, qualify together at the one-parent OB of
 $825 but that first parent's RIB exceeds the two-parent OB of $750. Counting
 two first excludes that parent and pays the other $825; testing eligibility
 at $825 first would count two and pay the other $750 (a $75 difference),
-while paying no auxiliary to the $780 own-RIB parent. Neither fixed order
-is silently selected: `parent_benefit` refuses the interval between the two
-dime-rounded OBs when both parents are potential entitlements.
+while paying no auxiliary to the $780 own-RIB parent.
+
+The Act decides it. 402(h)(1)(D) tests the own RIB against 82½ percent "if
+the amount of the parent's insurance benefit for such month is determinable
+under paragraph (2)(A) (or 75 percent of such primary insurance amount in
+any other case)", and (h)(2)(B) applies 75 percent "For any month for which
+more than one parent is entitled". The entitled set must satisfy that test
+for every parent at once. The parent without an own RIB is entitled
+whatever the other does, so the $780 parent's benefit, if entitled, would
+be the two-parent rate, which $780 reaches: that parent is not entitled,
+and the other parent alone is paid $825 under (h)(2)(A). The other one-pass
+order ends with one parent paid at the two-parent rate, which (h)(2)(A)
+contradicts. With two parents whose own RIBs both lie in the band, either
+parent alone satisfies the test for both, so `parent_benefit` still
+refuses that configuration by name (filing order, which the inputs omit,
+might settle it).
 
 `test_parent_entitlement_count_counterfactual_changes_payment_by_75`
-executes both readings with a test-only exact helper. Counting two first
-tests entitlement at $750, excludes the $780-own-RIB parent, and gives the
-other parent's candidate payment $825. Rechecking entitlement at $825
-would count two. Testing entitlement at $825 first counts two, changes the
-other parent's candidate payment to $750, and then excludes the first
-parent when entitlement is rechecked at $750. Both candidates pay that
-first parent no auxiliary, and the other parent's candidates differ by
-$75. The public result remains the `parent_benefit` refusal. The Hypothesis
-test `test_parent_count_counterfactual_orders_cycle_across_the_refused_band`
-executes the same count reversal and the exact difference between the two
-dime-rounded OBs throughout the refused interval. These reversals are an
-intended diagnostic inconsistency of the two one-pass readings, not a
-supported payment or a bug in the public refusal.
-
-Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
-population target needs it.
+executes both one-pass orders with a test-only exact helper and asserts
+that the public result is the consistent one: the $780 parent not
+entitled, the other parent paid $825. The Hypothesis test
+`test_parent_count_counterfactual_orders_cycle_across_the_refused_band`
+keeps the two one-pass orders' count reversal as a diagnostic.
+`test_one_parent_in_the_band_yields_to_the_other_parent` checks the reading
+across the whole band; `test_two_parents_in_the_band_refuse_because_either_alone_qualifies`
+the remaining refusal; and
+`test_parent_entitlement_satisfies_402h1d_for_every_parent` is an exact
+differential against a brute-force enumeration of every entitled set that
+satisfies 402(h)(1)(D) for both parents, with no own benefit, an own DIB or
+an own RIB anywhere: G computes exactly the unique consistent set and
+refuses exactly when there is more than one.
 
 Invented hand references (the captures publish rules without monetary
 worked examples for these classes): PIA $1,000 pays a solo parent $825 or
@@ -1886,25 +1929,33 @@ this contract. The envelope is deliberately conservative; it does not
 certify a tight set of all possible dated histories. Narrower historical
 support needs dated entitlement and reduction-money evidence.
 
-### Needs Max's judgment: DWB after January 1984
+### Reading taken: DWB after January 1984
 
-The broad instruction in RS 00615.005C.2 is "all cases involving single
-entitlement to actuarially reduced benefits prior to 1/78". In contrast,
-RS 00615.301B.1.e says "all disabled widow(er)s under age 60 receive .715 of
-the full unreduced WIB for 1/84 and later". RS 00615.005A.7 also states
-that the 1983 amendments "Eliminated the additional reduction for the
-period between age 50 and age 60." A specific-rule reading could treat
-that change as settling the entire later amount, including earlier awards.
-The general historical reading still requires the missing monetary ratio.
-
-This round conservatively refuses an otherwise unsettled pre-1978-capable
-DWB cohort and its possible aged-widow conversion; it does not assign a
-historical payment. For cohort 1927 in January 1984, with invented PIA and unreduced rate
-$1,000, the fixed 71.5% reading would pay $715.00 ($715 whole dollars), while the implemented
-reading refuses and retains the row and weight. Tests pin the captured
-texts, the alternative exact $715 formula and the actual refusal. This is
-an explicit support-boundary judgment item, separate from the earlier
-$715 surviving-divorced child-care regression, which remains supported.
+Source conflict `us:oasdi-dwb-1984-pre-1978-history`, decided October 23,
+2026 (specific over general). The broad instruction in RS 00615.005C.2 is
+"all cases involving single entitlement to actuarially reduced benefits
+prior to 1/78". In contrast, RS 00615.301B.1.e says "all disabled
+widow(er)s under age 60 receive .715 of the full unreduced WIB for 1/84 and
+later". RS 00615.005A.7 also states that the 1983 amendments "Eliminated
+the additional reduction for the period between age 50 and age 60", and RS
+00615.310B.3 says DWB entitled before 1/84 "had their benefits recalculated
+effective 1/84 as if the reduction for the period prior to age 60 did not
+exist." The specific DWB rule governs the general pre-1978 method: from
+January 1984, every month in which a disabled widow(er) is under 60 is paid
+.715 of the unreduced WIB whatever the entitlement date. G applies it to
+every payment month in a year before the SSA birth cohort can attain 60
+(cohort year plus 59 or earlier); in the year it can attain 60 the birth
+month decides and is not supplied, and from 60 the money history governs
+again, so those months keep `reduced_benefit_history_before_1978`. For
+cohort 1927 in January 1984, with invented PIA and unreduced rate $1,000,
+G now pays $715.00 ($715 whole dollars); in 1987 the row is refused and
+keeps its weight. `test_historical_dwb_under_60_takes_the_specific_fixed_rate`
+pins the texts and amounts, and the Hypothesis property
+`test_historical_dwb_is_settled_exactly_before_the_cohort_can_attain_60`
+checks, for cohorts 1912-1927 and payment years 1984-2000, that every
+under-60 year equals a post-1977 cohort's computation exactly and every
+later year refuses. The earlier $715 surviving-divorced child-care
+regression remains supported.
 
 Dual-entitlement snapshots also lack dates and earlier money history.
 RS 00615.250 gives the current reduced-excess procedure and refers to
@@ -1915,7 +1966,7 @@ claim that the conservative interval identifies a particular historical
 dual-entitlement amount. Expanding that historical surface is not in scope.
 
 
-### Needs Max's judgment: historical dual entitlement
+### Refused: historical dual entitlement (sources silent)
 
 RS 00615.005C.2 explicitly describes "single entitlement". RS 00615.020
 states "Method C - First benefit calculated independently; reduce excess
@@ -1935,8 +1986,16 @@ $99.30 ($99 whole dollars), with own $400. The conservative implementation
 refuses `reduced_benefit_history_before_1978`, retaining the row and weight;
 it does not assign a different historical dollar amount. The source-quote
 test executes that alternative and the cohort-1916 control side by side
-with the historical refusal. Resolving this narrower historical dual
-surface needs Max's judgment; no new monetary default is silently chosen.
+with the historical refusal.
+
+Refusal kept (October 23, 2026), logged as
+`us:oasdi-dual-entitlement-pre-1978-history`: the sources are silent, so
+the refusal is safe. RS 00615.005C.2's money method covers single
+entitlement only; RS 00615.250 sends subsequent adjustments to RS
+00615.005F, which the captured section does not contain; RS 00615.240
+settles spouse-first awards but still needs the dated pre-1978 increases.
+No statute or regulation in the captures fixes the own-first historical
+amount, and the inputs carry no dated money history in any case.
 
 
 ## Fix round 9 of October 15, 2026
@@ -2224,10 +2283,12 @@ benefit, including parent, widow-basis and dime-rounding cases.
     `test_two_parents_do_not_pass_their_count_to_other_survivor_roles`
     execute the applicability, basis-bound and mixed-family properties.
 
-### Needs Max's judgment and not in scope
+### Judgment items and scope (as of this round)
 
 No new statutory choice arises. All earlier judgment items, conservative
 refusals, source-erratum controls and rulings d1418/d1338 remain unchanged.
+(The October 23, 2026 readings pass, at the end of this note, has since
+decided or re-framed every judgment item.)
 This round does not implement savings-clause raised payments, new family
 configurations, new sources or real-data processing.
 
@@ -2471,7 +2532,7 @@ the guard, as well as the separate whole-dollar payment fields.
 | Skipped qualifying history | Existing `savings_clause_history_unknown` refusal |
 | Uninitialized/subclassed guard, guard copying or guard serialization | `InvalidFamilyInput`; no coverage refusal code |
 
-### Needs Max's judgment and not in scope
+### Judgment items and scope (as of this round)
 
 No new statutory interpretation is selected. Earlier judgment items and
 conservative savings-clause readings remain unchanged. This round does not
@@ -2724,8 +2785,9 @@ identical; tests pin both quoted OBs and modern OBs rather than overriding
 the arithmetic or claiming historical rounding coverage. The captures do
 not date these examples or establish why they used upward rounding.
 
-### Readings needing judgment
+### Readings taken and refusals kept
 
+Reading taken (logged as `us:oasdi-ret-temporary-partial-deduction`):
 GN 02603.050D.2 says "there are no partial deductions for temporary work
 deductions". RS 02501.160 Example 2 nevertheless instructs immediate
 same-household redistribution in June with C3 $39 and C2 $119, while E and
@@ -2735,8 +2797,14 @@ amounts. The literal GN sentence would refuse that temporary partial case;
 it would withhold C2's $20 June increase. The source assertions pin both
 sentences. No switch invents a different benefit amount.
 
-The interaction of NH reservations and age reductions is not established
-by a captured worked example. The implementation refuses that new mixed
+Refusal kept (October 23, 2026), logged as
+`us:oasdi-nh-charge-age-reduction-interaction`: the sources are silent.
+GN 02603.050C lists both "work deductions to be imposed against
+auxiliaries or survivors due to the number holder's work" and the "Age
+reduction amount for all workers or deductees" in PTAP, but no captured
+rule or example says whether an NH charge falls on the age-reduced or the
+pre-age rate when both apply; RS 02501.145-.160 and the 20 CFR 404.439-.441
+examples have no age reduction. The implementation refuses that mixed
 configuration by name; ordinary G/R2 age-reduced supported inputs remain
 unchanged. No population processing, combined maximum determination,
 multiple auxiliary-record selection or annual earnings determination is
@@ -2953,6 +3021,20 @@ with GN 02603.050, not to input validity. No protected amount is inferred
 from a diagnostic pre-offset total, and every refusal retains its row and
 weight. Completing this combined payment procedure remains outside scope.
 
+### Refused: gaps in the operational procedure (sources silent)
+
+Refusals kept (October 23, 2026), logged as
+`us:oasdi-saving-clause-procedure-gaps`. Ruling d1338 chose RS 00630.400's
+operational procedure over the Act's literal "any such subsequent month",
+and that procedure states only the life-case allocation with the worker
+alone, or one spouse and other auxiliaries, reduced for age. It says
+nothing on how a protection survives a change of entitled membership
+(`savings_clause_membership_change`), nor on survivor, own-benefit,
+deduction, multiple-reduced, lone-reduced-spouse, mixed-basis or above-OB
+rates (`savings_clause_rate_procedure`). Falling back to the literal Act
+would reverse d1338 for those months, and no other captured SSA source
+supplies the allocation, so each stays refused and counted.
+
 ### Not in scope
 
 No combined family maximum, multiple auxiliary records, survivor allocation
@@ -3000,3 +3082,42 @@ individuals = 225.30." Its displayed formula correctly gives $274.20
 before the original-benefit cap of $225.30. The existing A.2 test pins the
 literal narrative, raw quotient and capped payment side by side. This is
 an omitted cap in the narrative, not an alternate arithmetic rule.
+
+
+## Readings pass, October 23, 2026
+
+Verification class: statutory conformance on invented cases and captured
+sources; no population claim. Under Max's 2026-10-20 delegation, single
+readings are the session's call under his principles (P1 statute first,
+P2 regulations are law, P3 the agency breaks true ties, P4 taxpayer
+choices), logged in the source-conflict rulings with the ids below;
+patterns and collisions between principles go to him. Ruling d1418 had
+kept the older readings as defaults pending a population need; this pass
+decides each one. Every money-changing reading keeps the rejected
+alternatives pinned as diagnostics, and every remaining refusal keeps its
+row and weight in the denominators.
+
+| Item | Id | Outcome | Basis |
+|---|---|---|---|
+| 403(a)(5) literal or operational | `us:oasdi-family-maximum-saving-clause` | Operational default, literal behind a switch | Max, d1338 |
+| Operational rounding direction | `us:oasdi-saving-clause-operational-rate-rounding` | Round equal rates up | P1 |
+| Gaps in the operational procedure | `us:oasdi-saving-clause-procedure-gaps` | Refused | Sources silent |
+| Zero reached only after auxiliary age reduction | `us:oasdi-dual-entitlement-zero-after-age-reduction` | Count the .045 before-age amount: children $115.30 each, was refused | Definitions control (.050A ties A.2-A.3 to .045); P3 |
+| Circular parent count | `us:oasdi-parent-entitlement-count-interval` | The set satisfying 402(h)(1)(D) for both parents: other parent $825, was refused; two parents in the band stay refused | P1 |
+| DWB from January 1984, pre-1978-capable cohorts | `us:oasdi-dwb-1984-pre-1978-history` | Under 60: .715 of the unreduced WIB ($715, was refused); from 60: refused | Specific over general |
+| Historical dual entitlement | `us:oasdi-dual-entitlement-pre-1978-history` | Refused | Sources silent |
+| Exact fractions or float reuse | `us:oasdi-reduction-exact-fractions` | Exact fractions | Not a conflict (Act and RS 00615.005B agree) |
+| Disability-maximum rounding | `us:oasdi-disability-family-maximum-rounding` | Floor to the dime | Act's consistent usage; P3 |
+| Temporary partial deduction | `us:oasdi-ret-temporary-partial-deduction` | Follow the RS 02501.160 example in G | Specific over general; P3 |
+| NH reservations with age reductions | `us:oasdi-nh-charge-age-reduction-interaction` | Refused | Sources silent |
+
+The statutory texts newly relied on (42 U.S.C. 402(d)(1)(D), (d)(5),
+(e)(1), (h)(1)(D), (h)(2), (k)(3)(A), (k)(4) and (s)) were added to
+`lii_usc_402_415_excerpts.txt` from a re-fetch whose LII body matched the
+pinned 402 SHA-256 byte for byte. Every `# Source conflict` marker in the
+Track B modules names an id logged in the rulings, and every logged id
+has a marker: `tests/test_track_b_readings_20261023.py` checks both
+directions and that this note and the R2 and R3 notes carry no open
+"Needs Max's judgment" heading. The invented conformance lattice is
+unchanged; only the `parent_benefit` witness moved to two parents in the
+band.

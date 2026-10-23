@@ -1183,18 +1183,20 @@ def test_negative_nese_reading_changes_final_deduction_by_one_dollar():
     assert by_month(alternative)[1].payment == 598
 
 
-def test_unmarried_deemed_entitlement_is_refused_pending_source_judgment():
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        ledger(
-            beneficiary(work=earnings(lower_earnings_for_excess(600))),
-            beneficiary(
-                "deemed",
-                rate=200,
-                benefit_type=BenefitType.CDB,
-                deemed_entitled=True,
-            ),
+def test_unmarried_deemed_entitlement_is_an_input_error():
+    """Source conflict us:oasdi-ret-deemed-entitlement-basis.
+
+    Act 203(b)(1) and 20 CFR 404.420 deem only a recipient married to the
+    NH; RS 02501.140's broader wording yields to them (P1), so an
+    unmarried recipient is not on the NH's ledger at all.
+    """
+    with pytest.raises(r.InvalidFamilyInput, match="marriage to the NH"):
+        beneficiary(
+            "deemed",
+            rate=200,
+            benefit_type=BenefitType.CDB,
+            deemed_entitled=True,
         )
-    assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
 
 
 def test_married_deemed_disabled_child_is_charged_number_holders_excess():

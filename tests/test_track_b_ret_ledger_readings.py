@@ -435,7 +435,7 @@ def _deemed_cdb_january_counterfactual(nh, recipient, *, broader_poms):
     It never changes marriage facts or enables the broader reading through
     the public API. The CDB recipient has no excess of their own.
     """
-    assert recipient.deemed_entitled and not recipient.deemed_married_to_nh
+    assert not recipient.deemed_entitled
     assert set(recipient.benefit_types) == {BenefitType.CDB}
     assert 1 in nh.entitled_months & recipient.entitled_months
     assert recipient.earnings == earnings()
@@ -447,15 +447,21 @@ def _deemed_cdb_january_counterfactual(nh, recipient, *, broader_poms):
         * year.lower_withholding_rate.value
     )
     assert excess >= nh.gross_rates[0] + recipient.gross_rates[0]
-    # RS 02501.140 puts the other-record CDB rate in the NH's full family
-    # deduction. Act 203(b)(1) / CFR .420 leave an unmarried recipient's
-    # separate record outside that charge. This is test-only arithmetic.
+    # RS 02501.140 would put the other-record CDB rate in the NH's full
+    # family deduction. Act 203(b)(1) / CFR .420 leave an unmarried
+    # recipient's separate record outside that charge, the reading taken;
+    # the broader figure is test-only arithmetic.
     nh_deduction = recipient.gross_rates[0] if broader_poms else F(0)
     return recipient.gross_rates[0] - nh_deduction
 
 
 def test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars():
-    """Invented $400/$200 rates and $600 excess, with no real data."""
+    """Invented $400/$200 rates and $600 excess, with no real data.
+
+    Reading taken (P1): an unmarried recipient is not deemed, so its own
+    record pays $200 in January; RS 02501.140's broader wording would
+    remove it. The public API rejects the unmarried declaration.
+    """
     assert (
         "is married to an individual entitled to old-age insurance benefits under section 202(a)"
         in source_text("ssa_act_203")
@@ -476,21 +482,25 @@ def test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars():
         "deemed",
         rate=200,
         benefit_type=BenefitType.CDB,
-        deemed_entitled=True,
     )
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.apply_ret_year(record(nh, recipient), PARAMS)
-    assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
+    with pytest.raises(r.InvalidFamilyInput, match="marriage to the NH"):
+        replace(recipient, deemed_entitled=True)
 
     married = r.apply_ret_year(
-        record(nh, replace(recipient, deemed_married_to_nh=True)), PARAMS
+        record(
+            nh,
+            replace(
+                recipient, deemed_entitled=True, deemed_married_to_nh=True
+            ),
+        ),
+        PARAMS,
     )
     unrelated = r.apply_ret_year(
         r.RecordYear(
             YEAR,
             "other",
             kind=r.RecordKind.DECEASED,
-            beneficiaries=(replace(recipient, deemed_entitled=False),),
+            beneficiaries=(recipient,),
         ),
         PARAMS,
     )
@@ -527,8 +537,8 @@ def test_property_deemed_counterfactual_matches_full_married_charge(
 
     Shared surface: whole-dollar RIB/CDB rates, no other excess/protection,
     and NH excess equal to the combined January rate. Tolerance is zero.
-    The Act/CFR counterfactual always preserves the unrelated CDB rate;
-    the public API always retains the unmarried source-conflict refusal.
+    The Act/CFR reading always preserves the unrelated CDB rate; the
+    public API always rejects the unmarried deemed declaration.
     """
     family_rate = nh_rate + cdb_rate
     nh = beneficiary(
@@ -541,20 +551,24 @@ def test_property_deemed_counterfactual_matches_full_married_charge(
         "deemed",
         rate=cdb_rate,
         benefit_type=BenefitType.CDB,
-        deemed_entitled=True,
     )
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.apply_ret_year(record(nh, recipient), PARAMS)
-    assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
+    with pytest.raises(r.InvalidFamilyInput, match="marriage to the NH"):
+        replace(recipient, deemed_entitled=True)
     married = r.apply_ret_year(
-        record(nh, replace(recipient, deemed_married_to_nh=True)), PARAMS
+        record(
+            nh,
+            replace(
+                recipient, deemed_entitled=True, deemed_married_to_nh=True
+            ),
+        ),
+        PARAMS,
     )
     unrelated = r.apply_ret_year(
         r.RecordYear(
             YEAR,
             "other",
             kind=r.RecordKind.DECEASED,
-            beneficiaries=(replace(recipient, deemed_entitled=False),),
+            beneficiaries=(recipient,),
         ),
         PARAMS,
     )

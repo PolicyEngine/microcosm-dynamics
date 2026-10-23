@@ -469,9 +469,10 @@ deemed-entitled beneficiaries, and months with a binding maximum or
 another deduction event. A living NH must be present and receive RIB or
 DIB in entitled months. A deceased NH must be absent. Deemed entitlement
 asserts the married-person facts of Act 203(b)(1) and 20 CFR 404.420;
-the broader unmarried-child reading of RS 02501.140 is refused. An
-ordinary deemed child's age-18 months must be explicit. Their Act/CFR
-coverage difference is refused even with those facts established.
+an unmarried declaration under RS 02501.140's broader wording is an input
+error (that recipient is not on this NH's ledger). An ordinary deemed
+child's age-18 months must be explicit, and that residual adult-child case
+is refused even with those facts established.
 Deemed entitlement requires a different NH with RIB entitlement in each
 applicable month. `own_work_exempt_months` accepts only CHILD or WIDOW
 payment months and asserts respectively attainment of age 18 or initial
@@ -779,12 +780,13 @@ different section 202 type entered as DWB or CDB after a gap can still
 carry pending eligibility to a later year's first eligible NSM; the
 disability-only-year exclusion does not erase that entitlement history
 (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and B.4).
-The conservative default also
-excludes simultaneous disability entitlement, following 20 CFR
-404.435(b)(3). The named POMS alternative permits NSMs in months RIB is
-elected while technical DIB entitlement continues, reproducing RS
-02501.030B.4's published example. The money-changing difference is
-recorded under Needs Max's judgment.
+During simultaneous RIB and DIB entitlement the default counts NSMs in
+months RIB is paid: under Act 202(k)(4) the person is then entitled to the
+RIB alone, so 20 CFR 404.435(b)(3)'s disability exclusion does not reach
+the month, and RS 02501.030B.4's published example is reproduced. The
+former technical-entitlement exclusion remains an explicit alternative.
+"Readings taken and refusals kept" below records the reading and its
+money difference.
 
 ## Supported and refused configurations
 
@@ -826,8 +828,8 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Noncovered foreign work | `FOREIGN_WORK` / `noncovered_foreign_work` | Act 203(c); 20 CFR 404.417-.418 |
 | Refusal of vocational rehabilitation | `VOCATIONAL_REHABILITATION` / `vocational_rehabilitation_refusal` | RS 02501.130 |
 | Another deduction event on the record | `OTHER_DEDUCTION` / `other_deduction_event` | Act 203(c)/(d); RS 02501.130; GN 02603.040 |
-| Unmarried purported deemed entitlement | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | RS 02501.140's wording is broader than Act 203(b)(1)/20 CFR 404.420 |
-| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Act 203(b)(1)'s adult-child wording is broader than CFR .420's disabled-child basis |
+| Unmarried purported deemed entitlement | `InvalidFamilyInput`: not on this NH's ledger | Act 203(b)(1) and 20 CFR 404.420 require marriage; RS 02501.140's broader wording yields (P1) |
+| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Entitled only through 402(d)(5) for a marriage made while disabled (402(s)(2)); CFR .420 omits that residual case |
 
 The monthly G context establishes maximum membership, original age
 reduction and dual entitlement. Its declared baseline must match the R2
@@ -895,11 +897,11 @@ In the table, unqualified property test names are in
 | Exact 1/2 and 1/3 excess rates use an integer floor: excess is nonnegative and differs from the unrounded amount by less than $1 | readings `test_property_excess_uses_exact_statutory_rate_and_dollar_floor`; unit `test_lower_threshold_and_whole_dollar_floor`; unit `test_fra_threshold_uses_one_third_and_floors`; R1 differential above |
 | Invalid input is never counted as a statutory coverage gap | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_invalid_wage_inputs_raise_before_coverage_refusal`; `test_invalid_rates_raise_before_coverage_refusal`; `test_duplicate_identity_is_invalid_even_in_an_unsupported_record`; `test_invalid_inputs_are_not_counted_as_coverage_gaps` |
 | Every raw month-set element is validated before deduplication, independent of order; valid integer duplicates in the ledger preserve the same set | `test_every_raw_month_set_element_is_validated_before_deduplication`; `test_valid_month_set_duplicates_and_order_preserve_the_same_months`; grace `test_property_external_grace_month_sets_validate_before_deduplication`; unit `test_invalid_self_employment_month_collision_is_an_input_error`; `test_invalid_entitlement_month_collision_precedes_foreign_work_refusal` |
-| Under the explicit POMS election reading, only eligible elected RIB NSMs receive grace protection; the conservative CFR reading supplies none during concurrent disability entitlement | readings `test_property_explicit_poms_election_protects_only_eligible_rib_months`; `test_simultaneous_dib_rib_source_readings_change_4200_dollars` |
+| Under the default 202(k)(4) reading, only eligible elected RIB NSMs receive grace protection; the explicit CFR technical-entitlement alternative supplies none during concurrent disability entitlement | readings `test_property_explicit_poms_election_protects_only_eligible_rib_months`; `test_simultaneous_dib_rib_source_readings_change_4200_dollars` |
 | Actual and estimated grace statuses are distinct; changed service facts can require recovery even when annual earnings coincide | readings `test_estimated_initial_grace_and_actual_grace_are_separate`; `test_property_changed_grace_estimate_can_require_recovery` |
 | Zero payable caps retain their original shares and count toward the three-beneficiary sub-dollar stop; exact net shares plus the residual conserve the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
 | Explicit Act 203(f)(1)(C)-(D) protections exempt only the recipient's own work in asserted CHILD/WIDOW months | readings `test_property_other_statutory_own_exemptions_protect_only_that_workers_excess`; `test_own_work_exempt_flag_requires_a_statutory_benefit_type` |
-| The test-only broader deemed-CDB reading agrees exactly with the supported married full-family charge; the Act/CFR reading preserves the unrelated record, while the public unmarried input always refuses | readings `test_property_deemed_counterfactual_matches_full_married_charge`; `test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars` |
+| The test-only broader deemed-CDB reading agrees exactly with the supported married full-family charge; the Act/CFR reading preserves the unrelated record, while the public unmarried input is always an input error | readings `test_property_deemed_counterfactual_matches_full_married_charge`; `test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars` |
 
 The `ss/benefits.py` float oracle has no earnings-test ledger implementation,
 so there is no second RET-payment implementation against which to invent a
@@ -1318,28 +1320,31 @@ concurrent-disability default, the termination exclusions, refusal
 codes, or any ruling d1418 choice. No new statutory judgment or source
 erratum is introduced by these two corrections.
 
-## Needs Max's judgment
+## Readings taken and refusals kept
 
-**Ruling d1418 (Max, 2026-10-12): keep the current defaults for these
-readings, and reopen any one when a population target needs it.** The
-computed defaults below (NESE losses floored; no non-service months during
-simultaneous RIB and DIB entitlement, per 20 CFR 404.435(b)(3); own-work
-protections limited to the CFR's disability-based wording) stand, and the
-broader POMS deemed-entitlement reading stays refused.
+**Ruling d1418 (Max, 2026-10-12)** kept these readings at their defaults
+until a population target needed them. Max's 2026-10-20 delegation makes
+each single reading the session's call under his principles (P1 statute
+first; P2 regulations are law; P3 the agency breaks true ties), logged in
+the source-conflict rulings; this section records the October 23, 2026
+pass. Two defaults change money: an elected RIB month during simultaneous
+RIB and DIB entitlement now counts as a non-service month, and an unmarried
+"deemed" recipient is no longer on the NH's ledger. The other readings
+keep their computed defaults with the basis stated.
 
 The review resolved the historical monthly fractions and sub-dollar
 reapportionment stop directly from the captured Act and CFR text. Those
-rules are implemented above and are no longer judgment items. The
-remaining money-changing readings are explicit below.
-The production decision comments link the retained readings to the
-source-conflict register IDs `us:oasdi-ret-negative-nese-proration`,
+rules are implemented above and are no longer judgment items.
+The production decision comments link each reading to its source-conflict
+register ID: `us:oasdi-ret-negative-nese-proration`,
 `us:oasdi-ret-grace-simultaneous-rib-dib`,
-`us:oasdi-ret-own-work-age-exemptions` and
-`us:oasdi-ret-deemed-entitlement-basis`.
+`us:oasdi-ret-own-work-age-exemptions`,
+`us:oasdi-ret-deemed-entitlement-basis` and
+`us:oasdi-ret-other-deductee-scope`.
 `test_source_conflict_ids_are_linked_at_the_decision_lines` checks every
-link at its decision, including both deemed-entitlement refusals.
+link at its decision, including both deemed-entitlement decisions.
 
-### Signed NESE: floor versus dropping cents
+### Reading taken: signed NESE rounds down to the floor
 
 RS 02501.080B.2.c says: “prorate the net earnings (or loss) equally
 over all months the beneficiary was engaged in self-employment”. Its
@@ -1350,8 +1355,14 @@ the cents” supports truncation toward zero, while “round down” supports
 mathematical floor. The two readings agree on the published positive
 NESE examples.
 
-`NESEProrationPolicy.FLOOR` follows the literal “round down” instruction;
-`DROP_CENTS` is an explicit alternative. In an invented June FRA year,
+Kept: `NESEProrationPolicy.FLOOR` (one meaning per section; P3). Act
+203(f)(3) leaves the proration to the agency ("prorated in an equitable
+manner under regulations of the Commissioner of Social Security"), and no
+captured regulation fixes its rounding, so SSA's instruction governs.
+Within RS 02501.080, "round down" means "round down to the next lower
+dollar" (B.1.d, B.2.a); applied after the cents are dropped, only the floor
+gives that step any work, while truncation would leave it surplus.
+`DROP_CENTS` remains an explicit alternative. In an invented June FRA year,
 annual NESE loss −$13 over twelve months becomes monthly −$2 and
 five-month −$10 under floor, versus monthly −$1 and five-month −$5
 under dropping cents. With pre-FRA wages equal to R1's higher exempt
@@ -1362,7 +1373,7 @@ conservative. Tests `test_negative_nese_floor_and_drop_cents_readings_are_explic
 and `test_negative_nese_reading_changes_final_deduction_by_one_dollar`
 pin the one-dollar difference.
 
-### Simultaneous RIB and DIB entitlement
+### Reading taken: an elected RIB month counts as a non-service month
 
 20 CFR 404.435(b)(3) says: “we will not count as a non-service month,
 a month that occurred while the beneficiary was entitled to disability
@@ -1372,55 +1383,63 @@ says: “If the beneficiary becomes simultaneously entitled to RIB and
 DIB benefits, the earnings test (ET) applies to any month they elect
 to receive RIB.” It adds: “Count NSMs for any month the RIB applies.”
 
-`DisabilityGraceReading.CFR_ENTITLEMENT_EXCLUSION` is the conservative
-default: technical disability entitlement prevents those NSMs.
-`POMS_RIB_ELECTION` follows the express operational exception and is
-needed to reproduce the POMS 2010/2011/2012 election example. Both
-preserve technical entitlement history; neither invents a break when
-the elected payment changes. The grace properties and
-`test_simultaneous_disability_cfr_default_and_poms_alternative_are_explicit`
-pin both readings. In an invented 2026 ledger, $45,000 January wages
-precede entitlement to both RIB and DIB in June. The beneficiary elects
-RIB at $600 monthly June-December and has no wages or services in those
-months. Under the conservative reading all $4,200 is deducted; under
-the POMS reading all $4,200 is paid. Test
+Changed default (P1): Act 202(k)(4) says a person entitled to both an
+old-age and a disability insurance benefit "shall be entitled to only the
+larger of such benefits for such month, except that, if such individual so
+elects, he shall instead be entitled to only the smaller of such benefits
+for such month" (20 CFR 404.407(c) says the same). A month in which RIB is
+paid is therefore a month of entitlement to RIB alone, not one "entitled to
+disability benefits under section 223", and the regulation and RS
+02501.030B.4 agree once the Act is read. `grace_year` now defaults to
+`DisabilityGraceReading.POMS_RIB_ELECTION`; DWB and CDB months, which
+202(k)(4) does not touch, stay excluded, and
+`CFR_ENTITLEMENT_EXCLUSION` keeps the former technical-entitlement
+exclusion as an explicit alternative. Both preserve technical entitlement
+history; neither invents a break when the elected payment changes. In an
+invented 2026 ledger, $45,000 January wages precede entitlement to both
+RIB and DIB in June. The beneficiary elects RIB at $600 monthly
+June-December and has no wages or services in those months. The default
+now pays all $4,200; the alternative deducts it. Test
 `test_simultaneous_dib_rib_source_readings_change_4200_dollars` executes
-that money difference, and
-`test_property_explicit_poms_election_protects_only_eligible_rib_months`
-executes the related ledger property.
+that money difference;
+`test_simultaneous_disability_default_follows_202k4_and_cfr_alternative_is_explicit`
+pins the default and quotes; and the grace properties execute both
+values over arbitrary months.
 
-### Other own-work age clauses
+### Reading taken: the Act and the CFR coincide on own-work age exemptions
 
 Act 203(f)(1)(C) prohibits charging a month “in which such individual,
 if a child entitled to child's insurance benefits, has attained the age
 of 18”. Clause (D) prohibits charging a month “for which such individual
 is entitled to widow's or widower's insurance benefits if such individual
 became so entitled prior to attaining age 60”. The preceding sentence
-expressly says “but subject to section 202(s)”. This lane has no full
-capture of 202(s) and does not adjudicate that additional condition.
+expressly says “but subject to section 202(s)”. 20 CFR 404.435(a)(5)-(6)
+instead list “Are age 18 or over and entitled to a child's insurance
+benefit based on disability” and “Are entitled to a widow's or widower's
+insurance benefit based on disability”. The POMS payment-type exemption in
+RS 02501.021B.5.a also lists DIB/DWB/CDB.
 
-20 CFR 404.435(a)(5)-(6) instead list “Are age 18 or over and entitled
-to a child's insurance benefit based on disability” and “Are entitled
-to a widow's or widower's insurance benefit based on disability”. The
-POMS payment-type exemption in RS 02501.021B.5.a also lists DIB/DWB/CDB.
-The Act's express age clauses appear broader than those operational
-disabled-benefit descriptions.
-
-The automatic default exemptions therefore follow the explicit
-disability types. The documented `own_work_exempt_months` parameter
-defaults to empty and is the alternative Act-clause assertion: the
-caller must establish lawful entitlement, the age facts and any 202(s)
-condition before asserting it. The ledger validates CHILD/WIDOW types
-but does not derive those exemptions silently from an inferred age.
-Max must decide how monthly assembly will establish and select this
-broader reading. In invented $200 monthly ordinary CHILD and WIDOW
-cases, earnings equal R1's lower amount plus $1,200. Default own
-deductions total $600; the explicitly asserted Act exemption pays the
-additional $600. Both cases are executed by
+No conflict remains once the rest of the Act is read (P1). Section
+202(s)(3), now captured, says "subsection (f)(1)(C) of section 403 ...
+shall not apply in the case of any child with respect to any month
+referred to therein unless in such month or the third month prior thereto
+such child was under a disability", so clause (C) reaches only a disabled
+child. A widow(er) entitled before 60 is a disabled widow(er), and 402(e)(1)
+ends that entitlement with "the termination month" ("the third month
+following the month in which her disability ceases") unless retirement age
+comes first, so clause (D)'s months are months of a benefit based on
+disability. The automatic exemptions therefore follow the explicit
+disability types, which is the Act's own scope. The documented
+`own_work_exempt_months` parameter defaults to empty; it is not a broader
+lawful reading for an ordinary CHILD or WIDOW month, and remains only as a
+caller's explicit assertion of facts the ledger does not adjudicate. In
+invented $200 monthly ordinary CHILD and WIDOW cases, earnings equal R1's
+lower amount plus $1,200. Default own deductions total $600; the asserted
+exemption pays the additional $600. Both cases are executed by
 `test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading`,
 with the general selected-exemption property in the invariant table.
 
-### Broader POMS deemed entitlement
+### Reading taken: deemed entitlement requires marriage to the NH
 
 Act 203(b)(1)'s third sentence says a recipient of child's benefits who
 has attained age 18, or mother's/father's benefits, “is married to an individual entitled to
@@ -1432,65 +1451,60 @@ benefits on a third person's record is deemed entitled on the spouse's
 record. RS 02501.140 instead says: “deem a retirement beneficiary's
 spouse or child entitled on their record if they are receiving CDB,
 mother's or father's benefits, or child's benefits based on another
-person's ER.” The POMS wording appears to reach an unmarried child
-more broadly than the Act/CFR marriage requirement. The Act additionally
-covers an entitled adult child without expressly requiring disability;
-the CFR's stated child basis uses disability. This additional coverage
-difference is refused for an ordinary CHILD even after the caller asserts
-lawful age-18 and marriage facts, pending Max's reading.
+person's ER.”
 
-The default requires `deemed_married_to_nh=True` to assert the legal
-marriage facts; broader unmarried cases receive
-`DEEMED_ENTITLEMENT_BASIS`, as do ordinary deemed adult CHILD cases.
-No monetary answer is fabricated for a
-refused configuration. The lawful married benchmark has NH $400,
-deemed-entitled CDB $200 and NH excess $600; the NH charge includes
-the recipient's full $200 January benefit even though CDB's own
-earnings test is exempt. Applying the broader wording to an otherwise
-identical unmarried recipient would likewise remove $200 from that
-recipient; treating the unrelated record independently leaves it
-untouched. `test_unmarried_deemed_entitlement_is_refused_pending_source_judgment`
-and `test_married_deemed_disabled_child_is_charged_number_holders_excess`
-pin the refusal and the statutory benchmark.
-`test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars`
-now executes both alternative readings with an explicit test-only
-full-January-charge helper: the broader POMS reading pays $0 instead
-of $200 on the unrelated recipient's record. Annual checks are $2,200
-versus $2,400 in the otherwise identical married benchmark and separate
-unrelated record. It checks the public unmarried input still refuses.
-`test_property_deemed_counterfactual_matches_full_married_charge` compares
-the narrow helper with the supported married ledger and separate record
-over invented whole-dollar rates, with zero tolerance. This helper does
-not change marriage facts or enable the broader reading through the
-public API; ruling d1418's defaults remain in effect.
-The Act's ordinary-adult-child wording would include the same $200 in
-that benchmark. The CFR disability-only boundary refuses that ordinary
-child case. `test_deemed_ordinary_child_requires_explicit_adult_age_facts`
-pins invalid missing-age facts and the default coverage refusal with
-established age facts; the married CDB benchmark pins the supported
-$200 NH deduction.
+Changed (P1; P2 agrees): the Act and the regulation both require the
+marriage, so RS 02501.140's broader wording yields. An unmarried recipient
+is not deemed and is not on the NH's ledger: declaring `deemed_entitled`
+without `deemed_married_to_nh` is now `InvalidFamilyInput`, and the
+recipient is computed on their own record. The lawful married benchmark
+has NH $400, deemed-entitled CDB $200 and NH excess $600; the NH charge
+includes the recipient's full $200 January benefit even though CDB's own
+earnings test is exempt. The broader POMS wording would remove the same
+$200 from an unmarried recipient; the reading taken leaves it paid on that
+recipient's own record (annual $2,400 versus $2,200 in the married
+benchmark). `test_unmarried_deemed_entitlement_is_an_input_error`,
+`test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars` and
+`test_property_deemed_counterfactual_matches_full_married_charge` pin the
+error, the $200 difference and the exact agreement of the test-only
+broader harness with the supported married ledger.
 
-### Scope wording for another deductee
+Refusal kept for the residual adult-child case: the Act's words also
+reach "a child who has attained the age of 18 and is entitled to child's
+insurance benefits", where 20 CFR 404.420 says "a child's insurance
+benefit based on the child's disability". A non-disabled child's benefit
+ends with the month the child marries (402(d)(1)(D)), and 402(d)(5)'s
+exception for marrying a beneficiary applies only to a child "under a
+disability" at the time of the marriage (402(s)(2)). So a married,
+non-disabled adult child keeps child's benefits only in the residual case
+of a marriage made while disabled followed by recovery, which the
+regulation omits. That configuration stays refused as
+`DEEMED_ENTITLEMENT_BASIS`, with its row and weight kept;
+`test_deemed_ordinary_child_requires_explicit_adult_age_facts` pins
+invalid missing-age facts and the refusal, and the married CDB benchmark
+pins the supported $200 NH deduction.
 
-The part-(a) brief asks for refusal when an auxiliary's own excess is
-charged with a binding maximum “or any other deductee on the record
-that month”. It also requires reproduction of 20 CFR 404.441, whose
-rule expressly covers the same-month interaction: “Where both the
-insured individual and another person entitled (or deemed entitled)
-on the same earnings record have excess earnings”. Act 203(b)(1)
-likewise charges a beneficiary's remaining benefits after an earlier
-deduction, and 20 CFR 404.434(b)(3) specifies NH charging first.
+### Not a source conflict: another deductee's scope
 
-This build interprets the other-deductee refusal as other deduction
-events under Act 203(c)/(d)/222(b), represented by
-`other_deduction_months`, which are always refused. Simultaneous NH
-and auxiliary RET deductions without a binding maximum are supported
-so the explicitly required CFR .441 example can be reproduced. That
-example gives the wife's August $83 NH partial share, fully consumed
-by her own excess, and her October $82 check. Interpreting the brief
-as excluding any simultaneous RET deductee would instead refuse the
-example, not produce a different computed amount. This scope reading
-needs confirmation if the intended part-(a) boundary was broader.
+Logged as `us:oasdi-ret-other-deductee-scope`. The part-(a) brief asks for
+refusal when an auxiliary's own excess is charged with a binding maximum
+“or any other deductee on the record that month”. It also requires
+reproduction of 20 CFR 404.441, whose rule expressly covers the same-month
+interaction: “Where both the insured individual and another person
+entitled (or deemed entitled) on the same earnings record have excess
+earnings”. Act 203(b)(1) likewise charges a beneficiary's remaining
+benefits after an earlier deduction, and 20 CFR 404.434(b)(3) specifies
+NH charging first.
+
+The regulation settles the computation (P2), so the brief's
+other-deductee refusal is read as other deduction events under Act
+203(c)/(d)/222(b), represented by `other_deduction_months`, which are
+always refused. Simultaneous NH and auxiliary RET deductions without a
+binding maximum are supported so the explicitly required CFR .441 example
+can be reproduced. That example gives the wife's August $83 NH partial
+share, fully consumed by her own excess, and her October $82 check.
+Interpreting the brief as excluding any simultaneous RET deductee would
+instead refuse the example, not produce a different computed amount.
 
 ## Deduction before reduction and the G contract
 
