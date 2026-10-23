@@ -713,8 +713,8 @@ and "FRA for widow(er)'s benefits was age 62", then "People Born from
 years." and "1/2/1912—1/1/1940 65 years."
 
 A widow(er) of this cohort has a reduced benefit only if first entitled
-before full retirement age: before January 1973 under FRA 62, before
-January 1976 under FRA 65. Both precede January 1978, which
+before full retirement age, which the cohort attains during 1973 under FRA
+62 and during 1976 under FRA 65. Both precede January 1978, which
 `arf_initial_entitlement_before_1978` refuses independently; entitlement
 from 1978 falls after both ages and has no reduction months. The FRA helper
 must return one month, so it still refuses the cohort by name, and
@@ -722,10 +722,9 @@ must return one month, so it still refuses the cohort by name, and
 Act points to POMS's boundary: Pub. L. 92-603 §102(i) applies the 1972
 widow amendments "with respect to monthly benefits ... for months after
 December 1972", and a birth on January 2, 1911 attains 62 on January 1,
-1973. (The provision is printed in the statutory notes of the LII 42
-U.S.C. 402 page whose served body this module's manifest pins, SHA-256
-`e5bb977c3ab381c2c3bd4f6bb320b86f25e2f0ad2b629e01333be56727d3823b`; the
-excerpt file quotes only 402(q).) The regulation's January 2, 1912 boundary would then be a regulation
+1973. (The provision is excerpted from the statutory notes of the same
+LII 42 U.S.C. 402 body pinned in this module's manifest, in
+`lii_usc_402q_415f_excerpts.txt`.) The regulation's January 2, 1912 boundary would then be a regulation
 at odds with its statute, which P2 returns to Max. An invented January 2,
 1911 birth claiming January 1973 with PIA $1,000 gives $829 under FRA 65
 (36/60 of 28.5 percent) versus $1,000 under FRA 62; that claim is outside
@@ -743,14 +742,17 @@ such benefit was determined under paragraph (5)(D)", the mother/father
 floor, while (q)(7)(B) gives wife's and husband's benefits the plainer test
 "any month in which such individual had in his or her care ... a child of
 such person entitled to child's insurance benefits". Congress used
-different words for widows, so the Act and SSA's manual credit only months
-in which the floor set the benefit; the regulation copies the wife's
-wording and credits every caregiving month.
+different words for widows. On the better reading the Act and SSA's
+manual credit only months in which the floor set the benefit, while the
+regulation copies the wife's wording and credits every caregiving month.
+A broader reading of "determined under paragraph (5)(D)" is arguable:
+(5)(D) is applied in every caregiving month, even when it does not bind,
+and on that reading the three sources could be harmonized.
 
-That is a regulation reaching past its statute. P2 returns such a case to
+So the regulation may reach past its statute. P2 returns such a case to
 Max, and whether P2 covers SSA's 20 CFR at all (it names Treasury
 regulations) is itself unruled, so both are queued together as decision
-d1920, recommending the statute. Until he rules, the supported input
+d1920, recommending the narrower statutory reading. Until he rules, the supported input
 certifies actual mother/father-rate months and a nonbinding caregiving
 history keeps the named refusal. At age 64, FRA 67, PIA $1,000, 36/84 of
 28.5 percent gives $877.80; crediting six nonbinding caregiving months

@@ -14,6 +14,7 @@ import pytest
 
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
+from tests.track_b_arf_recompute_support import source_text
 from tests.track_b_gross_benefit_support import ssa_params
 
 PARAMS = ssa_params()
@@ -616,6 +617,17 @@ def test_historic_survivor_fra_conflict_is_refused():
     # POMS FRA65; CFR FRA62 gives1000. Neither reading is paid by R3.
     assert g.survivor_age_reduced(F(1000), 36, 60, PARAMS) == F(829)
     assert F(1000) - F(829) == F(171)
+    # The conflict cannot change a supported amount: under either FRA every
+    # reduced entitlement of the cohort is first entitled before 1978, which
+    # arf_initial_entitlement_before_1978 refuses independently.
+    for birth in (date(1911, 1, 2), date(1912, 1, 1)):
+        for fra_years in (62, 65):
+            assert a.age_attainment_month(birth, fra_years * 12) < g.YearMonth(
+                1978, 1
+            )
+    assert "for months after December 1972." in " ".join(
+        source_text("lii_usc_402q_415f_excerpts").split()
+    )
 
 
 def test_widow_nonbinding_child_care_readings_are_explicit():
