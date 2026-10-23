@@ -55,11 +55,14 @@ SSA-linked file.
 | SIPP public-use panels | Monthly receipt, earnings and marital status | Public download | Variables verified through the Census API |
 | SIPP Synthetic Beta, validated on the Gold Standard File | Insured status and claim timing for older cohorts, to 2014 | Application approved in about five business days; real results only through Census validation | Verified on census.gov |
 | FSRDC files linking SIPP, CPS or ACS to SSA records | Everything, including possible deduction fields | Person with Special Sworn Status on site; 6-12 months; $15,000-20,000 a year per project | Verified on the SAP catalog and RDC pages |
-| BEPUF 2020 | Linked earnings and benefit records, for J and recipient-side checks | Public CC0 download | Field list UNVERIFIED: the user guide was not opened |
+| BEPUF 2020 | Structural and recipient-side sanity checks only | Public CC0 download | **Fully synthetic** (section 5): not observed data, so not a holdout for J, B5-empirical or I |
 | Disability Analysis File | Monthly disability participation, with birth and death dates | "Restricted public" | Access UNVERIFIED |
 | SSA Supplement, DI ASR, OACT series, Monthly Snapshot | Aggregate stocks, flows, awards, withholding (6.E) | Public | Section and table indexes verified; several sections already exposed (section 2) |
 | NCHS life tables, mortality files and HMD | B4 mortality | Public; HMD needs registration | HMD and NCHS share vital-registration inputs, so they are not independent of each other |
 | ACS and CPS marital and earnings tables | B4 state shares; B3 employment margins | Public | Metadata verified |
+
+BEPUF 2020 was the strongest public candidate for J. It is fully
+synthetic (section 5), which leaves these gaps.
 
 **Gaps no verified public source closes:**
 - the insured, unclaimed person-month risk set (B6a);
@@ -242,10 +245,19 @@ only.
 These are facts the lanes could not open. Verify them in a browser,
 which works where automated fetches are refused, and open no numeric
 table:
-1. **BEPUF 2020's field list** (its user guide): entitlement dates,
-   payment status, work-deduction or withholding fields, deaths, spouse
-   links. This decides whether a public source can serve B5-empirical, I
-   and J.
+1. **BEPUF 2020: settled, 2026-10-23.** SSA's landing page
+   (https://www.ssa.gov/policy/docs/microdata/bepuf-2020/index.html, opened
+   in a browser; it showed no outcome figures) describes the file as "fully
+   synthetic microdata records statistically representing a self-weighted
+   10 percent sample of the current adult OASDI beneficiary population as
+   of December 2020". It says each record's earnings history and benefit
+   credited are related "by statistical modeling rather than by applying
+   Social Security program rules", and cautions against using them
+   together for individual-level analysis. A synthetic file is not
+   observed data, so it cannot serve as an observed holdout for J,
+   B5-empirical or I's timing gate, whatever its fields. The user guide
+   PDF did not render as text in the browser, and its field list is
+   unread; nothing above depends on it.
 2. **HRS terms:** whether an agent lane may analyse public files that a
    person registered, and the restricted-data access route, eligibility
    and lead time.
