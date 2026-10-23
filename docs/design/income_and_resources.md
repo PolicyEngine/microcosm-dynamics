@@ -78,7 +78,7 @@ Captures are in `EV/income-resources-20261021/sources/`, listed with their hashe
 
 ### 2.6 What the coordinator priced
 
-The coordinator's forecast, in revisions 1 and 2 of 21 and 22 October (`EV/coordinator/parity-forecast-20261021.md`, rows for these three items), listed as its own order-of-magnitude estimates covered and noncovered earnings at 8–12 engineer-days, SSI in the projection at 10–20, and wealth, pensions and other income at 30–60. No design priced them. Revision 4 (23 October) replaces those rows with this design's draft figures (`:89–91`). Its stress test assumes five of eight later milestones need a second attempt, "a stress assumption, not a rate" (`:76`); the gate record it cites is that four of the seven locked passing gates needed an amendment after an earlier failure, with `gate_epuf_fill` and B2 recorded separately (`:38`). §4.4 sets this design's figures beside the coordinator's.
+The coordinator's forecast, in revisions 1 and 2 of 21 and 22 October (`EV/coordinator/parity-forecast-20261021.md`, rows for these three items), listed as its own order-of-magnitude estimates covered and noncovered earnings at 8–12 engineer-days, SSI in the projection at 10–20, and wealth, pensions and other income at 30–60. No design priced them. Revision 4 (23 October) replaces those rows with figures from an earlier draft of this design (`:89–91`). Its CE and wealth rows match this revision; its SSI allowance is 60–92 d rather than 64–97 d, and its shared allowance is 51–79 d rather than 54–84 d. §4.4 gives this revision's prices. Its stress test assumes five of eight later milestones need a second attempt, "a stress assumption, not a rate" (`:76`); the gate record it cites is that four of the seven locked passing gates needed an amendment after an earlier failure, with `gate_epuf_fill` and B2 recorded separately (`:38`). §4.4 sets this design's figures beside the coordinator's.
 
 ### 2.7 PSID's conditions of use, and Max's ruling (d1899)
 
@@ -621,4 +621,4 @@ Each is a call this design cannot make. The coordinator brings them to Max; noth
 | R4.2 CPS ASEC had no owning deliverable | Low | Removed from §5 |
 | R4.3 HRS onboarding time stated as fact | Low | "end-to-end onboarding time is unverified" (§12) |
 | d1899 ruled: continue under July terms | — | §2.7 cites the ruling; PSID rows proceed; the September supplements and new downloads wait on d1901 (§2.7, §4.1, §4.3, §5, §10.2, §10.3, §12) |
-| Forecast revision 4 replaced its own estimates with this design's | — | §2.6 cites revisions 1 and 2 for the coordinator's estimates |
+| Forecast revision 4 replaced its own estimates with an earlier draft snapshot of this design's | — | §2.6 cites revisions 1 and 2 for the coordinator's estimates and records where revision 4's snapshot differs from this revision (round 5's low finding) |
