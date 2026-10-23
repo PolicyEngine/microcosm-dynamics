@@ -49,6 +49,18 @@ def test_u1_literals_equal_the_u1_modules():
     )
 
 
+def test_the_u1_input_frame_pin_is_u1s_artifacts():
+    """The d1597 entry's pin is the one U1's committed artifact records
+    (review of 9f79818a, finding 6); only that hash is compared."""
+    import json
+
+    artifact = json.loads(identity.U1_ARTIFACT_PATH.read_text())
+    assert (
+        artifact["cohort_provenance"]["input_frames_sha256"]
+        == rows._U1_INPUT_FRAMES_SHA256
+    )
+
+
 def test_u2_identity_is_separate():
     record = identity.identity()
     assert record["target_id"] == "U2"

@@ -2273,7 +2273,7 @@ Revision verification comprised the two touched test files and `tests/track_u2/t
   - **Finding 2.** The exposure record names this lane's session, its scratchpad and every U1 differential run, with both checkouts, and reads d1649's ruling correctly.
   - **Findings 3 and 5.** Tests now make each half of the d1242 guard fire on its own, and test amendment 6's option.
   - **Finding 4.** A missing d1090 exclusion entry refuses with a message instead of a bare `StopIteration`.
-  - **Finding 6.** Left for later: a test that holds the d1597 pin equal to U1's committed artifact would read that artifact, which waits for the coordinating session's PSID hold of 2026-10-23. The pin stays held to §13's text.
+  - **Finding 6.** A test holds the d1597 pin equal to the one U1's committed artifact records, comparing only that hash. It landed after the coordinating session's protective PSID hold of 2026-10-23 was lifted the same day (d1899).
   - **Finding 7.** §15 and §20 step 5 say exactly what the preflight checks of the registration: an issue #42 comment URL and an equal binding. That the comment exists, and that the forecast came before it, are kept by process.
   - **Finding 8.** A test holds `u1_identity.json`'s version equal to the code's.
   - This round changes code in `rows.py`, so the U1 differential ran again at the new last code change, `14d9576a`: equal in every check (`docs/design/u2_m2_u1_differential_14d9576.json`; §20 step 6).

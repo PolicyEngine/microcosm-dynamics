@@ -394,7 +394,7 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 
 **Ran:**
 - **Tests.** The U2 and U1 test files, the specification tests and the birth-evidence artifact test, with `POPULACE_DYNAMICS_PSID_DIR` set to the empty directory, which stayed empty, so the checks that need PSID documentation skipped. Also Black and Ruff, the tier recount by collection, and the mutation checks listed in the PR.
-- **Block, rulings and appendix checks.** Every one reads only the specification, the committed registries and the code.
+- **Block, rulings and appendix checks.** Every one reads only the specification, the committed registries and the code. After the PSID hold of 2026-10-23 was lifted (d1899), one identity test loads U1's committed artifact in memory to compare one hash, and prints nothing. While the hold stood, this lane ran only unit-tier and specification tests.
 - **The U1 differential** (`scripts/u2_u1_differential.py`, invented data only, with the empty PSID directory and this lane's virtual environment). Its two checkouts are worktrees of this repository: the base, `~/PolicyEngine/_clones/md-u2-diff-base-9cee2423`, detached at `9cee2423`, and the candidate, `~/PolicyEngine/_clones/md-u2-diff-cand`, detached at the head under test.
   - **Trial at `690a1276`** (2026-10-21): equal in every check.
   - **At `1742efb1`** (2026-10-22): equal in every check; report committed as `docs/design/u2_m2_u1_differential_1742efb.json`.
