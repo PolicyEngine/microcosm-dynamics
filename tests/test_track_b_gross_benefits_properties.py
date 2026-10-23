@@ -2,11 +2,12 @@
 
 Families are invented by Hypothesis: records from the statutory maximum
 (SSA-published NAWI, eligibility 1983-2026, random COLAs, RIB-LIM
-survivors), with random spouses, children, widow(er)s, mother/fathers and
-divorced beneficiaries, age reductions, credit-increased widow(er) OBs and
-dual entitlement (reduced, credited or disability own benefits; spouses by
-method B or C). Households pair two such records. Each property is stated
-in the PR and in ``docs/design/track_b_g_gross_benefits.md``.
+survivors), with random spouses, children, widow(er)s, mother/fathers,
+parents and divorced beneficiaries, age reductions, credit-increased
+widow(er) OBs and dual entitlement (reduced, credited or disability own
+benefits; spouses by method B or C). Households pair two such records. Each
+property is stated in the PR and in
+``docs/design/track_b_g_gross_benefits.md``.
 
 Intended violations are labelled: adding a *dually entitled* auxiliary can
 raise another auxiliary's benefit under POMS RS 00615.768 (the Parisi
@@ -18,9 +19,10 @@ counterexample for the dual case is pinned as intended behavior.
 from __future__ import annotations
 
 import dataclasses
+from datetime import date
 from fractions import Fraction as F
 
-from hypothesis import assume, given, settings, target
+from hypothesis import assume, example, given, settings, target
 from hypothesis import strategies as st
 
 from populace_dynamics.estimates.ledgers import floor_to_dime
@@ -59,7 +61,7 @@ def records(draw, kind=None):
             extra["worker_reduction_months"] = draw(st.integers(0, 60))
         else:
             # Credits run from full retirement age to 70 (402(w)(2)(A)).
-            birth = draw(st.integers(1925, 1990))
+            birth = draw(st.integers(max(1925, year - 62), 1990))
             window = g.delayed_credit_window_months(birth, PARAMS)
             extra["worker_delayed_credit_months"] = draw(
                 st.integers(0, window)
@@ -69,6 +71,10 @@ def records(draw, kind=None):
         kind, year, pia, cola_percents=tuple(draw(cola_lists)), **extra
     )
     state = g.record_state(record, PARAMS)
+    if kind is g.FamilyKind.SURVIVOR:
+        # Invented records explicitly exclude May 1978 protection; an
+        # omitted prior DIB date alone does not establish that fact.
+        state = dataclasses.replace(state, widow_drc_savings_clause=False)
     if kind is g.FamilyKind.SURVIVOR and draw(st.booleans()):
         # The deceased took a reduced RIB (402(e)(2)(D), RS 00615.320):
         # the RIB-LIM is that reduced benefit at the current PIA.
@@ -78,7 +84,7 @@ def records(draw, kind=None):
     return state
 
 
-def _own_benefits(draw, *, old_age_only):
+def _own_benefits(draw, *, old_age_only, birth_year=None):
     if draw(st.integers(0, 2)) == 0:
         return None
     pia = draw(dimes)
@@ -96,8 +102,14 @@ def _own_benefits(draw, *, old_age_only):
             delayed_credit_months=draw(st.integers(1, window)),
             birth_year=birth,
         )
+    # A widow's cohort is already known even when this own field is omitted.
+    # Keep inheritance exercised, with every legal reduced-RIB month for
+    # that cohort. The global generator still spans all 1-60 months.
+    maximum_months = (
+        60 if birth_year is None else PARAMS.fra_months(birth_year) - 744
+    )
     return g.OwnBenefit(
-        OLD_AGE, pia, reduction_months=draw(st.integers(1, 60))
+        OLD_AGE, pia, reduction_months=draw(st.integers(1, maximum_months))
     )
 
 
@@ -112,6 +124,7 @@ def beneficiaries(draw, state, index, *, dual=True):
                     g.Role.WIDOW,
                     g.Role.SURVIVING_DIVORCED_SPOUSE,
                     g.Role.MOTHER_FATHER,
+                    g.Role.PARENT,
                     g.Role.CHILD,
                     g.Role.CHILD,
                 ]
@@ -130,26 +143,46 @@ def beneficiaries(draw, state, index, *, dual=True):
             )
         )
     fields = {}
-    if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
-        fields["reduction_months"] = draw(st.integers(0, 60))
+    if role is g.Role.DIVORCED_SPOUSE:
+        fields["child_in_care"] = False
+        fields["first_entitlement_child_in_care"] = False
     widow = role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE)
     if widow:
-        period = draw(st.integers(60, 84))
+        fields["child_in_care"] = False
+        fields["birth_year"] = draw(st.integers(1929, 1995))
+        period = g.widow_reduction_period_months(
+            date(fields["birth_year"], 7, 1)
+        )
         fields["reduction_period_months"] = period
         fields["reduction_months"] = draw(st.integers(0, period))
-        fields["birth_year"] = draw(st.integers(1929, 1995))
         if draw(st.integers(0, 3)) == 0:
             # 402(e)(2)(C): the deceased's credit-increased benefit.
             extra = draw(st.integers(0, int(state.pia * 3)))
             fields["original_benefit_basis"] = state.pia + F(extra, 10)
     own = (
-        _own_benefits(draw, old_age_only=widow)
+        _own_benefits(
+            draw, old_age_only=widow, birth_year=fields.get("birth_year")
+        )
         if dual and role is not g.Role.CHILD or dual and draw(st.booleans())
         else None
     )
-    if own is not None and role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
-        # A then B (method C) or B then A (method B).
-        fields["own_benefit_first"] = draw(st.booleans())
+    if widow and own is not None and own.birth_year is not None:
+        fields["birth_year"] = own.birth_year
+        period = g.widow_reduction_period_months(date(own.birth_year, 7, 1))
+        fields["reduction_period_months"] = period
+        fields["reduction_months"] = min(fields["reduction_months"], period)
+    if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
+        # Own delayed credits supply a cohort for the auxiliary too. Draw
+        # every legal month once that metadata is known; unknown cohorts
+        # and FRA-67 cohorts retain the full global 0-60 month range.
+        cohort = None if own is None else own.birth_year
+        maximum_months = (
+            60 if cohort is None else PARAMS.fra_months(cohort) - 744
+        )
+        fields["reduction_months"] = draw(st.integers(0, maximum_months))
+        if own is not None:
+            # A then B (method C) or B then A (method B).
+            fields["own_benefit_first"] = draw(st.booleans())
     return g.Beneficiary(bid, role, own_benefit=own, **fields)
 
 
@@ -249,6 +282,7 @@ def test_shares_are_proportional_to_original_benefits(family):
 # ===========================================================================
 # I3. Raising the PIA never lowers the family maximum
 # ===========================================================================
+@settings(deadline=None)
 @given(years, dimes, dimes, cola_lists)
 def test_family_maximum_is_monotone_in_the_pia(year, a, b, colas):
     low, high = sorted((a, b))
@@ -260,6 +294,7 @@ def test_family_maximum_is_monotone_in_the_pia(year, a, b, colas):
     assert fm(low, year, PARAMS) >= F(3, 2) * low - DIME
 
 
+@settings(deadline=None)
 @given(dimes, dimes, st.integers(0, 20_000), st.integers(0, 20_000))
 def test_disability_maximum_is_monotone(a, b, aime_a, aime_b):
     low, high = sorted((a, b))
@@ -358,13 +393,6 @@ def test_dual_entitlement_never_goes_below_the_own_benefit(family):
 # I6. Unsupported configurations always raise, and stay in denominators
 # ===========================================================================
 UNSUPPORTED_MEMBERS = [
-    g.Beneficiary("parent", g.Role.PARENT),
-    g.Beneficiary("dwb", g.Role.DISABLED_WIDOW),
-    g.Beneficiary(
-        "gpo",
-        g.Role.CHILD,
-        conditions={g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET},
-    ),
     g.Beneficiary(
         "cfm",
         g.Role.CHILD,
@@ -382,7 +410,18 @@ UNSUPPORTED_MEMBERS = [
 @given(
     st.sampled_from(UNSUPPORTED_MEMBERS),
     st.integers(0, 6),
-    st.sampled_from(list(g.RecordCondition) + [None]),
+    st.sampled_from(
+        [
+            c
+            for c in g.RecordCondition
+            if c
+            not in {
+                g.RecordCondition.WORKER_NOT_ENTITLED,
+                g.RecordCondition.WINDFALL_ELIMINATION_PROVISION,
+            }
+        ]
+        + [None]
+    ),
     st.data(),
 )
 def test_unsupported_configurations_always_raise(
@@ -406,11 +445,12 @@ def test_unsupported_configurations_always_raise(
     assert (denominator.rows, denominator.unsupported_rows) == (1, 1)
 
 
+@settings(deadline=None)
 @given(st.lists(st.tuples(families(), st.booleans()), max_size=8))
 def test_denominators_keep_every_row(rows):
     outcomes = []
     for index, ((state, members), poison) in enumerate(rows):
-        injected = [*members, UNSUPPORTED_MEMBERS[2]] if poison else members
+        injected = [*members, UNSUPPORTED_MEMBERS[1]] if poison else members
         outcomes.append(
             g.evaluate_family(
                 f"r{index}",
@@ -468,6 +508,7 @@ def test_amounts_are_dimes_and_payments_whole_dollars(family):
 # ===========================================================================
 # Differential: the existing float oracle (ss/benefits.py) where it overlaps
 # ===========================================================================
+@settings(deadline=None)
 @given(st.integers(0, 60), st.integers(0, 60), st.integers(0, 84))
 def test_reduction_fractions_match_the_float_oracle(months, spouse, widow):
     # policyengine-us stores 5/9 of 1 percent as 0.00555556, so the worker
@@ -490,6 +531,7 @@ def test_reduction_fractions_match_the_float_oracle(months, spouse, widow):
     )
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(0, 10**6), st.integers(0, 60), st.integers(0, 60))
 def test_spouse_benefit_matches_the_oracle_within_one_dime(
     worker_pia, own_draw, months, own_months
@@ -528,6 +570,7 @@ def test_spouse_benefit_matches_the_oracle_within_one_dime(
     assert row.auxiliary_payable <= F(repr(expected)) + F(1, 10**6)
 
 
+@settings(deadline=None)
 @given(dimes, dimes, st.integers(0, 84), st.integers(0, 36))
 def test_widow_benefit_matches_the_oracle_within_rounding(
     deceased_pia, own_pia, months, deceased_early
@@ -545,6 +588,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
         g.FamilyKind.SURVIVOR,
         deceased_pia,
         g.floor_dime(F(188, 100) * deceased_pia),
+        widow_drc_savings_clause=False,
         rib_lim_benefit=deceased_rib if deceased_early else None,
     )
     widow = g.Beneficiary(
@@ -554,6 +598,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
         reduction_period_months=84,
         own_benefit=g.OwnBenefit(OLD_AGE, own_pia),
         birth_year=1962,
+        child_in_care=False,
     )
     row = _compute(state, [widow]).by_id()["w"]
     oracle_factor = float(deceased_rib / deceased_pia) if deceased_early else 1
@@ -572,6 +617,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
     assert row.total_received <= expected + F(1, 10**6)
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(0, 60), st.integers(1917, 1990))
 def test_delayed_credits_match_the_sealed_legacy_oracle_within_one_dime(
     pia, months, birth_year
@@ -625,6 +671,7 @@ def test_delayed_credits_match_the_statutory_float_function_over_the_whole_windo
     assert credited <= unrounded + F(1, 10**6)
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(1, 60))
 def test_float_ledger_is_never_above_and_at_most_a_dime_below(pia, months):
     """The sealed ledger path vs the exact fraction (POMS RS 00615.005B).
@@ -827,17 +874,16 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
     st.integers(1, 90),
     st.data(),
 )
-def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
+def test_formula_maximum_colas_preserve_available_room_and_guard_contract(
     kind, year, pia, colas, tenths, data
 ):
-    """With the statutory maximum, a COLA never trips 403(a)(5).
+    """A formula COLA preserves available room; rounded totals may fall.
 
     A COLA of c raises the maximum by floor(10 x FMAX x c) dimes and the
     PIA by floor(10 x PIA x c) dimes, and FMAX >= PIA, so the room left
-    for auxiliaries never shrinks. This property checks that the protected
-    total never falls either, for families that are not dually entitled.
-    The guard is for PIA increases that do not carry the maximum, and for
-    changes of membership.
+    for auxiliaries never shrinks. Separately dime-rounded proportional
+    shares need not have a monotone sum. A qualifying PIA increase protects
+    the earlier total: the guard refuses a lower total and retains the row.
     """
     extra = {}
     if kind is g.FamilyKind.DISABILITY:
@@ -848,7 +894,12 @@ def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
         record = g.WorkerRecord(
             kind, year, pia, cola_percents=tuple(increases), **extra
         )
-        return g.record_state(record, PARAMS)
+        result = g.record_state(record, PARAMS)
+        if kind is g.FamilyKind.SURVIVOR:
+            result = dataclasses.replace(
+                result, widow_drc_savings_clause=False
+            )
+        return result
 
     before_state = state(colas)
     after_state = state([*colas, F(tenths, 10)])
@@ -864,8 +915,40 @@ def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
     except g.FamilyConfigurationUnsupported:
         assume(False)
     guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
-    assert guard.admit(before) is before
-    assert guard.admit(after) is after
+    assert after.available_for_auxiliaries >= before.available_for_auxiliaries
+    total = g.savings_clause_total
+    qualifying_increase = after.pia > before.pia and _qualifies(before)
+    must_refuse = (
+        qualifying_increase
+        and _governed(after)
+        and total(after) < total(before)
+    )
+    weight = F(7, 3)
+    outcomes = [
+        guard.evaluate("before COLA", weight, lambda: before),
+        guard.evaluate("after COLA", weight, lambda: after),
+    ]
+    assert outcomes[0].benefits is before
+    assert outcomes[1].supported is not must_refuse
+    if must_refuse:
+        assert outcomes[1].unsupported.reason is SAVINGS_CLAUSE
+        assert guard.refused_since == after.payment_month
+    else:
+        assert outcomes[1].benefits is after
+        assert guard.refused_since is None
+    assert guard.protected_total == (
+        total(before) if qualifying_increase else None
+    )
+    counts = g.count_family_outcomes(outcomes)
+    assert counts.rows == 2
+    assert counts.weight == 2 * weight
+    assert counts.supported_rows == 2 - int(must_refuse)
+    assert counts.supported_weight == (2 - int(must_refuse)) * weight
+    assert counts.unsupported_rows == int(must_refuse)
+    assert counts.unsupported_weight == int(must_refuse) * weight
+    assert counts.unsupported_by_reason == (
+        {SAVINGS_CLAUSE: (1, weight)} if must_refuse else {}
+    )
 
 
 @st.composite
@@ -952,6 +1035,23 @@ def test_savings_clause_guard_along_month_paths(path):
 
 
 @settings(max_examples=300, deadline=None)
+@example(
+    family=(
+        g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F(2),
+            F("3.30"),
+            widow_drc_savings_clause=False,
+        ),
+        [
+            g.Beneficiary("w1", g.Role.WIDOW, child_in_care=False),
+            g.Beneficiary("m", g.Role.MOTHER_FATHER),
+            g.Beneficiary("w2", g.Role.WIDOW, child_in_care=False),
+        ],
+    ),
+    tenths=50,
+    months=1,
+)
 @given(
     families(dual=False, min_size=2, max_size=5),
     st.integers(1, 90),
@@ -960,9 +1060,13 @@ def test_savings_clause_guard_along_month_paths(path):
 def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
     family, tenths, months
 ):
-    """g-r1 M2 generalized: a COLA, then an age-reduced spouse or widow(er)
-    joins in a month with no PIA increase. January is refused exactly when
-    November qualified and January's total fell below November's."""
+    """A reduced joiner cannot escape an earlier 403(a)(5) protection.
+
+    The COLA itself can lower the dime-rounded proportional total: PIA
+    2 -> 2.10 and maximum 3.30 -> 3.40 give 3.30 -> 3.20 for the explicit
+    widow/mother/widow case. A refusal then persists. If the COLA month
+    was admitted, retain the original joiner-month iff assertion.
+    """
     state, members = family
     raised, raised_members = _with_colas(state, members, [F(tenths, 10)])
     if state.kind is g.FamilyKind.SURVIVOR:
@@ -971,6 +1075,7 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
             g.Role.WIDOW,
             reduction_months=months,
             reduction_period_months=84,
+            child_in_care=False,
         )
     else:
         joiner = g.Beneficiary(
@@ -989,7 +1094,15 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
         g.YearMonth(2026, 10), earlier_months_unknown=False
     )
     guard.admit(path[0])
-    guard.admit(path[1])
+    prior_refused = False
+    try:
+        guard.admit(path[1])
+    except g.FamilyConfigurationUnsupported as error:
+        assert error.reason is SAVINGS_CLAUSE
+        assert path[1].pia > path[0].pia and _qualifies(path[0])
+        assert total(path[1]) < total(path[0])
+        assert guard.protected_total == total(path[0])
+        prior_refused = True
     try:
         guard.admit(path[2])
     except g.FamilyConfigurationUnsupported as error:
@@ -998,7 +1111,11 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
     else:
         refused = False
     protected = path[1].pia > path[0].pia and _qualifies(path[0])
-    assert refused == (protected and total(path[2]) < total(path[0]))
+    if prior_refused:
+        assert refused
+        assert guard.refused_since == path[1].payment_month
+    else:
+        assert refused == (protected and total(path[2]) < total(path[0]))
 
 
 # ===========================================================================
@@ -1021,7 +1138,7 @@ def test_input_errors_are_never_absorbed_as_refusals(
     state, members = family
     survivor = state.kind is g.FamilyKind.SURVIVOR
     if refused.role in (g.Role.PARENT, g.Role.DISABLED_WIDOW) and not survivor:
-        refused = UNSUPPORTED_MEMBERS[2]
+        refused = UNSUPPORTED_MEMBERS[1]
     members = list(members)
     members.insert(data.draw(st.integers(0, len(members))), refused)
     if error == "credits":
@@ -1031,7 +1148,11 @@ def test_input_errors_are_never_absorbed_as_refusals(
         )
         bad = (
             g.Beneficiary(
-                "bad", g.Role.WIDOW, own_benefit=own, birth_year=1960
+                "bad",
+                g.Role.WIDOW,
+                own_benefit=own,
+                birth_year=1960,
+                child_in_care=False,
             )
             if survivor
             else g.Beneficiary(

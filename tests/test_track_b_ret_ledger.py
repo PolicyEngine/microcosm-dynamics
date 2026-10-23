@@ -8,13 +8,16 @@ No survey data, population computation, or forecast claim is admitted.
 
 from __future__ import annotations
 
+import copy
 import dataclasses
+import pickle
 from fractions import Fraction as F
 
 import pytest
 
 from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b import ret_ledger as r
+from populace_dynamics.track_b._provenance import _computed, _result_values
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 from populace_dynamics.track_b.ret_grace import (
     BenefitType,
@@ -875,7 +878,10 @@ def test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share():
     assert stopped.crediting_months["spouse"] == frozenset()
 
 
-def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b():
+@pytest.mark.parametrize("child_in_care", [False, "cdb"])
+def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b(
+    child_in_care,
+):
     # A zero auxiliary rate after dual entitlement does not remove that
     # beneficiary from the family-maximum computation. Widow own work
     # can release room for the entitled CDB recipient.
@@ -894,6 +900,7 @@ def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b():
                 g.Role.WIDOW,
                 reduction_months=60,
                 reduction_period_months=84,
+                child_in_care=child_in_care,
             ),
             g.Beneficiary(
                 "cdb",
@@ -1260,3 +1267,170 @@ def test_survivors_own_excess_is_charged_on_a_deceased_record(benefit_type):
     ] == [200, 100, 0]
     assert all(row.nh_deduction == 0 for row in result.months)
     assert result.crediting_months["survivor"] == {1, 2}
+
+
+def _ret_result_values(value):
+    return {
+        item.name: getattr(value, item.name)
+        for item in dataclasses.fields(value)
+    }
+
+
+def _unsealed_ret_result(value):
+    forged = object.__new__(type(value))
+    for name, item in _ret_result_values(value).items():
+        object.__setattr__(forged, name, item)
+    return forged
+
+
+@pytest.mark.parametrize(
+    "kind",
+    ["allocation", "month", "worker", "ledger", "outcome", "denominator"],
+)
+@pytest.mark.parametrize(
+    "operation", ["construct", "replace", "copy", "deepcopy"]
+)
+def test_ret_computed_values_reject_public_construction_and_copy(
+    kind, operation
+):
+    result = ledger()
+    outcome = r.evaluate_ret("supported", 1, lambda: result)
+    values = {
+        "allocation": r.partial_payments(1, {"nh": 2}, {"nh": 2}),
+        "month": result.months[0],
+        "worker": result.workers[0],
+        "ledger": result,
+        "outcome": outcome,
+        "denominator": r.count_ret_outcomes([outcome]),
+    }
+    value = values[kind]
+    operations = {
+        "construct": lambda: type(value)(**_ret_result_values(value)),
+        "replace": lambda: dataclasses.replace(value),
+        "copy": lambda: copy.copy(value),
+        "deepcopy": lambda: copy.deepcopy(value),
+    }
+    with pytest.raises(InvalidFamilyInput):
+        operations[operation]()
+
+
+@pytest.mark.parametrize("tamper", ["unsealed", "ledger", "month", "worker"])
+def test_evaluate_ret_rejects_caller_built_or_altered_ledger(tamper):
+    result = ledger()
+    if tamper == "unsealed":
+        result = _unsealed_ret_result(result)
+    elif tamper == "ledger":
+        object.__setattr__(result, "year", YEAR + 1)
+    elif tamper == "month":
+        object.__setattr__(result.months[0], "payment", 999)
+    else:
+        object.__setattr__(result.workers[0], "charged", F(999))
+    with pytest.raises(InvalidFamilyInput):
+        r.evaluate_ret("forged", 1, lambda: result)
+
+
+def test_ret_evaluator_rejects_other_layer_results_as_input_error():
+    family = g.family_benefits(
+        g.RecordState(
+            g.FamilyKind.SURVIVOR, F(1000), F(1500), eligibility_year=YEAR
+        ),
+        [],
+        payment_month=g.YearMonth(YEAR, 1),
+        params=ssa_params(),
+        standalone=True,
+    )
+    with pytest.raises(InvalidFamilyInput):
+        r.evaluate_ret("wrong-layer", 1, lambda: family)
+
+
+@pytest.mark.parametrize("key, weight", [("", 1), ("ok", -1), ("ok", 1.5)])
+def test_ret_evaluator_validates_metadata_before_computation(key, weight):
+    called = []
+    with pytest.raises(InvalidFamilyInput):
+        r.evaluate_ret(key, weight, lambda: called.append(True) or ledger())
+    assert called == []
+
+
+@pytest.mark.parametrize("tamper", ["unsealed", "weight", "ledger"])
+def test_ret_counter_rejects_unsealed_or_altered_outcomes(tamper):
+    outcome = r.evaluate_ret("supported", 1, ledger)
+    if tamper == "unsealed":
+        outcome = _unsealed_ret_result(outcome)
+    elif tamper == "weight":
+        object.__setattr__(outcome, "weight", F(2))
+    else:
+        object.__setattr__(outcome.ledger, "year", YEAR + 1)
+    with pytest.raises(InvalidFamilyInput):
+        r.count_ret_outcomes([outcome])
+
+
+@pytest.mark.parametrize("protocol", range(pickle.HIGHEST_PROTOCOL + 1))
+def test_ret_computed_values_cannot_be_pickled(protocol):
+    result = ledger()
+    supported = r.evaluate_ret("supported", 2, lambda: result)
+    refused = r.evaluate_ret("refused", 3, lambda: ledger(fiscal_year=True))
+    assert type(refused.unsupported) is r.RETConfigurationUnsupported
+    assert refused.unsupported.reason is r.UnsupportedReason.FISCAL_YEAR
+    assert refused.unsupported.code == "FAMILY_CONFIG_UNSUPPORTED"
+    assert r.count_ret_outcomes([refused]).unsupported_weight == 3
+    for value in (
+        r.partial_payments(1, {"nh": 2}, {"nh": 2}),
+        result.months[0],
+        result.workers[0],
+        result,
+        supported,
+        refused,
+        refused.unsupported,
+        r.count_ret_outcomes([supported, refused]),
+    ):
+        with pytest.raises(InvalidFamilyInput):
+            pickle.dumps(value, protocol=protocol)
+
+
+def test_ret_counter_and_common_counter_have_identical_counts():
+    outcomes = [
+        r.evaluate_ret("supported", 2, ledger),
+        r.evaluate_ret("refused", 3, lambda: ledger(fiscal_year=True)),
+    ]
+    assert r.count_ret_outcomes(outcomes) == g.count_family_outcomes(outcomes)
+
+
+def test_survivor_care_requires_child_identity_not_boolean_true():
+    # Positive care is child_in_care="cdb" in the paired maximum case.
+    # A bare True cannot attest which entitled child is in care in G v2.
+    with pytest.raises(InvalidFamilyInput, match="child_in_care"):
+        g.Beneficiary(
+            "widow",
+            g.Role.WIDOW,
+            reduction_months=60,
+            reduction_period_months=84,
+            child_in_care=True,
+        )
+
+
+@pytest.mark.parametrize(
+    "kind, field, value",
+    [
+        ("month", "net_due", F(999)),
+        ("month", "payment", 999),
+        ("month", "provisional_payment", 999),
+        ("worker", "charged", F(1)),
+        ("worker", "excess", 1),
+        ("ledger", "crediting_months", {"nh": frozenset({1})}),
+        ("ledger", "reconciliation", {"nh": 1}),
+    ],
+)
+def test_ret_private_capability_rechecks_accounting_identities(
+    kind, field, value
+):
+    result = ledger()
+    target = {
+        "month": result.months[0],
+        "worker": result.workers[0],
+        "ledger": result,
+    }[kind]
+    # Private capability exercises seal-time validation; persistence is forbidden.
+    cls, fields = type(target), _result_values(target)
+    fields[field] = value
+    with pytest.raises(InvalidFamilyInput):
+        _computed(cls, **fields)
