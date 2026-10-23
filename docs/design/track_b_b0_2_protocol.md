@@ -22,6 +22,15 @@ script then runs once, from a clean worktree at that commit. If the
 review changes the block, the pin and the script change with it before
 the freeze.
 
+Review round 1 (Sol, at `ec9eb486`) asked for changes, and the block was
+revised before any freeze:
+- **Ages:** a known-age definition, so a missing age (999) is in no band
+  and not in the Track A proxy.
+- **Disclosure:** coarsening and an integer-programming audit, which
+  replace subtraction-based complementary suppression, after two
+  executed recoveries of small cells.
+- **One run:** a frozen-status check and an attempt record.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -121,10 +130,16 @@ stay byte-identical.
   wave's relationship codes, with a positive weight at *w*, and whose
   role's labor income is below the sentinel. This is B0.1's
   `earnings_rows` rule, imported unchanged.
-- **Age bands.**
+- **Known age.** An age is known when it is an integer from 1 to 125,
+  the range the repository's readers accept
+  (`cohorts.age67._MAX_AGE_CODE`, which treats larger values, such as
+  999, as missing). Any other value, including 0 and 999, is an unknown
+  age. A person of unknown age is in no age band and in no age-defined
+  roster.
+- **Age bands,** on known ages only.
   - Older bands: 62-64, 65-66, 67-69 (B3's bands).
   - Context bands: 25-44, 45-61.
-  - Roster bands: 0-24, 25-44, 45-61, 62-64, 65-66, 67-69, 70-79, 80 and
+  - Roster bands: 1-24, 25-44, 45-61, 62-64, 65-66, 67-69, 70-79, 80 and
     over.
 - **Rosters at the 2011 wave** (H's candidates):
   - `R_FULL`: persons present (sequence 1-20) with a positive individual
@@ -134,13 +149,15 @@ stay byte-identical.
     B0.1's committed count (`docs/design/track_b_b0_1_counts.json`);
     this is a consistency check only.
   - `R_TA_PROXY`: persons present at 2011 with a positive 2011
-    cross-sectional weight and a reported 2011 age of 30 or over.
+    cross-sectional weight and a known 2011 age of 30 or over.
     - It is a proxy for Track A's closed cohort (persons born in 1980 or
       earlier, `cohorts/psid2010.py`).
     - Track A's own birth-year law reads marriage histories and earnings,
       so version 1 does not reproduce it. The H record cites Track A's
       own record for the exact cohort.
-- **Roster counts.** For each roster, overall and by roster band at 2011:
+- **Roster counts.** For each roster, overall, by roster band at 2011,
+  and for unknown age at 2011, so that the bands and unknown age
+  partition the roster:
   - persons;
   - households (2011 interview numbers);
   - design strata and clusters;
@@ -194,43 +211,111 @@ stay byte-identical.
 
 PSID's Conditions of Use, as agreed at the July 2026 download, allow
 "aggregate statistical reporting" only. Max's ruling d1899 adds "no
-small-cell counts on GitHub". So the committed output follows these
-rules:
+small-cell counts on GitHub". Suppressing small cells, and their
+complements by subtraction, is not enough: integer and nonnegativity
+bounds, and remainders that are never published, can still pin a small
+cell exactly (review round 1 of this protocol). So the committed output
+is coarsened, then audited, by these rules.
 
-- **Suppression.** Any count from 1 to 9 is written as the string `"<10"`.
-  So is every effective size computed on a set whose row or person count
-  is below 10. A count of 0 is written as 0.
-- **Complementary suppression.** Where a total and all but one of its
-  parts are published, a suppressed part could be recovered by
-  subtraction. In that case the smallest remaining published part of
-  the same total is also suppressed, and this is repeated until no
-  suppressed cell can be recovered from published cells of the same
-  table.
-- **Local copy.** The unsuppressed counts are written to a second file,
-  outside the repository, in B0.2's evidence folder. That file is never
-  committed.
-- **Tests.** Unit tests check both rules on invented tables, including a
-  table where subtraction would reveal a suppressed cell.
+- **Coarsening at base B.**
+  - A count of 0 is written as 0.
+  - A count from 1 to B − 1 is written as the string `"<B"`.
+  - A count of B or more is written as the nearest multiple of B,
+    rounding halves up.
+  - Effective sizes are coarsened in the same way, from their own values.
+  - Every count type is coarsened alike: persons, rows, pairs,
+    households, strata and clusters.
+  - B starts at 10.
+- **Sets and atoms.**
+  - Every published count is the size of one set of units of one type.
+    The types are persons; one wave's households; strata; and clusters
+    (stratum and cluster together). A row, a pair or an
+    accuracy-positive row is counted by its person, since a person has at
+    most one row per wave.
+  - For each unit type, the atoms are the classes of units that belong
+    to exactly the same published sets. Every published count is a sum
+    of atom sizes.
+  - Sets and atoms stay in memory, and their sizes stay in the local
+    copy. Neither is committed.
+- **Sensitive quantities.** These are:
+  - every atom whose true size is from 1 to 9; and
+  - every difference between a published set and a published subset of
+    it whose true size is from 1 to 9. Examples are a roster's persons in
+    no band, and `R_FULL` persons in B2 households who are not in `R_B2`.
+- **The audit.** For each sensitive quantity, the script solves two
+  integer programs for the quantity's size: a minimum and a maximum.
+  Integer, because an attacker may use integrality; a continuous
+  relaxation's range can be wider than the integer one.
+  - **Variables:** nonnegative integer atom sizes.
+  - **Published counts:** every published value constrains the sum of
+    its set's atoms to an interval:
+    - exactly 0 for 0;
+    - from 1 to B − 1 for `"<B"`;
+    - from m − B/2 to m + B/2 − 1 for a published multiple m.
+  - **Effective sizes:** each published effective size e also bounds a
+    count from below, because an effective size never exceeds the count
+    of units, or clusters, it is computed over. A Kish size bounds its
+    set's persons. A cluster-worst size bounds its households, or its
+    design clusters. The bound is max(0, e − B/2) for a multiple e, and
+    1 for `"<B"`.
+  - **Protection:** a quantity is protected when its maximum and minimum
+    differ by at least 4, so that at least five sizes remain possible. A
+    program that does not reach a proven optimum within 60 seconds
+    counts as unprotected. The release passes when every sensitive
+    quantity is protected.
+- **The ladder.**
+  - If the audit fails at B = 10, B becomes 50, then 100, then 500. The
+    audit reruns each time on the same counts.
+  - The first B that passes is used for the whole committed file.
+  - If none passes, the committed file holds only the disclosure block,
+    and the counts stay in the local copy.
+- **The disclosure block.** It records:
+  - B and the coarsening rule;
+  - the protection rule;
+  - for each B tried, how many quantities were audited and how many
+    failed.
 
-The threshold of 10 is version 1's. If Max or the coordinator sets
-another before the freeze, this section changes before it freezes; after
-the freeze, a change is a new version.
+  It never names a failing quantity.
+- **Local copy.** The unsuppressed counts, the atom sizes and the audit
+  results are written to a second file, outside the repository, in
+  B0.2's evidence folder. That file is never committed.
+- **Tests.** Unit tests check coarsening and the audit on invented
+  tables. They include each attack review round 1 executed:
+  - integer bounds pinning hidden bands;
+  - an unpublished remainder;
+  - an effective size bounding a count.
+
+  They also include a table that needs the ladder to reach B = 50.
+
+The threshold of 10, the protection width of 4 and the ladder are
+version 1's. If Max or the coordinator sets others before the freeze,
+this section changes before it freezes; after the freeze, a change is a
+new version.
 
 ### Output and stop rules
 
 - **The output.** The script writes one exclusive file,
   `docs/design/track_b_b0_2_counts.json`, with schema
-  `track_b_b0_2_counts.v1`. It holds the suppressed counts, under the
-  disclosure rule. The unsuppressed copy goes outside the repository. It refuses to overwrite a file, or to write
-  under `runs/`. The record carries:
+  `track_b_b0_2_counts.v1`. It holds the coarsened counts and the
+  disclosure block, under the disclosure rule. The unsuppressed copy
+  goes outside the repository. The script refuses to overwrite a file,
+  or to write under `runs/`. The record carries:
   - the repository head;
   - the script's SHA-256;
   - every opened PSID file's SHA-256;
   - the requested-label allowlist.
 - **One run.** It runs once, from a clean worktree at the commit that
   freezes this protocol, with at most four BLAS and OpenMP threads and
-  `OMP_WAIT_POLICY=PASSIVE`. If it fails, the failure is published, and
-  the protocol is revised in a new, dated version before any rerun.
+  `OMP_WAIT_POLICY=PASSIVE`.
+  - It refuses to start unless this file's status line reads FROZEN and
+    the block's SHA-256 equals the pin in its tests.
+  - Before it opens any PSID file, it creates an attempt record,
+    exclusively, beside the local copy. The record holds the repository
+    head, the script's SHA-256 and the start time.
+  - It refuses to start if an attempt record for this protocol version
+    already exists, so a failed run cannot be retried silently.
+  - If it fails, the failure is published, and the protocol is revised in
+    a new, dated version before any rerun.
 - **No changes after counts.** No definition above changes once counts
   are seen. A change is a new protocol version, recorded as such, with
   the reason.
