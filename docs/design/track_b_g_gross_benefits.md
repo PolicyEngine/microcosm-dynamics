@@ -489,9 +489,10 @@ maximum (215(i)(2)(A)(ii)), so an undimed initial maximum would be the only
 one of its kind; SSA's own description, the Bulletin, floors it. Where the
 statute is silent, P1 lets the agency's published reading fill the gap.
 A blind adjudication preferred leaving the maximum unrounded, reading the
-contrast with 403(a)(1) and 20 CFR 404.403(c) as deliberate; the stakes are
-at most $0.10 a month per auxiliary, and only after a COLA (the pre-COLA
-shares floor to the same dimes), so the published agency reading is kept.
+contrast with 403(a)(1) and 20 CFR 404.403(c) as deliberate. The stakes
+are a few dimes a month per auxiliary and arise only after COLAs: three
+successive 5 percent COLAs on PIA $1,000.10 and AIME $1,701 pay children
+$515.80 against $516.00. The published agency reading is kept.
 
 ## Households and the entry point
 
@@ -1312,9 +1313,11 @@ correct PIA; this layer does not calculate WEP.
 Parents on survivor records use 82.5 percent for one entitled parent and
 75 percent each for two, floored to a dime (202(h)(2); RS 00209.015). The
 maximum applies before 202(k)(3)(A)'s own-benefit offset. There is no age
-reduction. A parent's own RIB must be less than the parent's OB to establish
-entitlement (RS 00209.001). This compares the actual reduced or credited
-own RIB and the dime-rounded OB, rather than the own PIA. An own-DIB parent
+reduction. A parent's own RIB must be less than 82½ percent of the PIA, or
+75 percent when another parent is entitled, to establish entitlement
+(402(h)(1)(D); RS 00209.001 states the test with the OB). This compares the
+actual reduced or credited own RIB with the unrounded statutory share,
+rather than the dime-rounded OB or the own PIA. An own-DIB parent
 remains technically entitled even if no parent benefit is payable (RS
 00209.015); that parent still counts for the two-parent rate. More than two
 declared parents is refused as `parent_benefit`: the captured one/two-parent

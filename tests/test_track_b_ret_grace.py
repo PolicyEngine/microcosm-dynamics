@@ -933,6 +933,9 @@ def test_property_disabled_different_type_preserves_pending_until_eligible_nsm(
     "construct",
     [
         lambda: GraceMonth(received_types={B.RIB}),
+        lambda: GraceMonth(
+            entitled_types={B.RIB, B.DIB}, received_types={B.RIB, B.DIB}
+        ),
         lambda: GraceMonth(entitled_types={"rib"}),
         lambda: GraceMonth(nonservice=1),
         lambda: GraceYearState(gap_since_entitlement=True),
@@ -996,6 +999,9 @@ def arbitrary_month(draw):
         if types
         else set()
     )
+    if {B.RIB, B.DIB} <= received:
+        # 202(k)(4): one of the two is paid for the month.
+        received.discard(draw(st.sampled_from([B.RIB, B.DIB])))
     return GraceMonth(
         entitled_types=types,
         received_types=received,

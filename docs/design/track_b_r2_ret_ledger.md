@@ -828,7 +828,7 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Refusal of vocational rehabilitation | `VOCATIONAL_REHABILITATION` / `vocational_rehabilitation_refusal` | RS 02501.130 |
 | Another deduction event on the record | `OTHER_DEDUCTION` / `other_deduction_event` | Act 203(c)/(d); RS 02501.130; GN 02603.040 |
 | Unmarried purported deemed entitlement | `InvalidFamilyInput`: not on this NH's ledger | Act 203(b)(1) and 20 CFR 404.420 require marriage; RS 02501.140's broader wording yields (P1) |
-| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Entitled only through 402(d)(5) for a marriage made while disabled (402(s)(2)); CFR .420 omits that residual case |
+| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Entitled only through 402(d)(5) for a marriage made while disabled or within three months of disability (402(s)(2)); CFR .420 omits that residual case |
 
 The monthly G context establishes maximum membership, original age
 reduction and dual entitlement. Its declared baseline must match the R2
@@ -1287,8 +1287,8 @@ production calls carried year by year against that model over invented
 months, concurrent entitlement, work conditions, and a single FRA date.
 The comparison covers grace kinds, applicability, eligible and protected
 months, LMETY, and pending eligibility at zero tolerance. It exercises
-both the default CFR disability exclusion and the explicit POMS election
-alternative. At December terminations, inputs explicitly label known
+both the default 202(k)(4) reading (`POMS_RIB_ELECTION`) and the explicit
+CFR technical-entitlement alternative. At December terminations, inputs explicitly label known
 January conversions as excluded, preserving the annual interface's
 existing requirement. Captured quotations are checked by
 `test_reference_rules_are_verbatim_in_manifest_captures`. This
@@ -1360,10 +1360,12 @@ call). Act
 manner under regulations of the Commissioner of Social Security"), and no
 captured regulation fixes its rounding, so SSA's instruction governs.
 Within RS 02501.080, "round down" means "round down to the next lower
-dollar" (B.1.d, B.2.a); applied after the cents are dropped, only the floor
-gives that step any work, while truncation would leave it surplus; and
-for positive amounts the instruction's direction lowers countable
-earnings, which the floor keeps for a loss. A blind adjudication read
+dollar" (B.1.d, B.2.a). If "drop the cents" removes only the fraction of
+a cent the division leaves (−$1.0833 to −$1.08), rounding down to the next
+lower dollar then gives the floor, −$2, and both steps do work; if it
+truncates to whole dollars (−$1), "round down" is idle. For positive
+amounts the instruction's direction lowers countable earnings, which the
+floor keeps for a loss. A blind adjudication read
 "drop the cents" as truncating to whole dollars (leaving "round down"
 idle) and preferred `DROP_CENTS`, which here matches exact proration's $2
 excess; the stake is at most a dollar's worth of countable earnings per
@@ -1476,13 +1478,14 @@ broader harness with the supported married ledger.
 Refusal kept for the residual adult-child case: the Act's words also
 reach "a child who has attained the age of 18 and is entitled to child's
 insurance benefits", where 20 CFR 404.420 says "a child's insurance
-benefit based on the child's disability". A non-disabled child's benefit
-ends with the month the child marries (402(d)(1)(D)), and 402(d)(5)'s
-exception for marrying a beneficiary applies only to a child "under a
-disability" at the time of the marriage (402(s)(2)). So a married,
-non-disabled adult child keeps child's benefits only in the residual case
-of a marriage made while disabled followed by recovery, which the
-regulation omits. That configuration stays refused as
+benefit based on the child's disability". A child's entitlement ends
+"with the month preceding" the month the child marries (402(d)(1)(D)),
+and 402(d)(5)'s exception for marrying a beneficiary applies only if the
+child "at the time of the marriage ... was under a disability ... or had
+been under such a disability in the third month before the month in which
+such marriage occurred" (402(s)(2)). So a married, non-disabled adult
+child keeps child's benefits only in the residual case of such a marriage
+followed by recovery, which the regulation omits. That configuration stays refused as
 `DEEMED_ENTITLEMENT_BASIS`, with its row and weight kept;
 `test_deemed_ordinary_child_requires_explicit_adult_age_facts` pins
 invalid missing-age facts and the refusal, and the married CDB benchmark

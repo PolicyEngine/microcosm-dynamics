@@ -155,6 +155,10 @@ class GraceMonth:
             raise InvalidFamilyInput(
                 "Received benefit types must be entitled benefit types"
             )
+        if {BenefitType.RIB, BenefitType.DIB} <= received:
+            raise InvalidFamilyInput(
+                "A month pays RIB or DIB, not both (Act 202(k)(4))"
+            )
         object.__setattr__(self, "entitled_types", entitled)
         object.__setattr__(self, "received_types", received)
 
