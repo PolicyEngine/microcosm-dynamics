@@ -868,10 +868,18 @@ def check_rulings_against_code(
         )
     for disposition in sources.FAMILY_UNIT_EXCLUSIONS:
         entry = next(
-            e
-            for e in U2_RULINGS.values()
-            if e.get("disposition") == disposition
+            (
+                e
+                for e in U2_RULINGS.values()
+                if e.get("disposition") == disposition
+            ),
+            None,
         )
+        if entry is None:
+            raise ValueError(
+                f"the rulings record has no entry for the d1090 exclusion "
+                f"{disposition!r}"
+            )
         carrying = sorted(
             f"roles:{role['id']}"
             for role in registries.entries("roles")

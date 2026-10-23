@@ -423,6 +423,34 @@ def _without_reference(key: str, reference: str) -> dict:
         (
             {
                 **rows.U2_RULINGS,
+                "amendment_6_blocker_b3_2017_weight": {
+                    **rows.U2_RULINGS["amendment_6_blocker_b3_2017_weight"],
+                    "option": "2",
+                },
+            },
+            "another option",
+        ),
+        (
+            {
+                key: value
+                for key, value in rows.U2_RULINGS.items()
+                if key != "blocker_b1_male_code_20_2015"
+            },
+            "no entry for the d1090 exclusion",
+        ),
+        (
+            {
+                **rows.U2_RULINGS,
+                "b2_disclosed_count": {
+                    **rows.U2_RULINGS["b2_disclosed_count"],
+                    "person_counted_exclusions": [sources.MALE_CODE_20_2015],
+                },
+            },
+            "d1242",
+        ),
+        (
+            {
+                **rows.U2_RULINGS,
                 "seed_birth_year_support": {
                     **rows.U2_RULINGS["seed_birth_year_support"],
                     "support": [1890, 2016],
@@ -646,6 +674,15 @@ def test_b2s_person_count_must_be_made(monkeypatch, registries):
     monkeypatch.setattr(
         sources, "PERSON_COUNTED_EXCLUSIONS", (sources.MALE_CODE_20_2015,)
     )
+    with pytest.raises(ValueError, match="d1242"):
+        rows.check_rulings_against_code(registries)
+    # Review of 9f79818a, finding 3: with the record changed to match, the
+    # d1242 fact itself (B2 is a person count) still refuses.
+    record = copy.deepcopy(rows.U2_RULINGS)
+    record["b2_disclosed_count"]["person_counted_exclusions"] = [
+        sources.MALE_CODE_20_2015
+    ]
+    monkeypatch.setattr(rows, "U2_RULINGS", record)
     with pytest.raises(ValueError, match="d1242"):
         rows.check_rulings_against_code(registries)
 

@@ -383,14 +383,23 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 - `EV/RESTRICTED-FILES.md`, in full and first, through a saved copy of the tool output in this session's own transcript folder. No other session's file in that project folder was opened. The harness also auto-loaded that project's memory index (`MEMORY.md`, one-line pointers); no memory file was opened.
 - `EV/track-u2-step4-pass-20261021-run2/MANIFEST.md`, which the restricted list allows to be read and cited, and its SHA-256, which matched `acf5d8a4…e6d`. No other file in that folder and nothing in `EV/track-u2-step4-pass-20261019/` was opened or listed.
 - The chief-of-staff decision ledger's entries for d514, d637, d745, d1090, d1242, d1597, d1649 and d1724 (decision, ruling, ruling time and notes), selected by id, and the names in its folder.
-- On 2026-10-22, to check the review's finding 1: the field names of the d1597, d1649 and d1724 ledger records, and the d1649 `ruling` and d1724 `why` fields, which state that the first pass (2026-10-19, `640adccf`) passed d1597's U1 load.
+- On 2026-10-22, to check the review's finding 1: the field names of the d1597, d1649 and d1724 ledger records; d1724's `why` field, which states that the first pass (2026-10-19, `640adccf`) passed d1597's U1 load; and d1649's `ruling`, which requires that load to run before the pass.
 - The coordinating session's brief, the message that started this lane, and its later messages of 2026-10-21 and 2026-10-22. They carry value-free facts only: the step-4 outcomes this lane records, the evidence record's SHA-256 as its MANIFEST pins it, and the tier-slot queue.
 - The review lane's report, `EV/rulings-records-20261021-u2-step5/review-r1b-out.md`, and the names in the evidence folder that match `rulings-records` (names only).
 - The repository at `1e739d32`: `CLAUDE.md`; the specification in full; the U1 specification's header, §15 block and §20; the U2 package, scripts and tests named in the PR; `data/external/track_u2/u1_identity.json` and the registries' entry ids and fields; the U2 SSI capture's provenance fields and its source manifest's records; `tests/README-tiers.md`; Track M's `specification.py` header; `estimates/cola_age_profile.specification_unratified_fields`. Also `~/PolicyEngine/CLAUDE.md`.
 
 **Not opened:** any other evidence-folder path; any comparator folder, seal or Boomers Report copy; `runs/track_b_b2_*`, `docs/design/track_b_attempt_ledger.md` and `paper/paper.qmd`; other sessions' transcripts or scratchpads; `~/.subfleet/` other than this session's own review jobs; any PSID file or codebook.
 
-**Ran:** the U2 and U1 test files, the specification tests and the birth-evidence artifact test, with `POPULACE_DYNAMICS_PSID_DIR` set to an empty directory, which stayed empty, so the checks that need PSID documentation skipped; Black and Ruff; the tier recount by collection; and the mutation checks listed in the PR. Every block, rulings and appendix check reads only the specification, the committed registries and the code.
+**Who and where.** This lane is the Claude Code session `59b436cf-29b0-43ac-a811-411fcc960646`. Its scratchpad, `/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-…-scratch-2026-09-22-b65ec9/59b436cf-29b0-43ac-a811-411fcc960646/scratchpad/`, is its own. Until the host wiped it, on 2026-10-22, it held this lane's virtual environment (`venv/`), the empty PSID directory (`empty-psid/`), its mutation runners and its differential reports. From then on they live outside the repository: the virtual environment at `~/PolicyEngine/_clones/md-u2-step5-venv` (Python 3.14.7; pandas pinned to 3.0.6, the version the step-4 evidence froze), the empty PSID directory at `~/PolicyEngine/_clones/md-u2-step5-empty-psid`, and the mutation runners at `~/PolicyEngine/_clones/md-u2-step5-mut`. The lane opened no other session's scratchpad or transcript.
+
+**Ran:**
+- **Tests.** The U2 and U1 test files, the specification tests and the birth-evidence artifact test, with `POPULACE_DYNAMICS_PSID_DIR` set to the empty directory, which stayed empty, so the checks that need PSID documentation skipped. Also Black and Ruff, the tier recount by collection, and the mutation checks listed in the PR.
+- **Block, rulings and appendix checks.** Every one reads only the specification, the committed registries and the code.
+- **The U1 differential** (`scripts/u2_u1_differential.py`, invented data only, with the empty PSID directory and this lane's virtual environment). Its two checkouts are worktrees of this repository: the base, `~/PolicyEngine/_clones/md-u2-diff-base-9cee2423`, detached at `9cee2423`, and the candidate, `~/PolicyEngine/_clones/md-u2-diff-cand`, detached at the head under test.
+  - **Trial at `690a1276`** (2026-10-21): equal in every check.
+  - **At `1742efb1`** (2026-10-22): equal in every check; report committed as `docs/design/u2_m2_u1_differential_1742efb.json`.
+  - **At FINAL_CODE_HEAD**, the revision's last code change: see §20 step 6.
+  - Each run's dry run wrote only to a temporary directory the harness made and removed.
 
 **Values:** it stated and inferred no 1946–55 value or direction. Every number it wrote is a hash, a commit, a CI run id, a date, a line number, a registry entry count, a test count or a constant of the code or the specification.
 
@@ -403,4 +412,11 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
     - One early command wrote git-ignored bytecode caches under the review clone's `src/`.
     - Two `grep` searches over `docs/design/` scanned the bytes of `track_b_attempt_ledger.md` for fixed literals, with nothing from that file printed. That file is restricted for B2-successor work, not for U2; this record lists it for completeness.
   - It opened no other evidence path, PSID file or comparator. Its findings were addressed in the next commit (§19).
-
+- **Subfleet `20261021-214735-u2-step5-review-r2`.** It ran on GPT-6.1 Sol and reviewed `9f79818a` in full. It returned REQUEST CHANGES: one blocking finding (§20 step 6 dated the merge) and should-fix and nit findings, all answered in the next commit (§19).
+  - **What it read outside its worktree:** `EV/RESTRICTED-FILES.md`, the run-2 `MANIFEST.md`, the round-1 report and the eight decision-ledger records selected by id.
+  - **Where it worked:** in its own Subfleet worktree, writing nothing into the review clone.
+  - **Its three disclosures:**
+    - A `grep -rln` over `runs/` for the U1 pin's hex scanned the bytes of `runs/track_b_b2_*` and `runs/m2_pseudo_projection_v1.json`. Nothing from either file was printed.
+    - A `git archive` copy it started under `/tmp/r2rev/mut` may have included restricted files. It deleted the copy unopened.
+    - It loaded U1's artifact in memory to compare one hash, printing a boolean.
+  - It opened no PSID file, codebook or comparator, and the empty PSID directory stayed empty.

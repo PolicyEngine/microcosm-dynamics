@@ -997,6 +997,9 @@ def test_specification_revision_keeps_cited_lines(documents):
     )
     record = pins["u2_specification"]
     assert record["path"] == SPEC and SPEC not in pins["sha256"]
+    from populace_dynamics.uniform_cut_track_u2 import rows
+
+    assert record["version"] == rows.SPECIFICATION_VERSION
     raw = (ROOT / SPEC).read_bytes()
     assert hashlib.sha256(raw).hexdigest() == record["sha256"]
     assert record["draft_3_sha256"] == (
