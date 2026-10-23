@@ -1,4 +1,4 @@
-# Open population design, revision 6: births, migration, alignment and the long horizon
+# Open population design, revision 8: births, migration, alignment and the long horizon
 
 **Status:** design for approval, 23 October 2026. Nothing in it is built or registered. Max authorized this lane on 21 October 2026 (decision d1802); the coordinator walks him through approval, and no code is written before he approves. Every registration it names goes to issue #42 only through the coordinator, on Max's go.
 
@@ -9,6 +9,8 @@
 **Revision log.**
 - *Revisions 1 to 5* (21 October 2026; commits `d0082afc` to `80605c67`) built the design and answered four coordinator notes: entrant initialization as its own row (OP8), whose price Track B's B0.2 audit cites; Track B's rules lane as owner of the insured-status rule, with a per-year provenance interface; and a shared holdout registry with J's years first. Reviews of revisions 1 to 4 were queued and cancelled before they ran.
 - *Revision 6* (23 October 2026) answers the independent review of revision 5 (Subfleet job `20261021-103508-openpop-review-r5`, verdict REVISE, nine major and three minor findings). §12 maps each finding to its resolution. The main changes: the fertility mechanism and OP2's differential test are corrected; `gate_birth` is regression evidence by default because the repository already holds NCHS's 2016–2024 rates; OP3 adds the timing and exposure bridge that #218 required; the insured-status interface names the facts other than quarters of coverage that the statute needs; the EPUF arm of `gate_young_earn` needs explicit person fences; OP12 now gates unaligned totals, so no gate scores the aligned run unless Max makes an exception; ledger closure claims are narrowed; OP5 and OP7 gain date and link conventions; §5.3 sets tolerance classes by kind of source. The total rises from 133–205 d to 140–216 d (estimate).
+- *Revision 7* (23 October 2026) was reverted by revision 8; no estimate changed.
+- *Revision 8* (23 October 2026) reverts revision 7. No milestone is blocked, and no estimate changes.
 
 ## In brief
 
@@ -139,6 +141,7 @@ The mechanism follows from §2.1: every scheduled entrant through the end year g
 - No edits to `src/populace_dynamics/track_b/`. This lane consumes Track B's outputs through declared interfaces (§6.1).
 - Builds and tests use invented data. Real-data steps are registered steps; no real PSID statistic is computed outside one, and no small-cell PSID count goes to GitHub.
 - `~/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md` governs every lane. The entries that bind this lane are in §6.4.
+- PSID use follows the project's data-access record.
 
 ## 3. Staged milestones
 
