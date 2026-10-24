@@ -1,0 +1,22 @@
+== closed (births only): end year 2035 against 2045
+2026: rows 414 and 414; slices identical
+2027: rows 412 and 412; slices identical
+2028: rows 413 and 413; slices identical
+2029: rows 419 and 419; slices identical
+2030: rows 430 and 430; slices identical
+2031: rows 432 and 432; slices identical
+2032: rows 438 and 438; slices identical
+2033: rows 434 and 434; slices identical
+2034: rows 430 and 430; slices identical
+2035: rows 422 and 422; slices identical
+== open (births and scheduled entrants): end year 2035 against 2045
+2026: rows 417 and 417; slices different
+2027: rows 419 and 420; slices different
+2028: rows 420 and 420; slices different
+2029: rows 429 and 430; slices different
+2030: rows 443 and 445; slices different
+2031: rows 447 and 445; slices different
+2032: rows 452 and 454; slices different
+2033: rows 448 and 448; slices different
+2034: rows 446 and 448; slices different
+2035: rows 442 and 444; slices different
