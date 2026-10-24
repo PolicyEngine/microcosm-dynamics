@@ -61,6 +61,13 @@ that file.
   restricted linked data are requested only if public sources cannot
   supply the risk denominator, the timing observations or the
   withholding observations.
+- **Projected years past 2030.** The open-population design, approved
+  as recommended in d1925 (2026-10-23; PR #557, its question 5), sets
+  this principle: every projected year past 2030 is published as
+  conditional on named assumptions, with drift diagnostics, and never
+  as a validated forecast, and the DYNASIM comparisons at 2050, 2065
+  and 2070 are registered, report-only and blind. It bears on B7's
+  choice of target years and on J's record.
 - **B0.1's handoffs** (`docs/design/track_b_b0_1_addendum.md`, "To
   B0.2"):
   - the marital selectors' pseudo-boundaries 2008 and 2010 bear on B4;

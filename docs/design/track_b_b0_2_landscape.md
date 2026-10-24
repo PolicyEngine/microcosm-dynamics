@@ -1,7 +1,7 @@
 # Track B B0.2: landscape
 
-**Status: synthesis of five landscape lanes, 2026-10-23. It computes
-nothing and freezes nothing.** It feeds B0.2's structural-audit
+**Status: synthesis of five landscape lanes, 2026-10-23, revised
+2026-10-24 for public HRS. It computes nothing and freezes nothing.** It feeds B0.2's structural-audit
 protocol, which is frozen before any count, and the questions for Max.
 
 Five read-only lanes ran on 2026-10-21 and 2026-10-22, as set out in the
@@ -50,7 +50,7 @@ SSA-linked file.
 
 | Source | Strongest use | Access | Status |
 |---|---|---|---|
-| HRS public files and the RAND HRS longitudinal file | B3 at ages 62-69; B4 deaths separated from attrition; self-reported claim and DI dates for I; joint states for J | Registration; whether an agent lane may work on files a person registers is UNVERIFIED | Pages refused automated fetches |
+| HRS public files and the RAND HRS longitudinal file | B3 at ages 62-69; B4 deaths separated from attrition; self-reported claim and DI dates for I; joint states for J | Registration; use follows the project's data-access record | Available for the estimands it supplies (2026-10-24); pages refused automated fetches |
 | HRS files linked to SSA records | Administrative earnings, insured status and entitlement dates for B3, B6a and I | Virtual-desktop enclave run by a named person; 6-8 week decision (search snippet); likely an institutional sponsor and IRB | UNVERIFIED |
 | SIPP public-use panels | Monthly receipt, earnings and marital status | Public download | Variables verified through the Census API |
 | SIPP Synthetic Beta, validated on the Gold Standard File | Insured status and claim timing for older cohorts, to 2014 | Application approved in about five business days; real results only through Census validation | Verified on census.gov |
@@ -228,7 +228,7 @@ time, with their basis in the cited lane:
 
 | Item (design §3.3) | Access | Loader and gate work | Source |
 |---|---|---|---|
-| HRS loader and access, public | About one week of registration; agent use of a person's registration UNVERIFIED | Loader 4-8 d; B0.2 adds 1-2 d to freeze HRS elements per gate | a1 4-7 d, a2 5-8 d |
+| HRS loader and access, public | About one week of registration; use follows the project's data-access record | Loader 4-8 d; B0.2 adds 1-2 d to freeze HRS elements per gate | a1 4-7 d, a2 5-8 d |
 | HRS linked to SSA records | 2-4 months, about 6 if a sponsor is needed; 1-3 weeks of disclosure review per output | 6-10 d by a person in the enclave | a2 |
 | Linked withholding data (B5-empirical) | Public: none, if BEPUF 2020 carries a deduction field (UNVERIFIED). Otherwise HRS-SSA (2-4 months) or an FSRDC (6-12 months, $15,000-20,000 a year) | 1 d documentation check; then 8-12 d to rebuild annual deductions; 4-6 d to freeze and run | a2 |
 | I's timing gate: data, loaders, gate | Public HRS and SIPP: about one week; restricted fallback as above | SIPP extension 3-5 d; BEPUF 3-4 d; freezing estimands, limits and power 3-5 d; running the gate 4-6 d. About 10-20 d beyond B0.2's own 5-7 d | a1, a2 |
@@ -258,9 +258,10 @@ table:
    B5-empirical or I's timing gate, whatever its fields. The user guide
    PDF did not render as text in the browser, and its field list is
    unread; nothing above depends on it.
-2. **HRS terms:** whether an agent lane may analyse public files that a
-   person registered, and the restricted-data access route, eligibility
-   and lead time.
+2. **HRS.** Public HRS is settled (2026-10-24): it counts as available
+   for the estimands it supplies, and its use follows the project's
+   data-access record. Restricted HRS-SSA access, its eligibility and
+   lead time remain to be verified.
 3. **The Disability Analysis File's access route.**
 4. **Two staged files that may be restricted** (a1, section 7). Do not
    open them until someone rules:
@@ -287,7 +288,6 @@ Questions for Max, gathered from a2 and a5, go to him through
 - the common power procedure;
 - each gate's source;
 - whether to pursue restricted HRS-SSA or FSRDC access;
-- HRS terms for agent work;
 - H's roster;
 - B2's medians;
 - J's estimands and limits;
@@ -320,8 +320,8 @@ Restricted access is slow:
   RDC pages).
 
 These lead times would fall on the path to B6a and J, and so to B7.
-Neither route can be worked by an agent lane: a person has to do the
-analysis inside the enclave or data center.
+On both routes a person does the analysis inside the enclave or data
+center.
 
 The options:
 1. **Apply for HRS-SSA access now,** in parallel with B0.2. It supplies
@@ -338,6 +338,7 @@ The options:
    - J is narrowed to what PSID or public HRS can observe, or stays
      blocked, and B7 is limited accordingly.
 
-Public HRS registration is cheap, takes about a week, and is needed
-under every option. Whether an agent lane may work on files a person
-registers is UNVERIFIED and should be confirmed with HRS.
+Public HRS is needed under every option. It now counts as available
+for the estimands it supplies (2026-10-24), and its use follows the
+project's data-access record. Which estimands those are is fixed in
+the J and B6a records, before any HRS file is read.
