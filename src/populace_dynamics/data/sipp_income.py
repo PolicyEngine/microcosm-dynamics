@@ -204,14 +204,34 @@ def _read(
     )
 
 
-def _require_keys(frame: pd.DataFrame, year: int) -> None:
-    for concept in _KEYS:
+def _is_missing_code(values: pd.Series, spec: SippVariable) -> pd.Series:
+    """Rows holding one of the variable's documented missing codes."""
+    codes = {
+        Decimal(code) for code, label in spec.items if label in SENTINEL_LABELS
+    }
+    present = values.dropna().unique()
+    hits = [value for value in present if Decimal(str(value)) in codes]
+    return values.isin(hits)
+
+
+def _require_keys(
+    frame: pd.DataFrame, year: int, specs: dict[str, SippVariable]
+) -> None:
+    """Every structural key and the weight must hold a real value.
+
+    The variable API lists a missing code even for keys and weights; a
+    row carrying one (or a blank) cannot be linked or weighted, so it
+    refuses the file rather than entering as an identifier or a weight.
+    """
+    for concept in (*_KEYS, "weight"):
         values = frame[concept]
         if (
             values.isna().any()
-            or values.astype("string").isin(["-9", "-999"]).any()
+            or _is_missing_code(values, specs[concept]).any()
         ):
-            raise ValueError(f"SIPP {year}: missing structural key {concept}")
+            raise ValueError(
+                f"SIPP {year}: missing structural key or weight {concept}"
+            )
     keys = ["panel", "sample_unit_id", "person_number", "month"]
     if frame.duplicated(keys).any():
         raise ValueError(f"SIPP {year}: duplicate person-month key")
@@ -307,7 +327,7 @@ def read_sipp_income_months(
                 f"SIPP {year}: replicate filename identifies another year"
             )
     result = _read(_path(year, path, data_dir), year, specs)
-    _require_keys(result, year)
+    _require_keys(result, year, specs)
     if replicate_specs is not None:
         result = _attach_replicates(
             result, year, replicate_path, replicate_specs

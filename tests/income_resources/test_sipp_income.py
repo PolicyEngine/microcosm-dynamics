@@ -393,6 +393,40 @@ def test_blank_required_core_refuses(tmp_path, concept):
         sipp_income.read_sipp_income_months(year, path=path, concepts=[])
 
 
+#: Every documented missing code of a structural key or the weight.
+INVENTED_KEY_MISSING_CODES = [
+    (year, concept, code)
+    for year in SIPP_INCOME_YEARS
+    for concept, spec in income_variables(year).items()
+    if concept in CORE_CONCEPTS
+    for code, label in spec.items
+    if label in INVENTED_MISSING_LABELS
+]
+
+
+def test_every_api_release_documents_a_weight_missing_code():
+    assert {
+        year
+        for year, concept, _ in INVENTED_KEY_MISSING_CODES
+        if concept == "weight"
+    } == {2022, 2023, 2024, 2025}
+
+
+@pytest.mark.parametrize("year,concept,code", INVENTED_KEY_MISSING_CODES)
+def test_documented_missing_code_in_a_key_or_weight_refuses(
+    tmp_path, year, concept, code
+):
+    """A missing code never enters as an identifier or a weight."""
+    path = _write_invented_file(
+        tmp_path,
+        year,
+        [_invented_row(year, **{concept: code})],
+        concepts=CORE_CONCEPTS,
+    )
+    with pytest.raises(ValueError, match="missing structural key or weight"):
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+
+
 @pytest.mark.parametrize("value", (-9, -999, ".", "not_an_id"))
 def test_invalid_month_cannot_become_a_missing_or_default(tmp_path, value):
     year = 2022
