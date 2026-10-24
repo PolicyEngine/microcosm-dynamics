@@ -108,6 +108,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/open_population/schedule.py"),
         Path("src/populace_dynamics/open_population/harness.py"),
         Path("src/populace_dynamics/open_population/gates.py"),
+        Path("src/populace_dynamics/open_population/streams.py"),
         Path("src/populace_dynamics/engine/accounting_history.py"),
         Path("src/populace_dynamics/person_identity.py"),
         Path("src/populace_dynamics/forward_earnings_history.py"),
