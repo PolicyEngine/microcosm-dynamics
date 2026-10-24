@@ -1,0 +1,672 @@
+[
+  {
+    "release": 2018,
+    "concept": "other_real_estate_joint_spouse_owned",
+    "variable": "EJSOWNRE",
+    "schema_label": "Owned any other real estate jointly during the reference period [for respondents without a spouse in the household either at the end of the reference period or at the time of interview or without a civil union partner in the household at the end of the ref",
+    "dictionary_label": "Owned any other real estate jointly during the reference period [for respondents with a spouse or civil union partner in the household; this joint ownership question is asked of only one spouse or partner, and this response is copied to both spouses'/partners' records].",
+    "resolution": "dictionary",
+    "evidence": [
+      "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz"
+    ]
+  },
+  {
+    "release": 2018,
+    "concept": "rental_property_joint_spouse_owned",
+    "variable": "EJSOWNRP",
+    "schema_label": "Owned any rental properties jointly during the reference period [for respondents without a spouse in the household either at the end of the reference period or at the time of interview or without a civil union partner in the household at the end of the ref",
+    "dictionary_label": "Owned any rental properties jointly during the reference period [for respondents with a spouse or civil union partner in the household; this joint ownership question is asked of only one spouse or partner, and this response is copied to both spouses'/ partners' records.",
+    "resolution": "dictionary",
+    "evidence": [
+      "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "disability_source_6_amount",
+    "variable": "TDIS6AMT",
+    "schema_label": "How much did ... receive in disability income from a State government pension this month (1-12)?",
+    "dictionary_label": "How much did ... receive in disability income from a Local government pension this month (1-12)?",
+    "resolution": null,
+    "evidence": []
+  },
+  {
+    "release": 2020,
+    "concept": "disability_source_8_received_month",
+    "variable": "EDIS8MNYN",
+    "schema_label": "Did ... receive disability income from a Military retirement pension in this month of the reference period (1-12)?",
+    "dictionary_label": "Did ... receive disability income from a U.S. Government railroad retirement in this month of the reference period (1-12)?",
+    "resolution": null,
+    "evidence": []
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_other_income",
+    "variable": "TJOCDINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_other_owned",
+    "variable": "EJOOWNCD",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_other_value",
+    "variable": "TJOCDVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_spouse_income",
+    "variable": "TJSCDINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_spouse_owned",
+    "variable": "EJSOWNCD",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "certificates_of_deposit_joint_spouse_value",
+    "variable": "TJSCDVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_other_income",
+    "variable": "TJOCHKINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_other_owned",
+    "variable": "EJOOWNCHK",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_other_value",
+    "variable": "TJOCHKVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_spouse_income",
+    "variable": "TJSCHKINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_spouse_owned",
+    "variable": "EJSOWNCHK",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "checking_joint_spouse_value",
+    "variable": "TJSCHKVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "credit_card_joint_spouse_debt",
+    "variable": "TJSCCDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "credit_card_joint_spouse_debt_owed",
+    "variable": "EJSCCDEBT",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "education_joint_spouse_debt",
+    "variable": "TJSEDDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "education_joint_spouse_debt_owed",
+    "variable": "EJSEDDEBT",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_other_income",
+    "variable": "TJOGOVSINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_other_owned",
+    "variable": "EJOOWNGOVS",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_other_value",
+    "variable": "TJOGOVSVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_spouse_income",
+    "variable": "TJSGOVSINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_spouse_owned",
+    "variable": "EJSOWNGOVS",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "government_securities_joint_spouse_value",
+    "variable": "TJSGOVSVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_other_income",
+    "variable": "TJOMMINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_other_owned",
+    "variable": "EJOOWNMM",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_other_value",
+    "variable": "TJOMMVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_spouse_income",
+    "variable": "TJSMMINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_spouse_owned",
+    "variable": "EJSOWNMM",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "money_market_joint_spouse_value",
+    "variable": "TJSMMVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_other_income",
+    "variable": "TJOMCBDINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_other_owned",
+    "variable": "EJOOWNMCBD",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_other_value",
+    "variable": "TJOMCBDVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_spouse_income",
+    "variable": "TJSMCBDINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_spouse_owned",
+    "variable": "EJSOWNMCBD",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "municipal_corporate_bonds_joint_spouse_value",
+    "variable": "TJSMCBDVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_other_income",
+    "variable": "TJOMFINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_other_owned",
+    "variable": "EJOOWNMF",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_other_value",
+    "variable": "TJOMFVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_spouse_income",
+    "variable": "TJSMFINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_spouse_owned",
+    "variable": "EJSOWNMF",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "mutual_funds_joint_spouse_value",
+    "variable": "TJSMFVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_joint_spouse_debt",
+    "variable": "TJSOTDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_joint_spouse_debt_owed",
+    "variable": "EJSOTDEBT",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_other_debt",
+    "variable": "TJOREDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_other_owned",
+    "variable": "EJOOWNRE",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_other_value",
+    "variable": "TJOREVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_spouse_debt",
+    "variable": "TJSREDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_spouse_owned",
+    "variable": "EJSOWNRE",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "other_real_estate_joint_spouse_value",
+    "variable": "TJSREVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_other_debt",
+    "variable": "TJORPDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_other_gross_income",
+    "variable": "TJORPGROINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_other_net_income",
+    "variable": "TJORPNETINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_other_owned",
+    "variable": "EJOOWNRP",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_other_value",
+    "variable": "TJORPVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_spouse_debt",
+    "variable": "TJSRPDEBTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_spouse_gross_income",
+    "variable": "TJSRPGROINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_spouse_net_income",
+    "variable": "TJSRPNETINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_spouse_owned",
+    "variable": "EJSOWNRP",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "rental_property_joint_spouse_value",
+    "variable": "TJSRPVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_other_income",
+    "variable": "TJOSAVINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_other_owned",
+    "variable": "EJOOWNSAV",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_other_value",
+    "variable": "TJOSAVVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_spouse_income",
+    "variable": "TJSSAVINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_spouse_owned",
+    "variable": "EJSOWNSAV",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "savings_joint_spouse_value",
+    "variable": "TJSSAVVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_other_income",
+    "variable": "TJOSTINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_other_owned",
+    "variable": "EJOOWNST",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_other_value",
+    "variable": "TJOSTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_spouse_income",
+    "variable": "TJSSTINC",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_spouse_owned",
+    "variable": "EJSOWNST",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  },
+  {
+    "release": 2020,
+    "concept": "stocks_joint_spouse_value",
+    "variable": "TJSSTVAL",
+    "resolution": null,
+    "evidence": [
+      "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+    ]
+  }
+]

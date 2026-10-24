@@ -283,56 +283,56 @@ Status: CAPTURED_METADATA_LOCATOR (HTTP 200)
 Bytes: 403082
 SHA-256: 8556f9f67a889225d9f86f054190370a327dbeda9cf65f2d3826448df599d3ab
 
-File: 2018_python_input_example.py
+File: 2018_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:49.775536+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 3662
 SHA-256: 2b7975706604a6e0712fedffb30df8793f314cf659b13f2d04c7b008ff984004
 
-File: 2019_python_input_example.py
+File: 2019_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2019/2019_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:49.798842+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4160
 SHA-256: 136726912c09d8d3c8ecc114dcde1cb023a49d0e9a081a1d08dbf787d01f1285
 
-File: 2020_python_input_example.py
+File: 2020_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2020/2020_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:49.815916+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4739
 SHA-256: 5972dc8cad024116f886c629af83e1cc367c65097524e266a49eda2e9fb68f57
 
-File: 2021_python_input_example.py
+File: 2021_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2021/2021_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:50.009690+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4724
 SHA-256: 0a62b5977af11c4856cc5bfe4e0aa72fe8565b4c6850eb75a411674f40e09421
 
-File: 2022_python_input_example.py
+File: 2022_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2022/2022_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:50.368486+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4857
 SHA-256: 136cbaf72472d03db488ceed54924906f412a1596e24bdc7f92bfcab24744429
 
-File: 2023_python_input_example.py
+File: 2023_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/2023_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:50.371093+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4857
 SHA-256: 6503f4135cbc49342b14adb9ded0fcb3e09241720a35b8d3aadcf55e78884424
 
-File: 2024_python_input_example.py
+File: 2024_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2024/2024_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:50.476824+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 4857
 SHA-256: a7751f6f211760e7f464e4e5d65e7f4e04468f2b310b5345daecd8a4ae1de177
 
-File: 2025_python_input_example.py
+File: 2025_python_input_example.py.txt
 URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2025/2025_sipp_python_input_example.py
 Retrieved UTC: 2026-10-24T12:47:50.616104+00:00
 Status: CAPTURED_METADATA (HTTP 200)
@@ -534,3 +534,108 @@ Retrieved UTC: 2026-10-24T12:51:11.561664+00:00
 Status: CAPTURED_METADATA (HTTP 200)
 Bytes: 3994347
 SHA-256: 571e53b4ec3ebb11bebddbb7190fc1084f5364b8a1ec5fbd7ca8e2f69e7cc752
+
+File: 2019_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2019/2019_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:08.450530+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 199029
+SHA-256: 55fc129b68f0e909aa46b68018016afab5753e62ad8f1f038ee7e15644ffd751
+
+File: 2020_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2020/2020_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:08.547494+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 196797
+SHA-256: 7f1001920472bc4240a2b9a3a862d12c67a7df9d0a0f897f60a379c82297e3b5
+
+File: 2021_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2021/2021_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:09.555140+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 200782
+SHA-256: 372674518dcf2f847e809959ffbd571d9ac3a5ab40d352cb2321e7c83830c6f6
+
+File: 2022_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2022/2022_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:10.041083+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 104452
+SHA-256: cbcb4b889797997c0bdc35271aa3840259b0c2b41835059c99ec7bc918fe41b7
+
+File: 2023_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2023/2023_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:10.222196+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 106593
+SHA-256: 0ade1bfd698e31b1e622a6ac2409c7e8b2f743081f3d84c720b68da451511cf0
+
+File: 2024_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2024/2024_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:10.947185+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 129891
+SHA-256: 0aeb281722654515379b32c4162cf8164ae9c7d357d8064bbe7781ba36291e26
+
+File: 2025_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2025/2025_SIPP_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:11.164179+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 229923
+SHA-256: 6cb2e033266ddc9b3a0a0b597253c2817069056359b00fd53107c0efdea0dee7
+
+File: 2018_release_notes.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/2018/2018_Release_Notes.pdf
+Retrieved UTC: 2026-10-24T13:40:14.364530+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 177625
+SHA-256: 63bb545c839f894e9f5cd5961bbd5bafaf2246a4ed3c5b71d248708991f512b2
+
+File: 2018_metadata.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/2018_SIPP_Metadata_v3.pdf
+Retrieved UTC: 2026-10-24T13:40:15.287097+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 2753339
+SHA-256: 25f1ebb2a9e5ab52dddfe4bf50d83de3fc899d5a794cb2cbf5fe3965b1f321ef
+
+File: 2018_programs_dictionary.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2018/2018_SIPP_Programs_Data_Dictionary_v2.pdf
+Retrieved UTC: 2026-10-24T13:40:15.404930+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 707505
+SHA-256: d9a504fd5813a5b7afb3375624165231f3e17749194d5e70e556d39653422d4a
+
+File: 2018_poverty_income_dictionary.pdf
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2018/2018_SIPP_Poverty_Income_Data_Dictionary.pdf
+Retrieved UTC: 2026-10-24T13:40:15.465730+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 69569
+SHA-256: 4df37eb42a7b445815f3ede5b2fcbbeac7d846a6a09754ebdb8b6a11ac1a1f7b
+
+File: crosswalk_2018_to_2019.xlsx
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2019/2019_SIPP_Crosswalk_2018_to_2019.xlsx
+Retrieved UTC: 2026-10-24T13:40:15.610732+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 152110
+SHA-256: f2e45827f965ca8be34ccdab8566c1e8216724c6ff5ed88f4657d64d5cce6b56
+
+File: crosswalk_2019_to_2020.xlsx
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2020/2020_SIPP_Crosswalk_2019_to_2020.xlsx
+Retrieved UTC: 2026-10-24T13:40:16.047018+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 142370
+SHA-256: eb03e5e1418ed10a2182a364f4c5567bef14815e03274434fba0c2e1284f893c
+
+File: crosswalk_2020_to_2021.xlsx
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2021/2021_SIPP_Crosswalk_2020_to_2021.xlsx
+Retrieved UTC: 2026-10-24T13:40:16.145826+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 153091
+SHA-256: 095cb5f236445ad8807c23ad36ce5aa37a09a3b23452e5a09d110dcc7cb4b68b
+
+File: crosswalk_2021_to_2022.xlsx
+URL: https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2022/2022_SIPP_Crosswalk_2021_to_2022.xlsx
+Retrieved UTC: 2026-10-24T13:40:16.264996+00:00
+Status: CAPTURED_METADATA (HTTP 200)
+Bytes: 158472
+SHA-256: 78e34fb3670a9244fb2eb2ea9940a1f33a632adcd09811553ab752bb3ae6fa5b

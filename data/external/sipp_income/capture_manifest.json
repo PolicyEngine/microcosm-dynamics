@@ -400,7 +400,7 @@
     "retrieved_utc": "2026-10-24T12:47:49.775536+00:00",
     "bytes": 3662,
     "sha256": "2b7975706604a6e0712fedffb30df8793f314cf659b13f2d04c7b008ff984004",
-    "path": "2018_python_input_example.py",
+    "path": "2018_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -410,7 +410,7 @@
     "retrieved_utc": "2026-10-24T12:47:49.798842+00:00",
     "bytes": 4160,
     "sha256": "136726912c09d8d3c8ecc114dcde1cb023a49d0e9a081a1d08dbf787d01f1285",
-    "path": "2019_python_input_example.py",
+    "path": "2019_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -420,7 +420,7 @@
     "retrieved_utc": "2026-10-24T12:47:49.815916+00:00",
     "bytes": 4739,
     "sha256": "5972dc8cad024116f886c629af83e1cc367c65097524e266a49eda2e9fb68f57",
-    "path": "2020_python_input_example.py",
+    "path": "2020_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -430,7 +430,7 @@
     "retrieved_utc": "2026-10-24T12:47:50.009690+00:00",
     "bytes": 4724,
     "sha256": "0a62b5977af11c4856cc5bfe4e0aa72fe8565b4c6850eb75a411674f40e09421",
-    "path": "2021_python_input_example.py",
+    "path": "2021_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -440,7 +440,7 @@
     "retrieved_utc": "2026-10-24T12:47:50.368486+00:00",
     "bytes": 4857,
     "sha256": "136cbaf72472d03db488ceed54924906f412a1596e24bdc7f92bfcab24744429",
-    "path": "2022_python_input_example.py",
+    "path": "2022_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -450,7 +450,7 @@
     "retrieved_utc": "2026-10-24T12:47:50.371093+00:00",
     "bytes": 4857,
     "sha256": "6503f4135cbc49342b14adb9ded0fcb3e09241720a35b8d3aadcf55e78884424",
-    "path": "2023_python_input_example.py",
+    "path": "2023_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -460,7 +460,7 @@
     "retrieved_utc": "2026-10-24T12:47:50.476824+00:00",
     "bytes": 4857,
     "sha256": "a7751f6f211760e7f464e4e5d65e7f4e04468f2b310b5345daecd8a4ae1de177",
-    "path": "2024_python_input_example.py",
+    "path": "2024_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -470,7 +470,7 @@
     "retrieved_utc": "2026-10-24T12:47:50.616104+00:00",
     "bytes": 4857,
     "sha256": "43572909360d6cdb6906bfde67869943ad863c4ce4e82e9612c81a3ab1490026",
-    "path": "2025_python_input_example.py",
+    "path": "2025_python_input_example.py.txt",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   },
@@ -735,6 +735,156 @@
     "bytes": 3994347,
     "sha256": "571e53b4ec3ebb11bebddbb7190fc1084f5364b8a1ec5fbd7ca8e2f69e7cc752",
     "path": "2025_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2019,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2019/2019_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:08.450530+00:00",
+    "bytes": 199029,
+    "sha256": "55fc129b68f0e909aa46b68018016afab5753e62ad8f1f038ee7e15644ffd751",
+    "path": "2019_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2020,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2020/2020_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:08.547494+00:00",
+    "bytes": 196797,
+    "sha256": "7f1001920472bc4240a2b9a3a862d12c67a7df9d0a0f897f60a379c82297e3b5",
+    "path": "2020_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2021,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2021/2021_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:09.555140+00:00",
+    "bytes": 200782,
+    "sha256": "372674518dcf2f847e809959ffbd571d9ac3a5ab40d352cb2321e7c83830c6f6",
+    "path": "2021_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2022,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2022/2022_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:10.041083+00:00",
+    "bytes": 104452,
+    "sha256": "cbcb4b889797997c0bdc35271aa3840259b0c2b41835059c99ec7bc918fe41b7",
+    "path": "2022_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2023/2023_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:10.222196+00:00",
+    "bytes": 106593,
+    "sha256": "0ade1bfd698e31b1e622a6ac2409c7e8b2f743081f3d84c720b68da451511cf0",
+    "path": "2023_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2024/2024_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:10.947185+00:00",
+    "bytes": 129891,
+    "sha256": "0aeb281722654515379b32c4162cf8164ae9c7d357d8064bbe7781ba36291e26",
+    "path": "2024_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2025/2025_SIPP_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:11.164179+00:00",
+    "bytes": 229923,
+    "sha256": "6cb2e033266ddc9b3a0a0b597253c2817069056359b00fd53107c0efdea0dee7",
+    "path": "2025_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/2018/2018_Release_Notes.pdf",
+    "retrieved_utc": "2026-10-24T13:40:14.364530+00:00",
+    "bytes": 177625,
+    "sha256": "63bb545c839f894e9f5cd5961bbd5bafaf2246a4ed3c5b71d248708991f512b2",
+    "path": "2018_release_notes.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/2018_SIPP_Metadata_v3.pdf",
+    "retrieved_utc": "2026-10-24T13:40:15.287097+00:00",
+    "bytes": 2753339,
+    "sha256": "25f1ebb2a9e5ab52dddfe4bf50d83de3fc899d5a794cb2cbf5fe3965b1f321ef",
+    "path": "2018_metadata.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2018/2018_SIPP_Programs_Data_Dictionary_v2.pdf",
+    "retrieved_utc": "2026-10-24T13:40:15.404930+00:00",
+    "bytes": 707505,
+    "sha256": "d9a504fd5813a5b7afb3375624165231f3e17749194d5e70e556d39653422d4a",
+    "path": "2018_programs_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2018/2018_SIPP_Poverty_Income_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T13:40:15.465730+00:00",
+    "bytes": 69569,
+    "sha256": "4df37eb42a7b445815f3ede5b2fcbbeac7d846a6a09754ebdb8b6a11ac1a1f7b",
+    "path": "2018_poverty_income_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": null,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2019/2019_SIPP_Crosswalk_2018_to_2019.xlsx",
+    "retrieved_utc": "2026-10-24T13:40:15.610732+00:00",
+    "bytes": 152110,
+    "sha256": "f2e45827f965ca8be34ccdab8566c1e8216724c6ff5ed88f4657d64d5cce6b56",
+    "path": "crosswalk_2018_to_2019.xlsx",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": null,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2020/2020_SIPP_Crosswalk_2019_to_2020.xlsx",
+    "retrieved_utc": "2026-10-24T13:40:16.047018+00:00",
+    "bytes": 142370,
+    "sha256": "eb03e5e1418ed10a2182a364f4c5567bef14815e03274434fba0c2e1284f893c",
+    "path": "crosswalk_2019_to_2020.xlsx",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": null,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2021/2021_SIPP_Crosswalk_2020_to_2021.xlsx",
+    "retrieved_utc": "2026-10-24T13:40:16.145826+00:00",
+    "bytes": 153091,
+    "sha256": "095cb5f236445ad8807c23ad36ce5aa37a09a3b23452e5a09d110dcc7cb4b68b",
+    "path": "crosswalk_2020_to_2021.xlsx",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": null,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/complete-documents/2022/2022_SIPP_Crosswalk_2021_to_2022.xlsx",
+    "retrieved_utc": "2026-10-24T13:40:16.264996+00:00",
+    "bytes": 158472,
+    "sha256": "78e34fb3670a9244fb2eb2ea9940a1f33a632adcd09811553ab752bb3ae6fa5b",
+    "path": "crosswalk_2021_to_2022.xlsx",
     "http_status": 200,
     "status": "CAPTURED_METADATA"
   }
