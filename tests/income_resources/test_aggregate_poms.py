@@ -25,20 +25,41 @@ from populace_dynamics.income_resources.aggregate_tables import (
     read_verified,
 )
 
+RAW_BLOCKS = {"p", "h1", "h2", "h3", "h4", "h5", "h6"}
+
 
 class RawPomsCells(HTMLParser):
-    """Independent physical-cell locator; it does not use the table parser."""
+    """Independent physical-cell locator; it does not use the table parser.
+
+    It also records, in document order, each table and the text of each
+    paragraph or heading outside a table. A block ends at its end tag or at
+    the next block or table, as an unclosed paragraph does in HTML.
+    """
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.tables = []
+        self.events = []
         self.active = False
         self.row = None
         self.parts = None
         self.sup = 0
+        self.block = None
+
+    def _end_block(self):
+        if self.block is not None:
+            self.events.append(
+                ("block", " ".join("".join(self.block).split()))
+            )
+            self.block = None
 
     def handle_starttag(self, tag, attrs):
+        if tag in RAW_BLOCKS and not self.active:
+            self._end_block()
+            self.block = []
         if tag == "table":
+            self._end_block()
+            self.events.append(("table", len(self.tables)))
             self.tables.append([])
             self.active = True
         elif tag == "tr" and self.active:
@@ -51,8 +72,12 @@ class RawPomsCells(HTMLParser):
     def handle_data(self, text):
         if self.parts is not None and not self.sup:
             self.parts.append(text)
+        if self.block is not None and not self.active:
+            self.block.append(text)
 
     def handle_endtag(self, tag):
+        if tag in RAW_BLOCKS and not self.active:
+            self._end_block()
         if tag == "sup":
             self.sup -= 1
         elif tag in {"td", "th"} and self.parts is not None:
@@ -63,6 +88,80 @@ class RawPomsCells(HTMLParser):
             self.row = None
         elif tag == "table":
             self.active = False
+
+    def close(self):
+        super().close()
+        self._end_block()
+
+
+def raw_state_heading(text):
+    """The State a section heading names, found without the reader's regex."""
+    words = text.strip()
+    if len(words) > 2 and words[0].isupper() and words[1] == ".":
+        words = words[2:].strip()
+    lowered = words.lower()
+    for prefix in (
+        "description of supplements for the ",
+        "description of supplements for ",
+        "description of supplements -",
+        "description of supplements-",
+        "procedure -",
+        "procedure-",
+    ):
+        if lowered.startswith(prefix):
+            words = words[len(prefix) :].strip()
+            break
+    if len(words) > 5 and words[-4] == "(" and words.endswith(")"):
+        if words[-3:-1].isalpha() and words[-3:-1].isupper():
+            words = words[:-4].strip()
+    return next(
+        (state for state in _STATES if words.lower() == state.lower()), None
+    )
+
+
+def raw_alternatives(code):
+    """Split a joint code ("C/H", "A or B") with string operations."""
+    parts = [part.strip() for part in code.replace(" or ", "/").split("/")]
+    if len(parts) > 1 and all(
+        len(part) == 1 and part.isalpha() and part.isupper() for part in parts
+    ):
+        return parts
+    return [code]
+
+
+def raw_sections(payload):
+    """Map each raw payment chart to its State section's definition tables.
+
+    A section runs from a heading naming a new State to the next heading
+    naming another. Every Code/Definition table in it belongs to it, before
+    or after a chart.
+    """
+    locator = RawPomsCells()
+    locator.feed(payload.decode("utf-8"))
+    locator.close()
+    sections = []
+    state = None
+    for kind, value in locator.events:
+        if kind == "block":
+            named = raw_state_heading(value)
+            if named is not None and named != state:
+                state = named
+                sections.append({"charts": [], "definitions": []})
+            continue
+        rows = [
+            [" ".join(cell.replace("\u200b", "").split()) for cell in row]
+            for row in locator.tables[value]
+        ]
+        if any(row[:2] == ["Code", "Definition"] for row in rows[:3]):
+            sections[-1]["definitions"].append(value)
+        if rows and rows[0] and rows[0][0] == "Federal Code":
+            sections[-1]["charts"].append(value)
+    charts = {
+        chart: section["definitions"]
+        for section in sections
+        for chart in section["charts"]
+    }
+    return charts, locator.tables
 
 
 def poms_specs():
@@ -256,16 +355,33 @@ def test_poms_2004_california_definitions_span_both_published_tables():
 
 
 def test_poms_definition_codes_match_independently_located_raw_html():
-    raw_tables = {}
+    """Sections, charts and definition tables are located independently.
+
+    The raw locator finds each chart's State section and every definition
+    table in it, without the reader's selectors. Its tables must equal both
+    the registry's and the reader's, and its codes the reader's mapping.
+    """
+    raw = {}
+    described = {}
     for spec in poms_specs():
         payload = read_verified(spec)
-        if spec.capture_file not in raw_tables:
-            locator = RawPomsCells()
-            locator.feed(payload.decode("utf-8"))
-            raw_tables[spec.capture_file] = locator.tables
+        if spec.capture_file not in raw:
+            raw[spec.capture_file] = raw_sections(payload)
+            described[spec.capture_file] = {
+                selector["table_index"]: selector
+                for selector in describe_poms_tables(payload)
+            }
+        charts, tables = raw[spec.capture_file]
+        index = spec.selector["table_index"]
+        _require(index in charts, spec.identifier)
+        for selector in (spec.selector, described[spec.capture_file][index]):
+            _require(
+                charts[index] == selector["definitions_table_indexes"],
+                spec.identifier,
+            )
         raw_codes = set()
-        for index in spec.selector["definitions_table_indexes"]:
-            rows = raw_tables[spec.capture_file][index]
+        for table in charts[index]:
+            rows = tables[table]
             header = next(
                 i
                 for i, row in enumerate(rows)
@@ -274,9 +390,14 @@ def test_poms_definition_codes_match_independently_located_raw_html():
             for row in rows[header + 1 :]:
                 code = " ".join(row[0].replace("\u200b", "").split())
                 if len(row) >= 2 and code:
-                    raw_codes.update(poms_code_alternatives(code))
+                    raw_codes.update(raw_alternatives(code))
         definitions = poms_living_arrangements(spec, payload)
         _require(raw_codes == set(definitions), spec.identifier)
+    by_capture = defaultdict(set)
+    for spec in poms_specs():
+        by_capture[spec.capture_file].add(spec.selector["table_index"])
+    for capture_file, registered in by_capture.items():
+        _require(set(raw[capture_file][0]) == registered, capture_file)
 
 
 def test_poms_registry_selectors_match_the_structural_reader():

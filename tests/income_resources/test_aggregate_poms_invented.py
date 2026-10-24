@@ -535,3 +535,67 @@ def test_invented_state_named_only_in_a_date_line_is_refused():
     )
     with pytest.raises(TableStructureError, match="section heading"):
         describe_poms_tables(payload)
+
+
+def test_invented_definition_table_after_a_chart_is_refused():
+    """Regression: a later table once defined codes for later charts only."""
+    payload = invented_payload(
+        "<h3>Description of supplements for California</h3>"
+        + invented_definitions([("A", "Invented first")])
+        + INVENTED_CHART.format(state="California")
+        + invented_definitions([("B", "Invented second")])
+        + INVENTED_CHART.format(state="California")
+    )
+    with pytest.raises(TableStructureError, match="follows a payment chart"):
+        describe_poms_tables(payload)
+
+
+@settings(deadline=None, max_examples=60)
+@given(
+    st.lists(
+        st.sampled_from(["definitions", "chart"]), min_size=1, max_size=8
+    ).filter(lambda kinds: "chart" in kinds),
+    st.data(),
+)
+def test_invented_interleaved_definitions_are_read_in_full_or_refused(
+    kinds, data
+):
+    """Each chart reads every table of its section, or the section refuses.
+
+    The tables of one State section arrive in any order. A definition table
+    after a chart refuses; otherwise every chart reads every definition
+    table of its section, and a section with none refuses at the reader.
+    """
+    codes = iter(string.ascii_uppercase)
+    groups = {
+        index: [
+            (next(codes), f"Invented arrangement {index}.{row}")
+            for row in range(data.draw(st.integers(1, 2)))
+        ]
+        for index, kind in enumerate(kinds)
+        if kind == "definitions"
+    }
+    payload = invented_payload(
+        "<h3>Description of supplements for California</h3>"
+        + "".join(
+            (
+                invented_definitions(groups[index])
+                if kind == "definitions"
+                else INVENTED_CHART.format(state="California")
+            )
+            for index, kind in enumerate(kinds)
+        )
+    )
+    if "definitions" in kinds[kinds.index("chart") :]:
+        with pytest.raises(TableStructureError, match="follows a payment"):
+            describe_poms_tables(payload)
+        return
+    mapping = {code: text for group in groups.values() for code, text in group}
+    for chart in range(kinds.count("chart")):
+        spec, payload = invented_spec_for(payload, chart)
+        assert spec.selector["definitions_table_indexes"] == sorted(groups)
+        if not groups:
+            with pytest.raises(TableStructureError, match="not identified"):
+                poms_living_arrangements(spec, payload)
+            continue
+        assert poms_living_arrangements(spec, payload) == mapping

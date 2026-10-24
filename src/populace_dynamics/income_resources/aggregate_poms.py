@@ -21,7 +21,9 @@ code-definition tables (``definitions_table_indexes`` in selectors). A State's
 definitions may span more than one physical table; the reader merges them and
 refuses a code whose tables define it differently. Definitions come only from
 the chart's own State section, and a State named only in a date line, with no
-section heading, refuses. A jointly published code
+section heading, refuses. Every definition table of a section precedes its
+first chart; a definition table after a chart refuses, because the source does
+not say which earlier chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
 lists. A chart code that no definition table defines stays undefined and is
 recorded in ``poms_open_questions.json``; no definition is inferred for it.
@@ -128,11 +130,12 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
     effective_text = ""
     dates: tuple[str, ...] = ()
     definitions: list[int] = []
+    charted = False
     table_indexes = {id(table): i for i, table in enumerate(tables)}
     contexts: list[dict[str, Any]] = []
 
     def walk(element: ET.Element) -> None:
-        nonlocal state, claimant, effective_text, dates, definitions
+        nonlocal state, claimant, effective_text, dates, definitions, charted
         if element.tag == "table":
             index = table_indexes[id(element)]
             grid = expand_html_table(element)
@@ -143,6 +146,14 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 tuple(_blank(c.text) for c in row) == ("Code", "Definition")
                 for row in grid[:3]
             ):
+                if charted:
+                    # Which of the section's earlier charts a later table
+                    # defines codes for is not stated, so refuse rather than
+                    # apply it to some charts and not others.
+                    raise TableStructureError(
+                        f"POMS definition table {index} follows a payment "
+                        "chart in its State section"
+                    )
                 definitions.append(index)
             if len(first) >= 5 and first[0] == "Federal Code":
                 if state is None or claimant is None:
@@ -189,6 +200,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         "section_effective_to": revision_end,
                     }
                 )
+                charted = True
             return
         if element.tag in _BLOCKS:
             text = normalized_text(element)
@@ -209,6 +221,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         effective_text = ""
                         dates = ()
                         definitions = []
+                        charted = False
                     break
             for name in _STATES:
                 if re.match(re.escape(name) + r"\s+Effective\b", text, re.I):
