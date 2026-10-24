@@ -413,6 +413,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # The income-and-resources aggregate-table readers (D4) are opt-in
+    # source readers; nothing in the historical projection imports them.
+    Path("src/populace_dynamics/income_resources/__init__.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_coverage.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
