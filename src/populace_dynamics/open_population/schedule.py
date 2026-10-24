@@ -19,6 +19,8 @@ import numpy as np
 import pandas as pd
 
 from populace_dynamics.engine.entrant_schedule import (
+    ENTRY_KIND_COLUMN,
+    ENTRY_KIND_IMMIGRANT,
     EntrantSchedule,
     validate_projection_allocator,
 )
@@ -36,6 +38,7 @@ _INT64_MIN = np.iinfo(np.int64).min
 
 
 def _ids(values: Iterable[object]) -> list[int]:
+    """Validate signed IDs for the design §§2.1 and 7 allocator contract."""
     result = []
     for value in values:
         if (
@@ -53,6 +56,7 @@ def _ids(values: Iterable[object]) -> list[int]:
 def _frames(
     frames: Mapping[int, pd.DataFrame],
 ) -> dict[int, pd.DataFrame]:
+    """Copy and label scheduled cohorts under design §§2.3 and 7."""
     if not isinstance(frames, Mapping):
         raise TypeError("scheduled entries must be a mapping")
     result = {}
@@ -76,8 +80,8 @@ def _frames(
                 "scheduled entries must carry activation year - 1"
             )
         if (
-            "entry_kind" in frame
-            and not frame["entry_kind"].eq("immigrant_cohort").all()
+            ENTRY_KIND_COLUMN in frame
+            and not frame[ENTRY_KIND_COLUMN].eq(ENTRY_KIND_IMMIGRANT).all()
         ):
             raise ValueError("scheduled entries require immigrant_cohort kind")
         if "entry_year" in frame and not frame["entry_year"].eq(year).all():
@@ -85,7 +89,7 @@ def _frames(
                 "scheduled entry_year differs from activation year"
             )
         copied = frame.copy(deep=True)
-        copied["entry_kind"] = "immigrant_cohort"
+        copied[ENTRY_KIND_COLUMN] = ENTRY_KIND_IMMIGRANT
         copied["entry_year"] = year
         result[year] = copied.sort_values(
             "person_id", kind="stable"

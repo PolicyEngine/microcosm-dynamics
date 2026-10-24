@@ -14,7 +14,8 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, replace
 from functools import wraps
-from typing import Any
+from types import MappingProxyType
+from typing import Any, Literal
 
 import pandas as pd
 
@@ -31,8 +32,8 @@ from populace_dynamics.engine.accounting_history import (
     reconcile_history,
 )
 from populace_dynamics.engine.entrant_schedule import (
+    ENTRY_KIND_IMMIGRANT,
     EntrantSchedule,
-    validate_projection_allocator,
 )
 from populace_dynamics.engine.loop import (
     SCHEDULED_ENTRIES_KEY,
@@ -49,32 +50,49 @@ from populace_dynamics.open_population.errors import (
 from populace_dynamics.open_population.events import EventLedger, FlowEvent
 from populace_dynamics.open_population.exits import (
     EmigrationHazard,
-    ExitAdapter,
+    _ExitAdapter,
     require_emigration_compatible,
 )
 from populace_dynamics.open_population.schedule import (
     prepare_scheduled_entries,
 )
 
+REGISTERED_PRODUCTION_HORIZONS = MappingProxyType(
+    {"tr2026_intermediate": 2100}
+)
+
+
+def _registered_horizon(scenario: str) -> int:
+    """Resolve the single production horizon from design §2.9."""
+    try:
+        return REGISTERED_PRODUCTION_HORIZONS[scenario]
+    except KeyError as error:
+        raise IdOrStreamCollision(
+            f"unknown production scenario {scenario!r}"
+        ) from error
+
 
 @dataclass(frozen=True, slots=True)
 class ProductionRequest:
-    """Project once to the registered horizon; read shorter prefixes later."""
+    """Bind production to a scenario's horizon (design §§2.9, 7)."""
 
-    registered_horizon: int
-    end_year: int
+    scenario: str
     draw_index: int = 0
     start_year: int | None = None
 
     def __post_init__(self) -> None:
-        if (
-            type(self.registered_horizon) is not int
-            or type(self.end_year) is not int
-            or self.end_year != self.registered_horizon
-        ):
-            raise IdOrStreamCollision(
-                "production end_year must equal its registered horizon"
-            )
+        if type(self.scenario) is not str:
+            raise TypeError("production scenario must be a string")
+        if type(self.draw_index) is not int:
+            raise TypeError("production draw_index must be an integer")
+        if self.start_year is not None and type(self.start_year) is not int:
+            raise TypeError("production start_year must be an integer or None")
+        _registered_horizon(self.scenario)
+
+    @property
+    def end_year(self) -> int:
+        """Read the scenario horizon; callers cannot supply it (§2.9)."""
+        return _registered_horizon(self.scenario)
 
 
 @dataclass(frozen=True)
@@ -86,6 +104,8 @@ class OpenPopulationResult:
     events: tuple[FlowEvent, ...]
     start_year: int
     horizon: int
+    kind: Literal["production", "gate"]
+    scenario: str | None
 
     def read_prefix(self, end_year: int) -> ProjectionResult:
         """Copy a prefix of this run without scheduling or simulating again."""
@@ -153,7 +173,10 @@ def _project(
     metadata: Mapping[str, Any] | None = None,
     emigration_hazard: EmigrationHazard | None = None,
     reserved_real_ids: Iterable[int] = (),
+    kind: Literal["production", "gate"],
+    scenario: str | None,
 ) -> OpenPopulationResult:
+    """Wrap the sealed loop and reconcile every transition (design §§5.4, 7)."""
     require_emigration_compatible(modules.marital_core, emigration_hazard)
     ProjectionEngine._validate_slice(initial_slice, "initial_slice")
     # Run the initializer exactly once, before constructing allocator metadata.
@@ -164,6 +187,10 @@ def _project(
     ProjectionEngine._validate_slice(current, "initialized initial_slice")
     if set(current["person_id"]) != set(initial_slice["person_id"]):
         raise AccountingIdentityError("initializer changed the starting IDs")
+    # Match engine/loop.py:284–286, which canonicalizes years with entrants.
+    current = current.sort_values("person_id", kind="stable").reset_index(
+        drop=True
+    )
     if current.empty:
         if start_year is None:
             raise ValueError("empty initial_slice requires start_year")
@@ -188,15 +215,13 @@ def _project(
         metadata=metadata,
         reserved_real_ids=reserved_real_ids,
     )
-    # Validate this exact object immediately before passing it to the loop.
-    try:
-        validate_projection_allocator(current["person_id"], shared)
-    except (ValueError, TypeError) as error:
-        raise IdOrStreamCollision(str(error)) from error
     ledger = EventLedger()
-    exit_step = ExitAdapter(modules.mortality, ledger, emigration_hazard)
+    exit_step = _ExitAdapter(modules.mortality, ledger, emigration_hazard)
     transitions: list[AnnualTransition] = []
-    opening = current.copy()
+    # The accountants read only these columns (accounting.py:690–703;
+    # accounting_history.py:152–159). Retain only their stock snapshots.
+    stock_columns = ["person_id", "year", "weight"]
+    opening = current[stock_columns].copy()
 
     def mortality(frame, context, rng):
         entries = shared[SCHEDULED_ENTRIES_KEY].get(context.year)
@@ -205,7 +230,7 @@ def _project(
                 entries,
                 year=context.year,
                 kind=PopulationEventKind.SCHEDULED_ENTRY,
-                entry_kind="immigrant_cohort",
+                entry_kind=ENTRY_KIND_IMMIGRANT,
             )
         return exit_step(frame, context, rng)
 
@@ -214,14 +239,12 @@ def _project(
     def close_period(frame, context, marital, rng):
         nonlocal opening
         closing = household_step(frame, context, marital, rng)
-        events = [
-            event for event in ledger.events if event.year == context.year
-        ]
+        events = ledger.events_for_year(context.year)
         transition = AnnualTransition(
             opening_year=context.year - 1,
             closing_year=context.year,
             opening=opening,
-            closing=closing.copy(),
+            closing=closing[stock_columns].copy(),
             additions=tuple(
                 event.as_accounting_event()
                 for event in events
@@ -247,7 +270,7 @@ def _project(
         if account.weights.revaluation.total != 0:
             raise AccountingIdentityError("fixed person weights changed")
         transitions.append(transition)
-        opening = closing.copy()
+        opening = transition.closing
         return closing
 
     wrapped = replace(
@@ -281,6 +304,8 @@ def _project(
         events=tuple(ledger.events),
         start_year=start_year,
         horizon=end_year,
+        kind=kind,
+        scenario=scenario,
     )
 
 
@@ -299,5 +324,7 @@ def run_production(
         end_year=request.end_year,
         draw_index=request.draw_index,
         start_year=request.start_year,
+        kind="production",
+        scenario=request.scenario,
         **kwargs,
     )

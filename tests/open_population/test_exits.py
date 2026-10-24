@@ -8,6 +8,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+from populace_dynamics.baselines.fertility import ASFR_STREAM_TAG
 from populace_dynamics.cola_track_a.adapters import widowhood_marital_step
 from populace_dynamics.engine.accounting import PopulationEventKind
 from populace_dynamics.engine.loop import (
@@ -19,7 +20,7 @@ from populace_dynamics.engine.rng import (
     ProjectionModule,
     ProjectionRNGRegistry,
 )
-from populace_dynamics.engine.steps import advance_age
+from populace_dynamics.engine.steps import advance_age, apply_mortality
 from populace_dynamics.open_population.errors import (
     AccountingIdentityError,
     EmigrationMaritalIncompatibility,
@@ -27,7 +28,8 @@ from populace_dynamics.open_population.errors import (
 )
 from populace_dynamics.open_population.events import EventLedger
 from populace_dynamics.open_population.exits import (
-    ExitAdapter,
+    EMIGRATION_STREAM_TAG,
+    _ExitAdapter,
     no_marital_transitions,
     require_emigration_compatible,
 )
@@ -100,6 +102,107 @@ def ids(ledger, kind):
     return {event.person_id for event in ledger.events if event.kind == kind}
 
 
+class _ConstantMortality:
+    def __init__(self, probability):
+        self.probability = probability
+
+    def probabilities(self, frame):
+        return np.full(len(frame), self.probability)
+
+
+def _stream_case(size, death_probability, emigration_probability):
+    frame = roster(size).assign(weight=1.0)
+    registry = ProjectionRNGRegistry(0, 3)
+    ordinals = {
+        person_id: ordinal
+        for ordinal, person_id in enumerate(frame["person_id"])
+    }
+    coordinates = PeriodContext(
+        period_index=1,
+        year=2026,
+        draw_index=0,
+        metadata={},
+        rng_registry=registry,
+        person_ordinals=ordinals,
+    )
+    ledger = EventLedger()
+    _ExitAdapter(
+        partial(apply_mortality, model=_ConstantMortality(death_probability)),
+        ledger,
+        lambda f, c: np.full(len(f), emigration_probability),
+    )(frame, coordinates, np.random.default_rng(0))
+    survivors = set(frame["person_id"]) - ids(
+        ledger, PopulationEventKind.DEATH
+    )
+    return (
+        registry,
+        ordinals,
+        survivors,
+        ids(ledger, PopulationEventKind.EMIGRATION),
+    )
+
+
+def test_exact_emigration_stream():
+    probability = 0.4
+    registry, ordinals, survivors, emigrants = _stream_case(
+        200, 0.3, probability
+    )
+    # Compare with the sealed registry itself, independently of OP1 streams.
+    expected = {
+        person_id
+        for person_id in survivors
+        if registry.tagged_child_generator(
+            1,
+            ProjectionModule.MORTALITY,
+            EMIGRATION_STREAM_TAG,
+            ordinals[person_id],
+        ).random()
+        < probability
+    }
+    assert emigrants == expected
+
+
+def test_emigration_marginal_and_non_degenerate():
+    probability = 0.25
+    _, _, survivors, emigrants = _stream_case(4000, 0.5, probability)
+    count = len(survivors)
+    share = len(emigrants) / count
+    assert (
+        abs(share - probability)
+        <= 4 * (probability * (1 - probability) / count) ** 0.5
+    )
+    assert 0 < len(emigrants) < count
+
+
+def test_emigration_uniform_distinct_from_other_person_streams():
+    probability = 0.4
+    registry, ordinals, survivors, emigrants = _stream_case(
+        200, 0.3, probability
+    )
+    for other in (
+        lambda ordinal: registry.person_generator(
+            1, ProjectionModule.MORTALITY, ordinal
+        ),
+        lambda ordinal: registry.tagged_child_generator(
+            1, ProjectionModule.FERTILITY, ASFR_STREAM_TAG, ordinal
+        ),
+    ):
+        replay = {
+            person_id
+            for person_id in survivors
+            if other(ordinals[person_id]).random() < probability
+        }
+        assert replay != emigrants
+
+
+def test_package_exposes_no_public_exit_adapter():
+    import populace_dynamics.open_population as package
+    from populace_dynamics.open_population import exits
+
+    assert not hasattr(package, "ExitAdapter")
+    assert not hasattr(exits, "ExitAdapter")
+
+
 def test_mortality_receives_original_arguments_and_generator():
     frame = roster()
     coordinates = context(frame)
@@ -117,7 +220,7 @@ def test_mortality_receives_original_arguments_and_generator():
         return actual.iloc[1:]
 
     ledger = EventLedger()
-    out = ExitAdapter(wrapped, ledger, lambda f, c: np.zeros(len(f)))(
+    out = _ExitAdapter(wrapped, ledger, lambda f, c: np.zeros(len(f)))(
         frame, coordinates, rng
     )
     pd.testing.assert_frame_equal(out, frame.iloc[1:])
@@ -131,7 +234,7 @@ def test_off_returns_exact_mortality_object_without_rng_registry():
     survivors = frame.iloc[2:]
     coordinates = PeriodContext(1, 2026, 0, {})
     ledger = EventLedger()
-    out = ExitAdapter(lambda f, c, r: survivors, ledger)(
+    out = _ExitAdapter(lambda f, c, r: survivors, ledger)(
         frame, coordinates, np.random.default_rng(1)
     )
     assert out is survivors
@@ -147,7 +250,7 @@ def test_in_place_mortality_preserves_pre_call_death_weight():
         return actual
 
     ledger = EventLedger()
-    ExitAdapter(mutate, ledger)(frame, coordinates, np.random.default_rng(1))
+    _ExitAdapter(mutate, ledger)(frame, coordinates, np.random.default_rng(1))
     assert [(event.person_id, event.weight) for event in ledger.events] == [
         (1, 1.0)
     ]
@@ -161,9 +264,9 @@ def test_off_matches_closed_projection_slice_by_slice(size, draw):
     closed = ProjectionEngine(modules(mortality)).project(
         frame, end_year=2030, draw_index=draw
     )
-    opened = ProjectionEngine(modules(ExitAdapter(mortality, ledger))).project(
-        frame, end_year=2030, draw_index=draw
-    )
+    opened = ProjectionEngine(
+        modules(_ExitAdapter(mortality, ledger))
+    ).project(frame, end_year=2030, draw_index=draw)
     for a, b in zip(closed.slices, opened.slices, strict=True):
         pd.testing.assert_frame_equal(a, b)
     assert all(
@@ -196,7 +299,7 @@ def test_same_year_coupling_exclusivity_and_order(size, draw, probabilities):
     ):
         ledger = EventLedger()
         outputs.append(
-            ExitAdapter(
+            _ExitAdapter(
                 mortality,
                 ledger,
                 lambda f, c, p=probability: np.full(len(f), p),
@@ -231,7 +334,7 @@ def test_hazard_sees_only_survivors_and_cannot_mutate_output():
         return [1.0, 0.0]
 
     ledger = EventLedger()
-    out = ExitAdapter(lambda f, c, r: f.iloc[1:], ledger, hazard)(
+    out = _ExitAdapter(lambda f, c, r: f.iloc[1:], ledger, hazard)(
         frame, coordinates, np.random.default_rng(2)
     )
     assert out["person_id"].tolist() == [3]
@@ -246,7 +349,7 @@ def test_hazard_sees_only_survivors_and_cannot_mutate_output():
 def test_invalid_hazard_probabilities_are_refused(probabilities):
     frame = roster(3)
     with pytest.raises(ValueError, match="emigration"):
-        ExitAdapter(unchanged, EventLedger(), lambda f, c: probabilities)(
+        _ExitAdapter(unchanged, EventLedger(), lambda f, c: probabilities)(
             frame, context(frame), np.random.default_rng(1)
         )
 
@@ -254,7 +357,7 @@ def test_invalid_hazard_probabilities_are_refused(probabilities):
 def test_non_null_hazard_needs_person_streams():
     frame = roster(3)
     with pytest.raises(IdOrStreamCollision, match="ID_OR_STREAM_COLLISION"):
-        ExitAdapter(unchanged, EventLedger(), lambda f, c: [0.0] * len(f))(
+        _ExitAdapter(unchanged, EventLedger(), lambda f, c: [0.0] * len(f))(
             frame, PeriodContext(1, 2026, 0, {}), np.random.default_rng(1)
         )
 
@@ -276,7 +379,7 @@ def test_invalid_mortality_output_is_refused(defect):
     with pytest.raises(
         AccountingIdentityError, match="ACCOUNTING_IDENTITY_FAIL"
     ):
-        ExitAdapter(invalid, EventLedger())(
+        _ExitAdapter(invalid, EventLedger())(
             frame, context(frame), np.random.default_rng(1)
         )
 

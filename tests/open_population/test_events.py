@@ -30,3 +30,23 @@ def test_exit_carries_only_exit_kind():
     with pytest.raises(AccountingIdentityError, match="exit"):
         FlowEvent(1, 2026, Kind.EMIGRATION, 1.0, "maternal_birth")
     assert FlowEvent(1, 2026, Kind.DEATH, 1.0).entry_kind is None
+
+
+def test_year_index_preserves_declarations_and_returns_a_snapshot():
+    first = FlowEvent(1, 2026, Kind.DEATH, 1.0)
+    ledger = EventLedger([first])
+    before = ledger.events_for_year(2026)
+    ledger.record(
+        pd.DataFrame({"person_id": [3], "weight": [2.0]}),
+        year=2027,
+        kind=Kind.EMIGRATION,
+    )
+    ledger.record(
+        pd.DataFrame({"person_id": [2], "weight": [1.5]}),
+        year=2026,
+        kind=Kind.DEATH,
+    )
+    assert before == (first,)
+    assert ledger.events_for_year(2026) == (first, ledger.events[2])
+    assert ledger.events_for_year(2027) == (ledger.events[1],)
+    assert ledger.events_for_year(2028) == ()

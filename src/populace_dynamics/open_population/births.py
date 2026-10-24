@@ -16,6 +16,10 @@ import numpy as np
 import pandas as pd
 
 from populace_dynamics.engine.accounting import PopulationEventKind
+from populace_dynamics.engine.entrant_schedule import (
+    ENTRY_KIND_BIRTH,
+    ENTRY_KIND_COLUMN,
+)
 from populace_dynamics.engine.loop import (
     MaritalReaderStep,
     MaritalStepResult,
@@ -42,6 +46,7 @@ class BirthEntryAdapter:
         marital: MaritalStepResult,
         rng: np.random.Generator,
     ) -> pd.DataFrame:
+        """Declare allocator-backed births without new draws (design §7)."""
         # Snapshot before the delegated call, including adapters that mutate
         # their input in place. An ID alone cannot identify a reused child.
         before = frame[["person_id", "weight"]].copy(deep=True)
@@ -85,20 +90,22 @@ class BirthEntryAdapter:
 
         out = output.copy()
         added = out["person_id"].isin(added_ids)
-        if "entry_kind" not in out:
-            out["entry_kind"] = pd.Series(pd.NA, index=out.index, dtype=object)
+        if ENTRY_KIND_COLUMN not in out:
+            out[ENTRY_KIND_COLUMN] = pd.Series(
+                pd.NA, index=out.index, dtype=object
+            )
         else:
-            out["entry_kind"] = out["entry_kind"].astype(object)
+            out[ENTRY_KIND_COLUMN] = out[ENTRY_KIND_COLUMN].astype(object)
         if "entry_year" not in out:
             out["entry_year"] = pd.Series(
                 pd.NA, index=out.index, dtype="Int64"
             )
-        out.loc[added, "entry_kind"] = "maternal_birth"
+        out.loc[added, ENTRY_KIND_COLUMN] = ENTRY_KIND_BIRTH
         out.loc[added, "entry_year"] = context.year
         self.ledger.record(
             out.loc[added],
             year=context.year,
             kind=PopulationEventKind.BIRTH,
-            entry_kind="maternal_birth",
+            entry_kind=ENTRY_KIND_BIRTH,
         )
         return out

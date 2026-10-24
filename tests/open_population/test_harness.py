@@ -8,29 +8,32 @@ and ``baselines/fertility.py:163–181`` without supplying any observed data.
 from __future__ import annotations
 
 import math
-import subprocess
 from dataclasses import replace
 from functools import partial
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.baselines.fertility import AsfrFertilityStep
+from populace_dynamics.baselines.tr2026_intermediate import LAST_YEAR
 from populace_dynamics.engine.accounting import PopulationEventKind
 from populace_dynamics.engine.entrant_schedule import (
     validate_projection_allocator,
 )
 from populace_dynamics.engine.loop import (
+    SCHEDULED_ENTRIES_KEY,
     PeriodContext,
     PeriodModules,
     ProjectionEngine,
     SyntheticPersonIdAllocator,
 )
-from populace_dynamics.engine.rng import ProjectionRNGRegistry
+from populace_dynamics.engine.rng import (
+    ProjectionModule,
+    ProjectionRNGRegistry,
+)
 from populace_dynamics.engine.steps import advance_age, apply_mortality
 from populace_dynamics.open_population.errors import (
     AccountingIdentityError,
@@ -38,12 +41,35 @@ from populace_dynamics.open_population.errors import (
 )
 from populace_dynamics.open_population.exits import no_marital_transitions
 from populace_dynamics.open_population.harness import (
+    REGISTERED_PRODUCTION_HORIZONS,
     ProductionRequest,
     run_production,
 )
 
-ROOT = Path(__file__).resolve().parents[2]
 START = 2025
+
+
+@pytest.fixture(autouse=True)
+def _invented_horizons(monkeypatch):
+    from populace_dynamics.open_population import harness
+
+    original = harness._registered_horizon
+    horizons = {
+        "invented_2026": 2026,
+        "invented_2027": 2027,
+        "invented_2028": 2028,
+    }
+
+    def lookup(scenario):
+        return (
+            horizons[scenario] if scenario in horizons else original(scenario)
+        )
+
+    monkeypatch.setattr(harness, "_registered_horizon", lookup)
+
+
+def _request(end_year, **kwargs):
+    return ProductionRequest(f"invented_{end_year}", **kwargs)
 
 
 def _roster(weights=(1.0, 1.5, 2.0)):
@@ -113,7 +139,21 @@ def _canonical(frame):
     return frame.sort_values("person_id").reset_index(drop=True)
 
 
-@settings(max_examples=8, deadline=None)
+@example(
+    weights=[1.0, 1.5, 2.0],
+    death_probability=0.25,
+    emigration_probability=0.35,
+    birth_probability=1.0,
+    draw=0,
+)
+@example(
+    weights=[0.1, 0.7],
+    death_probability=0.25,
+    emigration_probability=0.35,
+    birth_probability=0.5,
+    draw=4,
+)
+@settings(max_examples=12, deadline=None)
 @given(
     weights=st.lists(
         st.integers(min_value=0, max_value=100).map(lambda x: x / 10),
@@ -145,7 +185,7 @@ def test_stock_flow_and_identity_history(
     result = run_production(
         initial,
         modules,
-        ProductionRequest(2028, 2028, draw_index=draw),
+        _request(2028, draw_index=draw),
         scheduled_entries=_scheduled(range(2026, 2029)),
         emigration_hazard=_hazard(emigration_probability),
     )
@@ -210,7 +250,7 @@ def test_records_all_four_flow_kinds_including_same_year_transients():
     result = run_production(
         initial,
         replace(_modules(birth_probability=1), mortality=mortality),
-        ProductionRequest(2026, 2026),
+        _request(2026),
         scheduled_entries=_scheduled([2026]),
         emigration_hazard=emigration,
     )
@@ -231,21 +271,28 @@ def test_records_all_four_flow_kinds_including_same_year_transients():
 @settings(max_examples=6, deadline=None)
 @given(draw=st.integers(min_value=0, max_value=12))
 def test_disabled_emigration_matches_closed_engine_slice_by_slice(draw):
-    initial = _roster((0.1, 0.7, 1.3, 2.0))
+    initial = _canonical(_roster((0.1, 0.7, 1.3, 2.0)).iloc[::-1])
     modules = _modules()
+    scheduled = _scheduled(range(2026, 2029))
     closed = ProjectionEngine(modules).project(
-        initial, end_year=2028, draw_index=draw
+        initial,
+        end_year=2028,
+        draw_index=draw,
+        metadata={SCHEDULED_ENTRIES_KEY: scheduled},
     )
     result = run_production(
         initial,
         modules,
-        ProductionRequest(2028, 2028, draw_index=draw),
+        _request(2028, draw_index=draw),
+        scheduled_entries=scheduled,
     )
     for expected, actual in zip(
         closed.slices, result.projection.slices, strict=True
     ):
         columns = list(expected.columns)
         pd.testing.assert_frame_equal(expected, actual[columns])
+    assert result.kind == "production"
+    assert result.scenario == "invented_2028"
     assert not any(event.kind == "emigration" for event in result.events)
 
 
@@ -255,10 +302,11 @@ def test_disabled_emigration_matches_closed_run_for_signed_ids(person_ids):
     initial["person_id"] = person_ids
     initial["sex"] = "female"
     modules = _modules(death_probability=0, birth_probability=1)
+    initial = _canonical(initial)
     closed = ProjectionEngine(modules).project(
         initial, end_year=2026, draw_index=0
     )
-    actual = run_production(initial, modules, ProductionRequest(2026, 2026))
+    actual = run_production(initial, modules, _request(2026))
     for expected, observed in zip(
         closed.slices, actual.projection.slices, strict=True
     ):
@@ -274,7 +322,7 @@ def test_prefix_reads_keep_identical_shared_slices(shorter, longer):
     result = run_production(
         _roster(),
         _modules(death_probability=0, birth_probability=1),
-        ProductionRequest(2028, 2028),
+        _request(2028),
         scheduled_entries=_scheduled(range(2026, 2029)),
     )
     first = result.read_prefix(shorter)
@@ -287,43 +335,84 @@ def test_prefix_reads_keep_identical_shared_slices(shorter, longer):
     assert result.projection.slices[0].loc[0, "weight"] != 999
 
 
-@settings(max_examples=8, deadline=None)
+def test_registered_production_horizon_matches_baseline():
+    assert dict(REGISTERED_PRODUCTION_HORIZONS) == {
+        "tr2026_intermediate": LAST_YEAR
+    }
+    with pytest.raises(TypeError):
+        REGISTERED_PRODUCTION_HORIZONS["another"] = 2026
+
+
+@settings(max_examples=12, deadline=None)
 @given(
-    end=st.integers(min_value=2025, max_value=2030).filter(
-        lambda year: year != 2028
-    )
+    scenario=st.sampled_from(tuple(REGISTERED_PRODUCTION_HORIZONS)),
+    draw=st.integers(),
+    start=st.one_of(st.none(), st.integers()),
 )
-def test_production_refuses_an_unregistered_end_year(end):
-    with pytest.raises(IdOrStreamCollision, match="ID_OR_STREAM_COLLISION"):
-        ProductionRequest(registered_horizon=2028, end_year=end)
+def test_production_horizon_is_bound_to_scenario(scenario, draw, start):
+    request = ProductionRequest(scenario, draw_index=draw, start_year=start)
+    assert request.end_year == REGISTERED_PRODUCTION_HORIZONS[scenario]
 
 
-def test_committed_evidence_reproduces_unsafe_independent_horizons():
-    source = subprocess.run(
-        [
-            "git",
-            "show",
-            "5c82dbd9:docs/design/open_population_evidence/"
-            "horizon_dependence.py",
-        ],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
-    namespace = {"__name__": "op1_horizon_evidence"}
-    exec(compile(source, "committed_horizon_dependence.py", "exec"), namespace)
-    project = namespace["project"]
-    closed_short = project(2026, with_entrants=False)
-    closed_long = project(2027, with_entrants=False)
-    pd.testing.assert_frame_equal(
-        closed_short.slices[1], closed_long.slices[1]
-    )
-    open_short = project(2026, with_entrants=True)
-    open_long = project(2027, with_entrants=True)
-    assert not open_short.slices[1][["person_id", "age"]].equals(
-        open_long.slices[1][["person_id", "age"]]
-    )
+def test_conflicting_production_end_years_cannot_be_constructed():
+    for end in (2027, 2029):
+        for keyword in ("end_year", "registered_horizon"):
+            with pytest.raises(TypeError, match="unexpected keyword"):
+                ProductionRequest("tr2026_intermediate", **{keyword: end})
+    request = ProductionRequest("tr2026_intermediate")
+    with pytest.raises((AttributeError, TypeError)):
+        request.end_year = 2027
+
+
+def test_unknown_production_scenario_is_named():
+    with pytest.raises(
+        IdOrStreamCollision, match="ID_OR_STREAM_COLLISION.*missing"
+    ):
+        ProductionRequest("missing")
+
+
+@pytest.mark.parametrize(
+    "kwargs, message",
+    [
+        ({"scenario": 2100}, "scenario must be a string"),
+        (
+            {"scenario": "tr2026_intermediate", "draw_index": 1.5},
+            "draw_index must be an integer",
+        ),
+        (
+            {"scenario": "tr2026_intermediate", "start_year": "2025"},
+            "start_year must be an integer or None",
+        ),
+    ],
+)
+def test_production_field_type_errors_are_accurate(kwargs, message):
+    with pytest.raises(TypeError, match=message):
+        ProductionRequest(**kwargs)
+
+
+def test_independent_horizons_change_open_but_not_closed_shared_slices():
+    # Provenance: docs/design/open_population_evidence/horizon_dependence.py.
+    initial = _roster((1.0, 1.0))
+    initial["sex"] = "female"
+    modules = _modules(death_probability=0, birth_probability=1)
+
+    def project(end_year, with_entrants):
+        metadata = {}
+        if with_entrants:
+            metadata[SCHEDULED_ENTRIES_KEY] = _scheduled(
+                range(2026, end_year + 1)
+            )
+        return ProjectionEngine(modules).project(
+            initial, end_year=end_year, draw_index=0, metadata=metadata
+        )
+
+    for with_entrants in (False, True):
+        short = project(2026, with_entrants)
+        long = project(2027, with_entrants)
+        if with_entrants:
+            assert not short.slices[1].equals(long.slices[1])
+        else:
+            pd.testing.assert_frame_equal(short.slices[1], long.slices[1])
 
 
 @settings(max_examples=6, deadline=None)
@@ -334,7 +423,7 @@ def test_committed_evidence_reproduces_unsafe_independent_horizons():
 def test_determinism_and_order_with_canonical_mortality(draw, permutation):
     initial = _roster((0.1, 0.7, 1.3, 2.0))
     modules = _modules()
-    request = ProductionRequest(2027, 2027, draw_index=draw)
+    request = _request(2027, draw_index=draw)
 
     def run(frame):
         return run_production(
@@ -364,7 +453,7 @@ def test_undeclared_population_change_raises_named_accounting_error(slot):
     with pytest.raises(
         AccountingIdentityError, match="ACCOUNTING_IDENTITY_FAIL"
     ):
-        run_production(_roster(), modules, ProductionRequest(2026, 2026))
+        run_production(_roster(), modules, _request(2026))
 
 
 def test_fixed_weight_change_raises_named_accounting_error():
@@ -379,7 +468,7 @@ def test_fixed_weight_change_raises_named_accounting_error():
         run_production(
             _roster(),
             replace(_modules(death_probability=0), earnings=changes_weight),
-            ProductionRequest(2026, 2026),
+            _request(2026),
         )
 
 
@@ -434,7 +523,7 @@ def test_initializer_cannot_hide_an_invalid_starting_year():
         run_production(
             initial,
             replace(_modules(), initialize=hides_invalid_year),
-            ProductionRequest(2026, 2026),
+            _request(2026),
         )
 
 
@@ -448,5 +537,91 @@ def test_missing_weight_after_adapter_raises_named_accounting_error():
         run_production(
             _roster(),
             replace(_modules(), earnings=loses_weight),
-            ProductionRequest(2026, 2026),
+            _request(2026),
         )
+
+
+@example(permutation=(3, 2, 1, 0))
+@settings(max_examples=6, deadline=None)
+@given(permutation=st.permutations((0, 1, 2, 3)))
+def test_non_sorting_person_mortality_is_order_invariant(permutation):
+    def mortality(frame, context, rng):
+        keep = [
+            context.person_generator(
+                ProjectionModule.MORTALITY, person
+            ).random()
+            >= 0.1
+            for person in frame["person_id"]
+        ]
+        return frame.loc[np.asarray(keep, dtype=bool)].copy()
+
+    initial = _roster((1.0, 1.5, 2.0, 2.5))
+    initial["sex"] = "female"
+    modules = replace(_modules(birth_probability=1), mortality=mortality)
+
+    def run(frame):
+        return run_production(frame, modules, _request(2027))
+
+    expected = run(initial)
+    actual = run(initial.iloc[list(permutation)].reset_index(drop=True))
+    for a, b in zip(
+        expected.projection.slices, actual.projection.slices, strict=True
+    ):
+        pd.testing.assert_frame_equal(_canonical(a), _canonical(b))
+
+
+@pytest.mark.parametrize(
+    "slot",
+    [
+        "aging",
+        "marital_core",
+        "disability",
+        "earnings",
+        "claiming",
+        "household_composition",
+    ],
+)
+def test_offsetting_weight_swaps_are_refused_in_every_fixed_slot(slot):
+    modules = _modules(death_probability=0, birth_probability=0)
+    original = getattr(modules, slot)
+
+    def swaps_weights(frame, *args):
+        # Net stock weight is unchanged, so only the per-person check detects it.
+        frame = frame.copy() if slot != "marital_core" else frame
+        frame["weight"] = frame["weight"].to_numpy()[::-1]
+        return original(frame, *args)
+
+    with pytest.raises(
+        AccountingIdentityError, match="ACCOUNTING_IDENTITY_FAIL"
+    ):
+        run_production(
+            _roster((1.0, 1.5)),
+            replace(modules, **{slot: swaps_weights}),
+            _request(2026),
+        )
+
+
+def test_annual_transitions_retain_only_accounting_columns(monkeypatch):
+    from populace_dynamics.open_population import harness
+
+    original = harness.reconcile_history
+    captured = []
+
+    def check(transitions, **kwargs):
+        for transition in transitions:
+            assert list(transition.opening.columns) == [
+                "person_id",
+                "year",
+                "weight",
+            ]
+            assert list(transition.closing.columns) == [
+                "person_id",
+                "year",
+                "weight",
+            ]
+        captured.extend(transitions)
+        return original(transitions, **kwargs)
+
+    monkeypatch.setattr(harness, "reconcile_history", check)
+    run_production(_roster(), _modules(), _request(2027))
+    assert len(captured) == 2

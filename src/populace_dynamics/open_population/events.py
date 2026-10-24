@@ -16,11 +16,15 @@ from populace_dynamics.engine.accounting import (
     PopulationEvent,
     PopulationEventKind,
 )
+from populace_dynamics.engine.entrant_schedule import (
+    ENTRY_KIND_BIRTH,
+    ENTRY_KIND_IMMIGRANT,
+)
 from populace_dynamics.open_population.errors import AccountingIdentityError
 
 ENTRY_KINDS = {
-    PopulationEventKind.BIRTH: "maternal_birth",
-    PopulationEventKind.SCHEDULED_ENTRY: "immigrant_cohort",
+    PopulationEventKind.BIRTH: ENTRY_KIND_BIRTH,
+    PopulationEventKind.SCHEDULED_ENTRY: ENTRY_KIND_IMMIGRANT,
 }
 
 
@@ -62,6 +66,17 @@ class EventLedger:
     """Collect declarations within one run; never share a ledger across runs."""
 
     events: list[FlowEvent] = field(default_factory=list)
+    _by_year: dict[int, list[FlowEvent]] = field(
+        default_factory=dict, init=False, repr=False
+    )
+
+    def __post_init__(self) -> None:
+        for event in self.events:
+            self._by_year.setdefault(event.year, []).append(event)
+
+    def events_for_year(self, year: int) -> tuple[FlowEvent, ...]:
+        """Read that year's declarations for design §7's annual identity."""
+        return tuple(self._by_year.get(year, ()))
 
     def record(
         self,
@@ -72,7 +87,7 @@ class EventLedger:
         entry_kind: str | None = None,
     ) -> None:
         """Snapshot IDs and weights where an adapter declares their cause."""
-        self.events.extend(
+        declared = [
             FlowEvent(
                 person_id=person_id,
                 year=year,
@@ -83,4 +98,6 @@ class EventLedger:
             for person_id, weight in frame.sort_values("person_id")[
                 ["person_id", "weight"]
             ].itertuples(index=False, name=None)
-        )
+        ]
+        self.events.extend(declared)
+        self._by_year.setdefault(year, []).extend(declared)

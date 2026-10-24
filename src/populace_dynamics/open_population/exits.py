@@ -34,6 +34,7 @@ from populace_dynamics.open_population.errors import (
     IdOrStreamCollision,
 )
 from populace_dynamics.open_population.events import EventLedger
+from populace_dynamics.open_population.streams import DirectRNGStreams
 
 EmigrationHazard = Callable[
     [pd.DataFrame, PeriodContext], Sequence[float] | np.ndarray
@@ -73,8 +74,13 @@ def require_emigration_compatible(
 
 
 @dataclass(frozen=True)
-class ExitAdapter:
-    """Declare wrapped mortality deaths, then draw emigrants among survivors."""
+class _ExitAdapter:
+    """Declare deaths and survivor exits inside the OP1 harness (§5.4).
+
+    Only ``harness._project`` constructs this harness-only adapter, after
+    ``require_emigration_compatible`` checks the marital slot. Direct use
+    does not establish relational compatibility (design §§5.4 and 7).
+    """
 
     step: FrameStep
     ledger: EventLedger
@@ -140,10 +146,14 @@ class ExitAdapter:
             raise IdOrStreamCollision(
                 "emigration needs the projection's person-keyed RNG registry"
             )
+        streams = DirectRNGStreams(
+            context.rng_registry.draw_index,
+            context.rng_registry.n_periods,
+        )
         try:
             uniforms = np.asarray(
                 [
-                    context.rng_registry.tagged_child_generator(
+                    streams.tagged_child_generator(
                         context.period_index,
                         ProjectionModule.MORTALITY,
                         EMIGRATION_STREAM_TAG,

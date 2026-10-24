@@ -30,3 +30,7 @@ class EmigrationMaritalIncompatibility(OpenPopulationError):
     """Refuse emigration when the marital adapter cannot separate exit causes."""
 
     code = "EMIGRATION_MARITAL_INCOMPATIBLE"
+
+
+class GateTargetRefused(OpenPopulationError):
+    """Refuse metadata outside the unaligned gate facade (design §5.1)."""
