@@ -11,8 +11,10 @@ of the module. The committed registry itself is checked in
 from __future__ import annotations
 
 import copy
+import errno
 import hashlib
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -1195,6 +1197,40 @@ def test_an_unanswerable_timing_check_fails_closed(
     assert any("cannot tell whether" in p for p in problems)
 
 
+@pytest.mark.parametrize(
+    "failure",
+    [
+        OSError(errno.EMFILE, "Too many open files"),
+        FileNotFoundError(errno.ENOENT, "git"),
+        TypeError("expected str, bytes or os.PathLike object"),
+        ValueError("embedded null byte"),
+    ],
+)
+def test_a_failed_object_hash_fails_closed(
+    tmp_path, no_ci_env, monkeypatch, failure
+):
+    repository = init_repository(tmp_path)
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "score")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    assert validate(used, repository, pin(SCORE)) == []
+    run = subprocess.run
+
+    def failing(command, *args, **kwargs):
+        if "hash-object" in command:
+            raise failure
+        return run(command, *args, **kwargs)
+
+    monkeypatch.setattr(registry.subprocess, "run", failing)
+    committed = registry.Committed(repository)
+    assert committed.committed_by(json.dumps(SCORE).encode(), "HEAD") is None
+    problems = validate(used, repository, pin(SCORE))
+    assert any("cannot tell whether" in p for p in problems), problems
+
+
 def test_a_used_registration_must_already_be_registered(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
     write(repository, run_path("s0"), SCORE)
@@ -1281,6 +1317,32 @@ def test_a_pull_request_head_is_read_from_its_event(tmp_path, monkeypatch):
     monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
     assert registry.pull_request_head() == sha
     monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    assert registry.pull_request_head() is None
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        "not json",
+        "[]",
+        json.dumps({}),
+        json.dumps({"pull_request": None}),
+        json.dumps({"pull_request": {"head": "abc"}}),
+        json.dumps({"pull_request": {"head": {"sha": "HEAD"}}}),
+    ],
+)
+def test_an_unreadable_pull_request_event_raises(
+    tmp_path, monkeypatch, payload
+):
+    event = tmp_path / "event.json"
+    if payload is not None:
+        event.write_text(payload, encoding="utf-8")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    with pytest.raises(LookupError):
+        registry.pull_request_head()
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "workflow_dispatch")
     assert registry.pull_request_head() is None
 
 
@@ -1416,6 +1478,66 @@ def test_a_push_compares_with_its_before_commit(
     )
     event.write_text(json.dumps({"before": "0" * 40}), encoding="utf-8")
     assert registry.base_registry(repository) == middle
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        "not json",
+        "[]",
+        json.dumps({}),
+        json.dumps({"before": None}),
+        json.dumps({"before": "HEAD"}),
+        json.dumps({"before": "b" * 40}),
+    ],
+)
+def test_a_push_without_a_resolvable_before_raises(
+    tmp_path, no_ci_env, monkeypatch, payload
+):
+    repository = init_repository(tmp_path)
+    commit_registry(repository, registered(["candidate"]), "registry")
+    event = tmp_path / "event.json"
+    if payload is not None:
+        event.write_text(payload, encoding="utf-8")
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    with pytest.raises(LookupError):
+        registry.base_commit(repository)
+    with pytest.raises(LookupError):
+        registry.base_registry(repository)
+
+
+@pytest.mark.parametrize("errno_code", [errno.EAGAIN, errno.EMFILE])
+def test_a_transient_failure_at_the_push_boundary_raises(
+    tmp_path, no_ci_env, monkeypatch, errno_code
+):
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    before = commit_registry(repository, first, "registry")
+    changed = copy.deepcopy(first)
+    changed["entries"][0]["unit_keys"] = ["s_c:2199"]
+    commit_registry(repository, changed, "an immutable key changes")
+    commit_registry(repository, first, "and is restored")
+    commit_all(repository, "an unchanged tip")
+    event = tmp_path / "event.json"
+    event.write_text(json.dumps({"before": before}), encoding="utf-8")
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    assert registry.base_commit(repository) == before
+    assert registry.history_problems(
+        repository, registry.base_commit(repository), imports={}
+    )
+    run = subprocess.run
+
+    def flaky(command, *args, **kwargs):
+        if f"{before}^{{commit}}" in command:
+            raise OSError(errno_code, os.strerror(errno_code))
+        return run(command, *args, **kwargs)
+
+    monkeypatch.setattr(registry.subprocess, "run", flaky)
+    with pytest.raises(LookupError):
+        registry.base_commit(repository)
 
 
 def test_no_base_raises_rather_than_passing(tmp_path, monkeypatch):

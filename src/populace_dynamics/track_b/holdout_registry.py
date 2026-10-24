@@ -1178,29 +1178,48 @@ def _commit(repository: Path, ref: str) -> str | None:
     return found.stdout.strip() if found.returncode == 0 else None
 
 
+def _event() -> Mapping[str, Any]:
+    """The GitHub event payload at ``GITHUB_EVENT_PATH``. Raises
+    ``LookupError`` when it cannot be read or is not a JSON object."""
+    path = os.environ.get("GITHUB_EVENT_PATH")
+    try:
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (TypeError, ValueError, OSError) as error:
+        raise LookupError(f"cannot read the GitHub event: {error}") from None
+    if not isinstance(payload, Mapping):
+        raise LookupError("the GitHub event is not a JSON object")
+    return payload
+
+
 def base_commit(repository: Path) -> str:
     """The commit the registry is compared against.
 
     - On a push (``GITHUB_EVENT_NAME=push``), the event's ``before``
-      commit, which was the branch tip before the push.
+      commit, which was the branch tip before the push. An all-zero
+      ``before`` (a branch's first push) falls through to the merge base.
     - Otherwise, the merge base of ``HEAD`` and the base branch
       (``GITHUB_BASE_REF`` on a pull request, otherwise ``master``),
       preferring its ``origin/`` ref.
     - When that merge base is ``HEAD`` itself, as on the base branch, its
       first parent.
 
-    Raises ``LookupError`` when none of these resolves."""
+    Raises ``LookupError`` when none of these resolves, and on a push
+    whose event cannot be read or whose ``before`` commit does not
+    resolve: a push is compared with its own boundary, never with a
+    nearer commit that would check less history."""
     head = _commit(repository, "HEAD")
     if head is None:
         raise LookupError(f"no HEAD in {repository}")
     if os.environ.get("GITHUB_EVENT_NAME") == "push":
-        event = os.environ.get("GITHUB_EVENT_PATH")
-        before = None
-        if event and Path(event).is_file():
-            before = json.loads(Path(event).read_text()).get("before")
-        if isinstance(before, str) and SHA_RX.fullmatch(before):
-            if set(before) != {"0"} and _commit(repository, before):
-                return before
+        before = _event().get("before")
+        if not isinstance(before, str) or SHA_RX.fullmatch(before) is None:
+            raise LookupError("the push event names no before commit")
+        if set(before) != {"0"}:
+            if _commit(repository, before) is None:
+                raise LookupError(
+                    f"the push's before commit {before} does not resolve"
+                )
+            return before
     branch = os.environ.get("GITHUB_BASE_REF") or "master"
     for ref in (f"origin/{branch}", branch):
         found = _git(repository, "merge-base", "HEAD", ref)
@@ -1241,19 +1260,20 @@ def base_registry(repository: Path) -> Any:
 
 
 def pull_request_head() -> str | None:
-    """The pull request's head commit, on a ``pull_request`` event."""
+    """The pull request's head commit, on a ``pull_request`` event, and
+    ``None`` on any other. Raises ``LookupError`` on a ``pull_request``
+    event that cannot be read or names no head commit, so the pull
+    request's own commits are never silently left unchecked."""
     if os.environ.get("GITHUB_EVENT_NAME") != "pull_request":
         return None
-    event = os.environ.get("GITHUB_EVENT_PATH")
-    if not event or not Path(event).is_file():
-        return None
-    try:
-        payload = json.loads(Path(event).read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-        return None
-    head = (payload.get("pull_request") or {}).get("head") or {}
+    pull_request = _event().get("pull_request")
+    head = (
+        pull_request.get("head") if isinstance(pull_request, Mapping) else None
+    )
     sha = head.get("sha") if isinstance(head, Mapping) else None
-    return sha if isinstance(sha, str) and SHA_RX.fullmatch(sha) else None
+    if not isinstance(sha, str) or SHA_RX.fullmatch(sha) is None:
+        raise LookupError("the pull_request event names no head commit")
+    return sha
 
 
 def history_problems(
