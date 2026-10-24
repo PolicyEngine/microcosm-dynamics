@@ -1,0 +1,144 @@
+[
+  {
+    "file": "poms_si_01120210.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501120210",
+    "retrieved_at_utc": "2026-10-24T12:45:10.953633+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 28107,
+    "sha256": "9dd41ec4c136fb583fcc7d39955ee682913a7634abfee4724d94a19407fc4e41"
+  },
+  {
+    "file": "usc_5_8340.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap83-subchapIII-sec8340.htm",
+    "retrieved_at_utc": "2026-10-24T12:45:13.258662+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 35798,
+    "sha256": "3d6b6ab8a42f4eb149d32a106e6cace0e861ec5394937886b684dbfddd1ef11e"
+  },
+  {
+    "file": "usc_5_8462.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap84-subchapVI-sec8462.htm",
+    "retrieved_at_utc": "2026-10-24T12:45:13.667611+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 10559,
+    "sha256": "c50a7e3e19370b0d4e6876ab683ebbf516b8f331735734e7071864b2dda1df85"
+  },
+  {
+    "file": "nasra_cola.html",
+    "url": "https://www.nasra.org/cola",
+    "retrieved_at_utc": "2026-10-24T12:45:14.073863+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 39891,
+    "sha256": "eb9cbca8619800a639c2163c7b96b0d63721f9dd422041809d0b319a1f43726f"
+  },
+  {
+    "file": "nasra_cola_brief.pdf",
+    "url": "https://www.nasra.org/files/Issue%20Briefs/NASRACOLA%20Brief.pdf",
+    "retrieved_at_utc": "2026-10-24T12:45:15.153450+00:00",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE",
+    "bytes": 2346,
+    "sha256": "806af9d30bf86e7d743390178b70e53733b6630f62c301aeb600d7cbf949cae2"
+  },
+  {
+    "file": "bls_ncs_2000.pdf",
+    "url": "https://www.bls.gov/opub/mlr/cwc/the-national-compensation-survey-compensation-statistics-for-the-21st-century.pdf",
+    "retrieved_at_utc": "2026-10-24T12:47:31.359855+00:00",
+    "http_status": 403,
+    "status": "SOURCE_BLOCKED",
+    "bytes": 1325,
+    "sha256": "ffb9bfae2ece76ab82176a6d76b478a1f26c1b1fc3ce0a22ea88562bc958d9a6"
+  },
+  {
+    "file": "bls_postretirement_2001.pdf",
+    "url": "https://www.bls.gov/opub/mlr/cwc/post-retirement-pension-increases.pdf",
+    "retrieved_at_utc": "2026-10-24T12:47:33.136506+00:00",
+    "http_status": 403,
+    "status": "SOURCE_BLOCKED",
+    "bytes": 1325,
+    "sha256": "235364796ac701e2922239001fe7f09b3537223f146a65054f399075bc0d8815"
+  },
+  {
+    "file": "dol_inflation_report_2024.pdf",
+    "url": "https://www.dol.gov/sites/dolgov/files/ebsa/laws-and-regulations/laws/secure-2.0/report-to-congress-2024-impact-of-inflation-on-retirement-savings.pdf",
+    "retrieved_at_utc": "2026-10-24T12:47:33.962751+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 496078,
+    "sha256": "c24e6fb75f6f4421188f8cba2a67c7b8e53919131c5d590998a74ed80be258c6"
+  },
+  {
+    "file": "nasra_colabrief.html",
+    "url": "https://www.nasra.org/colabrief",
+    "retrieved_at_utc": "2026-10-24T12:47:36.861774+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 46092,
+    "sha256": "6fe81b68f1a494f4ff9c628702418cc039218f54844d72c947da032f3442d382"
+  },
+  {
+    "file": "poms_si_00510001.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0500510001",
+    "retrieved_at_utc": "2026-10-24T12:47:37.465949+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 56508,
+    "sha256": "2520abe1731da9926ca2287de2d33d6859037bb1e40d6ab4338590822e905160"
+  },
+  {
+    "file": "nasra_cola_brief_2026.pdf",
+    "url": "https://www.nasra.org/files/Issue%20Briefs/NASRACOLABrief.pdf",
+    "retrieved_at_utc": "2026-10-24T12:52:05.616156+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 226598,
+    "sha256": "79f8659d0ff722aa8de30e6696ce7eab9fb4ca40974e20a7ad70ac258fab4ae0"
+  },
+  {
+    "file": "gao_pension_colas_1995.pdf",
+    "url": "https://www.gao.gov/assets/hehs-95-219r.pdf",
+    "retrieved_at_utc": "2026-10-24T12:52:09.527923+00:00",
+    "http_status": 403,
+    "status": "SOURCE_BLOCKED",
+    "bytes": 402,
+    "sha256": "feb61ebfb341fd24ab1662696b4836607d0fb8eaee0f4bef0c32ed455d984e73"
+  },
+  {
+    "file": "usc_5_8452.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap84-subchapV-sec8452.htm",
+    "retrieved_at_utc": "2026-10-24T12:52:11.442769+00:00",
+    "http_status": 200,
+    "status": "CAPTURED",
+    "bytes": 13947,
+    "sha256": "502dd117eac45604f80e0db42cd24da6eaef760f1c1ac40ae96967fe1c5e8929"
+  },
+  {
+    "file": "usc_5_8412.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap84-subchapII-sec8412.htm",
+    "retrieved_at_utc": "2026-10-24T12:52:13.301840+00:00",
+    "status": "SOURCE_UNAVAILABLE",
+    "error": "ReadTimeout"
+  },
+  {
+    "file": "gao_federal_private_retirement_1997.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/GAOREPORTS-GGD-97-40/pdf/GAOREPORTS-GGD-97-40.pdf",
+    "retrieved_at_utc": "2026-10-24T13:17:18.668663+00:00",
+    "http_status": 200,
+    "bytes": 736254,
+    "sha256": "062c35e7285de2a480e99a1817091a57e3b3e078ef4b3e606af05db75134e396",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "opm_cola_faq.html",
+    "url": "https://www.opm.gov/frequently-asked-questions/retire-faq/post-retirement/how-is-the-cost-of-living-adjustment-cola-determined/",
+    "retrieved_at_utc": "2026-10-24T13:17:18.822010+00:00",
+    "http_status": 200,
+    "bytes": 89294,
+    "sha256": "f6b0ba88e74dcd20ff92a37b61f4c2ea8feea302181669035a5acd57752254b5",
+    "status": "CAPTURED"
+  }
+]

@@ -1,0 +1,187 @@
+[
+  {
+    "file": null,
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section401&num=0&edition=prelim",
+    "retrieved_at_utc": "2026-10-24T12:46:54.082315+00:00",
+    "bytes": 75,
+    "sha256": "1d04e8d3f8cea7e75beaa2a27688749050dbf6e944dc63450a6dcc948c884658",
+    "http_status": 500,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "file": "secure_act.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-116publ94/html/PLAW-116publ94.htm",
+    "retrieved_at_utc": "2026-10-24T12:44:03.385680+00:00",
+    "timestamp_note": "Retrieval completion (file write time)",
+    "bytes": 2506236,
+    "sha256": "984fd03c2104d00ef82c5e984d0787f8d783626ae5262b55b87c6db7261d7e75",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "secure2.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-117publ328/html/PLAW-117publ328.htm",
+    "retrieved_at_utc": "2026-10-24T12:44:03.410413+00:00",
+    "timestamp_note": "Retrieval completion (file write time)",
+    "bytes": 5882612,
+    "sha256": "a5f090f4e688ffb6d8642a0752d5f05bd63e3e4a0564056f4ae6eba2389cd204",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "tables2022.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2020-11-12/html/2020-24723.htm",
+    "retrieved_at_utc": "2026-10-24T12:45:19.652725+00:00",
+    "timestamp_note": "Retrieval completion (file write time)",
+    "bytes": 338770,
+    "sha256": "b3156d4c2d89d3be8cd24608824d3bb13d6eacd25f83e995a01c016d1b0a4282",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "tables2003.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2020-title26-vol5/xml/CFR-2020-title26-vol5-sec1-401a9-9.xml",
+    "retrieved_at_utc": "2026-10-24T12:45:20.383576+00:00",
+    "timestamp_note": "Retrieval completion (file write time)",
+    "bytes": 44172,
+    "sha256": "ab214ce9f7a706cc4ee93703502f950222090c2547e47fafd75a299545919743",
+    "http_status": 200,
+    "status": "SOURCE_UNAVAILABLE",
+    "note": "HTTP 200 soft 404; not used as a source."
+  },
+  {
+    "file": "rmd_final2024.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2024-07-19/html/2024-14542.htm",
+    "retrieved_at_utc": "2026-10-24T12:46:54.098104+00:00",
+    "bytes": 537389,
+    "sha256": "ef17eab86e9fed32d25e8563f5b76ab39cde2801684d399393f0f0c60dc7e0c9",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "rmd_proposed2024.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2024-07-19/html/2024-14543.htm",
+    "retrieved_at_utc": "2026-10-24T12:46:54.099270+00:00",
+    "bytes": 72307,
+    "sha256": "91c29e48e5bc52770791fcec0a7bbc2e5ff8612a22a4ece7aa8f130a71a026bb",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "publication590b.html",
+    "url": "https://www.irs.gov/publications/p590b",
+    "retrieved_at_utc": "2026-10-24T12:46:54.111709+00:00",
+    "bytes": 997773,
+    "sha256": "1989d1adfaa47c2e9a0043ba2b1eb68d3464eecd7418807c94fedf5203e563ab",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "publication590_2013.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/p590--2013.pdf",
+    "retrieved_at_utc": "2026-10-24T12:46:54.496344+00:00",
+    "bytes": 2548848,
+    "sha256": "ba05a4401a6365686594953472fe4ff58fc6d6ee5c9f13d78e8da9554ddbf161",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "cares_act.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-116publ136/html/PLAW-116publ136.htm",
+    "retrieved_at_utc": "2026-10-24T12:46:54.609584+00:00",
+    "bytes": 1213284,
+    "sha256": "f8faea1a163304a7ad20c8540eb6d204e192a6e8a5901e3f38d84ab053a34d5d",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": null,
+    "url": "https://www.ecfr.gov/current/title-26/section-1.401(a)(9)-2",
+    "retrieved_at_utc": "2026-10-24T12:46:54.648967+00:00",
+    "bytes": 10596,
+    "sha256": "dfa9e17f69aa704363fae8935df95d07fe2a0cd6e31b3c3f9edd958271e84419",
+    "http_status": 200,
+    "status": "SOURCE_BLOCKED"
+  },
+  {
+    "file": "usc401_lii.html",
+    "url": "https://www.law.cornell.edu/uscode/text/26/401",
+    "retrieved_at_utc": "2026-10-24T12:46:54.695061+00:00",
+    "bytes": 1074022,
+    "sha256": "21923dfe2c952cce196ecb41b2455e84d5ebcd86b7ff9ef471d79f2d0aac3dd6",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "tables2003.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2002-04-17/html/02-8963.htm",
+    "retrieved_at_utc": "2026-10-24T12:49:02.654988+00:00",
+    "bytes": 363693,
+    "sha256": "b3424fa1116e4a70c422de0d93a850b819e42342f712077694cfa454525d35fa",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "waiver2009.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-110publ458/html/PLAW-110publ458.htm",
+    "retrieved_at_utc": "2026-10-24T12:53:27.564023+00:00",
+    "bytes": 110520,
+    "sha256": "bc67b109f9e2ccce65a0b9cf6f008d4034e1b2317c2da5418886f4e2ccec813f",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "current_beginning_date.html",
+    "url": "https://www.law.cornell.edu/cfr/text/26/1.401(a)(9)-2",
+    "retrieved_at_utc": "2026-10-24T13:17:28.047572+00:00",
+    "bytes": 68980,
+    "sha256": "cca2d57f7b9aa934485e7dc22b6e5248fddf77aacf5017a7a80cdc051903e814",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "announcement2026_7.pdf",
+    "url": "https://www.irs.gov/pub/irs-drop/a-26-07.pdf",
+    "retrieved_at_utc": "2026-10-24T13:17:28.562229+00:00",
+    "bytes": 142382,
+    "sha256": "522fba9634503c254533ef8b4b36cf3918cba4c62aa83a0dce4c1db9a04b5ea7",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "tables2003.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2002-04-17/pdf/02-8963.pdf",
+    "retrieved_at_utc": "2026-10-24T13:22:24.591922+00:00",
+    "bytes": 317835,
+    "sha256": "3ef68a6acb3f169c7f28e1ca617654ce8bdfdc565026f80f50e023567dcbc416",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "review_cfr2020_tables.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2020-title26-vol6/xml/CFR-2020-title26-vol6-sec1-401a9-9.xml",
+    "retrieved_at_utc": "2026-10-24T13:23:51.957919+00:00",
+    "bytes": 235602,
+    "sha256": "55de1a6eb90ad59f0eaf19db709624aa9e6ff4ac5de0d8af97b322f9bc093f18",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "review_cfr2020_tables.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2020-title26-vol6/pdf/CFR-2020-title26-vol6-sec1-401a9-9.pdf",
+    "retrieved_at_utc": "2026-10-24T13:23:52.358189+00:00",
+    "bytes": 267628,
+    "sha256": "8237051bfc0466bbf6a51c7b6336aae5c60a181ef44de5002a391912b4b63cfb",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "review_correction2002_05_24.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2002-05-24/html/C2-8963.htm",
+    "retrieved_at_utc": "2026-10-24T13:23:54.671159+00:00",
+    "bytes": 2215,
+    "sha256": "e82ae5c76a704cc8112502747e56574f062382d36e01a29dc32caff170213ddc",
+    "http_status": 200,
+    "status": "captured"
+  }
+]

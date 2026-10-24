@@ -1,0 +1,35 @@
+{
+  "version": "retirement_rules_v1",
+  "first_year": 2002,
+  "last_year": 2026,
+  "maximum_age": 120,
+  "rate_rounding_unit": "0.001",
+  "csrs": {
+    "citation": "5 U.S.C. 8340(a)-(e), (g)",
+    "rate_rule": "rounded_positive_price_index_change",
+    "effective_month": 12,
+    "first_increase_proration_months": 12,
+    "additional_voluntary_contribution_annuity_gets_cola": false
+  },
+  "fers": {
+    "citation": "5 U.S.C. 8462(a)-(d); 8452(a)(1)(B)",
+    "ordinary_minimum_age": 62,
+    "plateau_rate": "0.02",
+    "raw_growth_breakpoint": "0.03",
+    "high_growth_reduction": "0.01",
+    "effective_month": 12,
+    "first_increase_proration_months": 12,
+    "under_62_exceptions": [
+      "8412(d)(1) or 8412(e)",
+      "8414(c): separated as military reserve technician as result of disability",
+      "survivor other than child",
+      "8452(a): disability after initial 60-percent period"
+    ]
+  },
+  "proposed_state_local_cap": "0.03",
+  "proposed_assumptions_status": "UNREGISTERED: neither selected by this layer",
+  "proposed_assumptions": [
+    "state_local_cpi_capped_at_three_percent",
+    "private_fixed_nominal"
+  ]
+}
