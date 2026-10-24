@@ -10,7 +10,13 @@ sections 11 and 13. Revision 1 applied the round-1 review's fifteen
 findings (section 12); revision 2 applies the round-2 review's four
 findings (section 13). An erratum of 24 October 2026 updates section
 3.5's two citations of the coordinator's forecast and changes no
-estimate.*
+estimate. A second erratum of the same day rewrites section 6's F1
+invariants: it replaces two that fail by intent under the signed split
+with labeled departures, states the invariants that hold instead, names
+F1's PolicyEngine-US pin (2.61.0), and records the US and core hub's
+ruling that Chapter 1 liability is measured before refundable credits,
+with the difference from F1's pin that the ruling creates. It changes
+no estimate.*
 
 - **Status.** Approved. This document sets milestones, gates and prices
   for one lane of the DYNASIM-parity plan. Max authorized the lane on
@@ -704,10 +710,50 @@ violations are labeled.
   whitespace normalization; quintile ranks follow the existing invariants;
   the public writer refuses any artifact holding an unsuppressed small
   cell.
-- **Income tax on benefits (F1)**
-  - OASDI + HI = total, exactly when no zero floor binds, and reported
-    otherwise; both parts are nonnegative; zero benefits give zero.
-  - Total revenue is nondecreasing in benefits with other income fixed.
+- **Income tax on benefits (F1)**. The first three items below, with their
+  sub-items, are an erratum of 24 October 2026; they replace revision 2's
+  first two F1 invariants. The last two sentences of the last item are
+  part of the same erratum.
+  - OASDI + HI = total, by construction. F1, like PolicyEngine-US 2.61.0
+    (F1's pin; see `EV/mortality-groups-financing-20261021/f1-pin-check-20261024/README.md`),
+    keeps negative differences and applies no zero floor. The identity is
+    exact in exact arithmetic; tests compare within $0.01, which covers
+    float32 rounding, as PolicyEngine-US's own generated test does.
+  - Zero benefits give zero. Under the §86(a)(1) reading, which
+    PolicyEngine-US 2.61.0 uses, the OASDI part is zero when the §86(a)(1)
+    inclusion is zero, and the HI part is zero when that inclusion equals
+    current inclusion. The §86(a)(1) inclusion lies between zero and
+    current inclusion.
+  - **Intended departures.** Revision 2 also required both parts to be
+    nonnegative and total revenue to be nondecreasing in benefits with
+    other income fixed. Neither holds, and that is intended. The statute
+    appropriates "the aggregate increase in tax liabilities under chapter
+    1" attributable to section 86 (42 U.S.C. 401 note; Pub. L. 98-21
+    §121(e)(1)(A)–(B)), which the US and core hub reads as netting units
+    (`us:tob-oasdi-hi-signed-allocation`). Treasury computes each filing
+    unit's liability with and without benefits in AGI, counting the
+    indirect effects on deductions and credits, and notes that "these
+    effects can be in opposite directions" (*Report on the Taxation of
+    Social Security and Railroad Retirement Benefits in Calendar Year
+    1993*, July 1998, p. 3). Its own examples do not themselves produce a
+    negative difference.
+    - **Counterexample.** PolicyEngine-US's single-itemizer test case
+      (`tob_revenue_oasdi.yaml`), aged 67 in 2024, which elects to itemize.
+      The election and other income are held fixed in every
+      counterfactual; left to choose, PolicyEngine-US gives this unit the
+      standard deduction, and all three parts are $0. As benefits rise
+      from $0 to $250, $500, $1,000 and $2,000, the total moves from $0.00
+      to −$7.44, −$14.88, −$29.75 and −$59.50 under PolicyEngine-US 2.61.0
+      (`EV/mortality-groups-financing-20261021/f1-pin-check-20261024/mono.py`
+      and `mono.out.json`). The net investment income tax and refundable
+      credits are zero for this unit, so these are Chapter 1 amounts. The
+      test's worked arithmetic for the $1,000 case shows why: more
+      inclusion raises AGI, so the binding 60% limit on cash gifts
+      (§170(b)(1)(G)) allows a larger deduction, and the §22 credit for
+      the elderly rises as nontaxable benefits fall. Together they
+      outweigh the added tax.
+    - **Tests.** F1's tests assert those signed values, labeled intended,
+      in place of the two invariants.
   - The OASDI part equals the tax with taxable benefits set to the
     §86(a)(1) amount minus the tax with none, if F1's worked examples
     confirm that reading.
@@ -715,7 +761,14 @@ violations are labeled.
     `taxable_social_security_tier_1`, with each difference labeled.
   - Every counterfactual tax is Chapter 1 liability: an invented
     investment-income case above the net investment income tax threshold
-    shows that tax excluded from the total and from both shares.
+    shows that tax excluded from the total and from both shares. Chapter 1
+    liability is measured after nonrefundable credits and before
+    refundable credits, following the US and core hub's ruling
+    `us:tob-refundable-credit-netting`, so a refundable credit that
+    changes with inclusion enters neither part. PolicyEngine-US 2.61.0
+    computes its revenue variables from `income_tax`, which subtracts
+    refundable credits, so the differential tests label that difference
+    too.
 - **Covered payroll (F2a, F2b)**: taxable earnings never exceed the taxable
   maximum or covered earnings; noncovered earnings are never taxed;
   employee plus employer equals combined (the existing assertion,
