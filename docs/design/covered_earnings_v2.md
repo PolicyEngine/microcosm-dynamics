@@ -1,6 +1,6 @@
 # Covered earnings v2: a lean successor to the correction campaign
 
-- **Status:** design note CE0, revision 0, 24 October 2026, for one review round. It authorizes no registration, real-data run or label change. Nothing in it has run.
+- **Status:** design note CE0, revision 1, 24 October 2026. Revision 1 applies review round 1's six findings (§10). It authorizes no registration, real-data run or label change. Nothing in it has run.
 - **Authority:** Max approved Tier 1 of the income-and-resources design on 2026-10-23 (decision d1923). His answer to that design's decision 1 was to retire the covered-earnings correction campaign for CE v2, with the same estimands; his answer to decision 8 was that CE's projected-coverage sensitivity treats all projected wages as covered.
 - **Parent design:** `docs/design/income_and_resources.md` at commit `ee62046fbb985a63f8f2a67c4b329b2e4dc0a465` (PR #559), §3.1 and the CE rows of §4.1. This note is its milestone CE0. Prices and dependencies are the parent's and are not restated as new estimates.
 - **Supersedes, as a campaign:** `docs/design/covered_earnings_correction.md` (56,304 lines: a base design in §§1–14 and amendments in §§15–33). That document stays in the repository, byte for byte, as the record of the campaign and the source of the estimands below; a test pins its bytes at HEAD (`tests/estimates/test_covered_earnings_correction_registry.py`, lines 1392–1403), so this note adds no pointer to it. Its ratification, registration and amendment protocols no longer govern any work.
@@ -14,7 +14,7 @@ Every citation of the old design is to `docs/design/covered_earnings_correction.
 | Element | Where in the old design | How CE v2 uses it |
 |---|---|---|
 | The four statuses `covered_wage`, `covered_self_employment`, `noncovered`, `unresolved` | §1 (lines 30–34), §3.1 | Unchanged. Every component-year carries a probability for each, and they sum to one exactly (§4). |
-| The person-year estimand registry | §3.1, the table "The frozen person-year output registry" (lines 211–240) | Every estimand ID is kept with its definition (§2.5). One channel is added, RET-countable earnings, which the earnings test needs and the old registry did not carry. |
+| The person-year estimand registry | §3.1, the table "The frozen person-year output registry" (lines 211–240) | All 26 estimand IDs are kept with their definitions (§2.5). One channel is added, RET-countable earnings, which the earnings test needs and the old registry did not carry. |
 | Unresolved earnings are never silently counted as covered | §3.1, `unresolved_earnings` (line 222) | Unchanged, and strengthened: a record with no direct resolution and no sourced prior stays `unresolved` (§2.3). |
 | Statutory ordering | §3.2 (lines 286–321) | Unchanged: self-employment losses offset only self-employment gains and never wages; the self-employment threshold applies to the aggregated self-employment concept before the cap; wages consume the taxable maximum first and self-employment only the remainder; one consolidated maximum per person-year; an unverified incorporation or remuneration distinction never defaults to self-employment. |
 | Nonlinear fields from the joint state, never from expected components | §3.1 (lines 242–252) and §3.2 (lines 303–307) | Unchanged: capped and creditable fields, and worker probabilities, are computed inside each joint coverage outcome and then weighted. Benefits use keyed draws. |
@@ -58,24 +58,27 @@ The covered-earnings campaign's sweep found 46 of 818 official prompts that brok
 
 ### 2.3 CE3: the classifier
 
-The classifier is a pure function from a component-year's facts (remuneration type, amount, year, state, government level, industry, occupation, self-employment and incorporation status, and age) to its four status probabilities, with reason codes. It applies, in order:
+The classifier is a pure function from a component-year's facts (remuneration type, amount, year, state, government level, industry, occupation, self-employment and incorporation status, age, and, where a wave records them, place of work and armed-forces service) to its four status probabilities, with reason codes. It applies, in order:
 
 1. **Direct rules.** A CE1 rule whose trigger facts the record identifies decides the status, one-hot. Private-sector employment is covered unless an exclusion applies (42 U.S.C. 410(a)), so a private-sector wage record with every applicable exclusion resolved is `covered_wage`.
-2. **Thresholds.** Where the facts identify a threshold category (self-employment, church employees, domestic, agricultural or election work), the year's threshold decides the status.
-3. **Sourced priors.** Where coverage turns on facts the data do not record, chiefly state and local government workers, whose coverage depends on a Section 218 agreement and on membership in a public retirement system, the record takes a probability of noncoverage by state, government level, occupation group and era from a prior source registered at IR0: the Census Annual Survey of Public Pensions, SSA's Section 218 references and, if D5 admits it in this role, the SIPP Synthetic Beta's noncovered earnings. A cell with no prior source leaves the record `unresolved`.
+2. **Component thresholds.** CE1 records, for each threshold, whether it applies to one component's remuneration or to an aggregate over a person-year. Where the facts identify a category with a component-level threshold, the year's threshold decides the component's status. Aggregate thresholds are not applied here. Among them is the $400 self-employment threshold of 42 U.S.C. 411(b)(2), which applies to a taxable year's net earnings; it is applied inside each joint outcome (statutory order, below). For a self-employment component, this step classifies service coverage only.
+3. **Sourced priors.** Where coverage turns on facts the data do not record, chiefly state and local government workers, whose coverage depends on a Section 218 agreement and on membership in a public retirement system, the record takes a probability of noncoverage by state, government level, occupation group and era from a prior source registered at IR0: the Census Annual Survey of Public Pensions, SSA's Section 218 references and, if D5 admits it in this role, the SIPP Synthetic Beta's noncovered earnings. The Synthetic Beta's codebook places its earnings records' government-employment and self-employment indicators on the Gold Standard File only, so in this role it can inform cells by state and era but not by government level. A cell with no prior source leaves the record `unresolved`.
 4. **Everything else** to which an `unidentified` exclusion could apply stays `unresolved`.
 
 **One question this note does not settle** (§8, question 1): some exclusions can almost never be identified in a household survey and are rare, such as a child under 18 working for a parent (42 U.S.C. 410(a)(3)). Read strictly, step 4 leaves every young worker's wages `unresolved`. The alternative is a `negligible` class: an exclusion whose prevalence a cited source bounds below a registered threshold is treated as not applying, with a reason code on every affected record and the bounded mass reported. That is a methodology choice, and the review round and Max decide it.
 
-**Statutory order.** Within each joint coverage outcome of a person-year, §3.2's equations of the old design compute taxable wages, taxable self-employment and taxable payroll. Components that share one statutory coverage fact (one job, one year) share one coverage-state group and co-move; distinct groups are independent, a declared assumption (old design §3.1, lines 254–284). Expected values are exact probability-weighted sums over joint outcomes, computed by a dynamic program that a fixture test checks against brute-force enumeration.
+**Statutory order.** Within each joint coverage outcome of a person-year, CE3 first aggregates the outcome's covered self-employment gains and admissible losses. It then applies the year's eligible-concept and net-earnings-factor rules and the $400 threshold to that aggregate (the old registry's `covered_seca_base_uncapped`, line 219). Finally, §3.2's equations of the old design compute taxable wages, taxable self-employment and taxable payroll. Two $300 self-employment components in one outcome therefore clear the threshold together. Components that share one statutory coverage fact (one job, one year) share one coverage-state group and co-move; distinct groups are independent, a declared assumption (old design §3.1, lines 254–284). Expected values are exact probability-weighted sums over joint outcomes, computed by a dynamic program that a fixture test checks against brute-force enumeration.
 
-**RET-countable earnings.** The earnings test has its own earnings concept. An individual's earnings for a taxable year are the sum of wages for services rendered in the year and net earnings from self-employment, minus any net loss from self-employment (42 U.S.C. 403(f)(5)(A)). Net earnings from self-employment are determined as 42 U.S.C. 411 provides, except that paragraphs (1), (4) and (5) of 411(c) do not apply (403(f)(5)(B)(i)); so a minister's exemption does not remove earnings from the test. Wages include noncovered service performed in the United States as an employee, and exclude payments on account of retirement (403(f)(5)(C); parent §2.5). Three consequences for CE v2:
+**RET-countable earnings.** The earnings test has its own earnings concept. An individual's earnings for a taxable year are the sum of wages for services rendered in the year and net earnings from self-employment, minus any net loss from self-employment (42 U.S.C. 403(f)(5)(A)). Net earnings from self-employment are determined as 42 U.S.C. 411 provides, except that paragraphs (1), (4) and (5) of 411(c) do not apply (403(f)(5)(B)(i)); so a minister's exemption does not remove earnings from the test. Wages are computed without the remuneration limits of 42 U.S.C. 409(a)(1), (6)(B), (6)(C), (7)(B) and (8). Service that is not employment under 42 U.S.C. 410 is deemed employment if two conditions hold. First, it was performed in the United States by the individual as an employee, or outside it in the active military or naval service of the United States. Second, its remuneration is not included in net earnings or net loss from self-employment. Payments on account of retirement are not wages (403(f)(5)(C)(i) and (ii); parent §2.5). The consequences for CE v2:
 
-- a wage component counts toward the test whether it is covered, noncovered or `unresolved`; only its remuneration type matters;
-- a net self-employment loss reduces RET-countable earnings, although it never offsets wages in the taxable-payroll ordering above;
-- the $400 threshold defines self-employment income (42 U.S.C. 411(b)(2)), a different concept from the net earnings the test uses, so it does not apply here.
+- A covered wage component counts toward the test. So does a wage component that is noncovered only because of one of the 409(a) limits above; CE1 reads those paragraphs and records which component thresholds they are.
+- A noncovered or `unresolved` wage component counts only when its facts establish both conditions of the deeming rule. CE2 records, by wave, which of the needed facts the questionnaire carries: place of work, armed-forces service, and whether the remuneration entered self-employment.
+- Where a wage component's eligibility is not established, the person-year's `ret_countable_earnings` is not produced. The row carries the reason `RET_WAGE_ELIGIBILITY_UNRESOLVED`, and the amount concerned goes in `ret_eligibility_unresolved_wages`. The component is neither counted nor dropped.
+- No payment on account of retirement, and no pension payment, counts.
+- A net self-employment loss reduces RET-countable earnings, although it never offsets wages in the taxable-payroll ordering above.
+- The $400 threshold defines self-employment income (42 U.S.C. 411(b)(2)), a different concept from the net earnings the test uses, so it does not apply here.
 
-Pension income never enters. CE1 reads the rest of 403(f)(5), including subparagraph (D)'s exclusions from gross income, before CE3 encodes the channel.
+CE1 reads the rest of 403(f)(5), including subparagraph (D)'s exclusions from gross income, before CE3 encodes the channel.
 
 ### 2.4 CE4: the gate CE-G
 
@@ -89,8 +92,52 @@ The parent design (§3.1, part 4; §7.3) fixes the gate's structure; IR0 freezes
 
 One versioned table, one row per person, role and income year from 1968, with:
 
-- **the old registry's estimands, by their IDs and definitions** (old design §3.1, lines 211–240): `covered_employee_wages_uncapped`, `covered_se_gains_pre_loss`, `covered_se_loss_magnitude`, `covered_se_net_earnings_pre_seca`, `covered_seca_base_uncapped`, `noncovered_earnings`, `noncovered_se_loss_magnitude`, `unresolved_earnings`, `unresolved_se_loss_magnitude`, `oasdi_taxable_wages_person`, `oasdi_taxable_se_person`, `oasdi_person_taxable_payroll`, `benefit_only_deemed_credits` (zero, as in v1), `benefit_creditable_earnings`, and the worker-probability fields. The fields that the old design tied to Table 4.B2's and 4.B11's worker-membership rules are reported only where CE1 has verified the table's definition; otherwise they are absent, not approximated;
-- **the added channel** `ret_countable_earnings` (§2.3);
+- **the old registry's 26 estimands, by their IDs and definitions** (old design §3.1, lines 211–240), as the table below gives them. Each field is an exact expectation over the person-year's joint coverage outcomes, except the draw fields.
+- **Availability.** A field the old design tied to a published table's membership rule (Table 4.B2's `c11` and `c12`, Table 4.B11's worker counts, V-B7's covered-share denominator) is produced only where CE1 has verified that definition from the table's source bytes. Otherwise it is absent with the reason `TABLE_DEFINITION_UNVERIFIED`, not approximated.
+
+| Estimand ID | Definition in CE v2 |
+|---|---|
+| `covered_employee_wages_uncapped` | Sum of nonnegative amounts classified as OASDI-covered employee wages before the person-level maximum. |
+| `covered_se_gains_pre_loss` | Nonnegative sum of amounts classified as covered self-employment gains before statutory self-employment aggregation. |
+| `covered_se_loss_magnitude` | Nonnegative magnitude of losses classified as covered self-employment and admissible to the same statutory aggregation unit. |
+| `covered_se_net_earnings_pre_seca` | Signed intermediate `covered_se_gains_pre_loss − covered_se_loss_magnitude`. It never offsets wages and is not a final taxable component. |
+| `covered_seca_base_uncapped` | Nonnegative self-employment base after the year's eligible-concept, net-earnings-factor and threshold rules (§2.3), before wage-first cap coordination. |
+| `noncovered_earnings` | Sum assigned noncovered, by a direct rule or a sourced prior. |
+| `noncovered_se_loss_magnitude` | Separately reported nonnegative self-employment loss magnitude assigned noncovered. It never enters an OASDI base. |
+| `unresolved_earnings` | Sum left outside a defensible covered or noncovered allocation. It is never silently counted as covered. |
+| `unresolved_se_loss_magnitude` | Separately reported nonnegative self-employment loss magnitude left unresolved. |
+| `oasdi_taxable_wages_person` | Covered employee wages after the person-year maximum. |
+| `oasdi_taxable_se_person` | Self-employment base remaining after wages consume the person-year maximum. |
+| `oasdi_person_taxable_payroll` | Sum of the two preceding fields: the revenue tax-base view. |
+| `benefit_only_deemed_credits` | Literal zero, as in v1. No military or other deemed credit is invented without a separate source and legal registry. |
+| `benefit_creditable_earnings` | Creditable wage plus self-employment amount under the same combined maximum. It equals `oasdi_person_taxable_payroll` while deemed credits are zero, but stays a separate typed view. |
+| `covered_wage_worker_probability_analytic` | Probability of positive covered employee wages in the registered annual worker universe. |
+| `b2_wage_worker_membership_probability_analytic` | Probability of meeting Table 4.B2's `c11` worker-membership rule. It equals the preceding field only if source bytes prove that equivalence. Available only as above. |
+| `positive_covered_se_worker_probability_analytic` | Probability of a positive covered self-employment base in the registered annual worker universe. |
+| `b2_se_worker_membership_probability_analytic` | Probability of meeting Table 4.B2's `c12` worker-membership rule. It equals the preceding field only if source bytes prove that equivalence. Available only as above. |
+| `b11_wage_only_worker_probability_analytic` | Probability of membership in the wage-only cell implied by Table 4.B11's total, wage and self-employment worker-count definitions. Available only as above. |
+| `b11_se_only_worker_probability_analytic` | Probability of membership in Table 4.B11's implied self-employment-only cell. Available only as above. |
+| `b11_dual_type_worker_probability_analytic` | Probability of membership in both of Table 4.B11's wage and self-employment counts. Available only as above. |
+| `b11_any_worker_probability_analytic` | Sum of the three preceding mutually exclusive probabilities: the analogue of Table 4.B11's unduplicated total-worker cell. Available only as above. |
+| `registered_covered_share_denominator_indicator` | Deterministic zero-or-one membership in the model analogue of V-B7's verified covered-share denominator: a population-universe field, not an earnings or coverage outcome. Available only as above. It serves no calibration, since the calibrated path is dropped (§1.2). |
+| `modeled_covered_worker_probability_analytic` | Probability, under the joint wage and self-employment status law, that person taxable payroll is positive. It is not `proxy > 0`, and in CE v2 it selects nothing. |
+| `modeled_covered_worker_draw_indicator` | Zero-or-one indicator, within one realized draw, that taxable payroll is positive. |
+| `modeled_covered_worker_draw_grid_fraction_20` | Arithmetic mean of the 20 draw indicators. It is a finite-grid approximation and is never called an exact probability. |
+
+- **Worker probabilities** are sums of joint-outcome weights, never sums of marginals (old design lines 242–252).
+- **Coverage status, per component.** Each row lists its components, each with:
+  - its component ID, remuneration type and adjudicated amount;
+  - its `coverage_state_group_id`;
+  - its four status numerators (§4) and reason codes.
+- **The unresolved share.** `unresolved_share` is the expected unresolved amount (`unresolved_earnings` plus `unresolved_se_loss_magnitude`) over the sum of the person-year's component amount magnitudes. It is absent when that sum is zero. Parent §8.1 requires it.
+- **Coverage-state groups.** Group keys and memberships follow the old design's `coverage_state_dependence_specs.v1` (lines 254–273):
+  - one person-year and one remuneration type per group;
+  - components with one statutory coverage fact share a group;
+  - members of a group carry identical probability vectors;
+  - distinct groups are independent, a declared assumption;
+  - a missing or inconsistent group aborts.
+- **The realization contract.** Consumers that need realized coverage states, chiefly benefits, use one shared contract. Each nondegenerate group has one keyed uniform per draw, keyed by person, year, `coverage_state_group_id` and draw index through the counter-based hash of §4. That uniform realizes the group's categorical status. Benefits and revenue therefore see the same realization, and no consumer resamples. The draw count is 20, as in the registry; IR0 may register more.
+- **the added channels** `ret_countable_earnings` and `ret_eligibility_unresolved_wages` (§2.3);
 - labor income as adjudicated, so every row reconciles: covered wages, covered self-employment, noncovered and unresolved amounts sum to it, with self-employment losses in their own channels as in the old design;
 - provenance per row (`direct`, `structural_gap` or `projected`; source wave, role and component identifiers; the rule and prior versions applied);
 - **the label array**, proposed: `["frame-relative", "modeled-covered-earnings", "prior-informed-uncalibrated"]`. The third token says that registered statutory rules and registered prior sources informed the model, and that no official covered-earnings total, gate truth, loss or optimizer did. Amendment 2's token, `deterministic-uncalibrated`, would misdescribe sourced priors (§8, question 3).
@@ -108,31 +155,38 @@ One versioned table, one row per person, role and income year from 1968, with:
 The forward-earnings law has no job identity (parent §3.1), so a projected year cannot be reclassified from a new job.
 
 - **Primary rule.** Each person's last observed coverage-state distribution, by remuneration type, carries forward to every projected year. The wage and self-employment split of a projected amount follows the forward-earnings law's own components where it has them, and the person's last observed shares otherwise, as the old design's synthetic `projected#wage` and `projected#self_employment` components did (§4.3, lines 1347–1355).
-- **Registered sensitivity (Max, d1923):** all projected wages are covered; projected self-employment is covered subject to the year's threshold.
+- **Registered sensitivity (Max, d1923):** all projected wages are covered. The sensitivity changes wages only. Projected self-employment keeps the primary rule's carried coverage distribution, and §2.3's statutory rules (aggregation, then the threshold, inside each joint outcome) apply to it as in the primary run.
 - **No reset on a job change.** A reset conditioned on a job change waits for a separately sourced, priced and admitted job process, which no plan contains.
 - **People with no observed status.** Under the primary rule, a person who enters the projection without an observed coverage state (an entrant of the open-population lane) carries `unresolved` wages; under the sensitivity, covered wages. Max's ruling on pre-entry covered earnings (d1925: censored, unknown to insured status, with zero as a labelled sensitivity) governs years before entry; this rule governs years after it.
 
 ## 4. Representation
 
-- **Money** in integer cents (64-bit integers). Every conservation identity then holds exactly.
-- **Probabilities** as integer numerators over the fixed denominator 2^20. A sourced prior is rounded to that grid once, by a registered rule, when the prior table is built; the four numerators of every record sum to 2^20 exactly.
-- **Expected values** of nonlinear fields are exact sums over joint outcomes, converted to floating point only at a reporting boundary.
+- **Source money** in integer cents (64-bit integers). Every conservation identity over adjudicated amounts then holds exactly.
+- **Component probabilities** as integer numerators over the fixed denominator 2^20. A sourced prior is rounded to that grid once, by a registered rule, when the prior table is built. The four numerators of every component sum to 2^20 exactly.
+- **Joint probabilities.**
+  - For a person-year with k nondegenerate coverage-state groups, a joint outcome's probability is the product of k numerators: an integer over 2^(20k).
+  - It is held in an arbitrary-precision integer and never rounded back to the 2^20 grid.
+  - The probabilities of a person-year's joint outcomes sum to one exactly.
+- **Rule arithmetic.** Any rounding a statute or regulation prescribes, for example for the net-earnings factor, is part of that rule in CE1, and CE3 applies it to each outcome's amounts. Where no rounding is prescribed, an outcome's amounts are exact rationals.
+- **Expected amounts and probabilities** are sums of each outcome's amount, or indicator, times its probability. They are held as exact rationals (an arbitrary-precision numerator and denominator) and are never rounded inside the computation.
+- **Floating point** appears only at the declared reporting boundary, through one registered round-to-nearest-even binary64 conversion, as in the old design (§3.1, lines 205–209).
 - **Draws** are keyed by person, year, coverage-state group and draw index through a counter-based hash, so results do not depend on row order.
 
 ## 5. Invariants
 
 Each is stated in the PR that builds its component and tested with Hypothesis beside example tests (parent §9).
 
-- The four status numerators are nonnegative integers that sum to 2^20.
+- Every component's four status numerators are nonnegative integers that sum to 2^20, and a person-year's joint-outcome probabilities are exact and sum to one.
 - Conservation: covered wages, covered self-employment, noncovered and unresolved amounts sum to the component-year's adjudicated labor income, with self-employment losses reported in their own channels.
 - Statutory order: taxable wages = min(wages, cap); taxable self-employment = min(self-employment base, max(0, cap − taxable wages)); no self-employment loss offsets wages; no capped amount exceeds the year's taxable maximum.
 - Nothing is covered while an applicable exclusion is unresolved, unless a registered `negligible` class applies (§2.3) and the record carries its reason code.
-- Zero labor income gives zero in every channel.
+- If every adjudicated component amount is zero, all monetary earnings channels are zero. Self-employment gains and losses stay in separate channels even when their signed sum is zero.
 - Raising a component's noncoverage probability never raises its expected covered taxable amount.
-- RET-countable earnings equal all wage components (covered, noncovered and unresolved) plus net earnings from self-employment minus any net self-employment loss, as 42 U.S.C. 403(f)(5) defines them, and never include pension payments.
+- Where produced, RET-countable earnings equal the RET-eligible wage components (§2.3) plus net earnings from self-employment, minus any net self-employment loss, as 42 U.S.C. 403(f)(5) defines them. They never include a payment on account of retirement or a pension payment. Where a wage component's eligibility is not established, the field is absent and the amount is in `ret_eligibility_unresolved_wages`.
+- The self-employment threshold applies to each joint outcome's aggregated self-employment, never to a single component: splitting one self-employment amount into several components in one coverage-state group leaves every channel unchanged.
 - Expected nonlinear fields from the dynamic program equal brute-force enumeration on every registered dependence pattern.
 - Determinism under keyed draws, and invariance to row order.
-- Under the sensitivity, projected covered wages are at least those of the primary rule, person by person.
+- Under the sensitivity, projected covered wages are at least those of the primary rule, person by person, and every projected self-employment channel equals the primary rule's.
 
 ## 6. Information boundary
 
@@ -153,4 +207,16 @@ Unchanged from the parent's §4.1 and §4.3, and estimates there: CE1 (4–6 d),
 
 ## 9. Files read for this note
 
-At master `4fc2b9f4`: `docs/design/covered_earnings_correction.md` lines 1–346, 1323–1380, 8145–8222, 9193–9245, 10805–10918, 11054–11110 and 13751–13800, and its section headings; the module docstrings of `psid_covered_earnings_registry.py`, `covered_wage_history.py` and `psid_job_context.py`, and `historical_coverage_rule_validation.py` lines 1–30 and 60–105; `tests/estimates/test_covered_earnings_correction_registry.py` lines 1390–1415; `src/populace_dynamics/track_b/README.md` (searched for covered and RET-countable channels; line 125); and the parent design in full. From PR #558 at `2c19f5b6`: `docs/design/mortality_groups_financing.md`, lines found by a search for covered payroll and F2b, and lines 778–800 and 924–934. The captured texts of 42 U.S.C. 403 and 410 in `~/microcosm-launch-evidence/dynasim-parity-20260909/income-resources-20261021/sources/` (`MANIFEST.md` lists their hashes): 403(f)(5) and 410(a)(3). Decision records d1923 and d1925 in `~/chief-of-staff/state/decisions/decisions.jsonl`. No PSID, SIPP or EPUF data file was opened; no restricted file was opened.
+At master `4fc2b9f4`: `docs/design/covered_earnings_correction.md` lines 1–346 (for revision 1, lines 205–284 again), 1323–1380, 8145–8222, 9193–9245, 10805–10918, 11054–11110 and 13751–13800, and its section headings; the module docstrings of `psid_covered_earnings_registry.py`, `covered_wage_history.py` and `psid_job_context.py`, and `historical_coverage_rule_validation.py` lines 1–30 and 60–105; `tests/estimates/test_covered_earnings_correction_registry.py` lines 1390–1415; `src/populace_dynamics/track_b/README.md` (searched for covered and RET-countable channels; line 125); and the parent design in full. From PR #558 at `2c19f5b6`: `docs/design/mortality_groups_financing.md`, lines found by a search for covered payroll and F2b, and lines 778–800 and 924–934. The captured texts of 42 U.S.C. 403 and 410 in `~/microcosm-launch-evidence/dynasim-parity-20260909/income-resources-20261021/sources/` (`MANIFEST.md` lists their hashes): 403(f)(5), including all of subparagraph (C), and 410(a)(3). For revision 1, round 1's review report and the SIPP Synthetic Beta codebook captured for D5 (its variable-availability entries). Decision records d1923 and d1925 in `~/chief-of-staff/state/decisions/decisions.jsonl`. No PSID, SIPP or EPUF data file was opened; no restricted file was opened.
+
+## 10. Review history
+
+| Round 1 finding | Revision 1 |
+|---|---|
+| 1. The self-employment threshold was applied per component, before aggregation | §2.3 step 2 now applies only component-level thresholds and classifies a self-employment component's service coverage only. The statutory-order paragraph applies the eligible-concept, net-earnings-factor and $400 rules to each joint outcome's aggregate. §5 adds the splitting invariant. |
+| 2. RET's wage rule was broader than 42 U.S.C. 403(f)(5)(C) | §2.3 now states the 409(a) limits, the deeming rule's two conditions and the retirement-payment exclusions. It names the facts CE2 records, and refuses a person-year's RET channel with a reason code where eligibility is not established. §5 is qualified to match. |
+| 3. CE5 did not carry the complete registry and coverage probabilities | §2.5 lists all 26 IDs with definitions and availability, and adds per-component status numerators, the unresolved share, coverage-state group keys and the shared realization contract. |
+| 4. The encodings could not represent the exact outputs | §4 keeps source money in cents and component probabilities on the 2^20 grid. Joint probabilities are arbitrary-precision integers over 2^(20k), and expectations are exact rationals. Statutory rounding belongs to rules, and there is one conversion at the reporting boundary. |
+| 5. "Zero labor income" did not imply zero channels | §5 now uses the reviewer's invariant, keeping gains and losses separate. |
+| 6. The sensitivity changed self-employment coverage | §3: the sensitivity changes wages only. §5 adds that projected self-employment channels are equal under both runs. |
+| Author's addition | §2.3 step 3 notes that the Synthetic Beta's government-employment indicator is on the Gold Standard File only. |
