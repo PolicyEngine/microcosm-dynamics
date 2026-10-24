@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind the development-scorecard sections of docs/progress.md. Update and run scripts/build_progress_page.py; never edit the generated page by hand.",
-  "as_of": "2026-10-20",
+  "as_of": "2026-10-24",
   "headline": "Nine pre-registered gates in gates.yaml; all eight locked gates have a scored run; 52 one-shot candidate runs on the public record. Track B's registered tests, posted on issue #42: B1 v2 passed on 11 October 2026 as a reconstructed reproduction (weaker than bit-for-bit), and B2, which carries the forward earnings law from 2010 to 2014, failed on 18 October 2026.",
   "gates": [
     {
@@ -126,7 +126,7 @@
       {
         "component": "Forward projection",
         "dynasim": "Annual updating and alignment",
-        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and a successor law is being designed; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
+        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and its successor, S1, is built and tested on invented data but not registered; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
       },
       {
         "component": "Social Security rule engine",
