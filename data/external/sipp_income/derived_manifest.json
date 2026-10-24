@@ -1,0 +1,128 @@
+[
+  {
+    "path": "parse_dictionary_metadata.py",
+    "bytes": 9923,
+    "sha256": "0b0338b23515e069c43602c0b4b861ee09a9afb0fd74b83f88584667daac3b40",
+    "kind": "generator"
+  },
+  {
+    "path": "2018_dictionary.txt",
+    "bytes": 2505350,
+    "sha256": "e51c7e2ed5e1d5542915f6dcc489dbed46a8558d302580a5262c8298c73b3377",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2018_dictionary_variables.json",
+    "bytes": 2508880,
+    "sha256": "e1368ee956d8a82b4c4e653097f1001da5016522d8f6a244b477db41a77bf179",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2019_dictionary.txt",
+    "bytes": 2627205,
+    "sha256": "db4c7ac3cf0dfcefc6a5add320872e0d14e2c512c5e4682c4ffb0650b959e7b7",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2019_dictionary_variables.json",
+    "bytes": 2606118,
+    "sha256": "f62f015faf50c0cb38ca9dcbc582c0267940a546e909aa4f3a546ae039048dc1",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2020_dictionary.txt",
+    "bytes": 2627161,
+    "sha256": "194c4b8ada0d1a1e8ed47c2a09e539147214635f3d1f29d45627a825eff9923d",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2020_dictionary_variables.json",
+    "bytes": 2595909,
+    "sha256": "e832ef8dbee0209c640c344b04450a6333855c7e4cd68b6d18a53e20209945bf",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2021_dictionary.txt",
+    "bytes": 2216096,
+    "sha256": "06dc3b5adf24fac3f52d19e5f0866c742c29e198a2e5a2171983bae7f8459f02",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2021_dictionary_variables.json",
+    "bytes": 3045195,
+    "sha256": "63b0b9d00a8a31eaf451974a8597985c8873adbc3909028b5f180fc58e992589",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2022_dictionary.txt",
+    "bytes": 2326874,
+    "sha256": "8824ef435b04074f186f462146001c8a0814dfcb544ca36dd7d3e67c749f9dda",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2022_dictionary_variables.json",
+    "bytes": 3140773,
+    "sha256": "df1f2cfb3a87616e69e3d2c21b9a902780953ed255d88629e64bad3ec35b9d41",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2023_dictionary.txt",
+    "bytes": 2247701,
+    "sha256": "80277dd9b1d37ef49d37a7e7a404331d86d147e0543ec127068ac7dd3ee9c8cc",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2023_dictionary_variables.json",
+    "bytes": 3054765,
+    "sha256": "1a7b61f60699bf40564f441a308c89dee16b6ceb57f2f10efc41421fb05f8aa9",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2024_dictionary.txt",
+    "bytes": 2254019,
+    "sha256": "75d20f624e12538aa409fe874d24cce4799d3cb82b670776d41478813806efe3",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2024_dictionary_variables.json",
+    "bytes": 3075200,
+    "sha256": "9c763a44d9c2df5cf5583ae6e2a82f849868eec3255614b813e26b42806c3b7d",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2025_dictionary.txt",
+    "bytes": 2232635,
+    "sha256": "b64671237c9bfb80ee569c26ef56676cfb1a3c453487941e78625affe0e0f91b",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2025_dictionary_variables.json",
+    "bytes": 3051150,
+    "sha256": "47980cd61f33612ac1ae845e35e48cd1d1a222c7411b2aa8bee102d302acb9b3",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2022_dictionary_notes.txt",
+    "bytes": 20961,
+    "sha256": "592fba9ab2655f202e58507ce286b3e64e6e726403b8081df5c93da36336c73e",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2023_dictionary_notes.txt",
+    "bytes": 18944,
+    "sha256": "a6b82d2c102b94f82a25776bd4c47032d201fec376b047688112075b455a76b1",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2024_dictionary_notes.txt",
+    "bytes": 18720,
+    "sha256": "d30ac83d67c13c097ae7ced5bec337a4fc963b6d2c4171806faa3c1bf4fe5c03",
+    "kind": "derived_metadata"
+  },
+  {
+    "path": "2025_dictionary_notes.txt",
+    "bytes": 18190,
+    "sha256": "e600d9487e0ace37011298fa1db307f392c08f8189ebd2fe003a329fc9f56aa3",
+    "kind": "derived_metadata"
+  }
+]

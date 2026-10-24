@@ -1,0 +1,741 @@
+[
+  {
+    "year": 2018,
+    "url": "https://api.census.gov/data/2018/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:31.335269+00:00",
+    "bytes": 427,
+    "sha256": "6627955791ebfd75305ddd7e4c85d96077da70b0f7314183774594e544e87894",
+    "path": "2018_api_response.txt",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "year": 2019,
+    "url": "https://api.census.gov/data/2019/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:31.359701+00:00",
+    "bytes": 427,
+    "sha256": "6627955791ebfd75305ddd7e4c85d96077da70b0f7314183774594e544e87894",
+    "path": "2019_api_response.txt",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "year": 2020,
+    "url": "https://api.census.gov/data/2020/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:31.423903+00:00",
+    "bytes": 427,
+    "sha256": "6627955791ebfd75305ddd7e4c85d96077da70b0f7314183774594e544e87894",
+    "path": "2020_api_response.txt",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "year": 2021,
+    "url": "https://api.census.gov/data/2021/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:31.441911+00:00",
+    "bytes": 427,
+    "sha256": "6627955791ebfd75305ddd7e4c85d96077da70b0f7314183774594e544e87894",
+    "path": "2021_api_response.txt",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "year": 2022,
+    "url": "https://api.census.gov/data/2022/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:32.832427+00:00",
+    "bytes": 2991114,
+    "sha256": "36bce47d8613e3649395de903906377d9f65172caf8ff208205239d7e817a538",
+    "path": "2022_variables.json",
+    "http_status": 200,
+    "status": "VERIFIED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://api.census.gov/data/2023/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:32.837931+00:00",
+    "bytes": 2871932,
+    "sha256": "b62876a0763a0b45f2c4873b055b35c264d3a67640b8a8b3590b650aa1db679e",
+    "path": "2023_variables.json",
+    "http_status": 200,
+    "status": "VERIFIED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://api.census.gov/data/2024/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:33.080935+00:00",
+    "bytes": 2898779,
+    "sha256": "3a3867de604fa304fdcbeed39bff553e000638b7fd586145898d98d998bc1115",
+    "path": "2024_variables.json",
+    "http_status": 200,
+    "status": "VERIFIED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://api.census.gov/data/2025/sipp/variables.json",
+    "retrieved_utc": "2026-10-24T12:41:33.088611+00:00",
+    "bytes": 2864074,
+    "sha256": "b4bc24124b7a2cf9b389810660476445708fec6398cd78f9424453a6e6e8ca48",
+    "path": "2025_variables.json",
+    "http_status": 200,
+    "status": "VERIFIED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/metadata/2018/",
+    "retrieved_utc": "2026-10-24T12:44:35.535584+00:00",
+    "bytes": 18409,
+    "sha256": "b8f987240729e49e8db4cd543fab9b56d788182e74001ef14efa769aad4c7c67",
+    "path": "metadata_locator_0.html",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/metadata/2019/",
+    "retrieved_utc": "2026-10-24T12:44:37.870725+00:00",
+    "bytes": 18409,
+    "sha256": "b8f987240729e49e8db4cd543fab9b56d788182e74001ef14efa769aad4c7c67",
+    "path": "metadata_locator_1.html",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/metadata/2020/",
+    "retrieved_utc": "2026-10-24T12:44:38.939761+00:00",
+    "bytes": 18409,
+    "sha256": "b8f987240729e49e8db4cd543fab9b56d788182e74001ef14efa769aad4c7c67",
+    "path": "metadata_locator_2.html",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/metadata/2021/",
+    "retrieved_utc": "2026-10-24T12:44:39.929029+00:00",
+    "bytes": 18409,
+    "sha256": "b8f987240729e49e8db4cd543fab9b56d788182e74001ef14efa769aad4c7c67",
+    "path": "metadata_locator_3.html",
+    "http_status": 404,
+    "status": "SOURCE_UNAVAILABLE"
+  },
+  {
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2018-data.html",
+    "retrieved_utc": "2026-10-24T12:44:40.735352+00:00",
+    "bytes": 325135,
+    "sha256": "e3bb608fc80b861799a48466ddf8610b90a9abe144811b8167b04eb2d7bfdc15",
+    "path": "metadata_locator_4.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2018,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2018.html",
+    "retrieved_utc": "2026-10-24T12:45:31.182786+00:00",
+    "bytes": 359699,
+    "sha256": "dd127e9aed56b6e890ef85785e3c47fcb5b26b2897c38742bc94f4b28b87efaa",
+    "path": "2018_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2019,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2019.html",
+    "retrieved_utc": "2026-10-24T12:45:31.197987+00:00",
+    "bytes": 331414,
+    "sha256": "f24d527087ef57728ed67c2904d670387a81305e2b3d4748917913360a0c889c",
+    "path": "2019_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2020,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2020.html",
+    "retrieved_utc": "2026-10-24T12:45:31.230827+00:00",
+    "bytes": 331285,
+    "sha256": "9be6a8d928c4a40d85265f5b7e857cc0ca3da79b859f7ecc7b12cadcf232b1b6",
+    "path": "2020_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2021,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2021.html",
+    "retrieved_utc": "2026-10-24T12:45:31.242070+00:00",
+    "bytes": 330749,
+    "sha256": "cd5401e298551c9e9d2d2c891b57431ae2bda9ce113bb117c3d8046b3e613fca",
+    "path": "2021_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2022,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2022.html",
+    "retrieved_utc": "2026-10-24T12:45:31.987709+00:00",
+    "bytes": 330743,
+    "sha256": "a2530a88ec6617aad55c34b9aaa2a4f72e8678c1d4c5c763c687e409578881d2",
+    "path": "2022_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2023,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2023.html",
+    "retrieved_utc": "2026-10-24T12:45:33.262157+00:00",
+    "bytes": 330690,
+    "sha256": "b07b579c6257a162f5f2ce6cf391aabd1eae16d4c946c8560d382a5f095ae3c3",
+    "path": "2023_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2024,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2024.html",
+    "retrieved_utc": "2026-10-24T12:45:33.269222+00:00",
+    "bytes": 330696,
+    "sha256": "fba4a319871c470d62872911fa0fae497253409e45e9d521c51e63286879b2c7",
+    "path": "2024_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2025,
+    "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/data-dictionaries-2025.html",
+    "retrieved_utc": "2026-10-24T12:45:33.356495+00:00",
+    "bytes": 330701,
+    "sha256": "eb3cf0b661cd462f0bf4d114f0bd88cca5fe6580ed5a78ea513b96b06fc5ff9b",
+    "path": "2025_dictionary_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2018/2018_SIPP_Data_Dictionary_v3.pdf",
+    "retrieved_utc": "2026-10-24T12:46:22.863386+00:00",
+    "bytes": 3151178,
+    "sha256": "48bf3ee4ced21c2c0a5414bd44d4ff355c04ddf9ff9bdb32ae0747471e0c1d99",
+    "path": "2018_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2019,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2019/2019_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:46:22.868638+00:00",
+    "bytes": 2870844,
+    "sha256": "ef2d724bf6f661f880c3be9d3da51f98777b6e460c81f30734436a1c1c83c3ef",
+    "path": "2019_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2020,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2020/2020_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:46:22.875860+00:00",
+    "bytes": 2802783,
+    "sha256": "4af6546bd9f4ef1f8ae0fc370e4d971d89791dfef611fe45757486740db4a1c3",
+    "path": "2020_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2021,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2021/2021_SIPP_Data_Dictionary_AUG22.pdf",
+    "retrieved_utc": "2026-10-24T12:46:22.884654+00:00",
+    "bytes": 4038152,
+    "sha256": "336a1e2244334184c82bbb457da47376afa423647fa6284daea0314fe072bce6",
+    "path": "2021_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2019,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2019-data.html",
+    "retrieved_utc": "2026-10-24T12:46:23.364166+00:00",
+    "bytes": 325134,
+    "sha256": "577c3a87b80db00d204f9458fb666792993405b5f1bb037a56c1ed61abeb72da",
+    "path": "2019_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2020,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2020-data.html",
+    "retrieved_utc": "2026-10-24T12:46:23.446986+00:00",
+    "bytes": 325134,
+    "sha256": "be20a97a5fa805785c6a1799a991fa0182c463d6f721c0ce4a8b9c973dc37bee",
+    "path": "2020_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2021,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2021-data.html",
+    "retrieved_utc": "2026-10-24T12:46:23.794161+00:00",
+    "bytes": 326103,
+    "sha256": "9962d360c37cfec14474e0c8a5a892a94fd957f7d9962b768811cc5b09496812",
+    "path": "2021_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2022,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2022-data.html",
+    "retrieved_utc": "2026-10-24T12:46:24.854473+00:00",
+    "bytes": 325346,
+    "sha256": "5be92b0d087e3b52ad58cb001da9dd653d1633d27668ba77420d8ee6a19bbdaa",
+    "path": "2022_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2023-data.html",
+    "retrieved_utc": "2026-10-24T12:46:25.036623+00:00",
+    "bytes": 325110,
+    "sha256": "222d95253120aef69d2e76793cac9d52907091747556af5c4a817d8cd5af9841",
+    "path": "2023_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2024-data.html",
+    "retrieved_utc": "2026-10-24T12:46:25.128418+00:00",
+    "bytes": 325542,
+    "sha256": "775faab069cd3c8228614adb9a6494945726b54d9869e1f34120b169dfaf315e",
+    "path": "2024_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2025-data.html",
+    "retrieved_utc": "2026-10-24T12:46:25.703880+00:00",
+    "bytes": 325542,
+    "sha256": "27fd6dbe17eea8b019b7e9efe6302d981a380747d59c1eb13c32bd2c1ca776b2",
+    "path": "2025_dataset_locator.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2018-data/2018.html",
+    "retrieved_utc": "2026-10-24T12:47:18.800787+00:00",
+    "bytes": 355622,
+    "sha256": "f428da7a9ed4b606737f0e499c78e4485149b572193be150af4775b331dead4a",
+    "path": "2018_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2019,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2019-data/2019.html",
+    "retrieved_utc": "2026-10-24T12:47:19.048057+00:00",
+    "bytes": 381970,
+    "sha256": "3e51886dc5c0789bac8124d270d90e01a45cc62fb392c91ee35985581b8558d6",
+    "path": "2019_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2020,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2020-data/2020.html",
+    "retrieved_utc": "2026-10-24T12:47:19.052786+00:00",
+    "bytes": 404982,
+    "sha256": "44201e717a36c349070d5406e008871ea0a4f1253f9676e04a20698a18bebce4",
+    "path": "2020_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2021,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2021-data/2021.html",
+    "retrieved_utc": "2026-10-24T12:47:19.056537+00:00",
+    "bytes": 427682,
+    "sha256": "ce2f44ef430f9ec01bbd68bd097c86ecb7f6e75df4db07f6e95a3f2a2f373fc7",
+    "path": "2021_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2022,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2022-data/2022.html",
+    "retrieved_utc": "2026-10-24T12:47:20.420904+00:00",
+    "bytes": 404738,
+    "sha256": "30d6892688c39cea25d6b44cf595d0e8b7ddfd685f76db887a7b56b4779b0f29",
+    "path": "2022_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2023,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2023-data/2023.html",
+    "retrieved_utc": "2026-10-24T12:47:20.438375+00:00",
+    "bytes": 403378,
+    "sha256": "98afea13e5e63680745149923a9dedc1f54871e019d2ad939be3def9556e39d7",
+    "path": "2023_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2024,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2024-data/2024.html",
+    "retrieved_utc": "2026-10-24T12:47:20.733078+00:00",
+    "bytes": 403290,
+    "sha256": "edece6534109f4252c36a99a9a62574473ff2a97bcef94e8e743869a88567f7a",
+    "path": "2024_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2025,
+    "url": "https://www.census.gov/programs-surveys/sipp/data/datasets/2025-data/2025.html",
+    "retrieved_utc": "2026-10-24T12:47:20.975904+00:00",
+    "bytes": 403082,
+    "sha256": "8556f9f67a889225d9f86f054190370a327dbeda9cf65f2d3826448df599d3ab",
+    "path": "2025_dataset_details.html",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA_LOCATOR"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:49.775536+00:00",
+    "bytes": 3662,
+    "sha256": "2b7975706604a6e0712fedffb30df8793f314cf659b13f2d04c7b008ff984004",
+    "path": "2018_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2019,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2019/2019_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:49.798842+00:00",
+    "bytes": 4160,
+    "sha256": "136726912c09d8d3c8ecc114dcde1cb023a49d0e9a081a1d08dbf787d01f1285",
+    "path": "2019_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2020,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2020/2020_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:49.815916+00:00",
+    "bytes": 4739,
+    "sha256": "5972dc8cad024116f886c629af83e1cc367c65097524e266a49eda2e9fb68f57",
+    "path": "2020_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2021,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2021/2021_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:50.009690+00:00",
+    "bytes": 4724,
+    "sha256": "0a62b5977af11c4856cc5bfe4e0aa72fe8565b4c6850eb75a411674f40e09421",
+    "path": "2021_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2022,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2022/2022_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:50.368486+00:00",
+    "bytes": 4857,
+    "sha256": "136cbaf72472d03db488ceed54924906f412a1596e24bdc7f92bfcab24744429",
+    "path": "2022_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/2023_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:50.371093+00:00",
+    "bytes": 4857,
+    "sha256": "6503f4135cbc49342b14adb9ded0fcb3e09241720a35b8d3aadcf55e78884424",
+    "path": "2023_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2024/2024_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:50.476824+00:00",
+    "bytes": 4857,
+    "sha256": "a7751f6f211760e7f464e4e5d65e7f4e04468f2b310b5345daecd8a4ae1de177",
+    "path": "2024_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2025/2025_sipp_python_input_example.py",
+    "retrieved_utc": "2026-10-24T12:47:50.616104+00:00",
+    "bytes": 4857,
+    "sha256": "43572909360d6cdb6906bfde67869943ad863c4ce4e82e9612c81a3ab1490026",
+    "path": "2025_python_input_example.py",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/rw2018_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:42.174239+00:00",
+    "bytes": 1468,
+    "sha256": "06f54463fac53dbc1050bdad052c0cf3d160a09652dd01261345da00a182f712",
+    "path": "rw2018_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/rw2018_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:42.183871+00:00",
+    "bytes": 22164,
+    "sha256": "d969168a6bf5925024a3cd6dda3d568c877927542554480f486dfffe016b65a6",
+    "path": "rw2018_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2019/rw2019_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:42.196043+00:00",
+    "bytes": 1412,
+    "sha256": "cafd2c14ae080b41e0a877a790e8b7ac08daf4039943ed81bc6307959a57c61c",
+    "path": "rw2019_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2019/rw2019_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:42.206465+00:00",
+    "bytes": 21997,
+    "sha256": "fa4ca57e14416a3197eb9cf3123048720bf3ad2039ac340e142d78f8cdc60609",
+    "path": "rw2019_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2020/rw2020_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:42.590578+00:00",
+    "bytes": 1412,
+    "sha256": "36c536d8523e9f6d140e8a0b546fd5350026b068be90b78c5f0f9f3b5f8e6eb9",
+    "path": "rw2020_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2020/rw2020_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:42.594452+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2020_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2021/rw2021_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:43.010352+00:00",
+    "bytes": 1412,
+    "sha256": "5df6002b96882dd5e93809bf7508751e609c41fa52bc20ade619a1d0dc0713ef",
+    "path": "rw2021_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2021/rw2021_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:43.073854+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2021_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2022/rw2022_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:43.364945+00:00",
+    "bytes": 1412,
+    "sha256": "fb5c5c205c1f5e969246e196241f3e0f18f7e8541bd32f06762a33778e498b6a",
+    "path": "rw2022_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2022/rw2022_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:43.902875+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2022_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/rw2023_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:44.276253+00:00",
+    "bytes": 1412,
+    "sha256": "8311e830fda9aa31ede6d466f5e2d1cd304b529be4dae0be231bb2992e46308c",
+    "path": "rw2023_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/rw2023_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:44.530930+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2023_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2024/rw2024_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:45.349814+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2024_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2025/rw2025_schema.json",
+    "retrieved_utc": "2026-10-24T12:48:46.044918+00:00",
+    "bytes": 22164,
+    "sha256": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
+    "path": "rw2025_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2024/rw2024_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:46.401005+00:00",
+    "bytes": 1412,
+    "sha256": "23cc9897a02f49583a50a0638325ffae24f98256a6250ba1963fcf3968ac5e6c",
+    "path": "rw2024_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2025/rw2025_dictionary.txt",
+    "retrieved_utc": "2026-10-24T12:48:46.481805+00:00",
+    "bytes": 1412,
+    "sha256": "818e434ae1ac25b0be5b370826950ca46d2f538e38c49860a28e6cc25d2a8d60",
+    "path": "rw2025_dictionary.txt",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2018,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2018/pu2018_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:19.567587+00:00",
+    "bytes": 706454,
+    "sha256": "cccb2e895815833d52825dbe04b26435b08da0b5a1c31f9738fd8a97c8ead8e1",
+    "path": "pu2018_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2019,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2019/pu2019_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:19.590661+00:00",
+    "bytes": 729330,
+    "sha256": "54f8c185c846267d1586519fb2657010838a4def5f250f3d916388f88933424b",
+    "path": "pu2019_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2020,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2020/pu2020_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:19.741676+00:00",
+    "bytes": 728036,
+    "sha256": "0ed84df426dcc88c29a64ce5fe6a90f395ebd843bf887d2b9afedfe285303104",
+    "path": "pu2020_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2021,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2021/pu2021_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:19.972671+00:00",
+    "bytes": 757637,
+    "sha256": "bdd9fce939129c0dd3c0be58428dc0e4470423d050d8d796d600888ea32e4d33",
+    "path": "pu2021_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2022,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2022/pu2022_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:29.290746+00:00",
+    "bytes": 768477,
+    "sha256": "2427aa1bf79296038814737e967b7c84764dc53d476c6d1a1af58aa061e3d7ed",
+    "path": "pu2022_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2023/pu2023_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:29.383863+00:00",
+    "bytes": 755059,
+    "sha256": "a1985e1a6dcc8006521bdf22c7ffd36f37f752921b59972f2dbdeb6cd6328113",
+    "path": "pu2023_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2024/pu2024_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:29.401605+00:00",
+    "bytes": 757529,
+    "sha256": "601042d6f32e4c8ccd98952e91d0e25dc02d22d2dcb8babd4a2c269046d87b3d",
+    "path": "pu2024_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://www2.census.gov/programs-surveys/sipp/data/datasets/2025/pu2025_schema.json",
+    "retrieved_utc": "2026-10-24T12:50:29.618171+00:00",
+    "bytes": 754138,
+    "sha256": "6cdc23c537ba1431540e62994f0c05e05e62920e785384872bf5b7c23fe8c241",
+    "path": "pu2025_schema.json",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2022,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2022/2022_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:51:11.548306+00:00",
+    "bytes": 4157878,
+    "sha256": "8c58c1f6162a869b0a4a727c2893fc0633cd7601de5c6c8069e387d908e3a6d5",
+    "path": "2022_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2023,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2023/2023_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:51:11.558443+00:00",
+    "bytes": 3991831,
+    "sha256": "0f1c5fbd29b24d3f1c18e7168a0f6d9fdfa7578b58d247fa9f475093a6db894f",
+    "path": "2023_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2024,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2024/2024_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:51:11.559933+00:00",
+    "bytes": 4015396,
+    "sha256": "f7af93a5b75fc6c3b67ca9c8aad7de78c32d071aa829b682f01312a3f46c7289",
+    "path": "2024_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  },
+  {
+    "year": 2025,
+    "url": "https://www2.census.gov/programs-surveys/sipp/tech-documentation/data-dictionaries/2025/2025_SIPP_Data_Dictionary.pdf",
+    "retrieved_utc": "2026-10-24T12:51:11.561664+00:00",
+    "bytes": 3994347,
+    "sha256": "571e53b4ec3ebb11bebddbb7190fc1084f5364b8a1ec5fbd7ca8e2f69e7cc752",
+    "path": "2025_dictionary.pdf",
+    "http_status": 200,
+    "status": "CAPTURED_METADATA"
+  }
+]

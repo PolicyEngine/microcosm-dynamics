@@ -1,0 +1,61 @@
+SURVEY OF INCOME AND PROGRAM PARTICIPATION,
+CALENDAR YEAR 2025 REPLICATE WEIGHT FILE DATA DICTIONARY
+
+  VARIABLE   TYPE	LENGTH
+
+D SSUID      Char     	14
+T SU: Sample Unit Identifier
+     This identifier is created by scrambling together the PSU, 
+     Segment, Serial, Serial Suffix, and Panel of the 
+     original sample address.  It may be used 
+     in matching sample units across years.
+U All persons
+V 00000000000000:99999999999999 .Scrambled Id
+
+
+D PNUM        Num	3     
+T PE: Person Number
+     This field differentiates 
+     persons within the sample unit. Person 
+     number is unique within the sample unit.
+V 101:499 .Person number
+
+
+D SPANEL      Num	4     
+T SU: Panel Year
+U All persons
+V 2021:2024 .Panel Year
+
+
+D SWAVE       Num	1     
+T SU: Wave of data collection
+U All persons
+V 1:4 .Wave of data collection
+
+
+D MONTHCODE   Num	2     
+T SU: Reference month of this record
+U All persons
+V 1:12 .Reference month
+
+
+D REPWGT0     Num	14    
+T WW: Final Person Weight
+      This is equivalent to the variable WPFINWGT
+      in the data file.
+U All persons
+V 0.000000:9999999.999999 .Final person weight
+
+
+D REPWGT1     Num	14    
+T WW: Final Person 1st Replicate Weight
+U All persons
+V 0.000000:9999999.999999 .Final person replicate weight 1
+.
+.
+.
+D REPWGT240   Num	14    
+T WW: Final Person 240th Replicate Weight
+U All persons
+V 0.000000:9999999.999999 .Final person replicate weight 240
+

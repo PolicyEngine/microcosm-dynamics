@@ -1,0 +1,3 @@
+# Captured Census metadata is SHA-256 pinned: keep every byte as fetched
+# (several pages and input examples use CRLF line endings).
+* -text
