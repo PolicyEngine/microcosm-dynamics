@@ -1,0 +1,119 @@
+# D4 part 1: plain-request captures and one reused SSA snapshot.
+# Fields: retrieval_utc sha256 byte_size capture_file
+
+# ssa_manifest.txt
+# Reused, not fetched: https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html
+2026-07-27T13:02:54Z c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449 488165 ../ssa_level_anchors_vintage1/supplement2025_4b.html
+
+# poms_manifest.txt
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415000
+2026-10-24T12:40:56.922475Z 84ec0310b83249621ac7779bf0a0f642b708c410a979089e323c6c06dc1c3ff0 39925 poms_si_01415_index.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415031
+2026-10-24T12:42:11.374178Z 40e8cbdcae416ad1144e43b7c0616ee7974eb27d0d73881b5133e837964f6ebd 598744 poms_si_01415_1999.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415032
+2026-10-24T12:42:11.391443Z 1ae6f25b1da72404dd97cd32182586354addddf2eafc52016da7482658c46685 880615 poms_si_01415_2000.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415033
+2026-10-24T12:42:11.658843Z f5fe7a37407646e9bc91442728b4b32b90bbd056102b94922714849a7dc17da4 774357 poms_si_01415_2001.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415034
+2026-10-24T12:42:11.125515Z ac9696f1ebb477da04c90ac77c83af56b6c1c153743b078748f0588384d1315d 806798 poms_si_01415_2002.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415035
+2026-10-24T12:42:11.728143Z fccf7dfcec747561245e7ef9b6033e97956395aaaf03bbaaa39552484e443a9a 992291 poms_si_01415_2003.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415036
+2026-10-24T12:42:11.937059Z 349b9e1456c579cae132ea55138627021bdd97deda623ba5b4742d41e2c9eea4 828506 poms_si_01415_2004.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415037
+2026-10-24T12:42:11.935856Z c0efdc2042cc7ff12b3084e3336a0eeb5335f802d983d594f2f6e05269ad4deb 807378 poms_si_01415_2005.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415038
+2026-10-24T12:42:12.208030Z 360a7cf1dd586cffac45528787f206eaf432bbd9abdb080dad6e231107a0cde9 708104 poms_si_01415_2006.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415039
+2026-10-24T12:42:12.360739Z a9ed64e6a6506c68a8af84489125a655dde3af3117a6c3b2d68fae4018581bf6 705149 poms_si_01415_2007.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415040
+2026-10-24T12:42:12.528887Z 7e193aea809385f19fd4f39bb47fce1b8ee1b4ad2532d0eae7c4868c73338897 719631 poms_si_01415_2008.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415041
+2026-10-24T12:42:12.646711Z 824a5175b58ff8ccacfc1d517d5b8247fccf8e8efda0a4f1dbab277e347afd09 835407 poms_si_01415_2009.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415042
+2026-10-24T12:42:12.721632Z 2c4aba069d26a0cb0b9d97ec141df66a767bcd48af2ea925f4f4886a58c16ba6 904168 poms_si_01415_2010.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415043
+2026-10-24T12:42:12.806612Z 2a679781c018297ec66a1e83e131f4d8bfaee7874880ef92119958f375607de9 787351 poms_si_01415_2011.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415044
+2026-10-24T12:42:13.034963Z 33c9efd56bb3327589ba15043f000d498617809ccfae0d706ffc59c5fbdf07ad 737833 poms_si_01415_2012.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415045
+2026-10-24T12:42:13.256070Z 7e4851edbe7c61c36018e3ea4c6e75b53c749c8c05ae09eeca2ef495442a9214 658169 poms_si_01415_2013.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415046
+2026-10-24T12:42:13.258138Z 8b1d7421519574a7829196348f68d31bdfe1ae187585e05fc3ef3761e1cf20cb 643731 poms_si_01415_2014.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415047
+2026-10-24T12:42:13.844544Z e82bcaf9e199b86e4f8990b361383520997a41959762d352efdc5c195b9a9b10 661201 poms_si_01415_2015.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415048
+2026-10-24T12:42:14.204710Z c78f026fa6db579398bc34046011d747aab4e9a51321c31d9667481ea4393b4c 818951 poms_si_01415_2016.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415049
+2026-10-24T12:42:14.547525Z 3263e3bb8b5d77767672e935a0f263a57691adb6c091136c29cc2c5856bcdb65 635931 poms_si_01415_2017.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415050
+2026-10-24T12:42:14.663154Z c63ecdac5e1727a6160ae2e039cdeb89f6c3601aeaa9e43733d87de06fe7626e 655313 poms_si_01415_2018.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415051
+2026-10-24T12:42:14.908825Z 8e6e5ee861cb303c743805added3c0b99833747c76cf34a067769bdf9d7f3e9e 656129 poms_si_01415_2019.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415052
+2026-10-24T12:42:15.123773Z 090fb421a468c89f44cb98fc505d614e08433b3d4c1300dfc11ce4cbe4edd310 659869 poms_si_01415_2020.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415053
+2026-10-24T12:42:15.720199Z 307c3c72b105bf15380ed7967317e9c671510b4c9ee29e81e5f9f6e996d24a2e 659833 poms_si_01415_2021.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415054
+2026-10-24T12:42:15.940151Z d23620a981907eeba17d1ce4a2bbc976b6a32b06390565b633cb7f6f1c73fd06 657723 poms_si_01415_2022.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415055
+2026-10-24T12:42:16.244889Z 761d61eacb5aa68fc58c0be69761912c78cc4106eec901d923b4a8f454929119 659490 poms_si_01415_2023.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415056
+2026-10-24T12:42:16.105608Z a05465e94f25c1978a79657b32fc17c0877d2580ab4571186c0546300aa3cec0 606847 poms_si_01415_2024.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415057
+2026-10-24T12:42:16.902809Z 027971da9bf7e7e393d8f676d6c049da45a2b7f3ff525870bd11925a0db55c30 605487 poms_si_01415_2025.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0501415058
+2026-10-24T12:42:17.707028Z 0366a7c952da8025f51aef7d6c25d13f885b0ff4080e6c9525e7877ea344aaa1 532767 poms_si_01415_2026.html
+
+# coverage_manifest.txt
+# URL https://secure.ssa.gov/poms.nsf/lnx/0301505000
+2026-10-24T12:41:26.961290Z fdc07d643ddf12867f5f205b69f2f263f7ae860fc2384c7549fbc926842b7b88 18436 poms_rs_01505_toc.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0301505042
+2026-10-24T12:46:23.938874Z b1f3b3c916cff0ec4a97958d062d21ec1f1ae4ed0a2a67d7f6ae134901960cf6 24780 poms_rs_0301505042.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/0301505044
+2026-10-24T12:46:24.014005Z 54983d7e1719c0408542163b8c58ade88221127f09157ba958e049449e1e2012 27481 poms_rs_0301505044.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/1920001201
+2026-10-24T12:46:24.020978Z da4d3c8986a873700b7e6287995f7fcb4e94ac2dce945acdaab8ef8b598a5a88 26925 poms_sl_1920001201.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/1930001331
+2026-10-24T12:46:24.026434Z 88301a88d2b2dea7dc930638c59a14dcf5811bd83e6a06add5874565caf884f4 38827 poms_sl_1930001331.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/1930001347
+2026-10-24T12:46:24.213639Z f06dc121e076162f3aab7bdaece9177d6efd1050de67024c8bca026368afb155 38455 poms_sl_1930001347.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/1950001501
+2026-10-24T12:46:24.213956Z 375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604 28428 poms_sl_1950001501.html
+# URL https://secure.ssa.gov/poms.nsf/lnx/1950001510
+2026-10-24T12:46:24.254142Z 16eb3195b465303fff01c75caa044f123d23de16a9e9598b11fabf7f14b93578 29099 poms_sl_1950001510.html
+
+# pensions_manifest.txt
+# URL https://www.federalreserve.gov/releases/z1/
+2026-10-24T12:41:10Z b62f9c27e66233a1a5004d9de9de810a92e5989a622295986fcd71e374624244 120825 fed_release.html
+# URL https://www.dol.gov/agencies/ebsa/researchers/statistics/retirement-bulletins/private-pension-plan
+2026-10-24T12:41:14Z c32608b14b81c54f0e5917a694f4b164d3ad8c96f33755efc7f28117c683b62b 103883 dol_landing.html
+# URL https://www.irs.gov/statistics/soi-tax-stats-accumulation-and-distribution-of-individual-retirement-arrangements
+2026-10-24T12:41:19Z e2955985c8c3a43b46120936441e020dd1a70f02269ab09d65397af10ce95051 172336 irs_landing.html
+# URL https://www.federalreserve.gov/releases/z1/current/z1_table_mapping.csv
+2026-10-24T12:43:07Z 2b1ebfb5ffc9f755ff36861ae6fa4c6cc802b814c6658f24b033b1aeb633f24f 9737 fed_mapping.csv
+# URL https://www.federalreserve.gov/releases/z1/current/z1_csv_files.zip
+2026-10-24T12:43:08Z b63af9755437df0fb88b7cf346f8f9eaeb22bf1aa2b5df1709334135c43de4b6 8336582 fed_tables.zip
+# URL https://www.dol.gov/sites/dolgov/files/ebsa/researchers/statistics/retirement-bulletins/private-pension-plan-bulletins-abstract-2023.xlsx
+2026-10-24T12:43:09Z cbb35a0f9d16749ed8184a913da1b457bceb6afbad627cb2ff01b0b8e7318eb3 434019 dol_bulletin_2023.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in01ira.xlsx
+2026-10-24T12:43:06Z 5716444ff8f28adddaf0737d82ada2cfce8591c60e222fa76767a229040f1ca5 11460 irs_2023_table_01.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in02ira.xlsx
+2026-10-24T12:43:08Z bfcf581ced743df4cc4c9786b8086b910082a2d258634a7a6ad8cc7cfd64fbf1 13686 irs_2023_table_02.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in03ira.xlsx
+2026-10-24T12:43:08Z d304678b39ddf277048def3b6f6b486899e0df8adeccc8383f47853e0ccf26e4 14542 irs_2023_table_03.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in04ira.xlsx
+2026-10-24T12:43:09Z 83a0da20618ecbdb76ea14ec18d3ad38a32389b8c18356eba45b8e302a70c068 13894 irs_2023_table_04.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in05ira.xlsx
+2026-10-24T12:43:09Z 17b02670eeb35dab5d3f8be6a26333d527993f8b22933fa77bb3a06f3c8ad143 11345 irs_2023_table_05.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in06ira.xlsx
+2026-10-24T12:43:10Z b526e4d4163172ed9992d16375cbf601b1c8b4d5bcf66f86e038c0e91c420418 11380 irs_2023_table_06.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in07ira.xlsx
+2026-10-24T12:43:10Z 1454c2cdfcc0d6df493fd6b5aea9f94d3d7bdfb237e36e5f0d321442e3752b99 12501 irs_2023_table_07.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in08ira.xlsx
+2026-10-24T12:43:11Z 92d505742b2f1bf489e358cd2b38d195cb680fca1f9ea86b5637856e8dd7dad8 14214 irs_2023_table_08.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in09ira.xlsx
+2026-10-24T12:43:11Z 1c9d544c0374f2c0347a5c3546415cf9252d52db55f56192505a0f83f4bc734a 12847 irs_2023_table_09.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in10ira.xlsx
+2026-10-24T12:43:12Z 9b1d412a608fe51128df846e7f626700e27bd06d2c95cad7afa1eb61c9298f16 13490 irs_2023_table_10.xlsx
+

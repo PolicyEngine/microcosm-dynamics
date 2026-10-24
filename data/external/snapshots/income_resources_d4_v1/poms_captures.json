@@ -1,0 +1,233 @@
+[
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415000",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_index.html",
+    "sha256": "84ec0310b83249621ac7779bf0a0f642b708c410a979089e323c6c06dc1c3ff0",
+    "byte_size": 39925,
+    "retrieved_at": "2026-10-24T12:40:56.922475Z"
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415031",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_1999.html",
+    "sha256": "40e8cbdcae416ad1144e43b7c0616ee7974eb27d0d73881b5133e837964f6ebd",
+    "byte_size": 598744,
+    "retrieved_at": "2026-10-24T12:42:11.374178Z",
+    "year": 1999
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415032",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2000.html",
+    "sha256": "1ae6f25b1da72404dd97cd32182586354addddf2eafc52016da7482658c46685",
+    "byte_size": 880615,
+    "retrieved_at": "2026-10-24T12:42:11.391443Z",
+    "year": 2000
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415033",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2001.html",
+    "sha256": "f5fe7a37407646e9bc91442728b4b32b90bbd056102b94922714849a7dc17da4",
+    "byte_size": 774357,
+    "retrieved_at": "2026-10-24T12:42:11.658843Z",
+    "year": 2001
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415034",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2002.html",
+    "sha256": "ac9696f1ebb477da04c90ac77c83af56b6c1c153743b078748f0588384d1315d",
+    "byte_size": 806798,
+    "retrieved_at": "2026-10-24T12:42:11.125515Z",
+    "year": 2002
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415035",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2003.html",
+    "sha256": "fccf7dfcec747561245e7ef9b6033e97956395aaaf03bbaaa39552484e443a9a",
+    "byte_size": 992291,
+    "retrieved_at": "2026-10-24T12:42:11.728143Z",
+    "year": 2003
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415036",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2004.html",
+    "sha256": "349b9e1456c579cae132ea55138627021bdd97deda623ba5b4742d41e2c9eea4",
+    "byte_size": 828506,
+    "retrieved_at": "2026-10-24T12:42:11.937059Z",
+    "year": 2004
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415037",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2005.html",
+    "sha256": "c0efdc2042cc7ff12b3084e3336a0eeb5335f802d983d594f2f6e05269ad4deb",
+    "byte_size": 807378,
+    "retrieved_at": "2026-10-24T12:42:11.935856Z",
+    "year": 2005
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415038",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2006.html",
+    "sha256": "360a7cf1dd586cffac45528787f206eaf432bbd9abdb080dad6e231107a0cde9",
+    "byte_size": 708104,
+    "retrieved_at": "2026-10-24T12:42:12.208030Z",
+    "year": 2006
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415039",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2007.html",
+    "sha256": "a9ed64e6a6506c68a8af84489125a655dde3af3117a6c3b2d68fae4018581bf6",
+    "byte_size": 705149,
+    "retrieved_at": "2026-10-24T12:42:12.360739Z",
+    "year": 2007
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415040",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2008.html",
+    "sha256": "7e193aea809385f19fd4f39bb47fce1b8ee1b4ad2532d0eae7c4868c73338897",
+    "byte_size": 719631,
+    "retrieved_at": "2026-10-24T12:42:12.528887Z",
+    "year": 2008
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415041",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2009.html",
+    "sha256": "824a5175b58ff8ccacfc1d517d5b8247fccf8e8efda0a4f1dbab277e347afd09",
+    "byte_size": 835407,
+    "retrieved_at": "2026-10-24T12:42:12.646711Z",
+    "year": 2009
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415042",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2010.html",
+    "sha256": "2c4aba069d26a0cb0b9d97ec141df66a767bcd48af2ea925f4f4886a58c16ba6",
+    "byte_size": 904168,
+    "retrieved_at": "2026-10-24T12:42:12.721632Z",
+    "year": 2010
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415043",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2011.html",
+    "sha256": "2a679781c018297ec66a1e83e131f4d8bfaee7874880ef92119958f375607de9",
+    "byte_size": 787351,
+    "retrieved_at": "2026-10-24T12:42:12.806612Z",
+    "year": 2011
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415044",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2012.html",
+    "sha256": "33c9efd56bb3327589ba15043f000d498617809ccfae0d706ffc59c5fbdf07ad",
+    "byte_size": 737833,
+    "retrieved_at": "2026-10-24T12:42:13.034963Z",
+    "year": 2012
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415045",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2013.html",
+    "sha256": "7e4851edbe7c61c36018e3ea4c6e75b53c749c8c05ae09eeca2ef495442a9214",
+    "byte_size": 658169,
+    "retrieved_at": "2026-10-24T12:42:13.256070Z",
+    "year": 2013
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415046",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2014.html",
+    "sha256": "8b1d7421519574a7829196348f68d31bdfe1ae187585e05fc3ef3761e1cf20cb",
+    "byte_size": 643731,
+    "retrieved_at": "2026-10-24T12:42:13.258138Z",
+    "year": 2014
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415047",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2015.html",
+    "sha256": "e82bcaf9e199b86e4f8990b361383520997a41959762d352efdc5c195b9a9b10",
+    "byte_size": 661201,
+    "retrieved_at": "2026-10-24T12:42:13.844544Z",
+    "year": 2015
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415048",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2016.html",
+    "sha256": "c78f026fa6db579398bc34046011d747aab4e9a51321c31d9667481ea4393b4c",
+    "byte_size": 818951,
+    "retrieved_at": "2026-10-24T12:42:14.204710Z",
+    "year": 2016
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415049",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2017.html",
+    "sha256": "3263e3bb8b5d77767672e935a0f263a57691adb6c091136c29cc2c5856bcdb65",
+    "byte_size": 635931,
+    "retrieved_at": "2026-10-24T12:42:14.547525Z",
+    "year": 2017
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415050",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2018.html",
+    "sha256": "c63ecdac5e1727a6160ae2e039cdeb89f6c3601aeaa9e43733d87de06fe7626e",
+    "byte_size": 655313,
+    "retrieved_at": "2026-10-24T12:42:14.663154Z",
+    "year": 2018
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415051",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2019.html",
+    "sha256": "8e6e5ee861cb303c743805added3c0b99833747c76cf34a067769bdf9d7f3e9e",
+    "byte_size": 656129,
+    "retrieved_at": "2026-10-24T12:42:14.908825Z",
+    "year": 2019
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415052",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2020.html",
+    "sha256": "090fb421a468c89f44cb98fc505d614e08433b3d4c1300dfc11ce4cbe4edd310",
+    "byte_size": 659869,
+    "retrieved_at": "2026-10-24T12:42:15.123773Z",
+    "year": 2020
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415053",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2021.html",
+    "sha256": "307c3c72b105bf15380ed7967317e9c671510b4c9ee29e81e5f9f6e996d24a2e",
+    "byte_size": 659833,
+    "retrieved_at": "2026-10-24T12:42:15.720199Z",
+    "year": 2021
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415054",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2022.html",
+    "sha256": "d23620a981907eeba17d1ce4a2bbc976b6a32b06390565b633cb7f6f1c73fd06",
+    "byte_size": 657723,
+    "retrieved_at": "2026-10-24T12:42:15.940151Z",
+    "year": 2022
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415055",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2023.html",
+    "sha256": "761d61eacb5aa68fc58c0be69761912c78cc4106eec901d923b4a8f454929119",
+    "byte_size": 659490,
+    "retrieved_at": "2026-10-24T12:42:16.244889Z",
+    "year": 2023
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415056",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2024.html",
+    "sha256": "a05465e94f25c1978a79657b32fc17c0877d2580ab4571186c0546300aa3cec0",
+    "byte_size": 606847,
+    "retrieved_at": "2026-10-24T12:42:16.105608Z",
+    "year": 2024
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415057",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2025.html",
+    "sha256": "027971da9bf7e7e393d8f676d6c049da45a2b7f3ff525870bd11925a0db55c30",
+    "byte_size": 605487,
+    "retrieved_at": "2026-10-24T12:42:16.902809Z",
+    "year": 2025
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501415058",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_si_01415_2026.html",
+    "sha256": "0366a7c952da8025f51aef7d6c25d13f885b0ff4080e6c9525e7877ea344aaa1",
+    "byte_size": 532767,
+    "retrieved_at": "2026-10-24T12:42:17.707028Z",
+    "year": 2026
+  }
+]
