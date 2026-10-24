@@ -7,7 +7,16 @@
     "path": "/Users/maxghenis/PolicyEngine/_clones/md-u2-diff-cand",
     "head": "2faf03565cb55ab56256317aebefab2a2ce82efd"
   },
-  "python": "/Users/maxghenis/PolicyEngine/_clones/md-u2-evidence-copy-venv/bin/python",
+  "python": "/Users/maxghenis/PolicyEngine/_clones/md-u2-diff-venv-pandas306/bin/python",
+  "environment": {
+    "added_after_run": "read from the interpreter named in `python`, under the run's environment variables; scripts/u2_u1_differential.py does not write this block",
+    "python_version": "3.14.7",
+    "pandas_version": "3.0.6",
+    "numpy_version": "2.5.4",
+    "future_infer_string": true,
+    "install": "uv pip install -e \".[dev]\" \"pandas==3.0.6\" \"numpy==2.5.4\"",
+    "psid_root": "an empty directory (POPULACE_DYNAMICS_PSID_DIR and HOME)"
+  },
   "seed": 20260924,
   "tolerance": "zero: byte equality",
   "excluded_json_paths": [
@@ -19,12 +28,12 @@
     "result_json_equal": true,
     "results_md_equal": true,
     "result_json_sha256": {
-      "base": "f2a57684097d4ce04bd8f26291a1fbdd4dc45e37dfdcf3c3f9c9f4f8842c709c",
-      "candidate": "f2a57684097d4ce04bd8f26291a1fbdd4dc45e37dfdcf3c3f9c9f4f8842c709c"
+      "base": "9f4e4e7f1c466db7b375de6909ea85a2201a7d2361f101a35fc2514befffd35f",
+      "candidate": "9f4e4e7f1c466db7b375de6909ea85a2201a7d2361f101a35fc2514befffd35f"
     },
     "results_md_sha256": {
-      "base": "3f518a236c62e65b64142e998b10e1d7acb2baa9c43d4ffb2c248e5bf3541dd6",
-      "candidate": "3f518a236c62e65b64142e998b10e1d7acb2baa9c43d4ffb2c248e5bf3541dd6"
+      "base": "5906f196f71c09e48163e12abcf36f70083ec5674874aaa440474ceddb03c0df",
+      "candidate": "5906f196f71c09e48163e12abcf36f70083ec5674874aaa440474ceddb03c0df"
     },
     "first_json_difference": null,
     "first_md_difference": null,
@@ -35,7 +44,7 @@
         "git_head": "9cee2423f048683e15838aa5fee330afd072f85f",
         "git_clean": true,
         "python": "3.14.7",
-        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-gd2rm4q1/same-output --seed 20260924"
+        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-tjve5_7o/same-output --seed 20260924"
       },
       "candidate": {
         "date": "2026-10-24",
@@ -43,7 +52,7 @@
         "git_head": "2faf03565cb55ab56256317aebefab2a2ce82efd",
         "git_clean": true,
         "python": "3.14.7",
-        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-gd2rm4q1/same-output --seed 20260924"
+        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-tjve5_7o/same-output --seed 20260924"
       }
     }
   },
