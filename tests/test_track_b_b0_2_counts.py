@@ -1014,6 +1014,36 @@ def test_relations_are_registered_only_where_rows_guarantee_them(change, lost):
     assert {key for key, held in relations.items() if not held} == lost
 
 
+def test_a_relation_the_rows_do_not_guarantee_is_not_registered():
+    """One person with no design stratum, alone in the 62-64 bands: those
+    sets hold a person and no stratum, so "persons only with strata" is
+    not guaranteed for them. The registry omits it there, and the model
+    builds; registering it anyway would stop the script as a defect."""
+    rows = [_row(1, wave, 62 + wave - 2011) for wave in WAVES] + [
+        _row(person, wave, 30 + wave - 2011)
+        for person in (2, 3, 4)
+        for wave in WAVES
+    ]
+    people, labor, anchor, design = _inputs(rows)
+    design.loc[design["person_id"] == 1, "stratum"] = np.nan
+    registry = script.disclosure_registry(
+        people, _validity(labor), anchor, design
+    )
+    unguaranteed = []
+    for path, (_, members) in registry.sets.items():
+        strata = registry.sets.get((*path[:-1], "design_strata"))
+        if path[-1] == "persons" and members and strata and not strata[1]:
+            unguaranteed.append(path[:-1])
+    assert ("rosters", "R_FULL", "by_age_band", "62_64") in unguaranteed
+    registered = {
+        left[:-1]
+        for kind, left, right in registry.relations
+        if kind == "nonempty" and right[-1] == "design_strata"
+    }
+    assert registered and not registered & set(unguaranteed)
+    script.model_relations(registry, script.build_model(registry))
+
+
 def test_a_violated_relation_is_a_defect_not_data():
     counts, registry = _table_registry({"few": {1}, "many": {1, 2}})
     registry.relate("at_most", ("many",), ("few",))
@@ -1334,6 +1364,33 @@ def test_audit_programs_depend_only_on_the_publication(table, data):
         ]
 
 
+def test_targets_are_classified_in_one_order_whatever_their_sizes(
+    monkeypatch,
+):
+    """Two tables with one publication, 11 and 14 units in opposite atoms:
+    the first round classifies every target in the model's order, which
+    is the same for both. An order taken from true sizes would differ."""
+    calls = []
+    original = script.classify
+
+    def recording(system, target, pool, *, seconds):
+        calls.append(tuple(target["columns"]))
+        return original(system, target, pool, seconds=seconds)
+
+    monkeypatch.setattr(script, "classify", recording)
+    orders = []
+    for sizes in ([11, 14], [14, 11]):
+        counts, registry = _atom_table([(0, 1), (0,)], sizes)
+        model = script.build_model(registry)
+        expected = [tuple(target["columns"]) for target in model["targets"]]
+        calls.clear()
+        audit = script.audit_counts(counts, registry, 10)
+        assert audit["status"] == "released"
+        assert calls[: len(expected)] == expected
+        orders.append(expected)
+    assert orders[0] == orders[1]
+
+
 @pytest.mark.parametrize(
     "sizes", [(1, 1, 1), (1, 2, 3), (3, 3, 4), (3, 7, 8), (1, 2, 10)]
 )
@@ -1499,6 +1556,34 @@ def test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half(
     )
     assert record["result"] == result
     assert record["programs"][0] == "relaxation"
+
+
+@pytest.mark.parametrize("statuses", [(1, 2), (2, 1), (1, 1)])
+def test_a_timed_out_search_proves_nothing(statuses):
+    """HiGHS status 2 proves a window empty; status 1, a time limit,
+    proves nothing. A target whose search timed out without a point stays
+    narrow, and no extreme program runs for it."""
+    answers = iter(statuses)
+
+    class Stub:
+        def relaxed_minimum(self, columns, *, seconds):
+            raise AssertionError("the pool's least value is below 10")
+
+        def search(self, columns, low=None, high=None, *, seconds):
+            return next(answers), None
+
+        def extreme(self, columns, sense, low, high, *, seconds):
+            raise AssertionError("an unproven window ran an extreme")
+
+    pool = script.WitnessPool(1)
+    pool.add(np.array([5]))
+    record, witness = script.classify(
+        Stub(), {"columns": (0,), "true_size": 5}, pool, seconds=60
+    )
+    assert record["result"] == "narrow"
+    assert record["proof"] == "undetermined"
+    assert record["programs"] == list(statuses)
+    assert witness is None
 
 
 def _two_atom_disclosure():
