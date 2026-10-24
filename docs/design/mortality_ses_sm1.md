@@ -40,7 +40,9 @@ All public objects are exported from `populace_dynamics.mortality_ses`.
   returns `(probabilities, cell_log)`. Inputs are matching row vectors;
   cell IDs are `(year, sex, age)` triples. Weights are finite and
   nonnegative; zero-weight rows use the same factor but cannot determine
-  it. Inputs are never mutated.
+  it, and a cell whose positive-q free rows all weigh zero sets its
+  factor with unit weights (see "Normalization and tolerance"). Inputs
+  are never mutated.
 - `DifferentialMortality(baseline, specification, *, weight_column,
   di_configuration=None)` exposes single-year `bands` and
   `__call__(frame, context) -> ndarray`. `evaluate(frame, context)` also
@@ -98,6 +100,22 @@ rows. Fixed deaths above the target make the cell infeasible and give
 all free rows zero. Arbitrary fixed probabilities can also leave a target
 above free positive-q support; the normalizer saturates that support and
 flags infeasibility. Neither case can arise with fixed rows at baseline q.
+Both rules apply when that support carries weight; the weightless case
+follows.
+
+Weights decide the factor only when they can. If every free row with
+positive baseline q has zero weight, no factor changes the cell's weighted
+deaths, so the weighted target says nothing about it. The cell then sets
+the factor as if each person had weight one: its free rows' unweighted
+expected deaths equal their unweighted baseline total, and they keep their
+relative risks. A factor of zero would instead make those persons
+immortal. With unit risks the rule reproduces the DI adapter, which leaves
+the factor at one when the other rows carry no expected deaths. If the
+weighted target is nonzero in such a cell, because fixed probabilities
+differ from baseline, no allocation conserves it: the cell is still
+flagged infeasible and the residual records the gap. On the model's path
+the fixed rows sit at baseline, so the target is zero and the cell is
+feasible.
 
 The exact baseline path bypasses multiply/divide rounding for unit risks
 and for a common free-row risk with fixed rows at baseline. Stable sums
@@ -168,7 +186,8 @@ before being characterized as a mechanism defect.
 | DI composition, ratios and baseline origin q | Fixed origin in `model.py`, existing adapter | Composition examples and `test_composition_conserves_cells_preserves_ratios_and_fixes_di_q` |
 | Intended monotonicity by earnings and education | Positive cell factor, log-additive risks | `test_ordered_earnings_and_education_risks_preserve_probability_order` |
 | Row/weight invariance and one-risk cells | Stable reductions, exact common-risk path | Permutation/scaling examples and properties; `test_one_free_risk_group_returns_baseline_probability` |
-| Differential adapter arithmetic; intended clipping difference | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties; named intended capping divergence |
+| Weightless free support: unit-weight factor, never factor zero | Unit-weight allocation in both arithmetic paths of `normalizer.py` | `test_weightless_support_counts_persons_equally`, `test_weightless_support_uses_unit_weights_on_the_decimal_path`, `test_weightless_free_rows_in_infeasible_cells_keep_unit_weights`, `test_weightless_cells_count_persons_equally`, `test_model_gives_weightless_cells_their_unit_weight_probabilities`; the normalizer properties draw zero weights |
+| Differential adapter arithmetic; intended clipping difference | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended capping divergence |
 | Time path and alternative path isolation | Path protocol and hold-last default | `test_pluggable_path_changes_only_named_year`, generated hold-last/refusal property |
 | Determinism and no RNG consumption | Pure `evaluate` | Repeated-call examples, generator state and patched-generator property |
 | Refusals | Specification, frame and interface validation | Nonfinite/nonpositive risks, missing columns, unknown/unclassified values, age mismatch and `probabilities` attribute examples and properties |

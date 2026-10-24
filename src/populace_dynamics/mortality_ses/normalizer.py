@@ -86,8 +86,15 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
         )
         support = [i for i in free if base[i] > zero]
         capacity = total(w[i] for i in support)
+        allocation = w
+        unmet = False
+        if capacity == zero and support:
+            unmet = target != zero
+            allocation = [one] * len(w)
+            target = total(base[i] for i in support)
+            capacity = total(allocation[i] for i in support)
         capped = set()
-        infeasible = False
+        infeasible = unmet
         factor = one
         if fixed_at_baseline and (
             not free or all(rr[i] == rr[free[0]] for i in free)
@@ -99,7 +106,7 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
         elif target == zero:
             factor = zero
         elif target >= capacity:
-            infeasible = target > capacity
+            infeasible = target > capacity or unmet
             for i in support:
                 result[i] = one
             capped = set(support)
@@ -108,16 +115,18 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
             )
         else:
             raw = [qi * ri for qi, ri in zip(base, rr, strict=True)]
-            active = {i for i in support if w[i] > zero}
+            active = {i for i in support if allocation[i] > zero}
             remaining = target
             while active:
-                factor = remaining / total(w[i] * raw[i] for i in active)
+                factor = remaining / total(
+                    allocation[i] * raw[i] for i in active
+                )
                 next_capped = {i for i in active if raw[i] * factor > one}
                 if not next_capped:
                     break
                 capped |= next_capped
                 active -= next_capped
-                remaining = target - total(w[i] for i in capped)
+                remaining = target - total(allocation[i] for i in capped)
             for i in free:
                 result[i] = min(one, raw[i] * factor)
             capped = {i for i in free if raw[i] * factor > one}
@@ -161,8 +170,18 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
     )
     support = free & (base > 0)
     capacity = _stable_sum(w[support])
+    # Weightless support leaves the weighted target silent on the factor;
+    # set it by counting persons equally rather than letting zero weight
+    # decide a probability.  A nonzero weighted target stays infeasible.
+    allocation = w
+    unmet = False
+    if capacity == 0 and np.any(support):
+        unmet = bool(target != 0)
+        allocation = np.ones(len(base), dtype=np.longdouble)
+        target = _stable_sum(base[support])
+        capacity = _stable_sum(allocation[support])
     capped = np.zeros(len(base), dtype=bool)
-    infeasible = False
+    infeasible = unmet
     factor = np.longdouble(1)
     if fixed_at_baseline and (
         not np.any(free) or np.all(rr[free] == rr[free][0])
@@ -178,7 +197,9 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
     elif target >= capacity:
         # Baseline fixed rows are feasible by construction.  Independent
         # floating reductions can differ by a rounding bit at capacity.
-        infeasible = bool(target > capacity) and not fixed_at_baseline
+        infeasible = (
+            bool(target > capacity) and not fixed_at_baseline
+        ) or unmet
         result[support] = 1
         capped[support] = True
         factor = (
@@ -188,17 +209,17 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
         )
     else:
         raw = base * rr
-        active = support & (w > 0)
+        active = support & (allocation > 0)
         remaining = target
         while np.any(active):
-            denominator = _stable_sum(w[active] * raw[active])
+            denominator = _stable_sum(allocation[active] * raw[active])
             factor = remaining / denominator
             next_capped = active & (raw * factor > 1)
             if not np.any(next_capped):
                 break
             capped |= next_capped
             active &= ~next_capped
-            remaining = target - _stable_sum(w[capped])
+            remaining = target - _stable_sum(allocation[capped])
         result[free] = np.minimum(1, raw[free] * factor)
         capped[free] = raw[free] * factor > 1
 
@@ -244,11 +265,17 @@ def normalize_probabilities(
     factor is recomputed after each capped group until the remaining
     target can be allocated without further capping.  Zero-weight rows
     receive the same factor as other rows but do not affect its value.
+    When every free row with positive baseline probability has zero
+    weight, no factor changes the cell's weighted deaths.  The cell then
+    counts persons equally to set the factor, so those rows keep their
+    relative risks rather than a probability that zero weight decided.
+    It is still infeasible when its weighted target is nonzero.
 
     Fixed probabilities above the entire baseline target are infeasible;
     free probabilities are then zero.  A target above the free rows'
     positive-probability support is also infeasible; those rows saturate
-    at one.  The signed residual is baseline minus applied deaths.  On
+    at one.  Both rules apply only where that support carries weight.
+    The signed residual is baseline minus applied deaths.  On
     feasible cells without capping it is explicitly zero: arithmetic
     roundoff is covered by the accounting tolerance, rather than being
     described as a clipping loss.

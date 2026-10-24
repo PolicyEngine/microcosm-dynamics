@@ -132,6 +132,34 @@ def test_zero_baselines_and_zero_weights_remain_bounded():
     assert zero_log.iloc[0].clipping_residual == 0
 
 
+def test_weightless_support_counts_persons_equally():
+    # With no weight on the free rows that can die, conservation says
+    # nothing about the factor; zero would make these persons immortal.
+    unit_q, unit_log = normalize([0.2, 0.6], [1, 2], weights=[1, 1])
+    zero_q, zero_log = normalize([0.2, 0.6], [1, 2], weights=[0, 0])
+    np.testing.assert_array_equal(zero_q, unit_q)
+    np.testing.assert_allclose(zero_q, [0.8 / 7, 4.8 / 7])
+    assert zero_log.iloc[0].factor == unit_log.iloc[0].factor
+    assert zero_log.iloc[0].applied_expected_deaths == 0
+    assert not zero_log.iloc[0].infeasible
+    # Positive-weight rows with q_base = 0 leave the weightless row free.
+    mixed_q, mixed_log = normalize([0, 0.2], [1, 2], weights=[1, 0])
+    np.testing.assert_array_equal(mixed_q, [0, 0.2])
+    assert mixed_log.iloc[0].factor == pytest.approx(0.5)
+    # Positive-weight support still sets the factor alone.
+    q, _ = normalize([0.2, 0.2], [1, 2], weights=[1, 0])
+    np.testing.assert_allclose(q, [0.2, 0.4])
+
+
+def test_weightless_support_uses_unit_weights_on_the_decimal_path():
+    risks = [1e-90, 2e-90]
+    unit_q, _ = normalize([0.2, 0.2], risks, weights=[1, 1])
+    zero_q, zero_log = normalize([0.2, 0.2], risks, weights=[0, 0])
+    np.testing.assert_array_equal(zero_q, unit_q)
+    np.testing.assert_allclose(zero_q, [0.4 / 3, 0.8 / 3])
+    assert not zero_log.iloc[0].infeasible
+
+
 def test_cells_are_separate_and_sorted_and_inputs_are_unchanged():
     baseline = np.array([0.3, 0.1, 0.3, 0.1])
     risks = np.array([1.0, 1.0, 2.0, 2.0])

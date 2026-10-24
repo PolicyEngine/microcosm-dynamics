@@ -53,6 +53,7 @@ UNCLASSIFIED = "invented_unclassified"
 SEXES = ("female", "male")
 POSITIVE = st.floats(0.05, 20, allow_nan=False, allow_infinity=False)
 PROBABILITY = st.floats(0, 1, allow_nan=False, allow_infinity=False)
+WEIGHT = st.one_of(st.just(0.0), POSITIVE)
 
 
 def invented_dimensions():
@@ -182,9 +183,7 @@ def invented_normalizer_inputs(draw):
         draw(st.lists(PROBABILITY, min_size=size, max_size=size))
     )
     risk = np.asarray(draw(st.lists(POSITIVE, min_size=size, max_size=size)))
-    weights = np.asarray(
-        draw(st.lists(POSITIVE, min_size=size, max_size=size))
-    )
+    weights = np.asarray(draw(st.lists(WEIGHT, min_size=size, max_size=size)))
     fixed = np.asarray(
         draw(st.lists(st.booleans(), min_size=size, max_size=size))
     )
@@ -243,6 +242,23 @@ def test_permutation_and_common_weight_scaling_preserve_probabilities(
 
 
 @PROPERTY
+@given(invented_normalizer_inputs())
+def test_weightless_cells_count_persons_equally(inputs):
+    """Zero weight leaves the factor to unit weights, never to zero."""
+    base, risk, fixed, cells, _ = inputs
+    zero, zero_log = normalize_probabilities(
+        base, risk, fixed, base, cells, np.zeros(len(base))
+    )
+    unit, unit_log = normalize_probabilities(
+        base, risk, fixed, base, cells, np.ones(len(base))
+    )
+    np.testing.assert_array_equal(zero, unit)
+    np.testing.assert_array_equal(zero_log["factor"], unit_log["factor"])
+    assert not zero_log["infeasible"].any()
+    assert (zero_log["clipping_residual"] == 0).all()
+
+
+@PROPERTY
 @given(PROBABILITY, POSITIVE, st.integers(1, 15))
 def test_one_free_risk_group_returns_baseline_probability(q_base, risk, size):
     base = np.full(size, q_base)
@@ -277,7 +293,7 @@ def test_fixed_deaths_above_target_are_flagged(base_q, excess, weight):
 
 
 @PROPERTY
-@given(st.floats(0.02, 0.15), st.floats(0.5, 1.75), POSITIVE)
+@given(st.floats(0.02, 0.15), st.floats(0.5, 1.75), WEIGHT)
 def test_unit_risk_reproduces_adapter_arithmetic_without_clipping(
     baseline_q, multiplier, weight_scale
 ):
@@ -297,6 +313,69 @@ def test_unit_risk_reproduces_adapter_arithmetic_without_clipping(
     )
     assert not log["clipped_persons"].any()
     np.testing.assert_allclose(q, old, rtol=RTOL, atol=ATOL)
+
+
+@st.composite
+def invented_adapter_cells(draw):
+    size = draw(st.integers(1, 10))
+    rows = st.lists(PROBABILITY, min_size=size, max_size=size)
+    base, prescribed = np.asarray(draw(rows)), np.asarray(draw(rows))
+    fixed = np.asarray(
+        draw(st.lists(st.booleans(), min_size=size, max_size=size))
+    )
+    prescribed[~fixed] = base[~fixed]
+    weights = np.asarray(draw(st.lists(WEIGHT, min_size=size, max_size=size)))
+    groups = np.asarray(
+        draw(st.lists(st.integers(0, 3), min_size=size, max_size=size))
+    )
+    return base, fixed, prescribed, weights, groups % 2, 50 + groups // 2
+
+
+@PROPERTY
+@given(invented_adapter_cells())
+def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
+    """Includes zero weights, infeasible cells and weightless free rows."""
+    base, fixed, prescribed, weights, sex, age = inputs
+    cells = [(2021, SEXES[s], int(a)) for s, a in zip(sex, age, strict=True)]
+    q, log = normalize_probabilities(
+        base, np.ones(len(base)), fixed, prescribed, cells, weights
+    )
+    old, _ = _net_of_di_origin(
+        prescribed, base, fixed, sex, age, weights, SINGLE_YEAR_AGE_BANDS
+    )
+    for row in log.itertuples(index=False):
+        if row.clipped_persons:
+            continue  # Intended: iterative capping versus one-pass clipping.
+        mask = np.asarray(
+            [cell == (row.year, row.sex, row.age) for cell in cells]
+        )
+        np.testing.assert_allclose(q[mask], old[mask], rtol=RTOL, atol=ATOL)
+
+
+def test_weightless_free_rows_in_infeasible_cells_keep_unit_weights():
+    """Fixed rows carry the weight; no free factor can conserve the cell."""
+    cells = [(2021, "female", 50)] * 3
+    fixed = np.asarray([True, False, False])
+    for prescribed_q, sign in ((0.6, -1), (0.1, 1)):
+        base = np.asarray([0.3, 0.2, 0.4])
+        prescribed = np.asarray([prescribed_q, 0.2, 0.4])
+        weights = np.asarray([2.0, 0.0, 0.0])
+        q, log = normalize_probabilities(
+            base,
+            np.asarray([1.0, 1.0, 3.0]),
+            fixed,
+            prescribed,
+            cells,
+            weights,
+        )
+        unit, _ = normalize_probabilities(
+            base, np.asarray([1.0, 1.0, 3.0]), fixed, base, cells, np.ones(3)
+        )
+        assert log.loc[0, "infeasible"]
+        assert np.sign(log.loc[0, "clipping_residual"]) == sign
+        assert q[0] == prescribed_q
+        np.testing.assert_array_equal(q[1:], unit[1:])
+        assert_conserved(q, base, cells, weights, log)
 
 
 def test_iterative_capping_intentionally_differs_from_adapter_one_pass():
@@ -566,6 +645,19 @@ def test_model_permutation_scaling_and_no_randomness(scale, seed):
     np.testing.assert_allclose(scaled, q, rtol=RTOL, atol=ATOL)
     assert rng.bit_generator.state == rng_before
     assert person_rng.bit_generator.state == person_before
+
+
+def test_model_gives_weightless_cells_their_unit_weight_probabilities():
+    frame = invented_frame(12)
+    context = invented_context(frame)
+    model = DifferentialMortality(
+        invented_baseline(0.2), invented_spec(), weight_column="weight"
+    )
+    unit = model(frame, context)
+    weightless = model(frame.assign(weight=0.0), context)
+    np.testing.assert_array_equal(weightless, unit)
+    assert (weightless > 0).all()
+    assert len(np.unique(weightless)) > 1
 
 
 class InventedWideningPath:
