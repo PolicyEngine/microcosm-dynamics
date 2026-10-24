@@ -14,7 +14,8 @@ Evaluators establish provenance, layer and integrity, not freshness or
 caller-declared attribution of an earlier genuine result or refusal.
 The contract excludes code accessing private names, monkeypatching modules,
 or mutating an input from another thread during a call.
-One private capability seals every declared G, R2 and R3 result, refusal,
+One private capability seals every declared G, R2, R3 and insured-status
+result, refusal,
 outcome and denominator. Public construction and copying are input errors;
 serialization is rejected. Persist declared inputs and recompute instead.
 """
@@ -977,7 +978,9 @@ def _external_declarations():
 
 def _schema(annotation, module, *, name="", owner=None):
     origin, args = get_origin(annotation), get_args(annotation)
-    exact = module.endswith((".arf", ".recompute", ".ret_ledger"))
+    exact = module.endswith(
+        (".arf", ".recompute", ".ret_ledger", ".insured_status")
+    )
     if annotation is object or annotation is Fraction:
         return lambda value, label: _numeric_schema(
             value,

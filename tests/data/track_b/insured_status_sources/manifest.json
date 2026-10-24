@@ -1,0 +1,633 @@
+{
+  "schema_version": 1,
+  "purpose": "Track B insured-status statutory conformance; published and invented cases only, no population data",
+  "capture_formats": {
+    "http_body": "Complete decoded HTTP response body, unchanged from the staged capture.",
+    "browser_text": "Rendered document text checked against the served page during staging; served_bodies pins the complete HTTP response.",
+    "http_text_excerpt": "Cited paragraphs of staged LII HTTP bodies after stripping tags, decoding entities, collapsing whitespace and straightening apostrophes; served_bodies pins each original complete response.",
+    "pdf_text": "Text of a published PDF extracted with the named extractor, unchanged; served_bodies pins the PDF and any image renderings of the same pages."
+  },
+  "sources": [
+    {
+      "file": "ecfr_20cfr404_subpart_b.xml",
+      "bytes": 51316,
+      "sha256": "9b07c75507015c2944ca4f19dc6a8b2fffc0e2c6c0fb31b3b8d58c65a3424dfd",
+      "id": "ecfr_20cfr404_subpart_b",
+      "citation": "20 CFR part 404 subpart B (eCFR, as of 2026-10-07)",
+      "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-10-07/title-20.xml?part=404&subpart=B",
+      "retrieved_at_utc": "2026-10-21T13:57:36Z",
+      "capture": "http_body"
+    },
+    {
+      "file": "lii_usc_42_413_excerpts.txt",
+      "bytes": 9494,
+      "sha256": "b45a823d4376fbb41f40acf31b5df62284afcdf7373c84491bb08df54abfad44",
+      "id": "lii_usc_42_413",
+      "citation": "42 U.S.C. 413 (Legal Information Institute)",
+      "url": "https://www.law.cornell.edu/uscode/text/42/413",
+      "retrieved_at_utc": "2026-10-21T13:57:14Z",
+      "capture": "http_text_excerpt",
+      "served_bodies": [
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/413",
+          "bytes": 113691,
+          "sha256": "2dc803f32773ee70e257a7de9a04ccdd04018f55d42078b93bec198bcd832cd3"
+        }
+      ]
+    },
+    {
+      "file": "lii_usc_42_414_excerpts.txt",
+      "bytes": 2615,
+      "sha256": "deca2cfea26a61b37b847f4cd23d4820c362b6e5644622d50b9b6ee784b6fc24",
+      "id": "lii_usc_42_414",
+      "citation": "42 U.S.C. 414 (Legal Information Institute)",
+      "url": "https://www.law.cornell.edu/uscode/text/42/414",
+      "retrieved_at_utc": "2026-10-21T13:57:15Z",
+      "capture": "http_text_excerpt",
+      "served_bodies": [
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/414",
+          "bytes": 63944,
+          "sha256": "731e1dbc8648c689d2d97546980739a1a53477da0669d566d3d32ec9f3966a2d"
+        }
+      ]
+    },
+    {
+      "file": "lii_usc_42_416_excerpts.txt",
+      "bytes": 11545,
+      "sha256": "3c5e7d55166dc8a27625c0c926ded03d38d074f23cc6daf88de1cae4dd346222",
+      "id": "lii_usc_42_416",
+      "citation": "42 U.S.C. 416 (Legal Information Institute)",
+      "url": "https://www.law.cornell.edu/uscode/text/42/416",
+      "retrieved_at_utc": "2026-10-21T13:57:18Z",
+      "capture": "http_text_excerpt",
+      "served_bodies": [
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/416",
+          "bytes": 288079,
+          "sha256": "bd04463b757e1358b1cbf6bc942c2593d7be96d5ca297094ebba11bd107602db"
+        }
+      ]
+    },
+    {
+      "file": "lii_usc_42_423_excerpts.txt",
+      "bytes": 2044,
+      "sha256": "c0db1ea77f2d66910fa5eb7d2fdb9bd37e2f8b31ffc0a3d8a5298a384e277a61",
+      "id": "lii_usc_42_423",
+      "citation": "42 U.S.C. 423 (Legal Information Institute)",
+      "url": "https://www.law.cornell.edu/uscode/text/42/423",
+      "retrieved_at_utc": "2026-10-21T13:57:17Z",
+      "capture": "http_text_excerpt",
+      "served_bodies": [
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/423",
+          "bytes": 250339,
+          "sha256": "5168d384819acdcc672139f5d3b9e97ffdcb67c0bcad6f6a879052a66af44d2a"
+        }
+      ]
+    },
+    {
+      "file": "poms_rs_00301_000_toc.html",
+      "bytes": 29635,
+      "sha256": "23d5cd4907d30360336f43b95a132241b1efc2a544b3d5cb4e9854d85ced3f62",
+      "id": "poms_rs_00301_000_toc",
+      "citation": "POMS RS 00301.000",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301000",
+      "retrieved_at_utc": "2026-10-21T13:56:14Z",
+      "capture": "http_body",
+      "poms_transmittal": null,
+      "title": "RS 00301.000 - Retirement, Survivors and Disability Requirements - Table of Contents - 09/04/2026",
+      "page_date": "09/04/2026"
+    },
+    {
+      "file": "poms_rs_00301_101.html",
+      "bytes": 45244,
+      "sha256": "d7f1456ee6133790299468e4f5fd093711011e9e24032fff9bbb6cbfd5c2a6fc",
+      "id": "poms_rs_00301_101",
+      "citation": "POMS RS 00301.101",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301101",
+      "retrieved_at_utc": "2026-10-21T13:56:15Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 51 (10-23)",
+      "title": "RS 00301.101 - Insured Status &mdash; Overview - 08/09/2011",
+      "page_date": "08/09/2011"
+    },
+    {
+      "file": "poms_rs_00301_102.html",
+      "bytes": 225887,
+      "sha256": "dee8220e70bfbe337a327d9f79ba9ece7743db7c2eb146254c62deed5827e754",
+      "id": "poms_rs_00301_102",
+      "citation": "POMS RS 00301.102",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301102",
+      "retrieved_at_utc": "2026-10-21T13:56:16Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 64 (09-26)",
+      "title": "RS 00301.102 - Additional Requirements for Alien Workers- Social Security Protection Act of 2004 - 10/04/2023",
+      "page_date": "10/04/2023"
+    },
+    {
+      "file": "poms_rs_00301_105.html",
+      "bytes": 29489,
+      "sha256": "6f7920fae7eac9589ccb05bd3e51b85f080bc46646096f3feafe9baf1681d88e",
+      "id": "poms_rs_00301_105",
+      "citation": "POMS RS 00301.105",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301105",
+      "retrieved_at_utc": "2026-10-21T13:56:17Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 48 (10-23)",
+      "title": "RS 00301.105 - Fully Insured Status - 11/12/2010",
+      "page_date": "11/12/2010"
+    },
+    {
+      "file": "poms_rs_00301_106.html",
+      "bytes": 26367,
+      "sha256": "2a85835c78b5c94e7a3e921f23d0b18461fa4a7ff36c2700861793db9ef4c011",
+      "id": "poms_rs_00301_106",
+      "citation": "POMS RS 00301.106",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301106",
+      "retrieved_at_utc": "2026-10-21T13:56:19Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 45 (10-23)",
+      "title": "RS 00301.106 - Deemed Fully Insured - 10/06/2023",
+      "page_date": "10/06/2023"
+    },
+    {
+      "file": "poms_rs_00301_107.html",
+      "bytes": 25021,
+      "sha256": "c80dde8fbbda1602c02ba059b8732d090ea1546285688fb257d82476f06b2cbb",
+      "id": "poms_rs_00301_107",
+      "citation": "POMS RS 00301.107",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301107",
+      "retrieved_at_utc": "2026-10-21T13:56:20Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.107 - Identification and Development of Deemed Fully Insured Status - 07/19/2002",
+      "page_date": "07/19/2002"
+    },
+    {
+      "file": "poms_rs_00301_110.html",
+      "bytes": 20502,
+      "sha256": "6caf9a505c7c2aca23ae818dd4008c084c0527051624d2af8491195b0a681cd0",
+      "id": "poms_rs_00301_110",
+      "citation": "POMS RS 00301.110",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301110",
+      "retrieved_at_utc": "2026-10-21T13:56:21Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 54 (10-23)",
+      "title": "RS 00301.110 - Currently Insured Status - 08/18/2004",
+      "page_date": "08/18/2004"
+    },
+    {
+      "file": "poms_rs_00301_120.html",
+      "bytes": 28986,
+      "sha256": "12b6fad03a284e48507aae5af0055610d1085d2b9b7de14bf6d6693d9c8d0023",
+      "id": "poms_rs_00301_120",
+      "citation": "POMS RS 00301.120",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301120",
+      "retrieved_at_utc": "2026-10-21T13:56:22Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 50 (10-23)",
+      "title": "RS 00301.120 - DIB Insured Status - 08/18/2004",
+      "page_date": "08/18/2004"
+    },
+    {
+      "file": "poms_rs_00301_122.html",
+      "bytes": 18565,
+      "sha256": "0fc39a8f5c8d9b2408b5dad8bd436de52b9b615a0ad6c187f467ba73b9d8568c",
+      "id": "poms_rs_00301_122",
+      "citation": "POMS RS 00301.122",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301122",
+      "retrieved_at_utc": "2026-10-21T13:56:23Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.122 - Relationship Between Period of Disability and Insured Status - 01/23/2015",
+      "page_date": "01/23/2015"
+    },
+    {
+      "file": "poms_rs_00301_130.html",
+      "bytes": 22285,
+      "sha256": "3dcdabefbb6fcd2e4529ea94a6a5fcf562aa51e65bf32e9fbe2a1ca8bad07e26",
+      "id": "poms_rs_00301_130",
+      "citation": "POMS RS 00301.130",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301130",
+      "retrieved_at_utc": "2026-10-21T13:56:25Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 42 (10-23)",
+      "title": "RS 00301.130 - Freeze Insured Status Requirements - 08/18/2004",
+      "page_date": "08/18/2004"
+    },
+    {
+      "file": "poms_rs_00301_131.html",
+      "bytes": 17706,
+      "sha256": "a8cc684fe1ddd60fd7e150bb897f2f3ee6d8a60038fee704e68e3836d499f7e8",
+      "id": "poms_rs_00301_131",
+      "citation": "POMS RS 00301.131",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301131",
+      "retrieved_at_utc": "2026-10-21T13:56:26Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.131 - Use of Railroad (RR) Compensation and Military Service (MS) Credits for Freeze Insured Status - 01/23/2015",
+      "page_date": "01/23/2015"
+    },
+    {
+      "file": "poms_rs_00301_132.html",
+      "bytes": 23977,
+      "sha256": "d65fc3cba91bdc168ee4ae903c6b1b16d5e5b0b93949ca0cbc10740aa27f3a0c",
+      "id": "poms_rs_00301_132",
+      "citation": "POMS RS 00301.132",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301132",
+      "retrieved_at_utc": "2026-10-21T13:56:27Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 44 (10-23)",
+      "title": "RS 00301.132 - Relationship Between Freeze Insured Status and Disability Insurance Benefits (DIB) Insured Status - 10/06/2023",
+      "page_date": "10/06/2023"
+    },
+    {
+      "file": "poms_rs_00301_140.html",
+      "bytes": 38536,
+      "sha256": "76a8308bbb8be90097040dc4fa91f10579940689738c5704212ae82266489954",
+      "id": "poms_rs_00301_140",
+      "citation": "POMS RS 00301.140",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301140",
+      "retrieved_at_utc": "2026-10-21T13:56:28Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 46 (10-23)",
+      "title": "RS 00301.140 - Special Insured Status for Disability Before Age 31 - 04/15/2022",
+      "page_date": "04/15/2022"
+    },
+    {
+      "file": "poms_rs_00301_147.html",
+      "bytes": 53524,
+      "sha256": "39ec334cac61f5abb359345b8358feee918f8df7a23e8b85b45b86a2063f7159",
+      "id": "poms_rs_00301_147",
+      "citation": "POMS RS 00301.147",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301147",
+      "retrieved_at_utc": "2026-10-21T13:56:29Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 57 (10-23)",
+      "title": "RS 00301.147 - Special Insured Status Requirements for Subsequent Periods of Disability - NH Over Age 31 - 04/21/2023",
+      "page_date": "04/21/2023"
+    },
+    {
+      "file": "poms_rs_00301_148.html",
+      "bytes": 28174,
+      "sha256": "11fe33e7ff6840eff071fd14d629cda8790ebe3af77b5c762f4e0cca77d900eb",
+      "id": "poms_rs_00301_148",
+      "citation": "POMS RS 00301.148",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301148",
+      "retrieved_at_utc": "2026-10-21T13:56:30Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 49 (10-23)",
+      "title": "RS 00301.148 - Date Last Insured (DLI) - 01/13/2006",
+      "page_date": "01/13/2006"
+    },
+    {
+      "file": "poms_rs_00301_149.html",
+      "bytes": 16605,
+      "sha256": "ab96b715a7add620f3d40141f6569592c6c7f95358d5b12e758246014e6de9a8",
+      "id": "poms_rs_00301_149",
+      "citation": "POMS RS 00301.149",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301149",
+      "retrieved_at_utc": "2026-10-21T13:56:32Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.149 - SSA-1164 Exhibit of Special Insured Status Worksheet - 06/23/2011",
+      "page_date": "06/23/2011"
+    },
+    {
+      "file": "poms_rs_00301_150.html",
+      "bytes": 24115,
+      "sha256": "b2e17c812d4c63c84d72c0286c601d95ed11721ddbe7181681749bdc39440342",
+      "id": "poms_rs_00301_150",
+      "citation": "POMS RS 00301.150",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301150",
+      "retrieved_at_utc": "2026-10-21T13:56:33Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 63 (04-26)",
+      "title": "RS 00301.150 - Insured Status for Statutory Blindness - 10/12/2023",
+      "page_date": "10/12/2023"
+    },
+    {
+      "file": "poms_rs_00301_160.html",
+      "bytes": 28009,
+      "sha256": "58d9d65773b3c9bff2f69b102463aed24d86f526790a75f9fd062146e826e5e4",
+      "id": "poms_rs_00301_160",
+      "citation": "POMS RS 00301.160",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301160",
+      "retrieved_at_utc": "2026-10-21T13:56:34Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 53 (10-23)",
+      "title": "RS 00301.160 - Insured Status Based on Medicare Qualified Government Employment - 05/26/2011",
+      "page_date": "05/26/2011"
+    },
+    {
+      "file": "poms_rs_00301_161.html",
+      "bytes": 19296,
+      "sha256": "b393d1538b7edf8e1ffeda1e94441bcb80d5072137de9045f81b8085e41a0883",
+      "id": "poms_rs_00301_161",
+      "citation": "POMS RS 00301.161",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301161",
+      "retrieved_at_utc": "2026-10-21T13:56:35Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.161 - Part A Premium Reduction for Individuals with at Least 30 Quarters of Coverage (QC) - 05/26/2011",
+      "page_date": "05/26/2011"
+    },
+    {
+      "file": "poms_rs_00301_200.html",
+      "bytes": 18282,
+      "sha256": "bb8fc3d4a7ace6e75bfbf87235f8290b3ff67d38d4b4bb3fe3d44da9f6dfa829",
+      "id": "poms_rs_00301_200",
+      "citation": "POMS RS 00301.200",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301200",
+      "retrieved_at_utc": "2026-10-21T13:56:36Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.200 - Quarters of Coverage (QC) - 07/25/1996",
+      "page_date": "07/25/1996"
+    },
+    {
+      "file": "poms_rs_00301_210.html",
+      "bytes": 17911,
+      "sha256": "a8b416a2756e8552dcb4f31410e871b077821cc078c098edb7d2db0a5518169a",
+      "id": "poms_rs_00301_210",
+      "citation": "POMS RS 00301.210",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301210",
+      "retrieved_at_utc": "2026-10-21T13:56:37Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.210 - Crediting Quarters of Coverage (QC) - 05/26/2011",
+      "page_date": "05/26/2011"
+    },
+    {
+      "file": "poms_rs_00301_220.html",
+      "bytes": 17815,
+      "sha256": "e83e25303b2d3aec68f9c193c6068dba992ee94fa51761d478fa6674dc7cafb4",
+      "id": "poms_rs_00301_220",
+      "citation": "POMS RS 00301.220",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301220",
+      "retrieved_at_utc": "2026-10-21T13:56:39Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 20 (05-11)",
+      "title": "RS 00301.220 - Crediting of Self-Employment Income (SEI) to Calendar Years - 06/14/2013",
+      "page_date": "06/14/2013"
+    },
+    {
+      "file": "poms_rs_00301_230.html",
+      "bytes": 20419,
+      "sha256": "f4f6d7c00a7041b3c81ec0f7c65bd38c0edd1598ee8862354926d70ac2ea82eb",
+      "id": "poms_rs_00301_230",
+      "citation": "POMS RS 00301.230",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301230",
+      "retrieved_at_utc": "2026-10-21T13:56:40Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 58 (11-23)",
+      "title": "RS 00301.230 - Assignment of Quarters of Coverage (QC) - 11/01/2023",
+      "page_date": "11/01/2023"
+    },
+    {
+      "file": "poms_rs_00301_240.html",
+      "bytes": 19235,
+      "sha256": "3c484231ef09d30c481ab91f90c39d42e5418d7171f48a50f8fcfe65bec9f9a0",
+      "id": "poms_rs_00301_240",
+      "citation": "POMS RS 00301.240",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301240",
+      "retrieved_at_utc": "2026-10-21T13:56:41Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 19 (05-11)",
+      "title": "RS 00301.240 - When a Calendar Quarter cannot be a Quarter of Coverage (QC) - 05/17/2011",
+      "page_date": "05/17/2011"
+    },
+    {
+      "file": "poms_rs_00301_250.html",
+      "bytes": 43627,
+      "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64",
+      "id": "poms_rs_00301_250",
+      "citation": "POMS RS 00301.250",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301250",
+      "retrieved_at_utc": "2026-10-21T13:56:42Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 62 (11-25)",
+      "title": "RS 00301.250 - Chart of Increment Amounts - 11/21/2025",
+      "page_date": "11/21/2025"
+    },
+    {
+      "file": "poms_rs_00301_301.html",
+      "bytes": 17542,
+      "sha256": "18c0f696142080d2bf52db0167ff28e7381c7d3655fc6e698c51d66f07e32175",
+      "id": "poms_rs_00301_301",
+      "citation": "POMS RS 00301.301",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301301",
+      "retrieved_at_utc": "2026-10-21T13:56:43Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 41 (10-23)",
+      "title": "RS 00301.301 - Quarters of Coverage (QC) before 1978 - 10/05/2023",
+      "page_date": "10/05/2023"
+    },
+    {
+      "file": "poms_rs_00301_310.html",
+      "bytes": 20008,
+      "sha256": "04281c06db99c4665d15eac7a4f49157a7261ad51e6654b7b2cb057971240ecb",
+      "id": "poms_rs_00301_310",
+      "citation": "POMS RS 00301.310",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301310",
+      "retrieved_at_utc": "2026-10-21T13:56:44Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 21 (06-11)",
+      "title": "RS 00301.310 - Wage Quarters of Coverage (QC) - 06/23/2011",
+      "page_date": "06/23/2011"
+    },
+    {
+      "file": "poms_rs_00301_315.html",
+      "bytes": 26495,
+      "sha256": "3dbb0b1b79fac49da5d829ddab8ee69eac83cb121a664763236e8aeb7e6726f8",
+      "id": "poms_rs_00301_315",
+      "citation": "POMS RS 00301.315",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301315",
+      "retrieved_at_utc": "2026-10-21T13:56:46Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 43 (10-23)",
+      "title": "RS 00301.315 - Simplified Method of Determining Quarters of Coverage (QC) for 1937 - 1950 Period - 10/06/2023",
+      "page_date": "10/06/2023"
+    },
+    {
+      "file": "poms_rs_00301_320.html",
+      "bytes": 21028,
+      "sha256": "8e3fb43e37ce710dc20066962958be937c0106c8840cd020929f9d820f08359b",
+      "id": "poms_rs_00301_320",
+      "citation": "POMS RS 00301.320",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301320",
+      "retrieved_at_utc": "2026-10-21T13:56:47Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 55 (10-23)",
+      "title": "RS 00301.320 - Assignment of Quarters of Coverage (QC) based on Wages for Agricultural Labor before 1978 - 10/16/2023",
+      "page_date": "10/16/2023"
+    },
+    {
+      "file": "poms_rs_00301_325.html",
+      "bytes": 19797,
+      "sha256": "1cc2c240b3dff30fad0c2954692e588dce39b67f363634b42124541ce5201b5c",
+      "id": "poms_rs_00301_325",
+      "citation": "POMS RS 00301.325",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301325",
+      "retrieved_at_utc": "2026-10-21T13:56:48Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 40 (10-23)",
+      "title": "RS 00301.325 - Flexible Assignment of Quarters of Coverage (QC) based on Wages for Agricultural Labor - 10/05/2023",
+      "page_date": "10/05/2023"
+    },
+    {
+      "file": "poms_rs_00301_340.html",
+      "bytes": 21601,
+      "sha256": "e9a10a768e10bd494ae9d161491bf22b46b25c52880e9ea4279da6dfcdb375b7",
+      "id": "poms_rs_00301_340",
+      "citation": "POMS RS 00301.340",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301340",
+      "retrieved_at_utc": "2026-10-21T13:56:49Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 56 (10-23)",
+      "title": "RS 00301.340 - Self-Employment Quarters of Coverage (QC) before 1978 - 10/17/2023",
+      "page_date": "10/17/2023"
+    },
+    {
+      "file": "poms_rs_00301_345.html",
+      "bytes": 33788,
+      "sha256": "510a08ddf0ffdbf8fdfd664954ec2bb29bacf17de96b8f9882180d107210188e",
+      "id": "poms_rs_00301_345",
+      "citation": "POMS RS 00301.345",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301345",
+      "retrieved_at_utc": "2026-10-21T13:56:50Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 47 (10-23)",
+      "title": "RS 00301.345 - Gift Quarters of Coverage (QC) - 10/06/2023",
+      "page_date": "10/06/2023"
+    },
+    {
+      "file": "poms_rs_00301_350.html",
+      "bytes": 25890,
+      "sha256": "2512b0e0418b34030b1e415921f7932eafaf1401b68c333ec6862f4a2b796a40",
+      "id": "poms_rs_00301_350",
+      "citation": "POMS RS 00301.350",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301350",
+      "retrieved_at_utc": "2026-10-21T13:56:51Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 21 (06-11)",
+      "title": "RS 00301.350 - Quarters of Coverage (QC) Based on Railroad (RR) Compensation Before 1978 - 06/23/2011",
+      "page_date": "06/23/2011"
+    },
+    {
+      "file": "poms_rs_00301_470.html",
+      "bytes": 17779,
+      "sha256": "5f1712b9e09fed921a04753759baeea904a22d1feb6dc0dbf3aae0167380c031",
+      "id": "poms_rs_00301_470",
+      "citation": "POMS RS 00301.470",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301470",
+      "retrieved_at_utc": "2026-10-21T13:56:52Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 39 (10-23)",
+      "title": "RS 00301.470 - Deemed Fully Insured Status for World War II (WW II) Veterans - 10/05/2023",
+      "page_date": "10/05/2023"
+    },
+    {
+      "file": "poms_rs_00301_475.html",
+      "bytes": 22360,
+      "sha256": "2f30f4f3997c757839f19ef1cd25c2c1dadc3e6f89455a5df5dace0954e74a1a",
+      "id": "poms_rs_00301_475",
+      "citation": "POMS RS 00301.475",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301475",
+      "retrieved_at_utc": "2026-10-21T13:56:54Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 38 (10-23)",
+      "title": "RS 00301.475 - Special Method of Determining Insured Status by Crediting Wage Quarters of Coverage (QC) on Earned Basis - 10/05/2023",
+      "page_date": "10/05/2023"
+    },
+    {
+      "file": "poms_rs_00301_480.html",
+      "bytes": 21026,
+      "sha256": "b83438eea8b3b5e35451fd176a4e3d122aedec9f344d4b071e81a388a43e0d12",
+      "id": "poms_rs_00301_480",
+      "citation": "POMS RS 00301.480",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301480",
+      "retrieved_at_utc": "2026-10-21T13:56:55Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 37 (10-23)",
+      "title": "RS 00301.480 - Alternate Insured Status Test for NH's Under a Disability Before 1956 - 10/05/2023",
+      "page_date": "10/05/2023"
+    },
+    {
+      "file": "poms_rs_00301_600.html",
+      "bytes": 19441,
+      "sha256": "3598400f77293b0d933abb53afcc4b22bacd4e0b5519af5400a0a6fbb78c56fb",
+      "id": "poms_rs_00301_600",
+      "citation": "POMS RS 00301.600",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301600",
+      "retrieved_at_utc": "2026-10-21T13:56:56Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 23 (07-11)",
+      "title": "RS 00301.600 - Election of Coverage by Vow-of-Poverty Order - 07/21/2011",
+      "page_date": "07/21/2011"
+    },
+    {
+      "file": "poms_rs_00301_800.html",
+      "bytes": 17004,
+      "sha256": "f6fe4d8f7a00be6466bf95aae7252e19ea7b636b3405960ec49ef625b8ac73e2",
+      "id": "poms_rs_00301_800",
+      "citation": "POMS RS 00301.800",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301800",
+      "retrieved_at_utc": "2026-10-21T13:56:57Z",
+      "capture": "http_body",
+      "poms_transmittal": "TN 14 (04-89)",
+      "title": "RS 00301.800 - Quarters of Coverage Requirements - Exhibit - 08/10/2012",
+      "page_date": "08/10/2012"
+    },
+    {
+      "file": "ssa_oact_qc.txt",
+      "bytes": 3332,
+      "sha256": "27edf85daeef0f2d4235c826771d29b89a941fbf4400fa99df829c4de581f74b",
+      "id": "ssa_oact_qc",
+      "citation": "SSA Office of the Chief Actuary, Quarter of Coverage",
+      "url": "https://www.ssa.gov/oact/cola/QC.html",
+      "retrieved_at_utc": "2026-10-21T13:59:17Z",
+      "capture": "browser_text",
+      "note": "Rendered main text of the page, fetched from the ssa.gov origin in the Claude desktop in-app browser (www.ssa.gov answers curl with HTTP 403); file bytes equal the UTF-8 of the rendered text, whose SHA-256 was computed in the page.",
+      "served_bodies": [
+        {
+          "url": "https://www.ssa.gov/oact/cola/QC.html",
+          "bytes": 39454,
+          "sha256": "1e864536eb0b975f8f4d82d1ac806f57c285ab1dc2d8f9f03d34976caa02b6e7"
+        }
+      ]
+    },
+    {
+      "file": "poms_rs_00301_800_exhibit_pdftotext.txt",
+      "bytes": 6401,
+      "sha256": "4459a0bccfc9d025973f3c9183042375780d6ee3f1a9f7e91b603490ba5a3a79",
+      "id": "poms_rs_00301_800_exhibit",
+      "citation": "POMS RS 00301.800 exhibit, Quarters of Coverage Requirements (G-RS_00301.800-1.pdf)",
+      "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.pdf",
+      "retrieved_at_utc": "2026-10-23T14:12:14Z",
+      "capture": "pdf_text",
+      "extractor": "pdftotext 26.09.0 (Poppler), options -layout -enc UTF-8",
+      "poms_transmittal": "TN 14 (04-89)",
+      "page_date": "08/10/2012",
+      "title": "RS 00301.800 - Quarters of Coverage Requirements - Exhibit - 08/10/2012",
+      "served_bodies": [
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.pdf",
+          "bytes": 222133,
+          "sha256": "9dcf53be30f06978b50e109ace88265ac38753700bb0093cb6213e01920af22f"
+        },
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.gif",
+          "bytes": 31188,
+          "sha256": "5e25a2e1dd124aa218af34b93f284049e9516612955ae1326ceff19160bd28bc"
+        },
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-2/$File/G-RS_00301.800-2.gif",
+          "bytes": 48757,
+          "sha256": "65d94bae34becf54cf40e361cb6fb5668883f164efdff371122e8d2b9717efe3"
+        }
+      ]
+    }
+  ]
+}

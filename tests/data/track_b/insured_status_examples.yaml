@@ -1,0 +1,870 @@
+schema_version: 1
+verification_class: statutory_conformance
+admitted_scope: Published statutory worked cases and invented declarations only;
+  no population, behavioral or forecast claim. A refused or missing-attachment entry
+  is an inventory item, not a reproduced computation.
+examples:
+- id: poms_106_deemed
+  source: poms_rs_00301_106
+  quotes:
+  - NH's coverage begins 01/01/84.
+  - 04/01/85
+  - '6'
+  expected:
+    coverage_start: '1984-01-01'
+    first_insured: '1985-04-01'
+    required_qcs: 6
+  coverage: refused
+  note: Deemed nonprofit coverage is a named unsupported configuration.
+  refusal_reason: deemed_fully_insured_unsupported
+- id: poms_120_guinness
+  source: poms_rs_00301_120
+  quotes:
+  - Guinness T. Lis became disabled on 12/15/77.
+  - 20 quarters of coverage in the 40-quarter period ending with the 12/77 quarter
+  - 7/ 10 /88
+  - 2/87
+  - 17th
+  expected:
+    onset: '1977-12-15'
+    recent_qcs: 20
+    window_quarters: 40
+    filing: '1988-07-10'
+    waiting_month: 1987-02
+  coverage: computed
+  note: Source asserts fully insured without DOB or detailed quarters. Test supplies
+    explicitly invented birth/earnings completion satisfying that assertion and
+    reproduces protection of onset insurance through the later waiting month; it
+    does not adjudicate the application.
+  test_node: tests/test_track_b_insured_status.py::test_guinness_lis_poms_120_freeze_protects_onset_status
+- id: poms_122_military_freeze
+  source: poms_rs_00301_122
+  quotes:
+  - from 14 to 8
+  - only 7 QCs
+  - Cash benefits are not payable.
+  expected:
+    ordinary_requirement: 14
+    freeze_requirement: 8
+    nonmilitary_qcs: 7
+    cash_insured: false
+  coverage: refused
+  note: Railroad and military credits are named unsupported inputs.
+  refusal_reason: military_credits_unsupported
+- id: poms_140_fred
+  source: poms_rs_00301_140
+  quotes:
+  - 5/13/58
+  - 1/15/88
+  - 35 calendar quarters
+  - 34 quarters
+  - 17 QC's
+  - 7/1/79
+  expected:
+    birth: '1958-05-13'
+    onset: '1988-01-15'
+    elapsed_quarters: 35
+    required_qcs: 17
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_fred_brown_35_quarters_require_17_poms_140_example_1
+- id: poms_140_sam
+  source: poms_rs_00301_140
+  quotes:
+  - 8/20/61
+  - 4/12/84
+  - seven quarters
+  - 6 QC's
+  - 9/81 through 6/84
+  expected:
+    birth: '1961-08-20'
+    onset: '1984-04-12'
+    elapsed_quarters: 7
+    window_start: 1981-Q3
+    window_end: 1984-Q2
+    required_qcs: 6
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_sam_white_6_in_12_poms_140_example_2
+- id: poms_140_mary_met
+  source: poms_rs_00301_140
+  quotes:
+  - 11/15/64
+  - 8/30/85
+  - 1984 CCCC
+  - 1985 CCNN
+  - Mary has 6 QC's in this 12 quarter period and meets insured status.
+  expected:
+    birth: '1964-11-15'
+    onset: '1985-08-30'
+    year_qcs:
+      1982: 0
+      1983: 0
+      1984: 4
+      1985: 2
+    required_qcs: 6
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_mary_smith_special_window_poms_140_examples_3_to_5
+- id: poms_140_mary_not_met
+  source: poms_rs_00301_140
+  quotes:
+  - 1981 CCCC
+  - 1982 CNNN
+  - 1983 CNNN
+  - 1984 CCCN
+  - 1985 NNNN
+  - Mary is not insured.
+  expected:
+    birth: '1964-11-15'
+    onset: '1985-08-30'
+    year_qcs:
+      1981: 4
+      1982: 1
+      1983: 1
+      1984: 3
+      1985: 0
+    required_qcs: 6
+    insured: false
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_mary_smith_special_window_poms_140_examples_3_to_5
+- id: poms_140_mary_moveable
+  source: poms_rs_00301_140
+  quotes:
+  - 1982 CCCN
+  - 1983 NNNN
+  - 1984 CCCC
+  - 1985 CNNN
+  - Mary has 6 QC's in the 12-QTR period
+  expected:
+    birth: '1964-11-15'
+    onset: '1985-08-30'
+    year_qcs:
+      1982: 3
+      1983: 0
+      1984: 4
+      1985: 1
+    required_qcs: 6
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_mary_smith_special_window_poms_140_examples_3_to_5
+- id: poms_140_joseph
+  source: poms_rs_00301_140
+  quotes:
+  - 9/16/56
+  - 2/3/81
+  - 14 QTRS
+  - 7 QC's
+  - 2/14/84
+  - 18 QC's
+  - 9 QTRs
+  expected:
+    birth: '1956-09-16'
+    first_onset: '1981-02-03'
+    onset: '1984-02-14'
+    first_elapsed: 14
+    first_required: 7
+    second_elapsed: 18
+    second_required: 9
+    insured: true
+  coverage: source_rule_divergence
+  note: Published 18-quarter/9-QC requirement excludes both qualifying endpoint
+    quarters; statutory endpoint counting yields 20/10. Both answers insure the
+    record. Kept side by side for review.
+  implemented:
+    elapsed_quarters: 20
+    required_qcs: 10
+    available_qcs: 16
+    insured: true
+  test_node: tests/test_track_b_insured_status.py::test_joseph_subsequent_poms_140_example_6_endpoint_erratum
+- id: poms_140_jane
+  source: poms_rs_00301_140
+  quotes:
+  - 3/16/67
+  - 3/29/88
+  - 12/3/90
+  - Jane has 6 QCs in the 12 -QTR period
+  expected:
+    birth: '1967-03-16'
+    first_onset: '1988-03-29'
+    onset: '1990-12-03'
+    required_qcs: 6
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_subsequent_under31_poms_140_examples_7_and_8
+- id: poms_140_ralph
+  source: poms_rs_00301_140
+  quotes:
+  - 4/12/67
+  - 2/16/88
+  - 3/16/97
+  - 25 QCs
+  - '24'
+  - 12 QC's
+  expected:
+    birth: '1967-04-12'
+    first_onset: '1988-02-16'
+    onset: '1997-03-16'
+    elapsed_quarters: 25
+    required_qcs: 12
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_subsequent_under31_poms_140_examples_7_and_8
+- id: poms_140_sam_subsequent
+  source: poms_rs_00301_140
+  quotes:
+  - 2/16/64
+  - 12/16/85
+  - 5/16/93
+  - 17 QC's
+  - 8 QC's
+  - 7 QC's
+  - insured as of the 12/93 quarter
+  expected:
+    birth: '1964-02-16'
+    first_onset: '1985-12-16'
+    onset: '1993-05-16'
+    elapsed_quarters: 17
+    required_qcs: 8
+    observed_qcs: 7
+    insured: false
+    later_insured: 1993-Q4
+  coverage: source_rule_divergence
+  note: Source uses freeze and says not insured. CFR 404.130(f) requires disregarding
+    the entire prior freeze when advantageous; the record then has 20 QCs in 40
+    quarters and is insured. Kept side by side for review.
+  implemented:
+    window_quarters: 40
+    required_qcs: 20
+    available_qcs: 20
+    insured: true
+  test_node: tests/test_track_b_insured_status.py::test_sam_subsequent_poms_140_example_9_favorable_disregard_erratum
+- id: poms_147_mary
+  source: poms_rs_00301_147
+  quotes:
+  - 4/16/50
+  - 5/16/75
+  - 16 QTRs
+  - 8 QCs
+  - 11/2/82
+  - 32 QTRs
+  - 16 QC's
+  expected:
+    birth: '1950-04-16'
+    first_onset: '1975-05-16'
+    onset: '1982-11-02'
+    first_required: 8
+    elapsed_quarters: 32
+    required_qcs: 16
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_subsequent_over31_poms_147_examples
+- id: poms_147_john
+  source: poms_rs_00301_147
+  quotes:
+  - 7/16/40
+  - 3/4/68
+  - 26 QTRs
+  - 13 QC's
+  - 2/11/83
+  - 33 QTRs
+  - 16 QC's
+  expected:
+    birth: '1940-07-16'
+    first_onset: '1968-03-04'
+    onset: '1983-02-11'
+    first_required: 13
+    elapsed_quarters: 33
+    required_qcs: 16
+    insured: true
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_subsequent_over31_poms_147_examples
+  note: Source says requires and has 16; the complete record has 18 qualifying QCs.
+    Its parenthetical says two additional QCs would reach 20/40, confirming 18.
+    The requirement16 and insured disposition reproduce exactly.
+- id: poms_147_frank
+  source: poms_rs_00301_147
+  quotes:
+  - 7/14/45
+  - 12/13/70
+  - 17 QTRs
+  - 8 QC's
+  - 2/11/83
+  - 33 QTRs
+  - 16 QC's
+  - Their claim must be denied.
+  expected:
+    birth: '1945-07-14'
+    first_onset: '1970-12-13'
+    onset: '1983-02-11'
+    first_required: 8
+    elapsed_quarters: 33
+    required_qcs: 16
+    observed_qcs: 8
+    insured: false
+  coverage: source_rule_divergence
+  note: Published 33/16/8 treats 1978 annual QC as fixed Q1. Favorable reassignment
+    to PPD endpoint1978Q4 yields34/17/9; both deny insured status.
+  test_node: tests/test_track_b_insured_status.py::test_subsequent_over31_poms_147_examples
+  implemented:
+    elapsed_quarters: 34
+    required_qcs: 17
+    available_qcs: 9
+    insured: false
+- id: poms_148_dli
+  source: poms_rs_00301_148
+  quotes:
+  - 3/09/54
+  - 1973 CCNN
+  - 1975 CCCC
+  - 1976 CCCC
+  - 1980 CCNN
+  - 1981 CCNN
+  - 1982 CCCC
+  - 1985 CCCC
+  - 1986 CCCC
+  - 1987 CCNN
+  - 1988 CCNN
+  - 6/30/90
+  - 14 QC's
+  - 30 QC's
+  expected:
+    birth: '1954-03-09'
+    year_qcs:
+      1973: 2
+      1974: 0
+      1975: 4
+      1976: 4
+      1977: 0
+      1978: 0
+      1979: 0
+      1980: 2
+      1981: 2
+      1982: 4
+      1983: 0
+      1984: 0
+      1985: 4
+      1986: 4
+      1987: 2
+      1988: 2
+      1989: 0
+      1990: 0
+    dli: '1990-06-30'
+    fully_required: 14
+    total_qcs: 30
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_dli_1990_june_poms_148_example
+- id: poms_148_fra
+  source: poms_rs_00301_148
+  quotes:
+  - FRA attainment is 11/2019
+  - DLI is 9/30/2019
+  expected:
+    fra_month: 2019-11
+    dli: '2019-09-30'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_dli_fra_cap_poms_148_november_2019
+- id: poms_150_calvin
+  source: poms_rs_00301_150
+  quotes:
+  - 7/12/57
+  - 1977 NNCC
+  - 1982 CNNN
+  - 1983 CNNN
+  - 1985 CNNN
+  - 1986 CCNN
+  - 03/86 quarter
+  - seven QCs
+  - 04/01/1986
+  expected:
+    birth: '1957-07-12'
+    blind_from_birth: true
+    year_qcs:
+      1977: 2
+      1982: 1
+      1983: 1
+      1985: 1
+      1986: 2
+    required_qcs: 7
+    first_insured: '1986-04-01'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_calvin_hill_blind_clock_poms_150_example
+- id: poms_160_blind_freeze
+  source: poms_rs_00301_160
+  quotes:
+  - A blind person would not meet the insured status requirements
+  - could not qualify for Medicare.
+  expected:
+    medicare_eligible: false
+  coverage: refused
+  note: Medicare-qualified government credits and Medicare entitlement are unsupported.
+  refusal_reason: medicare_government_employment_unsupported
+- id: poms_220_ann_fiscal
+  source: poms_rs_00301_220
+  quotes:
+  - $12,000
+  - 10/01/87
+  - 09/30/88
+  - $3,000 (3/12 x 12,000)
+  - $9,000 SEI. (9/12 x 12,000)
+  expected:
+    sei: '12000'
+    '1987': '3000'
+    '1988': '9000'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_220_ann_calendar_year_sei_allocation
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: poms_230_henry_reassignment
+  source: poms_rs_00301_230
+  quotes:
+  - 05/23/1948
+  - May 2010
+  - $1,500
+  - first quarter of 2010
+  expected:
+    birth: '1948-05-23'
+    2010_wages: '1500'
+    2010_qcs: 1
+    assignment: 2010-Q1
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_230_henry_and_325_john_retroactive_assignment
+- id: poms_315_simplified
+  source: poms_rs_00301_315
+  quotes:
+  - 09/08/1926
+  - 09/1991
+  - 37 QCs
+  - 23 QCs
+  - $5,700 divided by $400 = 14
+  - $5,500
+  - 13 QCs
+  expected:
+    birth: '1926-09-08'
+    post1950_qcs: 23
+    required_qcs: 37
+    pre1951_wages: '5700'
+    simplified_qcs: 14
+    lower_wages: '5500'
+    lower_qcs: 13
+  coverage: refused
+  note: Simplified pre-1951 aggregate credits require the named special credit condition.
+  refusal_reason: simplified_pre1951_unsupported
+- id: poms_315_retroactive
+  source: poms_rs_00301_315
+  quotes:
+  - 37 QCs with 14 QCs
+  - 37th QC in the 09/1991 quarter
+  - If the number of QCs exceeds 14
+  expected:
+    required_qcs: 37
+    allocated_qcs: 14
+    last_qc: 1991-Q3
+  coverage: refused
+  note: Retroactive claims and simplified pre-1951 aggregates are outside the evaluator.
+  refusal_reason: simplified_pre1951_unsupported
+- id: poms_320_jane_agricultural
+  source: poms_rs_00301_320
+  quotes:
+  - $101
+  - $150
+  - $90
+  - $50
+  - $59
+  - $160
+  - 20 different days
+  - $400
+  - four QCs
+  - 12/1973 QC
+  - 09/1973 based on nonagricultural wages
+  - 06/1973 and 03/1973
+  expected:
+    year: 1973
+    agricultural_wages: '400'
+    quarterly_wages:
+    - '0'
+    - '0'
+    - '50'
+    - '0'
+    qcs: 4
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_320_jane_agricultural_example
+- id: poms_325_john_reassignment
+  source: poms_rs_00301_325
+  quotes:
+  - 03/2010
+  - $1200
+  - 11/2010
+  - 01/2010
+  expected:
+    year: 2010
+    agricultural_wages: '1200'
+    qcs: 1
+    assignment: 2010-Q1
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_230_henry_and_325_john_retroactive_assignment
+- id: poms_340_john_fiscal
+  source: poms_rs_00301_340
+  quotes:
+  - $10,800
+  - 03/31/1974
+  - 03/1974 - $2,700
+  - 12/1973 - $2,700
+  - 09/1973 - $2,700
+  - 06/1973 - $2,700
+  expected:
+    sei: '10800'
+    fiscal_end: '1974-03-31'
+    allocation:
+    - '2700'
+    - '2700'
+    - '2700'
+    - '2700'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_340_john_fiscal_sei_allocation
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: poms_340_jane_short_erratum
+  source: poms_rs_00301_340
+  quotes:
+  - 09/01/1973
+  - 01/03/1974
+  - $10,900
+  - $3,600
+  - 03/1974, 12/1973 and 09/1973
+  expected:
+    sei: '10900'
+    published_allocation:
+    - '3600'
+    - '3600'
+    - '3600'
+    published_total: '10800'
+    literal_covered_sei_allocation:
+    - 10900/3
+    - 10900/3
+    - 10900/3
+    unstated_ceiling: '10800'
+    ceiling_reading_allocation:
+    - '3600'
+    - '3600'
+    - '3600'
+    allocated_earnings_difference: '100'
+    qcs_both_readings: 3
+  coverage: source_ambiguity
+  note: The capture labels10900 as SEI but prints3600 for each of3 quarters. Literal
+    already-covered SEI gives10900/3. An unstated10800 ceiling for TYbeginning1973,
+    from RS00301.345 and Act213(a)(2)(B)(iii), explains3600 each if10900 meant net
+    earnings before the ceiling. Both readings are executed; neither an arithmetic
+    erratum nor the omitted ceiling is established by the capture. Both yield3QCs
+    and differ by100 in allocated earnings. Private helper consumes already-covered
+    SEI; public short taxable years remain refused.
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_340_short_year_source_erratum_is_not_imitated
+  execution_scope: allocation_helper
+  public_refusal_reason: short_taxable_year_unsupported
+- id: poms_345_john_four_gift
+  source: poms_rs_00301_345
+  quotes:
+  - $2,700
+  - $10,600
+  - 06/30/1974
+  - $8,100
+  - $10,800
+  - two QCs in 1973 and two in 1974
+  expected:
+    wages: '2700'
+    net_se: '10600'
+    sei: '8100'
+    combined: '10800'
+    qcs_by_year:
+      1973: 2
+      1974: 2
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_345_fiscal_gift_credit_examples
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: poms_345_jane_five_gift
+  source: poms_rs_00301_345
+  quotes:
+  - $10,800
+  - 05/31/1974
+  - five QCs including one for the second quarter of 1973
+  expected:
+    sei: '10800'
+    fiscal_end: '1974-05-31'
+    qcs: 5
+    qcs_by_year:
+      1973: 3
+      1974: 2
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_345_fiscal_gift_credit_examples
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: poms_345_public_combined_gift
+  source: poms_rs_00301_345
+  quotes:
+  - $10,620
+  - 05/31/1974
+  - $180
+  - $10,800
+  - five QCs based on their combined wages and SEI
+  expected:
+    sei: '10620'
+    wages: '180'
+    combined: '10800'
+    qcs: 5
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_345_fiscal_gift_credit_examples
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: cfr_102_age_attainment
+  source: ecfr_20cfr404_subpart_b
+  quotes:
+  - July 1, 1979
+  - June 30, 1979
+  expected:
+    birth: '1917-07-01'
+    age: 62
+    attainment: '1979-06-30'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_age_attainment_day_before_birthday_cfr_404_102_example
+- id: cfr_110_disability_years
+  source: ecfr_20cfr404_subpart_b
+  quotes:
+  - December 5, 1975 through January 31, 1977
+  - 1975, 1976 and 1977
+  expected:
+    period_start: '1975-12-05'
+    period_end: '1977-01-31'
+    excluded_years:
+    - 1975
+    - 1976
+    - 1977
+  coverage: computed
+  test_node: tests/test_track_b_insured_status.py::test_fully_requirement_excludes_partial_disability_years_cfr_example
+- id: cfr_143_two_increments
+  source: ecfr_20cfr404_subpart_b
+  quotes:
+  - more than twice, but less than 3 times
+  - only 2 QCs
+  expected:
+    earnings_multiple: 5/2
+    qcs: 2
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_cfr404_143_two_and_fraction_increments
+- id: cfr_144_fiscal
+  source: ecfr_20cfr404_subpart_b
+  quotes:
+  - May 15, 1978
+  - May 14, 1979
+  - $1200
+  - 7/12 ($700)
+  - 5/12 ($500)
+  expected:
+    sei: '1200'
+    '1978': '700'
+    '1979': '500'
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_cfr404_144_partial_month_taxable_year_example
+  execution_scope: allocation_helper
+  public_refusal_reason: fiscal_taxable_year_unsupported
+- id: oact_2027_determination
+  source: ssa_oact_qc
+  quotes:
+  - $250 times 72,800.33 divided by 9,226.48 equals $1,972.59, which rounds to $1,970
+  - $1,890
+  expected:
+    base: '250'
+    nawi_1976: '9226.48'
+    nawi_2025: '72800.33'
+    rounded_cents: '1972.59'
+    amount: 1970
+    prior_amount: 1890
+  coverage: computed
+  test_node: tests/test_track_b_insured_status_qc.py::test_oact_2027_published_determination
+- id: poms_250_chart
+  source: poms_rs_00301_250
+  quotes:
+  - 2010 – 2011 $1,120 $4,480
+  - 2026 $1,890 $7,560
+  - 1978 $250 $1000
+  expected:
+    first_year: 1978
+    last_year: 2026
+    year_count: 49
+  coverage: table_differential
+  test_node: tests/test_track_b_insured_status_sources.py::test_poms_and_oact_qc_charts_agree_every_shared_year
+- id: cfr_115_cohort_chart
+  source: ecfr_20cfr404_subpart_b
+  quotes:
+  - Jan. 1, 1893 or earlier
+  - Jan. 2, 1929 or later
+  expected:
+    first_band: 1893-or-earlier
+    last_band: 1929-or-later
+  coverage: table_differential
+  test_node: tests/test_track_b_insured_status.py::test_fully_requirement_differential_cfr_404_115_every_captured_row
+- id: poms_800_exhibit
+  source: poms_rs_00301_800_exhibit
+  quotes:
+  - 1889 or prior 1892 1954 or prior 6
+  - 1910-1913 1913 1975 24
+  - 1929 or later 1991 or later 40
+  expected:
+    first_row: 1889 or prior
+    last_row: 1929 or later
+    rows: 38
+  coverage: table_differential
+  test_node: tests/test_track_b_insured_status.py::test_fully_requirement_differential_poms_rs_00301_800_exhibit
+  note: Text extracted from the exhibit PDF (pdftotext), with the PDF and both
+    GIF renderings pinned in served_bodies. Every row is checked by birth cohort,
+    by the January 1 footnote and by year of death. The PDF's footnote misprints
+    the male age-65 cohort as 1/2/31; the GIF and 20 CFR 404.132(b) say 1913.
+- id: poms_102_1_lucinda
+  source: poms_rs_00301_102
+  quotes:
+  - 2/13/2004
+  - 2/12/2005
+  - 3/25/2005
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+- id: poms_102_2_john
+  source: poms_rs_00301_102
+  quotes:
+  - 3/15/04
+  - 3/20/04
+  - John W. does not meet insured status
+  - The deceased worker was never assigned an SSN.
+  expected:
+    sspa_criterion_satisfied_or_exempt: false
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+  test_node: tests/test_track_b_insured_status_sources.py::test_poms_102_never_assigned_ssn_is_a_named_refusal
+  refusal_input:
+    alien_worker: true
+    ssn_never_assigned: true
+- id: poms_102_3_yelena
+  source: poms_rs_00301_102
+  quotes:
+  - 11/02/2003
+  - 12/31/2003
+  - Yelena's SSN was assigned before 01/01/2004
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: administrative_inventory
+  note: SSN predates2004 and is exempt from the additional alien criterion. Source
+    gives no exact QC record; lawful-presence suspension and scrambled-earnings
+    adjudication are outside the module. This is a source inventory, not a refused
+    insured-status call.
+- id: poms_102_4_gustav
+  source: poms_rs_00301_102
+  quotes:
+  - 4/16/97
+  - 3/13/04
+  - 5/12/04
+  - 5/14/04
+  - 6/22/04
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+- id: poms_102_5_kismet
+  source: poms_rs_00301_102
+  quotes:
+  - 03/22/05
+  - Kismet meets the requirements of Section 211 of the SSPA.
+  - They have never been assigned an SSN, nor were they ever issued an SSN card
+    for work purposes.
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+  test_node: tests/test_track_b_insured_status_sources.py::test_poms_102_never_assigned_ssn_is_a_named_refusal
+  refusal_input:
+    alien_worker: true
+    ssn_never_assigned: true
+- id: poms_102_6_rocky
+  source: poms_rs_00301_102
+  quotes:
+  - February 2004
+  - more than 40 QCs
+  - Rocky does not meet fully or currently insured status
+  - Rocky and Oksana were never assigned SSNs.
+  expected:
+    sspa_criterion_satisfied_or_exempt: false
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+  test_node: tests/test_track_b_insured_status_sources.py::test_poms_102_never_assigned_ssn_is_a_named_refusal
+  refusal_input:
+    alien_worker: true
+    ssn_never_assigned: true
+- id: poms_102_7_cyril
+  source: poms_rs_00301_102
+  quotes:
+  - 6/15/04
+  - Cyril meets the requirements of Section 211 of the SSPA.
+  - 40 QCs
+  - nor were they ever assigned an SSN.
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: refused
+  note: Alien-worker adjudicative facts are named unsupported inputs; this expected
+    value records the source conclusion, not an implementation result.
+  refusal_reason: alien_worker_sspa211_unsupported
+  test_node: tests/test_track_b_insured_status_sources.py::test_poms_102_never_assigned_ssn_is_a_named_refusal
+  refusal_input:
+    alien_worker: true
+    ssn_never_assigned: true
+- id: poms_102_8_catherine
+  source: poms_rs_00301_102
+  quotes:
+  - 6/12/00
+  - 4/15/04
+  - 5/21/04
+  - Catherine's SSN was first assigned before 1/1/2004
+  expected:
+    sspa_criterion_satisfied_or_exempt: true
+  coverage: administrative_inventory
+  note: SSN predates2004 and is exempt from the additional alien criterion. Source
+    gives no exact QC record; lawful-presence suspension and scrambled-earnings
+    adjudication are outside the module. This is a source inventory, not a refused
+    insured-status call.
+- id: poms_102_2_john_authorized_alternative
+  source: poms_rs_00301_102
+  quotes:
+  - work authorization status at the time of their death
+  - would be met
+  expected:
+    sspa_criterion_satisfied: true
+  coverage: refused
+  note: Source alternative scenario; alien-worker adjudication is unsupported.
+  refusal_reason: alien_worker_sspa211_unsupported
+source_findings:
+  poms_345_impossible_1975_interval:
+    source: poms_rs_00301_345
+    quote: $14,100 in a TY beginning after 1975 and before 1975
+    finding: Empty interval as printed; the preceding wage table lists $14,100 for
+      1975. Calendar-year wage maximum uses that table. No fiscal-year interpretation
+      is silently inferred.
+  poms_102_conflicting_issue_dates:
+    source: poms_rs_00301_102
+    quotes:
+    - 5/12/04
+    - 5/14/04
+    finding: Example 4 names two SSN issuance dates; both after the statutory threshold.
+      Alien adjudication is refused.
+  poms_340_possible_unstated_ceiling:
+    source: poms_rs_00301_345
+    quote: $10,800 in a TY beginning after 1972 and before 1974;
+    finding: This ceiling could explain the short-taxable-year example in RS00301.340:10800/3=3600,
+      if printed10900 meant net earnings before the ceiling rather than already-covered
+      SEI. The capture does not state the cap step; both readings stay explicit.
