@@ -1818,6 +1818,34 @@ def test_a_push_is_compared_from_its_before_commit(
     assert reported(problems) == {older[:12], bad[:12]}
 
 
+def test_a_push_compares_a_merge_only_with_its_first_parent_line(
+    tmp_path, no_ci_env
+):
+    """A push walk treats no merge apart. Here master dropped a side
+    branch's registration when it merged that branch, and an older
+    branch, pushed as master's new tip, merges the same side branch the
+    same way: the merge is compared with its first-parent predecessor,
+    which never held the side's entry, and is not reported. Only the
+    older branch's commit without a registry is."""
+    repository = init_repository(tmp_path)
+    branch(repository, "pr")
+    older = own_work(repository, "older work")
+    switch(repository, "master")
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "side")
+    commit_registry(repository, grown(first, 2), "side adds H003")
+    switch(repository, "master")
+    merge_with(repository, "side", first)
+    before = own_work(repository, "master moves on")
+    switch(repository, "pr")
+    merge_with(repository, "side", first)
+    merge_with(repository, "master", first)
+    head = head_of(repository)
+    problems = registry.history_problems(repository, before, head, imports={})
+    assert reported(problems) == {older[:12]}
+
+
 def test_a_landed_union_orders_by_the_base_and_keeps_both_lines():
     """The union of the pull request's registry and a landed one: entries
     and rules the base lists in its order, then the pull request's, then
@@ -1859,6 +1887,15 @@ def test_a_landed_union_orders_by_the_base_and_keeps_both_lines():
     malformed = {"entries": [{}]}
     assert registry._landed_union(malformed, theirs, None) == (theirs, [])
     assert registry._landed_union(mine, malformed, None) == (malformed, [])
+
+
+def test_a_landed_union_stays_complete_when_the_pull_request_is():
+    """``complete`` is kept from either line, not only the landed one."""
+    first = registered(["candidate"])
+    mine, theirs = copy.deepcopy(first), copy.deepcopy(first)
+    mine["complete"] = True
+    union, conflicts = registry._landed_union(mine, theirs, first)
+    assert conflicts == [] and union["complete"] is True
 
 
 @pytest.mark.parametrize("field", ["schema", "source", "unit_keys", "history"])
