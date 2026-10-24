@@ -453,5 +453,225 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "B0.1's sets left out of the model",
+  "replacements": [
+   {
+    "old": "    for path, (unit_type, units, _) in registry.prior.items():\n        grouped.setdefault((unit_type, units), []).append(path)\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's counts bound their sets only from below",
+  "replacements": [
+   {
+    "old": "        lower[row] = max(lower[row], value)\n        upper[row] = min(upper[row], value)\n",
+    "new": "        lower[row] = max(lower[row], value)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "targets are the refined atoms, not this release's classes",
+  "replacements": [
+   {
+    "old": "        rows = tuple(row for row in signature if current[row])\n",
+    "new": "        rows = tuple(signature)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "differences of two B0.1 sets audited as targets",
+  "replacements": [
+   {
+    "old": "            if earlier[subset] and earlier[superset]:\n                continue\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a B0.1 count not checked against its set",
+  "replacements": [
+   {
+    "old": "        if value != len(units):\n",
+    "new": "        if False:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's rerun not compared with its record",
+  "replacements": [
+   {
+    "old": "    if rerun != counts:\n",
+    "new": "    if False:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's sums not checked",
+  "replacements": [
+   {
+    "old": "        if value != sum(leaves[part] for part in sums[path]):\n",
+    "new": "        if False:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a modeled set B0.1 never published accepted",
+  "replacements": [
+   {
+    "old": "    if missing := set(sets) - set(leaves):\n",
+    "new": "    if missing := set():\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's ledger copies not checked",
+  "replacements": [
+   {
+    "old": "        if copied != expected:\n",
+    "new": "        if False:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a change pair's row count registered with its persons added",
+  "replacements": [
+   {
+    "old": "        value = sum(sign * _cell(counts, part) for sign, part in terms)\n",
+    "new": "        value = sum(_cell(counts, part) for sign, part in terms)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's sets not registered in main()",
+  "replacements": [
+   {
+    "old": "    register_b0_1(registry, earlier, committed[\"counts\"])\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's record not checked in main()",
+  "replacements": [
+   {
+    "old": "    check_b0_1_record(\n        committed, b0_1_structural_counts(person_wave, validity), earlier\n    )\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's age support ends a year early",
+  "replacements": [
+   {
+    "old": "        in_support=valid[\"age\"].between(low, high).to_numpy(),\n",
+    "new": "        in_support=valid[\"age\"].between(low, high - 1).to_numpy(),\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's dispositions inverted",
+  "replacements": [
+   {
+    "old": "                [person for person, label in labels.items() if label == name],\n",
+    "new": "                [person for person, label in labels.items() if label != name],\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an empty pool classified as wide",
+  "replacements": [
+   {
+    "old": "    if pool.size == 0:\n        return {**record, \"result\": \"narrow\", \"proof\": \"undetermined\"}, None\n",
+    "new": "    if pool.size == 0:\n        return {**record, \"result\": \"wide\", \"proof\": \"pool\"}, None\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an emptied pool not reseeded",
+  "replacements": [
+   {
+    "old": "        if reseeded:\n            # The disclosures ruled out every point: seed again under them.\n            seed_pool(system, pool, seconds=seconds)\n",
+    "new": "        if reseeded:\n            # The disclosures ruled out every point: seed again under them.\n            pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an empty reseeding releases",
+  "replacements": [
+   {
+    "old": "            seed_pool(system, pool, seconds=seconds)\n            if pool.size == 0:\n                status = \"withheld\"\n",
+    "new": "            seed_pool(system, pool, seconds=seconds)\n            if pool.size == 0:\n                status = \"released\"\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "seed directions drawn without the fixed seed",
+  "replacements": [
+   {
+    "old": "    generator = np.random.default_rng(POOL_SEED)\n",
+    "new": "    generator = np.random.default_rng()\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "targets involving B0.1's sets marked as this release's",
+  "replacements": [
+   {
+    "old": "                    \"earlier\": not (current[superset] and current[subset]),\n",
+    "new": "                    \"earlier\": False,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy writes atom columns",
+  "replacements": [
+   {
+    "old": "            if key not in (\"columns\", \"earlier\")\n",
+    "new": "            if key not in (\"earlier\",)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy sums every target into class sizes",
+  "replacements": [
+   {
+    "old": "        if target[\"kind\"] == \"atom\":\n            class_sizes.setdefault(",
+    "new": "        if True:\n            class_sizes.setdefault(",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's households taken at each row's wave",
+  "replacements": [
+   {
+    "old": "            home[person] for person in persons if pd.notna(home[person])\n",
+    "new": "            person for person in persons if pd.notna(home[person])\n",
+    "occurrence": 1
+   }
+  ]
  }
 ]
