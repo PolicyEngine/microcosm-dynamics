@@ -1,0 +1,457 @@
+[
+ {
+  "mutation": "band edges",
+  "replacements": [
+   {
+    "old": "OLDER_BANDS = ((\"62_64\", 62, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+    "new": "OLDER_BANDS = ((\"62_64\", 63, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "lag set",
+  "replacements": [
+   {
+    "old": "LAGS = (2, 4)",
+    "new": "LAGS = (2, 6)",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "R_TA_PROXY age threshold",
+  "replacements": [
+   {
+    "old": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] >= 30)]",
+    "new": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] > 30)]",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "valid-row rule",
+  "replacements": [
+   {
+    "old": "rows[\"valid\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+    "new": "rows[\"weight_positive\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B3L origin wave",
+  "replacements": [
+   {
+    "old": "B3L_ORIGIN_WAVE = 2007",
+    "new": "B3L_ORIGIN_WAVE = 2009",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "sensitive-quantity threshold changed from 10 to 9",
+  "replacements": [
+   {
+    "old": "DISCLOSURE_THRESHOLD = 10",
+    "new": "DISCLOSURE_THRESHOLD = 9",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "effective sizes left uncoarsened",
+  "replacements": [
+   {
+    "old": "_put(published, path, coarsen(value, base))",
+    "new": "_put(published, path, value if path[-1].endswith(\"_n_eff\") else coarsen(value, base))",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "local copy allowed inside repository",
+  "replacements": [
+   {
+    "old": "raise SystemExit(\"local copy must be outside the repository\")",
+    "new": "pass  # Deliberately permit repository-local copies.",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "coarsening rounds halves down",
+  "replacements": [
+   {
+    "old": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")) // 1) * base",
+    "new": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")).to_integral_value(rounding=\"ROUND_CEILING\") - 1) * base",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "effective-size lower bounds omitted",
+  "replacements": [
+   {
+    "old": "for path, count_path in registry.effective_bounds.items():",
+    "new": "for path, count_path in ():  # Deliberately omit effective bounds.",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "protection width reduced to 3",
+  "replacements": [
+   {
+    "old": "PROTECTION_WIDTH = 4",
+    "new": "PROTECTION_WIDTH = 3",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "unknown age counted in 80 and over",
+  "replacements": [
+   {
+    "old": "return _known_age(ages) & numeric.between(low, high)",
+    "new": "return (_known_age(ages) & numeric.between(low, high)) | (~_known_age(ages) & (low == 80))",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "frozen check removed",
+  "replacements": [
+   {
+    "old": "    _check_protocol()\n",
+    "new": "    pass  # Deliberately omit frozen protocol validation.\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "published B interval starts at B/2",
+  "replacements": [
+   {
+    "old": "return max(int(value - base // 2), base), int(value + base // 2 - 1)",
+    "new": "return int(value - base // 2), int(value + base // 2 - 1)",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "80-and-over band ends at 80",
+  "replacements": [
+   {
+    "old": "(\"80_plus\", 80, age67._MAX_AGE_CODE),",
+    "new": "(\"80_plus\", 80, 80),",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "2009 lag origins dropped",
+  "replacements": [
+   {
+    "old": "if later not in WAVES:",
+    "new": "if later not in WAVES or wave == 2009:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "outside-B2 household exclusion",
+  "replacements": [
+   {
+    "old": "outside = full[~full[\"interview\"].isin(domain[\"interview\"])]",
+    "new": "outside = full[~full[\"person_id\"].isin(domain[\"person_id\"])]",
+    "occurrence": "all"
+   }
+  ]
+ },
+ {
+  "mutation": "attempt record not checked, allowing a silent retry",
+  "replacements": [
+   {
+    "old": "if attempt.exists() or attempt.is_symlink():",
+    "new": "if False and (attempt.exists() or attempt.is_symlink()):",
+    "occurrence": 1
+   },
+   {
+    "old": "with attempt.open(\"x\", encoding=\"utf-8\") as stream:",
+    "new": "with attempt.open(\"w\", encoding=\"utf-8\") as stream:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "effective bound for a published B starts at B/2",
+  "replacements": [
+   {
+    "old": "return max(base, math.ceil(value - base / 2))",
+    "new": "return max(0, math.ceil(value - base / 2))",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "audit skips published subset differences",
+  "replacements": [
+   {
+    "old": "if superset == subset or keys[superset][0] != keys[subset][0]:",
+    "new": "if True:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "continuous relaxation replaces integer programs",
+  "replacements": [
+   {
+    "old": "integrality=np.full(self.variables, int(integral)),",
+    "new": "integrality=np.zeros(self.variables),",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "pool seeded with the true sizes",
+  "replacements": [
+   {
+    "old": "    pool = WitnessPool(len(truth))\n",
+    "new": "    pool = WitnessPool(len(truth))\n    pool.add(truth)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "targets taken in order of true size",
+  "replacements": [
+   {
+    "old": "        for index in range(len(targets)):\n            if index in disclosed:",
+    "new": "        for index in sorted(range(len(targets)), key=lambda i: targets[i][\"true_size\"]):\n            if index in disclosed:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "search windows centred on the true size",
+  "replacements": [
+   {
+    "old": "    low, high = pool.values(columns)\n",
+    "new": "    low, high = pool.values(columns)\n    low = high = target[\"true_size\"]\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "disclosure test widened to sizes 2-9",
+  "replacements": [
+   {
+    "old": "if 1 <= targets[index][\"true_size\"] < DISCLOSURE_THRESHOLD:",
+    "new": "if 2 <= targets[index][\"true_size\"] < DISCLOSURE_THRESHOLD:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an empty pool releases",
+  "replacements": [
+   {
+    "old": "            # No program found a point, so nothing can be shown wide.\n            status = \"withheld\"",
+    "new": "            # No program found a point, so nothing can be shown wide.\n            pass",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a single round, with no reclassification",
+  "replacements": [
+   {
+    "old": "        if not added:\n            break\n",
+    "new": "        break\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "disclosed targets left unconstrained",
+  "replacements": [
+   {
+    "old": "self.disclosed = [tuple(target[\"columns\"]) for target in disclosed]",
+    "new": "self.disclosed = []",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "pool keeps points a disclosure rules out",
+  "replacements": [
+   {
+    "old": "        pool.keep(system)\n",
+    "new": "        pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "relaxation margin loosened to 8.5",
+  "replacements": [
+   {
+    "old": "relaxed > DISCLOSURE_THRESHOLD - 0.5",
+    "new": "relaxed > DISCLOSURE_THRESHOLD - 1.5",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a timed-out search proves absence",
+  "replacements": [
+   {
+    "old": "proven_absent = proven_absent and status == 2",
+    "new": "proven_absent = proven_absent and status in (1, 2)",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "solver witnesses used without the exact check",
+  "replacements": [
+   {
+    "old": "        if not self.feasible(sizes):\n            return None\n",
+    "new": "        if False:\n            return None\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "positive solver gap",
+  "replacements": [
+   {
+    "old": "\"mip_rel_gap\": gap,",
+    "new": "\"mip_rel_gap\": 0.01,",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "atoms assumed nonempty",
+  "replacements": [
+   {
+    "old": "        self.bounds = Bounds(\n            0,",
+    "new": "        self.bounds = Bounds(\n            np.concatenate([np.ones(self.atoms), np.zeros(binaries)]),",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "relations registered whether or not guaranteed",
+  "replacements": [
+   {
+    "old": "            if guaranteed:\n                registry.relate(",
+    "new": "            if True:\n                registry.relate(",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a violated relation tolerated",
+  "replacements": [
+   {
+    "old": "            raise ValueError(f\"a guaranteed relation fails: {kind} {left}\")",
+    "new": "            continue",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "relations dropped from the audit",
+  "replacements": [
+   {
+    "old": "    relations = model_relations(registry, model)\n",
+    "new": "    relations = model_relations(registry, model)[:0]\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "public block reports the audited target count",
+  "replacements": [
+   {
+    "old": "        \"status\": audit[\"status\"],\n    }",
+    "new": "        \"status\": audit[\"status\"],\n        \"audited\": len(audit[\"targets\"]),\n    }",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "fractional ages accepted",
+  "replacements": [
+   {
+    "old": "numeric.between(1, age67._MAX_AGE_CODE) & numeric.mod(1).eq(0)",
+    "new": "numeric.between(1, age67._MAX_AGE_CODE)",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "negative coarsening input accepted",
+  "replacements": [
+   {
+    "old": "if value < 0 or not np.isfinite(value):",
+    "new": "if not np.isfinite(value):",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "nonfinite coarsening input accepted",
+  "replacements": [
+   {
+    "old": "if value < 0 or not np.isfinite(value):",
+    "new": "if value < 0:",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "output replaces an existing file",
+  "replacements": [
+   {
+    "old": "        os.link(temporary, path)\n",
+    "new": "        os.replace(temporary, path)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "output not flushed to disk",
+  "replacements": [
+   {
+    "old": "                view = view[os.write(descriptor, view) :]\n            os.fsync(descriptor)\n",
+    "new": "                view = view[os.write(descriptor, view) :]\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a short write left incomplete",
+  "replacements": [
+   {
+    "old": "            while view:\n                view = view[os.write(descriptor, view) :]\n",
+    "new": "            os.write(descriptor, view)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "attempt record not flushed to disk",
+  "replacements": [
+   {
+    "old": "            stream.flush()\n            os.fsync(stream.fileno())\n",
+    "new": "            stream.flush()\n",
+    "occurrence": 1
+   }
+  ]
+ }
+]

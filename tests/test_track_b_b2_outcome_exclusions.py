@@ -27,6 +27,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import track_b_b0_1_review_root as review_root  # noqa: E402
 
 RECORD = ROOT / "docs" / "design" / "track_b_b2_outcome_exclusions.json"
+#: B0.2's standing record; tests/test_track_b_b0_2_exclusions.py pins its
+#: contents.
+B0_2_RECORD = ROOT / "docs" / "design" / "track_b_b0_2_exclusions.json"
 B2_OUTCOME_FILES = {
     "docs/design/track_b_attempt_ledger.md",
     "runs/track_b_b2_floor.json",
@@ -46,9 +49,17 @@ def test_the_standing_record_lists_b2s_outcome_files():
         assert (ROOT / relative).is_file(), relative
     assert review_root.STANDING_EXCLUSIONS == (
         "docs/design/track_b_b2_outcome_exclusions.json",
+        "docs/design/track_b_b0_2_exclusions.json",
     )
     standing = review_root.standing_inventories()
-    assert set(review_root.denied_paths(standing)) == B2_OUTCOME_FILES
+    assert set(review_root.denied_paths(standing)) == (
+        B2_OUTCOME_FILES | b0_2_paths()
+    )
+
+
+def b0_2_paths():
+    record = json.loads(B0_2_RECORD.read_text(encoding="utf-8"))
+    return {entry["path"] for entry in record["q6_exclusions"]}
 
 
 def test_a_missing_standing_record_refuses_rather_than_drops(
@@ -118,7 +129,9 @@ def test_build_unions_named_and_standing_exclusions(tmp_path, monkeypatch):
     )
     out = tmp_path / "root"
     record = review_root.build("h", out, [named], {})
-    expected = sorted(B2_OUTCOME_FILES | {"docs/named.md", "docs/absent.md"})
+    expected = sorted(
+        B2_OUTCOME_FILES | b0_2_paths() | {"docs/named.md", "docs/absent.md"}
+    )
     assert record["denied_paths"] == expected
     assert record["removed"] == sorted(B2_OUTCOME_FILES | {"docs/named.md"})
     assert set(review_root.manifest(out)) == {"docs/keep.md"}
@@ -165,6 +178,6 @@ def test_standing_paths_are_denied_whatever_the_inventories(named):
     )
     assert denied == sorted(set(denied))
     assert B2_OUTCOME_FILES <= set(denied)
-    assert set(denied) == B2_OUTCOME_FILES | {
+    assert set(denied) == B2_OUTCOME_FILES | b0_2_paths() | {
         path for paths in named for path in paths
     }
