@@ -1,0 +1,60 @@
+{
+  "draw_index": 0,
+  "largest_completed_initial_size": 100,
+  "measurements": [
+    {
+      "accounted_periods": 75,
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 1,
+      "births": 113,
+      "deaths": 79,
+      "emigrations": 0,
+      "final_people": 134,
+      "initial_people": 25,
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 134,
+      "peak_memory_bytes": 218071040,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "projection_wall_time_seconds": 63.877274708000186,
+      "python_version": "3.14.7",
+      "retained_person_year_rows": 6672,
+      "scheduled_entries": 75,
+      "status": "completed",
+      "subprocess_wall_time_seconds": 255.54322683299688,
+      "wall_time_seconds": 249.9737794160028
+    },
+    {
+      "accounted_periods": 75,
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 4,
+      "births": 181,
+      "deaths": 285,
+      "emigrations": 0,
+      "final_people": 296,
+      "initial_people": 100,
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 309,
+      "peak_memory_bytes": 227540992,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "projection_wall_time_seconds": 120.37653020900325,
+      "python_version": "3.14.7",
+      "retained_person_year_rows": 18543,
+      "scheduled_entries": 300,
+      "status": "completed",
+      "subprocess_wall_time_seconds": 196.3220620840002,
+      "wall_time_seconds": 193.2861114999978
+    }
+  ],
+  "peak_memory_method": "resource.getrusage(RUSAGE_SELF).ru_maxrss; bytes on macOS, KiB converted to bytes on Linux",
+  "process_isolation": "one fresh worker per initial roster size",
+  "registered_horizon": 2100,
+  "requested_initial_sizes": [
+    25,
+    100
+  ],
+  "scope": "invented data; arithmetic conformance and resource use only",
+  "start_year": 2025,
+  "wall_time_scope": "worker imports, setup, projection and summary"
+}
