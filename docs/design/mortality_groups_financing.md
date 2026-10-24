@@ -14,8 +14,9 @@ estimate. A second erratum of the same day rewrites section 6's F1
 invariants: it replaces two that fail by intent under the signed split
 with labeled departures, states the invariants that hold instead, names
 F1's PolicyEngine-US pin (2.61.0), and records the US and core hub's
-ruling that Chapter 1 liability is measured before refundable credits.
-It changes no estimate.*
+ruling that Chapter 1 liability is measured before refundable credits,
+with the difference from F1's pin that the ruling creates. It changes
+no estimate.*
 
 - **Status.** Approved. This document sets milestones, gates and prices
   for one lane of the DYNASIM-parity plan. Max authorized the lane on
@@ -709,14 +710,15 @@ violations are labeled.
   whitespace normalization; quintile ranks follow the existing invariants;
   the public writer refuses any artifact holding an unsuppressed small
   cell.
-- **Income tax on benefits (F1)**. The first four items below are an
-  erratum of 24 October 2026; they replace revision 2's first two F1
-  invariants.
+- **Income tax on benefits (F1)**. The first three items below, with their
+  sub-items, are an erratum of 24 October 2026; they replace revision 2's
+  first two F1 invariants. The last two sentences of the last item are
+  part of the same erratum.
   - OASDI + HI = total, by construction. F1, like PolicyEngine-US 2.61.0
     (F1's pin; see `EV/mortality-groups-financing-20261021/f1-pin-check-20261024/README.md`),
     keeps negative differences and applies no zero floor. The identity is
-    exact in exact arithmetic; tests compare within float32 rounding
-    ($0.01), as PolicyEngine-US's own generated test does.
+    exact in exact arithmetic; tests compare within $0.01, which covers
+    float32 rounding, as PolicyEngine-US's own generated test does.
   - Zero benefits give zero. Under the §86(a)(1) reading, which
     PolicyEngine-US 2.61.0 uses, the OASDI part is zero when the §86(a)(1)
     inclusion is zero, and the HI part is zero when that inclusion equals
@@ -727,7 +729,7 @@ violations are labeled.
     other income fixed. Neither holds, and that is intended. The statute
     appropriates "the aggregate increase in tax liabilities under chapter
     1" attributable to section 86 (42 U.S.C. 401 note; Pub. L. 98-21
-    §121(e)(1)(A)), which the US and core hub reads as netting units
+    §121(e)(1)(A)–(B)), which the US and core hub reads as netting units
     (`us:tob-oasdi-hi-signed-allocation`). Treasury computes each filing
     unit's liability with and without benefits in AGI, counting the
     indirect effects on deductions and credits, and notes that "these
@@ -761,9 +763,12 @@ violations are labeled.
     investment-income case above the net investment income tax threshold
     shows that tax excluded from the total and from both shares. Chapter 1
     liability is measured after nonrefundable credits and before
-    refundable credits (erratum, 24 October 2026, following the US and
-    core hub's ruling `us:tob-refundable-credit-netting`), so a refundable
-    credit that changes with inclusion enters neither part.
+    refundable credits, following the US and core hub's ruling
+    `us:tob-refundable-credit-netting`, so a refundable credit that
+    changes with inclusion enters neither part. PolicyEngine-US 2.61.0
+    computes its revenue variables from `income_tax`, which subtracts
+    refundable credits, so the differential tests label that difference
+    too.
 - **Covered payroll (F2a, F2b)**: taxable earnings never exceed the taxable
   maximum or covered earnings; noncovered earnings are never taxed;
   employee plus employer equals combined (the existing assertion,
