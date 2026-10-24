@@ -1,0 +1,29 @@
+[
+  {
+    "file": "review_cfr2020_tables.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2020-title26-vol6/xml/CFR-2020-title26-vol6-sec1-401a9-9.xml",
+    "retrieved_at_utc": "2026-10-24T13:23:51.957919+00:00",
+    "bytes": 235602,
+    "sha256": "55de1a6eb90ad59f0eaf19db709624aa9e6ff4ac5de0d8af97b322f9bc093f18",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "review_cfr2020_tables.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2020-title26-vol6/pdf/CFR-2020-title26-vol6-sec1-401a9-9.pdf",
+    "retrieved_at_utc": "2026-10-24T13:23:52.358189+00:00",
+    "bytes": 267628,
+    "sha256": "8237051bfc0466bbf6a51c7b6336aae5c60a181ef44de5002a391912b4b63cfb",
+    "http_status": 200,
+    "status": "captured"
+  },
+  {
+    "file": "review_correction2002_05_24.html",
+    "url": "https://www.govinfo.gov/content/pkg/FR-2002-05-24/html/C2-8963.htm",
+    "retrieved_at_utc": "2026-10-24T13:23:54.671159+00:00",
+    "bytes": 2215,
+    "sha256": "e82ae5c76a704cc8112502747e56574f062382d36e01a29dc32caff170213ddc",
+    "http_status": 200,
+    "status": "captured"
+  }
+]

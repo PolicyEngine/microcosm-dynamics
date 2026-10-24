@@ -1,0 +1,65 @@
+[
+  {
+    "file": "usc_26_72_2024.htm",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapB-partII-sec72.htm",
+    "retrieved_utc": "2026-10-24T12:47:50.064418+00:00",
+    "http_status": 200,
+    "size_bytes": 243029,
+    "sha256": "eec9d33e0296f7cce4ae0b344c7817593b118b29c63dc7561a5bfc76bdb5488b",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "irs_early_distribution_exceptions.html",
+    "url": "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions",
+    "retrieved_utc": "2026-10-24T12:47:50.597662+00:00",
+    "http_status": 200,
+    "size_bytes": 105831,
+    "sha256": "6b5460f42a0730de947aa42757de76802ada70b28bcb48c9e3e6b9eb12c44616",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "lii_26_72.html",
+    "url": "https://www.law.cornell.edu/uscode/text/26/72",
+    "retrieved_utc": "2026-10-24T12:47:51.151581+00:00",
+    "http_status": 200,
+    "size_bytes": 479215,
+    "sha256": "741ad3aa80147187beb06c28928d02d4674a7633c10f3c788b92e8fe2f1d3b6d",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "usc_26_408A_2024.htm",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapD-partI-subpartA-sec408A.htm",
+    "retrieved_utc": "2026-10-24T12:54:40.035095+00:00",
+    "http_status": 200,
+    "size_bytes": 55043,
+    "sha256": "66d9f2d55abe8966dd6be370886eebc7ee85a85513282e8e0dcdb5699368247c",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "plaw_109_280_ppa_2006.htm",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-109publ280/html/PLAW-109publ280.htm",
+    "retrieved_utc": "2026-10-24T13:16:28.937132+00:00",
+    "http_status": 200,
+    "size_bytes": 1498879,
+    "sha256": "6363b41551de771b52120a09711a1e423d878bab0d7fddcab5ab4309b61079bd",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "plaw_114_26_public_safety_2015.htm",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-114publ26/html/PLAW-114publ26.htm",
+    "retrieved_utc": "2026-10-24T13:16:29.121744+00:00",
+    "http_status": 200,
+    "size_bytes": 164624,
+    "sha256": "5648226cfdf57ff10a46f41d721ff3c6d5a9d601fa7d60d6bce0f9ca14401585",
+    "status": "CAPTURED"
+  },
+  {
+    "file": "usc_26_402A_2024.htm",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapD-partI-subpartA-sec402A.htm",
+    "retrieved_utc": "2026-10-24T13:19:02.341413+00:00",
+    "http_status": 200,
+    "size_bytes": 39710,
+    "sha256": "407954825a28440255af301d6e3e0ece6f4a8c0a51142922bfd3eb2015550cb5",
+    "status": "CAPTURED"
+  }
+]
