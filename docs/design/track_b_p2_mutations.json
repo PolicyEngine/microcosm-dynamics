@@ -2,7 +2,8 @@
   "schema_version": 1,
   "verification_class": "frozen P2 invented-panel conformance",
   "admitted_scope": "Development only; no real-data evaluation or registration.",
-  "mutation_method": "One frozen mutation per check; original bytes restored in finally before the next mutation.",
+  "mutation_method": "One mutation per check; original bytes restored in finally before the next mutation. Supplemental checks are labeled and are outside frozen T1-T7.",
+  "restored_source_sha256_note": "Historical restored-source hashes record the bytes restored at each mutation run; they are not claims about later file revisions. The recovery test subsequently gained only its CI populace.fit importorskip guard and explanatory comments, producing final SHA-256 d40a31e4749623de63e6e57009bf3240455d4d70c768ed7fa7c4e16584646a4e.",
   "restored_source_sha256": {
     "tests/test_forward_earnings_p2_recovery.py": "7ca6710e813066d56d5dc5bb1d68669f4a1c8544bab728f1bf53d6cc60e8995f",
     "src/populace_dynamics/engine/forward_earnings_p2_v1.py": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234"
@@ -288,9 +289,76 @@
       "restored_source_sha256": "7ca6710e813066d56d5dc5bb1d68669f4a1c8544bab728f1bf53d6cc60e8995f",
       "log": "/private/tmp/track_b_p2_mutation_14.log",
       "designated_check_failed": true
+    },
+    {
+      "mutation": "Supplemental runtime history threshold > to >=",
+      "supplemental": true,
+      "scope": "T1's eight test functions (22 cases) and the two supplemental functions (six cases), selected by explicit node ID.",
+      "scope_reason": "Full exact-module mutant runs are too slow for this job; the review follow-up limits each run to T1 and the two supplemental functions.",
+      "selected_node_ids": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table",
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table",
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_invalid_history_refuses_whole_operation",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_full_pair_retention_and_first_step_initialization",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_frozen_candidate_fit_and_signature_contract",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation"
+      ],
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "positive = older > 1e-6",
+      "new": "positive = older >= 1e-6",
+      "additional_replacements": [],
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-fit/src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-frame/src PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/private/tmp/p2-low-review-20261024-history-threshold-pycache HYPOTHESIS_STORAGE_DIRECTORY=/private/tmp/p2-low-review-20261024-history-threshold-hypothesis .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/p2-low-review-20261024-history-threshold -n 4 -q tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history tests/test_forward_earnings_p2_exact.py::test_t1_invalid_history_refuses_whole_operation tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property tests/test_forward_earnings_p2_exact.py::test_t1_full_pair_retention_and_first_step_initialization tests/test_forward_earnings_p2_exact.py::test_t1_frozen_candidate_fit_and_signature_contract tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table[1e-06-0.0-0.0]",
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table[1e-06-0.0-0.0]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation"
+      ],
+      "summary": "4 failed, 24 passed, 170 warnings in 471.87s (0:07:51)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/p2-low-review-20261024-history-threshold.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "Supplemental cumulative sign selection >= to >",
+      "supplemental": true,
+      "scope": "T1's eight test functions (22 cases) and the two supplemental functions (six cases), selected by explicit node ID.",
+      "scope_reason": "Full exact-module mutant runs are too slow for this job; the review follow-up limits each run to T1 and the two supplemental functions.",
+      "selected_node_ids": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table",
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table",
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_invalid_history_refuses_whole_operation",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_full_pair_retention_and_first_step_initialization",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_frozen_candidate_fit_and_signature_contract",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation"
+      ],
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "selected = (cumulative >= np.asarray(uniforms)[:, None]).argmax(axis=1)",
+      "new": "selected = (cumulative > np.asarray(uniforms)[:, None]).argmax(axis=1)",
+      "additional_replacements": [],
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-fit/src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-frame/src PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/private/tmp/p2-low-review-20261024-cumulative-boundary-pycache HYPOTHESIS_STORAGE_DIRECTORY=/private/tmp/p2-low-review-20261024-cumulative-boundary-hypothesis .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/p2-low-review-20261024-cumulative-boundary -n 4 -q tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history tests/test_forward_earnings_p2_exact.py::test_t1_invalid_history_refuses_whole_operation tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property tests/test_forward_earnings_p2_exact.py::test_t1_full_pair_retention_and_first_step_initialization tests/test_forward_earnings_p2_exact.py::test_t1_frozen_candidate_fit_and_signature_contract tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary"
+      ],
+      "summary": "1 failed, 27 passed in 458.08s (0:07:38)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/p2-low-review-20261024-cumulative-boundary.log",
+      "designated_check_failed": true
     }
   ],
-  "total_mutation_executions": 15,
-  "successful_designated_checks": 14,
+  "total_mutation_executions": 17,
+  "successful_designated_checks": 16,
   "unsuccessful_initial_checks": 1
 }

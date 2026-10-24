@@ -3,6 +3,7 @@
 All full-law panels, roots, periods, and fit seeds below are fixed by the
 frozen specification.  The always-positive reference is an independent
 copy of v1's correlated generation body with deterministic positive signs.
+Supplemental query-boundary checks beside T1 are outside frozen T1-T7.
 """
 
 from __future__ import annotations
@@ -461,6 +462,48 @@ def test_t1_exact_feature_table(history, positive, missing):
     pd.testing.assert_frame_equal(
         gate.loc[:, pairs.columns], pairs, check_exact=True
     )
+
+
+@pytest.mark.parametrize(
+    ("history", "positive", "missing"),
+    [
+        (0.0, 0.0, 0.0),
+        (5e-7, 0.0, 0.0),
+        (1e-6, 0.0, 0.0),
+        (np.nextafter(1e-6, np.inf), 1.0, 0.0),
+        (np.nan, 0.0, 1.0),
+    ],
+)
+def test_supplemental_runtime_gate_feature_table(history, positive, missing):
+    """Supplemental to T1-T7: apply T1's hand table to runtime features."""
+    features = p2.gate_features(
+        np.asarray([100.0]), np.asarray([34.0]), np.asarray([history])
+    )
+    assert tuple(features.columns) == FEATURES
+    assert all(
+        features[name].dtype == np.dtype("float64") for name in FEATURES
+    )
+    np.testing.assert_array_equal(
+        features.to_numpy(),
+        np.asarray([[100.0, 34.0, positive, missing]], dtype=np.float64),
+    )
+
+
+def test_supplemental_sign_draw_cumulative_boundary(monkeypatch):
+    """Supplemental to T1-T7: section 6's >= selects the boundary class."""
+    classes = np.asarray([0, 1], dtype=np.int64)
+    probabilities = np.asarray([[0.25, 0.75]], dtype=np.float64)
+    monkeypatch.setattr(
+        p2, "query_gate_probabilities", lambda *_: (classes, probabilities)
+    )
+    signs = p2.draw_p2_sign(
+        None,
+        np.asarray([100.0]),
+        np.asarray([34.0]),
+        np.asarray([0.0]),
+        np.asarray([0.25]),
+    )
+    np.testing.assert_array_equal(signs, np.asarray([0], dtype=np.int64))
 
 
 @pytest.mark.parametrize(

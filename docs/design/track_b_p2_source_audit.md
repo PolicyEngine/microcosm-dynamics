@@ -130,15 +130,15 @@ annual period coordinates through 2008. It uses the existing domain
 adapter, `PeriodContext`, RNG registry and `steps.apply_earnings`. It saves
 the protocol-5 full-fit serialization and raw little-endian float64 frame
 path bytes at `/private/tmp/p2_v1_equality/`. The after run repeats the same
-procedure and requires direct equality of both byte strings. Hashes and
-final comparison results are:
+procedure and requires direct equality of both byte strings. The original
+build recorded these hashes and direct byte comparisons:
 
 | Surface | Bytes | Before/after SHA-256 | Direct byte equality |
 |---|---:|---|---|
 | Complete protocol-5 candidate-3 refit | 127,346,166 | `4dfa5cb4cbb3cb414386b338ce055b0770d624dd1a18e720a45a42f5b32b2fbf` | `True` |
 | Complete materialized frame paths, shape `(20,9,640,12)` | 11,059,200 | `ba1ae25b946d48a746d2cb3c6e08052f3c3b72cd84c07fda35b966da2f67b7a3` | `True` |
 
-The unchanged v1 fit signature is
+The v1 fit signature recorded by that build was
 `bbe1f8c5232a767109f6a836c5d7e50239fe20ad16d8a4c659de77d00d2275ac`.
 Both model commands exited zero. The after run explicitly imports P2
 before fitting candidate 3; the pre-run does not import P2.
@@ -417,12 +417,22 @@ The T7 benchmark mutation reverses the comparison: mutated v1 mean risk
 one-sided 99% lower bound=-.022477489684556172. This fails the designated
 positive-loss assertion before probability recovery assertions.
 
-Restored hashes match final files after every check and after the suite:
+The restored production and recovery hashes describe the original mutation
+runs, after every check and after the suite. The final recovery-file hash
+is listed separately:
 
-- P2 production module:
+- P2 production module, unchanged in the final file:
   `58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234`.
-- Recovery test source (T7's benchmark mutation):
+- Recovery test source at the T7 benchmark mutation:
   `7ca6710e813066d56d5dc5bb1d68669f4a1c8544bab728f1bf53d6cc60e8995f`.
+- Final recovery test source:
+  `d40a31e4749623de63e6e57009bf3240455d4d70c768ed7fa7c4e16584646a4e`.
+
+The later CI `pytest.importorskip("populace.fit")` guard accounts for the
+recovery source difference. Removing only that guard and its explanatory
+comments in memory reproduces the mutation-run hash exactly. The guard
+changes no assertion, fixture, seed or criterion. The JSON retains its
+historical restored-source hashes; those values describe each recorded run.
 
 Mutation orchestration commands used the same required interpreter/thread
 environment; every child pytest command is recorded verbatim in the JSON:
@@ -525,13 +535,13 @@ reference/truth clarification and T4 assertion-order repair. The exact
 suite's final 70-case coverage is partitioned explicitly above; the original
 failed Hypothesis runtime-deadline check remains disclosed.
 
-The final read-only closure check confirmed the production and both test
-source hashes, the two frozen-document hashes, all 15 restored mutation
-records, valid evidence JSON, absence of the unfinished draft, and the
-unit-tier source-string restriction. The exact existing-src diff again
-exited 0 without output. The final access inventory contains 190 individual
-file entries. The assigned branch remains `trackb-p2-dev-20261021`; no
-commit or push was made.
+The build-time read-only closure check confirmed the then-current
+production and both test source hashes, the two frozen-document hashes,
+all 15 restored mutation records, valid evidence JSON, absence of the
+unfinished draft, and the unit-tier source-string restriction. The exact
+existing-src diff again exited 0 without output. The final access
+inventory contains 190 individual file entries. The assigned branch
+remains `trackb-p2-dev-20261021`; no commit or push was made.
 
 ## Declarations
 
@@ -574,3 +584,148 @@ acceptance criterion or reserve ordering changed. Implementation and test
 execution repairs, their original failures and exact reruns are preserved
 in `track_b_p2_test_execution.md` and the mutation ledger. Changes remain
 uncommitted in the assigned workspace and branch.
+
+## Supplemental query-boundary review, 2026-10-24
+
+The preceding run counts and access inventory describe the original build.
+The review follow-up adds two supplemental test functions beside T1 in
+`tests/test_forward_earnings_p2_exact.py`. They are outside frozen T1-T7;
+none of those tests' fixtures, seeds or criteria changes.
+
+- `test_supplemental_runtime_gate_feature_table` applies T1's five-row hand
+  table directly to `gate_features`, including older earnings exactly
+  `1e-6`. Section 3, "Indicator definitions", states that "exactly
+  \(10^{-6}\) have indicator zero"; section 4 codes available history at
+  that value as `(prior_positive, prior_missing) = (0,0)`.
+- `test_supplemental_sign_draw_cumulative_boundary` supplies recorded
+  classes `[0,1]`, probabilities `[.25,.75]` and uniform `.25` directly to
+  `draw_p2_sign` through a deterministic probability stub. Section 6,
+  "Signatures and versioning", requires the "existing cumulative-`>=`
+  selection rule", so the selected class is `0`.
+
+The current recovery-file hash and its mutation-time hash were checked by
+execution, removing the 219-byte skip guard/comment block only in memory.
+The production source and both frozen-document hashes also match their
+recorded values. Both top-level restored-source hashes and all 15 original
+per-execution hashes in the mutation ledger were verified; those historical
+values are preserved. The three candidate-3 artifact/signature hashes above
+remain historical evidence; their explicitly excluded byte comparison was
+not rerun during this follow-up.
+
+### Previous attempt's supplemental validation
+
+The previous attempt reported this supplemental-only run with exit 0;
+the current follow-up independently reruns the selected checks below:
+
+```sh
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-fit/src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-frame/src PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/private/tmp/p2-low-review-supplemental-cache .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/p2-low-review-supplemental -q tests/test_forward_earnings_p2_exact.py -k supplemental > /private/tmp/p2-low-review-supplemental.log 2>&1
+```
+
+Final output: `6 passed, 70 deselected in 138.85s (0:02:18)`.
+
+Black 26.5.1 and ruff both exited 0. All three changed paths were supplied;
+Markdown and JSON were excluded as non-Python. The ledger was separately
+parsed and its historical restored-source hashes verified.
+
+```sh
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m black -l 79 --force-exclude '\.(md|json)$' tests/test_forward_earnings_p2_exact.py docs/design/track_b_p2_source_audit.md docs/design/track_b_p2_mutations.json > /private/tmp/p2-low-review-black.log 2>&1
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/ruff check --force-exclude --extend-exclude '*.md' --extend-exclude '*.json' tests/test_forward_earnings_p2_exact.py docs/design/track_b_p2_source_audit.md docs/design/track_b_p2_mutations.json > /private/tmp/p2-low-review-ruff.log 2>&1
+```
+
+Final output lines: Black, `1 file left unchanged.`; ruff,
+`All checks passed!`.
+
+### Current follow-up scope and baseline
+
+The current checks select T1's eight test functions (22 cases) and the two
+supplemental functions (six cases) by explicit node ID. Full-module mutant
+runs are too slow for this job, so neither the baseline nor either mutant
+runs the full exact module. T2, T3, T7 and the candidate-3 byte comparison
+are outside this follow-up. The previous unfinished full-module mutation
+attempt supplies no completed result and is not counted in the ledger.
+
+The selected unmodified baseline exited 0 with final output
+`28 passed in 465.81s (0:07:45)`:
+
+```sh
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-fit/src:/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-frame/src PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/private/tmp/p2-low-review-20261024-baseline-pycache HYPOTHESIS_STORAGE_DIRECTORY=/private/tmp/p2-low-review-20261024-baseline-hypothesis .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/p2-low-review-20261024-baseline -n 4 -q tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_runtime_gate_feature_table tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history tests/test_forward_earnings_p2_exact.py::test_t1_invalid_history_refuses_whole_operation tests/test_forward_earnings_p2_exact.py::test_t1_history_encoding_property tests/test_forward_earnings_p2_exact.py::test_t1_full_pair_retention_and_first_step_initialization tests/test_forward_earnings_p2_exact.py::test_t1_frozen_candidate_fit_and_signature_contract tests/test_forward_earnings_p2_exact.py::test_t1_exact_prior_key_order_and_many_to_one_validation
+```
+
+The supplemental threshold mutation changes `positive = older > 1e-6` to
+`positive = older >= 1e-6`. It exited 1 with final output
+`4 failed, 24 passed, 170 warnings in 471.87s (0:07:51)`. Its four failed
+node IDs, with the common `tests/test_forward_earnings_p2_exact.py::`
+prefix, are:
+
+- `test_t1_exact_feature_table[1e-06-0.0-0.0]`
+- `test_supplemental_runtime_gate_feature_table[1e-06-0.0-0.0]`
+- `test_t1_history_encoding_property`
+- `test_t1_exact_prior_key_order_and_many_to_one_validation`
+
+The supplemental assertion directly observes `prior_positive=1.0` rather
+than the required `0.0` at the exact threshold. All four failures are
+assertion mismatches. The warnings are scikit-learn's parallel-configuration
+propagation warnings. The original module bytes were restored immediately;
+SHA-256 was `58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234`,
+and `git diff --exit-code dc0b634 -- src` exited 0 without output before the
+next mutation.
+
+The supplemental cumulative mutation changes
+`selected = (cumulative >= np.asarray(uniforms)[:, None]).argmax(axis=1)`
+to `selected = (cumulative > np.asarray(uniforms)[:, None]).argmax(axis=1)`.
+It exited 1 with final output `1 failed, 27 passed in 458.08s (0:07:38)`.
+Its only failed node ID was
+`tests/test_forward_earnings_p2_exact.py::test_supplemental_sign_draw_cumulative_boundary`:
+the actual sign was `1`, while the required sign was `0`. The original
+module bytes were restored immediately; SHA-256 was
+`58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234`,
+and `git diff --exit-code dc0b634 -- src` exited 0 without output.
+
+The two new ledger entries are explicitly supplemental. Each records its
+scope and reason, exact node IDs and expanded pytest command, old/new text,
+exit code, all failed IDs, final output, log path and restored-source hash.
+All 15 original execution records and their historical hashes are retained.
+The ledger now has 17 executions: 16 designated checks failed as intended,
+including the two supplemental checks, and the one original unsuccessful
+initial execution remains disclosed.
+
+### Current formatting and closure
+
+Black 26.5.1 and ruff were run on all three changed paths, excluding
+Markdown and JSON from these Python-only tools. The JSON was independently
+parsed; all 17 per-run restored hashes and both historical top-level
+restored hashes were verified against the current production bytes or the
+recovery bytes with only the skip block removed in memory, as appropriate.
+
+```sh
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m black -l 79 --force-exclude '\.(md|json)$' tests/test_forward_earnings_p2_exact.py docs/design/track_b_p2_source_audit.md docs/design/track_b_p2_mutations.json
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m ruff check --force-exclude --extend-exclude '*.md' --extend-exclude '*.json' tests/test_forward_earnings_p2_exact.py docs/design/track_b_p2_source_audit.md docs/design/track_b_p2_mutations.json
+git diff --check
+git diff --exit-code dc0b634 -- src
+```
+
+Final output lines: Black, `1 file left unchanged.`; ruff,
+`All checks passed!`. Both git checks exited 0 without output. No commit
+or push was made.
+
+### Current follow-up declarations and read inventory
+
+No B2 cell result or 2012/2014 gap was encountered. No survey data,
+prohibited checkout, prohibited evidence directory, network source or
+sparse-hidden file was read. The explicit follow-up file-read inventory
+outside `src/` and `tests/`, including the independent review, is:
+
+- `CLAUDE.md`
+- `pyproject.toml`
+- `docs/design/track_b_p2_spec.md`
+- `docs/design/track_b_p2_spec_amendment_1.md`
+- `docs/design/track_b_p2_source_audit.md`
+- `docs/design/track_b_p2_mutations.json`
+- `/private/tmp/p2-low-review-20261024-baseline.log`
+- `/private/tmp/p2-low-review-20261024-history-threshold.log`
+- `/private/tmp/p2-low-review-20261024-cumulative-boundary.log`
+- `/private/tmp/p2-low-review-20261024-results.json`
+
+Execution also loads the assigned `.venv-p2` and the permitted pinned
+dependencies through the recorded `PYTHONPATH`; those routine tool and
+dependency loads are separate from this explicit task-file inventory.
