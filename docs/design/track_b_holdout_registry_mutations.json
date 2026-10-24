@@ -4,7 +4,7 @@
   "admitted_scope": "The held-out data registry's rules on invented registries, temporary git repositories and the committed registry; no population, behavioral or forecast claim.",
   "mutation_method": "One deliberate production-line change per check; both registry test modules run in full and are expected to fail; original bytes restored before the next check. No mutated implementation is committed.",
   "restored_source_sha256": {
-    "src/populace_dynamics/track_b/holdout_registry.py": "e9879409df7b060bba1d1e379cb3afc844ba9a21e6339eecbc59f5e59dfea879"
+    "src/populace_dynamics/track_b/holdout_registry.py": "a1fd1d999f59abecb6a8ca08801a7b2bbf7c4960cf3581f8c77e6cf2972ee354"
   },
   "checks": [
     {
@@ -265,6 +265,10 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure0]",
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure1]",
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure2]",
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure3]",
         "tests/test_track_b_holdout_registry.py::test_a_shallow_clone_cannot_prove_a_score_was_not_committed",
         "tests/test_track_b_holdout_registry.py::test_an_unanswerable_timing_check_fails_closed"
       ]
@@ -604,6 +608,7 @@
         "tests/test_track_b_holdout_registry.py::test_a_push_compares_with_its_before_commit",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-append_then_remove]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]",
+        "tests/test_track_b_holdout_registry.py::test_any_json_in_any_field_is_reported_not_raised",
         "tests/test_track_b_holdout_registry.py::test_removing_or_reordering_entries_is_refused",
         "tests/test_track_b_holdout_registry.py::test_the_base_branch_compares_with_its_parent"
       ]
@@ -617,6 +622,8 @@
       "failed_tests": [
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-edit_then_restore]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-edit_then_restore]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]",
         "tests/test_track_b_holdout_registry.py::test_changing_an_earlier_entry_is_refused",
         "tests/test_track_b_holdout_registry.py::test_sha256_object_ids_bound_histories"
       ]
@@ -654,12 +661,15 @@
     },
     {
       "mutation": "push ignores its before commit",
-      "old": "if set(before) != {\"0\"} and _commit(repository, before):",
+      "old": "if set(before) != {\"0\"}:",
       "new": "if False:",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_holdout_registry.py::test_a_push_compares_with_its_before_commit",
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]",
         "tests/test_track_b_holdout_registry.py::test_sha256_object_ids_bound_histories"
       ]
     },
@@ -744,6 +754,8 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]",
         "tests/test_track_b_holdout_registry.py::test_subprocess_failures_are_reported_not_raised"
       ]
     },
@@ -779,6 +791,66 @@
         "tests/test_track_b_holdout_registry.py::test_a_clean_history_has_no_problems",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-append_then_remove]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]"
+      ]
+    },
+    {
+      "mutation": "an unresolved push boundary falls back",
+      "old": "            if _commit(repository, before) is None:\n                raise LookupError(\n                    f\"the push's before commit {before} does not resolve\"\n                )\n            return before",
+      "new": "            if _commit(repository, before) is not None:\n                return before",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
+        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]"
+      ]
+    },
+    {
+      "mutation": "a push naming no commit falls through",
+      "old": "            raise LookupError(\"the push event names no before commit\")",
+      "new": "            before = \"0\" * 40",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"HEAD\"}]",
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": null}]",
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{}]"
+      ]
+    },
+    {
+      "mutation": "a non-object event is read",
+      "old": "    if not isinstance(payload, Mapping):\n        raise LookupError(\"the GitHub event is not a JSON object\")\n",
+      "new": "",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[[]",
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[[]"
+      ]
+    },
+    {
+      "mutation": "an unreadable pull request event is skipped",
+      "old": "        raise LookupError(\"the pull_request event names no head commit\")",
+      "new": "        return None",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[{\"pull_request\": null}]",
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[{\"pull_request\": {\"head\": \"abc\"}}]",
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[{\"pull_request\": {\"head\": {\"sha\": \"HEAD\"}}}]",
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[{}]"
+      ]
+    },
+    {
+      "mutation": "binary git failures escape",
+      "old": "    except (ValueError, TypeError, OSError):\n        return None\n    return found.stdout if found.returncode == 0 else None",
+      "new": "    except ValueError:\n        return None\n    return found.stdout if found.returncode == 0 else None",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure0]",
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure1]",
+        "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure2]"
       ]
     }
   ]
