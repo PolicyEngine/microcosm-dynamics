@@ -1,16 +1,29 @@
 # Mortality, groups and financing: staged milestones
 
-*Design, revision 2, 23 October 2026. For approval. Revision 1 applied
-the round-1 review's fifteen findings (section 12); revision 2 applies the
-round-2 review's four findings (section 13). An erratum of 24 October 2026
-updates section 3.5's two citations of the coordinator's forecast and
-changes no estimate.*
+*Design, revision 2, 23 October 2026. Max approved revision 2 on
+23 October 2026 (decision d1922). The approved file is commit
+`2c19f5b6`'s copy, SHA-256
+`26e53d0849088307c1fa22631216cbbfb9745a05646425aa0a6174055646130d`. The
+branch was rebased on 24 October 2026. Its first commit, `c695d458`,
+differs from the approved text only in two data-access passages, in
+sections 11 and 13. Revision 1 applied the round-1 review's fifteen
+findings (section 12); revision 2 applies the round-2 review's four
+findings (section 13). An erratum of 24 October 2026 updates section
+3.5's two citations of the coordinator's forecast and changes no
+estimate.*
 
-- **Status.** This document proposes milestones, gates and prices for one
-  lane of the DYNASIM-parity plan. It authorizes no build, registration,
-  real-data run, comparator access or change to any shared module. Max
-  authorized the lane on 21 October 2026 (decision d1802); nothing is
-  built before Max approves this design.
+- **Status.** Approved. This document sets milestones, gates and prices
+  for one lane of the DYNASIM-parity plan. Max authorized the lane on
+  21 October 2026 (decision d1802) and approved this design, with its
+  methodology, on 23 October 2026 (decision d1922). The approval starts
+  first attempts, and only first attempts, of the group section 3.4 marks
+  buildable now: F0, S0.1, SM1, SM2, ED1, GR1, GR2a, F1, F2a and F4. F0R
+  follows F0 and Max's second Registration 18 comment. S0.2 follows F0R
+  and the ruling that lifts the A-COLA restrictions, on a validation-only
+  lane. Every other milestone waits on what section 3.4 names. The design
+  itself authorizes no registration, real-data run, comparator access or
+  change to any shared module; each needs the authorization its milestone
+  names.
 - **Scope.** Five rows of `docs/parity-ledger.md`: mortality differences by
   income, education and race; education; results by group; national costs
   and financing (Registration 18's 2030 COLA-cut cost test, covered payroll
