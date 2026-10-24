@@ -464,7 +464,7 @@ Track B's rule applies unchanged (Track B §7): required-source unavailability, 
 |---|---|---|
 | `COVERAGE_UNIDENTIFIED` | CE2 finds waves with no government or state information, so the unresolved share of a gated cell exceeds the limit IR0 freezes | CE-G for those cells; they stay report-only and `unresolved` |
 | `EPUF_CONCEPT_MISMATCH` | EPUF's disclosure operator or its zero-row convention makes a cell's floor uninformative | That cell; if the gate's core cells, CE-G (prospective rescope) |
-| `PSID_SOURCE_UNAVAILABLE` | Access to the September 2026 supplements or new PSID downloads is pending or denied in the project's data-access record; or PSID communicates with Max, requests data deletion, or revises its access requirements (§2.7) | Pending or denied access stops WP-G's use of the 2005 and 2007 supplements and D1's new downloads; WP-G trains on family-file wealth from 2009 instead. Any provider communication, deletion request or revision of access requirements stops every PSID row until Max rules again |
+| `PSID_SOURCE_UNAVAILABLE` | Access to the September 2026 supplements or new PSID downloads is pending or denied in the project's data-access record; or PSID communicates with Max, requests data deletion, or revises its access or use requirements (§2.7) | Pending or denied access stops WP-G's use of the 2005 and 2007 supplements and D1's new downloads; WP-G trains on family-file wealth from 2009 instead. Any such communication, deletion request or revision stops every PSID row until Max rules again |
 | `WEAK_POWER_OR_VACUITY` | Power below 0.90, undefined cells, or a bite check that fails after the floor and before the candidate is scored: the all-covered proxy passes CE-G's registered bite-check conjunction, M0 passes the cells its flaw predicts, SSI-G's or SSI7's age-and-sex null passes, or SSI8's carried-calibration null passes | That gate, pending a prospective rescope registered before candidate results |
 | `WEALTH_WAVE_GAP` | Pre-1999 waves are five years apart, so donor transitions before 1999 cannot be two-year | M1 uses biennial transitions from 1999; earlier waves inform starting states only |
 | `EXPOSURE_UNRESOLVED` | IR0 cannot establish an unused holdout (for example because of U2's step 4 or `gate_epuf`'s bridge) | The predictive label; a pass is regression evidence only |
@@ -487,7 +487,7 @@ Track B's rule applies unchanged (Track B §7): required-source unavailability, 
 2. **Wealth and pensions.** If IR0 finds WP-G's core cells below 0.90 power using every held-out wave, WP-G is rescoped before candidates or becomes report-only, the path `gate_epuf` took. If M1 and one successor (M2 or an M1 revision) both fail, WP projection pauses, the row stays *None* for projection, and every B7 target that needs non-Social-Security income is blocked.
 3. **SSI.** If take-up fails twice, the lane publishes only potential SSI at full take-up and stops projecting receipt. If SSI9 fails twice, caseload and payment claims stay blocked and SSI8 does not run.
 4. **Track B.** If forward earnings reach `SUCCESSOR_EXHAUSTED`, tier 1 still stands, since none of it depends on B2, but C1's arm (b), C2, C3, SSI9, SSI8, SSI6b, SSI7 and SSI6's earnings inputs stop.
-5. **PSID sources.** Any provider communication to Max, request to delete data or revision of access requirements stops every PSID row; the lane then reports which gates survive on the remaining authorized sources, and returns with a redesign and a new price.
+5. **PSID sources.** If PSID communicates with Max, requests data deletion or revises its access or use requirements, every PSID row stops; the lane then reports which gates survive on the sources the project's data-access record still authorizes, and returns with a redesign and a new price.
 
 ### 10.4 Attempt ledger
 
@@ -524,7 +524,7 @@ Each mechanism (coverage classification, wealth and pension transitions, SSI tak
 
 Each is a call this design cannot make. The coordinator brings them to Max; nothing below is decided.
 
-0. **Additional PSID sources** (§2.7). Availability of the 2005 and 2007 supplements and D1's new downloads follows the project's data-access record; this question bounds D1 and WP-G only.
+0. **Additional PSID sources** (§2.7). Availability of the 2005 and 2007 supplements and D1's new downloads follows the project's data-access record; this item bounds D1 and WP-G only.
 1. **Retire the covered-earnings correction campaign and build CE v2?** Recommended. It keeps the old design's estimands and its fitting-free path, and drops the amendment ceremony. The alternative, restarting at Amendment 20, is not priced here.
 2. **The return assumption for DC balances.** Needed only for M2 (WP7). The options are a deterministic path built on the selected baseline's interest rate, or a stochastic path. It is a methodology choice.
 3. **Which population the income comparisons start from.** PSID cohorts now, or Microcosm's frame once d947 posts and the frame, including its resource ownership, is certified. SSI8, C2 and C3 need a representative start.
