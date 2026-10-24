@@ -1321,7 +1321,7 @@
     "interview_address_id": {
       "group": "design",
       "label": "Interview address ERESIDENCEID",
-      "ownership_level": "household",
+      "ownership_level": "person",
       "period": "interview",
       "raw_name": "EHRESIDENCID"
     },
@@ -1616,7 +1616,7 @@
     "living_quarters_at_interview": {
       "group": "living_arrangement",
       "label": "Type of living quarters at time of interview.",
-      "ownership_level": "person",
+      "ownership_level": "household",
       "period": "interview",
       "raw_name": "TLIVQTR"
     },
@@ -2206,8 +2206,8 @@
     "panel": {
       "group": "design",
       "label": "Panel year",
-      "ownership_level": "person",
-      "period": "monthly",
+      "ownership_level": "sample_unit",
+      "period": "design",
       "raw_name": "SPANEL"
     },
     "parent_1_at_interview": {
@@ -2298,7 +2298,7 @@
       "group": "design",
       "label": "Person number",
       "ownership_level": "person",
-      "period": "monthly",
+      "period": "design",
       "raw_name": "PNUM"
     },
     "play_limited": {
@@ -3070,8 +3070,8 @@
     "sample_unit_id": {
       "group": "design",
       "label": "Sample unit identifier. This identifier is created by scrambling together PSU, Sequence #1, Sequence #2, and the Frame Indicator for a case. It may be used in matching sample units from different waves.",
-      "ownership_level": "person",
-      "period": "monthly",
+      "ownership_level": "sample_unit",
+      "period": "design",
       "raw_name": "SSUID"
     },
     "savings_individual_income": {
@@ -3216,7 +3216,7 @@
       "group": "social_security",
       "label": "Was . this child covered by Social Security benefits during the reference period?",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "ESSKDCOVFLG"
     },
     "social_security_child_dependent_reason": {
@@ -3244,7 +3244,7 @@
       "group": "social_security",
       "label": "Recode variable on the child's record pointing to the adult receiving Social Security on behalf of a child.",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "ESSCADLTPTR"
     },
     "social_security_child_survivor_reason": {
@@ -3340,7 +3340,7 @@
       "group": "ssi",
       "label": "Reason SSI receipt began",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "ESSI_BRSN"
     },
     "ssi_child_benefit_owner": {
@@ -3354,21 +3354,21 @@
       "group": "ssi",
       "label": "Continuation status of SSI benefit receipt in the last month of the reference period",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "TSSI_CFLG"
     },
     "ssi_end_reason": {
       "group": "ssi",
       "label": "Reason SSI receipt ended",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "TSSI_ERSN"
     },
     "ssi_initial_receipt_year": {
       "group": "ssi",
       "label": "Initial year of SSI receipt if it was received during the first month of the reference period",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "TSSI_LCYR"
     },
     "ssi_payment_source_1": {
@@ -3389,14 +3389,14 @@
       "group": "ssi",
       "label": "Begin month of SSI receipt",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "ESSI_BMONTH"
     },
     "ssi_receipt_end_month": {
       "group": "ssi",
       "label": "End month of SSI receipt",
       "ownership_level": "person",
-      "period": "reference_period",
+      "period": "monthly",
       "raw_name": "ESSI_EMONTH"
     },
     "ssi_received_month": {
@@ -3693,7 +3693,7 @@
     "tenure_at_interview": {
       "group": "living_arrangement",
       "label": "Tenure at time of interview.",
-      "ownership_level": "person",
+      "ownership_level": "household",
       "period": "interview",
       "raw_name": "ETENURE"
     },
@@ -3960,8 +3960,8 @@
     "wave": {
       "group": "design",
       "label": "Wave number of interview",
-      "ownership_level": "person",
-      "period": "monthly",
+      "ownership_level": "sample_unit",
+      "period": "design",
       "raw_name": "SWAVE"
     },
     "weight": {
@@ -4005,7 +4005,9 @@
     "Disability survey reports do not constitute an SSI disability determination.",
     "Citizenship, nativity and grouped entry year do not establish qualified-noncitizen status or qualifying quarters.",
     "No separate RMD identifier or retirement-fund lump-sum-access/periodic-payment eligibility has been verified.",
-    "Concept availability uses the release API plus Census public-use schema; admission also requires exact release dictionary/API label, type and domain verification in the reader registry."
+    "Concept availability uses the variable API (2022-2025) or the release dictionary (2018-2021) together with Census's public-use storage schema; admission also requires exact release label, type and domain verification in the reader registry.",
+    "SSI spell items (begin and end month, reasons, continuation, first receipt year) and the child Social Security coverage flags are person-month records in Census's 2022 record levels and can vary within a reference year.",
+    "Joint-holding families: in 2018-2019 EJS/TJS labels cover a spouse or civil union partner and EJO/TJO labels exclude both; from 2021 EJS/TJS labels name spouses only, and Census's 2020 user note puts civil union partners' joint assets in EJO/TJO and their unsecured debts only in EO/TO; the 2020 metadata are contested and refused (source_rulings.json)."
   ],
   "release_changes": [
     {
@@ -4032,7 +4034,7 @@
       ]
     },
     {
-      "change": "Available in 2022-2024 and suppressed in 2025. Other roster and business slots also have release-specific suppression; crosswalk nulls refuse them.",
+      "change": "Available in 2018 and 2020-2024; suppressed in 2019 and 2025. Other roster and business slots also have release-specific suppression; crosswalk nulls refuse them.",
       "concepts": [
         "roster_relationship_15",
         "roster_person_number_15"
@@ -4065,6 +4067,25 @@
         "wave",
         "month",
         "person_number"
+      ]
+    },
+    {
+      "change": "ERETANY's universe narrows in 2021 to ever-retired people who did not report 401(k)/thrift or IRA/Keogh withdrawals or pension income, and its label reads 'other retirement income' from 2023; in 2018-2020 it covers all retirement income of the ever-retired.",
+      "concepts": [
+        "retirement_received_year"
+      ]
+    },
+    {
+      "change": "TSSAGESS asks the age at first disability benefit in 2018-2022 (universe: disability receipt) and the age at first benefit for all beneficiaries from 2023.",
+      "concepts": [
+        "social_security_initial_age"
+      ]
+    },
+    {
+      "change": "From 2024 the credit-card debt questions ask whether a balance was carried from one month to another, not whether any money was owed.",
+      "concepts": [
+        "credit_card_individual_debt_owed",
+        "credit_card_joint_spouse_debt_owed"
       ]
     }
   ],

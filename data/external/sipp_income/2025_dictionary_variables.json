@@ -14682,7 +14682,9 @@
       "predicateType": "int",
       "storage_type": "integer",
       "values": {
-        "item": {},
+        "item": {
+          "9999999": "Not possible to distinguish the amount contributed to a defined-benefit pension from the amount contributed to a cash balance plan when EPENTYP in (3,4) and R2PENTYP in (3,4)"
+        },
         "range": [
           {
             "min": "0",
@@ -14696,10 +14698,8 @@
       "length": "7",
       "status_flag": "ASCNTAMT1 File: Person",
       "record_level": "",
-      "verified": false,
-      "unparsed_value_lines": [
-        "9,999,999. Not possible to distinguish the amount contributed to a"
-      ],
+      "verified": true,
+      "unparsed_value_lines": [],
       "dictionary_pdf_page": 590,
       "dictionary_pdf_pages": [
         590
@@ -14712,7 +14712,9 @@
       "predicateType": "int",
       "storage_type": "integer",
       "values": {
-        "item": {},
+        "item": {
+          "9999999": "Not possible to distinguish the amount contributed to a defined-benefit pension from the amount contributed to a cash balance plan when EPENTYP in (3,4) and R2PENTYP in (3,4)"
+        },
         "range": [
           {
             "min": "0",
@@ -14726,10 +14728,8 @@
       "length": "7",
       "status_flag": "ASCNTAMT2 File: Person",
       "record_level": "",
-      "verified": false,
-      "unparsed_value_lines": [
-        "9,999,999. Not possible to distinguish the amount contributed to a"
-      ],
+      "verified": true,
+      "unparsed_value_lines": [],
       "dictionary_pdf_page": 591,
       "dictionary_pdf_pages": [
         591

@@ -1,8 +1,8 @@
 [
   {
     "path": "parse_dictionary_metadata.py",
-    "bytes": 9923,
-    "sha256": "0b0338b23515e069c43602c0b4b861ee09a9afb0fd74b83f88584667daac3b40",
+    "bytes": 10628,
+    "sha256": "7f3ebddd247d118d3d3a177a5b114429057c815f566b9505daa324d66e17d998",
     "kind": "generator"
   },
   {
@@ -13,8 +13,8 @@
   },
   {
     "path": "2018_dictionary_variables.json",
-    "bytes": 2508880,
-    "sha256": "e1368ee956d8a82b4c4e653097f1001da5016522d8f6a244b477db41a77bf179",
+    "bytes": 2510290,
+    "sha256": "a10b1a8f46237489e052b2a158ec681b2a11c7e3efe4d2b61c78c4240256aa37",
     "kind": "derived_metadata"
   },
   {
@@ -25,8 +25,8 @@
   },
   {
     "path": "2019_dictionary_variables.json",
-    "bytes": 2606118,
-    "sha256": "f62f015faf50c0cb38ca9dcbc582c0267940a546e909aa4f3a546ae039048dc1",
+    "bytes": 2607669,
+    "sha256": "70c8576b409c2313d0fd946a87856dd15ebd6bf5f159ed47bed48a5040cd8a67",
     "kind": "derived_metadata"
   },
   {
@@ -37,8 +37,8 @@
   },
   {
     "path": "2020_dictionary_variables.json",
-    "bytes": 2595909,
-    "sha256": "e832ef8dbee0209c640c344b04450a6333855c7e4cd68b6d18a53e20209945bf",
+    "bytes": 2597460,
+    "sha256": "1ce3b105eaab9c2b3bbd34979f7640aa10bc7d596c74d77667052240675a872c",
     "kind": "derived_metadata"
   },
   {
@@ -61,8 +61,8 @@
   },
   {
     "path": "2022_dictionary_variables.json",
-    "bytes": 3140773,
-    "sha256": "df1f2cfb3a87616e69e3d2c21b9a902780953ed255d88629e64bad3ec35b9d41",
+    "bytes": 3141017,
+    "sha256": "fa42c2735e4347feed1221129d6115620b05185afec41752dfac37bbf3a071eb",
     "kind": "derived_metadata"
   },
   {
@@ -73,8 +73,8 @@
   },
   {
     "path": "2023_dictionary_variables.json",
-    "bytes": 3054765,
-    "sha256": "1a7b61f60699bf40564f441a308c89dee16b6ceb57f2f10efc41421fb05f8aa9",
+    "bytes": 3055009,
+    "sha256": "7cd03cc4bae6dd57e8f1c0b2ba329f01b47ca3af8e8d2407ef5bb07fd8923296",
     "kind": "derived_metadata"
   },
   {
@@ -85,8 +85,8 @@
   },
   {
     "path": "2024_dictionary_variables.json",
-    "bytes": 3075200,
-    "sha256": "9c763a44d9c2df5cf5583ae6e2a82f849868eec3255614b813e26b42806c3b7d",
+    "bytes": 3075444,
+    "sha256": "9fb274f8115ccaa6233e9e018344f25a7d9785627ffed967f9a1f7e0068636db",
     "kind": "derived_metadata"
   },
   {
@@ -97,8 +97,8 @@
   },
   {
     "path": "2025_dictionary_variables.json",
-    "bytes": 3051150,
-    "sha256": "47980cd61f33612ac1ae845e35e48cd1d1a222c7411b2aa8bee102d302acb9b3",
+    "bytes": 3051394,
+    "sha256": "3f1666d423f058fffa6b34f13b583b3117dd87affecf75435a492dd38068483b",
     "kind": "derived_metadata"
   },
   {

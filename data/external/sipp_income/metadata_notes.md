@@ -15,8 +15,8 @@ with its UTC retrieval time, byte size and SHA-256. Every request used plain
 Census's release-to-release crosswalks (2018 to 2019 through 2021 to 2022),
 the 2018 metadata file and the 2018 Programs and Poverty/Income topic
 dictionaries. `capture_user_notes.py` screened all 355 user-note pages for
-2018-2025: it stores, gzipped, each index page and each of the 109 notes that
-name an admitted variable, and logs every page fetched in
+2018-2025: it stores, gzipped, the 8 index pages and the 101 notes that name
+an admitted variable, and logs every page fetched in
 `user_notes_manifest.json` (hashes are of the uncompressed bytes).
 
 - The Census variable API exists for releases 2022-2025. Its 2018-2021
@@ -25,8 +25,11 @@ name an admitted variable, and logs every page fetched in
   its `pdftotext -layout` output and `*_dictionary_notes.txt` its first ten
   pages. `parse_dictionary_metadata.py` derives `*_dictionary_variables.json`
   from the text and the storage schema; `derived_manifest.json` pins the
-  derived files and the parser. An entry with an unparsed value line, or a
-  range whose minimum exceeds its maximum, is marked `verified: false`.
+  derived files and the parser. An entry is marked `verified: false` if it
+  has an unparsed value line, a range whose minimum exceeds its maximum, or
+  (2018-2020, whose pages the parser does not join) a value list that runs
+  onto the next page. Comma-grouped codes such as `9,999,999.` parse as
+  codes.
 - Census's Python input examples are stored byte for byte as
   `*_python_input_example.py.txt`, so the repository's black and ruff checks
   never rewrite them. Several captured pages and the 2022-2025 input
@@ -50,8 +53,10 @@ files alone.
   gives the type. The schema's label is checked against the dictionary's
   under NFKC case-folding with punctuation dropped (pdftotext drops some
   characters, such as the `*` of the business formulas) and allowing for the
-  schema's 255-256 character truncation. `label_checks.json` lists the
-  disagreements.
+  schema's 255-256 character truncation. The same check compares the
+  2022-2025 API labels with the dictionary's, reading the API's "equals"
+  and "or" as `=` and `/`. `label_checks.json` lists every disagreement,
+  including a variable one source suppresses and another documents.
 - **Every release.** Universes come from the release's dictionary. A domain
   is never taken from another release. The registry's API type
   (`predicateType`) and storage type are kept apart because they disagree for
@@ -69,10 +74,14 @@ files alone.
 
 ## Rulings and open questions
 
-- **Settled.** 2018 `EJSOWNRE` and `EJSOWNRP` follow the dictionary; the
-  schema's "without a spouse" text is the original error that Census's user
-  note "2018 SIPP: Metadata for Rental Properties and Other Real Estate"
-  corrects.
+- **Settled.** For 2018 `EJSOWNRE` and `EJSOWNRP` the label and universe are
+  quoted from Census's user note "2018 SIPP: Metadata for Rental Properties
+  and Other Real Estate", which calls the originally published metadata
+  incorrect and states the correct text. The schema still carries the
+  original "without a spouse" description, and the 2018 dictionary's
+  `EJSOWNRP` universe reads "or" where the note reads "and".
+- **Open: 2018 `EDIS8MNYN`.** The storage schema labels it "Suppressed" and
+  the dictionary documents it in full; refused in 2018.
 - **Open: disability sources in 2020.** For 2020 `TDIS6AMT` the dictionary
   says local government pension and the schema says state government
   pension. For 2020 `EDIS8MNYN` the dictionary says railroad retirement and
@@ -84,10 +93,22 @@ files alone.
 - **Open: joint holdings in 2020.** The 2020 dictionary and schema print the
   2019 definitions of the `EJS`/`TJS` and `EJO`/`TJO` families (spouse or
   civil union partner). Census's user note "2020 SIPP: Universe for Jointly
-  Held Assets and Debts" says `EREGDOMPART` was dropped in 2020, `EJS` became
-  spouse-only and civil union partners moved to `EJO`. The 70 affected
-  concept-years are refused; the person-level recodes and household totals
-  stay admitted.
+  Held Assets and Debts" says `EREGDOMPART` was dropped in 2020 and `EJS`
+  became spouse-only: assets held jointly with a civil union partner are
+  `EJO`/`TJO`, and civil union partners report unsecured debt only in the
+  individual `EO`/`TO` items. The 70 affected concept-years are refused; the
+  person-level recodes and household totals stay admitted.
+- **Misprinted universes.** The 2021 dictionary gives every `ERETTYPnYN` the
+  universe `ERETANY = 1 and EPENANY = 1`, which `ERETANY`'s own 2021
+  universe (`EPENANY=2`) makes empty; 2022-2025 print `OR`. The 2024 and
+  2025 dictionaries give `TRET1AMT`-`TRET7AMT` the universe of source 8
+  (`ERETTYP8YN`). The registry carries no universe for these concept-years
+  and cites the ruling instead.
+- **Codes inside an amount range.** `TSCNTAMT1` and `TSCNTAMT2` (2022-2025)
+  document 9,999,999 as "Not possible to distinguish the amount contributed
+  to a defined-benefit pension from the amount contributed to a cash
+  balance plan" inside a $0-$9,999,998 amount range. The reader carries the
+  code unchanged and `code_label` names it; it is not a dollar amount.
 - **Corrected re-release.** Census re-released the 2014-2021 files on
   2025-07-24 to correct `TSSSAMT`, which had double-counted Medicare
   deductions. The reader reads `TSSSAMT` for 2018-2021 only when the caller

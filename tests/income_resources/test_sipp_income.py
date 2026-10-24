@@ -29,7 +29,8 @@ from populace_dynamics.data.sipp_income_registry import (
     user_notes,
 )
 
-INVENTED_SAMPLE_UNIT_ID = "000000012345"
+#: Fourteen digits, the dictionaries' fixed width for SSUID.
+INVENTED_SAMPLE_UNIT_ID = "00000000012345"
 INVENTED_WEIGHT = 1234.25
 #: A download date after Census's 2025-07-24 re-release of 2018-2021.
 INVENTED_DOWNLOAD = "2026-10-24"
@@ -78,6 +79,28 @@ def _integral(spec: SippVariable) -> bool:
     return spec.storage_type != "float" and spec.period != "weight"
 
 
+def _well_formed(spec: SippVariable, token: str) -> bool:
+    """Independent statement of the reader's token syntax."""
+    if not token or not token.isascii():
+        return False
+    body = token[1:] if token.startswith("-") else token
+    whole, _, fraction = body.partition(".")
+    if not (whole + fraction).isdigit() or body.count(".") > 1:
+        return False
+    if not whole and not fraction:
+        return False
+    missing = [
+        Decimal(code)
+        for code, label in spec.items
+        if label in INVENTED_MISSING_LABELS
+    ]
+    if spec.storage_type == "string" and Decimal(token) not in missing:
+        return token.isdigit() and (
+            not spec.length or len(token) == spec.length
+        )
+    return True
+
+
 def _accepted_by_reader(spec: SippVariable, token: str) -> bool:
     """The reader's verdict on one invented token."""
     try:
@@ -113,7 +136,9 @@ def _invented_valid_value(concept: str, spec: SippVariable):
             continue
         if _admits(spec, number):
             value = int(number) if _integral(spec) else float(number)
-            return str(value) if spec.storage_type == "string" else value
+            if spec.storage_type == "string":
+                return str(value).zfill(spec.length)
+            return value
     raise AssertionError(f"No invented domain member for {concept}")
 
 
@@ -898,6 +923,153 @@ def test_same_sample_person_number_in_different_panels_has_distinct_id(
         )
 
 
+# File layout and token spelling.
+
+
+def _invented_lines(year, rows=2):
+    """A valid invented header and rows for the core layout."""
+    table = income_variables(year)
+    header = "|".join(table[concept].name for concept in CORE_CONCEPTS)
+    lines = [
+        "|".join(
+            str(_invented_row(year, month=month)[concept])
+            for concept in CORE_CONCEPTS
+        )
+        for month in range(1, rows + 1)
+    ]
+    return header, lines
+
+
+@pytest.mark.parametrize("problem", ("short", "long", "blank"))
+def test_rows_whose_field_count_differs_refuse(tmp_path, problem):
+    year = 2022
+    header, lines = _invented_lines(year)
+    if problem == "short":
+        lines[1] = lines[1].rsplit("|", 1)[0]
+    elif problem == "long":
+        lines[1] = lines[1] + "|INVENTED_EXTRA"
+    else:
+        lines.append("")
+    path = tmp_path / "INVENTED_layout.csv"
+    path.write_text("\n".join([header, *lines]) + "\n")
+    with pytest.raises(ValueError, match="line 3 has .* fields|line 4 has"):
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+
+
+def test_short_trailing_fields_never_become_structural_blanks(tmp_path):
+    """The reviewer's case: optional columns after the last core key."""
+    year = 2022
+    concept = "ssi_amount"
+    path = _write_invented_file(
+        tmp_path,
+        year,
+        [_invented_row(year, month=1), _invented_row(year, month=2)],
+        concepts=(*CORE_CONCEPTS, concept),
+    )
+    lines = path.read_text().splitlines()
+    lines[2] = lines[2].rsplit("|", 1)[0]
+    path.write_text("\n".join(lines) + "\n")
+    with pytest.raises(ValueError, match="fields"):
+        sipp_income.read_sipp_income_months(
+            year, path=path, concepts=[concept]
+        )
+
+
+def test_repeated_header_name_refuses(tmp_path):
+    year = 2022
+    header, lines = _invented_lines(year, rows=1)
+    path = tmp_path / "INVENTED_repeat.csv"
+    path.write_text(
+        "\n".join([header + "|TSSI_AMT|TSSI_AMT", lines[0] + "|1|2"]) + "\n"
+    )
+    with pytest.raises(ValueError, match="repeats a column name"):
+        sipp_income.read_sipp_income_months(
+            year, path=path, concepts=["ssi_amount"]
+        )
+
+
+def test_layout_check_reads_gzip(tmp_path):
+    year = 2022
+    path = _write_invented_file(
+        tmp_path,
+        year,
+        [_invented_row(year)],
+        concepts=CORE_CONCEPTS,
+        filename=f"pu{year}.csv.gz",
+    )
+    assert (
+        len(sipp_income.read_sipp_income_months(year, path=path, concepts=[]))
+        == 1
+    )
+    path.write_bytes(path.read_bytes()[:20])
+    with pytest.raises(ValueError, match="unreadable or truncated"):
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+
+
+@pytest.mark.parametrize(
+    "concept,value",
+    (
+        ("sample_unit_id", "12345"),
+        ("sample_unit_id", "000000012345"),
+        ("sample_unit_id", " 00000000012345"),
+        ("sample_unit_id", "+0000000012345"),
+        ("sample_unit_id", "1.2345E4"),
+        ("household_id_at_interview", "11"),
+        ("household_id_at_interview", "+11"),
+        ("monthly_address_id", "100001.0"),
+        ("month", "+1"),
+        ("month", "1E0"),
+        ("month", "0_1"),
+        ("weight", "1_234.25"),
+    ),
+)
+def test_odd_spellings_of_keys_refuse(tmp_path, concept, value):
+    year = 2022
+    path = _write_invented_file(
+        tmp_path,
+        year,
+        [_invented_row(year, **{concept: value})],
+        concepts=CORE_CONCEPTS,
+    )
+    with pytest.raises(ValueError) as caught:
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+    # Refusals name the variable, never the record value.
+    assert value.strip() not in str(caught.value)
+
+
+@pytest.mark.parametrize("year", (2022, 2025))
+@pytest.mark.parametrize(
+    "concept", ("citizen", "born_us", "half_sample", "variance_stratum")
+)
+def test_blank_refuses_where_the_universe_is_everyone(tmp_path, year, concept):
+    spec = income_variables(year)[concept]
+    assert spec.universe in ("All persons", "All households")
+    assert not spec.allow_blank
+    with pytest.raises(ValueError, match=spec.name):
+        _read_one(tmp_path, year, concept, "")
+
+
+def test_blank_stays_missing_where_the_universe_is_a_subset(tmp_path):
+    spec = income_variables(2022)["ssi_amount"]
+    assert spec.universe not in ("All persons", "All households")
+    assert (
+        _read_one(tmp_path, 2022, "ssi_amount", "")["ssi_amount"].isna().all()
+    )
+
+
+def test_download_date_accepts_a_datetime(tmp_path):
+    from datetime import datetime
+
+    out = _read_one(
+        tmp_path,
+        2019,
+        "social_security_amount",
+        100,
+        downloaded_on=datetime(2026, 1, 1, 12, 0),
+    )
+    assert out["social_security_amount"].tolist() == [100]
+
+
 # Property tests (Hypothesis) on invented data.
 
 
@@ -1022,37 +1194,28 @@ INVENTED_CATEGORICAL = [
     and not spec.check_ranges
     and spec.items
 ]
-#: Every admitted (release, concept) with a numeric domain.
+#: Every admitted (release, concept) with a documented domain.
 INVENTED_NUMERIC = [
     (year, concept)
     for year in SIPP_INCOME_YEARS
     for concept, spec in income_variables(year).items()
-    if spec.storage_type != "string"
+    if spec.ranges or spec.check_ranges or spec.items or spec.check_items
 ]
-
-
-@settings(max_examples=300, deadline=None)
-@given(
-    st.sampled_from(INVENTED_CATEGORICAL),
-    st.integers(min_value=-(10**6), max_value=10**6),
+#: Spellings Decimal() accepts but the reader must refuse.
+INVENTED_ODD_SPELLINGS = (
+    "+1",
+    "1E0",
+    "1e2",
+    "1_0",
+    " 1",
+    "1 ",
+    "\uff11",
+    "0x1",
+    "1.2.3",
+    "--1",
+    ".",
+    "-",
 )
-def test_property_unverified_code_always_refuses(case, code):
-    year, concept = case
-    spec = income_variables(year)[concept]
-    token = str(code)
-    if _admits(spec, code):
-        out = sipp_income.validate_sipp_values(
-            pd.Series([token], dtype="string"), spec, year=year
-        )
-        assert out.tolist() == [code]
-        assert code_label(year, concept, code)
-    else:
-        with pytest.raises(ValueError, match=spec.name):
-            sipp_income.validate_sipp_values(
-                pd.Series([token], dtype="string"), spec, year=year
-            )
-        with pytest.raises(ValueError, match="unverified"):
-            code_label(year, concept, code)
 
 
 def _edge_tokens(spec: SippVariable):
@@ -1077,14 +1240,19 @@ def test_property_reader_domain_matches_independent_rule(case, data):
     """Differential: the reader admits exactly what ``_admits`` admits."""
     year, concept = case
     spec = income_variables(year)[concept]
+    width = spec.length or 1
     token = data.draw(
         st.one_of(
             st.sampled_from(_edge_tokens(spec)),
             st.integers(-(10**12), 10**12).map(str),
+            st.integers(0, 10**width - 1).map(lambda n: str(n).zfill(width)),
+            st.sampled_from(INVENTED_ODD_SPELLINGS),
         )
     )
-    number = Decimal(token)
-    expected = _admits(spec, number) and (
-        not _integral(spec) or number == number.to_integral_value()
-    )
-    assert _accepted_by_reader(spec, token) == expected
+    expected = _well_formed(spec, token)
+    if expected:
+        number = Decimal(token)
+        expected = _admits(spec, number) and (
+            not _integral(spec) or number == number.to_integral_value()
+        )
+    assert _accepted_by_reader(spec, token) == expected, token

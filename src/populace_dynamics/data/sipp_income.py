@@ -34,7 +34,13 @@ Invariants:
   only when ``downloaded_on`` shows the staged file postdates the fix.
 * A separate replicate-weight file must have a verified layout and unique,
   complete linkage keys, and its ``REPWGT0`` must equal ``WPFINWGT``,
-  before the many-to-one join is made.
+  before the many-to-one join is made. The join keys are ``SSUID``,
+  ``PNUM`` and ``MONTHCODE``, as in Census's input examples; ``SPANEL`` is
+  not a key (the 2019 replicate schema omits it), so keys that repeat
+  across panels refuse rather than mislink.
+* Every row has the header's field count and no header name repeats, so a
+  short or long row can neither become structural blanks nor shift
+  values between columns.
 
 ``concepts`` selects canonical column names from :func:`income_variables`;
 the design and linkage core is always read. By default all concepts
@@ -42,8 +48,10 @@ verified for that release are required. An unavailable concept is an
 error when requested, not an all-missing column. Consult each variable's
 ownership, period, universe, codes, user notes and exact Census label
 before using it: annual and year-end items repeat on monthly rows and must
-not be summed across months, and ``release_changes.json`` beside the
-evidence lists every change in a concept between consecutive releases.
+not be summed across months. ``release_changes.json`` beside the evidence
+lists each concept's changes across releases in name, dictionary label,
+universe, codes, admitted domain, missing codes, storage type and
+admission (it does not compare API wording or range descriptions).
 
 The registry pins metadata only. This module performs no network access,
 model fitting, holdout selection or population statistic. Staging follows
@@ -53,10 +61,12 @@ overridden by ``POPULACE_DYNAMICS_SIPP_DIR`` or an explicit path/directory.
 
 from __future__ import annotations
 
+import gzip
 import os
 import re
+import zlib
 from collections.abc import Iterable
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
@@ -85,6 +95,8 @@ _KEYS = (
     "monthly_address_id",
 )
 _PU_YEAR = re.compile(r"pu(\d{4})\.csv(?:\.gz)?$", re.I)
+_DECIMAL_TOKEN = re.compile(r"-?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)")
+_DIGITS_TOKEN = re.compile(r"[0-9]+")
 _RW_YEAR = re.compile(r"rw(\d{4})\.csv(?:\.gz)?$", re.I)
 
 
@@ -96,10 +108,11 @@ def validate_sipp_values(
     A token is admitted only if :func:`domain_contains` admits its exact
     decimal value: every verified source for the release must allow it,
     and missing codes count only where that release lists them for that
-    variable. A blank is distinct from an explicit missing code and is
-    accepted only for registry-verified structural blanks. Integer codes
-    must be integral, and every token must be finite. Error messages omit
-    record values.
+    variable. A token must be a plain ASCII decimal; a string-stored
+    identifier must also be the dictionary's fixed-width digit string. A
+    blank is distinct from an explicit missing code and is accepted only
+    where ``spec.allow_blank`` marks a structural not-in-universe value.
+    Integer codes must be integral. Error messages omit record values.
     """
     text = values.astype("string")
     blank = text.isna() | text.isin(spec.structural_missing)
@@ -118,14 +131,30 @@ def validate_sipp_values(
         bad = blank & (not spec.allow_blank)
     else:
         integral = storage != "float" and spec.period != "weight"
+        missing_codes = {
+            Decimal(code)
+            for code, label in spec.items
+            if label in SENTINEL_LABELS
+        }
 
         def verified(token: str) -> bool:
+            # Plain ASCII decimals only: no sign other than "-", exponent,
+            # separator, whitespace or non-ASCII digit, all of which
+            # Decimal() would otherwise accept.
+            if not _DECIMAL_TOKEN.fullmatch(token):
+                return False
             try:
                 number = Decimal(token)
             except InvalidOperation:
                 return False
-            if not number.is_finite():
-                return False
+            if storage == "string" and number not in missing_codes:
+                # A string-stored identifier is kept verbatim, so it must
+                # be the dictionary's fixed-width digit string: "011", not
+                # "11" or "+11", or two spellings would split one key.
+                if not _DIGITS_TOKEN.fullmatch(token) or (
+                    spec.length and len(token) != spec.length
+                ):
+                    return False
             if integral and number != number.to_integral_value():
                 return False
             return domain_contains(spec, number)
@@ -178,10 +207,42 @@ def _path(
     return result
 
 
+def _check_layout(path: Path, year: int) -> None:
+    """Refuse duplicate header names and rows whose field count differs.
+
+    With ``usecols`` pandas stops checking field counts: a short row's
+    missing fields become blanks (read as not-in-universe) and a row with
+    an extra field shifts values into neighbouring columns. Counting the
+    separators on every line first closes both gaps.
+    """
+    opener = gzip.open if path.name.lower().endswith(".gz") else open
+    try:
+        with opener(path, "rb") as handle:
+            header = handle.readline().rstrip(b"\r\n")
+            names = header.split(b"|")
+            if len(set(names)) != len(names):
+                raise ValueError(
+                    f"SIPP {year}: the header repeats a column name."
+                )
+            separators = header.count(b"|")
+            for line_number, line in enumerate(handle, start=2):
+                found = line.rstrip(b"\r\n").count(b"|")
+                if found != separators:
+                    raise ValueError(
+                        f"SIPP {year}: line {line_number} has {found + 1} "
+                        f"fields; the header has {separators + 1}."
+                    )
+    except (OSError, EOFError, zlib.error):
+        raise ValueError(
+            f"SIPP {year}: unreadable or truncated pipe-delimited file."
+        ) from None
+
+
 def _read(
     path: Path, year: int, specs: dict[str, SippVariable]
 ) -> pd.DataFrame:
     wanted = [spec.name for spec in specs.values()]
+    _check_layout(path, year)
     try:
         raw = pd.read_csv(
             path,
@@ -264,6 +325,8 @@ def _check_vintage(
         if isinstance(downloaded_on, str)
         else downloaded_on
     )
+    if isinstance(when, datetime):
+        when = when.date()
     if not isinstance(when, date):
         raise ValueError("downloaded_on must be a date or an ISO date string")
     stale = sorted(

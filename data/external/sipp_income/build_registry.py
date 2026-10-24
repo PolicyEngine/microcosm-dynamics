@@ -34,7 +34,6 @@ import re
 import unicodedata
 from decimal import Decimal
 from pathlib import Path
-from pprint import pformat
 
 BASE = Path(__file__).resolve().parent
 REPO = BASE.parents[2]
@@ -45,6 +44,9 @@ API_YEARS = range(2022, 2026)
 SENTINEL_LABELS = frozenset({"NA-Missing", "NA or Missing"})
 #: Census storage schemas cut labels at 255-256 characters.
 SCHEMA_LABEL_LIMIT = 255
+#: Universes that cover every record, so a blank there cannot be a
+#: structural not-in-universe value.
+UNIVERSAL_UNIVERSES = frozenset({"all persons", "all households"})
 #: Structural keys: user notes that name them describe other variables.
 NOTE_EXCLUDED = frozenset({"SSUID", "PNUM", "MONTHCODE", "SPANEL", "SWAVE"})
 
@@ -57,21 +59,30 @@ def label_key(text: str) -> str:
     """Compare labels ignoring case, Unicode forms and punctuation only.
 
     pdftotext drops some characters (the ``*`` of the 2021-2025 business
-    formulas) and the dictionaries and schemas differ in quotes, ellipses
-    and ligatures; words and numbers must still match exactly.
+    formulas), the dictionaries, schemas and API differ in quotes,
+    ellipses and ligatures, and the API spells ``=`` and ``/`` as words;
+    words and numbers must still match exactly.
     """
     folded = unicodedata.normalize("NFKC", text).casefold()
+    # The variable API spells "=" as "equals" and "/" as "or".
+    folded = folded.replace("=", " equals ").replace("/", " or ")
     return "".join(re.findall(r"[a-z0-9]+", folded))
 
 
-def label_agreement(schema: str, dictionary: str) -> str:
-    """Classify a storage-schema label against the dictionary label."""
-    if label_key(schema) == label_key(dictionary):
+def label_agreement(first: str, second: str) -> str:
+    """Classify two Census labels for one variable in one release.
+
+    ``truncated`` means the shorter label has at least
+    :data:`SCHEMA_LABEL_LIMIT` characters and is a prefix of the longer
+    (Census's storage schemas cut labels there).
+    """
+    if label_key(first) == label_key(second):
         return "equal"
-    if len(schema) >= SCHEMA_LABEL_LIMIT and label_key(dictionary).startswith(
-        label_key(schema)
+    short, full = sorted((first, second), key=len)
+    if len(short) >= SCHEMA_LABEL_LIMIT and label_key(full).startswith(
+        label_key(short)
     ):
-        return "schema_truncated"
+        return "truncated"
     return "conflict"
 
 
@@ -182,7 +193,11 @@ def build_tables():
         "user_notes_manifest.json",
     }
     sources.update(path for _, _, path in note_table)
-    observed_label_conflicts = set()
+    observed = {
+        "label_conflicts": set(),
+        "suppression_conflicts": set(),
+        "universe_anomalies": set(),
+    }
     effective = {}
 
     def intern(value):
@@ -222,27 +237,61 @@ def build_tables():
             name = crosswalk[concept]
             raw_name = selected["concepts"][concept]["raw_name"]
             candidate = name or raw_name
-            labels = (
-                schema.get(candidate, {}).get("label", ""),
-                dictionary.get(candidate, {}).get("dictionary_label", ""),
-                api.get(candidate, {}).get("label", ""),
-            )
-            present = candidate in schema and not suppressed(*labels)
+            labels = {
+                "schema": schema.get(candidate, {}).get("label", ""),
+                "dictionary": dictionary.get(candidate, {}).get(
+                    "dictionary_label", ""
+                ),
+                "api": api.get(candidate, {}).get("label", ""),
+            }
+            present = candidate in schema and not suppressed(*labels.values())
             if name is None:
                 # The crosswalk may only omit a variable this release's
                 # own sources omit or suppress.
                 assert not present, (year, concept, candidate)
+                stated = {k: v for k, v in labels.items() if v}
+                if (
+                    candidate in schema
+                    and suppressed(*stated.values())
+                    and (not all(suppressed(v) for v in stated.values()))
+                ):
+                    key = f"{year}/{candidate}"
+                    ruling = rulings["suppression_conflicts"].get(key)
+                    assert ruling is not None, f"unruled suppression {key}"
+                    observed["suppression_conflicts"].add(key)
+                    label_checks.append(
+                        {
+                            "release": year,
+                            "concept": concept,
+                            "variable": candidate,
+                            "kind": "suppression",
+                            "labels": stated,
+                            "resolution": ruling["resolution"],
+                            "evidence": ruling.get("evidence", []),
+                        }
+                    )
+                    assert ruling["resolution"] is None
+                    refuse(concept, "open conflict: suppressed in one source")
+                    continue
                 refuse(concept, "absent or suppressed in release")
                 continue
             assert present, (year, concept, name)
             stored = schema[name]
             entry = dictionary.get(name)
+            universe = (entry or {}).get("universe", "")
+            universe_source = (
+                f"{year}_dictionary_variables.json#{name}" if universe else ""
+            )
             if year in API_YEARS:
                 primary = api.get(name)
                 assert primary is not None, (year, name)
                 label, label_source = primary["label"], "api"
                 predicate = primary["predicateType"]
                 source = f"{year}_variables.json#{name}"
+                other, other_source = (
+                    (entry or {}).get("dictionary_label", ""),
+                    "dictionary",
+                )
             else:
                 primary = entry
                 if primary is None or not primary["verified"]:
@@ -251,32 +300,51 @@ def build_tables():
                 label, label_source = primary["dictionary_label"], "dictionary"
                 predicate = primary["predicateType"]
                 source = f"{year}_dictionary_variables.json#{name}"
-                agreement = label_agreement(stored["label"], label)
-                if agreement == "conflict":
-                    key = f"{year}/{name}"
-                    observed_label_conflicts.add(key)
-                    ruling = rulings["label_conflicts"].get(key)
-                    assert ruling is not None, f"unruled label conflict {key}"
-                    label_checks.append(
-                        {
-                            "release": year,
-                            "concept": concept,
-                            "variable": name,
-                            "schema_label": stored["label"],
-                            "dictionary_label": label,
-                            "resolution": ruling["resolution"],
-                            "evidence": ruling.get("evidence", []),
-                        }
+                other, other_source = stored["label"], "schema"
+            if other and label_agreement(other, label) == "conflict":
+                key = f"{year}/{name}"
+                observed["label_conflicts"].add(key)
+                ruling = rulings["label_conflicts"].get(key)
+                assert ruling is not None, f"unruled label conflict {key}"
+                label_checks.append(
+                    {
+                        "release": year,
+                        "concept": concept,
+                        "variable": name,
+                        "kind": "label",
+                        "labels": {label_source: label, other_source: other},
+                        "resolution": ruling["resolution"],
+                        "evidence": ruling.get("evidence", []),
+                    }
+                )
+                sources.update(ruling.get("evidence", []))
+                if ruling["resolution"] is None:
+                    refuse(concept, f"open conflict: {other_source} label")
+                    continue
+                if ruling["resolution"] == "user_note":
+                    label, label_source = ruling["label"], "user_note"
+                    universe = ruling["universe"]
+                    universe_source = (
+                        f"source_rulings.json#label_conflicts/{key}"
                     )
-                    if ruling["resolution"] is None:
-                        refuse(
-                            concept,
-                            "open conflict: schema and dictionary labels",
-                        )
-                        continue
-                    if ruling["resolution"] == "schema":
-                        label, label_source = stored["label"], "schema"
-                    sources.update(ruling.get("evidence", []))
+                elif ruling["resolution"] == other_source:
+                    label, label_source = other, other_source
+            anomaly = next(
+                (
+                    rule
+                    for rule in rulings["universe_anomalies"]
+                    if year in rule["releases"] and name in rule["variables"]
+                ),
+                None,
+            )
+            if anomaly is not None:
+                assert universe == anomaly["printed"], (year, name, universe)
+                observed["universe_anomalies"].add((year, name))
+                sources.update(anomaly.get("evidence", []))
+                universe = ""
+                universe_source = (
+                    "source_rulings.json#universe_anomalies/" + anomaly["id"]
+                )
             items, sentinels = split_items(primary)
             ranges = meta_ranges(primary)
             integer = stored["dtype"] != "float" and (
@@ -307,26 +375,6 @@ def build_tables():
             if not admitted_spans:
                 refuse(concept, "API and dictionary domains do not overlap")
                 continue
-            if year in API_YEARS and (
-                check_spans is None or primary_spans != check_spans
-            ):
-                domain_checks.append(
-                    {
-                        "release": year,
-                        "concept": concept,
-                        "variable": name,
-                        "api": text_intervals(primary_spans),
-                        "dictionary": (
-                            None
-                            if check_spans is None
-                            else text_intervals(check_spans)
-                        ),
-                        "dictionary_verified": bool(
-                            entry is not None and entry["verified"]
-                        ),
-                        "admitted": text_intervals(admitted_spans),
-                    }
-                )
             family = next(
                 (
                     rule
@@ -350,6 +398,7 @@ def build_tables():
                         "release": year,
                         "concept": concept,
                         "variable": name,
+                        "kind": "release_family",
                         "resolution": family["resolution"],
                         "evidence": family["evidence"],
                     }
@@ -368,12 +417,46 @@ def build_tables():
                 if code_ruling["resolution"] is None:
                     refuse(concept, "open conflict: code meanings")
                     continue
+            if year in API_YEARS and (
+                check_spans is None or primary_spans != check_spans
+            ):
+                domain_checks.append(
+                    {
+                        "release": year,
+                        "concept": concept,
+                        "variable": name,
+                        "api": text_intervals(primary_spans),
+                        "dictionary": (
+                            None
+                            if check_spans is None
+                            else text_intervals(check_spans)
+                        ),
+                        "dictionary_verified": bool(
+                            entry is not None and entry["verified"]
+                        ),
+                        "admitted": text_intervals(admitted_spans),
+                    }
+                )
             missing = (
                 ("", ".")
                 if year <= 2021 and stored["dtype"] != "string"
                 else ("",)
             )
-            universe = (entry or {}).get("universe", "")
+            # A blank is a structural not-in-universe value, so it is
+            # refused for keys, weights and items asked of everyone.
+            allow_blank = (
+                concept not in selected["core_concepts"]
+                and concepts[concept][1] != "weight"
+                and " ".join(universe.split()).casefold()
+                not in UNIVERSAL_UNIVERSES
+            )
+            length = (
+                int(entry["length"])
+                if stored["dtype"] == "string"
+                and entry
+                and str(entry.get("length", "")).isdigit()
+                else 0
+            )
             definition = (
                 name,
                 label,
@@ -386,13 +469,11 @@ def build_tables():
                 check_source,
                 missing,
                 universe,
-                (
-                    f"{year}_dictionary_variables.json#{name}"
-                    if universe
-                    else ""
-                ),
+                universe_source,
                 stored["label"],
                 label_source,
+                allow_blank,
+                length,
             )
             releases[year][concept] = (intern(definition), source)
             effective[(year, concept)] = {
@@ -425,8 +506,16 @@ def build_tables():
                 ]
                 sources.update(rule["evidence"])
         replicates[year] = replicate_tables(year, concepts, intern, sources)
-    unruled = set(rulings["label_conflicts"]) - observed_label_conflicts
-    assert not unruled, f"rulings for conflicts not observed: {unruled}"
+    for section in ("label_conflicts", "suppression_conflicts"):
+        unused = set(rulings[section]) - observed[section]
+        assert not unused, f"{section} rulings never observed: {unused}"
+    expected_anomalies = {
+        (year, name)
+        for rule in rulings["universe_anomalies"]
+        for year in rule["releases"]
+        for name in rule["variables"]
+    }
+    assert observed["universe_anomalies"] == expected_anomalies
     notes = {
         year: {
             concept: tuple(
@@ -506,6 +595,8 @@ def replicate_tables(year, concepts, intern, sources):
                     "",
                     rw[name]["label"],
                     "replicate_dictionary",
+                    False,
+                    0,
                 )
             ),
             f"{rw_dictionary}+{rw_schema_file}#{name}",
@@ -538,6 +629,8 @@ def replicate_tables(year, concepts, intern, sources):
                     "",
                     rw[name]["label"],
                     "replicate_dictionary",
+                    False,
+                    0,
                 )
             ),
             f"{rw_dictionary}+{rw_schema_file}#{name}",
@@ -634,24 +727,27 @@ def main():
     original = REGISTRY.read_text()
     start, tail = original.split("# BEGIN GENERATED TABLES\n")
     _, end = tail.split("# END GENERATED TABLES")
-    generated = [
-        ("EVIDENCE_SHA256", tables["hashes"]),
-        ("_CONCEPTS", tables["concepts"]),
-        ("_DEFINITIONS", tables["definitions"]),
-        ("_RELEASES", tables["releases"]),
-        ("_REPLICATES", tables["replicates"]),
-        ("_USER_NOTES", tables["notes"]),
-        ("_NOTE_TABLE", tables["note_table"]),
-        ("_CORRECTED_ON", tables["corrections"]),
-    ]
+    payload = {
+        "EVIDENCE_SHA256": tables["hashes"],
+        "_CONCEPTS": tables["concepts"],
+        "_DEFINITIONS": tables["definitions"],
+        "_RELEASES": tables["releases"],
+        "_REPLICATES": tables["replicates"],
+        "_USER_NOTES": tables["notes"],
+        "_NOTE_TABLE": tables["note_table"],
+        "_CORRECTED_ON": tables["corrections"],
+    }
+    # One JSON string literal: black and ruff leave its contents alone, so
+    # regeneration never needs a formatter pass over megabytes of tables.
+    text = json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=True)
+    assert '"""' not in text and not text.endswith("\\")
     REGISTRY.write_text(
         start
         + "# BEGIN GENERATED TABLES\n"
-        + "\n\n".join(
-            f"{key} = {pformat(value, width=79, sort_dicts=True)}"
-            for key, value in generated
-        )
-        + "\n# END GENERATED TABLES"
+        + '_GENERATED = r"""\n'
+        + text
+        + '\n"""\n'
+        + "# END GENERATED TABLES"
         + end
     )
     write_json("refused_concepts.json", tables["refused"])

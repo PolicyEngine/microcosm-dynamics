@@ -18,6 +18,7 @@ import json
 import re
 import unicodedata
 from datetime import datetime, timedelta
+from decimal import Decimal
 from functools import cache
 from pathlib import Path
 from urllib.parse import urlparse
@@ -147,7 +148,14 @@ def test_registry_matches_own_release_metadata(year):
                 f"{year}_dictionary_variables.json#{spec.name}"
             )
             assert raw["verified"]
-            assert spec.label in (raw["dictionary_label"], stored["label"])
+            ruling = _json("source_rulings.json")["label_conflicts"].get(
+                f"{year}/{spec.name}", {}
+            )
+            assert spec.label == (
+                ruling["label"]
+                if ruling.get("resolution") == "user_note"
+                else raw["dictionary_label"]
+            )
         assert "Suppressed" not in (spec.label, stored["label"])
         assert spec.predicate_type == raw["predicateType"]
         assert spec.items == tuple(
@@ -158,20 +166,34 @@ def test_registry_matches_own_release_metadata(year):
         assert spec.schema_label == stored["label"]
         assert spec.ownership == selected[concept]["ownership_level"]
         assert spec.period == selected[concept]["period"]
+        printed = (entry or {}).get("universe", "")
         assert spec.allow_blank == (
-            concept not in registry.CORE_CONCEPTS and spec.period != "weight"
+            concept not in registry.CORE_CONCEPTS
+            and spec.period != "weight"
+            and " ".join(printed.split()).casefold()
+            not in ("all persons", "all households")
         )
+        if spec.storage_type == "string":
+            assert spec.length == int(entry["length"])
+            assert all(
+                len(low) == len(high) == spec.length
+                for low, high, _ in (*spec.ranges, *spec.check_ranges)
+            )
         assert spec.structural_missing == (
             ("", ".")
             if year <= 2021 and spec.storage_type != "string"
             else ("",)
         )
-        # Universes and second domains come from the same release only.
-        assert spec.universe == (entry or {}).get("universe", "")
-        if spec.universe:
-            assert spec.universe_source == (
-                f"{year}_dictionary_variables.json#{spec.name}"
-            )
+        # Universes and second domains come from the same release only,
+        # unless a cited ruling replaces or clears a misprinted universe.
+        if spec.universe_source.startswith("source_rulings.json#"):
+            assert spec.universe != printed
+        else:
+            assert spec.universe == printed
+            if spec.universe:
+                assert spec.universe_source == (
+                    f"{year}_dictionary_variables.json#{spec.name}"
+                )
         if year in API_YEARS and entry and entry["verified"]:
             assert spec.check_source == (
                 f"{year}_dictionary_variables.json#{spec.name}"
@@ -228,11 +250,40 @@ def test_schema_labels_agree_with_dictionary_or_are_ruled(year):
         if len(schema) >= 255 and _key(dictionary).startswith(_key(schema)):
             continue
         ruling = rulings[f"{year}/{spec.name}"]
-        assert ruling["resolution"] in ("dictionary", "schema")
         assert (year, spec.name) in checks
-        assert spec.label == (
-            dictionary if ruling["resolution"] == "dictionary" else schema
+        assert (
+            spec.label
+            == {
+                "dictionary": dictionary,
+                "schema": schema,
+                "user_note": ruling.get("label"),
+            }[ruling["resolution"]]
         )
+
+
+def _api_key(text):
+    """Label key that reads the API's "equals" and "or" as "=" and "/"."""
+    return _key(
+        unicodedata.normalize("NFKC", text)
+        .replace("=", " equals ")
+        .replace("/", " or ")
+    )
+
+
+@pytest.mark.parametrize("year", API_YEARS)
+def test_api_labels_agree_with_the_release_dictionary(year):
+    for spec in registry.income_variables(year).values():
+        entry = _dictionary(year).get(spec.name)
+        if not entry:
+            continue
+        api, printed = _api_key(spec.label), _api_key(
+            entry["dictionary_label"]
+        )
+        short, full = sorted((api, printed), key=len)
+        assert api == printed or (
+            min(len(spec.label), len(entry["dictionary_label"])) >= 255
+            and full.startswith(short)
+        ), (year, spec.name)
 
 
 @pytest.mark.parametrize("year", YEARS)
@@ -261,8 +312,19 @@ def test_admission_and_refusal_follow_the_evidence(year):
         elif reason == "dictionary domain unverified":
             assert year < 2022
             assert not _dictionary(year).get(name, {}).get("verified")
-        elif reason == "open conflict: schema and dictionary labels":
+        elif reason in (
+            "open conflict: schema label",
+            "open conflict: dictionary label",
+        ):
             assert rulings["label_conflicts"][f"{year}/{name}"][
+                "resolution"
+            ] is (None)
+        elif reason == "open conflict: suppressed in one source":
+            assert crosswalk[concept] is None
+            stated = [label for label in labels if label]
+            assert "Suppressed" in stated
+            assert any(label != "Suppressed" for label in stated)
+            assert rulings["suppression_conflicts"][f"{year}/{name}"][
                 "resolution"
             ] is (None)
         elif reason == "open conflict: code meanings":
@@ -315,6 +377,19 @@ def test_rulings_cite_committed_evidence_that_says_so():
         "for respondents with a spouse or civil union partner in the "
         "household" in real_estate
     )
+    for key in ("2018/EJSOWNRE", "2018/EJSOWNRP"):
+        ruling = rulings["label_conflicts"][key]
+        assert ruling["resolution"] == "user_note"
+        assert ruling["label"] in real_estate
+        assert ruling["universe"] in real_estate
+    for anomaly in rulings["universe_anomalies"]:
+        for year in anomaly["releases"]:
+            for name in anomaly["variables"]:
+                assert _dictionary(year)[name]["universe"] == (
+                    anomaly["printed"]
+                )
+    assert _dictionary(2021)["ERETANY"]["universe"].endswith("EPENANY=2)")
+    assert _dictionary(2023)["TRET3AMT"]["universe"] == "ERETTYP3YN = 1"
     ssi = _note_text("user_notes/2018/2018-reason-ssi-recpt-answ-catg.html.gz")
     assert "1. Blind or disabled 2. Aged (65 and over) 3. Other" in ssi
     assert "1. Aged (65 and over) 2. Blind or disabled 3. Other" in ssi
@@ -367,8 +442,15 @@ def test_2020_joint_family_matches_the_note_and_spares_other_years():
         assert reason not in refused[str(year)].values()
 
 
+def _inside(value, items, ranges):
+    return value in {Decimal(code) for code in items} or any(
+        Decimal(low) <= value <= Decimal(high) for low, high in ranges
+    )
+
+
 @pytest.mark.parametrize("year", API_YEARS)
 def test_domain_checks_record_every_api_dictionary_difference(year):
+    """Probe every boundary of both sources independently of the generator."""
     recorded = {
         row["concept"]: row
         for row in _json("domain_checks.json")
@@ -377,12 +459,59 @@ def test_domain_checks_record_every_api_dictionary_difference(year):
     for concept, spec in registry.income_variables(year).items():
         entry = _dictionary(year).get(spec.name)
         if not entry or not entry["verified"]:
-            assert concept in recorded
             assert recorded[concept]["dictionary"] is None
+            continue
+        api = _api(year)[spec.name].get("values", {})
+        api_items = [
+            code
+            for code, label in api.get("item", {}).items()
+            if label not in MISSING_LABELS
+        ]
+        api_ranges = [(r["min"], r["max"]) for r in api.get("range", [])]
+        printed = entry["values"]
+        dict_items = list(printed["item"])
+        dict_ranges = [(r["min"], r["max"]) for r in printed.get("range", [])]
+        # Integer variables admit only integers, so half steps would report
+        # differences no value can exhibit.
+        integral = spec.storage_type != "float" and spec.period != "weight"
+        deltas = (Decimal(-1), Decimal(0), Decimal(1)) + (
+            () if integral else (Decimal("-0.5"), Decimal("0.5"))
+        )
+        probes = {
+            Decimal(point) + delta
+            for point in (
+                *api_items,
+                *dict_items,
+                *(end for pair in (*api_ranges, *dict_ranges) for end in pair),
+            )
+            for delta in deltas
+        }
+        differs = any(
+            _inside(value, api_items, api_ranges)
+            != _inside(value, dict_items, dict_ranges)
+            for value in probes
+        )
+        assert (concept in recorded) == differs, (year, concept)
     for name in ("GHLFSAM", "GVARSTR", "SHHADID", "SSUID"):
         (row,) = [r for r in recorded.values() if r["variable"] == name]
         assert row["api"] == []
         assert row["admitted"] == row["dictionary"]
+
+
+def test_record_levels_match_period_and_ownership():
+    """Census's 2022 record levels against each concept's tags."""
+    for concept, spec in registry.income_variables(2022).items():
+        level = _dictionary(2022)[spec.name]["record_level"]
+        if level == "Person-month":
+            assert spec.period in ("monthly", "weight", "interview"), concept
+            if spec.period == "interview":
+                assert spec.name == "EHRESIDENCID"
+        elif level == "Household":
+            assert spec.ownership in ("household", "sample_unit"), concept
+        else:
+            assert level == "Person"
+            assert spec.ownership not in ("household",), concept
+            assert spec.period != "monthly", concept
 
 
 @pytest.mark.parametrize("year", YEARS)

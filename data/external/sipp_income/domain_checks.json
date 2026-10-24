@@ -389,44 +389,6 @@
   },
   {
     "release": 2022,
-    "concept": "retirement_main_employee_contribution",
-    "variable": "TSCNTAMT1",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2022,
-    "concept": "retirement_second_employee_contribution",
-    "variable": "TSCNTAMT2",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2022,
     "concept": "sample_unit_id",
     "variable": "SSUID",
     "api": [],
@@ -919,44 +881,6 @@
   },
   {
     "release": 2023,
-    "concept": "retirement_main_employee_contribution",
-    "variable": "TSCNTAMT1",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2023,
-    "concept": "retirement_second_employee_contribution",
-    "variable": "TSCNTAMT2",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2023,
     "concept": "sample_unit_id",
     "variable": "SSUID",
     "api": [],
@@ -1401,44 +1325,6 @@
   },
   {
     "release": 2024,
-    "concept": "retirement_main_employee_contribution",
-    "variable": "TSCNTAMT1",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2024,
-    "concept": "retirement_second_employee_contribution",
-    "variable": "TSCNTAMT2",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2024,
     "concept": "sample_unit_id",
     "variable": "SSUID",
     "api": [],
@@ -1878,44 +1764,6 @@
       [
         "101",
         "499"
-      ]
-    ]
-  },
-  {
-    "release": 2025,
-    "concept": "retirement_main_employee_contribution",
-    "variable": "TSCNTAMT1",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
-      ]
-    ]
-  },
-  {
-    "release": 2025,
-    "concept": "retirement_second_employee_contribution",
-    "variable": "TSCNTAMT2",
-    "api": [
-      [
-        "0",
-        "9999999"
-      ]
-    ],
-    "dictionary": null,
-    "dictionary_verified": false,
-    "admitted": [
-      [
-        "0",
-        "9999999"
       ]
     ]
   },

@@ -128,14 +128,16 @@ def parse_page(page, year):
                 )
                 current = None
                 continue
+        # Codes may be comma-grouped ("9,999,999. Not possible to ...").
         pattern = (
-            r"^\s*(-?\d+(?:\.\d+)?)\s{2,}(\S.*)$"
+            r"^\s*(-?[\d,]+(?:\.\d+)?)\s{2,}(\S.*)$"
             if year <= 2020
-            else r"^\s*(-?\d+(?:\.\d+)?)\.\s+(\S.*)$"
+            else r"^\s*(-?[\d,]+(?:\.\d+)?)\.\s+(\S.*)$"
         )
         m = re.match(pattern, line)
-        if m:
-            current = m.group(1)
+        code = numeric(m.group(1)) if m else None
+        if code is not None:
+            current = code
             values["item"][current] = m.group(2).strip()
         elif re.match(r"^\s*-?\$?\d", line):
             unparsed.append(line.strip())
@@ -185,6 +187,19 @@ def derive(year):
                 joined = without_footer + "\n" + "\n".join(continuation)
                 joined += "\n" + str(parsed[3])
                 parsed = parse_page(joined, year)
+        elif (
+            pdf_page < len(pages) and parse_page(pages[pdf_page], year) is None
+        ):
+            # 2018-2020 pages are not joined: an entry whose value list runs
+            # onto a following page without a variable header is incomplete.
+            first = next(
+                (s.strip() for s in pages[pdf_page].splitlines() if s.strip()),
+                "",
+            )
+            if re.match(r"^-?\$?\d", first):
+                parsed[1]["Unparsed values"].append(
+                    "continuation page not joined"
+                )
         name, fields, values, printed_page = parsed
         if name not in schema:
             rejected.append({"name": name, "reason": "Not in storage schema"})
