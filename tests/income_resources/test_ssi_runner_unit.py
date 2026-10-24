@@ -95,6 +95,47 @@ def test_dependency_version_is_part_of_pin():
         )
 
 
+_RECORD_PATH = st.text(
+    alphabet="abcdefghijklmnopqrstuvwxyz_/.", min_size=1, max_size=30
+).filter(lambda path: not path.startswith("../"))
+_RECORD_LINE = st.builds(
+    lambda path, digest: f"{path},sha256={digest},{len(digest)}",
+    _RECORD_PATH,
+    st.text(alphabet="ABCDEFabcdef0123456789", min_size=4, max_size=12),
+)
+_OUTSIDE_LINE = st.builds(
+    lambda name, shebang: f"../../../bin/{name},sha256={shebang},1",
+    st.text(alphabet="abcdefghijklmnopqrstuvwxyz-", min_size=1, max_size=12),
+    st.text(alphabet="ABCDEFabcdef0123456789", min_size=4, max_size=12),
+)
+
+
+@given(
+    st.lists(_RECORD_LINE, min_size=1, max_size=6),
+    st.lists(_OUTSIDE_LINE, max_size=3),
+    st.lists(_OUTSIDE_LINE, max_size=3),
+)
+def test_record_digest_ignores_install_location(inside, here, there):
+    # Console scripts outside site-packages carry the interpreter's path.
+    from populace_dynamics.income_resources.ssi import _child
+
+    assert _child.record_digest("\n".join([*here, *inside])) == (
+        _child.record_digest("\n".join([*inside, *there]))
+    )
+
+
+@given(st.lists(_RECORD_LINE, min_size=1, max_size=6), st.data())
+def test_record_digest_binds_package_files(inside, data):
+    from populace_dynamics.income_resources.ssi import _child
+
+    index = data.draw(st.integers(0, len(inside) - 1))
+    changed = [*inside]
+    changed[index] = changed[index] + "0"
+    assert _child.record_digest("\n".join(inside)) != (
+        _child.record_digest("\n".join(changed))
+    )
+
+
 @pytest.mark.parametrize("period", ["2026-01", True, "today"])
 def test_unsupported_period_is_counted(invented_case, period):
     runner = SSIRunner("/INVENTED_ABSENT_INTERPRETER")

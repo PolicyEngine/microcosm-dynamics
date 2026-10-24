@@ -1,7 +1,9 @@
 """Release identity: mismatched versions never reach the rules engine.
 
 Wheel SHA-256s record installed artifacts; RECORD digests additionally bind
-the installation inspected in the child to this certified installation.
+the installation inspected in the child to this certified installation. The
+digests cover RECORD entries inside site-packages only, so the same release
+installed at another path matches.
 """
 
 from __future__ import annotations

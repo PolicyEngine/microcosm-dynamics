@@ -11,10 +11,21 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.metadata as metadata
+import importlib.util
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import urlopen
+
+# The child worker is stdlib-only, so the isolated interpreter can load its
+# RECORD digest without the project package.
+_CHILD = (
+    Path(__file__).resolve().parents[2]
+    / "src/populace_dynamics/income_resources/ssi/_child.py"
+)
+_spec = importlib.util.spec_from_file_location("_ssi_child", _CHILD)
+_child = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_child)
 
 
 def main():
@@ -85,9 +96,9 @@ def main():
         "versions": versions,
         "wheels": wheels,
         "record_sha256": {
-            name: hashlib.sha256(
-                metadata.distribution(name).read_text("RECORD").encode()
-            ).hexdigest()
+            name: _child.record_digest(
+                metadata.distribution(name).read_text("RECORD")
+            )
             for name in versions
         },
         "installed_distributions": dict(

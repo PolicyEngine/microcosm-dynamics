@@ -25,6 +25,21 @@ HOUSEHOLD_ARGUMENTS = (
 )
 
 
+def record_digest(record):
+    """SHA-256 of a distribution's RECORD entries inside site-packages.
+
+    Entries outside it (``../`` paths, such as console scripts) embed the
+    interpreter's own path in their shebangs, so they differ between
+    otherwise identical installations and are left out.
+    """
+    lines = [
+        line
+        for line in record.splitlines()
+        if not line.lstrip('"').startswith("../")
+    ]
+    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+
+
 def compatible_batch(cases):
     """Combine only cases whose policy and annual measurement are identical."""
     keys = ("year", "reform", "spm", "extra_variables")
@@ -59,8 +74,7 @@ def main():
             dist = metadata.distribution(name)
         except metadata.PackageNotFoundError:
             continue
-        record = dist.read_text("RECORD") or ""
-        digest = hashlib.sha256(record.encode()).hexdigest()
+        digest = record_digest(dist.read_text("RECORD") or "")
         if digest != pin["record_sha256"][name]:
             errors.append(f"{name}: installation RECORD differs from pin")
             continue

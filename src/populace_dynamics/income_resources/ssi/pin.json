@@ -93,9 +93,9 @@
   },
   "latest_checked_utc": "2026-10-24T13:05:49.718277+00:00",
   "record_sha256": {
-    "policyengine": "c73173ad7eb016333e00f5bbac61bf269e202629a2ea84f06f812cef6222fa8c",
-    "policyengine-core": "1002c65b58c4d1d18e64a9acf584db3afaf37a2f1f137dfe0567d9c240823157",
-    "policyengine-us": "b6d8383a3717e598e229b2531237a03d12c95437e4143ebf726b7d131cbc6edf"
+    "policyengine": "8feb74acb0f191fb9027dd8af9be5bfb55176d65ee4acd6217cdbcdc0417fec4",
+    "policyengine-core": "f656481e240b67b0f0092a6cecd4d995bb6ddfdd86e8eee2ee2bbeb60bb49d93",
+    "policyengine-us": "34e87f836d26a709cabccfabeb5c9c6744b2976e1e3754ede3338a845338fa34"
   },
   "schema_version": 1,
   "versions": {
