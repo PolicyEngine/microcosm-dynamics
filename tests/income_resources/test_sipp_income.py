@@ -584,11 +584,15 @@ def test_design_codes_come_from_the_dictionary_when_the_api_has_none(
     # Census stores both as strings; the reader keeps the token verbatim.
     assert spec.storage_type == "string"
     for value in inside:
-        out = _read_one(tmp_path, year, concept, value)
-        assert out[concept].tolist() == [str(value)]
+        token = str(value).zfill(spec.length)
+        out = _read_one(tmp_path, year, concept, token)
+        assert out[concept].tolist() == [token]
+        if token != str(value):
+            with pytest.raises(ValueError, match=spec.name):
+                _read_one(tmp_path, year, concept, str(value))
     for value in outside:
         with pytest.raises(ValueError, match=spec.name):
-            _read_one(tmp_path, year, concept, value)
+            _read_one(tmp_path, year, concept, str(value).zfill(spec.length))
 
 
 def test_value_one_source_admits_but_the_other_does_not_refuses(tmp_path):
@@ -682,7 +686,10 @@ def test_ssi_begin_reason_is_refused_where_code_meanings_conflict():
 
 def test_label_conflicts_follow_their_rulings():
     spouse = income_variables(2018)["other_real_estate_joint_spouse_owned"]
-    assert spouse.label_source == "dictionary"
+    assert spouse.label_source == "user_note"
+    assert spouse.universe_source == (
+        "source_rulings.json#label_conflicts/2018/EJSOWNRE"
+    )
     assert "with a spouse or civil union partner" in spouse.label
     assert "without a spouse" in spouse.schema_label
     for concept in (

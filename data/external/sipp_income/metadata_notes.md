@@ -46,7 +46,7 @@ files alone.
   must satisfy both, except the API's own missing codes (`NA-Missing`,
   `NA or Missing`). Where the API lists only a missing code (`GHLFSAM`,
   `GVARSTR`, `SHHADID`, `SSUID`, and `PNUM` in 2022), the dictionary's domain
-  governs. `domain_checks.json` lists all 72 concept-years where the two
+  governs. `domain_checks.json` lists all 64 concept-years where the two
   sources differ.
 - **2018-2021.** The release dictionary verifies label and domain; the
   storage schema (`pu{year}_schema.json`, read by Census's own input example)
