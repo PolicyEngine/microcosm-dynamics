@@ -10,8 +10,11 @@ The binding check records d658's authorization rather than applying A7's
 ratification-wording test. This build authorizes no population run.
 
 The local build instructions are the cleared
-`EV/acola-builder-brief-cleared-20260930.md` and
-`EV/acola-build-20260930/stage2-brief-20261024.md`. EV denotes
+`EV/acola-builder-brief-cleared-20260930.md`,
+`EV/acola-build-20260930/stage2-brief-20261024.md` with its erratum
+`EV/acola-build-20260930/stage2-brief-20261024.erratum.md`, and, for
+this blind replay of the stage-2 builder's tree,
+`EV/acola-build-20260930/f0-blind-replay-brief-20261024.md`. EV denotes
 `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909`.
 PSID use follows the project's data-access record. Tests use invented data.
 
@@ -51,6 +54,7 @@ post-review exclusions and its exact-tuple and reachability tests.
 ## Mechanism preservation evidence
 
 The requested `dd222b9..origin/master` check at master `2195258c`
+(repeated at `f8ffc7d9`, with the same result)
 found only two added files among the mechanism paths:
 `engine/forward_earnings_s1_v1.py` (297 lines) and
 `ss/statutory_delayed_credit.py` (125 lines). No existing file changed.
@@ -70,14 +74,19 @@ Its adjacent provenance file pins the script, all imported historical
 source files and exact commands. Any future difference raises
 `REG18_MECHANISM_DRIFT` with row/person identifiers.
 
-The build environment denied writes to `.git`, including creation of the
-required historical worktree. The historical execution therefore used a
-clearly labelled source export of 117 actually imported source files at
-`dd222b9af926c773a0f92732e2d08be507793378`, excluding all data, runs and
-Track B source. The export was removed after comparison. This establishes
-working-source equality; the required worktree procedure and a comparison
-at the final committed build SHA remain release prerequisites. The golden
-was not regenerated from the current source to resolve a difference.
+The registered side ran in a temporary `git worktree` of
+`dd222b9af926c773a0f92732e2d08be507793378`, placed inside the clone and
+removed afterwards, with the clone's venv and `PYTHONPATH` set to that
+worktree's `src`. Every imported `populace_dynamics` module (117 files)
+resolved inside the worktree. The build side ran at commit `a3806e56`
+with `PYTHONPATH` set to the clone's `src`, importing the same 117 files,
+whose SHA-256 is unchanged between the two commits. Both runs wrote
+output byte-identical to the golden file. The provenance file records
+the commands, both commits, the script and output hashes, the imported
+files and the stage-2 builder's earlier export record. That builder's
+sandbox could not create the worktree, so it had run the registered side
+on a `git archive` export of the same 117 files, with the same result.
+The golden was never regenerated from the current source.
 
 ## Arithmetic and invariants
 
@@ -219,11 +228,17 @@ the population run, together with the registered commit and exact command.
     if a record asserts an OASI/DI split, its raw fields are retained with
     an explicit schema limitation rather than guessed field mappings.
 17. Mechanism L reaches `claiming.benefit_factor` at
-    `src/populace_dynamics/cola_track_a/benefits.py:345`. Its call to the
-    sealed oracle retains the legacy 48-month delayed-credit cap for
-    births 1917–1942, including late-entitled linked worker records.
-    R0's population can retain these people through 2030. The statutory
-    window is longer for those cohorts. Registration 18 keeps L and
+    `src/populace_dynamics/cola_track_a/benefits.py:345` (the same line at
+    `dd222b9`) for every retirement claimant's worker record. Its call to
+    the sealed oracle retains the legacy 48-month delayed-credit cap for
+    births 1917–1942. The cap also reaches an aged widow(er)'s benefit
+    through the deceased worker's record, whose factor enters
+    `widow_benefit_path` as `deceased_claim_age_factor`. A registered run
+    carries the cap because it refuses parameters that differ from the
+    committed statutory capture, which sets 48 months. R0's population
+    can retain these people through 2030. The statutory window,
+    `840 - FRA` months, is longer for those cohorts: 60 months at FRA 65,
+    falling to 50 for births in 1942. Registration 18 keeps L and
     discloses the cap rather than changing the registered mechanism.
     See `docs/errata/2026-10-11-delayed-credit-window.md` and
     `docs/design/d1408_delayed_credit_diagnostic.md`, decision d1408.
