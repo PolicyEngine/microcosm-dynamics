@@ -1104,7 +1104,7 @@
           "column": "Period q",
           "vintage": "2026",
           "captured_byte_hash": "to capture",
-          "status": "available",
+          "status": "validation_only",
           "role": "mortality_lane_target_no_op6_selection"
         }
       ],

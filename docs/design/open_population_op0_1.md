@@ -440,7 +440,7 @@ Evidence for this record:
 - nchs: NCHS 2024 derived single-age baseline shape, exposed; bridge only, not published OACT age schedule.
 
 - Births/ASFR by maternal age, gross positive immigration and emigration category, population stocks by age/sex; nativity only where publisher releases it.
-- OACT period death probabilities recorded as mortality-lane target, never OP6 selection target. V.A3/V.A4 and single-age population are validation-only unless a separately reviewed purpose is approved.
+- OACT period death probabilities are listed as `validation_only`: under ruling d1922 they are the mortality lane's target, and OP6 selects nothing against them (design §4, revision 13). V.A3/V.A4 and single-age population are validation-only unless a separately reviewed purpose is approved.
 
 Population: Named resident/SSA-area roster after source-specific universe bridges; each selected event unit preserves fixed trajectory weights and relational consistency.
 
@@ -529,7 +529,7 @@ Procedure:
 | tr_population / oact | TR2026 V.A3 | July 1 Y; under20/20–64/65+ | Population and dependency ratios; no nativity | 2026 | to capture | validation_only / reference |
 | tr_single_age_population / oact | CY population catalog | Single age×sex×marital status×year | Jan 1/July 1/Dec 31 population; actual header to capture | 2026 catalog vintage to verify | to capture | validation_only / reference |
 | tr_mortality_summary / oact | TR2026 V.A4 | Year×sex | Life-expectancy summary, exact columns to capture | 2026 | to capture | validation_only / reference |
-| mortality_lane_q / oact | OACT period death probabilities / CY catalog | Single age×sex×year | Period q | 2026 | to capture | available / mortality_lane_target_no_op6_selection |
+| mortality_lane_q / oact | OACT period death probabilities / CY catalog | Single age×sex×year | Period q | 2026 | to capture | validation_only / mortality_lane_target_no_op6_selection |
 
 | Component | Fitted or captured support | Rule outside support — proposal unless stated |
 | --- | --- | --- |
