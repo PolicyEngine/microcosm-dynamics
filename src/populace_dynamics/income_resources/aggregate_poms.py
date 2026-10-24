@@ -16,8 +16,13 @@ Invariants
 Only federally administered optional supplement tables are represented.
 State-administered programs described in prose are cited by the capture but
 are not silently represented as a complete state parameter series. The
-State OS code identifies the living arrangement defined in the section's
-associated code-definition table (``definitions_table_index`` in selectors).
+State OS code identifies the living arrangement defined in the State's
+code-definition tables (``definitions_table_indexes`` in selectors). A State's
+definitions may span more than one physical table; the reader merges them and
+refuses a code whose tables define it differently. A jointly published code
+("C/H" in a definition table, "A or B" in a chart) names each single code it
+lists. A chart code that no definition table defines stays undefined and is
+recorded in ``poms_open_questions.json``; no definition is inferred for it.
 """
 
 from __future__ import annotations
@@ -120,7 +125,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
     claimant = None
     effective_text = ""
     dates: tuple[str, ...] = ()
-    definitions = None
+    definitions: list[int] = []
     table_indexes = {id(table): i for i, table in enumerate(tables)}
     contexts: list[dict[str, Any]] = []
 
@@ -136,7 +141,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 tuple(_blank(c.text) for c in row) == ("Code", "Definition")
                 for row in grid[:3]
             ):
-                definitions = index
+                definitions.append(index)
             if len(first) >= 5 and first[0] == "Federal Code":
                 if state is None or claimant is None:
                     raise TableStructureError(
@@ -148,7 +153,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         "state": state,
                         "claimant_type": claimant,
                         "header_labels": list(first),
-                        "definitions_table_index": definitions,
+                        "definitions_table_indexes": list(definitions),
                         "effective_from": (
                             dates[0]
                             if len(dates) == 1
@@ -189,7 +194,10 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 if re.fullmatch(
                     r"(?:[A-Z]\.\s*)?"
                     r"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|\s*-\s*)"
-                    r"|Procedure\s*-\s*)?" + re.escape(name),
+                    r"|Procedure\s*-\s*)?" + re.escape(name)
+                    # The 2009 and 2010 sections append a postal code, as in
+                    # "New Jersey (NJ)".
+                    + r"(?:\s*\([A-Z]{2}\))?",
                     text,
                     re.IGNORECASE,
                 ):
@@ -198,7 +206,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         claimant = None
                         effective_text = ""
                         dates = ()
-                        definitions = None
+                        definitions = []
                     break
             for name in _STATES:
                 if re.match(re.escape(name) + r"\s+Effective\b", text, re.I):
@@ -369,13 +377,47 @@ def _payment_rows(table: ET.Element) -> tuple[tuple[CellToken, ...], ...]:
 def poms_living_arrangements(
     spec: TableSpec, payload: bytes
 ) -> dict[str, str]:
-    """Return cited State OS code definitions from the same verified section."""
+    """Return cited State OS code definitions from the same verified section.
+
+    A State's definitions may span several physical tables. Each table is
+    read in full and the tables are merged; a code two tables define
+    differently raises rather than choosing either definition. A row that
+    defines codes jointly, such as "C/H", defines each code it names, and a
+    full-width note row defines no code.
+    """
     verify_payload(spec, payload)
     _, tables = _document(payload)
-    index = spec.selector.get("definitions_table_index")
-    if index is None:
+    indexes = spec.selector.get("definitions_table_indexes")
+    if not indexes:
         raise TableStructureError("POMS definition table is not identified")
-    grid = expand_html_table(tables[index])
+    merged: dict[str, str] = {}
+    for index in indexes:
+        for published, definition in _definitions_table(tables[index]).items():
+            for code in poms_code_alternatives(published):
+                if merged.get(code, definition) != definition:
+                    raise TableStructureError(
+                        "POMS living-arrangement code has conflicting "
+                        "definitions"
+                    )
+                merged[code] = definition
+    return merged
+
+
+def poms_code_alternatives(code: str) -> tuple[str, ...]:
+    """Return the single State OS codes that a published code names.
+
+    POMS writes some codes jointly: a definition row "C/H" defines both C
+    and H, and a chart row "A or B" pays either code the same amount. Any
+    other code, joint or not, is returned unchanged.
+    """
+    parts = tuple(re.split(r"\s*/\s*|\s+or\s+", code.strip()))
+    if len(parts) > 1 and all(re.fullmatch(r"[A-Z]", part) for part in parts):
+        return parts
+    return (code,)
+
+
+def _definitions_table(table: ET.Element) -> dict[str, str]:
+    grid = expand_html_table(table)
     header_index = next(
         (
             index
@@ -388,26 +430,24 @@ def poms_living_arrangements(
         raise TableStructureError("POMS code definition headers differ")
     definitions = {}
     previous = None
-    physical_rows = list(tables[index].iter("tr"))
+    physical_rows = list(table.iter("tr"))
     for row_index, row in enumerate(
         grid[header_index + 1 :], header_index + 1
     ):
         code = _blank(row[0].text)
         definition = _blank(row[1].text)
+        cells = [
+            cell
+            for cell in physical_rows[row_index]
+            if cell.tag in {"td", "th"}
+        ]
+        if len(cells) == 1 and int(cells[0].get("colspan", "1")) >= 2:
+            # A full-width row is a note on the table, not a code.
+            continue
         if not code and previous:
             definitions[previous] += " " + definition
             continue
-        if (
-            code == previous
-            and len(
-                [
-                    cell
-                    for cell in physical_rows[row_index]
-                    if cell.tag in {"td", "th"}
-                ]
-            )
-            == 1
-        ):
+        if code == previous and len(cells) == 1:
             definitions[previous] += " " + definition
             continue
         if not code and not definition:

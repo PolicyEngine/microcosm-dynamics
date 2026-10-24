@@ -12,5 +12,108 @@
       "source_date_1": "1998-08-01",
       "source_date_2": "1999-01-01"
     }
+  },
+  {
+    "table": "poms_si_01415_2006_iowa_individual_t14",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2006_iowa_couple_t15",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2007_iowa_individual_t14",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2007_iowa_couple_t15",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2008_iowa_individual_t14",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2008_iowa_couple_t15",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2008_pennsylvania_couple_t36",
+    "undefined_living_arrangement_codes": [
+      "A",
+      "B"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2009_iowa_individual_t18",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2009_iowa_couple_t19",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2009_pennsylvania_couple_t40",
+    "undefined_living_arrangement_codes": [
+      "A",
+      "B"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2010_iowa_individual_t20",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2010_iowa_couple_t21",
+    "undefined_living_arrangement_codes": [
+      "C",
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2010_pennsylvania_couple_t42",
+    "undefined_living_arrangement_codes": [
+      "A",
+      "B"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2011_iowa_individual_t16",
+    "undefined_living_arrangement_codes": [
+      "D"
+    ]
+  },
+  {
+    "table": "poms_si_01415_2011_iowa_couple_t17",
+    "undefined_living_arrangement_codes": [
+      "D"
+    ]
   }
 ]

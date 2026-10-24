@@ -1,5 +1,6 @@
 """Invented HTML only; no public or person data supply these fixtures."""
 
+import string
 from dataclasses import replace
 from decimal import Decimal
 from hashlib import sha256
@@ -12,6 +13,7 @@ from populace_dynamics.income_resources.aggregate_poms import (
     _payment_rows,
     describe_poms_tables,
     parse_poms,
+    poms_code_alternatives,
     poms_living_arrangements,
 )
 from populace_dynamics.income_resources.aggregate_tables import (
@@ -39,7 +41,11 @@ INVENTED_PREFIX = (
 
 def invented_spec(rows: str):
     payload = (INVENTED_PREFIX + INVENTED_HEADER + rows + "</table>").encode()
-    selector = describe_poms_tables(payload)[0]
+    return invented_spec_for(payload)
+
+
+def invented_spec_for(payload: bytes, chart: int = 0):
+    selector = describe_poms_tables(payload)[chart]
     selector["nominal_year"] = 2030
     spec = TableSpec(
         identifier="INVENTED_POMS",
@@ -352,3 +358,169 @@ def test_invented_unrelated_program_prose_does_not_replace_chart_date():
     )
     selector = describe_poms_tables(payload)[0]
     assert selector["effective_from"] == "2030-01-01"
+
+
+INVENTED_CHART = (
+    "<p>Monthly payment levels effective January 1, 2030</p>"
+    "<h4>a. Individual payment levels for {state}</h4><table>"
+    + INVENTED_HEADER
+    + "<tr><td>A</td><td>A</td><td>All</td>"
+    "<td>100</td><td>10</td><td>110</td></tr></table>"
+)
+
+
+def invented_definitions(rows) -> str:
+    return (
+        "<table><tr><th>Code</th><th>Definition</th></tr>"
+        + "".join(
+            f"<tr><td>{code}</td><td>{definition}</td></tr>"
+            for code, definition in rows
+        )
+        + "</table>"
+    )
+
+
+def invented_section(state: str, groups, heading: str | None = None) -> str:
+    heading = heading or f"Description of supplements for {state}"
+    return (
+        f"<h3>{heading}</h3>"
+        + "".join(invented_definitions(group) for group in groups)
+        + INVENTED_CHART.format(state=state)
+    )
+
+
+def invented_payload(*sections: str) -> bytes:
+    return (
+        "<p>Effective Dates: 02/03/2040 - Present</p>" + "".join(sections)
+    ).encode()
+
+
+@settings(deadline=None, max_examples=60)
+@given(
+    st.lists(
+        st.sampled_from(string.ascii_uppercase),
+        min_size=1,
+        max_size=12,
+        unique=True,
+    ),
+    st.data(),
+)
+def test_invented_definitions_split_across_tables_keep_the_full_mapping(
+    codes, data
+):
+    """Splitting one State's definitions over tables loses no code."""
+    mapping = {
+        code: f"Invented arrangement {index}"
+        for index, code in enumerate(codes)
+    }
+    cuts = sorted(
+        data.draw(st.sets(st.integers(1, len(codes) - 1)))
+        if len(codes) > 1
+        else set()
+    )
+    bounds = [0, *cuts, len(codes)]
+    groups = [
+        [(code, mapping[code]) for code in codes[start:end]]
+        for start, end in zip(bounds, bounds[1:], strict=False)
+    ]
+    payload = invented_payload(invented_section("California", groups))
+    spec, payload = invented_spec_for(payload)
+    assert spec.selector["definitions_table_indexes"] == list(
+        range(len(groups))
+    )
+    assert poms_living_arrangements(spec, payload) == mapping
+
+
+@pytest.mark.parametrize("agrees", [True, False])
+def test_invented_cross_table_redefinition_merges_or_is_refused(agrees):
+    second = "Invented arrangement" if agrees else "Invented other arrangement"
+    payload = invented_payload(
+        invented_section(
+            "California",
+            [[("A", "Invented arrangement")], [("A", second)]],
+        )
+    )
+    spec, payload = invented_spec_for(payload)
+    if agrees:
+        assert poms_living_arrangements(spec, payload) == {
+            "A": "Invented arrangement"
+        }
+    else:
+        with pytest.raises(TableStructureError, match="conflicting"):
+            poms_living_arrangements(spec, payload)
+
+
+def test_invented_definitions_do_not_carry_into_the_next_state():
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        invented_section("Nevada", [[("B", "Invented second")]]),
+    )
+    first, payload = invented_spec_for(payload, 0)
+    second, payload = invented_spec_for(payload, 1)
+    assert first.selector["state"] == "California"
+    assert second.selector["state"] == "Nevada"
+    assert second.selector["definitions_table_indexes"] == [2]
+    assert poms_living_arrangements(second, payload) == {
+        "B": "Invented second"
+    }
+
+
+def test_invented_postal_code_heading_names_its_state():
+    """Regression: "New Jersey (NJ)" once left the prior State in place."""
+    payload = invented_payload(
+        invented_section("Nevada", [[("A", "Invented first")]]),
+        invented_section(
+            "New Jersey",
+            [[("B", "Invented second")]],
+            heading="K. Description of supplements - New Jersey (NJ)",
+        ),
+    )
+    spec, payload = invented_spec_for(payload, 1)
+    assert spec.selector["state"] == "New Jersey"
+    assert poms_living_arrangements(spec, payload) == {"B": "Invented second"}
+
+
+def test_invented_joint_definition_row_defines_each_named_code():
+    payload = invented_payload(
+        invented_section(
+            "California",
+            [[("A", "Invented first"), ("C/H", "Invented joint")]],
+        )
+    )
+    spec, payload = invented_spec_for(payload)
+    assert poms_living_arrangements(spec, payload) == {
+        "A": "Invented first",
+        "C": "Invented joint",
+        "H": "Invented joint",
+    }
+
+
+def test_invented_full_width_note_row_is_not_a_code():
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]])
+    ).replace(
+        b"</td></tr></table>",
+        b"</td></tr><tr><td colspan='2'>Invented note</td></tr></table>",
+        1,
+    )
+    spec, payload = invented_spec_for(payload)
+    assert poms_living_arrangements(spec, payload) == {"A": "Invented first"}
+
+
+@settings(deadline=None, max_examples=60)
+@given(
+    st.lists(
+        st.sampled_from(string.ascii_uppercase),
+        min_size=2,
+        max_size=4,
+        unique=True,
+    ),
+    st.sampled_from(["/", " / ", " or "]),
+)
+def test_invented_joint_codes_name_each_single_code(codes, separator):
+    assert poms_code_alternatives(separator.join(codes)) == tuple(codes)
+
+
+@pytest.mark.parametrize("code", ["A", "AB", "1/2", "A or BB", "Code A"])
+def test_invented_other_codes_are_returned_unchanged(code):
+    assert poms_code_alternatives(code) == (code,)
