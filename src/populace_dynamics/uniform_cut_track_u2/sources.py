@@ -151,6 +151,8 @@ __all__ = [
     "WEALTH_CONCEPTS",
     "DC_BALANCE_COLUMNS",
     "DC_CODE_DOMAINS",
+    "DC_PERSONS",
+    "DC_PLANS",
     "DcRoute",
     "FamilyUnitExclusion",
     "FieldSpec",
@@ -374,11 +376,12 @@ DC_ITEM_PLAN_TYPES: dict[str, int] = {"account": 5, "formula": 1, "dk": 8}
 #: the route inherited from U1; 2015-2023 admit account plans (P46 = 5)
 #: only, so a formula, combined, DK, refused or NA plan's account items
 #: are off-route, and an amount reached only through 2015's refused
-#: P62ACKPT branch is too (5b).  Where a ratified amendment and sections
-#: 3-15 differ the amendment governs (section 16b); section 15's own text
-#: keeps draft 3's wording until section 20 step 5 materializes the final
-#: parameter block.  ``tests/track_u2/test_u2_employer_dc.py`` holds this
-#: table equal to the fragment in section 16a.
+#: P62ACKPT branch is too (5b).  Section 20 step 5 materialized the
+#: fragment in section 15's block, which
+#: :func:`~populace_dynamics.uniform_cut_track_u2.rows.
+#: check_block_against_code` holds equal to this table;
+#: ``tests/track_u2/test_u2_employer_dc.py`` also holds it equal to the
+#: fragment in section 16a.
 DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
     2013: ("account", "formula", "dk"),
     2015: ("account",),
@@ -392,8 +395,10 @@ DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
 _SLOT_FLAG_CONCEPTS = frozenset({"wife_age"})
 _COUNTED_DISPOSITION = 3
 _EXCLUDED_IRA_DISPOSITION = 2
-_DC_PERSONS = ("head", "wife")
-_DC_PLANS = (1, 2)
+#: The employer-DC persons and previous-employer plans the reader walks
+#: (section 15 ``employer_dc.persons`` and ``previous_plans``).
+DC_PERSONS: tuple[str, ...] = ("head", "wife")
+DC_PLANS: tuple[int, ...] = (1, 2)
 _AGE_ACTUAL = (14, 120)
 _AGE_NA = 999
 _NO_SPOUSE = 0
@@ -1314,9 +1319,9 @@ def pension_field_specs(wave: int, gate: SourceGate) -> list[FieldSpec]:
     """Fixed-width specs of the employer-DC items (row U7)."""
 
     specs = []
-    for person in _DC_PERSONS:
+    for person in DC_PERSONS:
         names = [f"{person}_current_type", f"{person}_current_amount"]
-        for plan in _DC_PLANS:
+        for plan in DC_PLANS:
             names += [
                 f"{person}_prev{plan}_type",
                 f"{person}_prev{plan}_combo_disposition",
@@ -1818,7 +1823,7 @@ def employer_dc_balances(
         value = np.where(reported, amount, 0).astype(np.int64)
         return amount, value, reported, dk, amount == codes["top"]
 
-    for person in _DC_PERSONS:
+    for person in DC_PERSONS:
         amount, value, reported, dk, topped = decoded(
             f"{person}_current_amount"
         )
@@ -1829,7 +1834,7 @@ def employer_dc_balances(
         unreported += account & dk
         top += account & topped
         off_route += ~account & (amount != 0)
-        for plan in _DC_PLANS:
+        for plan in DC_PLANS:
             plan_type = raw[f"{person}_prev{plan}_type"].to_numpy(
                 dtype=np.int64
             )
