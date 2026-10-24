@@ -9,6 +9,7 @@ import sys
 from contextlib import contextmanager
 from itertools import combinations
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -674,25 +675,35 @@ def _own_strata(inputs):
     return people, labor, anchor, design
 
 
-def _release_panel(persons=60):
+def _release_panel(persons=60, *, b0_1_domain=True):
     """Persons in every wave, ages spread over the bands, some sharing a
-    household; large enough that the audit releases."""
-    return _own_strata(
-        _inputs(
-            [
-                _row(
-                    person,
-                    wave,
-                    20 + (person * 7) % 55 + wave - 2011,
-                    relationship=10 if person % 3 else 20,
-                    weight=1.0 + person % 4,
-                    interview=person if person % 3 else person - 1,
-                )
-                for person in range(1, persons + 1)
-                for wave in WAVES
-            ]
+    household; large enough that the audit releases.
+
+    B0.1's counts of this panel include small exact cells that are B0.2's
+    sets too (five persons under 25), so with them in the audit it rightly
+    withholds. Without a B0.1 domain (every 2011-wave labor row invalid),
+    B0.1 counts only the full anchor, and the panel releases."""
+    rows = [
+        _row(
+            person,
+            wave,
+            20 + (person * 7) % 55 + wave - 2011,
+            relationship=10 if person % 3 else 20,
+            weight=1.0 + person % 4,
+            interview=person if person % 3 else person - 1,
         )
-    )
+        for person in range(1, persons + 1)
+        for wave in WAVES
+    ]
+    invalid = ()
+    if not b0_1_domain:
+        interviews = {row["interview"] for row in rows} | {999_999}
+        invalid = [
+            (2011, interview, role)
+            for interview in interviews
+            for role in ("head", "spouse")
+        ]
+    return _own_strata(_inputs(rows, invalid=invalid))
 
 
 def _sensitive(audit):
@@ -1825,8 +1836,10 @@ def invented_main(tmp_path, monkeypatch):
 
 @pytest.fixture
 def released_main(tmp_path, monkeypatch):
-    """main() on a panel the audit releases."""
-    return _main_environment(tmp_path, monkeypatch, _release_panel())
+    """main() on a panel the audit releases with B0.1's counts in it."""
+    return _main_environment(
+        tmp_path, monkeypatch, _release_panel(b0_1_domain=False)
+    )
 
 
 def _main_environment(tmp_path, monkeypatch, inputs):
@@ -1857,13 +1870,8 @@ def _main_environment(tmp_path, monkeypatch, inputs):
     monkeypatch.setattr(
         script.psid2010, "record_files_read", record_files_read
     )
-    domain = script.structural_counts(*supplied[:-1])["rosters"]["R_B2"]
     baseline = tmp_path / "b01.json"
-    baseline.write_text(
-        json.dumps(
-            {"counts": {"domain_persons": domain["overall"]["persons"]}}
-        )
-    )
+    baseline.write_text(json.dumps(_b01_record(people, supplied[1])))
     monkeypatch.setattr(script, "B0_1_COUNTS", baseline)
     monkeypatch.setattr(script, "EVIDENCE_DIR", tmp_path)
     protocol = tmp_path / "protocol.md"
@@ -1905,6 +1913,12 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
     assert record["requested_label_allowlist"] == supplied[-1]
     raw_counts = script.structural_counts(*supplied[:-1])
     registry = script.disclosure_registry(*supplied[:-1])
+    script.register_b0_1(
+        registry,
+        script.b0_1_sets(*supplied[:2]),
+        json.loads(baseline.read_text())["counts"],
+    )
+    assert registry.prior
     coarsened, disclosure, local_audit = script.release_counts(
         raw_counts, registry
     )
@@ -1926,6 +1940,32 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
     assert record["geometry"]["age_convention"] == "collection_wave"
     assert record["geometry"]["lag_years"] == [2, 4]
     _assert_no_forbidden_output(record)
+
+
+def test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds(tmp_path, monkeypatch):
+    """B0.1 counts the plain release panel's domain persons under 25
+    exactly, as five, and that set is also B0.2's 1-24 band of R_FULL.
+    Through main() the release is withheld; the same panel releases when
+    B0.1's counts are left out of the audit."""
+    inputs = _release_panel()
+    _main_environment(tmp_path, monkeypatch, inputs)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    assert json.loads(out.read_text())["disclosure"]["status"] == "withheld"
+    people, labor, anchor, design = inputs
+    validity = _validity(labor)
+    earlier = b01.structural_counts(people, validity)
+    assert earlier["domain_by_anchor_wave_age"]["under_25"] == 5
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    band = ("rosters", "R_FULL", "by_age_band", "1_24", "persons")
+    under_25 = ("domain_by_anchor_wave_age", "under_25")
+    assert (
+        registry.sets[band][1]
+        == script.b0_1_sets(people, validity)[under_25][1]
+    )
+    counts = script.structural_counts(people, validity, anchor, design)
+    assert script.release_counts(counts, registry)[1]["status"] == "released"
 
 
 def test_main_allows_relative_local_copy_resolving_outside_repository(
@@ -2270,6 +2310,728 @@ def test_main_withheld_release_commits_provenance_and_status_only(
         target["result"] == "narrow" and 1 <= target["true_size"] <= 9
         for target in audit["targets"]
     )
+
+
+# --------------------------------------------------------------------------
+# The earlier release: B0.1's published counts as exact constraints
+# --------------------------------------------------------------------------
+B01_LEDGERS = (
+    "m6_qstar_train_only_selection_results.json",
+    "m6_rhostar_train_only_selection_results.json",
+)
+
+
+def _b01_record(people, validity, *, fit_input_rows=321_500):
+    """A B0.1 record as its script writes one: the structural counts, and
+    the ledger counts it copies, which repeat some of them."""
+    counts = b01.structural_counts(people, validity)
+    scored = {
+        year: counts["scored_support"][year]["scored_rows"]
+        for year in ("2010", "2012", "2014")
+    }
+    ledger = {
+        "anchor_wave": counts["anchor_wave"],
+        "endpoint_support_rows": scored["2012"] + scored["2014"],
+        "fit_input_rows": fit_input_rows,
+        "n_domain": counts["domain_persons"],
+        "n_full_anchor": counts["full_anchor_persons"],
+        "support_age_max": 64,
+        "support_age_min": 25,
+        "truth_support_rows": counts["scored_rows_total"],
+        "truth_support_rows_by_period": scored,
+    }
+    return {
+        "counts": counts,
+        "ledger_support_counts": {name: dict(ledger) for name in B01_LEDGERS},
+    }
+
+
+@st.composite
+def _b01_frames(draw):
+    """Invented persons at B0.1's three waves, reaching every disposition:
+    present or not, each sequence group, head, spouse, partner or other,
+    zero weights, missing and fractional ages, shared households, invalid
+    or missing family records and positive accuracy codes."""
+    persons = draw(st.integers(1, 9))
+    rows = []
+    for person in range(1, persons + 1):
+        for wave in (2011, 2013, 2015):
+            if wave != 2011 and not draw(st.booleans()):
+                continue
+            rows.append(
+                _row(
+                    person,
+                    wave,
+                    draw(
+                        st.sampled_from(
+                            [19, 24, 25, 30, 44, 44.5, 45, 60, 64, 65, 70, 999]
+                        )
+                    ),
+                    sequence=draw(st.sampled_from([1, 2, 0, 55, 75, 85])),
+                    relationship=draw(st.sampled_from([10, 20, 22, 30])),
+                    weight=draw(st.sampled_from([0.0, 1.0, 2.5])),
+                    interview=draw(st.integers(1, 3)),
+                )
+            )
+    keys = [
+        (wave, interview, role)
+        for wave in (2011, 2013, 2015)
+        for interview in (1, 2, 3)
+        for role in ("head", "spouse")
+    ]
+    people, labor, _, _ = _inputs(
+        rows,
+        invalid=draw(st.sets(st.sampled_from(keys))),
+        missing=draw(st.sets(st.sampled_from([k[:2] for k in keys]))),
+        accuracy=draw(st.sets(st.sampled_from(keys))),
+    )
+    return people, _validity(labor)
+
+
+@settings(max_examples=150, deadline=None)
+@given(_b01_frames())
+def test_b0_1_sets_are_the_sets_b0_1_counts(frames):
+    """Differential: on invented frames, every rebuilt set's size is the
+    count B0.1's own ``structural_counts`` publishes for it (rows minus
+    persons for a change pair's rows), and the record check accepts the
+    record those frames give, so every B0.1 count is modeled."""
+    people, validity = frames
+    counts = b01.structural_counts(people, validity)
+    sets = script.b0_1_sets(people, validity)
+    for path, (unit_type, units, terms) in sets.items():
+        value = sum(sign * _path_value(counts, part) for sign, part in terms)
+        assert len(units) == value, path
+        assert unit_type == (
+            "households_2011" if path[-1].endswith("households") else "persons"
+        ), path
+    script.check_b0_1_record(_b01_record(people, validity), counts, sets)
+    event(f"domain persons: {counts['domain_persons']}")
+    event(
+        "dispositions seen: "
+        + str(
+            sum(
+                value > 0
+                for year in ("2012", "2014")
+                for value in counts["domain_dispositions"][year].values()
+            )
+        )
+    )
+
+
+def _b01_example():
+    rows = [
+        _row(1, 2011, 40),
+        _row(1, 2013, 42, interview=7),
+        _row(1, 2015, 44),
+        _row(2, 2011, 50, relationship=20, interview=1),
+        _row(2, 2013, 52, relationship=20, interview=1, sequence=85),
+        _row(3, 2011, 70),
+        _row(4, 2011, 30, relationship=30, interview=3),
+        _row(4, 2013, 32, interview=4),
+    ]
+    people, labor, _, _ = _inputs(rows)
+    validity = _validity(labor)
+    counts = b01.structural_counts(people, validity)
+    return people, validity, counts, script.b0_1_sets(people, validity)
+
+
+def test_b0_1_sets_on_a_hand_counted_example():
+    """Person 1 is scored at every wave, and moves to interview 7 at 2013;
+    person 2, a spouse in person 1's household, dies by 2013; person 3 is
+    a domain head aged 70; person 4 enters at 2013 from inside the
+    anchor. B0.1 counts households at each person's 2011 interview, so
+    person 1's level cells hold household 1, not 7."""
+    people, validity, counts, sets = _b01_example()
+    assert sets[("domain_persons",)][1] == {1, 2, 3}
+    assert sets[("domain_by_role", "spouse")][1] == {2}
+    assert sets[("domain_by_anchor_wave_age", "65_plus")][1] == {3}
+    assert sets[("full_anchor_households",)][1] == {1, 3}
+    assert sets[("domain_weights", "households")][1] == {1, 3}
+    assert sets[("scored_support", "2010", "scored_rows")][1] == {1, 2}
+    assert sets[
+        ("scored_support", "2010", "valid_domain_rows_outside_age_support")
+    ][1] == {3}
+    assert sets[("domain_dispositions", "2012", "died")][1] == {2}
+    assert sets[("domain_dispositions", "2012", "scored")][1] == {1}
+    assert sets[("domain_dispositions", "2012", "not_in_responding_family")][
+        1
+    ] == {3}
+    assert sets[("change_pairs", "pooled_one_step", "persons")][1] == {1}
+    assert sets[("change_pairs", "pooled_one_step", "rows")][1] == {1}
+    assert counts["change_pairs"]["pooled_one_step"]["rows"] == 2
+    assert sets[
+        (
+            "entrants_not_scored",
+            "2012",
+            "in_2011_anchor_without_valid_boundary_row",
+            "prime",
+        )
+    ][1] == {4}
+    assert sets[("level_cells", "prime", "households")][1] == {1}
+    assert counts["level_cells"]["prime"]["households"] == 1
+
+
+def test_the_b0_1_record_must_be_the_one_these_inputs_give():
+    """The record check stops on a count these inputs do not give, a count
+    nothing models, a failed sum, a ledger copy that differs or carries a
+    new field, and a modeled set B0.1 never published. The M6 fit's row
+    count is not modeled, so its value does not matter."""
+    from copy import deepcopy
+
+    people, validity, counts, sets = _b01_example()
+    record = _b01_record(people, validity)
+    script.check_b0_1_record(record, counts, sets)
+    script.check_b0_1_record(
+        _b01_record(people, validity, fit_input_rows=7), counts, sets
+    )
+
+    changed = deepcopy(record)
+    changed["counts"]["domain_persons"] += 1
+    with pytest.raises(AssertionError, match="rerun"):
+        script.check_b0_1_record(changed, counts, sets)
+
+    for edit, message in (
+        (lambda c: c.update(new_count=1), "not modeled"),
+        (
+            lambda c: c.update(scored_rows_total=c["scored_rows_total"] + 1),
+            "sum does not hold",
+        ),
+        (
+            lambda c: c["level_cells"]["prime"].update(rows=99),
+            "sum does not hold",
+        ),
+    ):
+        edited = deepcopy(record)
+        edit(edited["counts"])
+        with pytest.raises(AssertionError, match=message):
+            script.check_b0_1_record(edited, edited["counts"], sets)
+
+    for edit in (
+        lambda ledger: ledger.update(n_domain=ledger["n_domain"] + 1),
+        lambda ledger: ledger["truth_support_rows_by_period"].update(
+            {"2012": -1}
+        ),
+        lambda ledger: ledger.update(extra_rows=4),
+        lambda ledger: ledger.pop("endpoint_support_rows"),
+    ):
+        edited = deepcopy(record)
+        edit(edited["ledger_support_counts"][B01_LEDGERS[1]])
+        with pytest.raises(AssertionError, match="ledger counts differ"):
+            script.check_b0_1_record(edited, counts, sets)
+
+    extra = dict(sets)
+    extra[("level_cells", "prime", "unpublished")] = (
+        "persons",
+        frozenset(),
+        ((1, ("level_cells", "prime", "unpublished")),),
+    )
+    with pytest.raises(AssertionError, match="publishes no count"):
+        script.check_b0_1_record(record, counts, extra)
+
+
+def _prior_table(current, prior, sizes):
+    """This release's rows and an earlier release's, over atoms of the
+    given sizes; an earlier row carries its exact size."""
+    units = {a: {(a, i) for i in range(sizes[a])} for a in range(len(sizes))}
+    registry = script.SetRegistry()
+    counts = {}
+    for name, row in current.items():
+        members = set().union(*(units[a] for a in row))
+        registry.add((name,), "persons", members)
+        counts[name] = len(members)
+    for name, row in prior.items():
+        members = set().union(*(units[a] for a in row))
+        registry.add_prior((name,), "persons", members, len(members))
+    return counts, registry
+
+
+def test_an_earlier_exact_count_narrows_a_hidden_band():
+    """Review round 3's attack in miniature. This release publishes ages
+    45-61 (12 units, so 10-14) and ages 62-64 (2 units, "<10"); the
+    earlier release published ages 45-64 exactly, 14. The small band can
+    then be only 1 or 2, so the release is withheld. Without the earlier
+    count the audit releases."""
+    current = {"45_61": (0,), "62_64": (1,)}
+    alone = script.audit_counts(*_prior_table(current, {}, [12, 2]), 10)
+    assert alone["status"] == "released"
+    audit = script.audit_counts(
+        *_prior_table(current, {"45_64": (0, 1)}, [12, 2]), 10
+    )
+    assert audit["status"] == "withheld"
+    (narrow,) = [
+        t
+        for t in audit["targets"]
+        if t["result"] == "narrow" and 1 <= t["true_size"] <= 9
+    ]
+    assert narrow["true_size"] == 2
+
+
+def test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own():
+    """An earlier set splits this release's set into two atoms, which stay
+    one target. A difference against an earlier set is a target; one
+    between two earlier sets, which that release fixed exactly, is not;
+    and the earlier counts bound their rows exactly."""
+    counts, registry = _prior_table(
+        {"all": (0, 1, 2)},
+        {"early": (0, 1), "earliest": (0,)},
+        [11, 4, 5],
+    )
+    model = script.build_model(registry)
+    assert model["matrix"].shape[1] == 3
+    column = {int(model["sizes"][c]): c for c in range(3)}
+    found = {
+        (t["kind"], tuple(sorted(t["columns"]))): t for t in model["targets"]
+    }
+    assert ("atom", (0, 1, 2)) in found
+    assert not any(
+        kind == "atom" and len(columns) < 3 for kind, columns in found
+    )
+    assert ("difference", (column[5],)) in found  # all minus early
+    assert ("difference", tuple(sorted((column[4], column[5])))) in found
+    assert ("difference", (column[4],)) not in found  # early minus earliest
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    rows = model["path_rows"]
+    assert (lower[rows[("early",)]], upper[rows[("early",)]]) == (15, 15)
+    assert (lower[rows[("earliest",)]], upper[rows[("earliest",)]]) == (
+        11,
+        11,
+    )
+    assert (lower[rows[("all",)]], upper[rows[("all",)]]) == (15, 24)
+
+
+def test_an_earlier_count_must_be_its_sets_size():
+    counts, registry = _prior_table({"a": (0,)}, {}, [12])
+    registry.add_prior(("b",), "persons", {(0, 0)}, 2)
+    with pytest.raises(ValueError, match="earlier release's count"):
+        script.audit_counts(counts, registry, 10)
+    with pytest.raises(ValueError, match="duplicate"):
+        registry.add_prior(("a",), "persons", set(), 0)
+
+
+@st.composite
+def _prior_atom_tables(draw):
+    """An atom table whose rows are each this release's, an earlier
+    release's, or both, with at least one of this release's."""
+    rows, sizes = draw(_atom_tables())
+    kinds = draw(
+        st.lists(
+            st.sampled_from(["current", "prior", "both"]),
+            min_size=len(rows),
+            max_size=len(rows),
+        ).filter(lambda kinds: "prior" in kinds or "both" in kinds)
+    )
+    if all(kind == "prior" for kind in kinds):
+        kinds[0] = "both"
+    return rows, kinds, sizes
+
+
+def _prior_registry(rows, kinds, sizes):
+    current = {
+        f"row_{j}": row
+        for j, (row, kind) in enumerate(zip(rows, kinds, strict=True))
+        if kind != "prior"
+    }
+    prior = {
+        f"prior_{j}": row
+        for j, (row, kind) in enumerate(zip(rows, kinds, strict=True))
+        if kind != "current"
+    }
+    return _prior_table(current, prior, sizes)
+
+
+def _oracle_prior_candidates(rows, kinds, sizes):
+    """Every atom-size vector with the truth's publication: this release's
+    rows coarsened, the earlier rows exact."""
+    from itertools import product
+
+    truth = [sum(sizes[a] for a in row) for row in rows]
+    highest = [
+        (
+            max(
+                v
+                for v in range(100)
+                if _oracle_coarsen(v) == _oracle_coarsen(t)
+            )
+            if kind == "current"
+            else t
+        )
+        for t, kind in zip(truth, kinds, strict=True)
+    ]
+    caps = [
+        min(highest[j] for j, row in enumerate(rows) if a in row)
+        for a in range(len(sizes))
+    ]
+    grid = np.array(list(product(*(range(cap + 1) for cap in caps))))
+    keep = np.ones(len(grid), dtype=bool)
+    for row, t, kind in zip(rows, truth, kinds, strict=True):
+        total = grid[:, list(row)].sum(axis=1)
+        if kind != "current":
+            keep &= total == t
+        if kind != "prior":
+            keep &= np.array(
+                [_oracle_coarsen(int(v)) == _oracle_coarsen(t) for v in total]
+            )
+    return grid[keep]
+
+
+def _oracle_prior_targets(rows, kinds, atoms):
+    """This release's classes, and differences unless both sets are the
+    earlier release's."""
+    own = {}
+    for a in range(atoms):
+        signature = tuple(
+            j
+            for j, (row, kind) in enumerate(zip(rows, kinds, strict=True))
+            if a in row and kind != "prior"
+        )
+        if signature:
+            own.setdefault(signature, []).append(a)
+    found = {tuple(sorted(group)) for group in own.values()}
+    sets = [
+        (frozenset(row), kind != "current")
+        for row, kind in zip(rows, kinds, strict=True)
+    ]
+    for big, big_early in sets:
+        for small, small_early in sets:
+            if small and small < big and not (big_early and small_early):
+                found.add(tuple(sorted(big - small)))
+    return sorted(found)
+
+
+@settings(max_examples=150, deadline=None)
+@given(_prior_atom_tables())
+@example(([(0, 1), (0,), (1,)], ["prior", "current", "current"], [12, 2]))
+@example(([(0, 1), (0,), (1,)], ["both", "current", "prior"], [9, 7]))
+def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
+    """With an earlier release's exact counts among the constraints, the
+    audit and the enumeration oracle reach the same targets, decision,
+    disclosures and classifications. A reader who reruns the rule on
+    every vector with both publications keeps exactly the final
+    candidates, and every sensitive target spans 4 or more among them."""
+    rows, kinds, sizes = table
+    counts, registry = _prior_registry(rows, kinds, sizes)
+    audit = script.audit_counts(counts, registry, 10)
+    model = script.build_model(registry)
+    matrix = model["matrix"].toarray()
+    mapping = {}
+    for c in range(matrix.shape[1]):
+        member = {
+            int(path[0].split("_")[1])
+            for path, r in model["path_rows"].items()
+            if matrix[r, c]
+        }
+        (mapping[c],) = [
+            a
+            for a in range(len(sizes))
+            if {j for j, row in enumerate(rows) if a in row} == member
+        ]
+    grid = _oracle_prior_candidates(rows, kinds, sizes)
+    targets = _oracle_prior_targets(rows, kinds, len(sizes))
+    script_targets = {
+        tuple(sorted(mapping[c] for c in t["columns"])): t
+        for t in audit["targets"]
+    }
+    assert set(script_targets) == set(targets)
+    status, disclosed, mask, classes = _oracle_release(
+        rows, sizes, grid, targets
+    )
+    assert audit["status"] == status
+    event(f"{status} after {len(audit['rounds'])} round(s)")
+    if status != "released":
+        return
+    assert {
+        tuple(sorted(mapping[c] for c in audit["targets"][i]["columns"]))
+        for i in audit["disclosed"]
+    } == set(disclosed)
+    for target, result in classes.items():
+        assert script_targets[target]["result"] == result, target
+    kept = np.array(
+        [
+            _oracle_release(rows, list(point), grid, targets)[0] == "released"
+            for point in grid
+        ]
+    )
+    assert np.array_equal(kept, mask)
+    for target in targets:
+        if 1 <= sum(sizes[a] for a in target) <= 9:
+            values = grid[kept][:, list(target)].sum(axis=1)
+            assert values.max() - values.min() >= 4, target
+
+
+@settings(max_examples=60, deadline=None)
+@given(_prior_atom_tables(), st.data())
+def test_programs_with_earlier_counts_depend_only_on_the_publications(
+    table, data
+):
+    """Two tables with the same two publications and the same atoms hand
+    the solver the same programs, up to the point where one withholds."""
+    rows, kinds, sizes = table
+    grid = _oracle_prior_candidates(rows, kinds, sizes)
+    grid = grid[np.all(grid > 0, axis=1)]
+    other = [int(v) for v in grid[data.draw(st.integers(0, len(grid) - 1))]]
+    transcripts = []
+    for vector in (sizes, other):
+        counts, registry = _prior_registry(rows, kinds, vector)
+        transcript = []
+        original = script.AuditSystem._program
+
+        def recording(
+            self,
+            objective,
+            extra,
+            seconds,
+            integral=True,
+            gap=0.0,
+            transcript=transcript,
+            original=original,
+        ):
+            parts = [np.asarray(objective, dtype=float).tobytes()]
+            for constraint in (self.constraint, *extra):
+                matrix = constraint.A
+                if hasattr(matrix, "toarray"):
+                    matrix = matrix.toarray()
+                for array in (matrix, constraint.lb, constraint.ub):
+                    parts.append(np.asarray(array, dtype=float).tobytes())
+            transcript.append(hashlib.sha256(b"|".join(parts)).hexdigest())
+            return original(self, objective, extra, seconds, integral, gap)
+
+        with pytest.MonkeyPatch.context() as patch:
+            patch.setattr(script.AuditSystem, "_program", recording)
+            audit = script.audit_counts(counts, registry, 10)
+        transcripts.append((transcript, audit["status"]))
+    (first, first_status), (second, second_status) = transcripts
+    shorter = min(len(first), len(second))
+    assert first[:shorter] == second[:shorter]
+    if first_status == second_status == "released":
+        assert first == second
+
+
+def _b2_heads(persons, older):
+    """Invented B2 heads at 2011, ``older`` of them aged 62 and the rest 60,
+    each with a household, stratum and cluster of their own."""
+    return _own_strata(
+        _inputs(
+            [
+                _row(person, age=62 if person <= older else 60)
+                for person in range(1, persons + 1)
+            ]
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    ("persons", "splits"), [(97, (1, 2)), (5, (1, 2, 3, 4))]
+)
+def test_b0_1_counts_enter_the_audit_through_main(
+    tmp_path, monkeypatch, persons, splits
+):
+    """Review round 3's executed attack. B0.1 publishes the B2 heads aged
+    45-64 exactly, the same for every split between ages 60 and 62. With
+    97 heads, this release would publish ages 45-61 as 100 (95-104) and
+    62-64 as "<10", leaving 62-64 only 1 or 2; with five, both bands
+    "<10", leaving 1 to 4. Through main(), every split now withholds, and
+    the committed files are identical. Without B0.1's counts in the
+    audit, the same tables release."""
+    publications = set()
+    for older in splits:
+        directory = tmp_path / str(older)
+        directory.mkdir()
+        _main_environment(directory, monkeypatch, _b2_heads(persons, older))
+        out = directory / "counts.json"
+        local = directory / "local.json"
+        assert (
+            script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+        )
+        record = json.loads(out.read_text())
+        assert record["disclosure"]["status"] == "withheld"
+        assert "counts" not in record
+        publications.add(out.read_bytes())
+        audit = json.loads(local.read_text())["disclosure_audit"]["audit"]
+        # The audit stops at the first sensitive narrow target: a band of
+        # the split, 62-64 (``older``) or, with five heads, 45-61 too.
+        assert any(
+            t["result"] == "narrow"
+            and t["true_size"] in {older, persons - older}
+            and 1 <= t["true_size"] < script.DISCLOSURE_THRESHOLD
+            for t in audit["targets"]
+        )
+    assert len(publications) == 1
+    people, labor, anchor, design = _b2_heads(persons, splits[0])
+    validity = _validity(labor)
+    released = script.release_counts(
+        script.structural_counts(people, validity, anchor, design),
+        script.disclosure_registry(people, validity, anchor, design),
+    )
+    assert released[1]["status"] == "released"
+
+
+def test_main_stops_when_b0_1_counts_differ_from_the_inputs(
+    tmp_path, invented_main
+):
+    _, baseline, _ = invented_main
+    record = json.loads(baseline.read_text())
+    record["counts"]["domain_by_role"]["head"] += 1
+    baseline.write_text(json.dumps(record))
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    with pytest.raises(AssertionError, match="rerun on these inputs"):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert not out.exists() and not local.exists()
+
+
+# --------------------------------------------------------------------------
+# An emptied pool, the seed directions and the directory flush
+# --------------------------------------------------------------------------
+def test_an_empty_pool_proves_nothing_and_runs_no_program():
+    def fail(*args, **kwargs):
+        raise AssertionError("no program may run")
+
+    system = SimpleNamespace(
+        relaxed_minimum=fail, search=fail, extreme=fail, direction=fail
+    )
+    record, witness = script.classify(
+        system,
+        {"columns": (0,), "true_size": 3},
+        script.WitnessPool(2),
+        seconds=60,
+    )
+    assert record == {
+        "programs": [],
+        "result": "narrow",
+        "proof": "undetermined",
+    }
+    assert witness is None
+
+
+def _emptied_pool(monkeypatch, reseeds):
+    """Two atoms: a (10 units) and b (3), published as a + b (13, so
+    10-14) and b ("<10"). The solver stub hands the first seeding the
+    points (6, 8) and (9, 1), which give b sizes 7 apart, and times out
+    every search, so a (true size 10) is narrow in round 1 and is
+    disclosed. That rules out both points. The second seeding gets
+    ``reseeds``."""
+    counts = {"total": 13, "small": 3}
+    registry = script.SetRegistry()
+    registry.add(("total",), "persons", range(13))
+    registry.add(("small",), "persons", range(10, 13))
+    model = script.build_model(registry)
+    a = int(np.flatnonzero(model["sizes"] == 10)[0])
+    b = 1 - a
+
+    def point(av, bv):
+        p = np.zeros(2)
+        p[a], p[b] = av, bv
+        return p
+
+    first = [point(6, 8), point(9, 1)]
+    later = [point(*values) for values in reseeds]
+    calls = []
+
+    def stub(self, objective, extra, seconds, integral=True, gap=0.0):
+        if extra:
+            calls.append("search")
+            return SimpleNamespace(x=None, status=1, fun=None)
+        seeding = sum(c == "seed" for c in calls) // (
+            1 + script.POOL_DIRECTIONS
+        )
+        calls.append("seed")
+        points = first if seeding == 0 else later
+        if not points:
+            return SimpleNamespace(x=None, status=1, fun=None)
+        return SimpleNamespace(
+            x=points[len(calls) % len(points)], status=1, fun=0.0
+        )
+
+    monkeypatch.setattr(script.AuditSystem, "_program", stub)
+    return counts, registry, calls
+
+
+def test_disclosures_that_empty_the_pool_seed_it_again(monkeypatch):
+    """Round 2 starts with no point left, so the nine seed programs run
+    again under the disclosure, and their points classify b: with a at
+    least 10, b is 1 to 4, so it is narrow and the release is withheld.
+    The pool keeps each seed program's point, repeats included."""
+    counts, registry, calls = _emptied_pool(monkeypatch, [(10, 4), (12, 1)])
+    audit = script.audit_counts(counts, registry, 10)
+    assert calls.count("seed") == 2 * (1 + script.POOL_DIRECTIONS)
+    assert [r["reseeded"] for r in audit["rounds"]] == [False, True]
+    assert audit["pool"] == 1 + script.POOL_DIRECTIONS
+    assert audit["status"] == "withheld"
+    small = [t for t in audit["targets"] if t["true_size"] == 3]
+    assert small and small[0]["round"] == 2 and small[0]["programs"]
+
+
+def test_an_empty_reseeding_withholds_with_complete_files(
+    tmp_path, monkeypatch
+):
+    """Review round 3's crash: when the disclosures rule out every point
+    and seeding again finds none, main() completes, writing both files,
+    and the release is withheld."""
+    counts, registry, calls = _emptied_pool(monkeypatch, [])
+    _main_environment(tmp_path, monkeypatch, _b2_heads(12, 0))
+    # main() reads and checks the invented panel as usual; its audit is
+    # the two-atom table whose second seeding finds nothing.
+    real_release = script.release_counts
+    monkeypatch.setattr(
+        script, "release_counts", lambda *args: real_release(counts, registry)
+    )
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    record = json.loads(out.read_text())
+    assert record["disclosure"]["status"] == "withheld"
+    audit = json.loads(local.read_text())["disclosure_audit"]["audit"]
+    assert audit["pool"] == 0
+    assert audit["rounds"][-1] == {
+        "round": 2,
+        "disclosed": [],
+        "reseeded": True,
+    }
+    assert calls.count("seed") == 2 * (1 + script.POOL_DIRECTIONS)
+
+
+def test_seed_directions_come_from_the_fixed_seed(monkeypatch):
+    """The nine seed programs push along zero, then eight directions drawn
+    from a generator seeded with 20261024, the same at every seeding."""
+    seen = []
+
+    def direction(self, weights, *, seconds):
+        seen.append(np.asarray(weights).copy())
+
+    monkeypatch.setattr(script.AuditSystem, "direction", direction)
+    counts, registry = _atom_table(
+        [(0, 1, 2, 3, 4), (0,), (1,), (2,), (3,)], [11, 12, 13, 14, 15]
+    )
+    model = script.build_model(registry)
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    system = script.AuditSystem(model, lower, upper, [], [])
+    for _ in range(2):
+        script.seed_pool(system, script.WitnessPool(5), seconds=1)
+    generator = np.random.default_rng(20261024)
+    expected = [np.zeros(5)] + [
+        generator.choice([-1.0, 1.0], size=5) for _ in range(8)
+    ]
+    assert len(seen) == 18
+    for got, want in zip(seen, expected + expected, strict=True):
+        assert np.array_equal(got, want)
+
+
+def test_write_new_flushes_the_directory_after_linking(tmp_path, monkeypatch):
+    import stat
+
+    flushed = []
+    real = os.fsync
+    path = tmp_path / "out.json"
+
+    def fsync(descriptor):
+        flushed.append(
+            (stat.S_ISDIR(os.fstat(descriptor).st_mode), path.exists())
+        )
+        real(descriptor)
+
+    monkeypatch.setattr(script.os, "fsync", fsync)
+    script.write_new(path, b"{}\n")
+    assert flushed == [(False, False), (True, True)]
 
 
 def test_module_stays_in_unit_tier(tier_policy_collection):

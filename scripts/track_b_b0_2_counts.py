@@ -33,12 +33,23 @@ from scipy.sparse import csr_matrix, hstack, vstack
 from populace_dynamics.cohorts import age67, psid2010
 from populace_dynamics.data import family, panels, psid
 from scripts.track_b_b0_1_counts import (
+    AGE_SUPPORT,
+    BOUNDARY_YEAR,
+    DISPOSITIONS,
+    EARN_COHORTS,
+    HORIZON_YEARS,
+    WAVE_OFFSET,
+    _cohort,
+    _disposition,
     _family_variables,
     _individual_variables,
     cluster_worst_n_eff,
     earnings_rows,
     kish_n_eff,
     validity_frame,
+)
+from scripts.track_b_b0_1_counts import (
+    structural_counts as b0_1_structural_counts,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -391,21 +402,38 @@ def _leaves(record: dict, prefix: CellPath = ()):
 
 class SetRegistry:
     """Every count's private unit set, its effective-size count bound and
-    the relations between counts of different unit types."""
+    the relations between counts of different unit types, and the sets an
+    earlier release published with their exact public values."""
 
     def __init__(self):
         self.sets: dict[CellPath, tuple[str, frozenset]] = {}
         self.effective_bounds: dict[CellPath, CellPath] = {}
         self.relations: list[tuple[str, CellPath, CellPath]] = []
+        self.prior: dict[CellPath, tuple[str, frozenset, int]] = {}
+
+    def _new(self, path: CellPath) -> None:
+        if (
+            path in self.sets
+            or path in self.effective_bounds
+            or path in self.prior
+        ):
+            raise ValueError(f"duplicate registry path: {path}")
 
     def add(self, path: CellPath, unit_type: str, units) -> None:
-        if path in self.sets or path in self.effective_bounds:
-            raise ValueError(f"duplicate registry path: {path}")
+        self._new(path)
         self.sets[path] = (unit_type, frozenset(units))
 
+    def add_prior(
+        self, path: CellPath, unit_type: str, units, value: int
+    ) -> None:
+        """Record a set an earlier release published, with the exact count
+        it published. It constrains the audit like any published count but
+        is not this release's: see ``build_model`` for its targets."""
+        self._new(path)
+        self.prior[path] = (unit_type, frozenset(units), int(value))
+
     def effective(self, path: CellPath, count_path: CellPath) -> None:
-        if path in self.sets or path in self.effective_bounds:
-            raise ValueError(f"duplicate registry path: {path}")
+        self._new(path)
         if count_path not in self.sets:
             raise ValueError("effective-size bound needs a registered count")
         self.effective_bounds[path] = count_path
@@ -460,19 +488,32 @@ def effective_count_bound(value: int | str, base: int) -> int:
 def build_model(registry: SetRegistry) -> dict:
     """Rows, atoms and targets for the audit.
 
-    A row is one distinct set; paths with identical sets of one unit type
-    share it. An atom is the class of units of one type that belong to
-    exactly the same rows, so every count is a sum of atom sizes. The
-    targets are every atom, and every difference between a row and a
-    proper subset of it of the same type, each audited once whatever its
-    true size. No unit identifier or membership leaves memory."""
+    A row is one distinct set, this release's or an earlier release's;
+    paths with identical sets of one unit type share it. An atom is the
+    class of units of one type that belong to exactly the same rows, so
+    every count is a sum of atom sizes.
+
+    The targets are this release's: each class of units that belong to
+    exactly the same rows of this release (a union of atoms), and every
+    difference between a row and a proper subset of it of the same type,
+    unless an earlier release published both exactly, which already
+    fixes that difference. Each is audited once whatever its true size.
+    No unit identifier or membership leaves memory."""
     grouped: dict[tuple[str, frozenset], list[CellPath]] = {}
     for path, key in registry.sets.items():
         grouped.setdefault(key, []).append(path)
+    for path, (unit_type, units, _) in registry.prior.items():
+        grouped.setdefault((unit_type, units), []).append(path)
     keys = list(grouped)
     path_rows = {
         path: row for row, key in enumerate(keys) for path in grouped[key]
     }
+    current = [
+        any(path in registry.sets for path in grouped[key]) for key in keys
+    ]
+    earlier = [
+        any(path in registry.prior for path in grouped[key]) for key in keys
+    ]
     memberships: dict[tuple[str, Any], list[int]] = {}
     for row, (unit_type, units) in enumerate(keys):
         for unit in units:
@@ -500,9 +541,14 @@ def build_model(registry: SetRegistry) -> dict:
         matrix.indices[matrix.indptr[row] : matrix.indptr[row + 1]]
         for row in range(len(keys))
     ]
+    own: dict[tuple[str, tuple[int, ...]], list[int]] = {}
+    for column, (unit_type, signature) in enumerate(atoms):
+        rows = tuple(row for row in signature if current[row])
+        if rows:
+            own.setdefault((unit_type, rows), []).append(column)
     targets: dict[tuple[int, ...], dict] = {}
-    for column in range(len(atoms)):
-        targets[(column,)] = {"kind": "atom", "unit_type": unit_types[column]}
+    for (unit_type, _), columns in sorted(own.items()):
+        targets[tuple(columns)] = {"kind": "atom", "unit_type": unit_type}
     shared = (matrix @ matrix.T).toarray()
     for subset in range(len(keys)):
         if shared[subset, subset] == 0:
@@ -512,6 +558,8 @@ def build_model(registry: SetRegistry) -> dict:
             shared[subset] == shared[subset, subset]
         ):
             if superset == subset or keys[superset][0] != keys[subset][0]:
+                continue
+            if earlier[subset] and earlier[superset]:
                 continue
             # A distinct row holding every atom of ``subset`` is a proper
             # superset, so the difference is nonempty.
@@ -549,14 +597,20 @@ def published_bounds(
     counts: dict, registry: SetRegistry, model: dict, base: int
 ) -> tuple[np.ndarray, np.ndarray]:
     """Each row's count interval from its published value, raised by any
-    published effective size computed over it."""
+    published effective size computed over it. An earlier release's
+    count fixes its row exactly."""
     rows = model["matrix"].shape[0]
     lower = np.zeros(rows, dtype=np.int64)
     upper = np.full(rows, np.iinfo(np.int64).max, dtype=np.int64)
-    for path, row in model["path_rows"].items():
+    for path in registry.sets:
+        row = model["path_rows"][path]
         low, high = count_interval(coarsen(_cell(counts, path), base), base)
         lower[row] = max(lower[row], low)
         upper[row] = min(upper[row], high)
+    for path, (_, _, value) in registry.prior.items():
+        row = model["path_rows"][path]
+        lower[row] = max(lower[row], value)
+        upper[row] = min(upper[row], value)
     for path, count_path in registry.effective_bounds.items():
         row = model["path_rows"][count_path]
         bound = effective_count_bound(coarsen(_cell(counts, path), base), base)
@@ -791,6 +845,22 @@ class WitnessPool:
         return int(values.min()), int(values.max())
 
 
+def seed_pool(system: AuditSystem, pool: WitnessPool, *, seconds) -> None:
+    """Add the seed programs' verified points: any feasible vector, then
+    one pushed along each of the fixed seeded directions. The directions
+    depend only on the number of atoms, so every seeding draws the same
+    ones."""
+    generator = np.random.default_rng(POOL_SEED)
+    seeds = [np.zeros(system.atoms)] + [
+        generator.choice([-1.0, 1.0], size=system.atoms)
+        for _ in range(POOL_DIRECTIONS)
+    ]
+    for weights in seeds:
+        point = system.direction(weights, seconds=seconds)
+        if point is not None:
+            pool.add(point)
+
+
 def classify(system: AuditSystem, target: dict, pool: WitnessPool, *, seconds):
     """Whether one target's integer range under ``system`` is at least the
     protection width ("wide"), cannot reach 1 to 9 ("irrelevant"), or is
@@ -799,10 +869,13 @@ def classify(system: AuditSystem, target: dict, pool: WitnessPool, *, seconds):
 
     Every program here is set from the pool and the system alone, never
     from the target's true size, so a reader holding the publication can
-    rerun it. The pool must hold at least one point."""
+    rerun it. An empty pool sets no window, so the target is unproven:
+    narrow."""
+    record = {"programs": []}
+    if pool.size == 0:
+        return {**record, "result": "narrow", "proof": "undetermined"}, None
     columns = list(target["columns"])
     low, high = pool.values(columns)
-    record = {"programs": []}
     if high - low >= PROTECTION_WIDTH:
         return {**record, "result": "wide", "proof": "pool"}, None
     if low >= DISCLOSURE_THRESHOLD:
@@ -864,7 +937,9 @@ def audit_counts(
     target is therefore added to the constraints as disclosed, and every
     target not yet disclosed is classified again, until a round adds none.
     Every target of true size 1 to 9 is then wide under everything a
-    release discloses."""
+    release discloses. A round whose disclosures rule out every pool
+    point seeds the pool again under them; if no seed program then finds
+    a point, nothing can be shown wide and the release is withheld."""
     started = time.monotonic()
     _validate_registry(counts, registry)
     model = build_model(registry)
@@ -883,15 +958,7 @@ def audit_counts(
             raise ValueError(
                 "true atom sizes violate the published constraints"
             )
-        generator = np.random.default_rng(POOL_SEED)
-        seeds = [np.zeros(system.atoms)] + [
-            generator.choice([-1.0, 1.0], size=system.atoms)
-            for _ in range(POOL_DIRECTIONS)
-        ]
-        for weights in seeds:
-            point = system.direction(weights, seconds=seconds)
-            if point is not None:
-                pool.add(point)
+        seed_pool(system, pool, seconds=seconds)
         if pool.size == 0:
             # No program found a point, so nothing can be shown wide.
             status = "withheld"
@@ -901,6 +968,20 @@ def audit_counts(
             model, lower, upper, relations, [targets[i] for i in disclosed]
         )
         pool.keep(system)
+        reseeded = pool.size == 0
+        if reseeded:
+            # The disclosures ruled out every point: seed again under them.
+            seed_pool(system, pool, seconds=seconds)
+            if pool.size == 0:
+                status = "withheld"
+                rounds.append(
+                    {
+                        "round": len(rounds) + 1,
+                        "disclosed": [],
+                        "reseeded": True,
+                    }
+                )
+                break
         added = []
         for index in range(len(targets)):
             if index in disclosed:
@@ -920,7 +1001,13 @@ def audit_counts(
                 status = "withheld"
                 break
             added.append(index)
-        rounds.append({"round": len(rounds) + 1, "disclosed": added})
+        rounds.append(
+            {
+                "round": len(rounds) + 1,
+                "disclosed": added,
+                "reseeded": reseeded,
+            }
+        )
         if not added:
             break
         disclosed.extend(added)
@@ -971,6 +1058,11 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
         if _cell(counts, path) != len(units):
             raise ValueError(
                 f"registered set size disagrees with count: {path}"
+            )
+    for path, (_, units, value) in registry.prior.items():
+        if value != len(units):
+            raise ValueError(
+                f"an earlier release's count disagrees with its set: {path}"
             )
 
 
@@ -1157,6 +1249,295 @@ def disclosure_registry(
 
 
 # --------------------------------------------------------------------------
+# The earlier release: B0.1's published counts, as exact constraints
+# --------------------------------------------------------------------------
+#: B0.1's ledger-support fields and the B0.1 count each must equal. B0.1
+#: copied them from the M6 ledgers. The M6 fit's ``fit_input_rows``, a
+#: count over every reference year to 2010, is not modeled (protocol,
+#: "What the audit assumes, and its limits").
+B0_1_LEDGER_FIELDS = {
+    "n_full_anchor": ("full_anchor_persons",),
+    "n_domain": ("domain_persons",),
+    "truth_support_rows": ("scored_rows_total",),
+    "anchor_wave": ("anchor_wave",),
+}
+B0_1_EFFECTIVE = ("kish_n_eff", "cluster_worst_n_eff")
+
+
+def b0_1_sums() -> dict[CellPath, list[CellPath]]:
+    """B0.1's counts that are sums of its other published counts."""
+    scored = [
+        ("scored_support", str(year), "scored_rows")
+        for year in (BOUNDARY_YEAR, *HORIZON_YEARS)
+    ]
+    sums = {
+        ("scored_rows_total",): scored,
+        ("domain_weights", "rows"): [("domain_persons",)],
+        ("level_cells", "pooled", "rows"): scored[1:],
+        ("change_pairs", "pooled_two_step", "rows"): [
+            ("change_pairs", "pooled_two_step", "persons")
+        ],
+    }
+    for name, _, _ in EARN_COHORTS:
+        sums[("level_cells", name, "rows")] = [
+            ("scored_support", str(year), "rows_by_cohort", name)
+            for year in HORIZON_YEARS
+        ]
+    return sums
+
+
+def b0_1_sets(
+    person_wave: pd.DataFrame,
+    validity_by_wave: Mapping[int, pd.DataFrame],
+) -> dict[CellPath, tuple[str, frozenset, tuple[tuple[int, CellPath], ...]]]:
+    """B0.1's published counts as the sets they count, rebuilt by B0.1's
+    own rules (``structural_counts`` in ``scripts/track_b_b0_1_counts.py``)
+    from this script's inputs.
+
+    Each entry maps a B0.1 count's path to its unit type, its set, and the
+    published counts whose signed sum is the set's size. Households are
+    2011 households, each person's from the full anchor. A change-pair
+    count of rows adds two persons' sets, the one-step pairs from 2010 to
+    2012 and from 2012 to 2014; given its persons, the union, it is fixed
+    by the persons in both, whose size is rows minus persons. Every other
+    count B0.1 publishes is a sum of these (``b0_1_sums``), an effective
+    size of a count published exactly, or a wave label."""
+    low, high = AGE_SUPPORT
+    years = (BOUNDARY_YEAR, *HORIZON_YEARS)
+    anchor_wave = BOUNDARY_YEAR + WAVE_OFFSET
+    households = f"households_{anchor_wave}"
+    at_anchor = person_wave[person_wave["period"] == anchor_wave]
+    full = at_anchor[
+        at_anchor["sequence"].between(1, 20)
+        & (pd.to_numeric(at_anchor["weight"], errors="coerce") > 0)
+    ]
+    anchor_ids = frozenset(full["person_id"].astype("int64"))
+    home = dict(
+        zip(full["person_id"].astype("int64"), full["interview"], strict=True)
+    )
+    rows = earnings_rows(person_wave, validity_by_wave, years)
+    valid = rows[rows["valid"]]
+    domain = (
+        frozenset(
+            valid.loc[
+                valid["reference_year"] == BOUNDARY_YEAR, "person_id"
+            ].astype("int64")
+        )
+        & anchor_ids
+    )
+    valid = valid.assign(
+        cohort=valid["age"].map(_cohort),
+        in_support=valid["age"].between(low, high).to_numpy(),
+        in_domain=valid["person_id"].isin(domain).to_numpy(),
+    )
+
+    def ids(frame):
+        return frozenset(frame["person_id"].astype("int64"))
+
+    def homes(persons):
+        return frozenset(
+            home[person] for person in persons if pd.notna(home[person])
+        )
+
+    scored = {
+        year: valid[
+            (valid["reference_year"] == year)
+            & valid["in_support"]
+            & valid["in_domain"]
+        ]
+        for year in years
+    }
+    cohorts = {
+        (year, name): ids(scored[year][scored[year]["cohort"] == name])
+        for year in years
+        for name, _, _ in EARN_COHORTS
+    }
+    sets = {}
+
+    def put(path, units, unit_type="persons", terms=None):
+        sets[path] = (unit_type, frozenset(units), terms or ((1, path),))
+
+    put(("full_anchor_persons",), anchor_ids)
+    put(("full_anchor_households",), full["interview"].dropna(), households)
+    put(("domain_persons",), domain)
+    boundary = valid[
+        (valid["reference_year"] == BOUNDARY_YEAR) & valid["in_domain"]
+    ]
+    for role in ("head", "spouse"):
+        put(("domain_by_role", role), ids(boundary[boundary["role"] == role]))
+    in_domain = full[full["person_id"].astype("int64").isin(domain)]
+    age = in_domain["age"].astype("float64")
+    for name, rule in (
+        ("under_25", age < low),
+        ("25_44", age.between(25, 44)),
+        ("45_64", age.between(45, high)),
+        ("65_plus", age > high),
+    ):
+        put(("domain_by_anchor_wave_age", name), ids(in_domain[rule]))
+    put(("domain_weights", "persons"), domain)
+    put(("domain_weights", "households"), homes(domain), households)
+    for year in years:
+        key = ("scored_support", str(year))
+        put((*key, "scored_rows"), ids(scored[year]))
+        for name, _, _ in EARN_COHORTS:
+            put((*key, "rows_by_cohort", name), cohorts[year, name])
+        outside = valid[
+            (valid["reference_year"] == year)
+            & valid["in_domain"]
+            & ~valid["in_support"]
+        ]
+        put((*key, "valid_domain_rows_outside_age_support"), ids(outside))
+        put(
+            (*key, "assigned_or_edited_rows"),
+            ids(scored[year][scored[year]["acc_flag"]]),
+        )
+    cells = [
+        (name, [cohorts[year, name] for year in HORIZON_YEARS])
+        for name, _, _ in EARN_COHORTS
+    ]
+    cells.append(("pooled", [ids(scored[year]) for year in HORIZON_YEARS]))
+    for name, parts in cells:
+        persons = frozenset().union(*parts)
+        put(("level_cells", name, "persons"), persons)
+        put(("level_cells", name, "households"), homes(persons), households)
+    step = HORIZON_YEARS[0] - BOUNDARY_YEAR
+    one_step = [(year, year + step) for year in years if year + step in years]
+    if len(one_step) != 2:
+        raise ValueError("B0.1's one-step pairs are not two")
+    pairs = [
+        (name, [cohorts[a, name] & cohorts[b, name] for a, b in one_step])
+        for name, _, _ in EARN_COHORTS
+    ]
+    pairs.append(
+        (
+            "pooled_one_step",
+            [ids(scored[a]) & ids(scored[b]) for a, b in one_step],
+        )
+    )
+    for name, (first, second) in pairs:
+        key = ("change_pairs", name)
+        put((*key, "persons"), first | second)
+        put((*key, "households"), homes(first | second), households)
+        put(
+            (*key, "rows"),
+            first & second,
+            terms=((1, (*key, "rows")), (-1, (*key, "persons"))),
+        )
+    both = ids(scored[BOUNDARY_YEAR]) & ids(scored[HORIZON_YEARS[-1]])
+    put(("change_pairs", "pooled_two_step", "persons"), both)
+    put(
+        ("change_pairs", "pooled_two_step", "households"),
+        homes(both),
+        households,
+    )
+    for year in HORIZON_YEARS:
+        wave = year + WAVE_OFFSET
+        at_wave = person_wave[
+            (person_wave["period"] == wave)
+            & person_wave["person_id"].isin(domain)
+        ].set_index("person_id")
+        year_rows = rows[
+            (rows["reference_year"] == year) & rows["person_id"].isin(domain)
+        ].set_index("person_id")
+        head_codes, spouse_codes = family._relationship_codes(wave)
+        codes = frozenset((*head_codes, *spouse_codes))
+        labels = {
+            person: _disposition(person, at_wave, year_rows, codes, low, high)
+            for person in sorted(domain)
+        }
+        for name in DISPOSITIONS:
+            put(
+                ("domain_dispositions", str(year), name),
+                [person for person, label in labels.items() if label == name],
+            )
+        entering = valid[
+            (valid["reference_year"] == year)
+            & valid["in_support"]
+            & ~valid["in_domain"]
+        ]
+        inside = entering["person_id"].isin(anchor_ids)
+        for name, _, _ in EARN_COHORTS:
+            cohort = entering["cohort"] == name
+            key = ("entrants_not_scored", str(year))
+            put(
+                (*key, "in_2011_anchor_without_valid_boundary_row", name),
+                ids(entering[cohort & inside]),
+            )
+            put(
+                (*key, "outside_2011_anchor", name),
+                ids(entering[cohort & ~inside]),
+            )
+    return sets
+
+
+def _b0_1_leaves(record: Mapping, prefix: CellPath = ()):
+    for key, value in record.items():
+        if isinstance(value, Mapping):
+            yield from _b0_1_leaves(value, (*prefix, key))
+        else:
+            yield (*prefix, key), value
+
+
+def check_b0_1_record(record: Mapping, rerun: Mapping, sets: Mapping) -> None:
+    """Stop unless the B0.1 record this audit constrains by is the one these
+    inputs give, and every number it publishes is modeled.
+
+    B0.1's own ``structural_counts``, rerun on this script's inputs, must
+    equal its committed counts exactly. Every committed count must be one
+    of ``sets``, a sum of published counts (``b0_1_sums``, checked), an
+    effective size, or a wave label. Each copied ledger count must equal
+    the B0.1 count it repeats."""
+    counts = record["counts"]
+    if rerun != counts:
+        raise AssertionError(
+            "B0.1's counts rerun on these inputs differ from its record"
+        )
+    sums = b0_1_sums()
+    labels = {("anchor_wave",)} | {
+        ("scored_support", str(year), "collection_wave")
+        for year in (BOUNDARY_YEAR, *HORIZON_YEARS)
+    }
+    leaves = dict(_b0_1_leaves(counts))
+    for path, value in leaves.items():
+        if path in sets or path in labels or path[-1] in B0_1_EFFECTIVE:
+            continue
+        if path not in sums:
+            raise AssertionError(f"B0.1 count is not modeled: {path}")
+        if value != sum(leaves[part] for part in sums[path]):
+            raise AssertionError(f"B0.1 sum does not hold: {path}")
+    if missing := set(sets) - set(leaves):
+        raise AssertionError(f"B0.1 publishes no count for {sorted(missing)}")
+    horizon = [str(year) for year in HORIZON_YEARS]
+    for name, ledger in record["ledger_support_counts"].items():
+        expected = {
+            field: leaves[path] for field, path in B0_1_LEDGER_FIELDS.items()
+        }
+        expected["truth_support_rows_by_period"] = {
+            str(year): leaves[("scored_support", str(year), "scored_rows")]
+            for year in (BOUNDARY_YEAR, *HORIZON_YEARS)
+        }
+        expected["endpoint_support_rows"] = sum(
+            leaves[("scored_support", year, "scored_rows")] for year in horizon
+        )
+        expected["support_age_min"] = AGE_SUPPORT[0]
+        expected["support_age_max"] = AGE_SUPPORT[1]
+        copied = {
+            field: value
+            for field, value in ledger.items()
+            if field != "fit_input_rows"
+        }
+        if copied != expected:
+            raise AssertionError(f"B0.1 ledger counts differ: {name}")
+
+
+def register_b0_1(registry: SetRegistry, sets: Mapping, counts: Mapping):
+    """Add B0.1's sets to the registry with their exact published sizes."""
+    for path, (unit_type, units, terms) in sets.items():
+        value = sum(sign * _cell(counts, part) for sign, part in terms)
+        registry.add_prior(("b0_1", *path), unit_type, units, value)
+
+
+# --------------------------------------------------------------------------
 # Thin readers and requested-label provenance
 # --------------------------------------------------------------------------
 def read_inputs(
@@ -1308,8 +1689,10 @@ def write_new(path: Path, data: bytes) -> None:
 
     The bytes go to a temporary file in the same directory, which is
     flushed to disk and then hard-linked to ``path``; the link fails if
-    ``path`` exists. Any failure removes the temporary file and leaves
-    nothing at ``path``, so no partial file ever has a final name."""
+    ``path`` exists. A failure up to the link removes the temporary file
+    and leaves nothing at ``path``. The directory is flushed after the
+    link, so a failure there leaves the complete file. No partial file
+    ever has a final name."""
     temporary = path.with_name(f".{path.name}.{os.getpid()}.partial")
     descriptor = os.open(
         temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644
@@ -1385,6 +1768,10 @@ def main(argv: list[str] | None = None) -> int:
         raise AssertionError(
             "R_B2 size differs from B0.1 counts.domain_persons"
         )
+    earlier = b0_1_sets(person_wave, validity)
+    check_b0_1_record(
+        committed, b0_1_structural_counts(person_wave, validity), earlier
+    )
     payload = {
         "schema": SCHEMA,
         "repository_head": repository_head,
@@ -1402,6 +1789,7 @@ def main(argv: list[str] | None = None) -> int:
         "counts": counts,
     }
     registry = disclosure_registry(person_wave, validity, anchor, design)
+    register_b0_1(registry, earlier, committed["counts"])
     coarsened, disclosure, local_audit = release_counts(counts, registry)
     payload["disclosure_audit"] = local_audit
     provenance = {
