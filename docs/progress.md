@@ -307,7 +307,7 @@ Component-by-component against DYNASIM, the main non-governmental dynamic benchm
 | Social Security rule engine | Rule-based, code not public | Python AIME/PIA oracle using PolicyEngine-US parameters (built, not gated); the Axiom engine matches its statutory AIME for 7,486 of 7,486 people (diagnostic) |
 | Claiming behavior | Retirement-and-timing model | Reduced-form claim-age distribution (built, reported, not gated) |
 | Auxiliary benefits | Spouse and survivor analysis in natural domain | Spousal, survivor, widow incl. dual-entitlement logic (built, not gated) |
-| Wealth, assets, and LTSS | Major documented strength | No wealth projection (a later extension track); exercise 2 annuitizes PSID wealth statically |
+| Wealth, assets, and LTSS | Major documented strength | No wealth projection yet; the approved income-and-resources design (Tier 1) plans one, scored on later PSID waves the model did not see; exercise 2 annuitizes PSID wealth statically |
 
 ## Timeline forecast
 
