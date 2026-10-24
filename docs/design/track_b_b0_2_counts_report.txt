@@ -136,3 +136,127 @@ Post-build correction (main session, before review round 2)
   Mutations: 22/22 killed, the build's 20 plus "published B interval
   starts at B/2" and "effective bound for a published B starts at B/2";
   record rewritten in docs/design/track_b_b0_2_counts_mutations.json.
+
+Review round 2 answer (main session, 2026-10-24)
+  Round 2 (Sol, at 0644b717) asked for changes. 22fcd5b1 answers it; its
+  commit message and the protocol's preamble list the changes. 88211bf8
+  then corrected three sentences of the block that had said a wide
+  target keeps at least five possible sizes: the rule guarantees a range
+  of width at least 4. bfd439cf adds three tests, for the mutants that a
+  first 45-check run at 88211bf8 left alive. The sections above describe
+  earlier rounds. Where they differ from the protocol (the ladder of
+  bases, proven optima, audited and failed counts in the public block),
+  the protocol and this section supersede them.
+
+Protocol pin (status remains DRAFT)
+  e9a39f445c8674ac3e0298239d2f8b5473c148495bb24d82870b9a3d70c799b6
+  Exact bytes from <!-- protocol:begin --> through <!-- protocol:end -->.
+  Count script SHA-256, unchanged from 88211bf8 through bfd439cf:
+  d0a96afe92699ed3ca9f7936b45a9154c115ac69e1b567decc70e454040f7553
+
+Validation (serial, in a clean clone at bfd439cf)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
+  PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/src:$PWD nice -n 10
+  .venv/bin/python -m pytest -q -p no:cacheprovider
+  tests/test_track_b_b0_2_counts.py tests/test_track_b_b0_1_counts.py
+  tests/test_track_b_b0_2_exclusions.py
+  tests/test_track_b_b2_outcome_exclusions.py
+  tests/test_track_b_b0_1_review_root.py
+    293 passed in 58.33s
+  git diff --name-only -z f8ffc7d9 HEAD -- '*.py' | xargs -0
+  .venv/bin/python -m black -l 79 --workers 1 --check
+    12 files would be left unchanged.
+  git diff --name-only -z f8ffc7d9 HEAD -- '*.py' | xargs -0
+  .venv/bin/ruff check
+    All checks passed!
+  Tier counts: tests/tier_counts.json has unit 18,249 against 18,125 at
+  master f8ffc7d9 (this module collects 120 unit tests); the other tiers
+  are unchanged.
+
+Enumeration checks (docs/design/track_b_b0_2_evidence/, invented tables)
+  oracle.py restates the rule by brute force, without the integer
+  programs: every atom-size vector with the truth's publication, atoms
+  allowed to be empty, one unit type and no relation beyond the rows.
+  python docs/design/track_b_b0_2_evidence/exhaust_closure.py
+    structures 96 tables 263424 multi 0
+    Every three-atom table (two or more rows, distinct nonempty
+    signatures, each atom 1 to 14): no release needs a second round. The
+    closure rounds are therefore tested by forcing one
+    (test_a_narrow_target_outside_one_to_nine_starts_another_round).
+  python docs/design/track_b_b0_2_evidence/search.py 2 1500
+    {'tables': 562, 'released': 531, 'multi_round': 0, 'theorem_fail': 0,
+    'width_fail': 0, 'single_unsound': 0}
+    Three to five atoms, at most 6,000 candidate vectors: on every
+    released table the reader's posterior equals the final constraint
+    set, and every sensitive target spans at least 4 over it. None needed
+    a second round, and a rule that stopped after its first round would
+    have left no sensitive target narrow on any of them.
+  python docs/design/track_b_b0_2_evidence/ranges.py 5 3000
+    {'released': 1635, 'sensitive': 2665, 'gaps': 0, 'under5': 0}
+    On these tables every sensitive target also takes every size in its
+    range, so at least five sizes. The rule does not promise this; it is
+    an observation, and the protocol states only the range.
+  The oracle first built every vector in the caps' product before
+  filtering; during search.py that reached 30 GB, and the run was
+  stopped. It now decodes vectors in chunks of one million, with an
+  early limit. Over 1,228 random tables the two versions gave identical
+  arrays, order included. Each output above also equals the first
+  version's: exhaust_closure.py and ranges.py from runs of these scripts
+  before the change, and search.py from an earlier scratch version of
+  the same search (same seed, trials and draws) before it was tidied for
+  commit.
+
+Calibration on an invented panel (calibration.txt)
+  invented_panel.py draws, from a seeded generator, the shapes the count
+  script reads (person-waves, family labor validity, the 2011 anchor and
+  design fields) for 13 biennial waves, with attrition, deaths,
+  split-offs, missing ages, zero weights, nonsample sequence numbers and
+  invalid labor amounts. calibrate.py runs the script's registry, model
+  and audit at B = 10 and times each program.
+  800 households: 2,843 targets (939 sensitive), released, every target
+    wide (2,773 from the pool, 70 by search), audit 298.5 s.
+  3,000 households: 3,112 targets (1,446 sensitive), released, every
+    target wide (3,028 pool, 84 search), audit 699.2 s.
+  9,000 households: 3,776 targets (2,244 sensitive), released, every
+    target wide (3,653 pool, 123 search), audit 705.2 s.
+  The slowest seed program took 22.3 s and the slowest target, over all
+  its programs, 19.1 s; each program's limit is 60 s. No round disclosed
+  a target. The staged PSID's atom and target counts are not known
+  before the run; the invented panel's are a calibration, not a bound.
+
+Mutations (docs/design/track_b_b0_2_counts_mutations.json)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
+  PYTHONDONTWRITEBYTECODE=1 nice -n 10 .venv/bin/python
+  docs/design/track_b_b0_2_evidence/mutations.py RECORD
+    FINAL: 45/45 mutations killed; restored
+    d0a96afe92699ed3ca9f7936b45a9154c115ac69e1b567decc70e454040f7553
+  A first run at 88211bf8 killed 42 of 45. Three survived, each a gap in
+  the tests: targets ordered by true size, a timed-out search counted as
+  proof, and relations registered whether or not guaranteed. bfd439cf
+  adds a test for each, and each fails on its mutant and passes on the
+  script:
+    test_targets_are_classified_in_one_order_whatever_their_sizes
+    test_a_timed_out_search_proves_nothing
+    test_a_relation_the_rows_do_not_guarantee_is_not_registered
+  The record is the full rerun at bfd439cf.
+  Each check makes one change from mutation_specs.json and runs the
+  whole count test module in a fresh pytest process with its own
+  Hypothesis database. 21 checks carry over from the earlier record, one
+  renamed ("atom audit skips published subset differences" is now "audit
+  skips published subset differences"); the ladder check is gone with
+  the ladder. 24 are new, covering the pool and its seeding, target
+  order, the search windows, the withhold test, the disclosure rounds,
+  the relaxation margin, timeouts, exact witness checks, the solver gap,
+  empty atoms, the relations, the public block, coarsening inputs, ages,
+  the output writes and the attempt record's flush.
+  Every check failed between 1 and 15 tests; 15 checks failed exactly
+  one. Each failed-test id in the record matches one of the 120 node ids
+  pytest collects from the module.
+  Every check restored the script's bytes and verified its SHA-256:
+    d0a96afe92699ed3ca9f7936b45a9154c115ac69e1b567decc70e454040f7553
+
+No-data and integrity declaration
+  No real data file or codebook was opened. Every table and panel above
+  is invented. No real-data count, power calculation, counts JSON or
+  evidence-folder attempt record was created. gates.yaml, runs/ and
+  existing src/ files were not edited.
