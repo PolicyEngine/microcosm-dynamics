@@ -26,13 +26,7 @@ that calls the existing `build_entrant_schedule`. The result exposes
 `projection`, `events`, `accounting` and `read_prefix(end_year)`.
 `run_gate` instead requires `GateRunRequest(horizon=...)`.
 
-The worktree's common Git directory is outside its writable boundary. Creating
-a normal branch failed with `Operation not permitted`. Commits therefore live
-in workspace-owned metadata at `.cache/op1-git` on
-`openpop-op1-harness-r2`. A Git bundle accompanies the completed report for
-transfer to the caller's repository (`op1-harness.bundle`, containing
-`refs/heads/openpop-op1-harness-r2`). No history was rewritten and nothing was
-pushed. All source edits and generated evidence stay in this workspace.
+No history was rewritten.
 
 ## 2. Tests and exact commands
 
@@ -48,12 +42,12 @@ All fixtures and property examples are invented. The Hypothesis tests use
 | `tests/open_population/test_harness.py` | Annual stock/weight identity, transient arrivals/exits, history retirement, closed-run coupling, registered prefixes, determinism and canonical-order invariance (§7) |
 | `tests/open_population/test_gates.py` | Fixed gate horizon, target refusal and fresh-process import isolation (§5.1) |
 
-Commands ran from the workspace root. In the commands below, the shell variables
-expand to the authorized existing dependency environment; `PYTHONPATH` selects
-this workspace's sources and bytecode writing is disabled.
+Commands ran from the repository root. `OP1_TOOLS` is the `bin` folder of a
+virtual environment with the package's dependencies; `PYTHONPATH` selects
+these sources and bytecode writing is disabled.
 
 ```sh
-OP1_TOOLS=/Users/maxghenis/PolicyEngine/_openpop-builds/op1/.venv/bin
+OP1_TOOLS=.venv/bin
 export PYTHONPATH="$PWD/src"
 export PYTHONDONTWRITEBYTECODE=1
 
