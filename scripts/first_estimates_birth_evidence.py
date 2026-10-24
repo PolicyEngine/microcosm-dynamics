@@ -413,6 +413,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # CE1 coverage rules are opt-in; the historical projection imports none.
+    Path("src/populace_dynamics/income_resources/__init__.py"),
+    Path("src/populace_dynamics/income_resources/coverage_rules.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
