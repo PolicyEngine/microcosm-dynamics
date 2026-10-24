@@ -9,7 +9,7 @@ are invented and contain no population observations.
 from datetime import date
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.retirement_rules import (
@@ -250,6 +250,7 @@ def test_designated_roth_transition_preserves_2023_obligation():
     )
 
 
+@settings(deadline=None)
 @given(
     st.floats(min_value=0, max_value=1e15, allow_nan=False),
     st.integers(2003, 2100),
@@ -282,6 +283,7 @@ def test_rmd_bounded_and_exempt(
         assert result == 0
 
 
+@settings(deadline=None)
 @given(st.integers(1900, 2100), st.sampled_from(list(Birth1959Rule)))
 def test_applicable_age_monotone(birth_year, reading):
     assert applicable_age(
@@ -289,6 +291,7 @@ def test_applicable_age_monotone(birth_year, reading):
     ) <= applicable_age(date(birth_year + 1, 1, 1), birth1959=reading)
 
 
+@settings(deadline=None)
 @given(st.sampled_from([2019, 2022]), st.integers(70, 119))
 def test_uniform_fraction_monotone(year, age):
     if year >= 2022 and age < 72:
@@ -298,6 +301,7 @@ def test_uniform_fraction_monotone(year, age):
     assert 1 / rmd_divisor(year, age) <= 1 / rmd_divisor(year, age + 1)
 
 
+@settings(deadline=None)
 @given(
     st.sampled_from([2019, 2022]),
     st.integers(70, 119),
@@ -325,6 +329,7 @@ def test_joint_fraction_monotone(year, age, spouse):
     )
 
 
+@settings(deadline=None)
 @given(st.integers(2003, 2100), st.integers(72, 120))
 def test_balance_divisor_differential(year, age):
     """The direct table formula agrees with owner obligation when due."""

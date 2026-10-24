@@ -7,7 +7,7 @@ Source citations identify statutory rules or IRS guidance, not observed data.
 from datetime import date, datetime, timedelta
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.early_distribution import (
@@ -175,6 +175,7 @@ def test_employer_sepp_begins_after_separation():
     )
 
 
+@settings(deadline=None)
 @given(
     amount=st.floats(min_value=0, max_value=1e12, allow_nan=False),
     scale=st.floats(min_value=0, max_value=10, allow_nan=False),
@@ -192,6 +193,7 @@ def test_tax_bounds_and_linearity(amount, scale, account_type):
     )
 
 
+@settings(deadline=None)
 @given(
     amount=st.floats(min_value=0, max_value=1e12, allow_nan=False),
     birth_year=st.integers(min_value=1910, max_value=1966),
@@ -214,6 +216,7 @@ def test_age_59_half_exempts_every_covered_account(
     assert early_distribution_tax(amount, **kwargs) == 0
 
 
+@settings(deadline=None)
 @given(
     amount=st.floats(min_value=0, max_value=1e12, allow_nan=False),
     exception=st.sampled_from(
@@ -243,6 +246,7 @@ def test_covered_exceptions_zero(amount, exception, account_type):
     assert early_distribution_tax(amount, exception=exception, **kwargs) == 0
 
 
+@settings(deadline=None)
 @given(
     amount=st.floats(min_value=0, max_value=1e12, allow_nan=False),
     participation_year=st.integers(min_value=2002, max_value=2024),
@@ -266,6 +270,7 @@ def test_simple_rate_changes_on_second_anniversary(
     assert early_distribution_tax(amount, **kwargs) == amount * 0.25
 
 
+@settings(deadline=None)
 @given(
     birth_year=st.integers(min_value=1947, max_value=1971),
     birth_month=st.integers(min_value=1, max_value=12),

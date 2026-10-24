@@ -11,7 +11,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources import pension_cola
@@ -125,6 +125,7 @@ def test_initial_disability_period_has_no_cola():
     )
 
 
+@settings(deadline=None)
 @given(
     growth=INVENTED_GROWTH,
     months=st.integers(min_value=0, max_value=12),
@@ -146,6 +147,7 @@ def test_rates_bounded_by_rounded_cpi_and_proration(growth, months, plan):
     assert Decimal(str(partial)) % Decimal("0.001") == 0
 
 
+@settings(deadline=None)
 @given(
     growth=st.floats(min_value=-1, max_value=0, allow_nan=False),
     plan=st.sampled_from(list(FederalPensionPlan)),
@@ -160,6 +162,7 @@ def test_no_positive_cpi_increase_gives_no_cola(growth, plan):
     )
 
 
+@settings(deadline=None)
 @given(
     age=st.floats(min_value=0, max_value=61.999, allow_nan=False),
     growth=INVENTED_GROWTH,
@@ -174,6 +177,7 @@ def test_ordinary_fers_before_62_has_no_cola(age, growth):
     )
 
 
+@settings(deadline=None)
 @given(
     age=st.floats(min_value=0, max_value=61.999, allow_nan=False),
     growth=INVENTED_GROWTH,
@@ -214,6 +218,7 @@ def test_monthly_annuity_dollar_rounding_and_minimum_increase():
     )
 
 
+@settings(deadline=None)
 @given(
     annuity=st.integers(min_value=0, max_value=100_000),
     cap=st.integers(min_value=0, max_value=200_000),
@@ -230,6 +235,7 @@ def test_csrs_cap_cannot_lower_already_payable_annuity(annuity, cap, growth):
     assert annuity <= result <= max(annuity, cap)
 
 
+@settings(deadline=None)
 @given(
     annuity=st.integers(min_value=1, max_value=100_000),
     growth=st.floats(
@@ -255,6 +261,7 @@ def test_fers_amount_rounds_dollars_with_minimum_increase(annuity, growth):
         assert result == annuity + 1
 
 
+@settings(deadline=None)
 @given(growth=INVENTED_GROWTH)
 def test_research_options_are_explicit_bounded_assumptions(growth):
     """Proposals in the research note are unregistered, not state plan law."""

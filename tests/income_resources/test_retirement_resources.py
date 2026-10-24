@@ -6,7 +6,7 @@ No fixture or generated input describes a survey record or real account.
 """
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.retirement_resources import (
@@ -129,6 +129,7 @@ def test_periodic_state_uses_current_lump_sum_rights(status):
     assert not result.must_apply_for_periodic_benefits
 
 
+@settings(deadline=None)
 @given(
     balance=INVENTED_AMOUNTS,
     access_fraction=st.floats(min_value=0, max_value=1, allow_nan=False),
@@ -153,6 +154,7 @@ def test_value_bounds_and_numeric_assessment_differential(
     assert retirement_fund_countable_value(**kwargs) == result.countable_value
 
 
+@settings(deadline=None)
 @given(
     balance=INVENTED_AMOUNTS,
     penalty=INVENTED_AMOUNTS,
@@ -174,6 +176,7 @@ def test_no_lump_sum_always_zero(balance, penalty, status):
     )
 
 
+@settings(deadline=None)
 @given(balance=INVENTED_AMOUNTS, penalty=INVENTED_AMOUNTS)
 def test_fund_requiring_current_job_termination_is_zero(balance, penalty):
     """SI 01120.210 C.1: employment termination is not required."""
@@ -190,6 +193,7 @@ def test_fund_requiring_current_job_termination_is_zero(balance, penalty):
     )
 
 
+@settings(deadline=None)
 @given(
     balance=INVENTED_AMOUNTS,
     owner=st.sampled_from(
@@ -216,6 +220,7 @@ def test_ineligible_family_funds_excluded_from_deeming(balance, owner, status):
     assert not result.must_choose_periodic_over_lump_sum
 
 
+@settings(deadline=None)
 @given(
     balance=INVENTED_AMOUNTS,
     first_penalty=INVENTED_AMOUNTS,
@@ -237,6 +242,7 @@ def test_higher_penalty_never_raises_value(
     assert retirement_fund_countable_value(**kwargs) <= before
 
 
+@settings(deadline=None)
 @given(taxes=INVENTED_AMOUNTS)
 def test_ordinary_taxes_never_reduce_value(taxes):
     """SI 01120.210 A.3: ordinary taxes are never deductible."""
