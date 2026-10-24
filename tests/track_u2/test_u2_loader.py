@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import math
 import os
 import pwd
@@ -1172,11 +1173,35 @@ def test_a_malformed_evidence_record_refuses(evidence, change, message):
         loader.check_preregistration_evidence(change(dict(evidence)))
 
 
-def test_an_absent_evidence_record_refuses(tmp_path):
+def test_an_absent_or_unpinned_evidence_record_refuses(
+    tmp_path, evidence, monkeypatch
+):
+    """Section 20 step 5 pins the record the step-4 pass wrote: a file
+    with any other bytes refuses before it is parsed, a well-formed
+    invented record included."""
+    assert loader.PREREGISTRATION_EVIDENCE_SHA256 == (
+        "7bc5c3c26ff014271061a8228068c6e71103430ec299048462570476a510b845"
+    )
     with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
         loader.read_preregistration_evidence(tmp_path / "absent.json")
     path = tmp_path / "evidence.json"
+    path.write_text(json.dumps(evidence))
+    assert loader.check_preregistration_evidence(evidence)
+    with pytest.raises(
+        loader.U2FrozenIdentityMismatch, match="not the pinned"
+    ):
+        loader.read_preregistration_evidence(path)
     path.write_text("not json")
+    with pytest.raises(
+        loader.U2FrozenIdentityMismatch, match="not the pinned"
+    ):
+        loader.read_preregistration_evidence(path)
+    # Only bytes equal to the pin are parsed; these are not JSON.
+    monkeypatch.setattr(
+        loader,
+        "PREREGISTRATION_EVIDENCE_SHA256",
+        hashlib.sha256(b"not json").hexdigest(),
+    )
     with pytest.raises(loader.U2LoaderRefusal, match="not JSON"):
         loader.read_preregistration_evidence(path)
 
