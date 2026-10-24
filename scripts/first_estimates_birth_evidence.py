@@ -409,6 +409,12 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # Registration 18's opt-in COLA layer is outside the historical reducer.
+    Path("src/populace_dynamics/acola_track/__init__.py"),
+    Path("src/populace_dynamics/acola_track/config.py"),
+    Path("src/populace_dynamics/acola_track/nulls.py"),
+    Path("src/populace_dynamics/acola_track/runner.py"),
+    Path("src/populace_dynamics/acola_track/statistics.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

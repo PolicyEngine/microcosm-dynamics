@@ -1,0 +1,6715 @@
+{
+  "data": "INVENTED DATA ONLY",
+  "draw": 0,
+  "reference_year": 2030,
+  "rows": {
+    "C0": {
+      "1": {
+        "base": 17727.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11239.2,
+            "reform": 10915.2
+          },
+          "spouse": {
+            "base": 6488.400000000001,
+            "reform": 6300.0
+          }
+        },
+        "reform": 17215.199999999997
+      },
+      "10": {
+        "base": 38676.0,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 38676.0,
+            "reform": 37556.399999999994
+          }
+        },
+        "reform": 37556.399999999994
+      },
+      "11": {
+        "base": 17415.6,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 11844.0,
+            "reform": 11500.8
+          },
+          "spouse": {
+            "base": 5571.6,
+            "reform": 5410.799999999999
+          }
+        },
+        "reform": 16911.6
+      },
+      "12": {
+        "base": 38398.8,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 38398.8,
+            "reform": 37288.8
+          }
+        },
+        "reform": 37288.8
+      },
+      "13": {
+        "base": 17372.4,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12145.2,
+            "reform": 11793.599999999999
+          },
+          "spouse": {
+            "base": 5227.200000000001,
+            "reform": 5074.799999999999
+          }
+        },
+        "reform": 16868.399999999998
+      },
+      "14": {
+        "base": 38091.600000000006,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38091.600000000006,
+            "reform": 36987.600000000006
+          }
+        },
+        "reform": 36987.600000000006
+      },
+      "15": {
+        "base": 17438.399999999998,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12381.599999999999,
+            "reform": 12025.2
+          },
+          "spouse": {
+            "base": 5056.799999999999,
+            "reform": 4909.200000000001
+          }
+        },
+        "reform": 16934.4
+      },
+      "16": {
+        "base": 38115.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38115.600000000006,
+            "reform": 37011.600000000006
+          }
+        },
+        "reform": 37011.600000000006
+      },
+      "17": {
+        "base": 17407.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12348.0,
+            "reform": 11990.400000000001
+          },
+          "spouse": {
+            "base": 5059.200000000001,
+            "reform": 4912.799999999999
+          }
+        },
+        "reform": 16903.199999999997
+      },
+      "18": {
+        "base": 38055.600000000006,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38055.600000000006,
+            "reform": 36952.8
+          }
+        },
+        "reform": 36952.8
+      },
+      "19": {
+        "base": 17433.600000000002,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12610.800000000001,
+            "reform": 12247.2
+          },
+          "spouse": {
+            "base": 4822.799999999999,
+            "reform": 4682.4
+          }
+        },
+        "reform": 16929.6
+      },
+      "2": {
+        "base": 39610.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 39610.8,
+            "reform": 38463.600000000006
+          }
+        },
+        "reform": 38463.600000000006
+      },
+      "20": {
+        "base": 37957.2,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 37957.2,
+            "reform": 36858.0
+          }
+        },
+        "reform": 36858.0
+      },
+      "21": {
+        "base": 17437.199999999997,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 12853.199999999999,
+            "reform": 12480.0
+          },
+          "spouse": {
+            "base": 4584.0,
+            "reform": 4452.0
+          }
+        },
+        "reform": 16932.0
+      },
+      "22": {
+        "base": 37810.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 37810.8,
+            "reform": 36715.2
+          }
+        },
+        "reform": 36715.2
+      },
+      "23": {
+        "base": 17392.800000000003,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 12974.400000000001,
+            "reform": 12598.800000000001
+          },
+          "spouse": {
+            "base": 4418.4,
+            "reform": 4290.0
+          }
+        },
+        "reform": 16888.800000000003
+      },
+      "24": {
+        "base": 37615.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 37615.2,
+            "reform": 36524.399999999994
+          }
+        },
+        "reform": 36524.399999999994
+      },
+      "25": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13332.0,
+            "reform": 12945.599999999999
+          },
+          "spouse": {
+            "base": 4198.799999999999,
+            "reform": 4077.6000000000004
+          }
+        },
+        "reform": 17023.199999999997
+      },
+      "26": {
+        "base": 37749.600000000006,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 37749.600000000006,
+            "reform": 36656.399999999994
+          }
+        },
+        "reform": 36656.399999999994
+      },
+      "27": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13218.0,
+            "reform": 12836.400000000001
+          },
+          "spouse": {
+            "base": 4312.799999999999,
+            "reform": 4188.0
+          }
+        },
+        "reform": 17024.4
+      },
+      "28": {
+        "base": 37824.0,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 37824.0,
+            "reform": 36729.600000000006
+          }
+        },
+        "reform": 36729.600000000006
+      },
+      "29": {
+        "base": 17524.800000000003,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13144.800000000001,
+            "reform": 12763.199999999999
+          },
+          "spouse": {
+            "base": 4380.0,
+            "reform": 4254.0
+          }
+        },
+        "reform": 17017.199999999997
+      },
+      "3": {
+        "base": 17586.0,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11367.599999999999,
+            "reform": 11040.0
+          },
+          "spouse": {
+            "base": 6218.400000000001,
+            "reform": 6037.200000000001
+          }
+        },
+        "reform": 17077.199999999997
+      },
+      "30": {
+        "base": 37855.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 37855.2,
+            "reform": 36759.600000000006
+          }
+        },
+        "reform": 36759.600000000006
+      },
+      "31": {
+        "base": 17535.6,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13207.199999999999,
+            "reform": 12825.599999999999
+          },
+          "spouse": {
+            "base": 4328.4,
+            "reform": 4203.6
+          }
+        },
+        "reform": 17029.199999999997
+      },
+      "32": {
+        "base": 37843.2,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 37843.2,
+            "reform": 36748.8
+          }
+        },
+        "reform": 36748.8
+      },
+      "33": {
+        "base": 17419.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 12774.0,
+            "reform": 12405.599999999999
+          },
+          "spouse": {
+            "base": 4645.200000000001,
+            "reform": 4509.6
+          }
+        },
+        "reform": 16915.199999999997
+      },
+      "34": {
+        "base": 37813.2,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 37813.2,
+            "reform": 36716.399999999994
+          }
+        },
+        "reform": 36716.399999999994
+      },
+      "35": {
+        "base": 17576.4,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 12944.400000000001,
+            "reform": 12568.800000000001
+          },
+          "spouse": {
+            "base": 4632.0,
+            "reform": 4498.799999999999
+          }
+        },
+        "reform": 17067.600000000002
+      },
+      "36": {
+        "base": 38118.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38118.0,
+            "reform": 37014.0
+          }
+        },
+        "reform": 37014.0
+      },
+      "37": {
+        "base": 17744.399999999998,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13213.199999999999,
+            "reform": 12831.599999999999
+          },
+          "spouse": {
+            "base": 4531.200000000001,
+            "reform": 4399.200000000001
+          }
+        },
+        "reform": 17230.800000000003
+      },
+      "38": {
+        "base": 38389.2,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 38389.2,
+            "reform": 37279.2
+          }
+        },
+        "reform": 37279.2
+      },
+      "39": {
+        "base": 17781.600000000002,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13030.800000000001,
+            "reform": 12654.0
+          },
+          "spouse": {
+            "base": 4750.799999999999,
+            "reform": 4614.0
+          }
+        },
+        "reform": 17268.0
+      },
+      "4": {
+        "base": 39152.399999999994,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39152.399999999994,
+            "reform": 38018.399999999994
+          }
+        },
+        "reform": 38018.399999999994
+      },
+      "40": {
+        "base": 38606.399999999994,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 38606.399999999994,
+            "reform": 37489.2
+          }
+        },
+        "reform": 37489.2
+      },
+      "41": {
+        "base": 17851.199999999997,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13032.0,
+            "reform": 12655.199999999999
+          },
+          "spouse": {
+            "base": 4819.200000000001,
+            "reform": 4678.799999999999
+          }
+        },
+        "reform": 17334.0
+      },
+      "42": {
+        "base": 38790.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 38790.0,
+            "reform": 37665.600000000006
+          }
+        },
+        "reform": 37665.600000000006
+      },
+      "43": {
+        "base": 17845.199999999997,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 12769.199999999999,
+            "reform": 12400.800000000001
+          },
+          "spouse": {
+            "base": 5076.0,
+            "reform": 4928.4
+          }
+        },
+        "reform": 17329.2
+      },
+      "44": {
+        "base": 38942.399999999994,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 38942.399999999994,
+            "reform": 37814.399999999994
+          }
+        },
+        "reform": 37814.399999999994
+      },
+      "45": {
+        "base": 18085.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 12976.800000000001,
+            "reform": 12601.199999999999
+          },
+          "spouse": {
+            "base": 5108.4,
+            "reform": 4960.799999999999
+          }
+        },
+        "reform": 17562.0
+      },
+      "46": {
+        "base": 39442.8,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 39442.8,
+            "reform": 38300.399999999994
+          }
+        },
+        "reform": 38300.399999999994
+      },
+      "47": {
+        "base": 18242.4,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 12932.400000000001,
+            "reform": 12556.800000000001
+          },
+          "spouse": {
+            "base": 5310.0,
+            "reform": 5157.6
+          }
+        },
+        "reform": 17714.4
+      },
+      "48": {
+        "base": 39885.600000000006,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 39885.600000000006,
+            "reform": 38732.399999999994
+          }
+        },
+        "reform": 38732.399999999994
+      },
+      "49": {
+        "base": 18422.4,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13060.800000000001,
+            "reform": 12680.400000000001
+          },
+          "spouse": {
+            "base": 5361.6,
+            "reform": 5206.799999999999
+          }
+        },
+        "reform": 17887.199999999997
+      },
+      "5": {
+        "base": 17588.4,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11530.8,
+            "reform": 11198.400000000001
+          },
+          "spouse": {
+            "base": 6057.6,
+            "reform": 5882.4
+          }
+        },
+        "reform": 17080.800000000003
+      },
+      "50": {
+        "base": 40276.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 40276.8,
+            "reform": 39110.399999999994
+          }
+        },
+        "reform": 39110.399999999994
+      },
+      "51": {
+        "base": 18520.800000000003,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 12902.400000000001,
+            "reform": 12529.199999999999
+          },
+          "spouse": {
+            "base": 5618.4,
+            "reform": 5455.200000000001
+          }
+        },
+        "reform": 17984.399999999998
+      },
+      "52": {
+        "base": 40638.0,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 40638.0,
+            "reform": 39462.0
+          }
+        },
+        "reform": 39462.0
+      },
+      "53": {
+        "base": 12949.199999999999,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3379.2000000000003,
+            "reform": 3280.7999999999997
+          },
+          "spouse": {
+            "base": 9570.0,
+            "reform": 9292.8
+          }
+        },
+        "reform": 12573.599999999999
+      },
+      "54": {
+        "base": 27372.0,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27372.0,
+            "reform": 26580.0
+          }
+        },
+        "reform": 26580.0
+      },
+      "55": {
+        "base": 13039.199999999999,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3219.6000000000004,
+            "reform": 3158.3999999999996
+          },
+          "spouse": {
+            "base": 9819.599999999999,
+            "reform": 9628.8
+          }
+        },
+        "reform": 12787.199999999999
+      },
+      "56": {
+        "base": 27591.600000000002,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 27591.600000000002,
+            "reform": 27057.600000000002
+          }
+        },
+        "reform": 27057.600000000002
+      },
+      "57": {
+        "base": 13112.400000000001,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3092.3999999999996,
+            "reform": 3062.3999999999996
+          },
+          "spouse": {
+            "base": 10020.0,
+            "reform": 9922.8
+          }
+        },
+        "reform": 12985.199999999999
+      },
+      "58": {
+        "base": 27769.199999999997,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 27769.199999999997,
+            "reform": 27498.0
+          }
+        },
+        "reform": 27498.0
+      },
+      "59": {
+        "base": 13095.599999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3024.0,
+            "reform": 3024.0
+          },
+          "spouse": {
+            "base": 10071.599999999999,
+            "reform": 10071.599999999999
+          }
+        },
+        "reform": 13095.599999999999
+      },
+      "6": {
+        "base": 39056.399999999994,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39056.399999999994,
+            "reform": 37927.2
+          }
+        },
+        "reform": 37927.2
+      },
+      "60": {
+        "base": 27741.600000000002,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 27741.600000000002,
+            "reform": 27741.600000000002
+          }
+        },
+        "reform": 27741.600000000002
+      },
+      "61": {
+        "base": 13213.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13213.199999999999,
+            "reform": 12831.599999999999
+          }
+        },
+        "reform": 12831.599999999999
+      },
+      "62": {
+        "base": 4516.799999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3116.3999999999996,
+            "reform": 3085.2000000000003
+          },
+          "spouse": {
+            "base": 1400.4,
+            "reform": 1304.4
+          }
+        },
+        "reform": 4389.6
+      },
+      "63": {
+        "base": 15170.400000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15170.400000000001,
+            "reform": 14731.199999999999
+          }
+        },
+        "reform": 14731.199999999999
+      },
+      "65": {
+        "base": 40938.0,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36267.600000000006,
+            "reform": 35217.600000000006
+          },
+          "retired_worker": {
+            "base": 4670.4,
+            "reform": 4536.0
+          }
+        },
+        "reform": 39753.600000000006
+      },
+      "66": {
+        "base": 13574.37690890607,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13574.37690890607,
+            "reform": 13181.320278393594
+          }
+        },
+        "reform": 13181.320278393594
+      },
+      "67": {
+        "base": 19011.84038662128,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19011.84038662128,
+            "reform": 18461.337776272838
+          }
+        },
+        "reform": 18461.337776272838
+      },
+      "68": {
+        "base": 21634.16319856905,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 21634.16319856905,
+            "reform": 21007.729193689782
+          }
+        },
+        "reform": 21007.729193689782
+      },
+      "69": {
+        "base": 17565.70648297362,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17565.70648297362,
+            "reform": 17057.07780343261
+          }
+        },
+        "reform": 17057.07780343261
+      },
+      "7": {
+        "base": 17528.4,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11574.0,
+            "reform": 11236.8
+          },
+          "spouse": {
+            "base": 5954.4,
+            "reform": 5784.0
+          }
+        },
+        "reform": 17020.800000000003
+      },
+      "70": {
+        "base": 15560.40080324886,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15560.40080324886,
+            "reform": 15109.837307760834
+          }
+        },
+        "reform": 15109.837307760834
+      },
+      "8": {
+        "base": 38869.2,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 38869.2,
+            "reform": 37744.8
+          }
+        },
+        "reform": 37744.8
+      },
+      "9": {
+        "base": 17515.199999999997,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 11822.400000000001,
+            "reform": 11480.400000000001
+          },
+          "spouse": {
+            "base": 5692.799999999999,
+            "reform": 5528.4
+          }
+        },
+        "reform": 17008.800000000003
+      }
+    },
+    "C1": {
+      "1": {
+        "base": 18081.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11462.400000000001,
+            "reform": 11022.0
+          },
+          "spouse": {
+            "base": 6619.200000000001,
+            "reform": 6363.599999999999
+          }
+        },
+        "reform": 17385.6
+      },
+      "10": {
+        "base": 39448.8,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 39448.8,
+            "reform": 37932.0
+          }
+        },
+        "reform": 37932.0
+      },
+      "11": {
+        "base": 17763.600000000002,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 12080.400000000001,
+            "reform": 11614.8
+          },
+          "spouse": {
+            "base": 5683.200000000001,
+            "reform": 5466.0
+          }
+        },
+        "reform": 17080.800000000003
+      },
+      "12": {
+        "base": 39165.600000000006,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 39165.600000000006,
+            "reform": 37660.8
+          }
+        },
+        "reform": 37660.8
+      },
+      "13": {
+        "base": 17719.199999999997,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12387.599999999999,
+            "reform": 11911.2
+          },
+          "spouse": {
+            "base": 5331.6,
+            "reform": 5126.4
+          }
+        },
+        "reform": 17037.6
+      },
+      "14": {
+        "base": 38851.2,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38851.2,
+            "reform": 37356.0
+          }
+        },
+        "reform": 37356.0
+      },
+      "15": {
+        "base": 17787.600000000002,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12628.800000000001,
+            "reform": 12144.0
+          },
+          "spouse": {
+            "base": 5158.799999999999,
+            "reform": 4958.4
+          }
+        },
+        "reform": 17102.4
+      },
+      "16": {
+        "base": 38877.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38877.600000000006,
+            "reform": 37380.0
+          }
+        },
+        "reform": 37380.0
+      },
+      "17": {
+        "base": 17755.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12594.0,
+            "reform": 12109.2
+          },
+          "spouse": {
+            "base": 5161.200000000001,
+            "reform": 4963.200000000001
+          }
+        },
+        "reform": 17072.4
+      },
+      "18": {
+        "base": 38815.2,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38815.2,
+            "reform": 37321.2
+          }
+        },
+        "reform": 37321.2
+      },
+      "19": {
+        "base": 17782.800000000003,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12862.800000000001,
+            "reform": 12368.400000000001
+          },
+          "spouse": {
+            "base": 4920.0,
+            "reform": 4729.200000000001
+          }
+        },
+        "reform": 17097.600000000002
+      },
+      "2": {
+        "base": 40402.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 40402.8,
+            "reform": 38847.600000000006
+          }
+        },
+        "reform": 38847.600000000006
+      },
+      "20": {
+        "base": 38715.600000000006,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 38715.600000000006,
+            "reform": 37225.2
+          }
+        },
+        "reform": 37225.2
+      },
+      "21": {
+        "base": 17786.4,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 13110.0,
+            "reform": 12603.599999999999
+          },
+          "spouse": {
+            "base": 4676.4,
+            "reform": 4497.6
+          }
+        },
+        "reform": 17101.199999999997
+      },
+      "22": {
+        "base": 38566.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 38566.8,
+            "reform": 37081.2
+          }
+        },
+        "reform": 37081.2
+      },
+      "23": {
+        "base": 17739.600000000002,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 13232.400000000001,
+            "reform": 12723.599999999999
+          },
+          "spouse": {
+            "base": 4507.200000000001,
+            "reform": 4333.200000000001
+          }
+        },
+        "reform": 17056.800000000003
+      },
+      "24": {
+        "base": 38365.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 38365.2,
+            "reform": 36889.2
+          }
+        },
+        "reform": 36889.2
+      },
+      "25": {
+        "base": 17881.199999999997,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13598.400000000001,
+            "reform": 13074.0
+          },
+          "spouse": {
+            "base": 4282.799999999999,
+            "reform": 4118.4
+          }
+        },
+        "reform": 17192.4
+      },
+      "26": {
+        "base": 38503.2,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 38503.2,
+            "reform": 37022.399999999994
+          }
+        },
+        "reform": 37022.399999999994
+      },
+      "27": {
+        "base": 17881.2,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13480.800000000001,
+            "reform": 12964.800000000001
+          },
+          "spouse": {
+            "base": 4400.4,
+            "reform": 4228.799999999999
+          }
+        },
+        "reform": 17193.600000000002
+      },
+      "28": {
+        "base": 38578.8,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 38578.8,
+            "reform": 37095.600000000006
+          }
+        },
+        "reform": 37095.600000000006
+      },
+      "29": {
+        "base": 17875.199999999997,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13406.400000000001,
+            "reform": 12890.400000000001
+          },
+          "spouse": {
+            "base": 4468.799999999999,
+            "reform": 4297.200000000001
+          }
+        },
+        "reform": 17187.600000000002
+      },
+      "3": {
+        "base": 17937.600000000002,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11594.400000000001,
+            "reform": 11149.2
+          },
+          "spouse": {
+            "base": 6343.200000000001,
+            "reform": 6098.4
+          }
+        },
+        "reform": 17247.6
+      },
+      "30": {
+        "base": 38611.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 38611.2,
+            "reform": 37126.8
+          }
+        },
+        "reform": 37126.8
+      },
+      "31": {
+        "base": 17886.0,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13470.0,
+            "reform": 12951.599999999999
+          },
+          "spouse": {
+            "base": 4416.0,
+            "reform": 4246.799999999999
+          }
+        },
+        "reform": 17198.399999999998
+      },
+      "32": {
+        "base": 38598.0,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 38598.0,
+            "reform": 37116.0
+          }
+        },
+        "reform": 37116.0
+      },
+      "33": {
+        "base": 17767.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 13029.599999999999,
+            "reform": 12529.199999999999
+          },
+          "spouse": {
+            "base": 4737.6,
+            "reform": 4554.0
+          }
+        },
+        "reform": 17083.199999999997
+      },
+      "34": {
+        "base": 38568.0,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 38568.0,
+            "reform": 37082.399999999994
+          }
+        },
+        "reform": 37082.399999999994
+      },
+      "35": {
+        "base": 17928.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 13202.400000000001,
+            "reform": 12693.599999999999
+          },
+          "spouse": {
+            "base": 4725.6,
+            "reform": 4543.200000000001
+          }
+        },
+        "reform": 17236.800000000003
+      },
+      "36": {
+        "base": 38880.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38880.0,
+            "reform": 37383.600000000006
+          }
+        },
+        "reform": 37383.600000000006
+      },
+      "37": {
+        "base": 18098.4,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13476.0,
+            "reform": 12960.0
+          },
+          "spouse": {
+            "base": 4622.4,
+            "reform": 4443.6
+          }
+        },
+        "reform": 17403.6
+      },
+      "38": {
+        "base": 39156.0,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 39156.0,
+            "reform": 37651.2
+          }
+        },
+        "reform": 37651.2
+      },
+      "39": {
+        "base": 18138.0,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13291.199999999999,
+            "reform": 12778.800000000001
+          },
+          "spouse": {
+            "base": 4846.799999999999,
+            "reform": 4660.799999999999
+          }
+        },
+        "reform": 17439.600000000002
+      },
+      "4": {
+        "base": 39934.8,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39934.8,
+            "reform": 38398.8
+          }
+        },
+        "reform": 38398.8
+      },
+      "40": {
+        "base": 39378.0,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 39378.0,
+            "reform": 37863.600000000006
+          }
+        },
+        "reform": 37863.600000000006
+      },
+      "41": {
+        "base": 18208.800000000003,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13292.400000000001,
+            "reform": 12781.199999999999
+          },
+          "spouse": {
+            "base": 4916.4,
+            "reform": 4726.799999999999
+          }
+        },
+        "reform": 17508.0
+      },
+      "42": {
+        "base": 39564.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 39564.0,
+            "reform": 38041.2
+          }
+        },
+        "reform": 38041.2
+      },
+      "43": {
+        "base": 18202.800000000003,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 13024.800000000001,
+            "reform": 12524.400000000001
+          },
+          "spouse": {
+            "base": 5178.0,
+            "reform": 4977.6
+          }
+        },
+        "reform": 17502.0
+      },
+      "44": {
+        "base": 39720.0,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 39720.0,
+            "reform": 38191.2
+          }
+        },
+        "reform": 38191.2
+      },
+      "45": {
+        "base": 18446.4,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 13234.800000000001,
+            "reform": 12727.199999999999
+          },
+          "spouse": {
+            "base": 5211.6,
+            "reform": 5010.0
+          }
+        },
+        "reform": 17737.199999999997
+      },
+      "46": {
+        "base": 40231.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 40231.2,
+            "reform": 38682.0
+          }
+        },
+        "reform": 38682.0
+      },
+      "47": {
+        "base": 18607.199999999997,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 13190.400000000001,
+            "reform": 12682.800000000001
+          },
+          "spouse": {
+            "base": 5416.799999999999,
+            "reform": 5209.200000000001
+          }
+        },
+        "reform": 17892.0
+      },
+      "48": {
+        "base": 40682.399999999994,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 40682.399999999994,
+            "reform": 39120.0
+          }
+        },
+        "reform": 39120.0
+      },
+      "49": {
+        "base": 18790.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13321.199999999999,
+            "reform": 12807.599999999999
+          },
+          "spouse": {
+            "base": 5469.6,
+            "reform": 5258.4
+          }
+        },
+        "reform": 18066.0
+      },
+      "5": {
+        "base": 17941.199999999997,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11761.2,
+            "reform": 11308.8
+          },
+          "spouse": {
+            "base": 6180.0,
+            "reform": 5941.200000000001
+          }
+        },
+        "reform": 17250.0
+      },
+      "50": {
+        "base": 41082.0,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 41082.0,
+            "reform": 39499.2
+          }
+        },
+        "reform": 39499.2
+      },
+      "51": {
+        "base": 18890.399999999998,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 13159.199999999999,
+            "reform": 12654.0
+          },
+          "spouse": {
+            "base": 5731.200000000001,
+            "reform": 5510.4
+          }
+        },
+        "reform": 18164.4
+      },
+      "52": {
+        "base": 41451.600000000006,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 41451.600000000006,
+            "reform": 39855.600000000006
+          }
+        },
+        "reform": 39855.600000000006
+      },
+      "53": {
+        "base": 13208.400000000001,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3446.3999999999996,
+            "reform": 3314.3999999999996
+          },
+          "spouse": {
+            "base": 9762.0,
+            "reform": 9385.2
+          }
+        },
+        "reform": 12699.599999999999
+      },
+      "54": {
+        "base": 27919.199999999997,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27919.199999999997,
+            "reform": 26845.199999999997
+          }
+        },
+        "reform": 26845.199999999997
+      },
+      "55": {
+        "base": 13300.800000000001,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3284.3999999999996,
+            "reform": 3188.3999999999996
+          },
+          "spouse": {
+            "base": 10016.400000000001,
+            "reform": 9726.0
+          }
+        },
+        "reform": 12914.400000000001
+      },
+      "56": {
+        "base": 28142.399999999998,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 28142.399999999998,
+            "reform": 27327.600000000002
+          }
+        },
+        "reform": 27327.600000000002
+      },
+      "57": {
+        "base": 13375.199999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3153.6000000000004,
+            "reform": 3092.3999999999996
+          },
+          "spouse": {
+            "base": 10221.599999999999,
+            "reform": 10022.400000000001
+          }
+        },
+        "reform": 13114.800000000001
+      },
+      "58": {
+        "base": 28324.800000000003,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 28324.800000000003,
+            "reform": 27772.800000000003
+          }
+        },
+        "reform": 27772.800000000003
+      },
+      "59": {
+        "base": 13357.199999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3084.0,
+            "reform": 3054.0
+          },
+          "spouse": {
+            "base": 10273.2,
+            "reform": 10172.400000000001
+          }
+        },
+        "reform": 13226.400000000001
+      },
+      "6": {
+        "base": 39837.600000000006,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39837.600000000006,
+            "reform": 38305.2
+          }
+        },
+        "reform": 38305.2
+      },
+      "60": {
+        "base": 28296.0,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 28296.0,
+            "reform": 28018.800000000003
+          }
+        },
+        "reform": 28018.800000000003
+      },
+      "61": {
+        "base": 13477.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13477.199999999999,
+            "reform": 12958.800000000001
+          }
+        },
+        "reform": 12958.800000000001
+      },
+      "62": {
+        "base": 4605.6,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3177.6000000000004,
+            "reform": 3115.2000000000003
+          },
+          "spouse": {
+            "base": 1428.0,
+            "reform": 1317.6
+          }
+        },
+        "reform": 4432.8
+      },
+      "63": {
+        "base": 15472.800000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15472.800000000001,
+            "reform": 14877.599999999999
+          }
+        },
+        "reform": 14877.599999999999
+      },
+      "65": {
+        "base": 41755.2,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36991.2,
+            "reform": 35568.0
+          },
+          "retired_worker": {
+            "base": 4764.0,
+            "reform": 4581.6
+          }
+        },
+        "reform": 40149.600000000006
+      },
+      "66": {
+        "base": 13845.86444708419,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13845.86444708419,
+            "reform": 13313.13348117753
+          }
+        },
+        "reform": 13313.13348117753
+      },
+      "67": {
+        "base": 19392.077194353707,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19392.077194353707,
+            "reform": 18645.951154035567
+          }
+        },
+        "reform": 18645.951154035567
+      },
+      "68": {
+        "base": 22066.84646254043,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 22066.84646254043,
+            "reform": 21217.80648562668
+          }
+        },
+        "reform": 21217.80648562668
+      },
+      "69": {
+        "base": 17917.020612633092,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17917.020612633092,
+            "reform": 17227.648581466936
+          }
+        },
+        "reform": 17227.648581466936
+      },
+      "7": {
+        "base": 17877.600000000002,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11804.400000000001,
+            "reform": 11347.2
+          },
+          "spouse": {
+            "base": 6073.200000000001,
+            "reform": 5842.799999999999
+          }
+        },
+        "reform": 17190.0
+      },
+      "70": {
+        "base": 15871.608819313838,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15871.608819313838,
+            "reform": 15260.935680838444
+          }
+        },
+        "reform": 15260.935680838444
+      },
+      "8": {
+        "base": 39645.600000000006,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 39645.600000000006,
+            "reform": 38121.600000000006
+          }
+        },
+        "reform": 38121.600000000006
+      },
+      "9": {
+        "base": 17865.6,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 12058.8,
+            "reform": 11594.400000000001
+          },
+          "spouse": {
+            "base": 5806.799999999999,
+            "reform": 5583.6
+          }
+        },
+        "reform": 17178.0
+      }
+    },
+    "M0": {
+      "1": {
+        "base": 17727.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11239.2,
+            "reform": 9328.8
+          },
+          "spouse": {
+            "base": 6488.400000000001,
+            "reform": 5382.0
+          }
+        },
+        "reform": 14710.800000000001
+      },
+      "10": {
+        "base": 38676.0,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 38676.0,
+            "reform": 32096.399999999998
+          }
+        },
+        "reform": 32096.399999999998
+      },
+      "11": {
+        "base": 17415.6,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 11844.0,
+            "reform": 9834.0
+          },
+          "spouse": {
+            "base": 5571.6,
+            "reform": 4620.0
+          }
+        },
+        "reform": 14454.0
+      },
+      "12": {
+        "base": 38398.8,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 38398.8,
+            "reform": 31866.0
+          }
+        },
+        "reform": 31866.0
+      },
+      "13": {
+        "base": 17372.4,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12145.2,
+            "reform": 10084.8
+          },
+          "spouse": {
+            "base": 5227.200000000001,
+            "reform": 4333.200000000001
+          }
+        },
+        "reform": 14418.0
+      },
+      "14": {
+        "base": 38091.600000000006,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38091.600000000006,
+            "reform": 31611.600000000002
+          }
+        },
+        "reform": 31611.600000000002
+      },
+      "15": {
+        "base": 17438.399999999998,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12381.599999999999,
+            "reform": 10272.0
+          },
+          "spouse": {
+            "base": 5056.799999999999,
+            "reform": 4198.799999999999
+          }
+        },
+        "reform": 14470.800000000001
+      },
+      "16": {
+        "base": 38115.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38115.600000000006,
+            "reform": 31628.399999999998
+          }
+        },
+        "reform": 31628.399999999998
+      },
+      "17": {
+        "base": 17407.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12348.0,
+            "reform": 10251.599999999999
+          },
+          "spouse": {
+            "base": 5059.200000000001,
+            "reform": 4196.4
+          }
+        },
+        "reform": 14448.0
+      },
+      "18": {
+        "base": 38055.600000000006,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38055.600000000006,
+            "reform": 31581.600000000002
+          }
+        },
+        "reform": 31581.600000000002
+      },
+      "19": {
+        "base": 17433.600000000002,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12610.800000000001,
+            "reform": 10465.2
+          },
+          "spouse": {
+            "base": 4822.799999999999,
+            "reform": 4003.2000000000003
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "2": {
+        "base": 39610.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 39610.8,
+            "reform": 32869.2
+          }
+        },
+        "reform": 32869.2
+      },
+      "20": {
+        "base": 37957.2,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 37957.2,
+            "reform": 31498.800000000003
+          }
+        },
+        "reform": 31498.800000000003
+      },
+      "21": {
+        "base": 17437.199999999997,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 12853.199999999999,
+            "reform": 10664.400000000001
+          },
+          "spouse": {
+            "base": 4584.0,
+            "reform": 3804.0
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "22": {
+        "base": 37810.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 37810.8,
+            "reform": 31371.600000000002
+          }
+        },
+        "reform": 31371.600000000002
+      },
+      "23": {
+        "base": 17392.800000000003,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 12974.400000000001,
+            "reform": 10766.400000000001
+          },
+          "spouse": {
+            "base": 4418.4,
+            "reform": 3669.6000000000004
+          }
+        },
+        "reform": 14436.0
+      },
+      "24": {
+        "base": 37615.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 37615.2,
+            "reform": 31221.600000000002
+          }
+        },
+        "reform": 31221.600000000002
+      },
+      "25": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13332.0,
+            "reform": 11064.0
+          },
+          "spouse": {
+            "base": 4198.799999999999,
+            "reform": 3484.7999999999997
+          }
+        },
+        "reform": 14548.800000000001
+      },
+      "26": {
+        "base": 37749.600000000006,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 37749.600000000006,
+            "reform": 31327.199999999997
+          }
+        },
+        "reform": 31327.199999999997
+      },
+      "27": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13218.0,
+            "reform": 10972.8
+          },
+          "spouse": {
+            "base": 4312.799999999999,
+            "reform": 3578.3999999999996
+          }
+        },
+        "reform": 14551.199999999999
+      },
+      "28": {
+        "base": 37824.0,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 37824.0,
+            "reform": 31394.399999999998
+          }
+        },
+        "reform": 31394.399999999998
+      },
+      "29": {
+        "base": 17524.800000000003,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13144.800000000001,
+            "reform": 10902.0
+          },
+          "spouse": {
+            "base": 4380.0,
+            "reform": 3642.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "3": {
+        "base": 17586.0,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11367.599999999999,
+            "reform": 9432.0
+          },
+          "spouse": {
+            "base": 6218.400000000001,
+            "reform": 5160.0
+          }
+        },
+        "reform": 14592.0
+      },
+      "30": {
+        "base": 37855.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 37855.2,
+            "reform": 31419.600000000002
+          }
+        },
+        "reform": 31419.600000000002
+      },
+      "31": {
+        "base": 17535.6,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13207.199999999999,
+            "reform": 10964.400000000001
+          },
+          "spouse": {
+            "base": 4328.4,
+            "reform": 3591.6000000000004
+          }
+        },
+        "reform": 14556.0
+      },
+      "32": {
+        "base": 37843.2,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 37843.2,
+            "reform": 31410.0
+          }
+        },
+        "reform": 31410.0
+      },
+      "33": {
+        "base": 17419.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 12774.0,
+            "reform": 10603.2
+          },
+          "spouse": {
+            "base": 4645.200000000001,
+            "reform": 3850.7999999999997
+          }
+        },
+        "reform": 14454.0
+      },
+      "34": {
+        "base": 37813.2,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 37813.2,
+            "reform": 31374.0
+          }
+        },
+        "reform": 31374.0
+      },
+      "35": {
+        "base": 17576.4,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 12944.400000000001,
+            "reform": 10737.599999999999
+          },
+          "spouse": {
+            "base": 4632.0,
+            "reform": 3847.2000000000003
+          }
+        },
+        "reform": 14584.800000000001
+      },
+      "36": {
+        "base": 38118.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38118.0,
+            "reform": 31632.0
+          }
+        },
+        "reform": 31632.0
+      },
+      "37": {
+        "base": 17744.399999999998,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13213.199999999999,
+            "reform": 10966.8
+          },
+          "spouse": {
+            "base": 4531.200000000001,
+            "reform": 3758.3999999999996
+          }
+        },
+        "reform": 14725.199999999999
+      },
+      "38": {
+        "base": 38389.2,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 38389.2,
+            "reform": 31858.800000000003
+          }
+        },
+        "reform": 31858.800000000003
+      },
+      "39": {
+        "base": 17781.600000000002,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13030.800000000001,
+            "reform": 10812.0
+          },
+          "spouse": {
+            "base": 4750.799999999999,
+            "reform": 3945.6000000000004
+          }
+        },
+        "reform": 14757.599999999999
+      },
+      "4": {
+        "base": 39152.399999999994,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39152.399999999994,
+            "reform": 32488.800000000003
+          }
+        },
+        "reform": 32488.800000000003
+      },
+      "40": {
+        "base": 38606.399999999994,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 38606.399999999994,
+            "reform": 32040.0
+          }
+        },
+        "reform": 32040.0
+      },
+      "41": {
+        "base": 17851.199999999997,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13032.0,
+            "reform": 10813.2
+          },
+          "spouse": {
+            "base": 4819.200000000001,
+            "reform": 3999.6000000000004
+          }
+        },
+        "reform": 14812.800000000001
+      },
+      "42": {
+        "base": 38790.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 38790.0,
+            "reform": 32187.600000000002
+          }
+        },
+        "reform": 32187.600000000002
+      },
+      "43": {
+        "base": 17845.199999999997,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 12769.199999999999,
+            "reform": 10598.400000000001
+          },
+          "spouse": {
+            "base": 5076.0,
+            "reform": 4213.200000000001
+          }
+        },
+        "reform": 14811.600000000002
+      },
+      "44": {
+        "base": 38942.399999999994,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 38942.399999999994,
+            "reform": 32319.600000000002
+          }
+        },
+        "reform": 32319.600000000002
+      },
+      "45": {
+        "base": 18085.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 12976.800000000001,
+            "reform": 10768.8
+          },
+          "spouse": {
+            "base": 5108.4,
+            "reform": 4239.6
+          }
+        },
+        "reform": 15008.400000000001
+      },
+      "46": {
+        "base": 39442.8,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 39442.8,
+            "reform": 32732.399999999998
+          }
+        },
+        "reform": 32732.399999999998
+      },
+      "47": {
+        "base": 18242.4,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 12932.400000000001,
+            "reform": 10731.599999999999
+          },
+          "spouse": {
+            "base": 5310.0,
+            "reform": 4406.4
+          }
+        },
+        "reform": 15138.0
+      },
+      "48": {
+        "base": 39885.600000000006,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 39885.600000000006,
+            "reform": 33097.2
+          }
+        },
+        "reform": 33097.2
+      },
+      "49": {
+        "base": 18422.4,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13060.800000000001,
+            "reform": 10837.2
+          },
+          "spouse": {
+            "base": 5361.6,
+            "reform": 4450.799999999999
+          }
+        },
+        "reform": 15288.0
+      },
+      "5": {
+        "base": 17588.4,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11530.8,
+            "reform": 9571.2
+          },
+          "spouse": {
+            "base": 6057.6,
+            "reform": 5025.6
+          }
+        },
+        "reform": 14596.800000000001
+      },
+      "50": {
+        "base": 40276.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 40276.8,
+            "reform": 33426.0
+          }
+        },
+        "reform": 33426.0
+      },
+      "51": {
+        "base": 18520.800000000003,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 12902.400000000001,
+            "reform": 10710.0
+          },
+          "spouse": {
+            "base": 5618.4,
+            "reform": 4660.799999999999
+          }
+        },
+        "reform": 15370.800000000001
+      },
+      "52": {
+        "base": 40638.0,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 40638.0,
+            "reform": 33726.0
+          }
+        },
+        "reform": 33726.0
+      },
+      "53": {
+        "base": 12949.199999999999,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3379.2000000000003,
+            "reform": 3280.7999999999997
+          },
+          "spouse": {
+            "base": 9570.0,
+            "reform": 9292.8
+          }
+        },
+        "reform": 12573.599999999999
+      },
+      "54": {
+        "base": 27372.0,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27372.0,
+            "reform": 26580.0
+          }
+        },
+        "reform": 26580.0
+      },
+      "55": {
+        "base": 13039.199999999999,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3219.6000000000004,
+            "reform": 3158.3999999999996
+          },
+          "spouse": {
+            "base": 9819.599999999999,
+            "reform": 9628.8
+          }
+        },
+        "reform": 12787.199999999999
+      },
+      "56": {
+        "base": 27591.600000000002,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 27591.600000000002,
+            "reform": 27057.600000000002
+          }
+        },
+        "reform": 27057.600000000002
+      },
+      "57": {
+        "base": 13112.400000000001,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3092.3999999999996,
+            "reform": 3062.3999999999996
+          },
+          "spouse": {
+            "base": 10020.0,
+            "reform": 9922.8
+          }
+        },
+        "reform": 12985.199999999999
+      },
+      "58": {
+        "base": 27769.199999999997,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 27769.199999999997,
+            "reform": 27498.0
+          }
+        },
+        "reform": 27498.0
+      },
+      "59": {
+        "base": 13095.599999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3024.0,
+            "reform": 3024.0
+          },
+          "spouse": {
+            "base": 10071.599999999999,
+            "reform": 10071.599999999999
+          }
+        },
+        "reform": 13095.599999999999
+      },
+      "6": {
+        "base": 39056.399999999994,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39056.399999999994,
+            "reform": 32410.800000000003
+          }
+        },
+        "reform": 32410.800000000003
+      },
+      "60": {
+        "base": 27741.600000000002,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 27741.600000000002,
+            "reform": 27741.600000000002
+          }
+        },
+        "reform": 27741.600000000002
+      },
+      "61": {
+        "base": 13213.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13213.199999999999,
+            "reform": 10963.2
+          }
+        },
+        "reform": 10963.2
+      },
+      "62": {
+        "base": 4516.799999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3116.3999999999996,
+            "reform": 3085.2000000000003
+          },
+          "spouse": {
+            "base": 1400.4,
+            "reform": 697.2
+          }
+        },
+        "reform": 3782.4000000000005
+      },
+      "63": {
+        "base": 15170.400000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15170.400000000001,
+            "reform": 12590.400000000001
+          }
+        },
+        "reform": 12590.400000000001
+      },
+      "65": {
+        "base": 40938.0,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36267.600000000006,
+            "reform": 32796.0
+          },
+          "retired_worker": {
+            "base": 4670.4,
+            "reform": 4317.6
+          }
+        },
+        "reform": 37113.600000000006
+      },
+      "66": {
+        "base": 13574.37690890607,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13574.37690890607,
+            "reform": 11265.695592540982
+          }
+        },
+        "reform": 11265.695592540982
+      },
+      "67": {
+        "base": 19011.84038662128,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19011.84038662128,
+            "reform": 15778.374792962226
+          }
+        },
+        "reform": 15778.374792962226
+      },
+      "68": {
+        "base": 21634.16319856905,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 21634.16319856905,
+            "reform": 17954.70235061218
+          }
+        },
+        "reform": 17954.70235061218
+      },
+      "69": {
+        "base": 17565.70648297362,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17565.70648297362,
+            "reform": 14578.194154552326
+          }
+        },
+        "reform": 14578.194154552326
+      },
+      "7": {
+        "base": 17528.4,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11574.0,
+            "reform": 9600.0
+          },
+          "spouse": {
+            "base": 5954.4,
+            "reform": 4944.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "70": {
+        "base": 15560.40080324886,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15560.40080324886,
+            "reform": 12913.943669290587
+          }
+        },
+        "reform": 12913.943669290587
+      },
+      "8": {
+        "base": 38869.2,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 38869.2,
+            "reform": 32254.800000000003
+          }
+        },
+        "reform": 32254.800000000003
+      },
+      "9": {
+        "base": 17515.199999999997,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 11822.400000000001,
+            "reform": 9812.400000000001
+          },
+          "spouse": {
+            "base": 5692.799999999999,
+            "reform": 4723.200000000001
+          }
+        },
+        "reform": 14535.600000000002
+      }
+    },
+    "M1": {
+      "1": {
+        "base": 17727.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11239.2,
+            "reform": 9234.0
+          },
+          "spouse": {
+            "base": 6488.400000000001,
+            "reform": 5331.6
+          }
+        },
+        "reform": 14565.599999999999
+      },
+      "10": {
+        "base": 38676.0,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 38676.0,
+            "reform": 31780.800000000003
+          }
+        },
+        "reform": 31780.800000000003
+      },
+      "11": {
+        "base": 17415.6,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 11844.0,
+            "reform": 9733.2
+          },
+          "spouse": {
+            "base": 5571.6,
+            "reform": 4579.200000000001
+          }
+        },
+        "reform": 14312.400000000001
+      },
+      "12": {
+        "base": 38398.8,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 38398.8,
+            "reform": 31556.399999999998
+          }
+        },
+        "reform": 31556.399999999998
+      },
+      "13": {
+        "base": 17372.4,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12145.2,
+            "reform": 9980.400000000001
+          },
+          "spouse": {
+            "base": 5227.200000000001,
+            "reform": 4296.0
+          }
+        },
+        "reform": 14276.400000000001
+      },
+      "14": {
+        "base": 38091.600000000006,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38091.600000000006,
+            "reform": 31304.399999999998
+          }
+        },
+        "reform": 31304.399999999998
+      },
+      "15": {
+        "base": 17438.399999999998,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12381.599999999999,
+            "reform": 10168.8
+          },
+          "spouse": {
+            "base": 5056.799999999999,
+            "reform": 4159.200000000001
+          }
+        },
+        "reform": 14328.0
+      },
+      "16": {
+        "base": 38115.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38115.600000000006,
+            "reform": 31318.800000000003
+          }
+        },
+        "reform": 31318.800000000003
+      },
+      "17": {
+        "base": 17407.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12348.0,
+            "reform": 10146.0
+          },
+          "spouse": {
+            "base": 5059.200000000001,
+            "reform": 4158.0
+          }
+        },
+        "reform": 14304.0
+      },
+      "18": {
+        "base": 38055.600000000006,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38055.600000000006,
+            "reform": 31270.800000000003
+          }
+        },
+        "reform": 31270.800000000003
+      },
+      "19": {
+        "base": 17433.600000000002,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12610.800000000001,
+            "reform": 10370.400000000001
+          },
+          "spouse": {
+            "base": 4822.799999999999,
+            "reform": 3957.6000000000004
+          }
+        },
+        "reform": 14328.0
+      },
+      "2": {
+        "base": 39610.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 39610.8,
+            "reform": 32544.0
+          }
+        },
+        "reform": 32544.0
+      },
+      "20": {
+        "base": 37957.2,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 37957.2,
+            "reform": 31188.0
+          }
+        },
+        "reform": 31188.0
+      },
+      "21": {
+        "base": 17437.199999999997,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 12853.199999999999,
+            "reform": 10561.2
+          },
+          "spouse": {
+            "base": 4584.0,
+            "reform": 3766.7999999999997
+          }
+        },
+        "reform": 14328.0
+      },
+      "22": {
+        "base": 37810.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 37810.8,
+            "reform": 31069.199999999997
+          }
+        },
+        "reform": 31069.199999999997
+      },
+      "23": {
+        "base": 17392.800000000003,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 12974.400000000001,
+            "reform": 10660.8
+          },
+          "spouse": {
+            "base": 4418.4,
+            "reform": 3632.3999999999996
+          }
+        },
+        "reform": 14293.199999999999
+      },
+      "24": {
+        "base": 37615.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 37615.2,
+            "reform": 30913.199999999997
+          }
+        },
+        "reform": 30913.199999999997
+      },
+      "25": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13332.0,
+            "reform": 10960.8
+          },
+          "spouse": {
+            "base": 4198.799999999999,
+            "reform": 3446.3999999999996
+          }
+        },
+        "reform": 14407.199999999999
+      },
+      "26": {
+        "base": 37749.600000000006,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 37749.600000000006,
+            "reform": 31020.0
+          }
+        },
+        "reform": 31020.0
+      },
+      "27": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13218.0,
+            "reform": 10863.599999999999
+          },
+          "spouse": {
+            "base": 4312.799999999999,
+            "reform": 3544.7999999999997
+          }
+        },
+        "reform": 14408.399999999998
+      },
+      "28": {
+        "base": 37824.0,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 37824.0,
+            "reform": 31088.399999999998
+          }
+        },
+        "reform": 31088.399999999998
+      },
+      "29": {
+        "base": 17524.800000000003,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13144.800000000001,
+            "reform": 10796.400000000001
+          },
+          "spouse": {
+            "base": 4380.0,
+            "reform": 3603.6000000000004
+          }
+        },
+        "reform": 14400.0
+      },
+      "3": {
+        "base": 17586.0,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11367.599999999999,
+            "reform": 9343.2
+          },
+          "spouse": {
+            "base": 6218.400000000001,
+            "reform": 5107.200000000001
+          }
+        },
+        "reform": 14450.400000000001
+      },
+      "30": {
+        "base": 37855.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 37855.2,
+            "reform": 31107.600000000002
+          }
+        },
+        "reform": 31107.600000000002
+      },
+      "31": {
+        "base": 17535.6,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13207.199999999999,
+            "reform": 10850.400000000001
+          },
+          "spouse": {
+            "base": 4328.4,
+            "reform": 3560.3999999999996
+          }
+        },
+        "reform": 14410.800000000001
+      },
+      "32": {
+        "base": 37843.2,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 37843.2,
+            "reform": 31099.199999999997
+          }
+        },
+        "reform": 31099.199999999997
+      },
+      "33": {
+        "base": 17419.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 12774.0,
+            "reform": 10496.400000000001
+          },
+          "spouse": {
+            "base": 4645.200000000001,
+            "reform": 3817.2000000000003
+          }
+        },
+        "reform": 14313.600000000002
+      },
+      "34": {
+        "base": 37813.2,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 37813.2,
+            "reform": 31071.600000000002
+          }
+        },
+        "reform": 31071.600000000002
+      },
+      "35": {
+        "base": 17576.4,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 12944.400000000001,
+            "reform": 10629.599999999999
+          },
+          "spouse": {
+            "base": 4632.0,
+            "reform": 3811.2000000000003
+          }
+        },
+        "reform": 14440.800000000001
+      },
+      "36": {
+        "base": 38118.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38118.0,
+            "reform": 31321.199999999997
+          }
+        },
+        "reform": 31321.199999999997
+      },
+      "37": {
+        "base": 17744.399999999998,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13213.199999999999,
+            "reform": 10856.400000000001
+          },
+          "spouse": {
+            "base": 4531.200000000001,
+            "reform": 3726.0
+          }
+        },
+        "reform": 14582.400000000001
+      },
+      "38": {
+        "base": 38389.2,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 38389.2,
+            "reform": 31549.199999999997
+          }
+        },
+        "reform": 31549.199999999997
+      },
+      "39": {
+        "base": 17781.600000000002,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13030.800000000001,
+            "reform": 10705.2
+          },
+          "spouse": {
+            "base": 4750.799999999999,
+            "reform": 3906.0
+          }
+        },
+        "reform": 14611.199999999999
+      },
+      "4": {
+        "base": 39152.399999999994,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39152.399999999994,
+            "reform": 32172.0
+          }
+        },
+        "reform": 32172.0
+      },
+      "40": {
+        "base": 38606.399999999994,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 38606.399999999994,
+            "reform": 31725.600000000002
+          }
+        },
+        "reform": 31725.600000000002
+      },
+      "41": {
+        "base": 17851.199999999997,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13032.0,
+            "reform": 10708.8
+          },
+          "spouse": {
+            "base": 4819.200000000001,
+            "reform": 3957.6000000000004
+          }
+        },
+        "reform": 14666.400000000001
+      },
+      "42": {
+        "base": 38790.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 38790.0,
+            "reform": 31868.399999999998
+          }
+        },
+        "reform": 31868.399999999998
+      },
+      "43": {
+        "base": 17845.199999999997,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 12769.199999999999,
+            "reform": 10491.599999999999
+          },
+          "spouse": {
+            "base": 5076.0,
+            "reform": 4172.4
+          }
+        },
+        "reform": 14664.0
+      },
+      "44": {
+        "base": 38942.399999999994,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 38942.399999999994,
+            "reform": 32000.399999999998
+          }
+        },
+        "reform": 32000.399999999998
+      },
+      "45": {
+        "base": 18085.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 12976.800000000001,
+            "reform": 10664.400000000001
+          },
+          "spouse": {
+            "base": 5108.4,
+            "reform": 4196.4
+          }
+        },
+        "reform": 14860.800000000001
+      },
+      "46": {
+        "base": 39442.8,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 39442.8,
+            "reform": 32409.600000000002
+          }
+        },
+        "reform": 32409.600000000002
+      },
+      "47": {
+        "base": 18242.4,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 12932.400000000001,
+            "reform": 10623.599999999999
+          },
+          "spouse": {
+            "base": 5310.0,
+            "reform": 4366.799999999999
+          }
+        },
+        "reform": 14990.399999999998
+      },
+      "48": {
+        "base": 39885.600000000006,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 39885.600000000006,
+            "reform": 32776.8
+          }
+        },
+        "reform": 32776.8
+      },
+      "49": {
+        "base": 18422.4,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13060.800000000001,
+            "reform": 10732.8
+          },
+          "spouse": {
+            "base": 5361.6,
+            "reform": 4405.200000000001
+          }
+        },
+        "reform": 15138.0
+      },
+      "5": {
+        "base": 17588.4,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11530.8,
+            "reform": 9476.400000000001
+          },
+          "spouse": {
+            "base": 6057.6,
+            "reform": 4977.6
+          }
+        },
+        "reform": 14454.0
+      },
+      "50": {
+        "base": 40276.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 40276.8,
+            "reform": 33097.2
+          }
+        },
+        "reform": 33097.2
+      },
+      "51": {
+        "base": 18520.800000000003,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 12902.400000000001,
+            "reform": 10603.2
+          },
+          "spouse": {
+            "base": 5618.4,
+            "reform": 4616.4
+          }
+        },
+        "reform": 15219.599999999999
+      },
+      "52": {
+        "base": 40638.0,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 40638.0,
+            "reform": 33394.8
+          }
+        },
+        "reform": 33394.8
+      },
+      "53": {
+        "base": 12949.199999999999,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3379.2000000000003,
+            "reform": 3280.7999999999997
+          },
+          "spouse": {
+            "base": 9570.0,
+            "reform": 9292.8
+          }
+        },
+        "reform": 12573.599999999999
+      },
+      "54": {
+        "base": 27372.0,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27372.0,
+            "reform": 26580.0
+          }
+        },
+        "reform": 26580.0
+      },
+      "55": {
+        "base": 13039.199999999999,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3219.6000000000004,
+            "reform": 3158.3999999999996
+          },
+          "spouse": {
+            "base": 9819.599999999999,
+            "reform": 9628.8
+          }
+        },
+        "reform": 12787.199999999999
+      },
+      "56": {
+        "base": 27591.600000000002,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 27591.600000000002,
+            "reform": 27057.600000000002
+          }
+        },
+        "reform": 27057.600000000002
+      },
+      "57": {
+        "base": 13112.400000000001,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3092.3999999999996,
+            "reform": 3062.3999999999996
+          },
+          "spouse": {
+            "base": 10020.0,
+            "reform": 9922.8
+          }
+        },
+        "reform": 12985.199999999999
+      },
+      "58": {
+        "base": 27769.199999999997,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 27769.199999999997,
+            "reform": 27498.0
+          }
+        },
+        "reform": 27498.0
+      },
+      "59": {
+        "base": 13095.599999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3024.0,
+            "reform": 3024.0
+          },
+          "spouse": {
+            "base": 10071.599999999999,
+            "reform": 10071.599999999999
+          }
+        },
+        "reform": 13095.599999999999
+      },
+      "6": {
+        "base": 39056.399999999994,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39056.399999999994,
+            "reform": 32096.399999999998
+          }
+        },
+        "reform": 32096.399999999998
+      },
+      "60": {
+        "base": 27741.600000000002,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 27741.600000000002,
+            "reform": 27741.600000000002
+          }
+        },
+        "reform": 27741.600000000002
+      },
+      "61": {
+        "base": 13213.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13213.199999999999,
+            "reform": 10855.2
+          }
+        },
+        "reform": 10855.2
+      },
+      "62": {
+        "base": 4516.799999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3116.3999999999996,
+            "reform": 3085.2000000000003
+          },
+          "spouse": {
+            "base": 1400.4,
+            "reform": 662.4000000000001
+          }
+        },
+        "reform": 3747.6000000000004
+      },
+      "63": {
+        "base": 15170.400000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15170.400000000001,
+            "reform": 12464.400000000001
+          }
+        },
+        "reform": 12464.400000000001
+      },
+      "65": {
+        "base": 40938.0,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36267.600000000006,
+            "reform": 32796.0
+          },
+          "retired_worker": {
+            "base": 4670.4,
+            "reform": 4317.6
+          }
+        },
+        "reform": 37113.600000000006
+      },
+      "66": {
+        "base": 13574.37690890607,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13574.37690890607,
+            "reform": 11155.247596535677
+          }
+        },
+        "reform": 11155.247596535677
+      },
+      "67": {
+        "base": 19011.84038662128,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19011.84038662128,
+            "reform": 15623.68484401162
+          }
+        },
+        "reform": 15623.68484401162
+      },
+      "68": {
+        "base": 21634.16319856905,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 21634.16319856905,
+            "reform": 17778.67585697873
+          }
+        },
+        "reform": 17778.67585697873
+      },
+      "69": {
+        "base": 17565.70648297362,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17565.70648297362,
+            "reform": 14435.270682448867
+          }
+        },
+        "reform": 14435.270682448867
+      },
+      "7": {
+        "base": 17528.4,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11574.0,
+            "reform": 9507.599999999999
+          },
+          "spouse": {
+            "base": 5954.4,
+            "reform": 4894.799999999999
+          }
+        },
+        "reform": 14402.399999999998
+      },
+      "70": {
+        "base": 15560.40080324886,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15560.40080324886,
+            "reform": 12787.336378415188
+          }
+        },
+        "reform": 12787.336378415188
+      },
+      "8": {
+        "base": 38869.2,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 38869.2,
+            "reform": 31940.399999999998
+          }
+        },
+        "reform": 31940.399999999998
+      },
+      "9": {
+        "base": 17515.199999999997,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 11822.400000000001,
+            "reform": 9714.0
+          },
+          "spouse": {
+            "base": 5692.799999999999,
+            "reform": 4678.799999999999
+          }
+        },
+        "reform": 14392.800000000001
+      }
+    },
+    "M2": {
+      "1": {
+        "base": 18081.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11462.400000000001,
+            "reform": 9421.2
+          },
+          "spouse": {
+            "base": 6619.200000000001,
+            "reform": 5437.200000000001
+          }
+        },
+        "reform": 14858.400000000001
+      },
+      "10": {
+        "base": 39448.8,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 39448.8,
+            "reform": 32415.600000000002
+          }
+        },
+        "reform": 32415.600000000002
+      },
+      "11": {
+        "base": 17763.600000000002,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 12080.400000000001,
+            "reform": 9932.400000000001
+          },
+          "spouse": {
+            "base": 5683.200000000001,
+            "reform": 4665.6
+          }
+        },
+        "reform": 14598.0
+      },
+      "12": {
+        "base": 39165.600000000006,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 39165.600000000006,
+            "reform": 32185.199999999997
+          }
+        },
+        "reform": 32185.199999999997
+      },
+      "13": {
+        "base": 17719.199999999997,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12387.599999999999,
+            "reform": 10184.400000000001
+          },
+          "spouse": {
+            "base": 5331.6,
+            "reform": 4377.6
+          }
+        },
+        "reform": 14562.0
+      },
+      "14": {
+        "base": 38851.2,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38851.2,
+            "reform": 31926.0
+          }
+        },
+        "reform": 31926.0
+      },
+      "15": {
+        "base": 17787.600000000002,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12628.800000000001,
+            "reform": 10372.8
+          },
+          "spouse": {
+            "base": 5158.799999999999,
+            "reform": 4240.799999999999
+          }
+        },
+        "reform": 14613.599999999999
+      },
+      "16": {
+        "base": 38877.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38877.600000000006,
+            "reform": 31944.0
+          }
+        },
+        "reform": 31944.0
+      },
+      "17": {
+        "base": 17755.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12594.0,
+            "reform": 10352.400000000001
+          },
+          "spouse": {
+            "base": 5161.200000000001,
+            "reform": 4238.4
+          }
+        },
+        "reform": 14590.800000000001
+      },
+      "18": {
+        "base": 38815.2,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38815.2,
+            "reform": 31896.0
+          }
+        },
+        "reform": 31896.0
+      },
+      "19": {
+        "base": 17782.800000000003,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12862.800000000001,
+            "reform": 10569.599999999999
+          },
+          "spouse": {
+            "base": 4920.0,
+            "reform": 4042.7999999999997
+          }
+        },
+        "reform": 14612.399999999998
+      },
+      "2": {
+        "base": 40402.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 40402.8,
+            "reform": 33196.8
+          }
+        },
+        "reform": 33196.8
+      },
+      "20": {
+        "base": 38715.600000000006,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 38715.600000000006,
+            "reform": 31812.0
+          }
+        },
+        "reform": 31812.0
+      },
+      "21": {
+        "base": 17786.4,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 13110.0,
+            "reform": 10771.2
+          },
+          "spouse": {
+            "base": 4676.4,
+            "reform": 3842.3999999999996
+          }
+        },
+        "reform": 14613.599999999999
+      },
+      "22": {
+        "base": 38566.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 38566.8,
+            "reform": 31686.0
+          }
+        },
+        "reform": 31686.0
+      },
+      "23": {
+        "base": 17739.600000000002,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 13232.400000000001,
+            "reform": 10872.0
+          },
+          "spouse": {
+            "base": 4507.200000000001,
+            "reform": 3708.0
+          }
+        },
+        "reform": 14580.0
+      },
+      "24": {
+        "base": 38365.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 38365.2,
+            "reform": 31533.600000000002
+          }
+        },
+        "reform": 31533.600000000002
+      },
+      "25": {
+        "base": 17881.199999999997,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13598.400000000001,
+            "reform": 11173.2
+          },
+          "spouse": {
+            "base": 4282.799999999999,
+            "reform": 3519.6000000000004
+          }
+        },
+        "reform": 14692.800000000001
+      },
+      "26": {
+        "base": 38503.2,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 38503.2,
+            "reform": 31640.399999999998
+          }
+        },
+        "reform": 31640.399999999998
+      },
+      "27": {
+        "base": 17881.2,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13480.800000000001,
+            "reform": 11083.2
+          },
+          "spouse": {
+            "base": 4400.4,
+            "reform": 3614.3999999999996
+          }
+        },
+        "reform": 14697.599999999999
+      },
+      "28": {
+        "base": 38578.8,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 38578.8,
+            "reform": 31707.600000000002
+          }
+        },
+        "reform": 31707.600000000002
+      },
+      "29": {
+        "base": 17875.199999999997,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13406.400000000001,
+            "reform": 11010.0
+          },
+          "spouse": {
+            "base": 4468.799999999999,
+            "reform": 3679.2000000000003
+          }
+        },
+        "reform": 14689.199999999999
+      },
+      "3": {
+        "base": 17937.600000000002,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11594.400000000001,
+            "reform": 9525.599999999999
+          },
+          "spouse": {
+            "base": 6343.200000000001,
+            "reform": 5212.799999999999
+          }
+        },
+        "reform": 14738.399999999998
+      },
+      "30": {
+        "base": 38611.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 38611.2,
+            "reform": 31732.800000000003
+          }
+        },
+        "reform": 31732.800000000003
+      },
+      "31": {
+        "base": 17886.0,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13470.0,
+            "reform": 11073.599999999999
+          },
+          "spouse": {
+            "base": 4416.0,
+            "reform": 3627.6000000000004
+          }
+        },
+        "reform": 14701.199999999999
+      },
+      "32": {
+        "base": 38598.0,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 38598.0,
+            "reform": 31723.199999999997
+          }
+        },
+        "reform": 31723.199999999997
+      },
+      "33": {
+        "base": 17767.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 13029.599999999999,
+            "reform": 10707.599999999999
+          },
+          "spouse": {
+            "base": 4737.6,
+            "reform": 3890.3999999999996
+          }
+        },
+        "reform": 14598.0
+      },
+      "34": {
+        "base": 38568.0,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 38568.0,
+            "reform": 31687.199999999997
+          }
+        },
+        "reform": 31687.199999999997
+      },
+      "35": {
+        "base": 17928.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 13202.400000000001,
+            "reform": 10843.2
+          },
+          "spouse": {
+            "base": 4725.6,
+            "reform": 3885.6000000000004
+          }
+        },
+        "reform": 14728.800000000001
+      },
+      "36": {
+        "base": 38880.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38880.0,
+            "reform": 31947.600000000002
+          }
+        },
+        "reform": 31947.600000000002
+      },
+      "37": {
+        "base": 18098.4,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13476.0,
+            "reform": 11076.0
+          },
+          "spouse": {
+            "base": 4622.4,
+            "reform": 3796.7999999999997
+          }
+        },
+        "reform": 14872.800000000001
+      },
+      "38": {
+        "base": 39156.0,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 39156.0,
+            "reform": 32176.800000000003
+          }
+        },
+        "reform": 32176.800000000003
+      },
+      "39": {
+        "base": 18138.0,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13291.199999999999,
+            "reform": 10920.0
+          },
+          "spouse": {
+            "base": 4846.799999999999,
+            "reform": 3985.2000000000003
+          }
+        },
+        "reform": 14905.199999999999
+      },
+      "4": {
+        "base": 39934.8,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39934.8,
+            "reform": 32814.0
+          }
+        },
+        "reform": 32814.0
+      },
+      "40": {
+        "base": 39378.0,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 39378.0,
+            "reform": 32360.399999999998
+          }
+        },
+        "reform": 32360.399999999998
+      },
+      "41": {
+        "base": 18208.800000000003,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13292.400000000001,
+            "reform": 10921.2
+          },
+          "spouse": {
+            "base": 4916.4,
+            "reform": 4040.3999999999996
+          }
+        },
+        "reform": 14961.599999999999
+      },
+      "42": {
+        "base": 39564.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 39564.0,
+            "reform": 32509.199999999997
+          }
+        },
+        "reform": 32509.199999999997
+      },
+      "43": {
+        "base": 18202.800000000003,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 13024.800000000001,
+            "reform": 10702.8
+          },
+          "spouse": {
+            "base": 5178.0,
+            "reform": 4256.4
+          }
+        },
+        "reform": 14959.199999999999
+      },
+      "44": {
+        "base": 39720.0,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 39720.0,
+            "reform": 32642.399999999998
+          }
+        },
+        "reform": 32642.399999999998
+      },
+      "45": {
+        "base": 18446.4,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 13234.800000000001,
+            "reform": 10875.599999999999
+          },
+          "spouse": {
+            "base": 5211.6,
+            "reform": 4282.799999999999
+          }
+        },
+        "reform": 15158.399999999998
+      },
+      "46": {
+        "base": 40231.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 40231.2,
+            "reform": 33058.8
+          }
+        },
+        "reform": 33058.8
+      },
+      "47": {
+        "base": 18607.199999999997,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 13190.400000000001,
+            "reform": 10837.2
+          },
+          "spouse": {
+            "base": 5416.799999999999,
+            "reform": 4450.799999999999
+          }
+        },
+        "reform": 15288.0
+      },
+      "48": {
+        "base": 40682.399999999994,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 40682.399999999994,
+            "reform": 33426.0
+          }
+        },
+        "reform": 33426.0
+      },
+      "49": {
+        "base": 18790.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13321.199999999999,
+            "reform": 10945.2
+          },
+          "spouse": {
+            "base": 5469.6,
+            "reform": 4496.4
+          }
+        },
+        "reform": 15441.599999999999
+      },
+      "5": {
+        "base": 17941.199999999997,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11761.2,
+            "reform": 9666.0
+          },
+          "spouse": {
+            "base": 6180.0,
+            "reform": 5076.0
+          }
+        },
+        "reform": 14742.0
+      },
+      "50": {
+        "base": 41082.0,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 41082.0,
+            "reform": 33760.8
+          }
+        },
+        "reform": 33760.8
+      },
+      "51": {
+        "base": 18890.399999999998,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 13159.199999999999,
+            "reform": 10816.8
+          },
+          "spouse": {
+            "base": 5731.200000000001,
+            "reform": 4707.6
+          }
+        },
+        "reform": 15524.400000000001
+      },
+      "52": {
+        "base": 41451.600000000006,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 41451.600000000006,
+            "reform": 34062.0
+          }
+        },
+        "reform": 34062.0
+      },
+      "53": {
+        "base": 13208.400000000001,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3446.3999999999996,
+            "reform": 3314.3999999999996
+          },
+          "spouse": {
+            "base": 9762.0,
+            "reform": 9385.2
+          }
+        },
+        "reform": 12699.599999999999
+      },
+      "54": {
+        "base": 27919.199999999997,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27919.199999999997,
+            "reform": 26845.199999999997
+          }
+        },
+        "reform": 26845.199999999997
+      },
+      "55": {
+        "base": 13300.800000000001,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3284.3999999999996,
+            "reform": 3188.3999999999996
+          },
+          "spouse": {
+            "base": 10016.400000000001,
+            "reform": 9726.0
+          }
+        },
+        "reform": 12914.400000000001
+      },
+      "56": {
+        "base": 28142.399999999998,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 28142.399999999998,
+            "reform": 27327.600000000002
+          }
+        },
+        "reform": 27327.600000000002
+      },
+      "57": {
+        "base": 13375.199999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3153.6000000000004,
+            "reform": 3092.3999999999996
+          },
+          "spouse": {
+            "base": 10221.599999999999,
+            "reform": 10022.400000000001
+          }
+        },
+        "reform": 13114.800000000001
+      },
+      "58": {
+        "base": 28324.800000000003,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 28324.800000000003,
+            "reform": 27772.800000000003
+          }
+        },
+        "reform": 27772.800000000003
+      },
+      "59": {
+        "base": 13357.199999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3084.0,
+            "reform": 3054.0
+          },
+          "spouse": {
+            "base": 10273.2,
+            "reform": 10172.400000000001
+          }
+        },
+        "reform": 13226.400000000001
+      },
+      "6": {
+        "base": 39837.600000000006,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39837.600000000006,
+            "reform": 32734.800000000003
+          }
+        },
+        "reform": 32734.800000000003
+      },
+      "60": {
+        "base": 28296.0,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 28296.0,
+            "reform": 28018.800000000003
+          }
+        },
+        "reform": 28018.800000000003
+      },
+      "61": {
+        "base": 13477.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13477.199999999999,
+            "reform": 11072.400000000001
+          }
+        },
+        "reform": 11072.400000000001
+      },
+      "62": {
+        "base": 4605.6,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3177.6000000000004,
+            "reform": 3115.2000000000003
+          },
+          "spouse": {
+            "base": 1428.0,
+            "reform": 704.4000000000001
+          }
+        },
+        "reform": 3819.6000000000004
+      },
+      "63": {
+        "base": 15472.800000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15472.800000000001,
+            "reform": 12715.199999999999
+          }
+        },
+        "reform": 12715.199999999999
+      },
+      "65": {
+        "base": 41755.2,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36991.2,
+            "reform": 33123.6
+          },
+          "retired_worker": {
+            "base": 4764.0,
+            "reform": 4359.6
+          }
+        },
+        "reform": 37483.2
+      },
+      "66": {
+        "base": 13845.86444708419,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13845.86444708419,
+            "reform": 11378.352548466391
+          }
+        },
+        "reform": 11378.352548466391
+      },
+      "67": {
+        "base": 19392.077194353707,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19392.077194353707,
+            "reform": 15936.158540891847
+          }
+        },
+        "reform": 15936.158540891847
+      },
+      "68": {
+        "base": 22066.84646254043,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 22066.84646254043,
+            "reform": 18134.249374118303
+          }
+        },
+        "reform": 18134.249374118303
+      },
+      "69": {
+        "base": 17917.020612633092,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17917.020612633092,
+            "reform": 14723.97609609785
+          }
+        },
+        "reform": 14723.97609609785
+      },
+      "7": {
+        "base": 17877.600000000002,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11804.400000000001,
+            "reform": 9694.8
+          },
+          "spouse": {
+            "base": 6073.200000000001,
+            "reform": 4994.4
+          }
+        },
+        "reform": 14689.199999999999
+      },
+      "70": {
+        "base": 15871.608819313838,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15871.608819313838,
+            "reform": 13043.083105983493
+          }
+        },
+        "reform": 13043.083105983493
+      },
+      "8": {
+        "base": 39645.600000000006,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 39645.600000000006,
+            "reform": 32576.399999999998
+          }
+        },
+        "reform": 32576.399999999998
+      },
+      "9": {
+        "base": 17865.6,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 12058.8,
+            "reform": 9908.400000000001
+          },
+          "spouse": {
+            "base": 5806.799999999999,
+            "reform": 4771.200000000001
+          }
+        },
+        "reform": 14679.600000000002
+      }
+    },
+    "M3": {
+      "1": {
+        "base": 17727.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11239.2,
+            "reform": 9328.8
+          },
+          "spouse": {
+            "base": 6488.400000000001,
+            "reform": 5382.0
+          }
+        },
+        "reform": 14710.800000000001
+      },
+      "10": {
+        "base": 38676.0,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 38676.0,
+            "reform": 32096.399999999998
+          }
+        },
+        "reform": 32096.399999999998
+      },
+      "11": {
+        "base": 17415.6,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 11844.0,
+            "reform": 9834.0
+          },
+          "spouse": {
+            "base": 5571.6,
+            "reform": 4620.0
+          }
+        },
+        "reform": 14454.0
+      },
+      "12": {
+        "base": 38398.8,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 38398.8,
+            "reform": 31866.0
+          }
+        },
+        "reform": 31866.0
+      },
+      "13": {
+        "base": 17372.4,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12145.2,
+            "reform": 10084.8
+          },
+          "spouse": {
+            "base": 5227.200000000001,
+            "reform": 4333.200000000001
+          }
+        },
+        "reform": 14418.0
+      },
+      "14": {
+        "base": 38091.600000000006,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38091.600000000006,
+            "reform": 31611.600000000002
+          }
+        },
+        "reform": 31611.600000000002
+      },
+      "15": {
+        "base": 17438.399999999998,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12381.599999999999,
+            "reform": 10272.0
+          },
+          "spouse": {
+            "base": 5056.799999999999,
+            "reform": 4198.799999999999
+          }
+        },
+        "reform": 14470.800000000001
+      },
+      "16": {
+        "base": 38115.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38115.600000000006,
+            "reform": 31628.399999999998
+          }
+        },
+        "reform": 31628.399999999998
+      },
+      "17": {
+        "base": 17407.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12348.0,
+            "reform": 10251.599999999999
+          },
+          "spouse": {
+            "base": 5059.200000000001,
+            "reform": 4196.4
+          }
+        },
+        "reform": 14448.0
+      },
+      "18": {
+        "base": 38055.600000000006,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38055.600000000006,
+            "reform": 31581.600000000002
+          }
+        },
+        "reform": 31581.600000000002
+      },
+      "19": {
+        "base": 17433.600000000002,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12610.800000000001,
+            "reform": 10465.2
+          },
+          "spouse": {
+            "base": 4822.799999999999,
+            "reform": 4003.2000000000003
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "2": {
+        "base": 39610.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 39610.8,
+            "reform": 32869.2
+          }
+        },
+        "reform": 32869.2
+      },
+      "20": {
+        "base": 37957.2,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 37957.2,
+            "reform": 31498.800000000003
+          }
+        },
+        "reform": 31498.800000000003
+      },
+      "21": {
+        "base": 17437.199999999997,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 12853.199999999999,
+            "reform": 10664.400000000001
+          },
+          "spouse": {
+            "base": 4584.0,
+            "reform": 3804.0
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "22": {
+        "base": 37810.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 37810.8,
+            "reform": 31371.600000000002
+          }
+        },
+        "reform": 31371.600000000002
+      },
+      "23": {
+        "base": 17392.800000000003,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 12974.400000000001,
+            "reform": 10766.400000000001
+          },
+          "spouse": {
+            "base": 4418.4,
+            "reform": 3669.6000000000004
+          }
+        },
+        "reform": 14436.0
+      },
+      "24": {
+        "base": 37615.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 37615.2,
+            "reform": 31221.600000000002
+          }
+        },
+        "reform": 31221.600000000002
+      },
+      "25": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13332.0,
+            "reform": 11064.0
+          },
+          "spouse": {
+            "base": 4198.799999999999,
+            "reform": 3484.7999999999997
+          }
+        },
+        "reform": 14548.800000000001
+      },
+      "26": {
+        "base": 37749.600000000006,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 37749.600000000006,
+            "reform": 31327.199999999997
+          }
+        },
+        "reform": 31327.199999999997
+      },
+      "27": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13218.0,
+            "reform": 10972.8
+          },
+          "spouse": {
+            "base": 4312.799999999999,
+            "reform": 3578.3999999999996
+          }
+        },
+        "reform": 14551.199999999999
+      },
+      "28": {
+        "base": 37824.0,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 37824.0,
+            "reform": 31394.399999999998
+          }
+        },
+        "reform": 31394.399999999998
+      },
+      "29": {
+        "base": 17524.800000000003,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13144.800000000001,
+            "reform": 10902.0
+          },
+          "spouse": {
+            "base": 4380.0,
+            "reform": 3642.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "3": {
+        "base": 17586.0,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11367.599999999999,
+            "reform": 9432.0
+          },
+          "spouse": {
+            "base": 6218.400000000001,
+            "reform": 5160.0
+          }
+        },
+        "reform": 14592.0
+      },
+      "30": {
+        "base": 37855.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 37855.2,
+            "reform": 31419.600000000002
+          }
+        },
+        "reform": 31419.600000000002
+      },
+      "31": {
+        "base": 17535.6,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13207.199999999999,
+            "reform": 10964.400000000001
+          },
+          "spouse": {
+            "base": 4328.4,
+            "reform": 3591.6000000000004
+          }
+        },
+        "reform": 14556.0
+      },
+      "32": {
+        "base": 37843.2,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 37843.2,
+            "reform": 31410.0
+          }
+        },
+        "reform": 31410.0
+      },
+      "33": {
+        "base": 17419.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 12774.0,
+            "reform": 10603.2
+          },
+          "spouse": {
+            "base": 4645.200000000001,
+            "reform": 3850.7999999999997
+          }
+        },
+        "reform": 14454.0
+      },
+      "34": {
+        "base": 37813.2,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 37813.2,
+            "reform": 31374.0
+          }
+        },
+        "reform": 31374.0
+      },
+      "35": {
+        "base": 17576.4,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 12944.400000000001,
+            "reform": 10737.599999999999
+          },
+          "spouse": {
+            "base": 4632.0,
+            "reform": 3847.2000000000003
+          }
+        },
+        "reform": 14584.800000000001
+      },
+      "36": {
+        "base": 38118.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38118.0,
+            "reform": 31632.0
+          }
+        },
+        "reform": 31632.0
+      },
+      "37": {
+        "base": 17744.399999999998,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13213.199999999999,
+            "reform": 10966.8
+          },
+          "spouse": {
+            "base": 4531.200000000001,
+            "reform": 3758.3999999999996
+          }
+        },
+        "reform": 14725.199999999999
+      },
+      "38": {
+        "base": 38389.2,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 38389.2,
+            "reform": 31858.800000000003
+          }
+        },
+        "reform": 31858.800000000003
+      },
+      "39": {
+        "base": 17781.600000000002,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13030.800000000001,
+            "reform": 10812.0
+          },
+          "spouse": {
+            "base": 4750.799999999999,
+            "reform": 3945.6000000000004
+          }
+        },
+        "reform": 14757.599999999999
+      },
+      "4": {
+        "base": 39152.399999999994,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39152.399999999994,
+            "reform": 32488.800000000003
+          }
+        },
+        "reform": 32488.800000000003
+      },
+      "40": {
+        "base": 38606.399999999994,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 38606.399999999994,
+            "reform": 32040.0
+          }
+        },
+        "reform": 32040.0
+      },
+      "41": {
+        "base": 17851.199999999997,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13032.0,
+            "reform": 10813.2
+          },
+          "spouse": {
+            "base": 4819.200000000001,
+            "reform": 3999.6000000000004
+          }
+        },
+        "reform": 14812.800000000001
+      },
+      "42": {
+        "base": 38790.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 38790.0,
+            "reform": 32187.600000000002
+          }
+        },
+        "reform": 32187.600000000002
+      },
+      "43": {
+        "base": 17845.199999999997,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 12769.199999999999,
+            "reform": 10598.400000000001
+          },
+          "spouse": {
+            "base": 5076.0,
+            "reform": 4213.200000000001
+          }
+        },
+        "reform": 14811.600000000002
+      },
+      "44": {
+        "base": 38942.399999999994,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 38942.399999999994,
+            "reform": 32319.600000000002
+          }
+        },
+        "reform": 32319.600000000002
+      },
+      "45": {
+        "base": 18085.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 12976.800000000001,
+            "reform": 10768.8
+          },
+          "spouse": {
+            "base": 5108.4,
+            "reform": 4239.6
+          }
+        },
+        "reform": 15008.400000000001
+      },
+      "46": {
+        "base": 39442.8,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 39442.8,
+            "reform": 32732.399999999998
+          }
+        },
+        "reform": 32732.399999999998
+      },
+      "47": {
+        "base": 18242.4,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 12932.400000000001,
+            "reform": 10731.599999999999
+          },
+          "spouse": {
+            "base": 5310.0,
+            "reform": 4406.4
+          }
+        },
+        "reform": 15138.0
+      },
+      "48": {
+        "base": 39885.600000000006,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 39885.600000000006,
+            "reform": 33097.2
+          }
+        },
+        "reform": 33097.2
+      },
+      "49": {
+        "base": 18422.4,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13060.800000000001,
+            "reform": 10837.2
+          },
+          "spouse": {
+            "base": 5361.6,
+            "reform": 4450.799999999999
+          }
+        },
+        "reform": 15288.0
+      },
+      "5": {
+        "base": 17588.4,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11530.8,
+            "reform": 9571.2
+          },
+          "spouse": {
+            "base": 6057.6,
+            "reform": 5025.6
+          }
+        },
+        "reform": 14596.800000000001
+      },
+      "50": {
+        "base": 40276.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 40276.8,
+            "reform": 33426.0
+          }
+        },
+        "reform": 33426.0
+      },
+      "51": {
+        "base": 18520.800000000003,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 12902.400000000001,
+            "reform": 10816.8
+          },
+          "spouse": {
+            "base": 5618.4,
+            "reform": 4706.4
+          }
+        },
+        "reform": 15523.199999999999
+      },
+      "52": {
+        "base": 40638.0,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 40638.0,
+            "reform": 34059.600000000006
+          }
+        },
+        "reform": 34059.600000000006
+      },
+      "53": {
+        "base": 12949.199999999999,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3379.2000000000003,
+            "reform": 3280.7999999999997
+          },
+          "spouse": {
+            "base": 9570.0,
+            "reform": 9292.8
+          }
+        },
+        "reform": 12573.599999999999
+      },
+      "54": {
+        "base": 27372.0,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27372.0,
+            "reform": 26580.0
+          }
+        },
+        "reform": 26580.0
+      },
+      "55": {
+        "base": 13039.199999999999,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3219.6000000000004,
+            "reform": 3158.3999999999996
+          },
+          "spouse": {
+            "base": 9819.599999999999,
+            "reform": 9628.8
+          }
+        },
+        "reform": 12787.199999999999
+      },
+      "56": {
+        "base": 27591.600000000002,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 27591.600000000002,
+            "reform": 27057.600000000002
+          }
+        },
+        "reform": 27057.600000000002
+      },
+      "57": {
+        "base": 13112.400000000001,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3092.3999999999996,
+            "reform": 3062.3999999999996
+          },
+          "spouse": {
+            "base": 10020.0,
+            "reform": 9922.8
+          }
+        },
+        "reform": 12985.199999999999
+      },
+      "58": {
+        "base": 27769.199999999997,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 27769.199999999997,
+            "reform": 27498.0
+          }
+        },
+        "reform": 27498.0
+      },
+      "59": {
+        "base": 13095.599999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3024.0,
+            "reform": 3024.0
+          },
+          "spouse": {
+            "base": 10071.599999999999,
+            "reform": 10071.599999999999
+          }
+        },
+        "reform": 13095.599999999999
+      },
+      "6": {
+        "base": 39056.399999999994,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39056.399999999994,
+            "reform": 32410.800000000003
+          }
+        },
+        "reform": 32410.800000000003
+      },
+      "60": {
+        "base": 27741.600000000002,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 27741.600000000002,
+            "reform": 27741.600000000002
+          }
+        },
+        "reform": 27741.600000000002
+      },
+      "61": {
+        "base": 13213.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13213.199999999999,
+            "reform": 10963.2
+          }
+        },
+        "reform": 10963.2
+      },
+      "62": {
+        "base": 4516.799999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3116.3999999999996,
+            "reform": 3085.2000000000003
+          },
+          "spouse": {
+            "base": 1400.4,
+            "reform": 1387.1999999999998
+          }
+        },
+        "reform": 4472.400000000001
+      },
+      "63": {
+        "base": 15170.400000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15170.400000000001,
+            "reform": 12590.400000000001
+          }
+        },
+        "reform": 12590.400000000001
+      },
+      "65": {
+        "base": 40938.0,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36267.600000000006,
+            "reform": 35742.0
+          },
+          "retired_worker": {
+            "base": 4670.4,
+            "reform": 4402.799999999999
+          }
+        },
+        "reform": 40144.8
+      },
+      "66": {
+        "base": 13574.37690890607,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13574.37690890607,
+            "reform": 11265.695592540982
+          }
+        },
+        "reform": 11265.695592540982
+      },
+      "67": {
+        "base": 19011.84038662128,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19011.84038662128,
+            "reform": 15778.374792962226
+          }
+        },
+        "reform": 15778.374792962226
+      },
+      "68": {
+        "base": 21634.16319856905,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 21634.16319856905,
+            "reform": 17954.70235061218
+          }
+        },
+        "reform": 17954.70235061218
+      },
+      "69": {
+        "base": 17565.70648297362,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17565.70648297362,
+            "reform": 14578.194154552326
+          }
+        },
+        "reform": 14578.194154552326
+      },
+      "7": {
+        "base": 17528.4,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11574.0,
+            "reform": 9600.0
+          },
+          "spouse": {
+            "base": 5954.4,
+            "reform": 4944.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "70": {
+        "base": 15560.40080324886,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15560.40080324886,
+            "reform": 12913.943669290587
+          }
+        },
+        "reform": 12913.943669290587
+      },
+      "8": {
+        "base": 38869.2,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 38869.2,
+            "reform": 32254.800000000003
+          }
+        },
+        "reform": 32254.800000000003
+      },
+      "9": {
+        "base": 17515.199999999997,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 11822.400000000001,
+            "reform": 9812.400000000001
+          },
+          "spouse": {
+            "base": 5692.799999999999,
+            "reform": 4723.200000000001
+          }
+        },
+        "reform": 14535.600000000002
+      }
+    },
+    "M4": {
+      "1": {
+        "base": 17727.600000000002,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 11239.2,
+            "reform": 9328.8
+          },
+          "spouse": {
+            "base": 6488.400000000001,
+            "reform": 5382.0
+          }
+        },
+        "reform": 14710.800000000001
+      },
+      "10": {
+        "base": 38676.0,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 38676.0,
+            "reform": 32096.399999999998
+          }
+        },
+        "reform": 32096.399999999998
+      },
+      "11": {
+        "base": 17415.6,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 11844.0,
+            "reform": 9834.0
+          },
+          "spouse": {
+            "base": 5571.6,
+            "reform": 4620.0
+          }
+        },
+        "reform": 14454.0
+      },
+      "12": {
+        "base": 38398.8,
+        "basis": "projected",
+        "birth_year": 1922,
+        "components": {
+          "retired_worker": {
+            "base": 38398.8,
+            "reform": 31866.0
+          }
+        },
+        "reform": 31866.0
+      },
+      "13": {
+        "base": 17372.4,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 12145.2,
+            "reform": 10084.8
+          },
+          "spouse": {
+            "base": 5227.200000000001,
+            "reform": 4333.200000000001
+          }
+        },
+        "reform": 14418.0
+      },
+      "14": {
+        "base": 38091.600000000006,
+        "basis": "projected",
+        "birth_year": 1923,
+        "components": {
+          "retired_worker": {
+            "base": 38091.600000000006,
+            "reform": 31611.600000000002
+          }
+        },
+        "reform": 31611.600000000002
+      },
+      "15": {
+        "base": 17438.399999999998,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 12381.599999999999,
+            "reform": 10272.0
+          },
+          "spouse": {
+            "base": 5056.799999999999,
+            "reform": 4198.799999999999
+          }
+        },
+        "reform": 14470.800000000001
+      },
+      "16": {
+        "base": 38115.600000000006,
+        "basis": "projected",
+        "birth_year": 1924,
+        "components": {
+          "retired_worker": {
+            "base": 38115.600000000006,
+            "reform": 31628.399999999998
+          }
+        },
+        "reform": 31628.399999999998
+      },
+      "17": {
+        "base": 17407.199999999997,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 12348.0,
+            "reform": 10251.599999999999
+          },
+          "spouse": {
+            "base": 5059.200000000001,
+            "reform": 4196.4
+          }
+        },
+        "reform": 14448.0
+      },
+      "18": {
+        "base": 38055.600000000006,
+        "basis": "projected",
+        "birth_year": 1925,
+        "components": {
+          "retired_worker": {
+            "base": 38055.600000000006,
+            "reform": 31581.600000000002
+          }
+        },
+        "reform": 31581.600000000002
+      },
+      "19": {
+        "base": 17433.600000000002,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 12610.800000000001,
+            "reform": 10465.2
+          },
+          "spouse": {
+            "base": 4822.799999999999,
+            "reform": 4003.2000000000003
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "2": {
+        "base": 39610.8,
+        "basis": "projected",
+        "birth_year": 1917,
+        "components": {
+          "retired_worker": {
+            "base": 39610.8,
+            "reform": 32869.2
+          }
+        },
+        "reform": 32869.2
+      },
+      "20": {
+        "base": 37957.2,
+        "basis": "projected",
+        "birth_year": 1926,
+        "components": {
+          "retired_worker": {
+            "base": 37957.2,
+            "reform": 31498.800000000003
+          }
+        },
+        "reform": 31498.800000000003
+      },
+      "21": {
+        "base": 17437.199999999997,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 12853.199999999999,
+            "reform": 10664.400000000001
+          },
+          "spouse": {
+            "base": 4584.0,
+            "reform": 3804.0
+          }
+        },
+        "reform": 14468.400000000001
+      },
+      "22": {
+        "base": 37810.8,
+        "basis": "projected",
+        "birth_year": 1927,
+        "components": {
+          "retired_worker": {
+            "base": 37810.8,
+            "reform": 31371.600000000002
+          }
+        },
+        "reform": 31371.600000000002
+      },
+      "23": {
+        "base": 17392.800000000003,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 12974.400000000001,
+            "reform": 10766.400000000001
+          },
+          "spouse": {
+            "base": 4418.4,
+            "reform": 3669.6000000000004
+          }
+        },
+        "reform": 14436.0
+      },
+      "24": {
+        "base": 37615.2,
+        "basis": "projected",
+        "birth_year": 1928,
+        "components": {
+          "retired_worker": {
+            "base": 37615.2,
+            "reform": 31221.600000000002
+          }
+        },
+        "reform": 31221.600000000002
+      },
+      "25": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 13332.0,
+            "reform": 11064.0
+          },
+          "spouse": {
+            "base": 4198.799999999999,
+            "reform": 3484.7999999999997
+          }
+        },
+        "reform": 14548.800000000001
+      },
+      "26": {
+        "base": 37749.600000000006,
+        "basis": "projected",
+        "birth_year": 1929,
+        "components": {
+          "retired_worker": {
+            "base": 37749.600000000006,
+            "reform": 31327.199999999997
+          }
+        },
+        "reform": 31327.199999999997
+      },
+      "27": {
+        "base": 17530.800000000003,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 13218.0,
+            "reform": 10972.8
+          },
+          "spouse": {
+            "base": 4312.799999999999,
+            "reform": 3578.3999999999996
+          }
+        },
+        "reform": 14551.199999999999
+      },
+      "28": {
+        "base": 37824.0,
+        "basis": "projected",
+        "birth_year": 1930,
+        "components": {
+          "retired_worker": {
+            "base": 37824.0,
+            "reform": 31394.399999999998
+          }
+        },
+        "reform": 31394.399999999998
+      },
+      "29": {
+        "base": 17524.800000000003,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 13144.800000000001,
+            "reform": 10902.0
+          },
+          "spouse": {
+            "base": 4380.0,
+            "reform": 3642.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "3": {
+        "base": 17586.0,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 11367.599999999999,
+            "reform": 9432.0
+          },
+          "spouse": {
+            "base": 6218.400000000001,
+            "reform": 5160.0
+          }
+        },
+        "reform": 14592.0
+      },
+      "30": {
+        "base": 37855.2,
+        "basis": "projected",
+        "birth_year": 1931,
+        "components": {
+          "retired_worker": {
+            "base": 37855.2,
+            "reform": 31419.600000000002
+          }
+        },
+        "reform": 31419.600000000002
+      },
+      "31": {
+        "base": 17535.6,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 13207.199999999999,
+            "reform": 10964.400000000001
+          },
+          "spouse": {
+            "base": 4328.4,
+            "reform": 3591.6000000000004
+          }
+        },
+        "reform": 14556.0
+      },
+      "32": {
+        "base": 37843.2,
+        "basis": "projected",
+        "birth_year": 1932,
+        "components": {
+          "retired_worker": {
+            "base": 37843.2,
+            "reform": 31410.0
+          }
+        },
+        "reform": 31410.0
+      },
+      "33": {
+        "base": 17419.199999999997,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 12774.0,
+            "reform": 10603.2
+          },
+          "spouse": {
+            "base": 4645.200000000001,
+            "reform": 3850.7999999999997
+          }
+        },
+        "reform": 14454.0
+      },
+      "34": {
+        "base": 37813.2,
+        "basis": "projected",
+        "birth_year": 1933,
+        "components": {
+          "retired_worker": {
+            "base": 37813.2,
+            "reform": 31374.0
+          }
+        },
+        "reform": 31374.0
+      },
+      "35": {
+        "base": 17576.4,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 12944.400000000001,
+            "reform": 10737.599999999999
+          },
+          "spouse": {
+            "base": 4632.0,
+            "reform": 3847.2000000000003
+          }
+        },
+        "reform": 14584.800000000001
+      },
+      "36": {
+        "base": 38118.0,
+        "basis": "projected",
+        "birth_year": 1934,
+        "components": {
+          "retired_worker": {
+            "base": 38118.0,
+            "reform": 31632.0
+          }
+        },
+        "reform": 31632.0
+      },
+      "37": {
+        "base": 17744.399999999998,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13213.199999999999,
+            "reform": 10966.8
+          },
+          "spouse": {
+            "base": 4531.200000000001,
+            "reform": 3758.3999999999996
+          }
+        },
+        "reform": 14725.199999999999
+      },
+      "38": {
+        "base": 38389.2,
+        "basis": "projected",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 38389.2,
+            "reform": 31858.800000000003
+          }
+        },
+        "reform": 31858.800000000003
+      },
+      "39": {
+        "base": 17781.600000000002,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 13030.800000000001,
+            "reform": 10812.0
+          },
+          "spouse": {
+            "base": 4750.799999999999,
+            "reform": 3945.6000000000004
+          }
+        },
+        "reform": 14757.599999999999
+      },
+      "4": {
+        "base": 39152.399999999994,
+        "basis": "projected",
+        "birth_year": 1918,
+        "components": {
+          "retired_worker": {
+            "base": 39152.399999999994,
+            "reform": 32488.800000000003
+          }
+        },
+        "reform": 32488.800000000003
+      },
+      "40": {
+        "base": 38606.399999999994,
+        "basis": "projected",
+        "birth_year": 1936,
+        "components": {
+          "retired_worker": {
+            "base": 38606.399999999994,
+            "reform": 32040.0
+          }
+        },
+        "reform": 32040.0
+      },
+      "41": {
+        "base": 17851.199999999997,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 13032.0,
+            "reform": 10813.2
+          },
+          "spouse": {
+            "base": 4819.200000000001,
+            "reform": 3999.6000000000004
+          }
+        },
+        "reform": 14812.800000000001
+      },
+      "42": {
+        "base": 38790.0,
+        "basis": "projected",
+        "birth_year": 1937,
+        "components": {
+          "retired_worker": {
+            "base": 38790.0,
+            "reform": 32187.600000000002
+          }
+        },
+        "reform": 32187.600000000002
+      },
+      "43": {
+        "base": 17845.199999999997,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 12769.199999999999,
+            "reform": 10598.400000000001
+          },
+          "spouse": {
+            "base": 5076.0,
+            "reform": 4213.200000000001
+          }
+        },
+        "reform": 14811.600000000002
+      },
+      "44": {
+        "base": 38942.399999999994,
+        "basis": "projected",
+        "birth_year": 1938,
+        "components": {
+          "retired_worker": {
+            "base": 38942.399999999994,
+            "reform": 32319.600000000002
+          }
+        },
+        "reform": 32319.600000000002
+      },
+      "45": {
+        "base": 18085.2,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 12976.800000000001,
+            "reform": 10768.8
+          },
+          "spouse": {
+            "base": 5108.4,
+            "reform": 4239.6
+          }
+        },
+        "reform": 15008.400000000001
+      },
+      "46": {
+        "base": 39442.8,
+        "basis": "projected",
+        "birth_year": 1939,
+        "components": {
+          "retired_worker": {
+            "base": 39442.8,
+            "reform": 32732.399999999998
+          }
+        },
+        "reform": 32732.399999999998
+      },
+      "47": {
+        "base": 18242.4,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 12932.400000000001,
+            "reform": 10731.599999999999
+          },
+          "spouse": {
+            "base": 5310.0,
+            "reform": 4406.4
+          }
+        },
+        "reform": 15138.0
+      },
+      "48": {
+        "base": 39885.600000000006,
+        "basis": "projected",
+        "birth_year": 1940,
+        "components": {
+          "retired_worker": {
+            "base": 39885.600000000006,
+            "reform": 33097.2
+          }
+        },
+        "reform": 33097.2
+      },
+      "49": {
+        "base": 18422.4,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 13060.800000000001,
+            "reform": 10837.2
+          },
+          "spouse": {
+            "base": 5361.6,
+            "reform": 4450.799999999999
+          }
+        },
+        "reform": 15288.0
+      },
+      "5": {
+        "base": 17588.4,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 11530.8,
+            "reform": 9571.2
+          },
+          "spouse": {
+            "base": 6057.6,
+            "reform": 5025.6
+          }
+        },
+        "reform": 14596.800000000001
+      },
+      "50": {
+        "base": 40276.8,
+        "basis": "projected",
+        "birth_year": 1941,
+        "components": {
+          "retired_worker": {
+            "base": 40276.8,
+            "reform": 33426.0
+          }
+        },
+        "reform": 33426.0
+      },
+      "51": {
+        "base": 18520.800000000003,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 12902.400000000001,
+            "reform": 10710.0
+          },
+          "spouse": {
+            "base": 5618.4,
+            "reform": 4660.799999999999
+          }
+        },
+        "reform": 15370.800000000001
+      },
+      "52": {
+        "base": 40638.0,
+        "basis": "projected",
+        "birth_year": 1942,
+        "components": {
+          "retired_worker": {
+            "base": 40638.0,
+            "reform": 33726.0
+          }
+        },
+        "reform": 33726.0
+      },
+      "53": {
+        "base": 12949.199999999999,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 3379.2000000000003,
+            "reform": 3280.7999999999997
+          },
+          "spouse": {
+            "base": 9570.0,
+            "reform": 9292.8
+          }
+        },
+        "reform": 12573.599999999999
+      },
+      "54": {
+        "base": 27372.0,
+        "basis": "projected",
+        "birth_year": 1965,
+        "components": {
+          "retired_worker": {
+            "base": 27372.0,
+            "reform": 26580.0
+          }
+        },
+        "reform": 26580.0
+      },
+      "55": {
+        "base": 13039.199999999999,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 3219.6000000000004,
+            "reform": 3158.3999999999996
+          },
+          "spouse": {
+            "base": 9819.599999999999,
+            "reform": 9628.8
+          }
+        },
+        "reform": 12787.199999999999
+      },
+      "56": {
+        "base": 27591.600000000002,
+        "basis": "projected",
+        "birth_year": 1966,
+        "components": {
+          "retired_worker": {
+            "base": 27591.600000000002,
+            "reform": 27057.600000000002
+          }
+        },
+        "reform": 27057.600000000002
+      },
+      "57": {
+        "base": 13112.400000000001,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3092.3999999999996,
+            "reform": 3062.3999999999996
+          },
+          "spouse": {
+            "base": 10020.0,
+            "reform": 9922.8
+          }
+        },
+        "reform": 12985.199999999999
+      },
+      "58": {
+        "base": 27769.199999999997,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 27769.199999999997,
+            "reform": 27498.0
+          }
+        },
+        "reform": 27498.0
+      },
+      "59": {
+        "base": 13095.599999999999,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 3024.0,
+            "reform": 3024.0
+          },
+          "spouse": {
+            "base": 10071.599999999999,
+            "reform": 10071.599999999999
+          }
+        },
+        "reform": 13095.599999999999
+      },
+      "6": {
+        "base": 39056.399999999994,
+        "basis": "projected",
+        "birth_year": 1919,
+        "components": {
+          "retired_worker": {
+            "base": 39056.399999999994,
+            "reform": 32410.800000000003
+          }
+        },
+        "reform": 32410.800000000003
+      },
+      "60": {
+        "base": 27741.600000000002,
+        "basis": "projected",
+        "birth_year": 1968,
+        "components": {
+          "retired_worker": {
+            "base": 27741.600000000002,
+            "reform": 27741.600000000002
+          }
+        },
+        "reform": 27741.600000000002
+      },
+      "61": {
+        "base": 13213.199999999999,
+        "basis": "projected",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 13213.199999999999,
+            "reform": 10963.2
+          }
+        },
+        "reform": 10963.2
+      },
+      "62": {
+        "base": 4516.799999999999,
+        "basis": "projected",
+        "birth_year": 1967,
+        "components": {
+          "retired_worker": {
+            "base": 3116.3999999999996,
+            "reform": 3085.2000000000003
+          },
+          "spouse": {
+            "base": 1400.4,
+            "reform": 697.2
+          }
+        },
+        "reform": 3782.4000000000005
+      },
+      "63": {
+        "base": 15170.400000000001,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "retired_worker": {
+            "base": 15170.400000000001,
+            "reform": 12590.400000000001
+          }
+        },
+        "reform": 12590.400000000001
+      },
+      "65": {
+        "base": 40938.0,
+        "basis": "projected",
+        "birth_year": 1960,
+        "components": {
+          "aged_widow": {
+            "base": 36267.600000000006,
+            "reform": 32796.0
+          },
+          "retired_worker": {
+            "base": 4670.4,
+            "reform": 4317.6
+          }
+        },
+        "reform": 37113.600000000006
+      },
+      "66": {
+        "base": 13574.37690890607,
+        "basis": "opening_stock",
+        "birth_year": 1935,
+        "components": {
+          "retired_worker": {
+            "base": 13574.37690890607,
+            "reform": 11265.695592540982
+          }
+        },
+        "reform": 11265.695592540982
+      },
+      "67": {
+        "base": 19011.84038662128,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_worker": {
+            "base": 19011.84038662128,
+            "reform": 15778.374792962226
+          }
+        },
+        "reform": 15778.374792962226
+      },
+      "68": {
+        "base": 21634.16319856905,
+        "basis": "opening_stock",
+        "birth_year": 1940,
+        "components": {
+          "spouse": {
+            "base": 21634.16319856905,
+            "reform": 17954.70235061218
+          }
+        },
+        "reform": 17954.70235061218
+      },
+      "69": {
+        "base": 17565.70648297362,
+        "basis": "opening_stock",
+        "birth_year": 1942,
+        "components": {
+          "aged_widow": {
+            "base": 17565.70648297362,
+            "reform": 14578.194154552326
+          }
+        },
+        "reform": 14578.194154552326
+      },
+      "7": {
+        "base": 17528.4,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 11574.0,
+            "reform": 9600.0
+          },
+          "spouse": {
+            "base": 5954.4,
+            "reform": 4944.0
+          }
+        },
+        "reform": 14544.0
+      },
+      "70": {
+        "base": 15560.40080324886,
+        "basis": "opening_stock",
+        "birth_year": 1975,
+        "components": {
+          "disabled_widow": {
+            "base": 15560.40080324886,
+            "reform": 12913.943669290587
+          }
+        },
+        "reform": 12913.943669290587
+      },
+      "8": {
+        "base": 38869.2,
+        "basis": "projected",
+        "birth_year": 1920,
+        "components": {
+          "retired_worker": {
+            "base": 38869.2,
+            "reform": 32254.800000000003
+          }
+        },
+        "reform": 32254.800000000003
+      },
+      "9": {
+        "base": 17515.199999999997,
+        "basis": "projected",
+        "birth_year": 1921,
+        "components": {
+          "retired_worker": {
+            "base": 11822.400000000001,
+            "reform": 9812.400000000001
+          },
+          "spouse": {
+            "base": 5692.799999999999,
+            "reform": 4723.200000000001
+          }
+        },
+        "reform": 14535.600000000002
+      }
+    }
+  },
+  "schema_version": "acola-mechanism-l-equivalence-v1",
+  "seed": 20261024
+}
