@@ -1,179 +1,265 @@
 # OP1 implementation report
 
-## 1. What I built
+## 1. Changes and design
 
-Implemented the approved design at `5c82dbd9`, §§2.1–2.5, 2.9–2.10,
-3.1 (OP1), 5.1, 5.4, 6.4, 7 and 8 (approval d1925).
-The package remains `src/populace_dynamics/open_population/`.
-Its scope is accounting conformance and seam mechanics; it admits no
-demographic law or population forecast.
+The review fixes implement `docs/design/open_population.md` on master,
+revision 14, SHA-256
+`ca67cbfdb7c94d0de10ad304f4bb9744da90af076f54061a146a45a870ecf339`.
+`git diff 5c82dbd9 origin/master -- docs/design/open_population.md` confirms
+that OP1's milestone row, horizon rule and stock-flow properties did not
+change since revision 12. Revision 14 clarifies §7's alignment death property:
+mortality receives the previous year's roster plus that year's scheduled
+entrants. The seam appends entrants before mortality
+(`src/populace_dynamics/engine/loop.py:271–297`), and OP1 declares their
+arrivals before delegating the call
+(`src/populace_dynamics/open_population/harness.py:226–235`).
 
-| Item | Implementation | Commit |
-|---|---|---|
-| Foundation | `__init__.py`, `errors.py`, `events.py`: named refusals and immutable declarations with explicit entry provenance | `574ab4f2` |
-| 1. Exits | `exits.py`: unchanged mortality call, deaths first, tagged person streams for survivor-only emigration, default off, marital compatibility refusal | `f84e3068` |
-| 2. Births | `births.py`: unchanged fertility call, allocator-backed additions, `maternal_birth` and entry year | `04817b36` |
-| 3. Scheduled entries | `schedule.py`: owned metadata/allocator, builder callback or supplied frames, exact metadata validation, `immigrant_cohort` and entry year; preserve the closed-loop cursor for signed IDs | `7fad996a`, `90474206` |
-| 4. Horizon | `harness.py`: production request enforces its registered end year; shorter reads copy prefixes of the completed run | `3b9b1845` |
-| 5. Accounting | `harness.py`: explicit declarations include entrants who exit during their entry year; annual reconciliation, fixed-weight checks and single-presence history reconciliation | `3b9b1845` |
-| 6. Gate facade | `gates.py`: fixed gate horizon, slotted request with no target field, unknown keyword refusal, isolated import and deferred project-import checks | `cfef0457` |
-| 7. Reducer seal | Exact eight-file exclusions and their existing pin; historical initializers remain unchanged | `1e23e0cf` |
-| 8. Run size | `op1_run_size.py` and `op1_run_size.json` beside this report | `5a5c8b93` |
+Base: `7e635bba`, branch `openpop-op1-harness-20261024`.
 
-`run_production(initial, modules, ProductionRequest(horizon, horizon), ...)`
-accepts copied `scheduled_entries`, or a `schedule_builder(allocator)` callback
-that calls the existing `build_entrant_schedule`. The result exposes
-`projection`, `events`, `accounting` and `read_prefix(end_year)`.
-`run_gate` instead requires `GateRunRequest(horizon=...)`.
+The build's sandbox could not write `.git`, so the main session committed
+its tree in logical steps on this branch: `7d321aef` (the fast path, its
+tests and the reducer exclusions), `a8c627a8` (the review fixes) and
+`0d0c073c` (a production test at the registered 2100 horizon). The
+measurement and this report follow in the next commit. No history was
+rewritten.
 
-No history was rewritten.
+`run_production(initial, modules,
+ProductionRequest("tr2026_intermediate"), ...)` projects to 2100.
+Shorter reads use `result.read_prefix(year)`. Production results carry
+`kind="production"` and their scenario; gates carry `kind="gate"` and
+`scenario=None` (`open_population/harness.py:301–328`,
+`open_population/gates.py:76–88`). Production metadata stays open for OP6.
 
-## 2. Tests and exact commands
+The scope remains accounting conformance and seam mechanics. The build
+admits no demographic law or population forecast.
 
-All fixtures and property examples are invented. The Hypothesis tests use
-6–25 examples and disable machine-dependent per-example deadlines.
+## 2. Resource measurements and stream cost
 
-| New test module | Design invariant |
+Measurements use invented rosters, emigration probability 0.02 and 75
+projected years, 2026–2100. The script and the detailed results are
+`op1_run_size.py` and `op1_run_size.json` beside this report. Each roster
+size and emigration stream runs in its own worker process, one at a time.
+Each measurement records the host load, wall time, peak RSS, retained
+snapshot bytes and the leading cProfile costs. The main session ran it on
+the committed code (`0d0c073c`), outside the build's sandbox, at one-minute
+load averages of 82–129. The build's own sandboxed run was about 40 times
+slower than this host, so its numbers are not used.
+
+Mortality uses `apply_mortality`, which draws person streams
+(`engine/steps.py:125–131`); fertility uses `AsfrFertilityStep` with invented
+rates and tagged person streams (`baselines/fertility.py:114–126`).
+`advance_age` draws nothing (`engine/steps.py:142–148`). The marital step is
+`no_marital_transitions`, required for nonzero emigration
+(`open_population/exits.py:64–67`). The sealed loop retains its original
+registry for every module and adapter draw.
+
+All six runs reconciled 75 periods with zero count and weight residuals and
+zero revaluations. For each roster size, the direct and registry runs give
+the same projection hash, so the fast path changes no draw.
+
+| Initial people | Mortality person-years | Emigrants | Profiled seconds, registry emigration | Profiled seconds, direct emigration | Peak RSS (MB), direct |
+|---:|---:|---:|---:|---:|---:|
+| 25 | 4,299 | 82 | 5.46 | 4.36 | 191.0 |
+| 100 | 11,936 | 248 | 9.35 | 6.62 | 194.7 |
+| 400 | 43,793 | 848 | 26.85 | 16.85 | 200.2 |
+
+The RNG shares are shares of profiled projection time, measured by disjoint
+wrappers (`op1_run_size.py:57`, `:208`). "Sequences" covers root, period and
+module construction; "full setup" adds the leaf sequence and the generator.
+The two overlap and must not be added.
+
+| Initial people | Emigration stream | Sealed loop, sequences | Sealed loop, full setup | Emigration, full setup |
+|---:|---|---:|---:|---:|
+| 25 | Registry | 34.77% | 37.06% | 24.49% |
+| 25 | Direct | 45.34% | 48.57% | 1.34% |
+| 100 | Registry | 42.70% | 44.95% | 35.04% |
+| 100 | Direct | 64.45% | 68.13% | 2.02% |
+| 400 | Registry | 47.95% | 50.30% | 42.15% |
+| 400 | Direct | 80.44% | 84.63% | 2.62% |
+
+With emigration on the direct path, building the registry's sequences for
+the sealed loop's own draws takes **45%, 64% and 80%** of profiled runtime
+at 25, 100 and 400 initial people, and the share grows with the roster.
+Here the loop draws 1.16–1.33 person-level registry streams per person-year
+(a mortality person stream for everyone, and a fertility tagged child for
+women of childbearing age), plus 600 module generators per run. Person-stream setup
+alone takes 32%, 53% and 72%. Adapters that do more non-random work would
+lower these shares, and adapters that draw more person streams would raise
+them. cProfile inflates call-heavy code, so the shares are indicative; the
+unprofiled timings below are the cleaner comparison.
+
+The unprofiled microbenchmark interleaves five repetitions of 400
+tagged-child draws (`op1_run_size.py:376`; the raw samples and loads are in
+the JSON's `rng_microbenchmark`).
+
+| Stream | Median µs per draw, 7 periods | Median µs per draw, 75 periods |
+|---|---:|---:|
+| Registry | 49.1 | 201.0 |
+| Direct | 6.1 | 6.2 |
+
+The registry's cost per draw grows about fourfold from 7 to 75 periods,
+because `_period_sequence` spawns n_periods + 1 children on every call
+(`engine/rng.py:61–67`). The direct path's cost does not depend on the
+horizon. At 75 periods and about 1.2 registry draws per person-year, the
+sealed loop's registry setup alone comes to roughly 240 seconds per million
+person-years unprofiled, against about 7 seconds on the direct path.
+
+Average profiled cost per mortality person-year is 0.38–1.01 ms with direct
+emigration and 0.61–1.27 ms with registry emigration. It falls as the roster
+grows, because fixed per-year costs spread out. The JSON marks a two-point
+marginal fit as unusable under varying host load. These are engineering
+extrapolations that include fixed and profiling overhead, not bounds.
+
+The 150 annual-frame references share 76 three-column snapshots. Retained
+snapshot bytes are **117,656**, **300,732** and **1,050,396** at 25, 100 and
+400 people, against full-copy totals of **4,058,725**, **11,067,075** and
+**40,445,014**. Peak RSS across the six workers ranges from 191.0 to
+202.5 MB. The snapshot totals measure retained frame bytes; they do not
+predict an equal fall in RSS.
+
+```sh
+.venv/bin/python docs/design/open_population_evidence/op1_run_size.py --sizes 25 100 400 --output docs/design/open_population_evidence/op1_run_size.json
+```
+
+Only `person_id`, `year` and `weight` are retained in `AnnualTransition`:
+`engine/accounting.py:690–703` reads these three columns, and
+`engine/accounting_history.py:152–159` calls that reader and reconstructs
+those same columns. OP1 stores one snapshot per boundary and shares it
+between adjacent transitions (`open_population/harness.py:221–247`, `:273`).
+The ledger indexes declarations by year
+(`open_population/events.py:68–79`, `:102–103`), and `close_period` reads
+that year's tuple (`open_population/harness.py:242`), avoiding a scan of all
+prior events.
+
+The full Microcosm-sized measurement remains an **open OP1 item before
+OP10a**, as design §8 requires. The open-population lane runs it locally,
+under `heavy`, in a quiet window, on invented data; otherwise it waits for
+OP10a. The small-run figures above are planning estimates, not a
+demonstrated scaling law.
+
+The fast-path invariant is: **at every valid stream address, the direct
+stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:49–59`
+constructs the same entropy and spawn keys as `engine/rng.py:61–100` and
+`:102–156`; its tagged period-zero cases preserve the separate root and
+spawned-child convention. Tests compare entropy, spawn key, pool size,
+eight state words and four draws across the specified exhaustive grid and
+24 generated examples. The exact emigration test independently uses the
+sealed registry, rather than the fast class.
+
+## 3. Tests, collection, style and scope
+
+All tests and mutation checks ran in one process at a time, with modest
+Hypothesis budgets and no xdist. The build ran its checks inside its
+sandbox, about 40 times slower than this host, so the main session reran
+them on the committed code.
+
+The build dropped its production run to 2100 because the sandbox took 62 s.
+On this host it takes 0.6 s, so
+`test_registered_scenario_projects_to_its_horizon_on_inventions` keeps it
+(`0d0c073c`): a three-person invented roster with emigration on projects to
+TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
+
+The required command gives **232 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in about 8 s at `0d0c073c`. It covers the self-contained
+horizon test, the reversed-roster example, the gate metadata refusals and
+every reducer identity, reachability and initializer check.
+
+```sh
+.venv/bin/python -m pytest -q tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
+.venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
+```
+
+Collection gives **129 tests**, all classified as `unit` (seven modules,
+including the original six). That is 69 more than the 60 reviewed at r1.
+
+Black and Ruff pass over every touched Python file, and `git diff --check`
+is clean.
+
+```sh
+.venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
+.venv/bin/ruff check src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
+git diff --check
+git diff --stat 7e635bba
+git diff --exit-code 7e635bba -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs tests/tier_counts.json tests/README-tiers.md
+```
+
+The scope comparison over the sealed and shared paths is empty. The three
+new files, `open_population/streams.py`, `tests/open_population/__init__.py`
+and `tests/open_population/test_streams.py`, lie within the allowed scope.
+The test modules, including the new stream module, classify as `unit` under
+the repository's `_classify_test_module`. The shared tier inventories are
+unchanged; their update waits for the coordinator's slot.
+
+No sealed engine, baseline, Track A, Track B, gate contract, committed run
+or shared tier file changed. The only changes outside OP1 sources, tests
+and `docs/design/open_population_evidence/op1_*` add `streams.py` to
+`POST_REVIEW_SOURCE_EXCLUSIONS` and its exact pin.
+
+Closed-run equality means equality with the sealed loop run on the
+canonical initialized slice, with the same scheduled frames and draw.
+OP1 canonicalizes after initialization (`open_population/harness.py:190–193`),
+matching the sealed loop's entrant-year sort (`engine/loop.py:284–286`).
+The underlying two-mother ASFR/materializer gap remains a strict xfail:
+`baselines/fertility.py:114–128` keeps mother row order and
+`engine/steps.py:473–497` assigns child IDs and parents in that order.
+
+The runtime gate closure test admits third-party helpers and refuses project
+alignment modules. `pandas.core.computation.align` is a third-party helper
+loaded at run time; it is outside the `populace_dynamics` namespace.
+
+## 4. Review r1 and fixes
+
+Paths below are relative to `src/populace_dynamics/` for source and
+`tests/open_population/` for test names. The build's sandbox could not
+commit, so the main session committed its tree (§1).
+
+| Finding | Severity | Fix and test that pins it | Commit |
+|---|---|---|---|
+| 1 | Major | `open_population/harness.py:60–95` freezes the TR2026→2100 lookup, derives the read-only request end year and gives accurate field-type errors. Tests `test_registered_production_horizon_matches_baseline`, `test_production_horizon_is_bound_to_scenario`, `test_conflicting_production_end_years_cannot_be_constructed`, unknown-scenario/type tests and result-kind tests pin the boundary. | `a8c627a8`, `0d0c073c` |
+| 2 | Major | `test_exact_emigration_stream` compares the ledger against the sealed registry; `test_emigration_marginal_and_non_degenerate` checks 4,000 invented people at q=.5/p=.25; `test_emigration_uniform_distinct_from_other_person_streams` checks mortality and ASFR independence. | `a8c627a8` |
+| 3 | Major | `open_population/gates.py:28`, `:44–89` uses explicit keyword-only arguments and a frozen two-key metadata allow-list. `GateTargetRefused` rejects unlisted metadata before adapters run. `test_gate_refuses_unlisted_metadata_before_any_adapter` and `test_gate_allowed_metadata_reaches_advance_age` pin both sides. Request target keywords and runner unknown keywords are rejected by their explicit signatures. | `a8c627a8` |
+| 4 | Minor | `test_independent_horizons_change_open_but_not_closed_shared_slices` runs the sealed loop on invented frames without git, exec or file reads; it cites the design evidence script as provenance. | `a8c627a8` |
+| 5 | Minor | Stable canonical sorting follows initialization (`open_population/harness.py:190–193`). Closed-run comparisons use that canonical slice; `test_non_sorting_person_mortality_is_order_invariant` pins non-sorting mortality. The sealed-function xfail stays. | `a8c627a8` |
+| 6 | Minor | `open_population/exits.py:77–83` makes `_ExitAdapter` harness-only; `_project` constructs it after compatibility validation. `test_package_exposes_no_public_exit_adapter` pins the public surface. | `a8c627a8` |
+| 7 | Minor | Three-column snapshots, shared adjacent boundaries and year-indexed events reduce retained state and ledger scans. `test_annual_transitions_retain_only_accounting_columns` and `test_year_index_preserves_declarations_and_returns_a_snapshot` pin them. §2 records nonzero-emigration profiles, draw timings and the open full-size item. | `a8c627a8` |
+| 8 | Minor | `test_running_gate_loads_no_project_alignment_module` executes a complete one-person gate in a fresh process and checks the loaded project namespace. | `a8c627a8` |
+| 9 | Minor | Scheduled entrants join closed-run differential tests; six fixed slots have offsetting weight-swap tests, including marital mutation in place. Two explicit stock-flow examples pin q=.25/p=.35 with entrants; the property budget rises from 8 to 12. | `a8c627a8` |
+| 10 | Minor | Source imports shared entry-kind constants, removes the duplicate allocator check and adds the requested docstrings. The schedule seam's exact-object validation test stays. A test package marker prevents top-level collisions. §1 cites revision 14 and below states the entry-year convention. | `a8c627a8` |
+| 11 | Coordinator addition | `open_population/streams.py` directly constructs all required registry addresses, preserves period-zero tagged streams and matches refusals. `test_streams.py` covers the exhaustive grid, generated addresses and invalid addresses. Only emigration uses the fast class (`open_population/exits.py:145–161`). Both reducer exclusions include the new module. | `7d321aef`, `a8c627a8` |
+
+The stream rechecks ran the actual three new tests against copied exit
+modules. The live source stayed byte-identical, and test bindings were restored.
+
+| Mutation | Recheck result |
 |---|---|
-| `tests/open_population/test_events.py` | Explicit entry provenance and independent event snapshots (§7) |
-| `tests/open_population/test_exits.py` | Mortality coupling, disjoint exits, one-year emigration monotonicity, order invariance, incompatible widowhood refusal (§§5.4, 7) |
-| `tests/open_population/test_births.py` | Delegated draws and arguments, exact allocator ownership, fixed incumbent weights, maternal provenance (§7) |
-| `tests/open_population/test_schedule.py` | Exact metadata validation, shared allocator, disjoint IDs, reserved namespace, copied schedules (§§2.1, 7) |
-| `tests/open_population/test_harness.py` | Annual stock/weight identity, transient arrivals/exits, history retirement, closed-run coupling, registered prefixes, determinism and canonical-order invariance (§7) |
-| `tests/open_population/test_gates.py` | Fixed gate horizon, target refusal and fresh-process import isolation (§5.1) |
+| M03: mortality person stream reused | Killed: exact stream, marginal and independence tests fail (3/3) |
+| M04: one shared emigration uniform | Killed: exact stream and marginal tests fail (2/3) |
+| M05: fertility tagged stream reused | Killed: exact stream and independence tests fail (2/3) |
+| M12: per-slot fixed-stock fence removed | Killed: all six offsetting weight-swap tests fail with DID NOT RAISE AccountingIdentityError (6/6); live source stayed byte-identical |
 
-Commands ran from the repository root. `OP1_TOOLS` is the `bin` folder of a
-virtual environment with the package's dependencies; `PYTHONPATH` selects
-these sources and bytecode writing is disabled.
+M20's redundant harness allocator check was deliberately removed; the seam's
+check remains pinned by `test_validator_receives_the_exact_returned_metadata`
+(the test that killed M21 in review r1). No new M21 mutation run is claimed.
 
-```sh
-OP1_TOOLS=.venv/bin
-export PYTHONPATH="$PWD/src"
-export PYTHONDONTWRITEBYTECODE=1
+## 5. Remaining work and restricted-files statement
 
-"$OP1_TOOLS/python" -m pytest -q tests/open_population/test_events.py
-"$OP1_TOOLS/python" -m pytest -q tests/open_population/test_exits.py
-"$OP1_TOOLS/python" -m pytest -q tests/open_population/test_births.py tests/open_population/test_schedule.py
+Scheduled entrants can emigrate in their entry year by default: the seam appends them
+before the exit adapter (`engine/loop.py:271–297`). OP0.1 and OP3's timing
+bridge own that convention (design §5.4, OP4). A supplied hazard can return
+0 for rows where `entry_year == context.year` to disable entry-year
+emigration; production schedules still need OP3's timing bridge.
 
-"$OP1_TOOLS/python" -m pytest -q tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
+OP4 must supply exit-aware relational updates before a non-null hazard can
+be composed with another marital adapter (`open_population/exits.py:64–72`).
+Full-size resource validation remains due before OP10a. Host variability
+prevented a reliable marginal-runtime estimate; §2 retains raw fits and a
+labelled engineering extrapolation. No other implementation work is deferred.
 
-"$OP1_TOOLS/python" -m pytest -q tests/open_population/test_schedule.py tests/open_population/test_gates.py tests/open_population/test_harness.py::test_disabled_emigration_matches_closed_engine_slice_by_slice tests/open_population/test_harness.py::test_disabled_emigration_matches_closed_run_for_signed_ids
-"$OP1_TOOLS/python" -m pytest -q tests/open_population/test_gates.py
-
-"$OP1_TOOLS/black" -l 79 src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py
-"$OP1_TOOLS/ruff" check src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py
-"$OP1_TOOLS/black" -l 79 docs/design/open_population_evidence/op1_run_size.py
-"$OP1_TOOLS/ruff" check docs/design/open_population_evidence/op1_run_size.py
-"$OP1_TOOLS/black" --check -l 79 src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
-"$OP1_TOOLS/ruff" check src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
-
-"$OP1_TOOLS/python" docs/design/open_population_evidence/op1_run_size.py --sizes 25 100 --timeout-seconds 900 --output docs/design/open_population_evidence/op1_run_size.json
-```
-
-Initial results: declarations **4 passed**; exits **15 passed, 1 fixture
-failure**, corrected by giving the empty invented mortality mask boolean
-dtype; births/schedules **15 passed**. The combined run then returned
-**158 passed, 1 expected failure, 1 timeout**, in 739.87 seconds.
-The corrected exit fixture passed in that combined run. The gate subprocess
-exceeded its original 180-second cold-import allowance; its follow-up uses
-600 seconds. The suite emitted two pandas deprecation warnings from fixtures
-that intentionally mutate a frame in place.
-
-The signed-ID/coupling follow-up returned **18 passed, 1 failure** in 258.08
-seconds. Its longer subprocess run exposed the imported numerical helper
-`pandas.core.computation.align`. Keeping facade descriptors lightweight and
-deferring the numerical runtime resolved the literal import-name requirement.
-A separate static test walks deferred imports in the OP package and refuses
-project alignment producers too. The final gate module returned **7 passed**
-in 44.68 seconds. A direct pre-fix fresh-interpreter probe independently printed
-`['pandas.core.computation.align']` and failed its assertion:
-
-```sh
-"$OP1_TOOLS/python" -c 'import sys; import populace_dynamics.open_population.gates; loaded = sorted(name for name in sys.modules if "align" in name.lower()); print(loaded, flush=True); assert not loaded, loaded'
-```
-
-The final combined command returned **163 passed, 1 expected failure, 2
-fixture deprecation warnings in 53.72 seconds**. This includes the reducer
-identity, reachability and initializer tests and all three existing entrant
-test files requested in the brief. Black's final check reported **17 files
-unchanged** and Ruff passed. No other test modules were run.
-The tier inventory files remain untouched; their main-session update is
-pending, so a full tier-policy check is not claimed.
-
-Both resource runs reached 2100 with 75 reconciled periods and zero count,
-weight and revaluation residuals:
-
-| Initial people | Final people | Births | Scheduled entries | Projection seconds | Worker seconds | Peak memory, bytes |
-|---:|---:|---:|---:|---:|---:|---:|
-| 25 | 134 | 113 | 75 | 63.877 | 249.974 | 218,071,040 |
-| 100 | 296 | 181 | 300 | 120.377 | 193.286 | 227,540,992 |
-
-The largest live roster was 309 people; the larger run retained 18,543
-person-year rows. Worker time includes cold imports and setup; projection
-time excludes both. Peak memory includes imports and retained slices. These
-two measurements establish no scaling law. Stopped at 100 initial people;
-the script's optional 400-person size was not run.
-
-## 3. Mechanism facts established from source
-
-- **Widowhood:** `cola_track_a/adapters.py:104–111` computes married, linked
-  spouses absent from the current roster, without an exit-cause check;
-  `:113–117` writes widowhood. Its assembly installs the adapter through a
-  partial at `:233`. Removing an emigrant would therefore widow the partner
-  who stays. OP1 refuses every non-null emigration hazard unless the exact
-  explicit `no_marital_transitions` adapter is used. The two-person example
-  executes the unsafe adapter and verifies the refusal.
-- **Timing:** `engine/loop.py:271–286` appends scheduled entries before
-  mortality; `:297–315` runs mortality before aging and marital state;
-  `:317–323` then runs fertility. OP1 declares arrivals before mortality so
-  a same-year death or emigration remains an accounted transient.
-- **Draws:** `engine/steps.py:121–134` sorts and draws person-keyed mortality.
-  `baselines/fertility.py:118–123` uses tagged person-child streams;
-  `engine/rng.py:129–156` constructs that independent child sequence.
-  OP1 uses that pattern under the mortality module for emigration and passes
-  the original mortality and fertility RNG objects through once.
-- **Birth IDs:** `engine/steps.py:488–503` takes IDs from the context's
-  allocator and fills year, age, sex, parent and carried weights. OP1 checks
-  that the exact allocated ID range equals the additions.
-- **Horizon dependence:** `engine/loop.py:242–266` reserves all initial and
-  scheduled IDs and ordinals before simulation; `:358–360` assigns newborn
-  ordinals afterward. The test executes the committed
-  `5c82dbd9:docs/design/open_population_evidence/horizon_dependence.py`
-  with 2026/2027 end years and reproduces unequal shared open-run slices.
-  Prefix reads avoid scheduling or simulating another horizon.
-- **Accounting:** `engine/accounting.py:1025–1086` resolves explicit event
-  weights, separates revaluation and reports a binary64 summation residual.
-  `engine/accounting_history.py:287–299` refuses departed-ID reuse under its
-  declared single-presence contract. OP1 retains those checks and refuses
-  fixed-weight changes in adapter slots.
-- **Source order gap:** `baselines/fertility.py:114–128` keeps mother row
-  order; `engine/steps.py:473–497` assigns child IDs and parent links in that
-  order. With two female mothers aged 30, birth probability 1 and allocation
-  beginning at 3, children 3/4 link to mothers 1/2; reversing the mother rows
-  links them to 2/1. This executed, minimized example remains a strict xfail.
-
-## 4. Refusals and remaining work
-
-No sealed engine, Track B, gate contract, committed run or shared tier file
-changed. Historical reducer identity, initializer coverage and transitive
-reachability checks passed in the combined run.
-
-Unknown or absence-based marital adapters remain incompatible with non-null
-emigration; OP4 must supply exit-aware relational updates and exit-unit rules.
-The existing ASFR/materializer order gap remains open. The harness requires
-at least one projected period because `reconcile_history` refuses an empty
-transition sequence (`engine/accounting_history.py:198–206`).
-
-Real-data schedules still require OP3's universe and timing/exposure bridges
-(design §2.3 and §3.1); this harness supplies only mechanical support.
-No new fertility, migration, benefit, alignment or forecast claim is made.
-Full Microcosm-sized resource validation remains open before OP10a; this job's
-optional measurement stops at 100 initial people.
-
-## 5. Restricted-files statement
-
-Read the required restricted-files policy in full before source work. Opened
-none of the files or folders it restricts, no other session's transcript or
-scratchpad, and no other Subfleet job folder. All test and measurement rosters
-are invented; no microdata or external statistical table was read. Every
-delegated agent reported the same boundary.
+Read `RESTRICTED-FILES.md` in full before source work. Opened nothing it
+restricts, no other session's transcript or scratchpad and no other Subfleet
+job folder. The expressly authorized coordinator RNG-check folder and OP1
+review/scratch folder were the only external evidence folders used. The
+three named NCHS source files and every OP0.1 review folder stayed unopened.
+All tests, probes, mutation checks and measurements use invented inputs;
+no microdata or external statistical table was read and no real-data
+statistic was computed. Every delegated agent reports the same boundary.
