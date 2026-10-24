@@ -1497,6 +1497,99 @@ def test_a_merge_of_unlanded_history_extends_its_own_predecessor(
     assert reported(problems) == (set() if keeps_own_order else {merge[:12]})
 
 
+def test_a_merge_of_contained_history_keeps_its_own_predecessor(
+    tmp_path, no_ci_env
+):
+    """A merge whose other parent is landed but already in its first
+    parent brings nothing in, so it does not reset the predecessor to that
+    older registry. Otherwise a crafted merge of the fork point could drop
+    an entry a master merge brought in, and a later commit restore it,
+    unseen."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    fork = commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    merge_with(repository, "master", landed)
+    write(repository, registry.REGISTRY, first)
+    git(repository, "add", "-A")
+    tree = git(repository, "write-tree").strip()
+    crafted = git(
+        repository,
+        "commit-tree",
+        tree,
+        "-p",
+        "HEAD",
+        "-p",
+        fork,
+        "-m",
+        "merge the fork point again, dropping a landed entry",
+    ).strip()
+    git(repository, "reset", "-q", "--hard", crafted)
+    commit_registry(repository, landed, "restore")
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert reported(problems) == {crafted[:12]}
+
+
+def test_a_first_commit_that_merges_unlanded_history_starts_at_the_fork(
+    tmp_path, no_ci_env
+):
+    """The walk starts from the first listed commit's first parent. When
+    that commit merges an unlanded branch, the branch's registry is not
+    the predecessor, so a rewrite the branch carries is reported at the
+    merge."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    base = commit_registry(repository, first, "registry")
+    branch(repository, "side")
+    rewritten = copy.deepcopy(first)
+    rewritten["entries"][0]["unit_keys"] = ["s_c:2199"]
+    commit_registry(repository, rewritten, "side rewrites an entry")
+    switch(repository, "master")
+    branch(repository, "pr")
+    merge = merge_with(repository, "side", rewritten)
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert reported(problems) == {merge[:12]}
+
+
+@pytest.mark.parametrize("where", ["fork", "landed_merge"])
+def test_an_unreadable_predecessor_is_reported(tmp_path, no_ci_env, where):
+    """A predecessor registry that is not JSON, at the fork point or at a
+    landed parent a merge brings in, is reported under its commit."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    if where == "fork":
+        write(repository, registry.REGISTRY, "not json")
+        unreadable = commit_all(repository, "an unreadable registry")
+    else:
+        commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    commit_registry(repository, first, "own registry")
+    switch(repository, "master")
+    if where == "landed_merge":
+        write(repository, registry.REGISTRY, "not json")
+    base = own_work(repository, "master moves on")
+    switch(repository, "pr")
+    if where == "landed_merge":
+        unreadable = base
+        merge_with(repository, "master", first)
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert any(
+        p.startswith(f"{unreadable[:12]}: ") and "is not JSON" in p
+        for p in problems
+    )
+
+
 def test_a_merge_of_two_landed_lines_is_reported(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
     first = registered(["candidate"])
