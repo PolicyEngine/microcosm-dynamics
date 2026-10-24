@@ -14,6 +14,7 @@ import pytest
 
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
+from tests.track_b_arf_recompute_support import source_text
 from tests.track_b_gross_benefit_support import ssa_params
 
 PARAMS = ssa_params()
@@ -105,9 +106,9 @@ def rib_claim(**kwargs):
     return a.ARFClaim(**values)
 
 
-def test_original_claim_iterator_credit_survives_repeated_application():
+def test_original_claim_collection_credit_survives_repeated_application():
     """Reviewer counterexample: one credit always pays $915.40/$915."""
-    claim = rib_claim(full_work_deduction_months=iter([(2022, 1)]))
+    claim = rib_claim(full_work_deduction_months=list([(2022, 1)]))
     first = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
     second = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
     assert first.adjusted_reduction_months == 59
@@ -116,10 +117,10 @@ def test_original_claim_iterator_credit_survives_repeated_application():
     assert second == first
 
 
-def test_original_claim_iterator_refusal_survives_repeated_evaluation():
+def test_original_claim_collection_refusal_survives_repeated_evaluation():
     """Reviewer counterexample: evaluating a refusal never erases it."""
     claim = rib_claim(
-        conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION])
+        conditions=list([a.ARFUnsupportedReason.OTHER_SUSPENSION])
     )
     outcomes = [
         a.evaluate_arf(
@@ -151,14 +152,14 @@ def test_original_claim_iterator_refusal_survives_repeated_evaluation():
         (a.ARFBenefitKind.WIDOW, "mother_father_rate_months"),
     ],
 )
-def test_every_iterator_credit_field_is_stable_for_supported_and_refused_claims(
+def test_every_collection_credit_field_is_stable_for_supported_and_refused_claims(
     kind, field
 ):
     for refused in (False, True):
         claim = rib_claim(
             kind=kind,
-            **{field: iter([(2022, 1)])},
-            conditions=iter(
+            **{field: list([(2022, 1)])},
+            conditions=list(
                 [a.ARFUnsupportedReason.OTHER_SUSPENSION] if refused else []
             ),
         )
@@ -183,13 +184,15 @@ def test_every_iterator_credit_field_is_stable_for_supported_and_refused_claims(
         assert isinstance(claim.conditions, (tuple, frozenset))
 
 
-def test_iterator_inputs_are_snapshotted_before_the_caller_can_consume_them():
-    credits = iter([(2022, 1)])
-    conditions = iter([a.ARFUnsupportedReason.OTHER_SUSPENSION])
+def test_collection_inputs_are_snapshotted_before_caller_mutation():
+    credits = list([(2022, 1)])
+    conditions = list([a.ARFUnsupportedReason.OTHER_SUSPENSION])
     claim = rib_claim(
         full_work_deduction_months=credits, conditions=conditions
     )
-    assert list(credits) == list(conditions) == []
+    credits.clear()
+    conditions.clear()
+    assert credits == conditions == []
     with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
         a.apply_arf(claim, payment_month=FRA, params=PARAMS)
     assert caught.value.reason is a.ARFUnsupportedReason.OTHER_SUSPENSION
@@ -199,13 +202,20 @@ def test_iterator_inputs_are_snapshotted_before_the_caller_can_consume_them():
     assert supported.benefit == F("915.4")
 
 
-def test_result_iterator_credits_are_immutable_and_survive_inspection():
+def test_result_collection_credits_are_immutable_and_survive_inspection():
     result = a.apply_arf(
         rib_claim(full_work_deduction_months={(2022, 1)}),
         payment_month=FRA,
         params=PARAMS,
     )
-    direct = replace(result, crediting_months=iter(result.crediting_months))
+    direct = a.apply_arf(
+        replace(
+            result.claim,
+            full_work_deduction_months=list(result.crediting_months),
+        ),
+        payment_month=FRA,
+        params=PARAMS,
+    )
     assert direct == result
     assert frozenset(direct.crediting_months) == result.crediting_months
     assert frozenset(direct.crediting_months) == result.crediting_months
@@ -527,24 +537,15 @@ def test_explicit_exceptional_history_is_refused_by_name(reason):
     assert caught.value.reason is reason
 
 
-def test_spouse_reentitlement_before_fra_is_explicitly_refused():
-    claim = a.ARFClaim(
-        a.ARFBenefitKind.SPOUSE,
-        date(1960, 1, 2),
-        (2022, 1),
-        F(650),
-        nonentitlement_months={(2022, 2)},
-        conditions={a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA},
-    )
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        a.apply_arf(claim, payment_month=(2024, 1), params=PARAMS)
-    assert (
-        caught.value.reason
-        is a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
-    )
+def test_spouse_reentitled_before_fra_keeps_original_months_until_fra():
+    """402(q)(1)(B): only the 62 and FRA months use the adjusted period.
 
-
-def test_spouse_reentitlement_before_fra_is_detected_from_termination_history():
+    Source conflict us:oasdi-arf-spouse-reentitlement-credits. Invented
+    1960-01-02 spouse, $650 unreduced, first reduced 2022-01, terminated
+    2022-02 and reentitled 2022-03. Every month before FRA keeps the 60
+    original months (35 percent, $422.50); the January 2027 ARF removes
+    the terminated month (59 months, reduction $224.80, $425.20).
+    """
     claim = a.ARFClaim(
         a.ARFBenefitKind.SPOUSE,
         date(1960, 1, 2),
@@ -552,15 +553,28 @@ def test_spouse_reentitlement_before_fra_is_detected_from_termination_history():
         F(650),
         nonentitlement_months={(2022, 2)},
     )
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        a.apply_arf(claim, payment_month=(2024, 1), params=PARAMS)
-    assert (
-        caught.value.reason
-        is a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
-    )
-    # The same known history has a settled final adjustment at FRA.
+    plain = replace(claim, nonentitlement_months=frozenset())
+    for payment in ((2022, 3), (2024, 1), (2026, 12)):
+        result = a.apply_arf(claim, payment_month=payment, params=PARAMS)
+        assert result.crediting_months == frozenset()
+        assert result.effective_adjustment_month is None
+        assert result.original_reduction_months == 60
+        assert result.adjusted_reduction_months == 60
+        assert result.benefit == F("422.50")
+        assert (
+            result.benefit
+            == a.apply_arf(plain, payment_month=payment, params=PARAMS).benefit
+        )
     result = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
     assert result.adjusted_reduction_months == 59
+    assert result.crediting_months == frozenset({g.YearMonth(2022, 2)})
+    assert result.benefit == F("425.20")
+
+
+def test_spouse_reentitlement_is_no_longer_a_coverage_reason():
+    """The settled timing leaves no named refusal to declare."""
+    values = {reason.value for reason in a.ARFUnsupportedReason}
+    assert "arf_spouse_reentitlement_before_fra" not in values
 
 
 def test_dual_spouse_after_spouse_before_arf_is_refused():
@@ -603,6 +617,17 @@ def test_historic_survivor_fra_conflict_is_refused():
     # POMS FRA65; CFR FRA62 gives1000. Neither reading is paid by R3.
     assert g.survivor_age_reduced(F(1000), 36, 60, PARAMS) == F(829)
     assert F(1000) - F(829) == F(171)
+    # The conflict cannot change a supported amount: under either FRA every
+    # reduced entitlement of the cohort is first entitled before 1978, which
+    # arf_initial_entitlement_before_1978 refuses independently.
+    for birth in (date(1911, 1, 2), date(1912, 1, 1)):
+        for fra_years in (62, 65):
+            assert a.age_attainment_month(birth, fra_years * 12) < g.YearMonth(
+                1978, 1
+            )
+    assert "for months after December 1972." in " ".join(
+        source_text("lii_usc_402q_415f_excerpts").split()
+    )
 
 
 def test_widow_nonbinding_child_care_readings_are_explicit():
@@ -652,13 +677,15 @@ def test_widow_nonbinding_child_care_readings_are_explicit():
     ],
 )
 def test_invalid_input_precedes_coverage_refusal(change):
-    claim = rib_claim(
-        conditions={a.ARFUnsupportedReason.OTHER_SUSPENSION},
-        **{k: v for k, v in change.items() if k != "conditions"},
-    )
-    if "conditions" in change:
-        claim = replace(claim, **change)
+    # Intrinsic declaration errors now reject during construction; cohort
+    # checks still require apply_arf. The same invalid values must raise.
     with pytest.raises(g.InvalidFamilyInput):
+        claim = rib_claim(
+            conditions={a.ARFUnsupportedReason.OTHER_SUSPENSION},
+            **{k: v for k, v in change.items() if k != "conditions"},
+        )
+        if "conditions" in change:
+            claim = replace(claim, **change)
         a.apply_arf(claim, payment_month=FRA, params=PARAMS)
 
 
@@ -786,7 +813,7 @@ def test_poms_00615_015_date_erratum_is_pinned_against_correct_table():
             rib_claim(
                 first_reduction_month=(2027, 1),
                 unreduced_benefit=F(0),
-                conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
+                conditions=list([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
             ),
             FRA,
             id="explicit-suspension-zero-rf",
@@ -861,7 +888,10 @@ def test_invalid_rib_parameters_precede_all_arf_refusals_and_counts(
             a.evaluate_arf("invalid", F(1), compute)
         else:
             a.count_arf_outcomes(
-                a.evaluate_arf(key, F(1), compute) for key in ("left", "right")
+                [
+                    a.evaluate_arf(key, F(1), compute)
+                    for key in ("left", "right")
+                ]
             )
     assert str(caught.value) == message
 
@@ -873,7 +903,7 @@ def test_invalid_rib_parameters_precede_arf_money_arithmetic(
     def forbidden(*args, **kwargs):
         pytest.fail("invalid statutory bundle reached money arithmetic")
 
-    monkeypatch.setattr(a, "worker_reduction_fraction", forbidden)
+    monkeypatch.setattr(a, "_worker_reduction_fraction_validated", forbidden)
     with pytest.raises(ValueError) as caught:
         a.apply_arf(
             rib_claim(), payment_month=FRA, params=ssa_params(**overrides)
@@ -926,14 +956,14 @@ def test_nonfinite_statutory_fields_precede_arf_refusals_and_arithmetic(
         pytest.fail("non-finite statutory input reached coverage or money")
 
     for name in (
-        "statutory_rates",
+        "_statutory_rates_validated",
         "_refuse",
-        "worker_reduction_fraction",
-        "spouse_reduction_fraction",
-        "survivor_reduction_fraction",
-        "ceil_dime",
-        "floor_dime",
-        "whole_dollars",
+        "_worker_reduction_fraction_validated",
+        "_spouse_reduction_fraction_validated",
+        "_survivor_reduction_fraction_validated",
+        "_ceil_dime_validated",
+        "_floor_dime_validated",
+        "_whole_dollars_validated",
     ):
         monkeypatch.setattr(a, name, forbidden)
 
@@ -951,11 +981,10 @@ def test_nonfinite_statutory_fields_precede_arf_refusals_and_arithmetic(
     elif entrypoint == "evaluate":
         invoke = evaluate
     else:
-        outcomes = (evaluate() for _ in range(2))
-        assert calls == []  # The invalid row is not evaluated at creation.
+        assert calls == []  # Row construction starts only on invocation.
 
         def invoke():
-            return a.count_arf_outcomes(outcomes)
+            return a.count_arf_outcomes([evaluate() for _ in range(2)])
 
     with pytest.raises(ValueError, match="finite") as caught:
         invoke()
@@ -982,3 +1011,34 @@ def test_nonfinite_decimal_statutory_fields_are_input_errors(
         a.apply_arf(rib_claim(), payment_month=FRA, params=params)
     label = field if index is None else f"{field}[{index}]"
     assert label in str(caught.value)
+
+
+@pytest.mark.parametrize("field", (*a._CREDIT_FIELDS, "conditions"))
+def test_arf_iterator_fields_are_rejected_without_consumption(field):
+    """Only built-in containers enter a declaration's schema boundary."""
+    item = (
+        a.ARFUnsupportedReason.OTHER_SUSPENSION
+        if field == "conditions"
+        else (2022, 1)
+    )
+    values = iter([item])
+    with pytest.raises(g.InvalidFamilyInput):
+        rib_claim(**{field: values})
+    assert next(values) == item
+
+
+def test_arf_outcome_iterator_is_rejected_without_computing_a_row():
+    calls = []
+
+    def evaluate():
+        calls.append("evaluated")
+        return a.evaluate_arf(
+            "control",
+            F(1),
+            lambda: a.apply_arf(rib_claim(), payment_month=FRA, params=PARAMS),
+        )
+
+    outcomes = (evaluate() for _ in range(2))
+    with pytest.raises(g.InvalidFamilyInput):
+        a.count_arf_outcomes(outcomes)
+    assert calls == []

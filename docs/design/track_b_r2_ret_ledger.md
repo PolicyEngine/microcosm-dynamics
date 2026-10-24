@@ -4,7 +4,8 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–6.
+**Status: build-only, R2 rules revised 2026-10-14 after PR #528 review
+rounds 1–6; shared input boundary revised 2026-10-18 for PR #530 round 15.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -36,6 +37,392 @@ makes no Axiom or population conformance claim.
   the URL, UTC retrieval time, byte count and SHA-256 of each capture,
   with POMS transmittals and page dates. R1's full Act 203 capture remains
   at `tests/data/track_b/ret_sources/ssa_act_203.html`.
+
+## Input boundary and threat model
+
+Every public argument and declaration field has a declared schema. The
+boundary admits only the declared built-in scalar kinds by exact type
+(`bool` is not `int`), canonical enum members by identity, exact registered
+declaration classes, and exact built-in containers of the declared shape.
+Every nonmapping collection declares ordered-sequence or membership
+semantics. Ordered fields and arguments admit `tuple` and `list` only,
+normalizing every element into a tuple in its original order. Membership
+slots admit `tuple`, `list`, `set` and `frozenset`, normalizing into a
+frozenset after every raw element passes its schema. Exact monetary
+encodings become built-in `Fraction` values. Dates remain exact `date`
+values, and sealed result slots require the declared result layer and an
+unchanged seal. A callback slot is checked with `callable()` and retained
+without reconstruction; its return still requires its layer's sealed
+result. Callable dataclasses therefore remain valid callbacks.
+
+An evaluator verifies provenance: the result was computed by its own
+Track B layer, has an unaltered declared payload, and has the right layer
+and type. It does not verify freshness or attribution. A callback may return a genuine result
+computed earlier or re-raise a genuine refusal computed earlier. The former
+counts as supported; the latter counts with its own reason. Which family
+receives that attribution is the caller's declaration, like its key and
+weight, neither of which the evaluator can independently verify. Track B
+guarantees that only values it computed enter denominators and every value
+entering its functions passes its schema.
+
+The boundary checks every raw key, value and element before reconstruction
+or hashing. A mapping must yield exactly its length in distinct valid
+keys. Keyed monetary histories and shares retain their associations in
+dictionary snapshots; normalized-key collisions are input errors. Unknown
+objects, scalar or container subclasses, forged enum values,
+`__class__` spoofs and arbitrary iterators are input errors before a
+coverage refusal or denominator row. Built-in mutable containers are
+snapshotted per call. Their later mutation cannot change admitted results.
+The boundary does not cache validation by input identity. Private internal
+helpers consume the owned snapshot without re-entering public validation.
+R1's generated parameter mapping proxies are accepted only around exact
+built-in dictionaries and their fields receive the same schema checks.
+The Hypothesis regression
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` executes
+the one-parameter-snapshot invariant for R2, ARF and a multi-year
+recomputation fold. Its monetary inputs and fold lengths vary; no public
+entry reuses a cached input identity. The same property requires zero
+internal calls to public declaration constructors in R2, ARF, recomputation
+and grace-year computation. Private construction retains the original
+domain checks while skipping the public schema walk on owned values.
+
+This contract concerns callers using the public API. It does not claim
+protection from code reaching private implementation names, monkeypatching modules, or
+mutating an input from another thread during a call. Sealed result
+identities and statutory cross-field identities remain checked when results
+are produced or consumed. No amount, supported refusal or statutory example
+changes for previously admitted ordered list/tuple and membership inputs.
+Rejecting `set` and `frozenset` in ordered slots is an explicit
+representation narrowing, like the earlier iterator narrowing. A set
+cannot declare the order or multiplicity of events, monthly arrays,
+history rows or denominator observations.
+
+The shared external `SSAParameters` declaration retains its exact built-in
+integer, float and text encodings, as the prior boundary did. Its numeric
+leaves must still be finite and its field shapes must match the schema;
+consumed monetary values use exact `Fraction` arithmetic. Decimal and
+Fraction objects are detached. This representation compatibility does not
+admit subclasses or custom scalar behavior.
+
+Call-layout caches hold signature metadata only: positional counts, keyword
+names and declared defaults. They never retain supplied values. A schema-wide
+Hypothesis differential compares positional, keyword, mixed and omitted-default
+calls with Python's signature binding, including missing, duplicate and unknown
+arguments. Reusing a layout with fresh values must use the new values. These
+checks are in
+`test_every_public_argument_and_declaration_field_declares_a_schema`.
+
+Private derived declarations and field replacements invoke their original
+initializers, retaining domain checks without re-entering the public schema.
+The G snapshot property and
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` assert zero
+public declaration-constructor calls inside family, RET, ARF, recomputation
+and grace computations after their input fixtures have been built. A
+deliberate return to a public constructor fails these checks.
+
+`test_all_valid_public_argument_controls_still_compute` checks each public
+function and guard method against valid controls while counting schema
+entries. Each call enters its public argument schema exactly once; internal
+guard evaluation and date formatting use private helpers. The same property
+checks invalid-date and out-of-order errors and an unknown-history refusal:
+errors leave no denominator row, while a legal refusal retains one row.
+Callbacks in this check return precomputed sealed results so separate public
+calls made by user callback code do not count as internal revalidation.
+
+Every public reader of a registered declaration, sealed value or stateful
+guard, including a property getter called through `fget` and reachable
+methods and dunders, checks its exact registered receiver
+and argument schemas before attribute access or protocol use. Seal
+validation starts with the exact-type check. Foreign receivers and
+arguments whose hooks raise a genuine refusal produce `InvalidFamilyInput`
+with zero hook calls and zero denominator rows. Genuine sealed results
+still undergo seal checks. The five savings-clause guard getters retain
+their valid values and one receiver-schema entry per getter.
+
+The four-layer tests in
+`tests/test_track_b_gross_benefits_fix_round_15_receivers.py` execute
+`test_review_four_layer_getter_rejects_receiver_before_any_hook` and the
+Hypothesis `test_every_public_reader_rejects_foreign_receiver_without_hooks`.
+`test_evaluator_accepts_precomputed_genuine_result_with_declared_metadata`
+and `test_evaluator_counts_reraised_genuine_refusal_with_its_own_reason`
+pin the two permitted caller-composition behaviors. This closes the
+receiver hook path without imposing an unverifiable freshness or family
+attribution condition.
+
+
+The reader boundary also covers exact registered objects whose public
+fields were altered after construction. Generated representation, equality,
+ordering and hash readers validate the receiver's current declaration or
+seal before using those fields. Refusal seals include exception `args`,
+which Python's string and representation methods consume. Direct public
+`__post_init__` calls revalidate their fields; an internal initialization
+marker only avoids repeating the same work during a checked constructor
+and is removed when that constructor returns or raises. This marker is
+not a freshness or attribution check.
+
+Integrity covers the declared computation and refusal payload, including
+exception `args` consumed by string and representation readers. Undeclared
+instance attributes on sealed values are input errors, including those
+that shadow registered methods; otherwise an unchanged monetary payload could invoke a
+caller-supplied `items` or `__reduce__` hook. Permitted exception notes must
+be an exact list of exact strings. Notes, traceback and context bookkeeping
+do not determine statutory money or the counted refusal reason and do not
+establish freshness or family attribution.
+Raw keyword names must be exact strings before named-argument binding or
+keyword lookup, including unbound readers and direct constructors.
+
+These reader guards cover the registered G/R2/R3 declarations, computed
+results, refusals, outcomes, denominator and stateful savings guard.
+Imported standard-library APIs and external R1/SSA classes are not newly
+wrapped. Their data pass the appropriate declared schemas when entering
+the statutory layer. Public method identity belongs to this callable
+boundary even when the method is not a declared monetary field.
+Canonical enum tokens are checked by identity at statutory boundaries.
+Inherited standard-library `Enum` factories and introspection remain
+caller-side composition, like imported `Fraction` or `dataclass`
+machinery; they are not alternative statutory evaluators. This reader
+contract does not cover every attribute imported into a module.
+This does not admit foreign enum classes as statutory reader arguments:
+those must reject before enum-member iteration or other class hooks.
+
+Public class metadata methods validate the class receiver and arguments
+before lineage or typing operations. Foreign metaclasses are rejected
+before descriptor hooks, including a custom `__mro__` descriptor.
+Ordinary subclass definitions and generic aliases remain usable; the
+existing exact-type admission rule still rejects subclass instances.
+
+Direct declaration reinitialization rejects instance method shadows before
+its generated initializer can dispatch `__post_init__`; inert extra
+declaration metadata remains usable. Public dunder writers, including
+`__notes__` and `__dict__`, validate values before assignment. Extra
+post-init arguments are checked before field reads, and recursive
+reader mappings produce `InvalidFamilyInput` without a denominator row.
+Stored instance-dictionary keys also require exact built-in strings
+before attribute lookup. A string subclass stored under a field or
+method name can otherwise execute its equality hook inside Python’s
+dictionary lookup, even when the receiver and requested name have
+the correct types. This rule covers declaration snapshots and public
+attribute readers on declarations, sealed values and the stateful guard.
+
+| Additional boundary invariant | Executing test |
+| --- | --- |
+| Every reader argument rejects foreign values before hooks | `test_public_reader_arguments_reject_foreign_values_before_hooks`; Hypothesis `test_public_reader_argument_schema_property` |
+| A nested evaluator rejects a foreign callback result before its `__class__` hook can raise a genuine refusal | `test_nested_evaluator_rejects_foreign_callback_result_without_class_hook` |
+| Generated sealed and declaration readers check altered public fields before hooks | `test_sealed_reader_checks_mutated_fields_before_hooks`; `test_declaration_reader_checks_mutated_fields_before_hooks` |
+| Refusal string/representation readers bind exception arguments to their seal | `test_refusal_reader_seal_covers_exception_arguments` |
+| Direct public post-init calls revalidate declarations and sealed results before field hooks | `test_direct_post_init_revalidates_declaration_before_collection_hooks`; `test_direct_post_init_revalidates_sealed_result_before_field_hooks` |
+| Direct construction rejects foreign constructor arguments before hooks | `test_public_new_rejects_foreign_constructor_argument` |
+| Reader and constructor keyword names reject string subclasses before binding, comparison or formatting hooks | `test_public_reader_keyword_names_reject_before_binding_hooks`; `test_public_constructor_keyword_names_reject_before_binding_hooks` |
+| Shadowed instance methods cannot execute through sealed serialization or mapping readers | `test_sealed_serialization_readers_reject_instance_method_shadowing`; `test_sealed_mapping_comparison_rejects_instance_method_shadowing` |
+| Generated keyword names and unexpected sealed instance attributes reject before hooks | Hypothesis `test_keyword_names_and_instance_shape_reject_before_hooks` |
+| Public class metadata readers check foreign receivers, arguments and keyword names while retaining valid alias/subclass behavior | `test_public_class_readers_reject_foreign_receivers_arguments_and_keywords`; `test_valid_class_metadata_hooks_keep_generic_alias_and_subclass_behavior` |
+| Foreign metaclasses with raising or lying descriptors reject before class-lineage hooks | Hypothesis `test_class_metadata_rejects_foreign_metaclass_before_descriptor_hooks` |
+| Every ordinary public argument and declaration field rejects foreign values before hooks | `test_every_public_argument_rejects_genuine_refusal_hooks`; `test_every_declaration_field_rejects_genuine_refusal_hooks` |
+| Extra direct post-init arguments reject before field reads | Hypothesis `test_public_post_init_rejects_extra_foreign_arguments_before_field_reads` |
+| Public dunder writers check foreign values before hooks | Hypothesis `test_public_dunder_writers_reject_foreign_values_before_hooks` |
+| Recursive reader mappings reject as input errors with zero denominator rows | Hypothesis `test_public_reader_rejects_cyclic_mapping_as_invalid_input` |
+| Direct declaration initialization rejects method shadows while retaining inert extra metadata | Hypothesis `test_public_declaration_init_rejects_instance_method_shadowing`; `test_direct_declaration_init_preserves_inert_extra_metadata` |
+| Stored instance-dictionary keys reject before snapshot, reader or initializer lookup hooks, including external and nested declarations | Hypothesis `test_public_attribute_dictionary_keys_reject_before_lookup_hooks` |
+| Foreign enum classes reject before metaclass iteration; registered canonical members remain usable | Hypothesis `test_foreign_enum_rejects_before_metaclass_iteration`; `test_reader_enum_schema_rejects_foreign_enums_and_keeps_canonical_members` |
+| Exact integer dime-validation checks preserve the prior Fraction comparison and multiplication decisions | Hypothesis `test_dime_validation_matches_legacy_fraction_arithmetic` |
+| Constructor introspection preserves the full declared initializer signature, defaults and displayed form while runtime keyword validation remains guarded | Hypothesis `test_every_public_argument_and_declaration_field_declares_a_schema` |
+| Newly guarded inherited exception and mapping readers have exact public-member and argument inventories and retain valid behavior | `test_public_api_has_no_unclassified_name_field_or_argument`; `test_cross_layer_public_names_and_members_have_explicit_audit_coverage`; Hypothesis `test_all_valid_public_argument_controls_still_compute` |
+| Exception note writes validate an exact list of exact strings before preserving its identity, so Python add_note appends to the stored list; later reads revalidate notes | Hypothesis `test_all_valid_public_argument_controls_still_compute`; Hypothesis `test_public_dunder_writers_reject_foreign_values_before_hooks` |
+| Public calls retain their once-only argument-schema boundary; trusted private helper aliases unwrap every public guard layer | Hypothesis `test_all_valid_public_argument_controls_still_compute`, retaining its unchanged `assert not repeated` |
+
+Performance optimizations retain the same schemas and seal checks.
+Cached identities, reader flags and field names describe registered
+classes; no caller value or validation result is cached. Dime validation
+uses equivalent exact integer checks, pinned against the prior Fraction
+comparison and multiplication by the property above, including large
+signed numerators and positive denominators.
+The `OwnBenefit`, `Beneficiary` and `WorkerRecord` post-init bodies
+read their already-validated fields directly after their existing
+field-validation step. Public constructor and post-init wrappers,
+stored-key checks, field schemas, domain checks and normalization
+order remain in force. The altered-field, direct-post-init, stored-key
+and constructor-shadow regressions execute those boundaries; existing
+family-total, proportional-share and beneficiary-order properties
+cover the unchanged computation.
+
+These tests use invented values and genuine earlier refusals only. They
+assert `InvalidFamilyInput`, zero foreign hook calls and zero denominator
+rows. Each adversarial callback attempts the reader and then returns a
+genuine computed result if that reader silently succeeds. A scalar reader
+return therefore cannot make the evaluator hide a permissive reader. The
+completion report records the executed and reverted deliberate mutations, including the exact changes and failing test names.
+
+### Collection inventory and round-15 invariants
+
+| Slots | Kind and reason |
+| --- | --- |
+| `WorkEarnings.wages`; `RETBeneficiary.benefit_types`, `gross_rates`, `original_rates`; `grace_year.months` | Ordered twelve-month arrays. Position identifies the calendar month; repeated equal values remain twelve entries. In particular, `benefit_types` is a monthly array, not role membership. |
+| `RecordYear.beneficiaries`; `grace_year.termination_events` | Ordered declarations and dated events. Preserve every element so duplicate identities and contradictory histories still reach their validation. |
+| `count_ret_outcomes.outcomes`; `weighted_ret_total.outcomes` | Ordered observations. Preserve every row and its duplicate-key checks; distinct keys retain every count, weight and payment contribution. |
+| `WorkEarnings.self_employment_months`, `substantial_service_months`; `RETBeneficiary.entitled_months`, `divorced_months`, `deemed_child_age_18_months`, `own_work_exempt_months`; `RecordYear.family_maximum_binding_months`, `other_deduction_months` | Month membership. Exact integers identify months 1 through 12; repeated declarations of a month do not create an additional month. |
+| `GraceMonth.entitled_types`, `received_types`; `GraceYearState.previous_entitled_types`, `previous_section_202_types` | Membership of canonical benefit-type enums. Grace rules test which types are present, never how many times each was supplied. |
+| `GraceYearDecision.kinds`, `met_eligible_months`, `protected_months`; values of `RETLedger.crediting_months` (computed outputs) | Membership of canonical grace kinds or exact months; no amounts are stored in these sets. |
+| `RETLedger.months`, `workers` (computed outputs) | Ordered monthly and worker rows. Every computed row is retained. |
+| R1 `ParameterValue.sources` admitted through a parameter schema | Ordered source records, preserving every declared source identity rather than silently deduplicating provenance. |
+| `partial_payments.rates`, `original_rates`; R1 `ProjectionInputs.nawi`, `december_cola_percent` and `RETParameters.years`; computed `PartialPaymentAllocation.shares`, `RETLedger.crediting_months`, `reconciliation` | Keyed associations. Exact dictionary keys and every value are checked; normalization may not collapse keys. Computed immutable views retain the same associations. |
+
+No membership field stores earnings, benefit rates, weights or dated
+events. Exact integer admission rejects `True`, `1.0`, `"1"`, Decimal and
+Fraction month aliases before deduplication. Enum membership accepts only
+the canonical members. Repeating an admitted month or flag is therefore
+the same statutory assertion, with no lost money or changed refusal.
+The rules that use those memberships remain Act 203(f), CFR 404.435-.440,
+RS 02501.030 and RS 02501.140; this revision changes representation only.
+
+The shared tests in
+`tests/test_track_b_gross_benefits_fix_round_15_collections.py` execute
+`test_every_collection_schema_declares_order_or_membership`,
+`test_every_collection_field_has_canonical_container_semantics`,
+`test_every_public_collection_argument_preserves_its_declared_semantics`,
+`test_membership_fields_contain_only_months_or_canonical_flags`, and
+`test_membership_numeric_aliases_are_rejected_not_collapsed`.
+Hypothesis `test_denominator_sequences_preserve_duplicate_key_errors` verifies
+that duplicate keys remain input errors in all four layers; a single row
+retains its count and weight. Every ordered field rejects both set forms instead of silently losing repeated
+monthly values, observations or identity errors.
+Hypothesis
+`test_monthly_wages_keep_equal_value_events_in_the_pre_fra_fold` independently
+folds every pre-FRA monthly wage, including mixed equal-value encodings.
+`test_external_parameter_collections_preserve_sources_and_table_order`
+checks source multiplicity and positional parameter tables.
+
+## Shared result and denominator contract
+
+G's round-12 integration changes provenance checks, with no change to
+Act 203's deduction amounts or coverage. `RETConfigurationUnsupported`
+remains a `FamilyConfigurationUnsupported` with code
+`FAMILY_CONFIG_UNSUPPORTED`, and accepts exactly `RETUnsupportedReason`;
+the original R2 `UnsupportedReason` import remains an alias. Each Track B
+layer has its own declared refusal and reason enum. `evaluate_ret` catches
+the shared refusal family, validates metadata before computation, and
+accepts only an unaltered `RETLedger` computed by R2 as a supported result.
+
+The package-private `_provenance.py` capability seals grace decisions, partial allocations,
+monthly and worker results, ledgers, outcomes and the shared denominator.
+Direct construction, `dataclasses.replace`, `copy` and `deepcopy` raise
+`InvalidFamilyInput`. Every pickle protocol and copyreg reduction path also
+raises `InvalidFamilyInput`; persistence stores declared inputs and reruns
+the computation. Serialized bytes cannot restore trusted derived state. Each
+monthly result reconciles gross, net and deductions and floors its checks
+under Act 215(g). Worker results reconcile calculated excess, charged and
+uncharged amounts. The ledger verifies every beneficiary's twelve months,
+crediting-month sets, provisional reconciliation and aggregate deductions,
+including the separate CFR 404.440 residual. Nested alteration is rejected
+before a result is consumed or counted. Allocation mapping reads check the
+seal too, so a caller cannot feed an altered allocation back as partial-payment
+rates or original shares. Ordinary exact built-in dictionaries remain accepted.
+
+`GraceYearDecision` is also money evidence: its eligibility can prevent a
+RET deduction. It is built only by `grace_year`, copies and validates its
+nested `next_state`, and reconciles the initial/after-break categories with
+current-year LMETY and protected post-1977 NSMs. `GraceYearState` remains a
+constructible declaration of initial history. Beneficiary construction,
+record-year construction and `apply_ret_year` each reject caller-built or
+altered actual or estimated grace decisions before any coverage refusal.
+`tests/test_track_b_ret_grace_provenance.py` exercises this invariant through
+`test_grace_decision_rejects_public_construction_and_copy`,
+`test_every_ret_admission_rejects_invalid_grace_evidence`,
+`test_grace_private_capability_revalidates_nested_state_and_identities`, and
+Hypothesis `test_grace_pickle_rejection_and_recomputation_preserve_money`.
+Malformed-decision tests invoke the private computation capability to
+exercise seal-time fields directly, retaining every invalid-field assertion.
+They do not restore or serialize results.
+
+`RETDenominator` aliases G's `FamilyDenominator`, and `count_ret_outcomes`
+delegates to `count_family_outcomes`; both accept every declared layer's
+sealed outcomes. Refused rows retain their rows and weights. RET money
+aggregation accepts only R2 outcomes and ledgers; G's household, guard and
+report consumers continue to require G results.
+
+The additional contract invariants and executable checks are:
+
+- Computation provenance and exact layer membership:
+  `test_ret_computed_values_reject_public_construction_and_copy`,
+  `test_evaluate_ret_rejects_caller_built_or_altered_ledger`,
+  `test_ret_evaluator_rejects_other_layer_results_as_input_error`, and the
+  Hypothesis `test_ret_evaluator_rejects_every_altered_month`, and the shared
+  contract test
+  `test_partial_payment_money_inputs_reject_unsealed_or_altered_allocations`
+  and Hypothesis
+  `test_partial_payments_reject_altered_allocation_money_inputs`.
+- Input errors precede a callback or denominator contribution:
+  `test_ret_evaluator_validates_metadata_before_computation` and
+  `test_ret_counter_rejects_unsealed_or_altered_outcomes`.
+- Counts are identical through the R2 and common counter, with refusals
+  retained: `test_ret_counter_and_common_counter_have_identical_counts`
+  and Hypothesis
+  `test_ret_seals_pickle_and_common_denominator_preserve_rows`.
+- Serialization rejects all computed results, refusals, rows and denominators
+  for every pickle protocol. Private seal construction still rejects altered
+  accounting fields: `test_ret_computed_values_cannot_be_pickled`,
+  `test_ret_private_capability_rechecks_accounting_identities`, and Hypothesis
+  `test_ret_private_capability_preserves_month_and_worker_accounting`.
+
+## Declared inputs and detached access
+
+Every public computation validates its declared input tree once and builds
+an owned snapshot before any coverage decision. This includes
+`RecordYear`, every `RETBeneficiary`, `WorkEarnings`, grace state, month and
+termination declarations, and nested R1 parameters. A declaration subclass
+is an input error. Numeric subclasses cannot contribute custom arithmetic:
+the shared exact-number boundary accepts built-in numeric encodings and
+stores fresh built-in fractions, while integer calendar fields remain
+built-in integers and Boolean flags retain their declared type.
+
+A valid post-construction input change computes exactly as a freshly built
+declaration. An invalid change raises `InvalidFamilyInput`, even when the
+record also requires `foreign_work` or another coverage refusal. The
+reviewer's negative $0.10 gross-rate case now raises before an outcome or
+denominator row exists. This preserves the existing rule that invalid
+inputs do not become coverage gaps, without changing Act 203 deductions.
+
+R2 carries no hidden mutable controller. Inputs and returned carried state
+are independent copies. Altered sealed nested evidence fails validation
+when consumed. `RETLedger.for_beneficiary` returns fresh sealed monthly
+rows, so changing an accessor result leaves ledger history unchanged.
+The tests in `test_track_b_r3_fix_round_13.py` execute every declared-field
+error, generated error combinations, valid planted-value equivalence,
+canonical numeric rejection and accessor/state detachment. The invariants
+are recursive input validation before refusal, immutable arithmetic meaning,
+and independence of admitted output from later caller input changes.
+
+Grace benefit-type collections validate every raw element before set
+deduplication. A forged value equal to a legal enum cannot disappear and
+become a supported declaration. The generated
+`test_r2_r3_enum_collection_types_are_checked_before_equality_collapse`
+checks both input orders for grace month and carried-state declarations,
+alongside the same invariant in ARF and recomputation. Exact huge wages
+also remain exact through countable earnings and calculated excess;
+`test_huge_exact_ret_money_and_recomputation_caps_do_not_overflow` checks
+that boundary without changing any statutory rate or threshold.
+
+All beneficiary identities and partial-payment mapping keys are nonempty
+built-in strings. A mutable object used as a mapping key could previously
+change its hash after admission, break a lookup and leave the seal matching.
+The public apportionment function, private seal validation and lookup
+accessors now reject such keys, including string-enum subclasses. The
+same rule covers beneficiary, number-holder, monthly-result and worker
+identities. `test_ret_partial_mapping_keys_are_builtin_nonempty_text`
+executes the property at computation, sealing and lookup;
+`test_ret_identity_slots_reject_string_enum_subclasses` covers each
+identity slot. This changes no apportionment for declared valid inputs.
+
+The binding-survivor fixture now states its original no-care assumption
+explicitly. Both `child_in_care=False` and the positive attestation
+`child_in_care="cdb"` produce a $796.40 widow rate and $0 CDB auxiliary
+rate, retain the entitled CDB's $750 original share, and refuse auxiliary
+work as `deduction_before_reduction_part_b`. This is the paired
+`test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b`.
+G v2 requires the child's identity for positive care; literal boolean
+`True` is an input error, pinned by
+`test_survivor_care_requires_child_identity_not_boolean_true`.
+RS 00615.340's mother/father comparison does not increase this particular
+widow rate. No statutory reading changed.
 
 ## Authority and inputs
 

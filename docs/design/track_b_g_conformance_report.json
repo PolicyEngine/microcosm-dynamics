@@ -1,0 +1,608 @@
+{
+  "admitted_scope": "Gross benefits for supported invented configurations only; no population, behavioral, payment-timing or forecast claim.",
+  "denominator_kind": "finite invented configuration lattice; no population data or population weights",
+  "gross_benefits_version": "track-b-g-v2",
+  "lattice": {
+    "by_payment_era": {
+      "before_october_1999": {
+        "invalid": 95598,
+        "refused": 21165,
+        "rows": 118800,
+        "supported": 2037
+      },
+      "from_january_2024": {
+        "invalid": 95598,
+        "refused": 19141,
+        "rows": 118800,
+        "supported": 4061
+      },
+      "october_1999_through_december_2023": {
+        "invalid": 95598,
+        "refused": 20469,
+        "rows": 118800,
+        "supported": 2733
+      }
+    },
+    "definition": {
+      "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
+      "child_in_care": "Every widow(er), surviving divorced spouse, disabled widow(er) and divorced spouse receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Divorced spouses explicitly attest no entitled child in care at first entitlement. Unknown current care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a role.",
+      "declared_conditions": [
+        {
+          "condition": null,
+          "scope": "none"
+        },
+        {
+          "condition": "dib_guarantee_pia",
+          "scope": "record"
+        },
+        {
+          "condition": "dib_after_reduced_rib",
+          "scope": "record"
+        },
+        {
+          "condition": "workers_compensation_offset",
+          "scope": "record"
+        },
+        {
+          "condition": "administrative_finality",
+          "scope": "record"
+        },
+        {
+          "condition": "worker_not_entitled",
+          "scope": "record"
+        },
+        {
+          "condition": "windfall_elimination_provision",
+          "scope": "record"
+        },
+        {
+          "condition": "non_aime_formula_pia",
+          "scope": "record"
+        },
+        {
+          "condition": "entitled_on_another_record",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "deemed_or_putative_spouse",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "legal_spouse_with_deemed_spouse",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "government_pension_offset",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "rate_protected_by_finality",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "dib_between_spouse_benefit_and_rib",
+          "scope": "beneficiary"
+        },
+        {
+          "condition": "widow_drc_savings_clause",
+          "scope": "beneficiary"
+        }
+      ],
+      "divorced_spouse_child_in_care": [
+        null,
+        false,
+        "entitled_child"
+      ],
+      "divorced_spouse_first_entitlement_child_in_care": false,
+      "dual_modes": [
+        "none",
+        "rib_unreduced_b",
+        "rib_unreduced_c",
+        "rib_reduced_b",
+        "rib_reduced_c",
+        "rib_credited_c",
+        "dib_b",
+        "dib_c"
+      ],
+      "dual_sequence": "Modes ending b select spouse method B; modes ending c select method C. Other roles retain G's supported sequencing or explicit refusal.",
+      "fixed_money": {
+        "own_pia": "100.00",
+        "own_rib_credit_months": 12,
+        "own_rib_reduction_months": 36,
+        "pia": "1000.00",
+        "retirement_and_disability_maximum": "1500.00",
+        "survivor_maximum": "1750.00"
+      },
+      "focal_flags": "Dual entitlement, reduction months and a single beneficiary condition apply to the first beneficiary in Role enum multiset order. Every remaining beneficiary is unadjusted and not dually entitled. Empty multisets with any focal-beneficiary flag are invalid.",
+      "payment_eras": {
+        "before_october_1999": "1999-09",
+        "from_january_2024": "2024-01",
+        "october_1999_through_december_2023": "2023-12"
+      },
+      "record_kinds": [
+        "retirement",
+        "disability",
+        "survivor"
+      ],
+      "reduction_months": [
+        0,
+        36
+      ],
+      "role_enum_order": [
+        "spouse",
+        "spouse_child_in_care",
+        "divorced_spouse",
+        "child",
+        "widow",
+        "surviving_divorced_spouse",
+        "mother_father",
+        "parent",
+        "disabled_widow"
+      ],
+      "role_multiset_count": 55,
+      "role_multiset_sizes": [
+        0,
+        1,
+        2
+      ],
+      "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately.",
+      "widow_child_in_care": [
+        null,
+        false,
+        "entitled_child"
+      ]
+    },
+    "denominator": {
+      "invalid": 286794,
+      "refused": 60775,
+      "rows": 356400,
+      "supported": 8831
+    },
+    "refused_by_reason": {
+      "administrative_finality": 9831,
+      "combined_family_maximum": 4860,
+      "deemed_or_putative_spouse": 9720,
+      "delayed_credits_born_before_1917": 0,
+      "di_entitlement_before_july_1980": 0,
+      "dib_after_reduced_rib": 4971,
+      "dib_guarantee_pia": 4971,
+      "disabled_widow_before_1984": 0,
+      "divorced_spouse_care_history": 0,
+      "divorced_spouse_child_in_care_unknown": 196,
+      "dual_entitlement_sequence": 6844,
+      "eligibility_before_1983": 0,
+      "government_pension_offset": 3240,
+      "independently_entitled_divorced_spouse": 0,
+      "multiple_auxiliary_records": 0,
+      "non_aime_formula_pia": 4971,
+      "own_rib_history_before_1978": 0,
+      "parent_benefit": 0,
+      "parisi_before_october_1999": 832,
+      "parisi_redistribution_ambiguous": 340,
+      "payment_month_before_1983": 0,
+      "reduced_benefit_history_before_1978": 0,
+      "savings_clause_403a5": 0,
+      "savings_clause_history_unknown": 0,
+      "widow_child_in_care_unknown": 168,
+      "widow_drc_savings_clause": 4860,
+      "widow_drc_savings_clause_history_unknown": 0,
+      "workers_compensation_offset": 4971
+    }
+  },
+  "registry": {
+    "counts_by_class": {
+      "cola_path": 0,
+      "credits:own_rib": 1,
+      "credits:widow_basis": 2,
+      "credits:worker": 1,
+      "dual:all_dual": 0,
+      "dual:child": 2,
+      "dual:method_b": 1,
+      "dual:method_c": 7,
+      "dual:parent": 0,
+      "dwb": 0,
+      "formula:bend_points": 1,
+      "formula:maximum": 5,
+      "historical:refused": 4,
+      "ieds": 0,
+      "maximum:binding": 15,
+      "maximum:disability_aime": 0,
+      "maximum:disability_cap": 4,
+      "maximum:disability_floor": 0,
+      "maximum:nonbinding": 6,
+      "outside:divorced_spouse": 0,
+      "outside:ieds": 0,
+      "outside:surviving_divorced_spouse": 1,
+      "parent:one": 0,
+      "parent:two": 0,
+      "record:disability": 5,
+      "record:retirement": 10,
+      "record:survivor": 9,
+      "redistribution:own_age_reduced": 2,
+      "redistribution:partial": 4,
+      "redistribution:zero": 4,
+      "reduction:spouse": 4,
+      "reduction:widow": 4,
+      "reduction:worker": 1,
+      "rib_lim": 1,
+      "role:child": 17,
+      "role:disabled_widow": 0,
+      "role:divorced_spouse": 0,
+      "role:mother_father": 2,
+      "role:parent": 0,
+      "role:spouse": 11,
+      "role:spouse_child_in_care": 0,
+      "role:surviving_divorced_spouse": 1,
+      "role:widow": 7,
+      "source:erratum": 1,
+      "ssfa:gpo_ignored": 0,
+      "ssfa:wep_regular_pia": 0,
+      "widow:child_in_care": 2
+    },
+    "examples": 29,
+    "figures": 216,
+    "file": "tests/data/track_b/gross_benefit_examples.yaml",
+    "invented_only_classes": {
+      "cola_path": {
+        "reason": "The captures state the COLA ordering, but no in-scope numerical gross-family COLA path is published.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_record_state_applies_the_same_colas_to_pia_and_maximum"
+        ]
+      },
+      "dual:all_dual": {
+        "reason": "RS 00615.768 states that all-dual families disregard redistribution without publishing numerical figures.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_poms_768_all_dually_entitled_disregards_the_rule"
+        ]
+      },
+      "dual:parent": {
+        "reason": "RS 00209.015 states own-RIB/DIB offsets but gives no worked-money example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_dib_retains_technical_entitlement"
+        ]
+      },
+      "dwb": {
+        "reason": "The DWB capture states 28.5% and the January 1984 recalculation without worked monetary figures.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_dwb.py::test_dwb_hand_reference_reduces_the_maximum_share"
+        ]
+      },
+      "ieds": {
+        "reason": "RS 00202.100 states IEDS entitlement and formula but gives no worked monetary example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_hand_reference_dual_entitlement_uses_the_spouse_method"
+        ]
+      },
+      "maximum:disability_aime": {
+        "reason": "The captured disability examples do not have the 85%-AIME branch binding.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_disability_family_maximum"
+        ]
+      },
+      "maximum:disability_floor": {
+        "reason": "The Bulletin publishes the disability cap case; floor cases are invented exact 403(a)(6) references.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_disabled_worker_family_can_leave_nothing_for_auxiliaries"
+        ]
+      },
+      "outside:divorced_spouse": {
+        "reason": "The captures give the outside-maximum rule without a monetary living-worker divorce example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_divorced_spouse_is_ignored_by_everyone_else"
+        ]
+      },
+      "outside:ieds": {
+        "reason": "RS 00202.100 has no monetary IEDS worked example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_is_outside_the_maximum_and_other_divorced_spouses"
+        ]
+      },
+      "parent:one": {
+        "reason": "RS 00209.015 gives the 82.5% rule without a monetary parent example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents"
+        ]
+      },
+      "parent:two": {
+        "reason": "RS 00209.015 gives the 75%-each rule without a monetary parent example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents"
+        ]
+      },
+      "role:disabled_widow": {
+        "reason": "RS 00615.310/.315 provide rules without a numerical DWB example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_dwb.py::test_dwb_hand_reference_and_round_up"
+        ]
+      },
+      "role:divorced_spouse": {
+        "reason": "The captured divorced-spouse sections give entitlement and payment rules without a worked-money life example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_divorced_spouse_is_ignored_by_everyone_else"
+        ]
+      },
+      "role:parent": {
+        "reason": "RS 00209.001/.015 provide rules without a numerical example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents"
+        ]
+      },
+      "role:spouse_child_in_care": {
+        "reason": "The captures give the exemption from age reduction but no worked-money child-in-care dual-entitlement example.",
+        "tests": [
+          "tests/test_track_b_gross_benefits.py::test_child_in_care_spouse_offset_uses_the_reduced_rib"
+        ]
+      },
+      "ssfa:gpo_ignored": {
+        "reason": "GN 02608.100 publishes the repeal boundary, not worked gross-family monetary figures.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_ssfa.py::test_gpo_refuses_december_2023_and_computes_january_2024"
+        ]
+      },
+      "ssfa:wep_regular_pia": {
+        "reason": "RS 00605.360 publishes WEP repeal from January 2024 without a gross-family monetary example. G takes the PIA as an input: a WEP-affected PIA is supplied by the caller before 2024, and a regular-formula PIA is supplied from January 2024.",
+        "tests": [
+          "tests/test_track_b_gross_benefits_ssfa.py::test_wep_pia_is_supplied_by_caller_and_regular_pia_applies_after_repeal",
+          "tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_worker_wep_december_2023_january_2024_boundary"
+        ]
+      }
+    },
+    "sha256": "9595c8ec4f19b164faef26faadf90649fbf40fc2b18a7639d7deaa8aba3a8da9",
+    "supported_classes": [
+      "cola_path",
+      "credits:own_rib",
+      "credits:widow_basis",
+      "credits:worker",
+      "dual:all_dual",
+      "dual:child",
+      "dual:method_b",
+      "dual:method_c",
+      "dual:parent",
+      "dwb",
+      "ieds",
+      "maximum:binding",
+      "maximum:disability_aime",
+      "maximum:disability_cap",
+      "maximum:disability_floor",
+      "maximum:nonbinding",
+      "outside:divorced_spouse",
+      "outside:ieds",
+      "outside:surviving_divorced_spouse",
+      "parent:one",
+      "parent:two",
+      "record:disability",
+      "record:retirement",
+      "record:survivor",
+      "redistribution:own_age_reduced",
+      "redistribution:partial",
+      "redistribution:zero",
+      "reduction:spouse",
+      "reduction:widow",
+      "reduction:worker",
+      "rib_lim",
+      "role:child",
+      "role:disabled_widow",
+      "role:divorced_spouse",
+      "role:mother_father",
+      "role:parent",
+      "role:spouse",
+      "role:spouse_child_in_care",
+      "role:surviving_divorced_spouse",
+      "role:widow",
+      "ssfa:gpo_ignored",
+      "ssfa:wep_regular_pia",
+      "widow:child_in_care"
+    ]
+  },
+  "schema_version": 1,
+  "supplemental_refusal_witnesses": {
+    "denominator": {
+      "invalid": 0,
+      "refused": 28,
+      "rows": 28,
+      "supported": 0
+    },
+    "refused_by_reason": {
+      "administrative_finality": 1,
+      "combined_family_maximum": 1,
+      "deemed_or_putative_spouse": 1,
+      "delayed_credits_born_before_1917": 1,
+      "di_entitlement_before_july_1980": 1,
+      "dib_after_reduced_rib": 1,
+      "dib_guarantee_pia": 1,
+      "disabled_widow_before_1984": 1,
+      "divorced_spouse_care_history": 1,
+      "divorced_spouse_child_in_care_unknown": 1,
+      "dual_entitlement_sequence": 1,
+      "eligibility_before_1983": 1,
+      "government_pension_offset": 1,
+      "independently_entitled_divorced_spouse": 1,
+      "multiple_auxiliary_records": 1,
+      "non_aime_formula_pia": 1,
+      "own_rib_history_before_1978": 1,
+      "parent_benefit": 1,
+      "parisi_before_october_1999": 1,
+      "parisi_redistribution_ambiguous": 1,
+      "payment_month_before_1983": 1,
+      "reduced_benefit_history_before_1978": 1,
+      "savings_clause_403a5": 1,
+      "savings_clause_history_unknown": 1,
+      "widow_child_in_care_unknown": 1,
+      "widow_drc_savings_clause": 1,
+      "widow_drc_savings_clause_history_unknown": 1,
+      "workers_compensation_offset": 1
+    },
+    "scope": "Named invented witnesses outside the finite lattice; separate denominator, one valid refusal for every retained UnsupportedReason.",
+    "witnesses": [
+      {
+        "description": "Declared finality protection",
+        "id": "administrative_finality",
+        "reason": "administrative_finality",
+        "status": "refused"
+      },
+      {
+        "description": "One child on retirement and survivor records",
+        "id": "combined_family_maximum",
+        "reason": "combined_family_maximum",
+        "status": "refused"
+      },
+      {
+        "description": "Declared deemed spouse",
+        "id": "deemed_or_putative_spouse",
+        "reason": "deemed_or_putative_spouse",
+        "status": "refused"
+      },
+      {
+        "description": "Own RIB has 12 credit months for a 1916 birth",
+        "id": "delayed_credits_born_before_1917",
+        "reason": "delayed_credits_born_before_1917",
+        "status": "refused"
+      },
+      {
+        "description": "Initial DIB entitlement June 1980",
+        "id": "di_entitlement_before_july_1980",
+        "reason": "di_entitlement_before_july_1980",
+        "status": "refused"
+      },
+      {
+        "description": "Own DIB reduced for prior reduced RIB",
+        "id": "dib_after_reduced_rib",
+        "reason": "dib_after_reduced_rib",
+        "status": "refused"
+      },
+      {
+        "description": "Declared DIB guarantee PIA",
+        "id": "dib_guarantee_pia",
+        "reason": "dib_guarantee_pia",
+        "status": "refused"
+      },
+      {
+        "description": "DWB benefit month December 1983",
+        "id": "disabled_widow_before_1984",
+        "reason": "disabled_widow_before_1984",
+        "status": "refused"
+      },
+      {
+        "description": "An aged divorced spouse lacks first-entitlement care history that can change the amount",
+        "id": "divorced_spouse_care_history",
+        "reason": "divorced_spouse_care_history",
+        "status": "refused"
+      },
+      {
+        "description": "A divorced spouse and an entitled child lack a current care attestation",
+        "id": "divorced_spouse_child_in_care_unknown",
+        "reason": "divorced_spouse_child_in_care_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "Widow also entitled to own DIB",
+        "id": "dual_entitlement_sequence",
+        "reason": "dual_entitlement_sequence",
+        "status": "refused"
+      },
+      {
+        "description": "1982 eligibility with otherwise valid survivor inputs",
+        "id": "eligibility_before_1983",
+        "reason": "eligibility_before_1983",
+        "status": "refused"
+      },
+      {
+        "description": "Widow GPO before repeal in December 2023",
+        "id": "government_pension_offset",
+        "reason": "government_pension_offset",
+        "status": "refused"
+      },
+      {
+        "description": "IEDS benefit month December 1984",
+        "id": "independently_entitled_divorced_spouse",
+        "reason": "independently_entitled_divorced_spouse",
+        "status": "refused"
+      },
+      {
+        "description": "One person is divorced spouse and mother/father on two records",
+        "id": "multiple_auxiliary_records",
+        "reason": "multiple_auxiliary_records",
+        "status": "refused"
+      },
+      {
+        "description": "Declared PIA outside the AIME formula",
+        "id": "non_aime_formula_pia",
+        "reason": "non_aime_formula_pia",
+        "status": "refused"
+      },
+      {
+        "description": "Spouse born in 1912 has own RIB PIA 1000 and RF1 but no pre-January-1978 reduction or PIA history",
+        "id": "own_rib_history_before_1978",
+        "reason": "own_rib_history_before_1978",
+        "status": "refused"
+      },
+      {
+        "description": "Two potential parents; one own RIB 780 lies between 75% and 82.5% of PIA 1000",
+        "id": "parent_benefit",
+        "reason": "parent_benefit",
+        "status": "refused"
+      },
+      {
+        "description": "Binding mixed dual/non-dual family in September 1999",
+        "id": "parisi_before_october_1999",
+        "reason": "parisi_before_october_1999",
+        "status": "refused"
+      },
+      {
+        "description": "Binding maximum with credited own RIB and a non-dual child",
+        "id": "parisi_redistribution_ambiguous",
+        "reason": "parisi_redistribution_ambiguous",
+        "status": "refused"
+      },
+      {
+        "description": "December 1982 benefit month",
+        "id": "payment_month_before_1983",
+        "reason": "payment_month_before_1983",
+        "status": "refused"
+      },
+      {
+        "description": "Spouse born in 1912 has RF1 on an unreduced 500 benefit but no pre-January-1978 money reduction or unreduced-rate history",
+        "id": "reduced_benefit_history_before_1978",
+        "reason": "reduced_benefit_history_before_1978",
+        "status": "refused"
+      },
+      {
+        "description": "Protected total 1500 falls to 1499.90 after a PIA increase",
+        "id": "savings_clause_403a5",
+        "reason": "savings_clause_403a5",
+        "status": "refused"
+      },
+      {
+        "description": "Governed month begins with unknown prior entitlement months",
+        "id": "savings_clause_history_unknown",
+        "reason": "savings_clause_history_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "A widow and an entitled child lack a current care attestation",
+        "id": "widow_child_in_care_unknown",
+        "reason": "widow_child_in_care_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "May 1978 survivor protected from widow deceased-worker DRCs",
+        "id": "widow_drc_savings_clause",
+        "reason": "widow_drc_savings_clause",
+        "status": "refused"
+      },
+      {
+        "description": "Direct survivor snapshot has widow DRCs and a child but lacks May 1978 attestation",
+        "id": "widow_drc_savings_clause_history_unknown",
+        "reason": "widow_drc_savings_clause_history_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "Disability record with declared workers compensation offset",
+        "id": "workers_compensation_offset",
+        "reason": "workers_compensation_offset",
+        "status": "refused"
+      }
+    ]
+  },
+  "verification_class": "statutory_conformance"
+}
