@@ -1,0 +1,256 @@
+[
+  {
+    "file": "peus-retirement-issues.json",
+    "url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+SSI+retirement&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+SSI+retirement&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:44:50.224405Z",
+    "http_status": 200,
+    "bytes": 319253,
+    "sha256": "49e2e97424afd7433e51fad21232498a577cd4d20f2efe61e8811716640bf5dc",
+    "status": "captured"
+  },
+  {
+    "file": "peus-spousal-issues.json",
+    "url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+spousal+deeming&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+spousal+deeming&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:44:52.062133Z",
+    "http_status": 200,
+    "bytes": 74735,
+    "sha256": "d7171b9af0c452ce72088a730383939397a300f5f1c0b2b1248c6daafb44404e",
+    "status": "captured"
+  },
+  {
+    "file": "peus-4161163-issues.json",
+    "url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+%22416.1163%22&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Fpolicyengine-us+is%3Aissue+%22416.1163%22&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:44:52.370521Z",
+    "http_status": 403,
+    "bytes": 281,
+    "sha256": "f1f45af712b50cef0ccebd2062019babbeb0eb28b98dbb0dec85516a6cc92716",
+    "status": "SOURCE_BLOCKED"
+  },
+  {
+    "file": "rulespec-tree.json",
+    "url": "https://api.github.com/repos/PolicyEngine/rulespec-us/git/trees/main?recursive=1",
+    "final_url": "https://api.github.com/repos/PolicyEngine/rulespec-us/git/trees/main?recursive=1",
+    "retrieved_at_utc": "2026-10-24T12:44:52.653390Z",
+    "http_status": 404,
+    "bytes": 110,
+    "sha256": "8c177a38af7c68d455e9554231def022cc2bcf62c1d3dab3626aaf5c319a5e04",
+    "status": "not_found"
+  },
+  {
+    "file": "rulespec-retirement-issues.json",
+    "url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Frulespec-us+is%3Aissue+SSI+retirement&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Frulespec-us+is%3Aissue+SSI+retirement&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:44:53.148632Z",
+    "http_status": 403,
+    "bytes": 281,
+    "sha256": "f1f45af712b50cef0ccebd2062019babbeb0eb28b98dbb0dec85516a6cc92716",
+    "status": "SOURCE_BLOCKED"
+  },
+  {
+    "file": "rulespec-4161163-issues.json",
+    "url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Frulespec-us+is%3Aissue+%22416.1163%22&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3APolicyEngine%2Frulespec-us+is%3Aissue+%22416.1163%22&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:44:53.443193Z",
+    "http_status": 403,
+    "bytes": 281,
+    "sha256": "f1f45af712b50cef0ccebd2062019babbeb0eb28b98dbb0dec85516a6cc92716",
+    "status": "SOURCE_BLOCKED"
+  },
+  {
+    "file": "poms-si01120210.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0501120210",
+    "final_url": "https://secure.ssa.gov/poms.nsf/lnx/0501120210",
+    "retrieved_at_utc": "2026-10-24T12:44:53.790909Z",
+    "http_status": 200,
+    "bytes": 28107,
+    "sha256": "9dd41ec4c136fb583fcc7d39955ee682913a7634abfee4724d94a19407fc4e41",
+    "status": "captured"
+  },
+  {
+    "file": "cfr-2026-4161163.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2026-title20-vol2/xml/CFR-2026-title20-vol2-sec416-1163.xml",
+    "final_url": "https://www.govinfo.gov/error",
+    "retrieved_at_utc": "2026-10-24T12:44:54.162570Z",
+    "http_status": 200,
+    "bytes": 44172,
+    "sha256": "ab214ce9f7a706cc4ee93703502f950222090c2547e47fafd75a299545919743",
+    "status": "not_found"
+  },
+  {
+    "file": "microcosm-1215.json",
+    "url": "https://api.github.com/repos/PolicyEngine/microcosm/issues/1215",
+    "final_url": "https://api.github.com/repos/PolicyEngine/microcosm/issues/1215",
+    "retrieved_at_utc": "2026-10-24T12:47:12.260535Z",
+    "http_status": 200,
+    "bytes": 8480,
+    "sha256": "8fc2d1f55dda721652d949b270e2b86a32e36bb332e08c27f40d78245899898c",
+    "status": "captured"
+  },
+  {
+    "file": "ecfr-4161163.html",
+    "url": "https://www.ecfr.gov/current/title-20/section-416.1163",
+    "final_url": "https://unblock.federalregister.gov/",
+    "retrieved_at_utc": "2026-10-24T12:47:12.832234Z",
+    "http_status": 200,
+    "bytes": 10596,
+    "sha256": "032b4f391a81971860cd0bf5709f969ded9db4c2a02acdf36876712d4836c1e6",
+    "status": "SOURCE_BLOCKED"
+  },
+  {
+    "file": "cfr-2025-4161163.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2025-title20-vol2/xml/CFR-2025-title20-vol2-sec416-1163.xml",
+    "final_url": "https://www.govinfo.gov/content/pkg/CFR-2025-title20-vol2/xml/CFR-2025-title20-vol2-sec416-1163.xml",
+    "retrieved_at_utc": "2026-10-24T12:47:13.044588Z",
+    "http_status": 200,
+    "bytes": 15934,
+    "sha256": "c4eaa7c6bf7e120de1806493c3caba748f28520c1bb3534679ae557d12656b27",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-tree-correct-owner.json",
+    "url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/git/trees/main?recursive=1",
+    "final_url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/git/trees/main?recursive=1",
+    "retrieved_at_utc": "2026-10-24T12:50:48.905718Z",
+    "http_status": 200,
+    "bytes": 5038945,
+    "sha256": "fab668381d3042e772670518681d01a592e414be920e80871730c34078545df4",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-retirement-issues-correct-owner.json",
+    "url": "https://api.github.com/search/issues?q=repo%3ATheAxiomFoundation%2Frulespec-us+is%3Aissue+retirement+SSI&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3ATheAxiomFoundation%2Frulespec-us+is%3Aissue+retirement+SSI&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:50:51.110727Z",
+    "http_status": 200,
+    "bytes": 2937346,
+    "sha256": "ac421f5f2e68e290c47ea05c8bb3ff53c6ebf76bbec852ccdf2c21363177e8a2",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-spousal-issues-correct-owner.json",
+    "url": "https://api.github.com/search/issues?q=repo%3ATheAxiomFoundation%2Frulespec-us+is%3Aissue+spousal+deeming&per_page=100",
+    "final_url": "https://api.github.com/search/issues?q=repo%3ATheAxiomFoundation%2Frulespec-us+is%3Aissue+spousal+deeming&per_page=100",
+    "retrieved_at_utc": "2026-10-24T12:50:52.006323Z",
+    "http_status": 200,
+    "bytes": 253602,
+    "sha256": "252ddf1db891e3a2fcb2d54e91478d09a4cc59bf7034c70a6e4069ca1a18b219",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-template-1403.json",
+    "url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/issues/1403",
+    "final_url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/issues/1403",
+    "retrieved_at_utc": "2026-10-24T12:50:54.003763Z",
+    "http_status": 200,
+    "bytes": 10591,
+    "sha256": "b8f266de8b9d8f335d5d69cdeeda7245965cca2b919a4b5230c86165967d755e",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-template-1416.json",
+    "url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/issues/1416",
+    "final_url": "https://api.github.com/repos/TheAxiomFoundation/rulespec-us/issues/1416",
+    "retrieved_at_utc": "2026-10-24T12:50:54.682383Z",
+    "http_status": 200,
+    "bytes": 25499,
+    "sha256": "dc28b6ca78d5929e41a09255ebefbe3a522e3e277fc4b9b27a624f4cb11e8d3e",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-local-us-statutes-42-1382b-a.yaml",
+    "url": "https://github.com/TheAxiomFoundation/rulespec-us/blob/9a08d03e00065012fcd9ae3405a4dd029136dc2f/us/statutes/42/1382b/a.yaml",
+    "local_source": "/Users/maxghenis/TheAxiomFoundation/rulespec-us/us/statutes/42/1382b/a.yaml",
+    "retrieved_at_utc": "2026-10-24T12:50:59.077841Z",
+    "bytes": 6536,
+    "sha256": "aeb9fcbe2cb54886272c260e600d9ef4f7ff0f768b8c9701927a9adc0953e1ed",
+    "status": "captured_local_checkout"
+  },
+  {
+    "file": "rulespec-local-us-statutes-42-1382b-a.test.yaml",
+    "url": "https://github.com/TheAxiomFoundation/rulespec-us/blob/9a08d03e00065012fcd9ae3405a4dd029136dc2f/us/statutes/42/1382b/a.test.yaml",
+    "local_source": "/Users/maxghenis/TheAxiomFoundation/rulespec-us/us/statutes/42/1382b/a.test.yaml",
+    "retrieved_at_utc": "2026-10-24T12:50:59.114481Z",
+    "bytes": 1975,
+    "sha256": "cd7e6a07654c7d1a51d8a4648b2352f5c99753700f69aa6f26a008aa8d835512",
+    "status": "captured_local_checkout"
+  },
+  {
+    "file": "rulespec-local-us-statutes-42-1382-b.yaml",
+    "url": "https://github.com/TheAxiomFoundation/rulespec-us/blob/9a08d03e00065012fcd9ae3405a4dd029136dc2f/us/statutes/42/1382/b.yaml",
+    "local_source": "/Users/maxghenis/TheAxiomFoundation/rulespec-us/us/statutes/42/1382/b.yaml",
+    "retrieved_at_utc": "2026-10-24T12:50:59.301711Z",
+    "bytes": 4815,
+    "sha256": "ef314bc070041ea2346a9bb22369b8649c9ec4b328863e91c2edfbbd2eb9a63f",
+    "status": "captured_local_checkout"
+  },
+  {
+    "file": "rulespec-local-README.md",
+    "url": "https://github.com/TheAxiomFoundation/rulespec-us/blob/9a08d03e00065012fcd9ae3405a4dd029136dc2f/README.md",
+    "local_source": "/Users/maxghenis/TheAxiomFoundation/rulespec-us/README.md",
+    "retrieved_at_utc": "2026-10-24T12:50:59.592001Z",
+    "bytes": 2565,
+    "sha256": "7cc7636eb668ae761a4bced9dd83c36aba0c830054813ca982d3b7bc80bafab5",
+    "status": "captured_local_checkout"
+  },
+  {
+    "file": "rulespec-remote-us-statutes-42-1382b-a.yaml",
+    "url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/us/statutes/42/1382b/a.yaml",
+    "final_url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/us/statutes/42/1382b/a.yaml",
+    "retrieved_at_utc": "2026-10-24T12:54:33.610366Z",
+    "http_status": 200,
+    "bytes": 6536,
+    "sha256": "aeb9fcbe2cb54886272c260e600d9ef4f7ff0f768b8c9701927a9adc0953e1ed",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-remote-us-statutes-42-1382-b.yaml",
+    "url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/us/statutes/42/1382/b.yaml",
+    "final_url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/us/statutes/42/1382/b.yaml",
+    "retrieved_at_utc": "2026-10-24T12:54:35.280472Z",
+    "http_status": 200,
+    "bytes": 4815,
+    "sha256": "ef314bc070041ea2346a9bb22369b8649c9ec4b328863e91c2edfbbd2eb9a63f",
+    "status": "captured"
+  },
+  {
+    "file": "rulespec-remote-.axiom-workflow-toolchain.toml",
+    "url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/.axiom/workflow-toolchain.toml",
+    "final_url": "https://raw.githubusercontent.com/TheAxiomFoundation/rulespec-us/3fefe74bd7c8a9849bfb6e5646f8c6b10061a177/.axiom/workflow-toolchain.toml",
+    "retrieved_at_utc": "2026-10-24T12:54:35.663482Z",
+    "http_status": 200,
+    "bytes": 674,
+    "sha256": "46742e2d51158d66c7e4521c5f53317980146f12163aff7284fc631ada88e76f",
+    "status": "captured"
+  },
+  {
+    "file": "corpus-4161163.json",
+    "url": "https://www.ecfr.gov/current/title-20/chapter-III/part-416#p-416.1163",
+    "local_source": "/Users/maxghenis/TheAxiomFoundation/axiom-corpus/data/corpus/provisions/us/regulation/2026-07-23-title-20-part-416.jsonl:6",
+    "retrieved_at_utc": "2026-10-24T12:59:51.001444Z",
+    "bytes": 14035,
+    "sha256": "301dd12d163cc2b58e1e02803fea98e8ded029caa8711fbe3b3d91fbb677c29e",
+    "status": "captured_local_corpus_row",
+    "source_as_of": "2026-07-14"
+  },
+  {
+    "file": "peus-2.2.1-parameters-gov-ssa-ssi-eligibility-resources-countable.yaml",
+    "url": "https://pypi.org/project/policyengine-us/2.2.1/",
+    "local_source": "/private/tmp/mdyn-ssi0-policyengine-6.10.2/lib/python3.13/site-packages/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/countable.yaml",
+    "retrieved_at_utc": "2026-10-24T13:06:12.053268Z",
+    "bytes": 948,
+    "sha256": "340d82956b609fcb3d1cd321c94bc6a20503e7698292279e8bec2e040db37c81",
+    "status": "captured_installed_release_source"
+  },
+  {
+    "file": "peus-2.2.1-variables-gov-ssa-ssi-ssi_if_takes_up.py",
+    "url": "https://pypi.org/project/policyengine-us/2.2.1/",
+    "local_source": "/private/tmp/mdyn-ssi0-policyengine-6.10.2/lib/python3.13/site-packages/policyengine_us/variables/gov/ssa/ssi/ssi_if_takes_up.py",
+    "retrieved_at_utc": "2026-10-24T13:06:12.355860Z",
+    "bytes": 1323,
+    "sha256": "a5aacd66b5b7c43f12ab84651300e40dd74e5d8ae1684b1f03b62b41f136fc90",
+    "status": "captured_installed_release_source"
+  }
+]
