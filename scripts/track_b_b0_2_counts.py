@@ -548,7 +548,11 @@ def build_model(registry: SetRegistry) -> dict:
             own.setdefault((unit_type, rows), []).append(column)
     targets: dict[tuple[int, ...], dict] = {}
     for (unit_type, _), columns in sorted(own.items()):
-        targets[tuple(columns)] = {"kind": "atom", "unit_type": unit_type}
+        targets[tuple(columns)] = {
+            "kind": "atom",
+            "unit_type": unit_type,
+            "earlier": False,
+        }
     shared = (matrix @ matrix.T).toarray()
     for subset in range(len(keys)):
         if shared[subset, subset] == 0:
@@ -573,6 +577,8 @@ def build_model(registry: SetRegistry) -> dict:
                     "unit_type": keys[subset][0],
                     "superset": list(grouped[keys[superset]][0]),
                     "subset": list(grouped[keys[subset]][0]),
+                    # It involves a set only the earlier release counts.
+                    "earlier": not (current[superset] and current[subset]),
                 },
             )
     target_list = [
@@ -1027,6 +1033,7 @@ def audit_counts(
                     if key in target
                 },
                 "true_size": target["true_size"],
+                "earlier": target["earlier"],
                 **settled.get(index, {"result": "unclassified"}),
             }
             for index, target in enumerate(targets)
@@ -1066,11 +1073,65 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
             )
 
 
+def local_audit(audit: dict) -> dict:
+    """The audit as the local copy records it.
+
+    B0.1's sets enter the audit in memory only (protocol, "What this audit
+    may and may not compute"), so nothing about them beyond B0.1's own
+    counts is written. Targets that involve a set only B0.1 counts are
+    left out, with their places in the rounds. The atoms, which B0.1's
+    sets refine, are left out too: each target's atom columns, and the
+    atom sizes, which become the sizes of this release's classes (its
+    atom targets)."""
+    shown = [
+        index
+        for index, target in enumerate(audit["targets"])
+        if not target["earlier"]
+    ]
+    renumber = {old: new for new, old in enumerate(shown)}
+    targets = [
+        {
+            key: value
+            for key, value in audit["targets"][index].items()
+            if key not in ("columns", "earlier")
+        }
+        for index in shown
+    ]
+    class_sizes: dict[str, list[int]] = {}
+    for target in targets:
+        if target["kind"] == "atom":
+            class_sizes.setdefault(target["unit_type"], []).append(
+                target["true_size"]
+            )
+    return {
+        **{
+            key: value
+            for key, value in audit.items()
+            if key not in ("targets", "disclosed", "rounds", "atom_sizes")
+        },
+        "rounds": [
+            {
+                **round_,
+                "disclosed": [
+                    renumber[i] for i in round_["disclosed"] if i in renumber
+                ],
+            }
+            for round_ in audit["rounds"]
+        ],
+        "disclosed": [
+            renumber[i] for i in audit["disclosed"] if i in renumber
+        ],
+        "targets": targets,
+        "class_sizes": class_sizes,
+    }
+
+
 def release_counts(
     counts: dict, registry: SetRegistry, base: int = DISCLOSURE_BASE
 ) -> tuple[dict, dict, dict]:
     """Coarsen and audit once at the fixed base. The public block holds the
-    base, the rules and the status, and nothing the audit computed."""
+    base, the rules and the status, and nothing the audit computed; the
+    local copy holds ``local_audit``'s record."""
     audit = audit_counts(counts, registry, base)
     published = {}
     if audit["status"] == "released":
@@ -1083,7 +1144,7 @@ def release_counts(
         "protection_rule": PROTECTION_RULE,
         "status": audit["status"],
     }
-    return published, disclosure, {"audit": audit}
+    return published, disclosure, {"audit": local_audit(audit)}
 
 
 def frame_relations(frame: pd.DataFrame) -> dict[tuple[str, str, str], bool]:

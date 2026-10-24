@@ -1258,13 +1258,15 @@ def test_disclosure_public_block_holds_only_base_rules_and_status():
         b'"sets"',
         b'"atoms"',
         b'"atom_sizes"',
+        b'"class_sizes"',
         b'"true_size"',
         b'"targets"',
         b'"rounds"',
         b'"range"',
     ):
         assert forbidden not in public_bytes
-    assert "atom_sizes" in private["audit"]
+    assert "class_sizes" in private["audit"]
+    assert "atom_sizes" not in private["audit"]
 
 
 def test_a_withheld_release_publishes_status_and_no_counts(monkeypatch):
@@ -1279,7 +1281,7 @@ def test_a_withheld_release_publishes_status_and_no_counts(monkeypatch):
         "protection_rule",
         "status",
     }
-    assert private["audit"]["atom_sizes"] == {"persons": [3]}
+    assert private["audit"]["class_sizes"] == {"persons": [3]}
 
 
 @settings(max_examples=100, deadline=None)
@@ -1940,6 +1942,49 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
     assert record["geometry"]["age_convention"] == "collection_wave"
     assert record["geometry"]["lag_years"] == [2, 4]
     _assert_no_forbidden_output(record)
+
+
+def _nested_prior_release(died):
+    """B0.2 publishes 30 persons and 20 of them; B0.1 counted ``died``, 12
+    of the 20, exactly."""
+    counts = {"total": 30, "part": 20}
+    registry = script.SetRegistry()
+    registry.add(("total",), "persons", range(30))
+    registry.add(("part",), "persons", range(20))
+    registry.add_prior(("b0_1", "died"), "persons", died, 12)
+    return script.release_counts(counts, registry), registry, counts
+
+
+def test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts():
+    """Which 12 of the 20 B0.1 counted is B0.1's to know, and the local
+    copy must not say: it is the same for both splits. The audit itself
+    holds the targets that involve B0.1's set; the local copy leaves them
+    out, with their places in the rounds, and gives this release's class
+    sizes rather than the atoms that B0.1's set refines."""
+    records = []
+    for died in (range(5, 17), range(12)):
+        (_, disclosure, private), registry, counts = _nested_prior_release(
+            died
+        )
+        assert disclosure["status"] == "released"
+        full = script.audit_counts(counts, registry, 10)
+        hidden = [t for t in full["targets"] if t["earlier"]]
+        assert hidden and all(t["kind"] == "difference" for t in hidden)
+        local = private["audit"]
+        assert sorted(local["class_sizes"]["persons"]) == [10, 20]
+        assert len(local["targets"]) == len(full["targets"]) - len(hidden)
+        for target in local["targets"]:
+            assert "columns" not in target and "earlier" not in target
+        assert all(
+            0 <= i < len(local["targets"])
+            for r in local["rounds"]
+            for i in r["disclosed"]
+        )
+        local.pop("seconds")
+        text = json.dumps(local, sort_keys=True)
+        assert "b0_1" not in text and "died" not in text
+        records.append(text)
+    assert records[0] == records[1]
 
 
 def test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds(tmp_path, monkeypatch):
