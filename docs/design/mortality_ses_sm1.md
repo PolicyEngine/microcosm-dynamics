@@ -151,15 +151,35 @@ reduce order sensitivity. The Decimal path (precision 2,400 digits)
 handles extreme magnitudes that would underflow or overflow ordinary
 products. The float path also hands the Decimal path every decision it
 cannot make reliably:
-- a target within 1e-3 of the free capacity, relative to that capacity;
-- a target formed by subtracting fixed deaths that is within 1e-3 of zero,
+- a target within m = 1e-3 of the free capacity, relative to that
+  capacity;
+- a target formed by subtracting fixed deaths that is within m of zero,
   relative to the larger total;
-- a capping round that leaves less than 1e-3 of the target;
+- a capping round that leaves a remaining target within m of zero,
+  relative to the totals the target is taken from (the larger of baseline
+  and fixed deaths when fixed rows are off baseline, otherwise the target
+  itself);
+- a row whose scaled probability `q_base * relative_risk * factor` lies
+  within 1e-9 of one, at any capping round;
 - a feasible result that misses conservation by more than 1e-12,
   relative to the cell's expected deaths.
 
-Float reductions err by a few units of 2^-52, so above that margin the
-error moves the factor by less than the 1e-12 accounting tolerance.
+The margins rest on an error bound. Write u = 2^-53. Each stable sum of
+nonnegative float products errs by at most about 4u of its value. A
+target formed by subtraction then errs by at most about 8u of the larger
+total, and a remaining target by about 12u of it. Each guarded quantity
+exceeds m times that total, so its relative error is at most about
+12u/m, roughly 1.3e-12, and so are the factor's and every returned
+probability's. That is far below the 1e-9 margin for cap decisions, so
+every cap decision the float path makes is the exact one. A row within
+1e-9 of one is different: rounding can put it on the wrong side of one,
+and whether it caps decides the factor of every other row. Rows with tiny
+weight can then end up with very different probabilities while the
+weighted totals still conserve.
+Measured against the exact oracle, cells built near these margins err by
+at most about 1.3e-13 on the float path. The separate 1e-12 conservation
+check concerns weighted deaths only.
+
 Probabilities returned are float64; the log accounts for those returned
 values.
 
@@ -179,8 +199,14 @@ equality. Permutation checks are exact where supported by stable sums;
 weight scaling and adapter comparisons use the stated tolerance. An
 independent exact oracle in the tests, in rational arithmetic, finds the
 capped rows by searching over how many rows cap rather than by iterating.
-The normalizer must match it to `rtol=1e-9, atol=1e-15` on cells across
-float magnitudes, near-one q and arbitrary fixed probabilities.
+The normalizer must match it to `rtol=1e-11, atol=1e-15`, about seven
+times the float path's error bound. Three generators feed that check:
+- cells across float magnitudes, near-one q and arbitrary fixed
+  probabilities;
+- cells whose dominant row sits at the cap, a few units of rounding
+  either way, beside rows of tiny weight;
+- cells of ordinary magnitude whose fixed deaths cancel all but a share
+  near m of the cell's deaths, where the float path's error is largest.
 
 Intended monotonicity applies among free rows with the same baseline q in
 a cell, holding other dimensions constant. This is the setting supplied
@@ -192,15 +218,24 @@ The existing DI adapter caps once. Its feasible cells can consequently
 fall short of the target; its residual is computed from
 `expected_deaths_population_model - expected_deaths_applied` in its
 existing cell log. The SM1 log describes normalization before that step.
-Tests label the normalizer's iterative redistribution versus the
+So under the adapter a cell's applied deaths equal its baseline deaths
+minus two separate gaps: SM1's residual, zero in every feasible cell, and
+the adapter's clipping gap, its population-model deaths minus its applied
+deaths. The composition conserves only where the adapter's clip does not
+bind. Tests label the normalizer's iterative redistribution versus the
 adapter's one-pass clipping as an intended difference. A second intended
 difference: in an infeasible cell whose free support weighs nothing, the
 adapter leaves the factor at one, while the rules above zero or saturate
 those rows. No shared-module change is required.
 
 At the scale of a projection frame (1,000,000 invented rows in 242
-cells), `evaluate` takes about 1.3 seconds on the build host, and the
-normalizer alone takes 0.4–0.6 seconds.
+cells), `evaluate` takes about 1.4 seconds on the build host, and the
+normalizer alone takes 0.5–0.9 seconds. No cell of those invented frames
+goes to the Decimal path. In an invented frame whose baseline q follows a
+Gompertz curve to one, the 42 oldest-age cells, where every free row's q
+is one, fill their capacity exactly and take the Decimal path. The
+normalizer then takes about 3 seconds, because each such cell holds about
+4,000 invented rows; real frames have few persons at those ages.
 
 ## Design and build traceability
 
@@ -234,12 +269,12 @@ before being characterized as a mechanism defect.
 | Unit-risk bit identity | Exact common-risk baseline path | `test_equal_risks_preserve_baseline_bits_with_fixed_baseline_rows`, `test_identity_is_bit_for_bit_and_normalizer_is_deterministic` |
 | Same deaths with/without registry, ordinary and DI steps | `step.py` and context-only wrapper | `test_identity_probabilities_and_step_deaths`, `test_di_adapter_identity`, corresponding generated death-identity properties |
 | Bounds | Capping and input validation | Conservation/bounds property and extreme-risk examples |
-| DI composition, ratios and baseline origin q | Fixed origin in `model.py`, existing adapter | Composition examples, `test_composition_conserves_cells_preserves_ratios_and_fixes_di_q`, and, with unequal weights, clipping in both steps and the retained model log, `test_composition_with_unequal_weights_keeps_every_accounting_link` and `test_composition_accounts_for_clipping_in_both_steps` |
+| DI composition, ratios and baseline origin q; applied deaths equal baseline deaths minus SM1's residual and the adapter's clipping gap | Fixed origin in `model.py`, existing adapter | Composition examples, `test_composition_conserves_cells_preserves_ratios_and_fixes_di_q`, and, with unequal weights, clipping in both steps and the retained model log, `test_composition_with_unequal_weights_keeps_every_accounting_link` and `test_composition_accounts_for_clipping_in_both_steps` |
 | Intended monotonicity by earnings and education | Positive cell factor, log-additive risks | `test_ordered_earnings_and_education_risks_preserve_probability_order` |
 | Row/weight invariance and one-risk cells | Stable reductions, exact common-risk path | Permutation/scaling examples and properties; `test_one_free_risk_group_returns_baseline_probability` |
 | Weightless free support with a zero target: unit-weight factor, logged as basis `persons` | Unit-weight allocation in both arithmetic paths of `normalizer.py`; `normalization_basis` and `persons_target` log columns; the model's optional `cell_log` | `test_weightless_support_counts_persons_equally`, `test_weightless_support_uses_unit_weights_on_the_decimal_path`, `test_weightless_cells_count_persons_equally`, `test_weightless_cells_take_the_vanishing_weight_limit`, `test_model_gives_weightless_cells_their_unit_weight_probabilities`; the normalizer properties draw zero weights |
 | Infeasible weightless cells follow the weighted rules (the vanishing-weight limit) | Infeasibility decided before the unit-weight rule | `test_fixed_excess_zeroes_weightless_free_rows_on_both_paths`, `test_fixed_shortfall_saturates_weightless_support_on_both_paths`, `test_weightless_infeasible_cells_follow_the_weighted_rules`, `test_weightless_cells_take_the_vanishing_weight_limit` |
-| Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`; the oracle property's examples |
+| Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check, the cap-decision check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`, `test_a_cap_decision_at_one_is_decided_exactly`, `test_compounded_cancellation_is_decided_exactly`; the oracle property's examples, `test_cap_boundaries_beside_tiny_weights_match_the_oracle` and `test_cancellation_near_the_margin_matches_the_oracle` |
 | A target that exactly fills the weighted support takes the smallest capping factor | The Decimal path's tie branch | The oracle property's two tie examples |
 | Differential adapter arithmetic; intended clipping and weightless-infeasible differences | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended divergences |
 | Time path and alternative path isolation | Path protocol and hold-last default | `test_pluggable_path_changes_only_named_year`, generated hold-last/refusal property |

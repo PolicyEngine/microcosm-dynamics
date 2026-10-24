@@ -34,12 +34,19 @@ CELL_LOG_COLUMNS = (
     "unclassified_reference",
 )
 
-# The float path leaves a decision to the Decimal path when it compares
-# totals this close, relative to their size, or when capping leaves a
-# remaining target this small.  Float reductions here err by a few units
-# of 2**-52; above this margin that error moves the factor by less than
-# the 1e-12 accounting tolerance.
+# The float path leaves a cell to the Decimal path when cancellation
+# leaves too little to compute reliably: a target within this relative
+# margin m of zero or of capacity, or a capping round that leaves a
+# remaining target within it of zero, relative to the totals the target
+# is taken from.  Each total errs by at most about 4u of the totals it
+# sums (u = 2**-53), so outside the margin the factor and every returned
+# probability err by at most about 12u/m, roughly 1.3e-12, relative.
 _FLOAT_MARGIN = 1e-3
+# Under that error a row whose scaled probability is this close to one
+# may cap or not, and which it does decides the factor every other row
+# gets.  Such a cell also goes to the Decimal path.  The margin is far
+# above the error bound, so every other cap decision is the exact one.
+_CAP_MARGIN = 1e-9
 # A feasible float cell that misses conservation by more than this,
 # relative to its expected deaths, is recomputed on the Decimal path.
 _CONSERVATION_RTOL = 1e-12
@@ -204,12 +211,15 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
     baseline_deaths = _stable_sum(w * base)
     fixed_deaths = _stable_sum(w[is_fixed] * prescribed[is_fixed])
     fixed_at_baseline = np.array_equal(prescribed[is_fixed], base[is_fixed])
+    # ``scale`` is the size of the totals the target is taken from, which
+    # bounds its rounding error.
     if fixed_at_baseline:
         # Avoid cancellation of small free totals when fixed rows dominate.
-        target = _stable_sum(w[free] * base[free])
+        target = scale = _stable_sum(w[free] * base[free])
     else:
         target = baseline_deaths - fixed_deaths
-        if _ambiguous(target, max(baseline_deaths, fixed_deaths)):
+        scale = max(baseline_deaths, fixed_deaths)
+        if _ambiguous(target, scale):
             return exact()
     support = free & (base > 0)
     # Weightless support leaves a zero weighted target silent on the
@@ -219,7 +229,7 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
     persons_target = None
     if target == 0 and np.any(support) and _stable_sum(w[support]) == 0:
         allocation = np.ones(len(base), dtype=np.longdouble)
-        target = persons_target = _stable_sum(base[support])
+        target = persons_target = scale = _stable_sum(base[support])
     capacity = _stable_sum(allocation[support])
     capped = np.zeros(len(base), dtype=bool)
     infeasible = False
@@ -254,13 +264,18 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
         while np.any(active):
             denominator = _stable_sum(allocation[active] * raw[active])
             factor = remaining / denominator
-            next_capped = active & (raw * factor > 1)
+            scaled = raw * factor
+            # A row this close to one may be capped or not; which it is
+            # decides the factor every other row gets.
+            if np.any(active & (np.abs(scaled - 1) <= _CAP_MARGIN)):
+                return exact()
+            next_capped = active & (scaled > 1)
             if not np.any(next_capped):
                 break
             capped |= next_capped
             active &= ~next_capped
             remaining = target - _stable_sum(allocation[capped])
-            if remaining <= _FLOAT_MARGIN * target:
+            if remaining <= _FLOAT_MARGIN * scale:
                 return exact()
         result[free] = np.minimum(1, raw[free] * factor)
         result[capped] = 1

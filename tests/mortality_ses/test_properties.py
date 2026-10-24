@@ -51,6 +51,7 @@ PROPERTY = settings(max_examples=35, deadline=None)
 # The exact oracle is cheap on these small cells and is the main check
 # of the arithmetic, so it gets more examples.
 ORACLE_PROPERTY = settings(max_examples=150, deadline=None)
+ORACLE_RTOL = 1e-11
 REF = "invented_ref"
 OTHER = "invented_other"
 UNCLASSIFIED = "invented_unclassified"
@@ -332,8 +333,36 @@ def invented_wide_cells(draw):
         np.array([1, 0]),
     )
 )
+@example(  # A scaled probability rounded to exactly one once capped nothing.
+    (
+        np.array([0.5, 0.5, 0.5]),
+        np.array([20, 1e-26, 1]),
+        np.zeros(3, dtype=bool),
+        np.array([0.5, 0.5, 0.5]),
+        np.array([1, 1, 1e-20]),
+    )
+)
+@example(  # Fixed-death and capping cancellation once compounded.
+    (
+        np.array([0.5, 0.5, 0.5]),
+        np.array([1, 1e12, 1]),
+        np.array([True, False, False]),
+        np.array([0.49950165, 0.5, 0.5]),
+        np.array([1, 0.0009989, 0.0000044]),
+    )
+)
 def test_normalizer_matches_an_exact_oracle_across_magnitudes(inputs):
-    base, risk, fixed, prescribed, weights = inputs
+    assert_matches_oracle(*inputs)
+
+
+def assert_matches_oracle(base, risk, fixed, prescribed, weights):
+    """The normalizer agrees with ``exact_cell`` within its error bound.
+
+    The float path's bound is about 1.3e-12 relative (see
+    ``normalizer._FLOAT_MARGIN``), and the Decimal path is exact up to the
+    final float64 rounding, so ``ORACLE_RTOL`` leaves headroom of about
+    seven times.
+    """
     cells = [(2021, "female", 50)] * len(base)
     q, log = normalize_probabilities(
         base, risk, fixed, prescribed, cells, weights
@@ -341,7 +370,7 @@ def test_normalizer_matches_an_exact_oracle_across_magnitudes(inputs):
     expected, infeasible, basis = exact_cell(
         base, risk, fixed, prescribed, weights
     )
-    np.testing.assert_allclose(q, expected, rtol=1e-9, atol=1e-15)
+    np.testing.assert_allclose(q, expected, rtol=ORACLE_RTOL, atol=1e-15)
     assert bool(log.loc[0, "infeasible"]) == infeasible
     assert log.loc[0, "normalization_basis"] == basis
     assert ((0 <= q) & (q <= 1)).all()
@@ -355,6 +384,101 @@ def test_normalizer_matches_an_exact_oracle_across_magnitudes(inputs):
         )
         assert float(abs(applied - target)) <= RTOL * max(float(target), ATOL)
         assert log.loc[0, "clipping_residual"] == 0
+
+
+@st.composite
+def invented_cap_boundary_cells(draw):
+    """Cells whose dominant row sits at the cap, beside tiny weights.
+
+    Row 0's weight equals the target that rows 0 and 1 (and an optional
+    fixed row) supply, so its scaled probability is one up to rounding,
+    nudged a few units either way.  Row 1 adds target but almost no
+    scaled mass, and the other rows carry tiny positive weights, so
+    whether row 0 caps decides their probabilities.
+    """
+    q0 = draw(st.floats(0.05, 0.95))
+    q1 = draw(st.floats(0.05, 1))
+    w0 = draw(wide(-3, 6))
+    share = w0 * (1 - q0)
+    base, risk, fixed, prescribed, weights = [], [], [], [], []
+    if draw(st.booleans()):
+        # A fixed row off baseline moves part of row 1's target into a
+        # cancellation of baseline and fixed deaths.
+        qf = draw(st.floats(0.05, 0.95))
+        pf = draw(st.floats(0.05, 0.95).filter(lambda p: abs(p - qf) > 0.01))
+        moved = draw(st.floats(-0.9, 0.9)) * share
+        wf = abs(moved / (qf - pf))
+        share -= wf * (qf - pf)
+        base, risk, fixed = [qf], [draw(wide(-2, 2))], [True]
+        prescribed, weights = [pf], [wf]
+    w1 = share / q1
+    nudge = draw(st.integers(-3, 3))
+    for _ in range(abs(nudge)):
+        w0 = float(np.nextafter(w0, np.inf if nudge > 0 else 0.0))
+    extra = draw(st.integers(1, 4))
+    rows = dict(min_size=extra, max_size=extra)
+    base += [q0, q1] + draw(st.lists(st.floats(0.01, 1), **rows))
+    risk += [draw(wide(0, 3)), draw(wide(-60, -12))] + draw(
+        st.lists(wide(-2, 2), **rows)
+    )
+    # Relative to row 0, from below one unit in the last place upward.
+    weights += [w0, w1] + [
+        w0 * tiny for tiny in draw(st.lists(wide(-40, -8), **rows))
+    ]
+    fixed += [False] * (2 + extra)
+    prescribed = prescribed + base[len(prescribed) :]
+    order = draw(st.permutations(range(len(base))))
+    return tuple(
+        np.asarray([values[i] for i in order], dtype=dtype)
+        for values, dtype in (
+            (base, float),
+            (risk, float),
+            (fixed, bool),
+            (prescribed, float),
+            (weights, float),
+        )
+    )
+
+
+@ORACLE_PROPERTY
+@given(invented_cap_boundary_cells())
+def test_cap_boundaries_beside_tiny_weights_match_the_oracle(inputs):
+    assert_matches_oracle(*inputs)
+
+
+@st.composite
+def invented_near_margin_cells(draw):
+    """Ordinary magnitudes with cancellation near the float margin.
+
+    A fixed row's deaths cancel all but a drawn share of the cell's
+    deaths, near the margin on either side, and large risks cap free rows,
+    so capping cancels much of the rest.  Most such cells stay on the
+    float path, where the error bound is tightest.
+    """
+    size = draw(st.integers(1, 7))
+    rows = dict(min_size=size, max_size=size)
+    free_base = np.asarray(draw(st.lists(st.floats(0.01, 1), **rows)))
+    free_risk = draw(st.lists(st.one_of(wide(-3, 0), wide(0, 6)), **rows))
+    free_weights = np.asarray(draw(st.lists(wide(-4, 4), **rows)))
+    q0 = draw(st.floats(0.01, 0.5))
+    free_deaths = float(np.sum(free_weights * free_base))
+    # Large enough that the prescribed probability below stays in [0, 1].
+    w0 = free_deaths * draw(st.floats(1, 3)) / (1 - q0)
+    keep = draw(wide(-3.5, -1))
+    p0 = min(1.0, (w0 * q0 + free_deaths) * (1 - keep) / w0)
+    return (
+        np.r_[q0, free_base],
+        np.r_[draw(wide(-2, 2)), free_risk],
+        np.r_[True, np.zeros(size, dtype=bool)],
+        np.r_[p0, free_base],
+        np.r_[w0, free_weights],
+    )
+
+
+@ORACLE_PROPERTY
+@given(invented_near_margin_cells())
+def test_cancellation_near_the_margin_matches_the_oracle(inputs):
+    assert_matches_oracle(*inputs)
 
 
 def test_cascading_caps_match_the_oracle():
@@ -913,6 +1037,18 @@ def composed_accounting(q_base, risk, multiplier, weights):
         assert np.sum(w[cell] * q_applied[cell]) == pytest.approx(
             netted.expected_deaths_applied, rel=RTOL, abs=ATOL
         )
+        # Baseline deaths reach applied deaths through two separate gaps:
+        # SM1's residual and the adapter's own clipping gap, its
+        # population-model deaths minus its applied deaths.
+        adapter_gap = (
+            netted.expected_deaths_population_model
+            - netted.expected_deaths_applied
+        )
+        assert np.sum(w[cell] * q_applied[cell]) == pytest.approx(
+            row.baseline_expected_deaths - row.clipping_residual - adapter_gap,
+            rel=RTOL,
+            abs=ATOL,
+        )
         free = cell & ~fixed
         if not (q_applied[free] == 1).any():
             # Without the adapter's one-pass clip, the composition conserves.
@@ -927,7 +1063,7 @@ def composed_accounting(q_base, risk, multiplier, weights):
                 rtol=RTOL,
                 atol=ATOL,
             )
-    return mechanism, q_applied, fixed
+    return mechanism, q_applied, fixed, cells[2021]
 
 
 @PROPERTY
@@ -945,9 +1081,20 @@ def test_composition_with_unequal_weights_keeps_every_accounting_link(
 
 def test_composition_accounts_for_clipping_in_both_steps():
     weights = np.linspace(0.5, 6, 24)
-    mechanism, q_applied, fixed = composed_accounting(0.8, 3.0, 0.1, weights)
+    mechanism, q_applied, fixed, adapter = composed_accounting(
+        0.8, 3.0, 0.1, weights
+    )
     assert mechanism["clipped_persons"].sum() > 0
     assert (q_applied[~fixed] == 1).any()
+    # SM1 conserves, but the adapter's one-pass clip loses deaths in a
+    # feasible cell: the composition does not conserve there.
+    gap = (
+        adapter["expected_deaths_population_model"]
+        - adapter["expected_deaths_applied"]
+    )
+    assert (gap > 1e-6).any()
+    assert not adapter["infeasible"].any()
+    assert (mechanism["clipping_residual"] == 0).all()
 
 
 @PROPERTY

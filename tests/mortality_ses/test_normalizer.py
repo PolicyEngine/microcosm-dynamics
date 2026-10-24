@@ -261,6 +261,44 @@ def test_cancelling_target_is_decided_exactly():
     assert log.iloc[0].clipping_residual == 0
 
 
+def test_a_cap_decision_at_one_is_decided_exactly():
+    # Rounded, the first row's scaled probability is exactly one, so float
+    # arithmetic caps nothing.  Exactly, it caps, and the other rows share
+    # the small target that remains.  Expected values are the exact
+    # oracle's.
+    with patch.object(
+        normalizer, "_decimal_cell", wraps=normalizer._decimal_cell
+    ) as exact:
+        q, log = normalize([0.5] * 3, [20, 1e-26, 1], weights=[1, 1, 1e-20])
+    exact.assert_called_once()
+    np.testing.assert_allclose(
+        q, [1, 4.999995000005e-27, 0.4999995000005], rtol=1e-12
+    )
+    assert log.iloc[0].clipped_persons == 1
+    assert not log.iloc[0].infeasible
+
+
+def test_compounded_cancellation_is_decided_exactly():
+    # Fixed deaths cancel most of the cell's deaths, and capping cancels
+    # most of the rest.  What remains is too small, relative to the totals
+    # it came from, to settle in float arithmetic.
+    with patch.object(
+        normalizer, "_decimal_cell", wraps=normalizer._decimal_cell
+    ) as exact:
+        q, log = normalize(
+            [0.5] * 3,
+            [1, 1e12, 1],
+            fixed=[True, False, False],
+            prescribed=[0.49950165, 0.5, 0.5],
+            weights=[1, 0.0009989, 0.0000044],
+        )
+    exact.assert_called_once()
+    np.testing.assert_allclose(
+        q, [0.49950165, 1, 0.24999999999562017], rtol=1e-12
+    )
+    assert not log.iloc[0].infeasible
+
+
 def test_cells_are_separate_and_sorted_and_inputs_are_unchanged():
     baseline = np.array([0.3, 0.1, 0.3, 0.1])
     risks = np.array([1.0, 1.0, 2.0, 2.0])
