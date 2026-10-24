@@ -2273,12 +2273,13 @@ Revision verification comprised the two touched test files and `tests/track_u2/t
   - **Finding 2.** The exposure record names this lane's session, its scratchpad and every U1 differential run, with both checkouts, and reads d1649's ruling correctly.
   - **Findings 3 and 5.** Tests now make each half of the d1242 guard fire on its own, and test amendment 6's option.
   - **Finding 4.** A missing d1090 exclusion entry refuses with a message instead of a bare `StopIteration`.
-  - **Finding 6.** A test holds the d1597 pin equal to the one U1's committed artifact records, comparing only that hash. It landed after the coordinating session's protective PSID hold of 2026-10-23 was lifted the same day (d1899).
+  - **Finding 6.** A test holds the d1597 pin equal to the one U1's committed artifact records, comparing only that hash. It landed in a later commit, on 2026-10-23.
   - **Finding 7.** §15 and §20 step 5 say exactly what the preflight checks of the registration: an issue #42 comment URL and an equal binding. That the comment exists, and that the forecast came before it, are kept by process.
   - **Finding 8.** A test holds `u1_identity.json`'s version equal to the code's.
   - This round changes code in `rows.py`, so the U1 differential ran again at the new last code change, `14d9576a`: equal in every check (`docs/design/u2_m2_u1_differential_14d9576.json`; §20 step 6).
 - After the delta review of `a2e2d688` (GPT-6.1 Sol, Subfleet job `20261023-063829-u2-step5-review-r3b`, APPROVE, with every round-2 finding resolved), its one nit is fixed: the exposure record said the round-2 findings were answered in one commit, and finding 6's came later. An earlier round-3 job (`20261023-062935-u2-step5-review-r3`) was cancelled before it launched, so that one review would also cover finding 6's commit.
 - After the delta review of `ac808d4a` (GPT-6.1 Sol, Subfleet job `20261023-073938-u2-step5-review-r4`, APPROVE), its nit is fixed: the entry above had been inserted inside round 2's list and now follows it.
+- After the delta review of `7fc7ab21` (GPT-6.1 Sol, Subfleet job `20261023-121425-u2-step5-review-r5`), which found no defects but withheld approval because its read boundaries blocked two checks, and a follow-up review that ran those checks (an in-session Claude Opus 5.5 reviewer, APPROVE at `7fc7ab21`; both reports in the same folder): finding 6's entry above and two lines of the exposure record are reworded, and the exposure record adds both reviews.
 
 ## 20. Ratification and execution record
 
