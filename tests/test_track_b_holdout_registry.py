@@ -19,7 +19,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import event, given, settings, target
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import holdout_registry as registry
@@ -1364,6 +1364,13 @@ def head_of(repository: Path) -> str:
     return git(repository, "rev-parse", "HEAD").strip()
 
 
+def pr_problems(repository: Path, base: str, head: str) -> list[str]:
+    """The append-only problems in a pull request's own commits."""
+    return registry.history_problems(
+        repository, base, head, full=False, pull_request=True
+    )
+
+
 @pytest.mark.parametrize("merged", [False, True])
 def test_a_pull_request_from_before_the_registry_passes(
     tmp_path, no_ci_env, merged
@@ -1385,7 +1392,7 @@ def test_a_pull_request_from_before_the_registry_passes(
         merge_with(repository, "master", landed)
         own_work(repository, "three")
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert problems == []
 
@@ -1408,7 +1415,7 @@ def test_a_pull_request_passes_while_master_grows(tmp_path, no_ci_env, merged):
         merge_with(repository, "master", grown(landed, 5))
         own_work(repository, "after the merge")
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert problems == []
 
@@ -1443,7 +1450,7 @@ def test_own_commits_after_a_master_merge_are_checked(
             bad = commit_registry(repository, first, "drop a landed entry")
     commit_registry(repository, landed, "restore")
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert reported(problems) == {bad[:12]}
 
@@ -1469,7 +1476,7 @@ def test_a_pull_request_cannot_hide_a_change_it_undoes(
     bad = commit_registry(repository, changed, "change")
     commit_registry(repository, built_on, "undo")
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert reported(problems) == {bad[:12]}
 
@@ -1492,7 +1499,7 @@ def test_a_merge_of_unlanded_history_extends_its_own_predecessor(
     resolution = grown(first, 5, 7) if keeps_own_order else grown(first, 7, 5)
     merge = merge_with(repository, "side", resolution)
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert reported(problems) == (set() if keeps_own_order else {merge[:12]})
 
@@ -1532,32 +1539,39 @@ def test_a_merge_of_contained_history_keeps_its_own_predecessor(
     git(repository, "reset", "-q", "--hard", crafted)
     commit_registry(repository, landed, "restore")
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert reported(problems) == {crafted[:12]}
 
 
+@pytest.mark.parametrize("carried", ["rewrite", "addition"])
 def test_a_first_commit_that_merges_unlanded_history_starts_at_the_fork(
-    tmp_path, no_ci_env
+    tmp_path, no_ci_env, carried
 ):
     """The walk starts from the first listed commit's first parent. When
     that commit merges an unlanded branch, the branch's registry is not
-    the predecessor, so a rewrite the branch carries is reported at the
-    merge."""
+    the predecessor: a rewrite the branch carries is reported at the
+    merge, and an unlanded addition the merge leaves out is not."""
     repository = init_repository(tmp_path)
     first = registered(["candidate"])
     base = commit_registry(repository, first, "registry")
     branch(repository, "side")
-    rewritten = copy.deepcopy(first)
-    rewritten["entries"][0]["unit_keys"] = ["s_c:2199"]
-    commit_registry(repository, rewritten, "side rewrites an entry")
+    carried_registry = grown(first, 1)
+    if carried == "rewrite":
+        carried_registry = copy.deepcopy(first)
+        carried_registry["entries"][0]["unit_keys"] = ["s_c:2199"]
+    commit_registry(repository, carried_registry, f"side {carried}")
     switch(repository, "master")
     branch(repository, "pr")
-    merge = merge_with(repository, "side", rewritten)
-    problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+    merge = merge_with(
+        repository,
+        "side",
+        carried_registry if carried == "rewrite" else first,
     )
-    assert reported(problems) == {merge[:12]}
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == (
+        {merge[:12]} if carried == "rewrite" else set()
+    )
 
 
 @pytest.mark.parametrize("where", ["fork", "landed_merge"])
@@ -1582,7 +1596,7 @@ def test_an_unreadable_predecessor_is_reported(tmp_path, no_ci_env, where):
         unreadable = base
         merge_with(repository, "master", first)
     problems = registry.history_problems(
-        repository, base, head_of(repository), full=False
+        repository, base, head_of(repository), full=False, pull_request=True
     )
     assert any(
         p.startswith(f"{unreadable[:12]}: ") and "is not JSON" in p
@@ -1615,9 +1629,253 @@ def test_a_merge_of_two_landed_lines_is_reported(tmp_path, no_ci_env):
         "octopus",
     ).strip()
     git(repository, "update-ref", "refs/heads/pr", octopus)
-    problems = registry.history_problems(repository, base, octopus, full=False)
+    problems = registry.history_problems(
+        repository, base, octopus, full=False, pull_request=True
+    )
     assert any("more than one line of landed history" in p for p in problems)
     assert reported(problems) == {octopus[:12]}
+
+
+def test_a_stale_landed_branch_cannot_drop_what_the_pull_request_holds(
+    tmp_path, no_ci_env
+):
+    """Another pull request's branch, once landed, can carry an older
+    registry than this pull request's. A merge of it still keeps every
+    entry this pull request held: one resolved to the stale registry is
+    reported, though a later commit restores the entry it dropped."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "other")
+    own_work(repository, "the other pull request's work")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    commit_registry(repository, landed, "master grows")
+    branch(repository, "pr")
+    own_work(repository, "own work, after the growth landed")
+    switch(repository, "master")
+    base = merge_with(repository, "other", landed)
+    switch(repository, "pr")
+    bad = merge_with(repository, "other", first)
+    commit_registry(repository, landed, "restore")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {bad[:12]}
+
+
+@pytest.mark.parametrize("order", ["landed", "branch"])
+def test_a_landed_branch_is_merged_in_the_landed_order(
+    tmp_path, no_ci_env, order
+):
+    """A landed branch's own registry need not follow master's order. One
+    that added H003 holds [H001, H003]; master, which landed H002 first,
+    holds [H001, H002, H003]. A pull request built on H002 that merges
+    that branch in master's order passes. Resolving to the branch's own
+    registry drops H002 and is reported, though a later master merge
+    restores it."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "other")
+    side = grown(first, 2)
+    commit_registry(repository, side, "the other pull request adds H003")
+    switch(repository, "master")
+    commit_registry(repository, grown(first, 1), "H002 lands")
+    branch(repository, "pr")
+    switch(repository, "master")
+    canonical = grown(first, 1, 2)
+    base = merge_with(repository, "other", canonical)
+    switch(repository, "pr")
+    merge = merge_with(
+        repository, "other", canonical if order == "landed" else side
+    )
+    merge_with(repository, "master", canonical)
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == (set() if order == "landed" else {merge[:12]})
+
+
+@pytest.mark.parametrize("merge", ["keeps", "drops", "diverges"])
+def test_a_landed_merge_keeps_the_pull_requests_own_extensions(
+    tmp_path, no_ci_env, merge
+):
+    """A landed merge keeps each list at the longer of its two versions,
+    so it cannot drop evidence the pull request added to a landed entry.
+    Where the pull request and master each extended that list
+    differently, no merge keeps both, and the merge is reported."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    extended = copy.deepcopy(first)
+    extended["entries"][0]["evidence"].append("own evidence")
+    commit_registry(repository, extended, "own evidence")
+    switch(repository, "master")
+    landed = copy.deepcopy(first)
+    if merge == "diverges":
+        landed["entries"][0]["evidence"].append("landed evidence")
+    landed = grown(landed, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    resolution = copy.deepcopy(landed)
+    if merge == "keeps":
+        resolution["entries"][0]["evidence"] = extended["entries"][0][
+            "evidence"
+        ]
+    merged = merge_with(repository, "master", resolution)
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == (set() if merge == "keeps" else {merged[:12]})
+    assert any("each extend beyond the other" in p for p in problems) == (
+        merge == "diverges"
+    )
+
+
+def test_a_landed_merge_cannot_drop_the_pull_requests_own_entry(
+    tmp_path, no_ci_env
+):
+    """A master merge that leaves out the pull request's own registration
+    is reported, though a later commit restores it."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    commit_registry(repository, grown(first, 5), "own registration")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    merge = merge_with(repository, "master", landed)
+    commit_registry(repository, grown(landed, 5), "restore")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+
+
+def test_an_octopus_of_a_landed_and_a_contained_parent_is_one_line(
+    tmp_path, no_ci_env
+):
+    """A parent the first parent already has brings nothing in, so an
+    octopus of it and one landed parent brings in one line, and is
+    compared like any landed merge."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    fork = commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+
+    def octopus(document) -> str:
+        write(repository, registry.REGISTRY, document)
+        git(repository, "add", "-A")
+        tree = git(repository, "write-tree").strip()
+        return git(
+            repository,
+            "commit-tree",
+            tree,
+            "-p",
+            "HEAD",
+            "-p",
+            fork,
+            "-p",
+            base,
+            "-m",
+            "octopus",
+        ).strip()
+
+    kept = octopus(landed)
+    dropped = octopus(first)
+    assert pr_problems(repository, base, kept) == []
+    assert reported(pr_problems(repository, base, dropped)) == {dropped[:12]}
+
+
+@pytest.mark.parametrize("change", ["delete", "rewrite"])
+def test_a_push_is_compared_from_its_before_commit(
+    tmp_path, no_ci_env, change
+):
+    """A push is walked from its before commit, which need not lie on the
+    pushed tip's first-parent line: here an older branch merges a
+    descendant of it, changing the registry, and the next commit
+    restores it. The change is reported, as is the older branch's commit
+    without a registry; the fork-point start is for pull requests only."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    branch(repository, "pr")
+    older = own_work(repository, "older work")
+    switch(repository, "master")
+    before = commit_registry(repository, first, "registry lands")
+    own_work(repository, "a descendant of before")
+    switch(repository, "pr")
+    changed = None
+    if change == "rewrite":
+        changed = copy.deepcopy(first)
+        changed["entries"][0]["unit_keys"] = ["s_a:2199"]
+    bad = merge_with(repository, "master", changed)
+    commit_registry(repository, first, "restore")
+    head = head_of(repository)
+    first_parents = git(repository, "rev-list", "--first-parent", head)
+    assert before not in first_parents.split()
+    problems = registry.history_problems(repository, before, head, imports={})
+    assert reported(problems) == {older[:12], bad[:12]}
+
+
+def test_a_landed_union_orders_by_the_base_and_keeps_both_lines():
+    """The union of the pull request's registry and a landed one: entries
+    and rules the base lists in its order, then the pull request's, then
+    the landed line's; sources from both; complete if either is."""
+    first = registered(["candidate"])
+    mine = grown(first, 1, 5)
+    mine["rules"].append("own rule")
+    mine["sources"]["s_own"] = {"family": "f3", "title": "own"}
+    theirs = grown(first, 2, 7)
+    theirs["rules"].append("landed rule")
+    theirs["complete"] = True
+    theirs["entries"][0]["history"].append({"status": "frozen"})
+    canonical = grown(first, 1, 2)
+    canonical["rules"].append("landed rule")
+    union, conflicts = registry._landed_union(mine, theirs, canonical)
+    assert conflicts == []
+    assert [e["id"] for e in union["entries"]] == [
+        "H001",
+        "H002",
+        "H003",
+        "H006",
+        "H008",
+    ]
+    assert union["entries"][0]["history"] == theirs["entries"][0]["history"]
+    assert union["rules"] == [*first["rules"], "landed rule", "own rule"]
+    assert union["sources"] == {**theirs["sources"], **mine["sources"]}
+    assert union["complete"] is True
+    held = {entry["id"]: entry for entry in union["entries"]}
+    for document in (mine, theirs):
+        for entry in document["entries"]:
+            kept = held[entry["id"]]
+            assert all(kept[key] == entry[key] for key in registry.IMMUTABLE)
+            assert all(
+                kept[key][: len(entry[key])] == entry[key]
+                for key in registry.EXTENDING
+            )
+    assert registry._landed_union(None, theirs, canonical) == (theirs, [])
+    assert registry._landed_union(mine, None, canonical) == (mine, [])
+    malformed = {"entries": [{}]}
+    assert registry._landed_union(malformed, theirs, None) == (theirs, [])
+    assert registry._landed_union(mine, malformed, None) == (malformed, [])
+
+
+@pytest.mark.parametrize("field", ["schema", "source", "unit_keys", "history"])
+def test_a_landed_union_reports_what_no_merge_can_keep(field):
+    first = registered(["candidate"])
+    mine, theirs = copy.deepcopy(first), copy.deepcopy(first)
+    if field == "schema":
+        theirs["schema"] = "another schema"
+    elif field == "source":
+        theirs["sources"]["s_a"] = {"family": "f9", "title": "changed"}
+    elif field == "unit_keys":
+        theirs["entries"][0]["unit_keys"] = ["s_a:2199"]
+    else:
+        mine["entries"][0]["history"].append({"status": "frozen"})
+        theirs["entries"][0]["history"].append({"status": "withdrawn"})
+    _, conflicts = registry._landed_union(mine, theirs, first)
+    assert len(conflicts) == 1
 
 
 @pytest.mark.parametrize(
@@ -1640,7 +1898,12 @@ def test_unreadable_parents_or_ancestry_raise(
     switch(repository, "pr")
     merge_with(repository, "master", landed)
     head = head_of(repository)
-    assert registry.history_problems(repository, base, head, full=False) == []
+    assert (
+        registry.history_problems(
+            repository, base, head, full=False, pull_request=True
+        )
+        == []
+    )
     real = registry._git
 
     def failing(repo, *args):
@@ -1650,41 +1913,114 @@ def test_unreadable_parents_or_ancestry_raise(
 
     monkeypatch.setattr(registry, "_git", failing)
     with pytest.raises(LookupError):
-        registry.history_problems(repository, base, head, full=False)
+        registry.history_problems(
+            repository, base, head, full=False, pull_request=True
+        )
 
 
 PR_STEPS = st.lists(
     st.sampled_from(
-        ["master", "own", "noop", "rewrite", "delete", "restore", "merge"]
+        [
+            "master",
+            "own",
+            "noop",
+            "rewrite",
+            "delete",
+            "restore",
+            "fork_side",
+            "land_side",
+            "merge",
+            "merge_side",
+            "merge_side_raw",
+        ]
     ),
-    max_size=7,
+    max_size=10,
 )
 
 
-@settings(max_examples=25, deadline=None)
+@settings(max_examples=30, deadline=None)
 @given(registered_first=st.booleans(), steps=PR_STEPS)
 def test_only_commits_that_remove_or_rewrite_entries_are_reported(
     tmp_path_factory, registered_first, steps
 ):
-    """Over generated graphs of master commits, own commits and master
-    merges, the pull request's own commits that are reported are exactly
-    those whose registry removes or rewrites an entry of its predecessor
-    (the last valid own registry, or the landed one a merge brings in)."""
+    """Over generated graphs of master commits, own commits, master
+    merges, and merges of other pull requests' branches after they land
+    (stale: they lack master's later growth, and, when forked before a
+    master merge, entries the pull request holds), the pull request's own
+    commits that are reported are exactly those whose registry removes,
+    reorders or rewrites an entry of its predecessor: the last valid own
+    registry, or, at a landed merge, every entry the pull request held
+    and the branch brings in, in master's order, then its own.
+
+    Each merge step first makes what it merges: master grows when the
+    pull request is not behind it, and a branch is forked or landed when
+    none waits. Entries are tracked as indices (own ones, master's from
+    100, other branches' from 200), so the expected registry is built
+    from master's order, independently of the module's comparison
+    code."""
     repository = init_repository(tmp_path_factory.mktemp("graph"))
-    landed = registered(["candidate"]) if registered_first else None
-    if landed is not None:
-        commit_registry(repository, landed, "registry")
+    start = registered(["candidate"]) if registered_first else None
+
+    def document(indices):
+        if start is None and not indices:
+            return None
+        return grown(start, *indices)
+
+    if start is not None:
+        commit_registry(repository, start, "registry")
     branch(repository, "pr")
-    valid, own, broken, behind, index = landed, [], False, False, 0
-    expected = set()
-    for step in steps:
-        index += 1
+    master_order, known, own = [], set(), []
+    pending, landed_sides = [], []
+    valid, broken, behind = start, False, False
+    expected, merges = set(), 0
+
+    def resolved() -> list[int]:
+        return [index for index in master_order if index in known] + own
+
+    def contained(name: str) -> bool:
+        found = subprocess.run(
+            ["git", "-C", str(repository), "merge-base", "--is-ancestor"]
+            + [name, "pr"],
+            capture_output=True,
+        )
+        return found.returncode == 0
+
+    def grow_master(index: int) -> None:
+        switch(repository, "master")
+        master_order.append(100 + index)
+        commit_registry(repository, document(master_order), "grows")
+        switch(repository, "pr")
+
+    def fork_side(index: int) -> None:
+        switch(repository, "master")
+        name = f"side{index}"
+        branch(repository, name)
+        indices = [*master_order, 200 + index]
+        commit_registry(repository, document(indices), "side adds")
+        pending.append((name, indices))
+        switch(repository, "pr")
+
+    def land_side() -> None:
+        name, indices = pending.pop(0)
+        switch(repository, "master")
+        master_order.append(indices[-1])
+        merge_with(repository, name, document(master_order))
+        landed_sides.append((name, indices))
+        switch(repository, "pr")
+
+    for index, step in enumerate(steps, start=1):
+        landed_sides = [s for s in landed_sides if not contained(s[0])]
         if step == "master":
-            switch(repository, "master")
-            landed = grown(landed, 100 + index)
-            commit_registry(repository, landed, "master grows")
-            switch(repository, "pr")
+            grow_master(index)
             behind = True
+            continue
+        if step == "fork_side":
+            fork_side(index)
+            continue
+        if step == "land_side":
+            if pending:
+                land_side()
+                behind = True
             continue
         if step == "rewrite" and valid is not None and valid["entries"]:
             rewritten = copy.deepcopy(valid)
@@ -1696,26 +2032,48 @@ def test_only_commits_that_remove_or_rewrite_entries_are_reported(
             commit = commit_all(repository, "delete")
             broken = True
         elif step == "own":
-            valid = grown(valid, index)
             own.append(index)
+            valid = document(resolved())
             commit = commit_registry(repository, valid, "own registration")
             broken = False
         elif step == "restore" and valid is not None:
             commit = commit_registry(repository, valid, "restore")
             broken = False
-        elif step == "merge" and behind:
-            valid = grown(landed, *own) if landed is not None else valid
+        elif step == "merge":
+            if not behind:
+                grow_master(index)
+            known = set(master_order)
+            valid = document(resolved())
             commit = merge_with(repository, "master", valid)
-            broken, behind = False, False
+            broken, behind, merges = False, False, merges + 1
+        elif step.startswith("merge_side"):
+            if not landed_sides:
+                if not pending:
+                    fork_side(index)
+                    grow_master(index)
+                land_side()
+                behind = True
+            name, indices = landed_sides.pop(0)
+            known |= set(indices)
+            valid = document(resolved())
+            if step == "merge_side":
+                commit = merge_with(repository, name, valid)
+                broken = False
+            else:
+                raw = [*indices, *own]
+                commit = merge_with(repository, name, document(raw))
+                broken = raw != resolved()
+            merges += 1
         else:
             commit = own_work(repository, f"note {index}")
         if broken:
             expected.add(commit[:12])
+    event(f"first-parent merges, up to 3: {min(merges, 3)}")
+    target(float(merges), label="first-parent merges")
     switch(repository, "master")
     base = head_of(repository)
     head = git(repository, "rev-parse", "pr").strip()
-    problems = registry.history_problems(repository, base, head, full=False)
-    assert reported(problems) == expected
+    assert reported(pr_problems(repository, base, head)) == expected
 
 
 def test_a_pull_request_head_is_read_from_its_event(tmp_path, monkeypatch):
