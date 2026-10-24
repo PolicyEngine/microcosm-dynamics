@@ -4,6 +4,9 @@ INVENTED DATA ONLY. ``invented_panel.py`` builds the panel from a seeded
 generator; no PSID file is read. The script builds the count script's
 registry and model, runs its audit at the fixed base, and prints the
 model's size, the audit's status and results, and its slowest targets.
+As ``main()`` does, it registers B0.1's sets, rebuilt from the same panel,
+at the counts B0.1's own script gives; ``--without-b0-1`` leaves them out,
+as the runs before review round 3's answer did.
 It wraps ``classify`` and ``AuditSystem.direction`` only to time them; the
 audit itself is unchanged.
 
@@ -11,7 +14,7 @@ Run from the repository root, with the thread settings the protocol uses::
 
     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE \\
     PYTHONPATH=src:. python docs/design/track_b_b0_2_evidence/calibrate.py \\
-        HOUSEHOLDS SEED
+        HOUSEHOLDS SEED [--without-b0-1]
 
 The output for the report is committed beside it as ``calibration.txt``.
 """
@@ -31,7 +34,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from invented_panel import invented_inputs  # noqa: E402
 
 
-def main(households: int, seed: int) -> None:
+def main(households: int, seed: int, with_b0_1: bool = True) -> None:
     started = time.monotonic()
     people, labor, anchor, design = invented_inputs(households, seed)
     validity = {
@@ -39,11 +42,18 @@ def main(households: int, seed: int) -> None:
     }
     counts = script.structural_counts(people, validity, anchor, design)
     registry = script.disclosure_registry(people, validity, anchor, design)
+    earlier = {}
+    if with_b0_1:
+        earlier = script.b0_1_sets(people, validity)
+        script.register_b0_1(
+            registry, earlier, script.b0_1_structural_counts(people, validity)
+        )
     model = script.build_model(registry)
     sensitive = sum(1 <= t["true_size"] < 10 for t in model["targets"])
     print(
         f"households={households} seed={seed} "
         f"persons/wave~{len(people) // 13} sets={len(registry.sets)} "
+        f"b0_1_sets={len(earlier)} "
         f"rows={model['matrix'].shape[0]} "
         f"atoms={dict(Counter(model['unit_types']))} "
         f"targets={len(model['targets'])} sensitive={sensitive} "
@@ -99,7 +109,17 @@ def main(households: int, seed: int) -> None:
         flush=True,
     )
     print("  slowest targets:", sorted(slow, reverse=True)[:5], flush=True)
+    withholding = [
+        (t["kind"], t["unit_type"], t["true_size"], t["earlier"])
+        for t in audit["targets"]
+        if t["result"] == "narrow" and 1 <= t["true_size"] < 10
+    ]
+    print("  narrow sensitive (kind, unit, size, earlier):", withholding)
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]), int(sys.argv[2]))
+    main(
+        int(sys.argv[1]),
+        int(sys.argv[2]),
+        with_b0_1="--without-b0-1" not in sys.argv[3:],
+    )

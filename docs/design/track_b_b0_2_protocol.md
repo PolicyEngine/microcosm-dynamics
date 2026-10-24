@@ -56,6 +56,26 @@ tests, guarantee a range of width at least 4. The evidence for the
 revision (an enumeration oracle, searches, an invented-panel calibration
 and the mutation runner) is in `docs/design/track_b_b0_2_evidence/`.
 
+Review round 3 (Sol, at `2d0ed992`) asked for changes, and the block was
+revised before any freeze:
+- **B0.1's counts:** B0.1 had already published exact counts of the same
+  persons, which the audit did not model. Two executed tables used them:
+  - with 97 invented B2 heads, B0.1's exact count of those aged 45-64,
+    against this release's 45-61 band published as 100 (95 to 104), left
+    the 62-64 band one or two;
+  - a five-head table, both bands under 10, left the 62-64 band one to
+    four.
+
+  B0.1's sets are now rebuilt in memory by its own rules and enter the
+  audit at their exact counts, after a rerun of B0.1's script on the same
+  inputs must reproduce its record. This required an exception to the
+  rule against counting dispositions: B0.1's disposition sets are among
+  them. Nothing derived from them beyond B0.1's own counts is written.
+- **An emptied pool:** disclosures could rule out every pool point,
+  leaving nothing to classify against. An empty pool now makes its
+  target narrow, the seed programs run again under the disclosures, and
+  the release is withheld if they find nothing.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -91,7 +111,10 @@ ruling on it.
 - read any marital, marriage-history, death, disability,
   employment-status, Social Security, wealth or other income variable;
 - count dispositions that separate death from attrition, or any
-  transition;
+  transition. The one exception is B0.1's published sets, its disposition
+  sets among them. They are rebuilt in memory, by B0.1's own rules, only
+  to constrain the audit (Disclosure rule). Nothing derived from them
+  beyond B0.1's own counts is written to either file;
 - compute any planning value, power probability, model fit, projection,
   floor, gap or candidate outcome.
 
@@ -126,6 +149,13 @@ joint state, recipient or payment value is computed.
    `family.read_family_labor` with its label verification, then reduced
    at once by B0.1's `validity_frame`
    (`scripts/track_b_b0_1_counts.py`), which is imported unchanged.
+
+6. **B0.1's committed counts,** `docs/design/track_b_b0_1_counts.json`.
+   They are public and exact, so they constrain the audit (Disclosure
+   rule). The script reruns B0.1's `structural_counts`
+   (`scripts/track_b_b0_1_counts.py`) on its own inputs and stops unless
+   the result equals the committed counts exactly. Each ledger count B0.1
+   copied must equal the B0.1 count it repeats.
 
 No other file or variable is opened. The script records the label of
 every variable it requests, and a test pins that list as an allowlist.
@@ -171,8 +201,8 @@ stay byte-identical.
     weight at 2011. This is B0.1's full anchor.
   - `R_B2`: B2's domain, `R_FULL` persons with a valid 2010-reference row
     (`b2.domain_person_ids`). The script asserts that its size equals
-    B0.1's committed count (`docs/design/track_b_b0_1_counts.json`);
-    this is a consistency check only.
+    B0.1's committed count (`docs/design/track_b_b0_1_counts.json`).
+    B0.1's counts also constrain the audit (Inputs, item 6).
   - `R_TA_PROXY`: persons present at 2011 with a positive 2011
     cross-sectional weight and a known 2011 age of 30 or over.
     - It is a proxy for Track A's closed cohort (persons born in 1980 or
@@ -266,18 +296,35 @@ rules.
   - For each unit type, the atoms are the classes of units that belong
     to exactly the same published sets. Every published count is a sum
     of atom sizes.
-  - The targets are every atom, and every difference between a published
-    set and a published proper subset of it of the same unit type,
-    whatever their true sizes. Examples of differences are a roster's
-    persons in no band, and `R_FULL` persons in B2 households who are not
-    in `R_B2`. A target is sensitive when its true size is from 1 to 9.
-  - Sets and atoms stay in memory, and their sizes stay in the local
-    copy. Neither is committed.
+  - B0.1's published counts are sets too, each counted exactly (below).
+    They refine the atoms.
+  - The targets are this release's, whatever their true sizes:
+    - each class of units that belong to exactly the same sets of this
+      release (a union of atoms);
+    - every difference between a published set and a published proper
+      subset of it of the same unit type, unless B0.1 published both,
+      which fixes the difference already.
+
+    Examples of differences are a roster's persons in no band, and
+    `R_FULL` persons in B2 households who are not in `R_B2`. A target is
+    sensitive when its true size is from 1 to 9.
+  - Sets and atoms stay in memory. Neither is committed, and the local
+    copy holds only what its item below names.
 - **What a reader can use.** The audit works over nonnegative integer
   atom sizes, subject to:
   - **published counts:** each published value confines its set's count
     to exactly the integers that coarsen to it: 0 for 0; 1 to B − 1 for
     `"<B"`; max(B, m − B/2) to m + B/2 − 1 for a multiple m;
+  - **B0.1's counts:** each count B0.1 publishes is the size of a set,
+    which the script rebuilds by B0.1's rules from the same inputs, and
+    that set's count is fixed at its published value.
+    - B0.1's other counts must follow from these, and the script checks
+      that they do: its sums (a total of scored rows, a pooled level
+      cell's rows, a change-pair count of rows), its effective sizes and
+      its wave labels.
+    - The M6 fit's input-row count, which B0.1 copied from the ledgers,
+      is not modeled: it counts every reference year to 2010, which no set
+      here counts;
   - **effective sizes:** an effective size never exceeds the count of
     units, or clusters, it is computed over, and a positive one needs at
     least one. So a published effective size e bounds a count from
@@ -324,6 +371,10 @@ rules.
     ±1 per atom, drawn from a seeded generator (seed 20261024). Each
     accepts the first integer point found. Every verified point is kept,
     and so is every point a later search finds.
+  - **An empty pool** sets no window, so a target classified with it is
+    narrow. When a round's disclosures rule out every pool point, the
+    nine seed programs run again under them; if none finds a point,
+    nothing can be shown wide, and the release is withheld.
   - **Per target, in the registry's fixed order:** wide at once if the
     pool's points give it sizes 4 apart. Otherwise, if the pool's least
     value is 10 or more, a continuous relaxation whose minimum exceeds
@@ -369,6 +420,13 @@ rules.
     unknown-age cells, are published sets.
   - Relations across unit types are those listed. Others a reader might
     know, such as how many clusters each stratum has, are not modeled.
+  - The one earlier release modeled is B0.1's counts. Under B0.1 §15.4
+    this audit may not open the other committed files that count the same
+    persons, so their counts enter only through the copies B0.1 made of
+    them, its ledger-support fields. Any other committed count over these
+    persons is not modeled. The exposure inventory names the committed
+    runs. A count found later to constrain these sets needs a new
+    protocol version.
   - An unanswered program counts against release, so machine speed can
     withhold a release or add a disclosure, but never weaken one. Time
     limits are the one input to a program's answer that the publication
@@ -383,9 +441,18 @@ rules.
   record and the disclosure block, and no counts. The counts stay in the
   local copy. A later attempt is a new protocol version, ruled on before
   it runs, and must treat this version's withheld status as public.
-- **Local copy.** The unsuppressed counts, the atom sizes and the audit's
-  targets, classifications, rounds and times are written to a second
-  file, outside the repository, in B0.2's evidence folder. That file is
+- **Local copy.** A second file, outside the repository, in B0.2's
+  evidence folder, holds:
+  - the unsuppressed counts;
+  - the sizes of this release's classes;
+  - the audit's targets that involve only this release's sets, with their
+    classifications;
+  - the rounds and the times.
+
+  Targets that involve a set only B0.1 counts are audited but not
+  written, nor are their places in the rounds or any target's atoms:
+  B0.1's sets refine the atoms, and their nesting and sizes would add to
+  what B0.1 published. The number of rounds is written. That file is
   never committed.
 - **Tests.** Unit tests check coarsening and the audit on invented
   tables. They include each attack reviews of this protocol executed:
@@ -410,7 +477,23 @@ rules.
   - **that relations are structure:** each is registered only when its
     rows guarantee it, and a violated one stops the script;
   - **the output writes:** an interrupted or failed write leaves no
-    partial file under a final name.
+    partial file under a final name;
+  - **B0.1's sets:**
+    - each rebuilt set's size is the count B0.1's own script publishes,
+      checked on invented frames and on a hand-counted example;
+    - the record check stops on a count these inputs do not give, a count
+      nothing models, a failed sum, a changed ledger copy, and a modeled
+      set B0.1 never published;
+  - **B0.1's counts in the audit:**
+    - the exhaustive reader with earlier exact counts;
+    - review round 3's executed attacks (97 and 5 heads), which now
+      withhold through `main()` with identical committed files;
+    - a small B0.1 cell that is a B0.2 set withholds;
+    - programs that depend only on the publications;
+    - a local copy that is the same for every split of a B0.2 class by a
+      B0.1 set of the same count;
+  - **an emptied pool:** disclosures that empty it reseed it, and an empty
+    reseeding withholds while `main()` still writes both files.
 
 The threshold of 10, the protection width of 4 and the base of 10 are
 version 1's. If Max or the coordinator sets others before the freeze,
