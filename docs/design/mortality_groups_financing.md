@@ -10,7 +10,9 @@ sections 11 and 13. Revision 1 applied the round-1 review's fifteen
 findings (section 12); revision 2 applies the round-2 review's four
 findings (section 13). An erratum of 24 October 2026 updates section
 3.5's two citations of the coordinator's forecast and changes no
-estimate.*
+estimate. A second erratum of the same day corrects two of section 6's
+invariants for F1, which fail by intent under the signed split, and
+changes no estimate.*
 
 - **Status.** Approved. This document sets milestones, gates and prices
   for one lane of the DYNASIM-parity plan. Max authorized the lane on
@@ -705,9 +707,32 @@ violations are labeled.
   the public writer refuses any artifact holding an unsuppressed small
   cell.
 - **Income tax on benefits (F1)**
-  - OASDI + HI = total, exactly when no zero floor binds, and reported
-    otherwise; both parts are nonnegative; zero benefits give zero.
-  - Total revenue is nondecreasing in benefits with other income fixed.
+  - OASDI + HI = total, exactly. PolicyEngine-US 2.61.0, F1's pin, splits
+    the revenue with signs and no zero floor.
+  - Zero benefits give zero. The OASDI part is zero when the §86(a)(1)
+    inclusion is zero, and the HI part is zero when that inclusion equals
+    current inclusion. The §86(a)(1) inclusion lies between zero and
+    current inclusion.
+  - **Intended departures (erratum, 24 October 2026).** Revision 2 also
+    required both parts to be nonnegative and total revenue to be
+    nondecreasing in benefits with other income fixed. Neither holds
+    under the signed split, and that is intended. The statute
+    appropriates the aggregate increase in Chapter 1 liabilities.
+    Treasury's Office of Tax Analysis notes that including benefits in
+    AGI changes the use of deductions and credits, and that "these
+    effects can be in opposite directions" (*Taxation of Social Security
+    and Railroad Retirement Benefits*, 1998, p. 3).
+    - **Minimized counterexample.** PolicyEngine-US's own single-itemizer
+      test case (`tob_revenue_oasdi.yaml`), aged 67 in 2024, with other
+      income fixed. As benefits rise from $0 to $250, $500, $1,000 and
+      $2,000, the total moves from $0.00 to −$7.44, −$14.88, −$29.75 and
+      −$59.50 under PolicyEngine-US 2.61.0. The test's worked arithmetic
+      for the $1,000 case shows why. More inclusion raises AGI, so the
+      binding 60% limit on cash gifts (§170(b)(1)(G)) allows a larger
+      deduction, and the §22 credit for the elderly rises as nontaxable
+      benefits fall. Together they outweigh the added tax.
+    - **Tests.** F1's tests assert those signed values, labeled intended,
+      in place of the two invariants.
   - The OASDI part equals the tax with taxable benefits set to the
     §86(a)(1) amount minus the tax with none, if F1's worked examples
     confirm that reading.
