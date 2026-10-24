@@ -2,11 +2,11 @@
 
 Specification sections 14 and 20.  This is the only entry point that
 would compute the U2 statistic on real data.  It is built but not
-authorized: the specification is ``u2-draft-4`` (not ratified; Max has
-ruled on section 16a's amendments, d637 and d1090) and the
-pre-registration evidence record does not exist, so its preflight
-refuses (items 4 and 8) before any PSID file is opened.  :func:`preflight`
-verifies, in order:
+authorized: the specification is ``u2-ratified-1`` (section 20 steps 5
+and 6), but the pre-registration evidence record is not committed and no
+issue #42 registration binds a run, so its preflight refuses (items 8
+and 9) before any PSID file is opened.  :func:`preflight` verifies, in
+order:
 
 1. the registration pointer is an issue #42 comment URL;
 2. ``--registered-commit`` is a full SHA equal to ``HEAD`` and the
@@ -22,7 +22,12 @@ verifies, in order:
    value anywhere;
 5. its rows equal :data:`~populace_dynamics.uniform_cut_track_u2.rows.
    REGISTERED_ROWS` with the fixed U0 headline, its ``decisions`` equal
-   U2's own rulings record (U1's are refused), and section 12's named
+   U2's own rulings record (U1's are refused), the rulings record agrees
+   with the code and the committed registries
+   (:func:`~populace_dynamics.uniform_cut_track_u2.rows.
+   check_rulings_against_code`), the whole block equals the code in every
+   key and value (:func:`~populace_dynamics.uniform_cut_track_u2.rows.
+   check_block_against_code`; section 20 step 5), and section 12's named
    deltas equal the code's literal strings;
 6. row U1's observation plan (and so U0's) equals milestone 1's
    committed support registry, cell by cell;
@@ -288,6 +293,8 @@ def preflight(
     check_specification_ratified(block)
     row_check = rows.check_rows_against_block(block)
     ruling_check = rows.check_u2_rulings_against_block(block)
+    rulings_code_check = rows.check_rulings_against_code()
+    block_check = rows.check_block_against_code(block)
     delta_check = rows.check_named_deltas_against_specification()
     plan_check = cohort.check_plan_against_support_registry(
         sources.RegistrySet.committed()
@@ -317,6 +324,8 @@ def preflight(
         "binding_sha256": expected,
         "rows": row_check,
         "rulings": ruling_check,
+        "rulings_against_code": rulings_code_check,
+        "block_against_code": block_check,
         "named_deltas": delta_check,
         "plan": plan_check,
         "mapping_review": review,
