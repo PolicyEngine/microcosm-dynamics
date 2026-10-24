@@ -47,7 +47,7 @@
     {
       "id": "gate_w1",
       "name": "Representative-frame transport",
-      "tests": "The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cross-sectional cells plus SSA administrative margins.",
+      "tests": "The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cells (43 cross-sectional joint cells plus one compression-swap check); SSA administrative margins are report-only.",
       "locked": "2026-07-12",
       "candidates": 4,
       "first_pass": "Candidate 4 (2026-07-13): 43/43 cells in-band on 5/5 seeds — after 3 failing candidates."
@@ -55,7 +55,7 @@
     {
       "id": "gate_m6",
       "name": "Temporal-holdout projection drift",
-      "tests": "The projection engine fits on data through 2014 only, then projects and is scored on the held-out 2015–2022 window — a genuine out-of-time test.",
+      "tests": "The engine fits its parameters on data through 2014 and gates 2015–2019 flows and 2016 and 2018 earnings; 2020–2022 is a diagnostic. The holdout also informed the choice of the gated surface and the forward earnings law's structure, and the gate certifies nothing about mortality drift.",
       "locked": "2026-07-13",
       "candidates": 3,
       "first_pass": "Candidate 3 (2026-07-24): 4/5 seeds across the 11 gated cells."
@@ -94,9 +94,9 @@
       },
       {
         "name": "DYNASIM output comparisons",
-        "status": "not yet",
-        "detail": "No quantitative DYNASIM-output rows exist yet; today's DYNASIM comparison is the capability table below. Quantitative rows begin at the projection and benefit stages.",
-        "href": null
+        "status": "four blind comparisons",
+        "detail": "Four blind tests compare a reform's effect in the model with DYNASIM3's published figures (exercises 1–4; their model artifacts are under runs/). Each gap measures a disagreement between two models; none involves DYNASIM4, and none establishes that the model matches either version.",
+        "href": "https://microcosm.institute/dynamics/paper"
       }
     ]
   },
