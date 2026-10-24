@@ -1,0 +1,16 @@
+[
+  {
+    "table": "poms_si_01415_1999_district_of_columbia_individual_t10",
+    "date_options": {
+      "source_date_1": "1998-08-01",
+      "source_date_2": "1999-01-01"
+    }
+  },
+  {
+    "table": "poms_si_01415_1999_district_of_columbia_couple_t11",
+    "date_options": {
+      "source_date_1": "1998-08-01",
+      "source_date_2": "1999-01-01"
+    }
+  }
+]
