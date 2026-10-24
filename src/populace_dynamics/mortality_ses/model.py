@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from dataclasses import dataclass, field
 from typing import ClassVar, Protocol
 
@@ -77,6 +78,8 @@ class DifferentialMortality:
     This model deliberately exposes no ``probabilities`` attribute: the DI
     adapter dispatches that attribute without a context or a projection year.
     ``evaluate`` additionally returns the pure normalizer's cell accounting.
+    The adapter keeps only probabilities, so ``cell_log``, when given,
+    receives each ``__call__``'s cell accounting keyed by projection year.
     """
 
     baseline: YearAwareMortality
@@ -84,6 +87,9 @@ class DifferentialMortality:
     weight_column: str | None = field(kw_only=True)
     di_configuration: DIEntitlementRates | DIEntitlementSpec | None = field(
         default=None, kw_only=True
+    )
+    cell_log: MutableMapping[int, pd.DataFrame] | None = field(
+        default=None, kw_only=True, compare=False, repr=False
     )
     bands: ClassVar[tuple[tuple[int, int], ...]] = SINGLE_YEAR_AGE_BANDS
 
@@ -110,6 +116,10 @@ class DifferentialMortality:
             self.di_configuration, (DIEntitlementRates, DIEntitlementSpec)
         ):
             raise TypeError("di_configuration must be DI rates or their spec")
+        if self.cell_log is not None and not isinstance(
+            self.cell_log, MutableMapping
+        ):
+            raise TypeError("cell_log must be a mutable mapping or None")
 
     def _fixed_rows(self, frame: pd.DataFrame) -> np.ndarray:
         columns = {"di_entitled", "di_conversion_year"}
@@ -214,4 +224,7 @@ class DifferentialMortality:
     def __call__(
         self, frame: pd.DataFrame, context: PeriodContext
     ) -> np.ndarray:
-        return self.evaluate(frame, context)[0]
+        probabilities, cells = self.evaluate(frame, context)
+        if self.cell_log is not None:
+            self.cell_log[int(context.year)] = cells
+        return probabilities

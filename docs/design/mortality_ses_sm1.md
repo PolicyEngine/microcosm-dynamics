@@ -40,13 +40,15 @@ All public objects are exported from `populace_dynamics.mortality_ses`.
   returns `(probabilities, cell_log)`. Inputs are matching row vectors;
   cell IDs are `(year, sex, age)` triples. Weights are finite and
   nonnegative; zero-weight rows use the same factor but cannot determine
-  it, and a cell whose positive-q free rows all weigh zero sets its
-  factor with unit weights (see "Normalization and tolerance"). Inputs
-  are never mutated.
+  it. A feasible cell whose positive-q free rows all weigh zero sets its
+  factor with unit weights and logs that basis (see "Normalization and
+  tolerance"). Inputs are never mutated.
 - `DifferentialMortality(baseline, specification, *, weight_column,
-  di_configuration=None)` exposes single-year `bands` and
+  di_configuration=None, cell_log=None)` exposes single-year `bands` and
   `__call__(frame, context) -> ndarray`. `evaluate(frame, context)` also
-  returns its cell log. `weight_column=None` explicitly means equal
+  returns its cell log. The DI adapter keeps only probabilities, so a
+  `cell_log` mapping, when given, receives each call's cell log keyed by
+  projection year. `weight_column=None` explicitly means equal
   person weights. The baseline must be callable with context, have
   single-year bands, and have no `probabilities` attribute. Neither does
   the new model: the DI adapter would otherwise call it without the year.
@@ -100,42 +102,85 @@ rows. Fixed deaths above the target make the cell infeasible and give
 all free rows zero. Arbitrary fixed probabilities can also leave a target
 above free positive-q support; the normalizer saturates that support and
 flags infeasibility. Neither case can arise with fixed rows at baseline q.
-Both rules apply when that support carries weight; the weightless case
-follows.
+Both rules hold whatever the free rows' weights.
+
+When the target exactly fills the weighted support, any factor that caps
+every weighted row conserves the cell. The normalizer takes the smallest,
+which is the limit of the capping loop's factor as the target rises to
+capacity, so zero-weight rows are not pushed to one. With fixed rows at
+baseline and one free risk, that factor returns the baseline q.
 
 Weights decide the factor only when they can. If every free row with
-positive baseline q has zero weight, no factor changes the cell's weighted
-deaths, so the weighted target says nothing about it. The cell then sets
-the factor as if each person had weight one: its free rows' unweighted
-expected deaths equal their unweighted baseline total, and they keep their
-relative risks. A factor of zero would instead make those persons
-immortal. With unit risks the rule reproduces the DI adapter, which leaves
-the factor at one when the other rows carry no expected deaths. If the
-weighted target is nonzero in such a cell, because fixed probabilities
-differ from baseline, no allocation conserves it: the cell is still
-flagged infeasible and the residual records the gap. On the model's path
-the fixed rows sit at baseline, so the target is zero and the cell is
-feasible.
+positive baseline q has zero weight and the weighted target is zero, every
+factor conserves the cell's weighted deaths, so the weights say nothing
+about it. The cell then sets the factor as if each person had weight one:
+its free rows' unweighted expected deaths equal their unweighted baseline
+total, and they keep their relative risks. A factor of zero would instead
+make those persons immortal. The log marks such a cell with
+`normalization_basis = "persons"` and reports that unweighted total as
+`persons_target`; every other cell has basis `"weights"` and a missing
+persons target. On the model's path the fixed rows sit at baseline, so a
+weightless cell's target is zero and the rule applies. With fixed rows at
+baseline the cell gets the probabilities it would get if every weight
+were one.
+
+Unit weights apply only where the weighted target is zero. When it is
+not, because fixed probabilities differ from baseline, the cell is
+infeasible and follows the rules above. Those rules are the unique limit
+as the free support's weight shrinks to zero: a negative target gives
+zero at every small weight, and a positive one saturates the support. A
+zero target has no unique limit, since the factor then depends on how the
+vanishing weights compare. The unit-weight rule chooses equal weights.
+
+Zero weights can reach a projection frame:
+- persons take their household's weight (`data/deployment_frame.py`), so
+  a zero household weight reaches every member;
+- children take their parent's weight (`engine/steps.py`);
+- the projection loop passes the whole frame to the mortality module
+  (`engine/loop.py`);
+- population accounting treats zero-weight rows as ordinary persons and
+  never drops them (`engine/accounting.py`).
+
+A weighted gate such as SM3 cannot see these rows' probabilities, so
+passing it does not validate the rule; the `normalization_basis` column
+shows where it applied.
 
 The exact baseline path bypasses multiply/divide rounding for unit risks
 and for a common free-row risk with fixed rows at baseline. Stable sums
-reduce order sensitivity; Decimal arithmetic handles extreme magnitudes
-that would underflow or overflow ordinary products. Probabilities returned
-are float64; the log accounts for those returned values.
+reduce order sensitivity. The Decimal path (precision 2,400 digits)
+handles extreme magnitudes that would underflow or overflow ordinary
+products. The float path also hands the Decimal path every decision it
+cannot make reliably:
+- a target within 1e-3 of the free capacity, relative to that capacity;
+- a target formed by subtracting fixed deaths that is within 1e-3 of zero,
+  relative to the larger total;
+- a capping round that leaves less than 1e-3 of the target;
+- a feasible result that misses conservation by more than 1e-12,
+  relative to the cell's expected deaths.
 
-The cell log contains year, sex, age, persons, fixed persons, total weight,
-fixed weight, baseline expected deaths, applied expected deaths, factor,
-clipped persons, signed clipping residual and infeasibility, plus the
-unclassified counts. `clipping_residual = baseline - applied`. In a
-feasible cell without capping it is explicitly zero; ordinary rounding
-is handled by the tolerance, rather than labeled a clipping loss.
+Float reductions err by a few units of 2^-52, so above that margin the
+error moves the factor by less than the 1e-12 accounting tolerance.
+Probabilities returned are float64; the log accounts for those returned
+values.
+
+The cell log contains year, sex, age, persons, fixed persons, total
+weight, fixed weight, baseline expected deaths, applied expected deaths,
+factor, clipped persons, signed clipping residual, infeasibility,
+normalization basis and persons target, plus the unclassified counts.
+`clipping_residual = baseline - applied`. It is nonzero only on
+infeasible cells: iterative capping conserves every feasible cell, and the
+float path verifies that rather than assuming it.
 
 Conservation checks use `rtol=1e-12, atol=1e-12` in expected-death units.
 This allows float64 product, summation and multiply/divide roundoff and
 the existing adapter's separate reductions; it is an accounting tolerance,
 not an empirical admission threshold. Identity checks use exact array
 equality. Permutation checks are exact where supported by stable sums;
-weight scaling and adapter comparisons use the stated tolerance.
+weight scaling and adapter comparisons use the stated tolerance. An
+independent exact oracle in the tests, in rational arithmetic, finds the
+capped rows by searching over how many rows cap rather than by iterating.
+The normalizer must match it to `rtol=1e-9, atol=1e-15` on cells across
+float magnitudes, near-one q and arbitrary fixed probabilities.
 
 Intended monotonicity applies among free rows with the same baseline q in
 a cell, holding other dimensions constant. This is the setting supplied
@@ -148,8 +193,14 @@ fall short of the target; its residual is computed from
 `expected_deaths_population_model - expected_deaths_applied` in its
 existing cell log. The SM1 log describes normalization before that step.
 Tests label the normalizer's iterative redistribution versus the
-adapter's one-pass clipping as an intended difference. No shared-module
-change is required.
+adapter's one-pass clipping as an intended difference. A second intended
+difference: in an infeasible cell whose free support weighs nothing, the
+adapter leaves the factor at one, while the rules above zero or saturate
+those rows. No shared-module change is required.
+
+At the scale of a projection frame (1,000,000 invented rows in 242
+cells), `evaluate` takes about 1.3 seconds on the build host, and the
+normalizer alone takes 0.4–0.6 seconds.
 
 ## Design and build traceability
 
@@ -178,16 +229,19 @@ before being characterized as a mechanism defect.
 
 | Invariant | Implementation | Example and property coverage |
 |---|---|---|
-| Cell conservation and zero uncapped residual | Iterative cap in `normalizer.py` | `test_invented_uncapped_cell_conserves_and_logs_counts`, `test_cell_conservation_bounds_and_baseline_fixed_feasibility` |
+| Cell conservation; residual nonzero only when infeasible | Iterative cap and the float path's conservation check in `normalizer.py` | `test_invented_uncapped_cell_conserves_and_logs_counts`, `test_cell_conservation_bounds_and_baseline_fixed_feasibility`, `test_normalizer_matches_an_exact_oracle_across_magnitudes`, `test_cascading_caps_match_the_oracle`; `assert_conserved` requires conservation outright on feasible cells |
 | Feasibility with baseline fixed q; arbitrary excess flagged | Fixed target calculation | `test_fixed_deaths_above_invented_target_are_infeasible`, `test_fixed_deaths_above_target_are_flagged`, baseline-fixed property |
 | Unit-risk bit identity | Exact common-risk baseline path | `test_equal_risks_preserve_baseline_bits_with_fixed_baseline_rows`, `test_identity_is_bit_for_bit_and_normalizer_is_deterministic` |
 | Same deaths with/without registry, ordinary and DI steps | `step.py` and context-only wrapper | `test_identity_probabilities_and_step_deaths`, `test_di_adapter_identity`, corresponding generated death-identity properties |
 | Bounds | Capping and input validation | Conservation/bounds property and extreme-risk examples |
-| DI composition, ratios and baseline origin q | Fixed origin in `model.py`, existing adapter | Composition examples and `test_composition_conserves_cells_preserves_ratios_and_fixes_di_q` |
+| DI composition, ratios and baseline origin q | Fixed origin in `model.py`, existing adapter | Composition examples, `test_composition_conserves_cells_preserves_ratios_and_fixes_di_q`, and, with unequal weights, clipping in both steps and the retained model log, `test_composition_with_unequal_weights_keeps_every_accounting_link` and `test_composition_accounts_for_clipping_in_both_steps` |
 | Intended monotonicity by earnings and education | Positive cell factor, log-additive risks | `test_ordered_earnings_and_education_risks_preserve_probability_order` |
 | Row/weight invariance and one-risk cells | Stable reductions, exact common-risk path | Permutation/scaling examples and properties; `test_one_free_risk_group_returns_baseline_probability` |
-| Weightless free support: unit-weight factor, never factor zero | Unit-weight allocation in both arithmetic paths of `normalizer.py` | `test_weightless_support_counts_persons_equally`, `test_weightless_support_uses_unit_weights_on_the_decimal_path`, `test_weightless_free_rows_in_infeasible_cells_keep_unit_weights`, `test_weightless_cells_count_persons_equally`, `test_model_gives_weightless_cells_their_unit_weight_probabilities`; the normalizer properties draw zero weights |
-| Differential adapter arithmetic; intended clipping difference | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended capping divergence |
+| Weightless free support with a zero target: unit-weight factor, logged as basis `persons` | Unit-weight allocation in both arithmetic paths of `normalizer.py`; `normalization_basis` and `persons_target` log columns; the model's optional `cell_log` | `test_weightless_support_counts_persons_equally`, `test_weightless_support_uses_unit_weights_on_the_decimal_path`, `test_weightless_cells_count_persons_equally`, `test_weightless_cells_take_the_vanishing_weight_limit`, `test_model_gives_weightless_cells_their_unit_weight_probabilities`; the normalizer properties draw zero weights |
+| Infeasible weightless cells follow the weighted rules (the vanishing-weight limit) | Infeasibility decided before the unit-weight rule | `test_fixed_excess_zeroes_weightless_free_rows_on_both_paths`, `test_fixed_shortfall_saturates_weightless_support_on_both_paths`, `test_weightless_infeasible_cells_follow_the_weighted_rules`, `test_weightless_cells_take_the_vanishing_weight_limit` |
+| Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`; the oracle property's examples |
+| A target that exactly fills the weighted support takes the smallest capping factor | The Decimal path's tie branch | The oracle property's two tie examples |
+| Differential adapter arithmetic; intended clipping and weightless-infeasible differences | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended divergences |
 | Time path and alternative path isolation | Path protocol and hold-last default | `test_pluggable_path_changes_only_named_year`, generated hold-last/refusal property |
 | Determinism and no RNG consumption | Pure `evaluate` | Repeated-call examples, generator state and patched-generator property |
 | Refusals | Specification, frame and interface validation | Nonfinite/nonpositive risks, missing columns, unknown/unclassified values, age mismatch and `probabilities` attribute examples and properties |

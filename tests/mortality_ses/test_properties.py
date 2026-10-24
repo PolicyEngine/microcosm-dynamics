@@ -10,12 +10,13 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import replace
+from fractions import Fraction
 from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.baselines.base import BaselineYearAwareMortality
@@ -47,6 +48,9 @@ from populace_dynamics.mortality_ses.step import apply_differential_mortality
 
 RTOL = ATOL = 1e-12
 PROPERTY = settings(max_examples=35, deadline=None)
+# The exact oracle is cheap on these small cells and is the main check
+# of the arithmetic, so it gets more examples.
+ORACLE_PROPERTY = settings(max_examples=150, deadline=None)
 REF = "invented_ref"
 OTHER = "invented_other"
 UNCLASSIFIED = "invented_unclassified"
@@ -157,6 +161,7 @@ def invented_rates(*, multiplier=1.5, post_conversion="di_origin"):
 
 
 def assert_conserved(q, base, cells, weights, log):
+    """Feasible cells conserve outright; only infeasible ones log a gap."""
     for row in log.itertuples(index=False):
         mask = np.asarray(
             [cell == (row.year, row.sex, row.age) for cell in cells]
@@ -172,8 +177,233 @@ def assert_conserved(q, base, cells, weights, log):
         assert row.applied_expected_deaths == pytest.approx(
             applied, rel=RTOL, abs=ATOL
         )
-        if not row.clipped_persons and not row.infeasible:
+        if not row.infeasible:
             assert row.clipping_residual == 0
+            assert applied == pytest.approx(target, rel=RTOL, abs=ATOL)
+
+
+def exact_cell(base, risk, fixed, prescribed, weights):
+    """An independent exact reading of the normalization rule.
+
+    It uses rational arithmetic and finds the capped rows by trying each
+    count of largest-q*RR rows in turn, rather than iterating the factor
+    as the normalizer does.  Returns probabilities, the infeasible flag
+    and the normalization basis.
+    """
+    b, r, p, w = (
+        [Fraction(float(x)) for x in values]
+        for values in (base, risk, prescribed, weights)
+    )
+    rows = range(len(b))
+    free = [i for i in rows if not fixed[i]]
+    q = [p[i] if fixed[i] else Fraction(0) for i in rows]
+    target = sum((w[i] * b[i] for i in rows), Fraction(0)) - sum(
+        (w[i] * p[i] for i in rows if fixed[i]), Fraction(0)
+    )
+    support = [i for i in free if b[i] > 0]
+    allocation, basis = w, "weights"
+    if target == 0 and support and not any(w[i] for i in support):
+        allocation, basis = [Fraction(1)] * len(b), "persons"
+        target = sum(b[i] for i in support)
+    capacity = sum((allocation[i] for i in support), Fraction(0))
+    if target <= 0:
+        return [float(x) for x in q], target < 0, basis
+    if target > capacity:
+        for i in support:
+            q[i] = Fraction(1)
+        return [float(x) for x in q], True, basis
+    raw = [b[i] * r[i] for i in rows]
+    if target == capacity:
+        # Every weighted row must reach one; zero-allocation rows take the
+        # smallest factor that does that.
+        factor = max(1 / raw[i] for i in support if allocation[i] > 0)
+        for i in free:
+            q[i] = min(Fraction(1), raw[i] * factor)
+        return [float(x) for x in q], False, basis
+    ranked = sorted(
+        (i for i in support if allocation[i] > 0),
+        key=lambda i: raw[i],
+        reverse=True,
+    )
+    for count in range(len(ranked)):
+        top, rest = ranked[:count], ranked[count:]
+        factor = (target - sum(allocation[i] for i in top)) / sum(
+            allocation[i] * raw[i] for i in rest
+        )
+        if all(raw[i] * factor <= 1 for i in rest):
+            break
+    else:  # pragma: no cover - a target below capacity always stops
+        raise AssertionError("no capped set satisfies the cell")
+    for i in free:
+        q[i] = min(Fraction(1), raw[i] * factor)
+    return [float(x) for x in q], False, basis
+
+
+def wide(low, high):
+    """Invented magnitudes spread evenly in log10 between the bounds."""
+    return st.floats(low, high).map(lambda exponent: 10.0**exponent)
+
+
+@st.composite
+def invented_wide_cells(draw):
+    """Cells across float magnitudes, near-one q and arbitrary fixed q."""
+    size = draw(st.integers(1, 9))
+    rows = dict(min_size=size, max_size=size)
+    base = draw(
+        st.lists(
+            st.one_of(
+                st.sampled_from((0.0, 1.0)), PROBABILITY, st.floats(0.9, 1)
+            ),
+            **rows,
+        )
+    )
+    risk = draw(
+        st.lists(
+            st.one_of(wide(-30, 30), st.sampled_from((1e-100, 1e100))),
+            **rows,
+        )
+    )
+    weights = draw(st.lists(st.one_of(st.just(0.0), wide(-8, 16)), **rows))
+    fixed = draw(st.lists(st.booleans(), **rows))
+    prescribed = list(base)
+    if draw(st.booleans()):
+        prescribed = [
+            draw(PROBABILITY) if is_fixed else q
+            for q, is_fixed in zip(base, fixed, strict=True)
+        ]
+    return tuple(
+        np.asarray(values, dtype=dtype)
+        for values, dtype in (
+            (base, float),
+            (risk, float),
+            (fixed, bool),
+            (prescribed, float),
+            (weights, float),
+        )
+    )
+
+
+@ORACLE_PROPERTY
+@given(invented_wide_cells())
+@example(  # Float roundoff once emptied the remaining target here.
+    (
+        np.array([0.5, 0.5, 0.5]),
+        np.array([20, 1, 1e-25]),
+        np.zeros(3, dtype=bool),
+        np.array([0.5, 0.5, 0.5]),
+        np.array([1, 0.1, 1.1]),
+    )
+)
+@example(  # A rounded target-capacity tie once saturated both rows.
+    (
+        np.array([1, 0.5]),
+        np.array([1, 1e-20]),
+        np.zeros(2, dtype=bool),
+        np.array([1, 0.5]),
+        np.array([1e16, 1]),
+    )
+)
+@example(  # An exactly filled weighted support beside weightless rows.
+    (
+        np.array([1, 2.2691957742722138e-77, 1, 1, 0.05303249588052529]),
+        np.array(
+            [1e30, 4.0259657179840314e17, 4.0259657179840314e17, 1e30, 1e30]
+        ),
+        np.array([False, True, True, False, False]),
+        np.array([1, 2.2691957742722138e-77, 1, 1, 0.05303249588052529]),
+        np.array([0, 0, 131.91017397114445, 1.000000137244776, 0]),
+    )
+)
+@example(  # The same tie with unequal risks, on the Decimal path.
+    (
+        np.array([1, 0.5, 0.2]),
+        np.array([1, 3, 2]),
+        np.zeros(3, dtype=bool),
+        np.array([1, 0.5, 0.2]),
+        np.array([2, 0, 0]),
+    )
+)
+@example(  # Fixed excess with weightless free rows.
+    (
+        np.array([0.25, 0.25]),
+        np.array([1, 2]),
+        np.array([True, False]),
+        np.array([0.5, 0.25]),
+        np.array([1, 0]),
+    )
+)
+def test_normalizer_matches_an_exact_oracle_across_magnitudes(inputs):
+    base, risk, fixed, prescribed, weights = inputs
+    cells = [(2021, "female", 50)] * len(base)
+    q, log = normalize_probabilities(
+        base, risk, fixed, prescribed, cells, weights
+    )
+    expected, infeasible, basis = exact_cell(
+        base, risk, fixed, prescribed, weights
+    )
+    np.testing.assert_allclose(q, expected, rtol=1e-9, atol=1e-15)
+    assert bool(log.loc[0, "infeasible"]) == infeasible
+    assert log.loc[0, "normalization_basis"] == basis
+    assert ((0 <= q) & (q <= 1)).all()
+    if not infeasible:
+        applied = sum(
+            Fraction(x) * Fraction(y) for x, y in zip(weights, q, strict=True)
+        )
+        target = sum(
+            Fraction(x) * Fraction(y)
+            for x, y in zip(weights, base, strict=True)
+        )
+        assert float(abs(applied - target)) <= RTOL * max(float(target), ATOL)
+        assert log.loc[0, "clipping_residual"] == 0
+
+
+def test_cascading_caps_match_the_oracle():
+    """Each capping round pushes the next row over one."""
+    base = np.full(6, 0.9)
+    risk = np.asarray([1, 1.1, 1.3, 1.7, 2.5, 5.0])
+    weights = np.asarray([3.0, 1.0, 2.0, 1.0, 0.5, 1.0])
+    fixed = np.zeros(6, dtype=bool)
+    cells = [(2021, "male", 90)] * 6
+    q, log = normalize_probabilities(base, risk, fixed, base, cells, weights)
+    expected, infeasible, _ = exact_cell(base, risk, fixed, base, weights)
+    np.testing.assert_allclose(q, expected, rtol=1e-12, atol=1e-15)
+    assert log.loc[0, "clipped_persons"] >= 3
+    assert not infeasible
+    assert_conserved(q, base, cells, weights, log)
+
+
+@PROPERTY
+@given(
+    st.lists(st.floats(0.01, 1), min_size=3, max_size=6),
+    st.lists(POSITIVE, min_size=3, max_size=6),
+    st.floats(0, 1),
+    st.lists(POSITIVE, min_size=2, max_size=5),
+    st.booleans(),
+)
+def test_weightless_cells_take_the_vanishing_weight_limit(
+    base, risk, fixed_q, free_weights, equal
+):
+    """Infeasible cells: the limit is unique.  Feasible: unit weights."""
+    size = min(len(base), len(risk), len(free_weights) + 1)
+    base, risk = np.asarray(base[:size]), np.asarray(risk[:size])
+    fixed = np.arange(size) == 0
+    prescribed = base.copy()
+    prescribed[0] = fixed_q
+    cells = [(2021, "female", 50)] * size
+    vanishing = np.asarray(free_weights[: size - 1])
+    if equal:
+        vanishing = np.full(size - 1, vanishing[0])
+    zero, zero_log = normalize_probabilities(
+        base, risk, fixed, prescribed, cells, np.r_[1.0, np.zeros(size - 1)]
+    )
+    small, _ = normalize_probabilities(
+        base, risk, fixed, prescribed, cells, np.r_[1.0, 1e-60 * vanishing]
+    )
+    if zero_log.loc[0, "infeasible"]:
+        np.testing.assert_array_equal(zero, small)
+    elif equal:
+        assert zero_log.loc[0, "normalization_basis"] == "persons"
+        np.testing.assert_allclose(zero, small, rtol=RTOL, atol=ATOL)
 
 
 @st.composite
@@ -256,6 +486,19 @@ def test_weightless_cells_count_persons_equally(inputs):
     np.testing.assert_array_equal(zero_log["factor"], unit_log["factor"])
     assert not zero_log["infeasible"].any()
     assert (zero_log["clipping_residual"] == 0).all()
+    assert (unit_log["normalization_basis"] == "weights").all()
+    for row in zero_log.itertuples(index=False):
+        mask = np.asarray(
+            [cell == (row.year, row.sex, row.age) for cell in cells]
+        )
+        support = mask & ~fixed & (base > 0)
+        if support.any():
+            assert row.normalization_basis == "persons"
+            assert row.persons_target == pytest.approx(
+                np.sum(base[support]), rel=RTOL, abs=ATOL
+            )
+        else:
+            assert row.normalization_basis == "weights"
 
 
 @PROPERTY
@@ -334,7 +577,11 @@ def invented_adapter_cells(draw):
 @PROPERTY
 @given(invented_adapter_cells())
 def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
-    """Includes zero weights, infeasible cells and weightless free rows."""
+    """Includes zero weights, infeasible cells and weightless free rows.
+
+    The one intended exception besides clipping is an infeasible cell
+    whose free support weighs nothing.
+    """
     base, fixed, prescribed, weights, sex, age = inputs
     cells = [(2021, SEXES[s], int(a)) for s, a in zip(sex, age, strict=True)]
     q, log = normalize_probabilities(
@@ -349,17 +596,22 @@ def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
         mask = np.asarray(
             [cell == (row.year, row.sex, row.age) for cell in cells]
         )
+        support = mask & ~fixed & (base > 0)
+        if row.infeasible and support.any() and not weights[support].any():
+            # Intended: the adapter leaves weightless rows at factor one,
+            # while the brief's infeasible-cell rules hold for any weight.
+            continue
         np.testing.assert_allclose(q[mask], old[mask], rtol=RTOL, atol=ATOL)
 
 
-def test_weightless_free_rows_in_infeasible_cells_keep_unit_weights():
-    """Fixed rows carry the weight; no free factor can conserve the cell."""
+def test_weightless_infeasible_cells_follow_the_weighted_rules():
+    """Unit weights apply only where the weighted target is zero."""
     cells = [(2021, "female", 50)] * 3
     fixed = np.asarray([True, False, False])
-    for prescribed_q, sign in ((0.6, -1), (0.1, 1)):
-        base = np.asarray([0.3, 0.2, 0.4])
+    base = np.asarray([0.3, 0.2, 0.4])
+    weights = np.asarray([2.0, 0.0, 0.0])
+    for prescribed_q, free_q, sign in ((0.6, 0, -1), (0.1, 1, 1)):
         prescribed = np.asarray([prescribed_q, 0.2, 0.4])
-        weights = np.asarray([2.0, 0.0, 0.0])
         q, log = normalize_probabilities(
             base,
             np.asarray([1.0, 1.0, 3.0]),
@@ -368,13 +620,10 @@ def test_weightless_free_rows_in_infeasible_cells_keep_unit_weights():
             cells,
             weights,
         )
-        unit, _ = normalize_probabilities(
-            base, np.asarray([1.0, 1.0, 3.0]), fixed, base, cells, np.ones(3)
-        )
         assert log.loc[0, "infeasible"]
+        assert log.loc[0, "normalization_basis"] == "weights"
         assert np.sign(log.loc[0, "clipping_residual"]) == sign
-        assert q[0] == prescribed_q
-        np.testing.assert_array_equal(q[1:], unit[1:])
+        np.testing.assert_array_equal(q, [prescribed_q, free_q, free_q])
         assert_conserved(q, base, cells, weights, log)
 
 
@@ -594,6 +843,113 @@ def test_composition_conserves_cells_preserves_ratios_and_fixes_di_q(
         )
 
 
+def composed_accounting(q_base, risk, multiplier, weights):
+    """Run the model under the DI adapter and check each accounting link.
+
+    A multiplier below one gives DI-origin persons less than their share
+    of deaths, so the adapter scales everyone else up and can clip.
+    """
+    frame = pd.concat(
+        [
+            invented_frame(6, di=True).assign(sex=sex, age=age)
+            for sex in SEXES
+            for age in (50, 70)
+        ],
+        ignore_index=True,
+    )
+    frame["person_id"] = np.arange(len(frame))
+    frame["birth_year"] = 2020 - frame["age"]
+    frame["weight"] = weights
+    context = invented_context(frame)
+    baseline = invented_baseline(q_base)
+    rates = invented_rates(multiplier=multiplier)
+    retained = {}
+    model = DifferentialMortality(
+        baseline,
+        invented_spec(risk=risk),
+        weight_column="weight",
+        di_configuration=rates,
+        cell_log=retained,
+    )
+    deaths, cells = {}, {}
+    apply_di_aware_mortality(
+        frame,
+        context,
+        InventedZeroUniforms(),
+        population_model=model,
+        rates=rates,
+        weight_column="weight",
+        death_log=deaths,
+        cell_log=cells,
+    )
+    # The adapter keeps only probabilities; the model's own log survives.
+    _, mechanism = model.evaluate(frame, context)
+    pd.testing.assert_frame_equal(retained[2021], mechanism)
+    logged = deaths[2021].set_index("person_id").loc[frame["person_id"]]
+    q_population = logged["q_population"].to_numpy()
+    q_applied = logged["q_applied"].to_numpy()
+    w = frame["weight"].to_numpy()
+    fixed = (
+        frame["di_entitled"].to_numpy()
+        | frame["di_conversion_year"].notna().to_numpy()
+    )
+    np.testing.assert_array_equal(
+        q_population[fixed], baseline(frame, context)[fixed]
+    )
+    adapter = cells[2021].set_index(["sex", "band_lower"])
+    for row in mechanism.itertuples(index=False):
+        cell = ((frame["sex"] == row.sex) & (frame["age"] == row.age)).values
+        # Fixed rows sit at baseline, so SM1 conserves the baseline cell.
+        assert not row.infeasible
+        assert row.clipping_residual == 0
+        assert np.sum(w[cell] * q_population[cell]) == pytest.approx(
+            row.baseline_expected_deaths, rel=RTOL, abs=ATOL
+        )
+        # The adapter starts from SM1's deaths and logs its own result.
+        netted = adapter.loc[(row.sex, row.age)]
+        assert netted.expected_deaths_population_model == pytest.approx(
+            row.applied_expected_deaths, rel=RTOL, abs=ATOL
+        )
+        assert np.sum(w[cell] * q_applied[cell]) == pytest.approx(
+            netted.expected_deaths_applied, rel=RTOL, abs=ATOL
+        )
+        free = cell & ~fixed
+        if not (q_applied[free] == 1).any():
+            # Without the adapter's one-pass clip, the composition conserves.
+            assert netted.expected_deaths_applied == pytest.approx(
+                row.baseline_expected_deaths, rel=RTOL, abs=ATOL
+            )
+        kept = free & (q_population < 1) & (q_applied < 1)
+        if kept.sum() >= 2:
+            np.testing.assert_allclose(
+                q_applied[kept] / q_applied[kept][0],
+                q_population[kept] / q_population[kept][0],
+                rtol=RTOL,
+                atol=ATOL,
+            )
+    return mechanism, q_applied, fixed
+
+
+@PROPERTY
+@given(
+    st.floats(0.3, 0.9),
+    st.floats(1.0, 4.0),
+    st.floats(0.05, 1.0),
+    st.lists(st.floats(0.1, 10), min_size=24, max_size=24),
+)
+def test_composition_with_unequal_weights_keeps_every_accounting_link(
+    q_base, risk, multiplier, weights
+):
+    composed_accounting(q_base, risk, multiplier, weights)
+
+
+def test_composition_accounts_for_clipping_in_both_steps():
+    weights = np.linspace(0.5, 6, 24)
+    mechanism, q_applied, fixed = composed_accounting(0.8, 3.0, 0.1, weights)
+    assert mechanism["clipped_persons"].sum() > 0
+    assert (q_applied[~fixed] == 1).any()
+
+
 @PROPERTY
 @given(st.floats(1, 20), st.sampled_from(("lifetime_earnings", "education")))
 def test_ordered_earnings_and_education_risks_preserve_probability_order(
@@ -650,14 +1006,31 @@ def test_model_permutation_scaling_and_no_randomness(scale, seed):
 def test_model_gives_weightless_cells_their_unit_weight_probabilities():
     frame = invented_frame(12)
     context = invented_context(frame)
+    logs = {}
     model = DifferentialMortality(
-        invented_baseline(0.2), invented_spec(), weight_column="weight"
+        invented_baseline(0.2),
+        invented_spec(),
+        weight_column="weight",
+        cell_log=logs,
     )
     unit = model(frame, context)
+    assert (logs[2021]["normalization_basis"] == "weights").all()
     weightless = model(frame.assign(weight=0.0), context)
     np.testing.assert_array_equal(weightless, unit)
     assert (weightless > 0).all()
     assert len(np.unique(weightless)) > 1
+    assert (logs[2021]["normalization_basis"] == "persons").all()
+    assert (logs[2021]["persons_target"] > 0).all()
+
+
+def test_model_cell_log_must_be_a_mapping():
+    with pytest.raises(TypeError, match="cell_log"):
+        DifferentialMortality(
+            invented_baseline(),
+            invented_spec(),
+            weight_column=None,
+            cell_log=[],
+        )
 
 
 class InventedWideningPath:

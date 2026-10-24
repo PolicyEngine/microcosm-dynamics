@@ -28,9 +28,21 @@ CELL_LOG_COLUMNS = (
     "clipped_persons",
     "clipping_residual",
     "infeasible",
+    "normalization_basis",
+    "persons_target",
     "unclassified_refuse",
     "unclassified_reference",
 )
+
+# The float path leaves a decision to the Decimal path when it compares
+# totals this close, relative to their size, or when capping leaves a
+# remaining target this small.  Float reductions here err by a few units
+# of 2**-52; above this margin that error moves the factor by less than
+# the 1e-12 accounting tolerance.
+_FLOAT_MARGIN = 1e-3
+# A feasible float cell that misses conservation by more than this,
+# relative to its expected deaths, is recomputed on the Decimal path.
+_CONSERVATION_RTOL = 1e-12
 
 
 def _stable_sum(values: np.ndarray) -> np.longdouble:
@@ -45,16 +57,24 @@ def _stable_sum(values: np.ndarray) -> np.longdouble:
     maximum = np.max(values)
     if maximum == 0:
         return np.longdouble(0)
-    return maximum * np.longdouble(fsum(float(x / maximum) for x in values))
+    scaled = (values / maximum).astype(np.float64).tolist()
+    return maximum * np.longdouble(fsum(scaled))
+
+
+def _ambiguous(difference, scale) -> bool:
+    """Whether a float difference is too close to zero to decide on."""
+    return bool(scale > 0 and abs(difference) <= _FLOAT_MARGIN * scale)
 
 
 def _decimal_cell(base, rr, w, is_fixed, prescribed):
-    """Handle extreme finite float64 inputs without platform assumptions.
+    """Handle extreme or ambiguous cells without platform assumptions.
 
     On some supported platforms ``longdouble`` has float64's exponent
     range.  Decimal's exponent range retains positive q*RR support even
     when that product would underflow, and avoids overflowing products.
-    This slower path is restricted to cells containing extreme magnitudes.
+    Its precision also settles the comparisons and cancellations that the
+    float path refers here.  This slower path is used only for those
+    cells.
     """
     with localcontext() as decimal_context:
         # Enough to retain exact products of three finite binary64 inputs,
@@ -85,16 +105,14 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
             else baseline_deaths - fixed_deaths
         )
         support = [i for i in free if base[i] > zero]
-        capacity = total(w[i] for i in support)
         allocation = w
-        unmet = False
-        if capacity == zero and support:
-            unmet = target != zero
+        persons_target = None
+        if target == zero and support and total(w[i] for i in support) == zero:
             allocation = [one] * len(w)
-            target = total(base[i] for i in support)
-            capacity = total(allocation[i] for i in support)
+            target = persons_target = total(base[i] for i in support)
+        capacity = total(allocation[i] for i in support)
         capped = set()
-        infeasible = unmet
+        infeasible = False
         factor = one
         if fixed_at_baseline and (
             not free or all(rr[i] == rr[free[0]] for i in free)
@@ -105,14 +123,25 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
             infeasible, factor = True, zero
         elif target == zero:
             factor = zero
-        elif target >= capacity:
-            infeasible = target > capacity or unmet
+        elif target > capacity:
+            infeasible = True
             for i in support:
                 result[i] = one
             capped = set(support)
             factor = max(
                 (one / (base[i] * rr[i]) for i in support), default=one
             )
+        elif target == capacity:
+            # Any factor that caps the whole weighted support conserves the
+            # cell.  The smallest is the capping loop's limit as the target
+            # rises to capacity; zero-allocation rows take it too.
+            weighted = [i for i in support if allocation[i] > zero]
+            factor = max(one / (base[i] * rr[i]) for i in weighted)
+            for i in free:
+                result[i] = min(one, base[i] * rr[i] * factor)
+            for i in weighted:
+                result[i] = one
+            capped = {i for i in free if base[i] * rr[i] * factor > one}
         else:
             raw = [qi * ri for qi, ri in zip(base, rr, strict=True)]
             active = {i for i in support if allocation[i] > zero}
@@ -128,14 +157,16 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
                 active -= next_capped
                 remaining = target - total(allocation[i] for i in capped)
             for i in free:
-                result[i] = min(one, raw[i] * factor)
-            capped = {i for i in free if raw[i] * factor > one}
+                result[i] = one if i in capped else min(one, raw[i] * factor)
+            capped |= {i for i in free if raw[i] * factor > one}
         probabilities = np.asarray([float(value) for value in result])
         applied = total(
             wi * Decimal.from_float(float(qi))
             for wi, qi in zip(w, probabilities, strict=True)
         )
-        residual = baseline_deaths - applied if infeasible or capped else zero
+        # Feasible cells conserve exactly; only the conversion of the
+        # returned probabilities to float64 rounds.
+        residual = baseline_deaths - applied if infeasible else zero
         return probabilities, {
             "weight": float(total(w)),
             "fixed_weight": float(total(w[i] for i in fixed)),
@@ -145,43 +176,53 @@ def _decimal_cell(base, rr, w, is_fixed, prescribed):
             "clipped_persons": len(capped),
             "clipping_residual": float(residual),
             "infeasible": infeasible,
+            "normalization_basis": (
+                "weights" if persons_target is None else "persons"
+            ),
+            "persons_target": (
+                float("nan")
+                if persons_target is None
+                else float(persons_target)
+            ),
         }
 
 
 def _normalize_cell(base, rr, w, is_fixed, prescribed):
+    def exact():
+        return _decimal_cell(base, rr, w, is_fixed, prescribed)
+
     # Within these magnitudes, coefficients, weighted products, and capped
     # scaling products remain representable even on float64-only platforms.
     if any(
         np.any((values > 0) & (values < 1e-80)) or np.any(values > 1e80)
         for values in (base, rr, w, prescribed)
     ):
-        return _decimal_cell(base, rr, w, is_fixed, prescribed)
+        return exact()
     free = ~is_fixed
     result = np.zeros(len(base), dtype=np.longdouble)
     result[is_fixed] = prescribed[is_fixed]
     baseline_deaths = _stable_sum(w * base)
     fixed_deaths = _stable_sum(w[is_fixed] * prescribed[is_fixed])
     fixed_at_baseline = np.array_equal(prescribed[is_fixed], base[is_fixed])
-    # Avoid cancellation of small free totals when fixed rows dominate.
-    target = (
-        _stable_sum(w[free] * base[free])
-        if fixed_at_baseline
-        else baseline_deaths - fixed_deaths
-    )
+    if fixed_at_baseline:
+        # Avoid cancellation of small free totals when fixed rows dominate.
+        target = _stable_sum(w[free] * base[free])
+    else:
+        target = baseline_deaths - fixed_deaths
+        if _ambiguous(target, max(baseline_deaths, fixed_deaths)):
+            return exact()
     support = free & (base > 0)
-    capacity = _stable_sum(w[support])
-    # Weightless support leaves the weighted target silent on the factor;
-    # set it by counting persons equally rather than letting zero weight
-    # decide a probability.  A nonzero weighted target stays infeasible.
+    # Weightless support leaves a zero weighted target silent on the
+    # factor: every factor conserves the cell.  Count persons equally to
+    # set it, rather than letting zero weight decide a probability.
     allocation = w
-    unmet = False
-    if capacity == 0 and np.any(support):
-        unmet = bool(target != 0)
+    persons_target = None
+    if target == 0 and np.any(support) and _stable_sum(w[support]) == 0:
         allocation = np.ones(len(base), dtype=np.longdouble)
-        target = _stable_sum(base[support])
-        capacity = _stable_sum(allocation[support])
+        target = persons_target = _stable_sum(base[support])
+    capacity = _stable_sum(allocation[support])
     capped = np.zeros(len(base), dtype=bool)
-    infeasible = unmet
+    infeasible = False
     factor = np.longdouble(1)
     if fixed_at_baseline and (
         not np.any(free) or np.all(rr[free] == rr[free][0])
@@ -194,12 +235,11 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
         factor = np.longdouble(0)
     elif target == 0:
         factor = np.longdouble(0)
-    elif target >= capacity:
-        # Baseline fixed rows are feasible by construction.  Independent
-        # floating reductions can differ by a rounding bit at capacity.
-        infeasible = (
-            bool(target > capacity) and not fixed_at_baseline
-        ) or unmet
+    elif _ambiguous(target - capacity, capacity):
+        return exact()
+    elif target > capacity:
+        # Ties went to the Decimal path, so this cell is infeasible.
+        infeasible = True
         result[support] = 1
         capped[support] = True
         factor = (
@@ -220,13 +260,22 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
             capped |= next_capped
             active &= ~next_capped
             remaining = target - _stable_sum(allocation[capped])
+            if remaining <= _FLOAT_MARGIN * target:
+                return exact()
         result[free] = np.minimum(1, raw[free] * factor)
-        capped[free] = raw[free] * factor > 1
+        result[capped] = 1
+        capped |= free & (raw * factor > 1)
 
     probabilities = result.astype(float)
     applied_deaths = _stable_sum(w * probabilities)
     residual = baseline_deaths - applied_deaths
-    if not infeasible and not np.any(capped):
+    if not infeasible:
+        # Iterative capping conserves every feasible cell, so a material
+        # float residual is an arithmetic failure, never a clipping loss.
+        if abs(residual) > _CONSERVATION_RTOL * max(
+            baseline_deaths, applied_deaths
+        ):
+            return exact()
         residual = np.longdouble(0)
     return probabilities, {
         "weight": _stable_sum(w),
@@ -237,6 +286,12 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
         "clipped_persons": int(np.count_nonzero(capped)),
         "clipping_residual": residual,
         "infeasible": infeasible,
+        "normalization_basis": (
+            "weights" if persons_target is None else "persons"
+        ),
+        "persons_target": (
+            float("nan") if persons_target is None else float(persons_target)
+        ),
     }
 
 
@@ -265,20 +320,30 @@ def normalize_probabilities(
     factor is recomputed after each capped group until the remaining
     target can be allocated without further capping.  Zero-weight rows
     receive the same factor as other rows but do not affect its value.
-    When every free row with positive baseline probability has zero
-    weight, no factor changes the cell's weighted deaths.  The cell then
-    counts persons equally to set the factor, so those rows keep their
-    relative risks rather than a probability that zero weight decided.
-    It is still infeasible when its weighted target is nonzero.
 
     Fixed probabilities above the entire baseline target are infeasible;
     free probabilities are then zero.  A target above the free rows'
     positive-probability support is also infeasible; those rows saturate
-    at one.  Both rules apply only where that support carries weight.
-    The signed residual is baseline minus applied deaths.  On
-    feasible cells without capping it is explicitly zero: arithmetic
-    roundoff is covered by the accounting tolerance, rather than being
-    described as a clipping loss.
+    at one.  These rules hold whatever the free rows' weights.  A target
+    that exactly fills the weighted support conserves with any factor
+    that caps it; the cell takes the smallest such factor, so zero-weight
+    rows keep ``min(1, q_base * relative_risk * factor)``.
+
+    When every free row with positive baseline probability has zero
+    weight and the weighted target is zero, every factor conserves the
+    cell, so the weights cannot set it.  The cell then counts persons
+    equally: the factor makes those rows' unweighted expected deaths equal
+    their unweighted baseline total, which the log reports as
+    ``persons_target`` with ``normalization_basis == "persons"``.  Every
+    other cell has basis ``"weights"`` and a missing persons target.
+    With fixed rows at baseline, such a cell gets the probabilities it
+    would get if every weight were one.
+
+    The signed residual is baseline minus applied deaths.  It is nonzero
+    only on infeasible cells; iterative capping conserves feasible cells.
+    The float path verifies that within the accounting tolerance, and
+    recomputes on the Decimal path any cell it cannot decide or conserve
+    in float arithmetic.
 
     All relative risks must be finite and strictly positive, including
     those on fixed rows.  Probabilities lie in [0, 1], weights are finite
@@ -310,15 +375,16 @@ def normalize_probabilities(
     for index, cell in enumerate(ids):
         if not isinstance(cell, (tuple, list, np.ndarray)) or len(cell) != 3:
             raise ValueError("cell ids must be (year, sex, age) triples")
-        key = tuple(cell)
-        if any(pd.isna(value) for value in key):
-            raise ValueError("cell ids must not contain missing values")
         try:
-            groups.setdefault(key, []).append(index)
+            groups.setdefault(tuple(cell), []).append(index)
         except TypeError as error:
             raise ValueError(
                 "cell ids must contain hashable values"
             ) from error
+    # Every row's key is one of the distinct keys, so checking each
+    # distinct key once checks every row.
+    if any(pd.isna(value) for key in groups for value in key):
+        raise ValueError("cell ids must not contain missing values")
 
     counts = {
         "unclassified_refuse": np.zeros(size, dtype=np.int64),
