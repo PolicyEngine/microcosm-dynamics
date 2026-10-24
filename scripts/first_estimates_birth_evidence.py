@@ -328,6 +328,8 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # committed run artifacts; nothing in the historical projection
     # imports them.
     Path("src/populace_dynamics/track_b/holdout_registry.py"),
+    # S1 development and future registration; no historical projection imports.
+    Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
