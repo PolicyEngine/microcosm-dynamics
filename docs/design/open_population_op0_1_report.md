@@ -6,20 +6,14 @@
 - [Machine-readable records](open_population_op0_1_records.json): schema `open_population_op0_record.v1`, six records with `status: draft`, source-specific tolerances, candidate uncertainty, named unrun power procedures, manifest statuses and the exact registry pin.
 - [Unit test](../../tests/open_population/test_op0_1_records.py): reads only the documentation JSON; validates completeness, draft state, pending years, registry snapshot, manifest/power shapes and access fields.
 
-Commits already preserved on `openpop-op0-1-audit-20261024` in the workspace-local Git store:
+Commits on `openpop-op0-1-audit-20261024`:
 
 - `a04617e1b948161f16300a920613ca24667cd6e4` — docs: draft OP0.1 birth audit and registry boundary.
 - `d131cebcb0f50af9fa2269cd3046a3710eb7ee4e` — docs: draft migration, target, population and horizon records.
 - `99d4f6fabca7c45744b21791431513473a2ff51d` — docs: complete OP0.1 exposure audit and validate draft records.
+- `22f646734ffc38092548d71895cc6578b99a41ec` — docs: report OP0.1 findings, validation and exposure limits (this report and the final transitive-consumer citations).
 
-The following handoff commit adds this report and the final transitive-consumer citations; its SHA is in the verified bundle head and the final response. No history was rewritten and nothing was pushed. Normal `git add`/`git commit` failed because this linked worktree’s administrative Git directory is in the caller clone outside the writable boundary. The original worktree HEAD therefore remains at the assigned base. To preserve coherent commits without writing there, the build used `.venv/op0-commit-store` and exported `open_population_op0_1_commits.bundle` in this workspace. That bundle contains only commits after `b51ffb576090155adc2befd2715c58b27bb2afa9` and requires that base.
-
-The main session can import the bundle into its assigned branch (these commands are a handoff, not commands run in the caller checkout):
-
-```sh
-git fetch /Users/maxghenis/.subfleet/worktrees/20261024-075734-openpop-op0-1-build-r3/open_population_op0_1_commits.bundle refs/heads/openpop-op0-1-audit-20261024
-git cherry-pick b51ffb576090..FETCH_HEAD
-```
+No history was rewritten.
 
 Validation: `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py` — **5 passed**; `.venv/bin/black --check -l 79 tests/open_population/test_op0_1_records.py` and `.venv/bin/ruff check tests/open_population/test_op0_1_records.py` — **passed**. Python is 3.14.7. The test was run in one process. No power simulation or real-data calculation ran. `tests/tier_counts.json` and `tests/README-tiers.md` remain untouched; the coordinator owns the expected global tier-count update.
 
@@ -166,7 +160,7 @@ Repository references are to the assigned base `b51ffb576090` unless a different
 - `tests/test_gate2_floors.py:42,454`.
 - `tests/test_nchs_asfr.py:21`.
 
-Instruction sources outside the repository: the full `RESTRICTED-FILES.md` and Track B design revision3 §5.1–§5.2/§7 at `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/`. No other evidence working folders were opened.
+Instruction sources outside the repository: the project's restricted-files record, read in full, and Track B design revision 3, §5.1–§5.2 and §7, both in the project's local evidence folder. No other evidence working folders were opened.
 
 Issue42 source-specific registration inspection used `gh issue view 42`; the installed CLI rejected `--comments` together with `--json`, so comments were read through its JSON field with filtering before output. Known restricted result IDs were excluded, and numeric text was redacted before display. Relevant prior-use references were [Census household concept](https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4939453260), [partner-inclusion registration](https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4939456379), [NCHS mortality trend](https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4911788302) and [later mortality-trend selection](https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4928232089). These concern mortality or household concepts, not a second natality input. No named use of the other requested sources was established by that scoped search.
 

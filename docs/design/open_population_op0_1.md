@@ -999,4 +999,4 @@ These incidents are disclosed without their values. No claim of completely unexp
 
 The documentation-only unit test validates six complete draft records, pending held-out years, registry commit/hash, target manifests and unrun named power procedures. It imports no model code and reads only `docs/design/`. Run `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py`; Black79 and Ruff apply to that test. Tier count files remain untouched as instructed; their repository-wide policy count is deliberately deferred to the coordinator.
 
-Normal Git writes were denied because the worktree administration directory is outside this workspace. Coherent commits are preserved on `openpop-op0-1-audit-20261024` in `.venv/op0-commit-store` and exported as an incremental bundle at the workspace root. The caller checkout was not written. See [the report](open_population_op0_1_report.md) for commit IDs, test results and import instructions.
+See [the report](open_population_op0_1_report.md) for commit IDs, test results and the official-page ledger.
