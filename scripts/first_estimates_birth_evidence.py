@@ -413,6 +413,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # The PSID income and wealth readers (D1a) are opt-in source readers;
+    # nothing in the historical projection imports them.
+    Path("src/populace_dynamics/data/psid_income_wealth.py"),
+    Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
