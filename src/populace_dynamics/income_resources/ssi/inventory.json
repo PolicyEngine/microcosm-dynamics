@@ -1,0 +1,3106 @@
+{
+  "comparison_2_18_0": {
+    "added_inputs": [],
+    "added_parameters": [],
+    "added_variables": [],
+    "missing_inputs": [],
+    "missing_parameters": [],
+    "missing_variables": [],
+    "reference_version": "2.18.0",
+    "source_changed_inputs": [
+      "alimony_income",
+      "disability_benefits",
+      "veterans_benefits",
+      "workers_compensation"
+    ],
+    "source_changed_parameters": [],
+    "source_changed_variables": [
+      "alimony_income",
+      "disability_benefits",
+      "veterans_benefits",
+      "workers_compensation"
+    ]
+  },
+  "explicit_formula_boundaries": {
+    "alimony_income": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "bank_account_assets": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+    "bond_assets": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+    "child_support_received": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "disability_benefits": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "dividend_income": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "employment_income": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+    "financial_assistance": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "gi_cash_assistance": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "immigration_status": "Observed immigration status, not its text adapter",
+    "interest_income": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "is_tax_unit_head": "Explicit head role derived from typed tax-unit links",
+    "is_tax_unit_spouse": "Explicit spouse role derived from typed tax-unit links",
+    "pension_income": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "rental_income": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "retirement_distributions": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "self_employment_income": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+    "social_security": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "sstb_self_employment_income": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+    "stock_assets": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+    "survivor_benefits": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "takes_up_ssi_if_eligible": "Explicit receipt decision; SSI4 fits take-up",
+    "unemployment_compensation": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "veterans_benefits": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+    "workers_compensation": "Observed source listed by gov.ssa.ssi.income.sources.unearned"
+  },
+  "extraction": {
+    "core_default_source": {
+      "path": "policyengine_core/variables/config.py",
+      "sha256": "8b130317e95f0303e1f1e774e7db8bdbbcb3b60ed28b64ad5990d82b61d7d811"
+    },
+    "defaults": "Class default_value, else policyengine_core type default",
+    "method": "Static AST closure plus parameter source-list expansion",
+    "roots": "Every Variable class in variables/gov/ssa/ssi",
+    "scope": "Source inspection; no country-model runtime imports"
+  },
+  "federal_ssi_variable_count": 52,
+  "inputs": [
+    {
+      "default": 40,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "age",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/age/age.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_child",
+        "is_in_k12_school",
+        "is_ssi_aged",
+        "is_ssi_blind_or_disabled_working_student_exclusion_eligible"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "024c82027eb6e67bc2cf93cdf1a99c6d6b54742e21f15983ced03086a42102bd",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "alimony_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/alimony_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "03c0db96bb8c308c706dbbcac60c11b86c275e77c117a2a71f8717b01df811b8",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "bank_account_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/bank_account_assets.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_countable_resources"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+      "sha256": "58ac6c3d6396f1747d7cf789ac99671d976bb6b11b73056c48e80722d204fbb2",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "bond_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/bond_assets.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_countable_resources"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+      "sha256": "b13500e4d96a51f4bf5e265317fca676d7be18f6742e7b1dc92b4bfd1061b725",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "child_support_received",
+      "parameter_dependencies": [],
+      "path": "variables/household/expense/child_support/child_support_received.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "9561f0d7b3069373d28a2c6efe38dc4e29ecaaa5504aa555b355159442a99be3",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "disability_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/disability_benefits.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "abc8e7fb5dfae9edbd6e2a35e2d7d12287051a00b0ff7de84c7c62c63ce7a178",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "ordinary_dividend_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "dividend_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/dividends/dividend_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "12da45c9e1392dd7ae993cf08c31c95605bf0bc03eb32bb138e932adab0ae384",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "employment_income_before_lsr",
+        "employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/employment_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_earned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+      "sha256": "86d7d4709d84d0e69cec13e67ce7cc5dfa6eb3051e3c036568c015516aeb8870",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "financial_assistance",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/financial_assistance.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "d3eddc5c06f9a74dff8c15a5ceae9111ce0b28d2225a013ef667c1849216640a",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "gi_cash_assistance",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/gi_cash_assistance.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "5a2c301dc9c1d86bc71b180e5ea22e5920e252a07f358fd0e0a03ab102235528",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "immigration_status_str"
+      ],
+      "default": "CITIZEN",
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 18,
+      "name": "immigration_status",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/immigration_status.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_ssi_eligible",
+        "is_ssi_eligible_individual",
+        "is_ssi_qualified_noncitizen"
+      ],
+      "reason": "Observed immigration status, not its text adapter",
+      "sha256": "14d83ed9e7a20112a03e4ff7ac821b1ad0edbf48dd0d9d04d041542123ae8954",
+      "value_type": "Enum"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_interest_income",
+        "taxable_interest_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "interest_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/interest/interest_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "6f13eba16d340e34c01f3b6b160e7c816fcf5925e6e6d5f7e690d715bde4377c",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_blind",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_blind.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_blind_or_disabled_working_student_exclusion_eligible",
+        "ssi_category",
+        "ssi_engaged_in_sga"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "7eb93a64d96c32ab1fb033bb66800115dda947feb3f616c9fb11dea67b94ba51",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_full_time_college_student",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_full_time_college_student.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_full_time_student"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "64159ab1e8ccaafe507103250c8a668741578499c5fbb0a37c56e70b18e7c43a",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_in_medicaid_facility",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/is_in_medicaid_facility.py",
+      "period": "MONTH",
+      "read_by": [],
+      "reason": "No formula or aggregation",
+      "sha256": "e68b0237fec7822502fed363f77b6f35f24c2ac6511a816cbb108fcaf03e6dad",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "age",
+        "is_child"
+      ],
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_tax_unit_head",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/tax_unit/is_tax_unit_head.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_tax_unit_head_or_spouse"
+      ],
+      "reason": "Explicit head role derived from typed tax-unit links",
+      "sha256": "2d3cf6847fbfb9193683321c8061b843055a0a1cb11e0eac3bcacaf59168d13a",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "age",
+        "is_child",
+        "is_separated",
+        "is_tax_unit_head"
+      ],
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_tax_unit_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/tax_unit/is_tax_unit_spouse.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_ssi_eligible_spouse",
+        "is_tax_unit_head_or_spouse"
+      ],
+      "reason": "Explicit spouse role derived from typed tax-unit links",
+      "sha256": "e1f93a6b259bcedde24b70f3e4dd596e114eab12ec868ef824535f14cd36f5c4",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "meets_ssi_disability_criteria",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/meets_ssi_disability_criteria.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_ssi_blind_or_disabled_working_student_exclusion_eligible",
+        "is_ssi_disabled"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "98f7fad4b1a8aab630d93e5facfb5149f8c874988a5cceac35f853a884f1cf46",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "own_children_in_household",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/own_children_in_household.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_parent"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "485ba523659ca57fd5782ba005847eae223c1515c04bf166f8b9d91f088412c6",
+      "value_type": "int"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_pension_income",
+        "taxable_pension_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "pension_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/retirement/pension_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "b0a47b7c95601b770d3f5189c2c97d354d1a27d29769cc1551f6be3db974a4bb",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "receives_ssi",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/receives_ssi.py",
+      "period": "MONTH",
+      "read_by": [],
+      "reason": "No formula or aggregation",
+      "sha256": "2039e174d2aef4f08e5b3fe085e4285bd93ab9c2df77844d476572f37c2d927c",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "rental_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/rental_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "f7d28bc3cec9524503a0bf1ab8e6651f1b705300db72a2aab0c6980fc4bfaf49",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_retirement_distributions",
+        "taxable_retirement_distributions"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "retirement_distributions",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/retirement/retirement_distributions.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "24cac2aefabbdb5553df442a836cdf7f22441502790ea45a07a880c2e6146cfe",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "self_employment_income_before_lsr",
+        "self_employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "self_employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/self_employment_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_earned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+      "sha256": "ee58df027b34aaab8f132eac46bbe2090e0ef152f301ee13b4e237000f94d691",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "social_security",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ss/social_security.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "c7330b5ed55fe9624d49bf04d44fb2b59cfac2b16a7def4a070f6be977331e59",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_lives_in_another_persons_household",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_lives_in_another_persons_household.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_federal_living_arrangement"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "4c77a6e6ce8fd079f53f4dd6bebb1980e4aab0b4ba6cf6ba07729bc40a08f56f",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_lives_in_medical_treatment_facility",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_lives_in_medical_treatment_facility.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_federal_living_arrangement"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "17e1701bb3702e803b7ad1be91374e03e6855f4ea661314e508b93f45bdef5e0",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_medicaid_pays_majority_of_care",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_medicaid_pays_majority_of_care.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_federal_living_arrangement"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "d1ea1c91179934930b3720ce13ddfba79f4d77d0c0cae6c7898edc17c6c97a95",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_others_pay_all_meals",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_others_pay_all_meals.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_federal_living_arrangement"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "3ac317aceccef9b82de87ca1bbda414085a3cb0dcaba8f7bff549fa58167c47d",
+      "value_type": "bool"
+    },
+    {
+      "default": 40,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_qualifying_quarters_earnings",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/ssi_qualifying_quarters_earnings.py",
+      "period": "YEAR",
+      "read_by": [
+        "is_ssi_qualified_noncitizen"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "23efce104a4d6343f15963018ab9b134df98ccc7a4d2d35d914e8f7180d214a6",
+      "value_type": "int"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_food_from_others",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_food_from_others.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_pmv_applies"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "d4ef3d3157fb306fac04baf749320a581c0f732912643bb546f00ebf47b5bd1e",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_outside_shelter_support",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_outside_shelter_support.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_pmv_applies"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "041ebe7879f8ab603781c459fa49e34b0dba39c18ea04d888aa1518d7f83a2a7",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_shelter_from_others_in_household",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_shelter_from_others_in_household.py",
+      "period": "MONTH",
+      "read_by": [
+        "ssi_federal_living_arrangement",
+        "ssi_pmv_applies"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "9987d642a9e39b44196a445ff326192eb11fbba713dbd8b72f5a10c2919c3833",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_shelter_support_value",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ism/ssi_shelter_support_value.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_in_kind_support_and_maintenance"
+      ],
+      "reason": "No formula or aggregation",
+      "sha256": "75864138b8f1470c0833ed90c44c36b45003a8ccd190d8c908615dd879d775c1",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "sstb_self_employment_income_before_lsr",
+        "sstb_self_employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "sstb_self_employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/sstb_self_employment_income.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_earned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.earned",
+      "sha256": "e82db8b41f967bca6e5c1041a657589f05e311def6429ecfee85754f168f25f6",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "stock_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/stock_assets.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_countable_resources"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.eligibility.resources.countable",
+      "sha256": "d84faa07a80dbaaff9bd7b1d02f95e24164a7085b68d624fc3e07351e4827cdd",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "survivor_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/survivor_benefits.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "e71679c8e624bac007151c097cee27a893715caa97fa3c587cd22468a31b315d",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": true,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "takes_up_ssi_if_eligible",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/takes_up_ssi_if_eligible.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi"
+      ],
+      "reason": "Explicit receipt decision; SSI4 fits take-up",
+      "sha256": "e3af8f883111d4739fed5e89766f26ece114446a7dc017868a82c09d8347443e",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "unemployment_compensation",
+      "parameter_dependencies": [],
+      "path": "variables/gov/states/unemployment_compensation.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "a10125a052a1134d375afcb826cd9247ba02dfc8e755d07e578b595d816de44c",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "veterans_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/veterans_benefits.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "3c293d3e9615fee42d01a850ee9a05ed75a324dcfab9b495c5f74db5b54c432b",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "workers_compensation",
+      "parameter_dependencies": [],
+      "path": "variables/gov/states/workers_compensation.py",
+      "period": "YEAR",
+      "read_by": [
+        "ssi_unearned_income"
+      ],
+      "reason": "Observed source listed by gov.ssa.ssi.income.sources.unearned",
+      "sha256": "aa87475e1a3aadb9c2c1777cc02886383f716165a38e3b15321e7c84e61a9f2e",
+      "value_type": "float"
+    }
+  ],
+  "parameters": [
+    {
+      "in_federal_ssi_tree": false,
+      "name": "gov.ssa.sga.non_blind",
+      "path": "parameters/gov/ssa/sga/non_blind.yaml",
+      "sha256": "ada7567e35cee98feb409fe0dbd35c9d50030ba3db20bc8418f1ec162eb5778c",
+      "values": {
+        "1975-01-01": 200,
+        "1976-01-01": 230,
+        "1977-01-01": 240,
+        "1978-01-01": 260,
+        "1979-01-01": 280,
+        "1980-01-01": 300,
+        "1990-01-01": 500,
+        "1999-01-01": 700,
+        "2001-01-01": 740,
+        "2002-01-01": 780,
+        "2003-01-01": 800,
+        "2004-01-01": 810,
+        "2005-01-01": 830,
+        "2006-01-01": 860,
+        "2007-01-01": 900,
+        "2008-01-01": 940,
+        "2009-01-01": 980,
+        "2010-01-01": 1000,
+        "2012-01-01": 1010,
+        "2013-01-01": 1040,
+        "2014-01-01": 1070,
+        "2015-01-01": 1090,
+        "2016-01-01": 1130,
+        "2017-01-01": 1170,
+        "2018-01-01": 1180,
+        "2019-01-01": 1220,
+        "2020-01-01": 1260,
+        "2021-01-01": 1310,
+        "2022-01-01": 1350,
+        "2023-01-01": 1470,
+        "2024-01-01": 1550,
+        "2025-01-01": 1620,
+        "2026-01-01": 1690
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.abolish_ssi",
+      "path": "parameters/gov/ssa/ssi/abolish_ssi.yaml",
+      "sha256": "3e5ad159c2673a204e99517403c452a0339cafbe155f10501059bf72648e9c22",
+      "values": {
+        "0000-01-01": false
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.couple",
+      "path": "parameters/gov/ssa/ssi/amount/couple.yaml",
+      "sha256": "fa8d7cee418f6b4c02df757f2cc591936eb835efcdde17534dffd9d9d90e459e",
+      "values": {
+        "1975-01-01": 236.6,
+        "1976-01-01": 251.8,
+        "1977-01-01": 266.7,
+        "1978-01-01": 284.1,
+        "1979-01-01": 312.3,
+        "1980-01-01": 357.0,
+        "1981-01-01": 397.0,
+        "1982-01-01": 426.4,
+        "1983-01-01": 456.4,
+        "1984-01-01": 472,
+        "1985-01-01": 488,
+        "1986-01-01": 504,
+        "1987-01-01": 510,
+        "1988-01-01": 532,
+        "1989-01-01": 553,
+        "1990-01-01": 579,
+        "1991-01-01": 610,
+        "1992-01-01": 633,
+        "1993-01-01": 652,
+        "1994-01-01": 669,
+        "1995-01-01": 687,
+        "1996-01-01": 705,
+        "1997-01-01": 726,
+        "1998-01-01": 741,
+        "1999-01-01": 751,
+        "2000-01-01": 769,
+        "2001-01-01": 796,
+        "2002-01-01": 817,
+        "2003-01-01": 829,
+        "2004-01-01": 846,
+        "2005-01-01": 869,
+        "2006-01-01": 904,
+        "2007-01-01": 934,
+        "2008-01-01": 956,
+        "2009-01-01": 1011,
+        "2010-01-01": 1011,
+        "2011-01-01": 1011,
+        "2012-01-01": 1048,
+        "2013-01-01": 1066,
+        "2014-01-01": 1082,
+        "2015-01-01": 1100,
+        "2016-01-01": 1100,
+        "2017-01-01": 1103,
+        "2018-01-01": 1125,
+        "2019-01-01": 1157,
+        "2020-01-01": 1175,
+        "2021-01-01": 1191,
+        "2022-01-01": 1261,
+        "2023-01-01": 1371,
+        "2024-01-01": 1415,
+        "2025-01-01": 1450,
+        "2026-01-01": 1491
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.individual",
+      "path": "parameters/gov/ssa/ssi/amount/individual.yaml",
+      "sha256": "9dc3d2ed15f1f86e073e7ef06e06bd79c43d8d8b48419dcee87de25a5cdd0eaf",
+      "values": {
+        "1975-01-01": 157.7,
+        "1976-01-01": 167.8,
+        "1977-01-01": 177.8,
+        "1978-01-01": 189.4,
+        "1979-01-01": 208.2,
+        "1980-01-01": 238.0,
+        "1981-01-01": 264.7,
+        "1982-01-01": 284.3,
+        "1983-01-01": 304.3,
+        "1984-01-01": 314,
+        "1985-01-01": 325,
+        "1986-01-01": 336,
+        "1987-01-01": 340,
+        "1988-01-01": 354,
+        "1989-01-01": 368,
+        "1990-01-01": 386,
+        "1991-01-01": 407,
+        "1992-01-01": 422,
+        "1993-01-01": 434,
+        "1994-01-01": 446,
+        "1995-01-01": 458,
+        "1996-01-01": 470,
+        "1997-01-01": 484,
+        "1998-01-01": 494,
+        "1999-01-01": 500,
+        "2000-01-01": 513,
+        "2001-01-01": 531,
+        "2002-01-01": 545,
+        "2003-01-01": 552,
+        "2004-01-01": 564,
+        "2005-01-01": 579,
+        "2006-01-01": 603,
+        "2007-01-01": 623,
+        "2008-01-01": 637,
+        "2009-01-01": 674,
+        "2010-01-01": 674,
+        "2011-01-01": 674,
+        "2012-01-01": 698,
+        "2013-01-01": 710,
+        "2014-01-01": 721,
+        "2015-01-01": 733,
+        "2016-01-01": 733,
+        "2017-01-01": 735,
+        "2018-01-01": 750,
+        "2019-01-01": 771,
+        "2020-01-01": 783,
+        "2021-01-01": 794,
+        "2022-01-01": 841,
+        "2023-01-01": 914,
+        "2024-01-01": 943,
+        "2025-01-01": 967,
+        "2026-01-01": 994
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.institutional.couple",
+      "path": "parameters/gov/ssa/ssi/amount/institutional/couple.yaml",
+      "sha256": "35dae9b76a243ca9c1517c5e59f5b92ad2ad2bc4b777945c32be15820cbff1a2",
+      "values": {
+        "1988-07-01": 60
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.institutional.individual",
+      "path": "parameters/gov/ssa/ssi/amount/institutional/individual.yaml",
+      "sha256": "10d727cfab0a4cc51cea87b88ebe5831e064f72e5ade3b41a4ad6a25e2620fd4",
+      "values": {
+        "1988-07-01": 30
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.medical_facility",
+      "path": "parameters/gov/ssa/ssi/amount/medical_facility.yaml",
+      "sha256": "f364f73240a46493a4aa17fa5bf862a977d5514980b9b94dcf5c2f9962b3720e",
+      "values": {
+        "1975-01-01": 25,
+        "1988-07-01": 30
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.amount.one_third_reduction_rate",
+      "path": "parameters/gov/ssa/ssi/amount/one_third_reduction_rate.yaml",
+      "sha256": "0d8a9749147c5f2173e3ad04039a8aeae9eae0681fb033f449dc979f7e4010a0",
+      "values": {
+        "1975-01-01": 0.333333333
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.eligibility.aged_threshold",
+      "path": "parameters/gov/ssa/ssi/eligibility/aged_threshold.yaml",
+      "sha256": "6db6fb621418f1661eb7a4ddfbc65a81c238fcf2c76bbeb7a6db8d2778b41e0b",
+      "values": {
+        "1975-01-01": 65
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.eligibility.resources.countable",
+      "path": "parameters/gov/ssa/ssi/eligibility/resources/countable.yaml",
+      "sha256": "340d82956b609fcb3d1cd321c94bc6a20503e7698292279e8bec2e040db37c81",
+      "values": {
+        "1975-01-01": [
+          "bank_account_assets",
+          "stock_assets",
+          "bond_assets"
+        ]
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.eligibility.resources.limit.couple",
+      "path": "parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml",
+      "sha256": "341b821e70c50a269741152f2e616cc4dc0663bfeab5fcfe0ded1b32a316dfc9",
+      "values": {
+        "1985-01-01": 2400,
+        "1986-01-01": 2550,
+        "1987-01-01": 2700,
+        "1988-01-01": 2850,
+        "1989-01-01": 3000
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.eligibility.resources.limit.individual",
+      "path": "parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml",
+      "sha256": "155d6728a2ae00ea5da441ada685ad638f21d1faaa8cadd0e991ef6a40b94cc7",
+      "values": {
+        "1985-01-01": 1600,
+        "1986-01-01": 1700,
+        "1987-01-01": 1800,
+        "1988-01-01": 1900,
+        "1989-01-01": 2000
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.eligibility.status.qualified_noncitizen_status",
+      "path": "parameters/gov/ssa/ssi/eligibility/status/qualified_noncitizen_status.yaml",
+      "sha256": "9dd135de6eeaf6aa09d227ba0ba8c5ad3166e8afdec1cccb8b449d65c881dd8e",
+      "values": {
+        "1975-01-01": [
+          "LEGAL_PERMANENT_RESIDENT",
+          "REFUGEE",
+          "ASYLEE",
+          "DEPORTATION_WITHHELD",
+          "CUBAN_HAITIAN_ENTRANT",
+          "CONDITIONAL_ENTRANT",
+          "PAROLED_ONE_YEAR"
+        ]
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.age_limit",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/blind_or_disabled_working_student/age_limit.yaml",
+      "sha256": "516b3fd0f8d8b50aa7dd581b51c706c30f39e6058f0926dad5cfb018458c86a8",
+      "values": {
+        "1974-01-01": 22
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.amount",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/blind_or_disabled_working_student/amount.yaml",
+      "sha256": "4f717503f6043f55140351b1cca6b28282bbf00b19e3a02feabdae4f483dd6eb",
+      "values": {
+        "1974-01-01": 400,
+        "2001-01-01": 1290,
+        "2002-01-01": 1320,
+        "2003-01-01": 1340,
+        "2004-01-01": 1370,
+        "2005-01-01": 1410,
+        "2006-01-01": 1460,
+        "2007-01-01": 1510,
+        "2008-01-01": 1550,
+        "2009-01-01": 1640,
+        "2012-01-01": 1700,
+        "2013-01-01": 1730,
+        "2014-01-01": 1750,
+        "2015-01-01": 1780,
+        "2017-01-01": 1790,
+        "2018-01-01": 1820,
+        "2019-01-01": 1870,
+        "2020-01-01": 1900,
+        "2021-01-01": 1930,
+        "2022-01-01": 2040,
+        "2023-01-01": 2220,
+        "2024-01-01": 2290,
+        "2025-01-01": 2350,
+        "2026-01-01": 2410
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.cap",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/blind_or_disabled_working_student/cap.yaml",
+      "sha256": "7b9ac16ea37d0ce42f9503785eea397aa832a2f3521103be59b8ebfd46163ce5",
+      "values": {
+        "1974-01-01": 1620,
+        "2001-01-01": 5200,
+        "2002-01-01": 5340,
+        "2003-01-01": 5410,
+        "2004-01-01": 5520,
+        "2005-01-01": 5670,
+        "2006-01-01": 5910,
+        "2007-01-01": 6100,
+        "2008-01-01": 6240,
+        "2009-01-01": 6600,
+        "2012-01-01": 6840,
+        "2013-01-01": 6960,
+        "2014-01-01": 7060,
+        "2015-01-01": 7180,
+        "2017-01-01": 7200,
+        "2018-01-01": 7350,
+        "2019-01-01": 7550,
+        "2020-01-01": 7670,
+        "2021-01-01": 7770,
+        "2022-01-01": 8230,
+        "2023-01-01": 8950,
+        "2024-01-01": 9230,
+        "2025-01-01": 9460,
+        "2026-01-01": 9730
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.earned",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/earned.yaml",
+      "sha256": "50bc791fec4bf24b444a394e23f5ad19b86f758e71739bfd17665b3c11a96f4b",
+      "values": {
+        "1975-01-01": 65
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.earned_share",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml",
+      "sha256": "f9efb4c19445cbc5fc38dcbeabcde0920396365fb3ba5de4e29a93e469257ec6",
+      "values": {
+        "1975-01-01": 0.5
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.exclusions.general",
+      "path": "parameters/gov/ssa/ssi/income/exclusions/general.yaml",
+      "sha256": "dc77f88b148bd06771a267ab0775e80898043ec7581adea5b9431eff8267f9b1",
+      "values": {
+        "1975-01-01": 20
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.ism.food_counts",
+      "path": "parameters/gov/ssa/ssi/income/ism/food_counts.yaml",
+      "sha256": "20b053e6f70dfe800b5930aea162506a5f832ca440ebef37a508535650e74c94",
+      "values": {
+        "1975-01-01": true,
+        "2024-10-01": false
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.ism.pmv_fbr_fraction",
+      "path": "parameters/gov/ssa/ssi/income/ism/pmv_fbr_fraction.yaml",
+      "sha256": "9288e2375b626e173f86808979a77b6c21c84d4fcab2aa19af4a8dccfaf4c4ef",
+      "values": {
+        "1975-01-01": 0.333333333
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.sources.earned",
+      "path": "parameters/gov/ssa/ssi/income/sources/earned.yaml",
+      "sha256": "77692a8088f5107ad7b07a70dc1830517f5febf9743f9ed0d79c9a1dd13ca869",
+      "values": {
+        "1975-01-01": [
+          "employment_income",
+          "self_employment_income",
+          "sstb_self_employment_income"
+        ]
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.sources.qualifying_quarters_threshold",
+      "path": "parameters/gov/ssa/ssi/income/sources/qualifying_quarters_threshold.yaml",
+      "sha256": "4d75d458730a89837da4e0b0ba330130eb8043015f31fd54d6f84f354f0e7465",
+      "values": {
+        "1975-01-01": 40
+      }
+    },
+    {
+      "in_federal_ssi_tree": true,
+      "name": "gov.ssa.ssi.income.sources.unearned",
+      "path": "parameters/gov/ssa/ssi/income/sources/unearned.yaml",
+      "sha256": "a3ede21a1f9410f2c6e7828dccf8be2e468935eb0e873773ee8533bd7bb5be0a",
+      "values": {
+        "1975-01-01": [
+          "pension_income",
+          "social_security",
+          "disability_benefits",
+          "veterans_benefits",
+          "survivor_benefits",
+          "workers_compensation",
+          "unemployment_compensation",
+          "retirement_distributions",
+          "gi_cash_assistance",
+          "alimony_income",
+          "child_support_received",
+          "financial_assistance",
+          "dividend_income",
+          "interest_income",
+          "rental_income"
+        ]
+      }
+    }
+  ],
+  "policyengine_us_version": "2.2.1",
+  "policyengine_version": "6.10.2",
+  "rules_engine_gaps": [
+    {
+      "condition": "RULES_ENGINE_GAP",
+      "details": "Refuse ineligible-spouse or parental resource deeming: the certified release has no SSI resource-deeming tree.",
+      "id": "resource_deeming"
+    }
+  ],
+  "schema_version": 1,
+  "source_lists": {
+    "gov.ssa.ssi.eligibility.resources.countable": [
+      "bank_account_assets",
+      "bond_assets",
+      "stock_assets"
+    ],
+    "gov.ssa.ssi.income.sources.earned": [
+      "employment_income",
+      "self_employment_income",
+      "sstb_self_employment_income"
+    ],
+    "gov.ssa.ssi.income.sources.unearned": [
+      "alimony_income",
+      "child_support_received",
+      "disability_benefits",
+      "dividend_income",
+      "financial_assistance",
+      "gi_cash_assistance",
+      "interest_income",
+      "pension_income",
+      "rental_income",
+      "retirement_distributions",
+      "social_security",
+      "survivor_benefits",
+      "unemployment_compensation",
+      "veterans_benefits",
+      "workers_compensation"
+    ]
+  },
+  "state_supplement_paths": [
+    "variables/gov/states/ca/cdss/state_supplement/ca_state_supplement.py",
+    "variables/gov/states/ca/cdss/state_supplement/ca_state_supplement_eligible_person.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_aged_blind_disabled_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_aged_disabled_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_aged_disabled_count.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_blind_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_dependent_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_food_allowance.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_food_allowance_eligible.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_medical_care_facility_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_out_of_home_care_facility_amount.py",
+    "variables/gov/states/ca/cdss/state_supplement/payment_standard/ca_state_supplement_payment_standard.py",
+    "variables/gov/states/co/ssa/state_supplement/co_state_supplement.py",
+    "variables/gov/states/co/ssa/state_supplement/co_state_supplement_eligible.py",
+    "variables/gov/states/ma/dta/ssp/ma_maximum_state_supplement.py",
+    "variables/gov/states/ma/dta/ssp/ma_state_supplement.py",
+    "variables/gov/states/nm/hca/ssi_supplement/nm_ssi_state_supplement.py",
+    "variables/gov/states/nm/hca/ssi_supplement/nm_ssi_state_supplement_eligible.py",
+    "variables/gov/states/sc/scdhhs/ssi_state_supplement/sc_ssi_state_supplement.py",
+    "variables/gov/states/sc/scdhhs/ssi_state_supplement/sc_ssi_state_supplement_eligible.py",
+    "variables/gov/states/sc/scdhhs/ssi_state_supplement/sc_ssi_state_supplement_pna.py",
+    "variables/gov/states/tx/hhsc/ssi_state_supplement/tx_ssi_state_supplement.py",
+    "variables/gov/states/tx/hhsc/ssi_state_supplement/tx_ssi_state_supplement_eligible.py"
+  ],
+  "states_with_named_ssi_supplement_files": [
+    "CA",
+    "CO",
+    "MA",
+    "NM",
+    "SC",
+    "TX"
+  ],
+  "variables": [
+    {
+      "default": 40,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "age",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/age/age.py",
+      "period": "YEAR",
+      "sha256": "024c82027eb6e67bc2cf93cdf1a99c6d6b54742e21f15983ced03086a42102bd",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "alimony_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/alimony_income.py",
+      "period": "YEAR",
+      "sha256": "03c0db96bb8c308c706dbbcac60c11b86c275e77c117a2a71f8717b01df811b8",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "bank_account_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/bank_account_assets.py",
+      "period": "YEAR",
+      "sha256": "58ac6c3d6396f1747d7cf789ac99671d976bb6b11b73056c48e80722d204fbb2",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "bond_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/bond_assets.py",
+      "period": "YEAR",
+      "sha256": "b13500e4d96a51f4bf5e265317fca676d7be18f6742e7b1dc92b4bfd1061b725",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "child_support_received",
+      "parameter_dependencies": [],
+      "path": "variables/household/expense/child_support/child_support_received.py",
+      "period": "YEAR",
+      "sha256": "9561f0d7b3069373d28a2c6efe38dc4e29ecaaa5504aa555b355159442a99be3",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "disability_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/disability_benefits.py",
+      "period": "YEAR",
+      "sha256": "abc8e7fb5dfae9edbd6e2a35e2d7d12287051a00b0ff7de84c7c62c63ce7a178",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "ordinary_dividend_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "dividend_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/dividends/dividend_income.py",
+      "period": "YEAR",
+      "sha256": "12da45c9e1392dd7ae993cf08c31c95605bf0bc03eb32bb138e932adab0ae384",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "employment_income_before_lsr",
+        "employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/employment_income.py",
+      "period": "YEAR",
+      "sha256": "86d7d4709d84d0e69cec13e67ce7cc5dfa6eb3051e3c036568c015516aeb8870",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "financial_assistance",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/financial_assistance.py",
+      "period": "YEAR",
+      "sha256": "d3eddc5c06f9a74dff8c15a5ceae9111ce0b28d2225a013ef667c1849216640a",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "gi_cash_assistance",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/gi_cash_assistance.py",
+      "period": "YEAR",
+      "sha256": "5a2c301dc9c1d86bc71b180e5ea22e5920e252a07f358fd0e0a03ab102235528",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "immigration_status_str"
+      ],
+      "default": "CITIZEN",
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 18,
+      "name": "immigration_status",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/immigration_status.py",
+      "period": "YEAR",
+      "sha256": "14d83ed9e7a20112a03e4ff7ac821b1ad0edbf48dd0d9d04d041542123ae8954",
+      "value_type": "Enum"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_interest_income",
+        "taxable_interest_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "interest_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/interest/interest_income.py",
+      "period": "YEAR",
+      "sha256": "6f13eba16d340e34c01f3b6b160e7c816fcf5925e6e6d5f7e690d715bde4377c",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_blind",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_blind.py",
+      "period": "YEAR",
+      "sha256": "7eb93a64d96c32ab1fb033bb66800115dda947feb3f616c9fb11dea67b94ba51",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "age"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_child",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/age/is_child.py",
+      "period": "YEAR",
+      "sha256": "08cfb3c8a17afe147781c328292d62a85173584a500bd598267721cbad83e903",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_full_time_college_student",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_full_time_college_student.py",
+      "period": "YEAR",
+      "sha256": "64159ab1e8ccaafe507103250c8a668741578499c5fbb0a37c56e70b18e7c43a",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_full_time_college_student",
+        "is_in_k12_school"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_full_time_student",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_full_time_student.py",
+      "period": "YEAR",
+      "sha256": "2df142ac99b9ee036bde8e88ff105a5d019365f6c4badd7a18d0022595d10109",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "age"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_in_k12_school",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_in_k12_school.py",
+      "period": "YEAR",
+      "sha256": "95ab8f7eeedf777116fafde77f1a36c967ee5a8448b428bc4087fdbde66e8d8c",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_in_medicaid_facility",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/is_in_medicaid_facility.py",
+      "period": "MONTH",
+      "sha256": "e68b0237fec7822502fed363f77b6f35f24c2ac6511a816cbb108fcaf03e6dad",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "own_children_in_household"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_parent",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/is_parent.py",
+      "period": "YEAR",
+      "sha256": "52f4f28f1a7f15483010edf4ebf3ca33592dbbc6679b4f898d90d1b4100788ed",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "age"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_aged",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.eligibility.aged_threshold"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_aged.py",
+      "period": "YEAR",
+      "sha256": "46a35b42636c904d7176c5b4debb28d089123cc15d6421b00aba184bf3c6ef1e",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_blind",
+        "is_ssi_aged",
+        "is_ssi_disabled"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 5,
+      "name": "is_ssi_aged_blind_disabled",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_aged_blind_disabled.py",
+      "period": "YEAR",
+      "sha256": "8ad09c254feba7c00f24f2737cd6708cf5f50eb9c22d8a5c1d9c9670c4947827",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "age",
+        "is_blind",
+        "is_full_time_student",
+        "meets_ssi_disability_criteria"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_blind_or_disabled_working_student_exclusion_eligible",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.age_limit"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/is_ssi_blind_or_disabled_working_student_exclusion_eligible.py",
+      "period": "YEAR",
+      "sha256": "9e3c88567118e1a95dc44c0d2ee2df0eb0420bba142f3edf049cbbf1f14ebdb8",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "meets_ssi_disability_criteria",
+        "ssi_engaged_in_sga"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_disabled",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_disabled.py",
+      "period": "YEAR",
+      "sha256": "b1dbc3ec361226335d33a91685e9fff0b2e9630a2dff454a13fe83295e099813",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "immigration_status",
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_qualified_noncitizen",
+        "meets_ssi_resource_test"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_eligible",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/is_ssi_eligible.py",
+      "period": "MONTH",
+      "sha256": "555b140875af94285216175386feefdc22fd5ee02c821b0e0aab86229285a40a",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "immigration_status",
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_eligible_spouse",
+        "is_ssi_qualified_noncitizen"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_eligible_individual",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_eligible_individual.py",
+      "period": "YEAR",
+      "sha256": "f01b9c7fda6105ad23baee251ced5bf03e407a882c883cf217c28bce3368ced5",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_tax_unit_spouse",
+        "ssi_marital_both_eligible"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_eligible_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_eligible_spouse.py",
+      "period": "YEAR",
+      "sha256": "bba8f3c65d28f93db5209436aff503eb7b774809888f1cec3e111176a377d4f6",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_child",
+        "is_ssi_aged_blind_disabled"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_ineligible_child",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_ineligible_child.py",
+      "period": "YEAR",
+      "sha256": "f5718e993b9133a500fdcf1d6b9535d1b47f0a5574f84e6754baea6e29d2c8af",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_child",
+        "is_parent",
+        "is_ssi_aged_blind_disabled"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_ineligible_parent",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_ineligible_parent.py",
+      "period": "YEAR",
+      "sha256": "64cbb036e4d62d3fad7d045a2ba9e63a8d6ce70796b10950458c95a86c94fce5",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_eligible_spouse",
+        "is_tax_unit_head_or_spouse"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_ineligible_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_ineligible_spouse.py",
+      "period": "YEAR",
+      "sha256": "3c513e2ec4b691690ba3d5d7d160dc9379e3ce5bd5a55b48164d12ea910c5183",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "immigration_status",
+        "ssi_qualifying_quarters_earnings"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_qualified_noncitizen",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.eligibility.status.qualified_noncitizen_status",
+        "gov.ssa.ssi.income.sources.qualifying_quarters_threshold"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/status/is_ssi_qualified_noncitizen.py",
+      "period": "YEAR",
+      "sha256": "68ace60e28bf6f6d7162922a96c6abf39bcca1fe973b09460dc021a40b7dc769",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_eligible_individual",
+        "ssi_earned_income_deemed_from_ineligible_spouse",
+        "ssi_unearned_income_deemed_from_ineligible_spouse"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_ssi_spousal_deeming_applies",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.amount.couple",
+        "gov.ssa.ssi.amount.individual"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/from_ineligible_spouse/is_ssi_spousal_deeming_applies.py",
+      "period": "YEAR",
+      "sha256": "78f271f6ea1bae4e622dc6a9783ea461ae1d71ee9518ce3bbb4760ad68805c83",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "age",
+        "is_child"
+      ],
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_tax_unit_head",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/tax_unit/is_tax_unit_head.py",
+      "period": "YEAR",
+      "sha256": "2d3cf6847fbfb9193683321c8061b843055a0a1cb11e0eac3bcacaf59168d13a",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_tax_unit_head",
+        "is_tax_unit_spouse"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_tax_unit_head_or_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/tax_unit/is_tax_unit_head_or_spouse.py",
+      "period": "YEAR",
+      "sha256": "4a01e9e3615e1705668507935dc40b10149df383d068b280dc32a05bf35c8f7b",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "age",
+        "is_child",
+        "is_separated",
+        "is_tax_unit_head"
+      ],
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "is_tax_unit_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/tax_unit/is_tax_unit_spouse.py",
+      "period": "YEAR",
+      "sha256": "e1f93a6b259bcedde24b70f3e4dd596e114eab12ec868ef824535f14cd36f5c4",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "meets_ssi_disability_criteria",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/meets_ssi_disability_criteria.py",
+      "period": "YEAR",
+      "sha256": "98f7fad4b1a8aab630d93e5facfb5149f8c874988a5cceac35f853a884f1cf46",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_claim_is_joint",
+        "ssi_countable_resources"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "meets_ssi_resource_test",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.eligibility.resources.limit.couple",
+        "gov.ssa.ssi.eligibility.resources.limit.individual"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/resources/meets_ssi_resource_test.py",
+      "period": "MONTH",
+      "sha256": "14355b19a014ba8b91f8f61d6a0712e0a9ed2697c214e42723dc6edc448958d9",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "own_children_in_household",
+      "parameter_dependencies": [],
+      "path": "variables/household/demographic/person/own_children_in_household.py",
+      "period": "YEAR",
+      "sha256": "485ba523659ca57fd5782ba005847eae223c1515c04bf166f8b9d91f088412c6",
+      "value_type": "int"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_pension_income",
+        "taxable_pension_income"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "pension_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/retirement/pension_income.py",
+      "period": "YEAR",
+      "sha256": "b0a47b7c95601b770d3f5189c2c97d354d1a27d29769cc1551f6be3db974a4bb",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "receives_ssi",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/receives_ssi.py",
+      "period": "MONTH",
+      "sha256": "2039e174d2aef4f08e5b3fe085e4285bd93ab9c2df77844d476572f37c2d927c",
+      "value_type": "bool"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "rental_income",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/misc/rental_income.py",
+      "period": "YEAR",
+      "sha256": "f7d28bc3cec9524503a0bf1ab8e6651f1b705300db72a2aab0c6980fc4bfaf49",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "tax_exempt_retirement_distributions",
+        "taxable_retirement_distributions"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "retirement_distributions",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/retirement/retirement_distributions.py",
+      "period": "YEAR",
+      "sha256": "24cac2aefabbdb5553df442a836cdf7f22441502790ea45a07a880c2e6146cfe",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "self_employment_income_before_lsr",
+        "self_employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "self_employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/self_employment_income.py",
+      "period": "YEAR",
+      "sha256": "ee58df027b34aaab8f132eac46bbe2090e0ef152f301ee13b4e237000f94d691",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "social_security",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ss/social_security.py",
+      "period": "YEAR",
+      "sha256": "c7330b5ed55fe9624d49bf04d44fb2b59cfac2b16a7def4a070f6be977331e59",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_if_takes_up",
+        "takes_up_ssi_if_eligible"
+      ],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/ssi.py",
+      "period": "MONTH",
+      "sha256": "b4d4c380ce1a05baeef2c9b69d0e2bdce87aaa7548ff840e6a7eeb9b54716c0c",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_child",
+        "is_ssi_spousal_deeming_applies",
+        "ssi_couple_computation_applies",
+        "ssi_federal_living_arrangement"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 7,
+      "name": "ssi_amount_if_eligible",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.amount.couple",
+        "gov.ssa.ssi.amount.individual",
+        "gov.ssa.ssi.amount.medical_facility",
+        "gov.ssa.ssi.amount.one_third_reduction_rate"
+      ],
+      "path": "variables/gov/ssa/ssi/ssi_amount_if_eligible.py",
+      "period": "MONTH",
+      "sha256": "aabd402b1c75d4ebfe9a6bd772d1915eb3f9a1e195eb1b3193ab7425a7e6fb45",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_blind_or_disabled_working_student_exclusion_eligible",
+        "ssi_earned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_blind_or_disabled_working_student_exclusion",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.amount",
+        "gov.ssa.ssi.income.exclusions.blind_or_disabled_working_student.cap"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ssi_blind_or_disabled_working_student_exclusion.py",
+      "period": "YEAR",
+      "sha256": "3d9a5c64b71b90090b2eb8cf423437fc536b1bc56679e1f35646676927e49059",
+      "value_type": "float"
+    },
+    {
+      "default": "NONE",
+      "default_origin": "explicit",
+      "dependencies": [
+        "is_blind",
+        "is_ssi_aged",
+        "is_ssi_disabled"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 11,
+      "name": "ssi_category",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_category.py",
+      "period": "YEAR",
+      "sha256": "048fe337a6cdee14115327f35da31f588cbff11d39ecec6b41d7131dd77bcd82",
+      "value_type": "Enum"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_aged_blind_disabled",
+        "is_tax_unit_head_or_spouse"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_claim_is_joint",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/ssi_claim_is_joint.py",
+      "period": "YEAR",
+      "sha256": "358c11d8b54b576c5fd6f6c51b4afd670850155959fe02e757f174d11514ebf6",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_eligible_individual",
+        "is_ssi_eligible_spouse",
+        "ssi_blind_or_disabled_working_student_exclusion",
+        "ssi_couple_computation_applies",
+        "ssi_in_kind_support_and_maintenance",
+        "ssi_income_deemed_from_ineligible_spouse",
+        "ssi_marital_earned_income",
+        "ssi_marital_unearned_income",
+        "ssi_unearned_income_deemed_from_ineligible_parent"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [
+        "_apply_ssi_exclusions"
+      ],
+      "line": 7,
+      "name": "ssi_countable_income",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.exclusions.earned",
+        "gov.ssa.ssi.income.exclusions.earned_share",
+        "gov.ssa.ssi.income.exclusions.general"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ssi_countable_income.py",
+      "period": "YEAR",
+      "sha256": "06041272eef45b36c81b0aa74b3f74f89e2f890b4cbee8feba725535ba639022",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "bank_account_assets",
+        "bond_assets",
+        "stock_assets"
+      ],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_countable_resources",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.eligibility.resources.countable"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/resources/ssi_countable_resources.py",
+      "period": "YEAR",
+      "sha256": "daddbe0e37c2987b6c29cc71b9e0d512acdfa267d80034a53059f98cb59ad03e",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_claim_is_joint",
+        "ssi_federal_living_arrangement"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 7,
+      "name": "ssi_couple_computation_applies",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/ssi_couple_computation_applies.py",
+      "period": "MONTH",
+      "sha256": "2364a28518a326119e57d95dd82cd794640fcdb84e02560dba6e042d498ccafa",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "employment_income",
+        "self_employment_income",
+        "sstb_self_employment_income"
+      ],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_earned_income",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.sources.earned"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ssi_earned_income.py",
+      "period": "YEAR",
+      "sha256": "5542187a1ef7ed101c44826ed8610870463b27c110c4689b5c67e99b8a86baf5",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_ineligible_spouse",
+        "ssi_earned_income",
+        "ssi_ineligible_child_allocation",
+        "ssi_unearned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_earned_income_deemed_from_ineligible_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/from_ineligible_spouse/ssi_earned_income_deemed_from_ineligible_spouse.py",
+      "period": "YEAR",
+      "sha256": "d496b735bb992bccc5fbfe452f27b023728a4d796af33326cbb2e6da68ed0582",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_blind",
+        "ssi_earned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_engaged_in_sga",
+      "parameter_dependencies": [
+        "gov.ssa.sga.non_blind"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ssi_engaged_in_sga.py",
+      "period": "YEAR",
+      "sha256": "826625e3fec5ae943a5c1967d4839d587776fbf388bea820c95c543c024b76ea",
+      "value_type": "bool"
+    },
+    {
+      "default": "OWN_HOUSEHOLD",
+      "default_origin": "explicit",
+      "dependencies": [
+        "is_child",
+        "is_ssi_ineligible_parent",
+        "ssi_lives_in_another_persons_household",
+        "ssi_lives_in_medical_treatment_facility",
+        "ssi_medicaid_pays_majority_of_care",
+        "ssi_others_pay_all_meals",
+        "ssi_receives_shelter_from_others_in_household"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 11,
+      "name": "ssi_federal_living_arrangement",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_federal_living_arrangement.py",
+      "period": "MONTH",
+      "sha256": "1107672ec0ff99929ac5f3a904028c5e1037380ae260d6a9b4ab38fc131a073b",
+      "value_type": "Enum"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_spousal_deeming_applies",
+        "uncapped_ssi"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_if_takes_up",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.abolish_ssi",
+        "gov.ssa.ssi.amount.individual"
+      ],
+      "path": "variables/gov/ssa/ssi/ssi_if_takes_up.py",
+      "period": "MONTH",
+      "sha256": "a5aacd66b5b7c43f12ab84651300e40dd74e5d8ae1684b1f03b62b41f136fc90",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_pmv_amount",
+        "ssi_pmv_applies",
+        "ssi_shelter_support_value"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_in_kind_support_and_maintenance",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ism/ssi_in_kind_support_and_maintenance.py",
+      "period": "YEAR",
+      "sha256": "0adbd499d1cc4091eb75b127bdab39b54c66658df4fb47efea177a93fc634514",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_eligible_individual",
+        "is_ssi_spousal_deeming_applies",
+        "ssi_earned_income",
+        "ssi_earned_income_deemed_from_ineligible_spouse",
+        "ssi_unearned_income",
+        "ssi_unearned_income_deemed_from_ineligible_spouse"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [
+        "_apply_ssi_exclusions"
+      ],
+      "line": 9,
+      "name": "ssi_income_deemed_from_ineligible_spouse",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.exclusions.earned",
+        "gov.ssa.ssi.income.exclusions.earned_share",
+        "gov.ssa.ssi.income.exclusions.general"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/from_ineligible_spouse/ssi_income_deemed_from_ineligible_spouse.py",
+      "period": "YEAR",
+      "sha256": "7d09e884f9d184320c42e2c1d345e3e566e06b6b3b9cc20ac5a89c0cfbb62130",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_ineligible_child",
+        "ssi_earned_income",
+        "ssi_unearned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_ineligible_child_allocation",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.amount.couple",
+        "gov.ssa.ssi.amount.individual"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/ssi_ineligible_child_allocation.py",
+      "period": "YEAR",
+      "sha256": "735f55c2b18d16de4ccb74ac818d8d9c72ff3c0c0f3fc7d1a42c2d83748af40f",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_ineligible_parent"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 7,
+      "name": "ssi_ineligible_parent_allocation",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.amount.couple",
+        "gov.ssa.ssi.amount.individual"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/ssi_ineligible_parent_allocation.py",
+      "period": "YEAR",
+      "sha256": "1cf74d4cee73b76b9141acf648c3c8ee95b2e216f4890bbfbb5521c8fa9a55ad",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_lives_in_another_persons_household",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_lives_in_another_persons_household.py",
+      "period": "MONTH",
+      "sha256": "4c77a6e6ce8fd079f53f4dd6bebb1980e4aab0b4ba6cf6ba07729bc40a08f56f",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_lives_in_medical_treatment_facility",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_lives_in_medical_treatment_facility.py",
+      "period": "MONTH",
+      "sha256": "17e1701bb3702e803b7ad1be91374e03e6855f4ea661314e508b93f45bdef5e0",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_aged_blind_disabled"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_marital_both_eligible",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/marital/ssi_marital_both_eligible.py",
+      "period": "YEAR",
+      "sha256": "9ade55f64b7762c532638a92de3121656c3a6e8d528cf7a49386d2419158a711",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_couple_computation_applies",
+        "ssi_earned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_marital_earned_income",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/marital/ssi_marital_earned_income.py",
+      "period": "YEAR",
+      "sha256": "c1b2ed93c5ea1863a12c7f005e6f7e50cf7d57c30ac44ba876c5148cd05ea5b3",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_couple_computation_applies",
+        "ssi_unearned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_marital_unearned_income",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/marital/ssi_marital_unearned_income.py",
+      "period": "YEAR",
+      "sha256": "39322ae516d36898f7ed1ae6e04c187079f15985af9b3cd361313bc21cfbd9b9",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_medicaid_pays_majority_of_care",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_medicaid_pays_majority_of_care.py",
+      "period": "MONTH",
+      "sha256": "d1ea1c91179934930b3720ce13ddfba79f4d77d0c0cae6c7898edc17c6c97a95",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_others_pay_all_meals",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_others_pay_all_meals.py",
+      "period": "MONTH",
+      "sha256": "3ac317aceccef9b82de87ca1bbda414085a3cb0dcaba8f7bff549fa58167c47d",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_spousal_deeming_applies",
+        "ssi_couple_computation_applies"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_pmv_amount",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.amount.couple",
+        "gov.ssa.ssi.amount.individual",
+        "gov.ssa.ssi.income.exclusions.general",
+        "gov.ssa.ssi.income.ism.pmv_fbr_fraction"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ism/ssi_pmv_amount.py",
+      "period": "YEAR",
+      "sha256": "8dc803b2b74669bc81a32eedb5c028cb37b35e589a1a16f98a23466ae0df7bb6",
+      "value_type": "float"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi_federal_living_arrangement",
+        "ssi_receives_food_from_others",
+        "ssi_receives_outside_shelter_support",
+        "ssi_receives_shelter_from_others_in_household"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 7,
+      "name": "ssi_pmv_applies",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.ism.food_counts"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ism/ssi_pmv_applies.py",
+      "period": "YEAR",
+      "sha256": "a6d6168defa29e50311543aa5ab4b354bb582716702a05c7f97dfb2544812871",
+      "value_type": "bool"
+    },
+    {
+      "default": 40,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_qualifying_quarters_earnings",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/ssi_qualifying_quarters_earnings.py",
+      "period": "YEAR",
+      "sha256": "23efce104a4d6343f15963018ab9b134df98ccc7a4d2d35d914e8f7180d214a6",
+      "value_type": "int"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_food_from_others",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_food_from_others.py",
+      "period": "MONTH",
+      "sha256": "d4ef3d3157fb306fac04baf749320a581c0f732912643bb546f00ebf47b5bd1e",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_outside_shelter_support",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_outside_shelter_support.py",
+      "period": "MONTH",
+      "sha256": "041ebe7879f8ab603781c459fa49e34b0dba39c18ea04d888aa1518d7f83a2a7",
+      "value_type": "bool"
+    },
+    {
+      "default": false,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_receives_shelter_from_others_in_household",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/status/ssi_receives_shelter_from_others_in_household.py",
+      "period": "MONTH",
+      "sha256": "9987d642a9e39b44196a445ff326192eb11fbba713dbd8b72f5a10c2919c3833",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_shelter_support_value",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ism/ssi_shelter_support_value.py",
+      "period": "YEAR",
+      "sha256": "75864138b8f1470c0833ed90c44c36b45003a8ccd190d8c908615dd879d775c1",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "alimony_income",
+        "child_support_received",
+        "disability_benefits",
+        "dividend_income",
+        "financial_assistance",
+        "gi_cash_assistance",
+        "interest_income",
+        "pension_income",
+        "rental_income",
+        "retirement_distributions",
+        "social_security",
+        "survivor_benefits",
+        "unemployment_compensation",
+        "veterans_benefits",
+        "workers_compensation"
+      ],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_unearned_income",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.sources.unearned"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/ssi_unearned_income.py",
+      "period": "YEAR",
+      "sha256": "df01f896efc19488ad0585252f7ec648570089cb7f3c1d1169222accc374bd62",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_child",
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_ineligible_parent",
+        "ssi_blind_or_disabled_working_student_exclusion",
+        "ssi_earned_income",
+        "ssi_ineligible_child_allocation",
+        "ssi_ineligible_parent_allocation",
+        "ssi_unearned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [
+        "_apply_ssi_exclusions"
+      ],
+      "line": 7,
+      "name": "ssi_unearned_income_deemed_from_ineligible_parent",
+      "parameter_dependencies": [
+        "gov.ssa.ssi.income.exclusions.earned",
+        "gov.ssa.ssi.income.exclusions.earned_share",
+        "gov.ssa.ssi.income.exclusions.general"
+      ],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/from_ineligible_parent/ssi_unearned_income_deemed_from_ineligible_parent.py",
+      "period": "YEAR",
+      "sha256": "487c9b91adb0688320bbc8c985df8635dbe198e6ea52fb9a3b89caad05596a53",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_ineligible_spouse",
+        "ssi_ineligible_child_allocation",
+        "ssi_unearned_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "ssi_unearned_income_deemed_from_ineligible_spouse",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/eligibility/income/deemed/from_ineligible_spouse/ssi_unearned_income_deemed_from_ineligible_spouse.py",
+      "period": "YEAR",
+      "sha256": "0f4142c367b63dbae313a1d26bfc7599a12fb8dded99201b711f232b0344ffd5",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [
+        "sstb_self_employment_income_before_lsr",
+        "sstb_self_employment_income_behavioral_response"
+      ],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "sstb_self_employment_income",
+      "parameter_dependencies": [],
+      "path": "variables/input/sstb_self_employment_income.py",
+      "period": "YEAR",
+      "sha256": "e82db8b41f967bca6e5c1041a657589f05e311def6429ecfee85754f168f25f6",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "stock_assets",
+      "parameter_dependencies": [],
+      "path": "variables/household/assets/stock_assets.py",
+      "period": "YEAR",
+      "sha256": "d84faa07a80dbaaff9bd7b1d02f95e24164a7085b68d624fc3e07351e4827cdd",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "survivor_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/survivor_benefits.py",
+      "period": "YEAR",
+      "sha256": "e71679c8e624bac007151c097cee27a893715caa97fa3c587cd22468a31b315d",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": true,
+      "default_origin": "explicit",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "takes_up_ssi_if_eligible",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/takes_up_ssi_if_eligible.py",
+      "period": "YEAR",
+      "sha256": "e3af8f883111d4739fed5e89766f26ece114446a7dc017868a82c09d8347443e",
+      "value_type": "bool"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "ssi"
+      ],
+      "entity": "TaxUnit",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "tax_unit_ssi",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/tax_unit_ssi.py",
+      "period": "YEAR",
+      "sha256": "1b0f279789f573cea6de0b046e8619ff9d8c7fc2aead69df9c84c529194c1829",
+      "value_type": "float"
+    },
+    {
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [
+        "is_ssi_eligible",
+        "ssi_amount_if_eligible",
+        "ssi_countable_income"
+      ],
+      "entity": "Person",
+      "formula_names": [
+        "formula"
+      ],
+      "helper_functions": [],
+      "line": 4,
+      "name": "uncapped_ssi",
+      "parameter_dependencies": [],
+      "path": "variables/gov/ssa/ssi/uncapped_ssi.py",
+      "period": "MONTH",
+      "sha256": "869ce6ad3b15e77422f04f69f2cb0c7015ac74484876291e7859224ab8934925",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "unemployment_compensation",
+      "parameter_dependencies": [],
+      "path": "variables/gov/states/unemployment_compensation.py",
+      "period": "YEAR",
+      "sha256": "a10125a052a1134d375afcb826cd9247ba02dfc8e755d07e578b595d816de44c",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "veterans_benefits",
+      "parameter_dependencies": [],
+      "path": "variables/household/income/person/general/veterans_benefits.py",
+      "period": "YEAR",
+      "sha256": "3c293d3e9615fee42d01a850ee9a05ed75a324dcfab9b495c5f74db5b54c432b",
+      "value_type": "float"
+    },
+    {
+      "bypassed_formula_dependencies": [],
+      "default": 0,
+      "default_origin": "core type",
+      "dependencies": [],
+      "entity": "Person",
+      "formula_names": [],
+      "helper_functions": [],
+      "line": 4,
+      "name": "workers_compensation",
+      "parameter_dependencies": [],
+      "path": "variables/gov/states/workers_compensation.py",
+      "period": "YEAR",
+      "sha256": "aa87475e1a3aadb9c2c1777cc02886383f716165a38e3b15321e7c84e61a9f2e",
+      "value_type": "float"
+    }
+  ]
+}
