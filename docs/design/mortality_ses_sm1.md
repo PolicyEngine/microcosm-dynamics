@@ -176,8 +176,8 @@ every cap decision the float path makes is the exact one. A row within
 and whether it caps decides the factor of every other row. Rows with tiny
 weight can then end up with very different probabilities while the
 weighted totals still conserve.
-Measured against the exact oracle, cells built near these margins err by
-at most about 1.3e-13 on the float path. The separate 1e-12 conservation
+Measured against the exact oracle in 10,000 invented cells built near
+these margins, the float path erred by at most 2.4e-13. The separate 1e-12 conservation
 check concerns weighted deaths only.
 
 Probabilities returned are float64; the log accounts for those returned
