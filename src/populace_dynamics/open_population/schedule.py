@@ -127,7 +127,8 @@ def prepare_scheduled_entries(
         raise IdOrStreamCollision("initial and scheduled person IDs overlap")
     if (set(known) - set(initial_ids)) & reserved:
         raise IdOrStreamCollision("scheduled IDs overlap reserved real IDs")
-    cursor = max([0, *known, *reserved]) + 1
+    # Match the sealed loop's signed-ID convention (loop.py:251–253).
+    cursor = max([*known, *reserved], default=0) + 1
     if cursor > _INT64_MAX:
         raise IdOrStreamCollision(
             "no signed-int64 ID remains above the roster"
