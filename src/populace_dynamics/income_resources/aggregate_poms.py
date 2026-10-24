@@ -19,7 +19,9 @@ are not silently represented as a complete state parameter series. The
 State OS code identifies the living arrangement defined in the State's
 code-definition tables (``definitions_table_indexes`` in selectors). A State's
 definitions may span more than one physical table; the reader merges them and
-refuses a code whose tables define it differently. A jointly published code
+refuses a code whose tables define it differently. Definitions come only from
+the chart's own State section, and a State named only in a date line, with no
+section heading, refuses. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
 lists. A chart code that no definition table defines stays undefined and is
 recorded in ``poms_open_questions.json``; no definition is inferred for it.
@@ -211,7 +213,13 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
             for name in _STATES:
                 if re.match(re.escape(name) + r"\s+Effective\b", text, re.I):
                     if state != name:
-                        state, claimant = name, None
+                        # Definitions are collected per section heading; a
+                        # State named only in a date line has none of its
+                        # own, so the reader refuses rather than reuse
+                        # another State's.
+                        raise TableStructureError(
+                            "POMS State changes without a section heading"
+                        )
                     break
             if (
                 "effective" in text.lower()

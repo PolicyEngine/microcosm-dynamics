@@ -524,3 +524,14 @@ def test_invented_joint_codes_name_each_single_code(codes, separator):
 @pytest.mark.parametrize("code", ["A", "AB", "1/2", "A or BB", "Code A"])
 def test_invented_other_codes_are_returned_unchanged(code):
     assert poms_code_alternatives(code) == (code,)
+
+
+def test_invented_state_named_only_in_a_date_line_is_refused():
+    """A State without its own section heading has no definitions."""
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        "<p>Nevada Effective 1/1/30</p>"
+        + INVENTED_CHART.format(state="Nevada"),
+    )
+    with pytest.raises(TableStructureError, match="section heading"):
+        describe_poms_tables(payload)
