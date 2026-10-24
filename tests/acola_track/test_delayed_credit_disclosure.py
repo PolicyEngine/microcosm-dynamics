@@ -6,6 +6,8 @@ from dataclasses import fields, replace
 import pytest
 
 from populace_dynamics import claiming
+from populace_dynamics.acola_track.config import ACOLAConfig
+from populace_dynamics.cola_track_a import statutory
 from populace_dynamics.cola_track_a.benefits import (
     BenefitContext,
     StateLookups,
@@ -13,7 +15,11 @@ from populace_dynamics.cola_track_a.benefits import (
     reference_benefit_rows,
 )
 from populace_dynamics.cola_track_a.config import TrackAConfig
-from populace_dynamics.estimates.parameters import COLASeries
+from populace_dynamics.cola_track_a.runner import tr2008_baseline_cola
+from populace_dynamics.estimates.parameters import (
+    COLASeries,
+    load_cola_history,
+)
 from populace_dynamics.ss.params import SSAParameters
 from tests.acola_track.test_mechanism_l_equivalence import (
     equivalence_script,
@@ -98,3 +104,48 @@ def test_mechanism_l_uses_legacy_48_month_cap_for_old_late_claimants(
         )
     defaults = {field.name: field.default for field in fields(SSAParameters)}
     assert defaults["max_delayed_months"] == params.max_delayed_months == 48
+
+
+def test_registered_parameter_binding_carries_the_48_month_cap():
+    """A registered run's cap is the committed statutory capture's.
+
+    A registered run checks its runtime parameters against the committed
+    capture and refuses a mismatch, delayed-credit cap included
+    (statutory_value_checks, through the legacy _parameter_consistency).
+    So the disclosed cap holds for the registered run, not only for the
+    invented bundle above.
+    """
+    assert statutory.load_statutory_capture()["max_delayed_months"] == 48
+    params = statutory.captured_ssa_parameters()
+    assert params.max_delayed_months == 48
+    track = ACOLAConfig().track_a_config()
+    baseline = tr2008_baseline_cola(
+        load_cola_history(),
+        first_year=track.tr2008_first_rate_year,
+        last_year=track.reference_year,
+        alternative=track.tr2008_alternative,
+    )
+
+    def delayed_credit_check(bundle):
+        return statutory.statutory_value_checks(
+            bundle,
+            baseline,
+            first_tr2008_rate_year=track.tr2008_first_rate_year,
+            reference_year=track.reference_year,
+            last_earnings_year=max(track.start_years.values()),
+            tr2008_alternative=track.tr2008_alternative,
+        )["delayed_retirement_credit"]
+
+    assert delayed_credit_check(params)["consistent"]
+    assert not delayed_credit_check(replace(params, max_delayed_months=60))[
+        "consistent"
+    ]
+    # Under the committed schedule, a claim at 70 by anyone born
+    # 1917-1942 falls more than 48 months past FRA, so the cap binds.
+    for birth in range(1917, 1943):
+        assert 840 - params.fra_months(birth) > 48
+        assert claiming.benefit_factor(
+            840, birth, params
+        ) == claiming.benefit_factor(
+            params.fra_months(birth) + 48, birth, params
+        )
