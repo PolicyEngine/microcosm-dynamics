@@ -343,6 +343,28 @@ def test_registered_production_horizon_matches_baseline():
         REGISTERED_PRODUCTION_HORIZONS["another"] = 2026
 
 
+def test_registered_scenario_projects_to_its_horizon_on_inventions():
+    result = run_production(
+        _roster(),
+        _modules(death_probability=0, birth_probability=0),
+        ProductionRequest("tr2026_intermediate"),
+        emigration_hazard=_hazard(0.02),
+    )
+    assert (result.kind, result.scenario, result.horizon) == (
+        "production",
+        "tr2026_intermediate",
+        LAST_YEAR,
+    )
+    assert len(result.projection.slices) == LAST_YEAR - START + 1
+    for year, frame in enumerate(result.projection.slices, start=START):
+        assert set(frame["year"]) <= {year}
+    prefix = result.read_prefix(2030)
+    for short, full in zip(
+        prefix.slices, result.projection.slices, strict=False
+    ):
+        pd.testing.assert_frame_equal(short, full)
+
+
 @settings(max_examples=12, deadline=None)
 @given(
     scenario=st.sampled_from(tuple(REGISTERED_PRODUCTION_HORIZONS)),
