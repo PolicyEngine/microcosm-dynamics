@@ -245,7 +245,7 @@
     "status": "captured_installed_release_source"
   },
   {
-    "file": "peus-2.2.1-variables-gov-ssa-ssi-ssi_if_takes_up.py",
+    "file": "peus-2.2.1-variables-gov-ssa-ssi-ssi_if_takes_up.py.txt",
     "url": "https://pypi.org/project/policyengine-us/2.2.1/",
     "local_source": "/private/tmp/mdyn-ssi0-policyengine-6.10.2/lib/python3.13/site-packages/policyengine_us/variables/gov/ssa/ssi/ssi_if_takes_up.py",
     "retrieved_at_utc": "2026-10-24T13:06:12.355860Z",
