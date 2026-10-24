@@ -50,6 +50,12 @@ block was revised before any freeze:
   inputs to coarsening, the solver's exact-optimum setting and the
   attempt record's flush.
 
+Before round 3, three sentences of the block were corrected. They had
+said a wide target keeps at least five possible sizes; the rule, and the
+tests, guarantee a range of width at least 4. The evidence for the
+revision (an enumeration oracle, searches, an invented-panel calibration
+and the mutation runner) is in `docs/design/track_b_b0_2_evidence/`.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -302,10 +308,10 @@ rules.
 - **The audit.**
   - A target is **wide** when two integer atom-size vectors, each
     satisfying every constraint exactly, give it sizes at least 4 apart,
-    so that at least five sizes remain possible. The script finds such
-    vectors with integer programs (`scipy.optimize.milp`, one HiGHS
-    thread, 60 seconds per program) and checks each in exact integer
-    arithmetic before using it.
+    so that no range of fewer than five sizes holds every size it can
+    take. The script finds such vectors with integer programs
+    (`scipy.optimize.milp`, one HiGHS thread, 60 seconds per program)
+    and checks each in exact integer arithmetic before using it.
   - A target is **irrelevant** when it is proven unable to take a size
     from 1 to 9.
   - Any other target is **narrow**, including one whose programs reach
@@ -342,8 +348,8 @@ rules.
 - **What a release guarantees.** The release passes when no sensitive
   target is ever narrow. The vectors a reader holding the release cannot
   rule out are then exactly those satisfying every constraint and every
-  disclosure, and every sensitive target ranges over at least five sizes
-  among them. If a sensitive target is narrow, the audit stops and the
+  disclosure, and the sizes each sensitive target takes among them span
+  at least 4. If a sensitive target is narrow, the audit stops and the
   counts are withheld.
 - **What the audit assumes, and its limits.**
   - The reader is assumed to know the atoms, how they nest and the
@@ -396,8 +402,8 @@ rules.
     publication is enumerated, the rule is rerun on each, and the
     script's decision, disclosures and classifications must match. The
     vectors whose rerun releases must be exactly the final constraint
-    set, and every sensitive target of a released table must range over
-    at least five sizes among them;
+    set, and the sizes each sensitive target of a released table takes
+    among them must span at least 4;
   - **that no program sees a true size:** two tables with the same
     publication and atoms hand the solver the same programs in the same
     order, up to the point where one withholds;
