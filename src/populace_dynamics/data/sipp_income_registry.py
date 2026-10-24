@@ -128,10 +128,14 @@ class SippVariable:
     length: int = 0
 
 
-def income_variables(year: int) -> dict[str, SippVariable]:
-    """Return only concepts explicitly verified for this release."""
+def _check_release(year: int) -> None:
     if type(year) is not int or year not in _RELEASES:
         raise ValueError(f"No verified SIPP income registry for {year}")
+
+
+def income_variables(year: int) -> dict[str, SippVariable]:
+    """Return only concepts explicitly verified for this release."""
+    _check_release(year)
     return {
         concept: _variable(concept, definition, source)
         for concept, (definition, source) in _RELEASES[year].items()
@@ -186,7 +190,7 @@ def replicate_variables(year: int) -> dict[str, SippVariable]:
 
     Longitudinal replicate weights are a different product and are refused.
     """
-    income_variables(year)
+    _check_release(year)
     if year not in _REPLICATES:
         raise ValueError(f"No verified SIPP replicate layout for {year}")
     return {
@@ -260,7 +264,7 @@ def user_notes(year: int, concept: str) -> tuple[tuple[str, str], ...]:
     ``SSUID``, ``PNUM``, ``MONTHCODE``, ``SPANEL`` and ``SWAVE``, which
     notes name only to identify cases.
     """
-    income_variables(year)
+    _check_release(year)
     return tuple(
         _NOTE_TABLE[index][:2]
         for index in _USER_NOTES.get(year, {}).get(concept, ())
@@ -273,7 +277,7 @@ def corrected_on(year: int, concept: str) -> str | None:
     A file staged before that date carries the uncorrected values under
     the same name and metadata.
     """
-    income_variables(year)
+    _check_release(year)
     return _CORRECTED_ON.get(year, {}).get(concept)
 
 

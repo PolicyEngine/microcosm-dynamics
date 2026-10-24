@@ -1249,6 +1249,10 @@ def test_property_reader_domain_matches_independent_rule(case, data):
             st.sampled_from(INVENTED_ODD_SPELLINGS),
         )
     )
+    if token in spec.structural_missing:
+        # A documented blank ("." before 2022) is a not-in-universe value.
+        assert _accepted_by_reader(spec, token) == spec.allow_blank
+        return
     expected = _well_formed(spec, token)
     if expected:
         number = Decimal(token)
