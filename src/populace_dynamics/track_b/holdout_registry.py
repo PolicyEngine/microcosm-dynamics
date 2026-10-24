@@ -1196,7 +1196,9 @@ def base_commit(repository: Path) -> str:
 
     - On a push (``GITHUB_EVENT_NAME=push``), the event's ``before``
       commit, which was the branch tip before the push. An all-zero
-      ``before`` (a branch's first push) falls through to the merge base.
+      ``before`` falls through to the merge base only when the event
+      says the push created the branch (``created`` is true), as on a
+      branch's first push.
     - Otherwise, the merge base of ``HEAD`` and the base branch
       (``GITHUB_BASE_REF`` on a pull request, otherwise ``master``),
       preferring its ``origin/`` ref.
@@ -1204,14 +1206,16 @@ def base_commit(repository: Path) -> str:
       first parent.
 
     Raises ``LookupError`` when none of these resolves, and on a push
-    whose event cannot be read or whose ``before`` commit does not
-    resolve: a push is compared with its own boundary, never with a
-    nearer commit that would check less history."""
+    whose event cannot be read, whose ``before`` commit does not
+    resolve, or whose all-zero ``before`` comes without ``created``: a
+    push is compared with its own boundary, never with a nearer commit
+    that would check less history."""
     head = _commit(repository, "HEAD")
     if head is None:
         raise LookupError(f"no HEAD in {repository}")
     if os.environ.get("GITHUB_EVENT_NAME") == "push":
-        before = _event().get("before")
+        event = _event()
+        before = event.get("before")
         if not isinstance(before, str) or SHA_RX.fullmatch(before) is None:
             raise LookupError("the push event names no before commit")
         if set(before) != {"0"}:
@@ -1220,6 +1224,11 @@ def base_commit(repository: Path) -> str:
                     f"the push's before commit {before} does not resolve"
                 )
             return before
+        if event.get("created") is not True:
+            raise LookupError(
+                "an all-zero before commit needs a push that creates its "
+                "branch"
+            )
     branch = os.environ.get("GITHUB_BASE_REF") or "master"
     for ref in (f"origin/{branch}", branch):
         found = _git(repository, "merge-base", "HEAD", ref)
