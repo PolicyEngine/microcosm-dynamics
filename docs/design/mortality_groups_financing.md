@@ -2,7 +2,9 @@
 
 *Design, revision 2, 23 October 2026. For approval. Revision 1 applied
 the round-1 review's fifteen findings (section 12); revision 2 applies the
-round-2 review's four findings (section 13).*
+round-2 review's four findings (section 13). An erratum of 24 October 2026
+updates section 3.5's two citations of the coordinator's forecast and
+changes no estimate.*
 
 - **Status.** This document proposes milestones, gates and prices for one
   lane of the DYNASIM-parity plan. It authorizes no build, registration,
@@ -415,15 +417,19 @@ phases are the separate GR2b and F2b.
 - **The waiting legs.** ED2, F2b and F3a take 10–15 d once the Microcosm
   start exists. After the later of Track B's B7 and the open-population
   lane's horizon admission, F3b → F5 runs serially on lane F, 16–25 d,
-  while SM4, GR2b and GR4 (9–14 d) run on lane M. At the coordinator's central B7
-  date (around August 2027), F5's first attempt would end about four to six
-  and a half weeks after that later date.
-- **Rework.** The coordinator's forecast of 21 October counts 5 of 8 gated
-  first attempts failed so far. This lane has four gates (SM3, ED2, F3b,
-  F5). At that rate, plan for two or three retries. Each costs its gate's
-  effort, 6–9.5 d on average across the four, plus about a week (4 d) of
-  design and review, so the allowance is 20–41 engineer-days. It is not in
-  the totals above.
+  while SM4, GR2b and GR4 (9–14 d) run on lane M. F5's first attempt
+  would end about four to six and a half weeks after that later date. The
+  coordinator's forecast (revision 6, 24 October 2026) gives no central B7
+  date. From a successor result on 20 November to 11 December 2026, it
+  puts B7 at 5 March to 30 May 2027 if no later Track B gate needs a
+  second attempt, or 15 June to 22 October 2027 under its stress
+  assumption that five later milestones do.
+- **Rework (a stress scenario).** This lane has four gates (SM3, ED2, F3b,
+  F5). If two or three of them need a second attempt, each retry costs its
+  gate's effort, 6–9.5 d on average across the four, plus about a week
+  (4 d) of design and review, so the allowance is 20–41 engineer-days. The
+  count of retries is an assumption, not an observed failure rate. The
+  allowance is not in the totals above.
 
 **Still unpriced:**
 - loaders and access for any restricted-use linked-mortality file, if S0.1
