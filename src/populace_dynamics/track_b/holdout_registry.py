@@ -39,7 +39,10 @@ This module enforces its rules:
   consecutive first-parent commits since it (each snapshot validated
   against its own commit's tree), and between a pull request's own
   commits, an entry's identity and units never change and its lists only
-  extend. A newly created registry is admitted against an empty one;
+  extend. A pull request's own commits are compared from its fork point,
+  and a merge among them that brings in landed history keeps every entry
+  of both lines. A newly created registry is admitted against an empty
+  one;
 - the registry stays incomplete until its completion record, B0.2's
   mechanical exposure inventory, exists.
 
@@ -1178,6 +1181,151 @@ def _commit(repository: Path, ref: str) -> str | None:
     return found.stdout.strip() if found.returncode == 0 else None
 
 
+def _parents(repository: Path, commit: str) -> list[str]:
+    """``commit``'s parents, first parent first. Raises ``LookupError``
+    when git cannot list them."""
+    found = _git(repository, "rev-list", "--parents", "-n", "1", commit)
+    listed = found.stdout.split()
+    if found.returncode != 0 or listed[:1] != [commit]:
+        raise LookupError(f"cannot list the parents of {str(commit)[:80]}")
+    return listed[1:]
+
+
+def _is_ancestor(repository: Path, ancestor: str, descendant: str) -> bool:
+    """Whether ``ancestor`` is an ancestor of ``descendant`` (or the same
+    commit). Raises ``LookupError`` when git cannot answer."""
+    found = _git(
+        repository, "merge-base", "--is-ancestor", ancestor, descendant
+    )
+    if found.returncode not in (0, 1):
+        raise LookupError(
+            f"cannot tell whether {str(ancestor)[:80]} is an ancestor of "
+            f"{str(descendant)[:80]}"
+        )
+    return found.returncode == 0
+
+
+def _landed_parents(repository: Path, commit: str, base: str) -> list[str]:
+    """The parents through which a merge ``commit`` brings in landed
+    history: each parent after the first that is an ancestor of ``base``
+    and not already an ancestor of the first parent. Empty for a commit
+    that is not a merge."""
+    parents = _parents(repository, commit)
+    return [
+        parent
+        for parent in parents[1:]
+        if _is_ancestor(repository, parent, base)
+        and not _is_ancestor(repository, parent, parents[0])
+    ]
+
+
+def _union_ready(document: Any) -> bool:
+    """Whether ``document`` has the lists and mappings
+    :func:`_landed_union` combines."""
+    return (
+        isinstance(document, Mapping)
+        and isinstance(document.get("rules", []), list)
+        and isinstance(document.get("sources", {}), Mapping)
+        and isinstance(document.get("entries"), list)
+        and all(
+            isinstance(entry, Mapping) and isinstance(entry.get("id"), str)
+            for entry in document["entries"]
+        )
+    )
+
+
+def _in_order(order: list, *groups: list) -> list:
+    """The keys in ``groups``, each once: those ``order`` lists, in its
+    order, then the rest in the order the groups give them."""
+    present = set().union(*groups)
+    ranked = [key for key in dict.fromkeys(order) if key in present]
+    return list(dict.fromkeys([*ranked, *(key for g in groups for key in g)]))
+
+
+def _landed_union(
+    previous: Any, incoming: Any, canonical: Any
+) -> tuple[Any, list[str]]:
+    """The registry a merge that brings in landed history must extend.
+
+    It holds every rule, source and entry of ``previous``, the pull
+    request's last valid registry, and of ``incoming``, the landed
+    parent's, each entry once with each list at the longer of its two
+    versions. Entries and rules that ``canonical``, the base's registry,
+    lists come first, in its order (the landed order; a landed side
+    branch's own registry need not follow it), then ``previous``'s others,
+    then ``incoming``'s. Also returns the conflicts that no merge could
+    resolve: a field that differs, or a list where neither version
+    extends the other.
+
+    When either registry is missing, the other is returned. When either
+    lacks those lists and mappings, ``incoming`` is returned, as before
+    this union, for the append-only rule to report."""
+    if previous is None or incoming is None:
+        return (incoming if previous is None else previous), []
+    if not (_union_ready(previous) and _union_ready(incoming)):
+        return incoming, []
+    conflicts: list[str] = []
+    union = dict(incoming)
+    for key in ("schema", "status_values", "completion_record"):
+        if previous.get(key) != incoming.get(key):
+            conflicts.append(f"registry: {key} differs from the landed one")
+    sources = dict(incoming.get("sources", {}))
+    for source, declared in previous.get("sources", {}).items():
+        if source in sources and sources[source] != declared:
+            conflicts.append(
+                f"source {source!r}: differs from the landed registry"
+            )
+        sources.setdefault(source, declared)
+    union["sources"] = sources
+    if previous.get("complete") is True:
+        union["complete"] = True
+    order = canonical if _union_ready(canonical) else {}
+
+    def text(rule: Any) -> str:
+        return json.dumps(rule, sort_keys=True)
+
+    rules = {
+        text(rule): rule
+        for document in (incoming, previous)
+        for rule in document.get("rules", [])
+    }
+    union["rules"] = [
+        rules[key]
+        for key in _in_order(
+            [text(rule) for rule in order.get("rules", [])],
+            [text(rule) for rule in previous.get("rules", [])],
+            [text(rule) for rule in incoming.get("rules", [])],
+        )
+    ]
+    mine = {entry["id"]: entry for entry in previous["entries"]}
+    theirs = {entry["id"]: entry for entry in incoming["entries"]}
+    entries = []
+    for name in _in_order(
+        [entry.get("id") for entry in order.get("entries", [])],
+        list(mine),
+        list(theirs),
+    ):
+        if name not in theirs or name not in mine:
+            entries.append(theirs.get(name, mine.get(name)))
+            continue
+        entry = dict(theirs[name])
+        for key in IMMUTABLE:
+            if mine[name].get(key) != theirs[name].get(key):
+                conflicts.append(f"{name}: {key} differs from the landed one")
+        for key in EXTENDING:
+            ours, landed = mine[name].get(key, []), theirs[name].get(key, [])
+            if _extends(landed, ours):
+                entry[key] = ours
+            elif not _extends(ours, landed):
+                conflicts.append(
+                    f"{name}: {key} and the landed {key} each extend "
+                    "beyond the other"
+                )
+        entries.append(entry)
+    union["entries"] = entries
+    return union, conflicts
+
+
 def _event() -> Mapping[str, Any]:
     """The GitHub event payload at ``GITHUB_EVENT_PATH``. Raises
     ``LookupError`` when it cannot be read or is not a JSON object."""
@@ -1282,6 +1430,7 @@ def history_problems(
     head: str = "HEAD",
     *,
     full: bool = True,
+    pull_request: bool = False,
     scored_runs: Mapping[str, tuple[str, str]] = SCORED_RUNS,
     imports: Mapping[str, Mapping[str, Any]] = HISTORICAL_IMPORTS,
 ) -> list[str]:
@@ -1289,12 +1438,28 @@ def history_problems(
     ``head``, so a run of commits cannot hide a change a later commit
     undoes.
 
+    The walk starts from the registry at ``base``. With
+    ``pull_request``, for a pull request's own commits, it starts instead
+    from the registry at the first listed commit's first parent: the
+    pull request's fork point, where its commits leave landed history. A
+    pull request branched before the registry existed, or before
+    ``base`` changed it, is so compared with the registry it was built
+    on. A merge among those commits whose other parent brings in landed
+    history (an ancestor of ``base`` that its first parent lacks) is
+    compared with the union of its own predecessor and that parent's
+    registry (:func:`_landed_union`), so it keeps every entry either line
+    holds; a merge bringing in more than one line of landed history is
+    reported. Without ``pull_request``, as on a push, merges are not
+    treated apart, and nothing before ``base`` is trusted.
+
     With ``full``, each snapshot is validated against its own commit's
     tree. A snapshot that fails is reported and is not used as the next
-    one's predecessor. Each valid snapshot must append only to the last
-    valid one; a newly created registry is admitted against an empty
-    registry. Without ``full``, as for a pull request's own commits, only
-    the append-only rule is checked."""
+    one's predecessor. Each valid snapshot must append only to its
+    predecessor: the last valid one, or the union a landed merge brings
+    in. A newly created registry is admitted against an empty registry.
+    Without ``full``, as for a pull request's own commits, only the
+    append-only rule is checked. Raises ``LookupError`` when git cannot
+    list the commits, their parents or their ancestry."""
     listed = _git(
         repository,
         "rev-list",
@@ -1304,17 +1469,49 @@ def history_problems(
     )
     if listed.returncode != 0:
         raise LookupError(f"cannot list commits from {base} to {head}")
+    commits = listed.stdout.split()
     problems: list[str] = []
-    try:
-        previous = registry_at(repository, base)
-    except ValueError as error:
-        problems.append(f"{base[:12]}: {error}")
-        previous = None
-    if not isinstance(previous, Mapping):
-        previous = None
-    previous_commit = base
-    for commit in listed.stdout.split():
+
+    def landed_registry(commit: str) -> Mapping[str, Any] | None:
+        try:
+            found = registry_at(repository, commit)
+        except ValueError as error:
+            problems.append(f"{commit[:12]}: {error}")
+            return None
+        return found if isinstance(found, Mapping) else None
+
+    canonical = None
+    if pull_request:
+        try:
+            canonical = registry_at(repository, base)
+        except ValueError:
+            canonical = None
+    previous_label, previous = base[:12], None
+    start = [base]
+    if pull_request and commits:
+        start = _parents(repository, commits[0])[:1]
+    if start:
+        previous_label = start[0][:12]
+        previous = landed_registry(start[0])
+    for commit in commits:
         label = commit[:12]
+        landed = (
+            _landed_parents(repository, commit, base) if pull_request else []
+        )
+        if len(landed) > 1:
+            problems.append(
+                f"{label}: a merge brings in more than one line of landed "
+                "history"
+            )
+            continue
+        if landed:
+            previous, conflicts = _landed_union(
+                previous, landed_registry(landed[0]), canonical
+            )
+            previous_label = f"{previous_label}+{landed[0][:12]}"
+            if conflicts:
+                problems.extend(f"{label}: {p}" for p in conflicts)
+                continue
         try:
             current = registry_at(repository, commit)
         except ValueError as error:
@@ -1343,9 +1540,7 @@ def history_problems(
         before = previous if previous is not None else empty_like(current)
         changes = append_only_problems(before, current)
         if changes:
-            problems.extend(
-                f"{previous_commit[:12]}..{label}: {p}" for p in changes
-            )
+            problems.extend(f"{previous_label}..{label}: {p}" for p in changes)
             continue
-        previous_commit, previous = commit, current
+        previous_label, previous = label, current
     return problems
