@@ -28,7 +28,11 @@ def _result():
 
 
 def test_boolean_pia_is_invalid_before_historical_refusal_and_guard():
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = vars(guard).copy()
     outcomes = []
     with pytest.raises(g.InvalidFamilyInput):
@@ -64,7 +68,11 @@ def test_guard_revalidates_entire_result_before_any_state_change(
     result = _result()
     # Bypass frozen construction to test defensive public consumption too.
     object.__setattr__(result, field, value)
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = vars(guard).copy()
     outcomes = []
     with pytest.raises(g.InvalidFamilyInput):
@@ -82,7 +90,11 @@ def test_guard_revalidates_refusal_before_skipping():
     object.__setattr__(
         refusal, "reason", g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
     )
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = vars(guard).copy()
 
     def compute():

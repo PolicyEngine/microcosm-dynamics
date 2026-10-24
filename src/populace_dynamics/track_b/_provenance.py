@@ -520,6 +520,13 @@ def _checked_public_methods(cls):
 
     if cls not in _RESULT_TYPES and cls not in _DECLARATION_TYPES:
         _STATEFUL_TYPES.add(cls)
+        # Stateful constructors need their declared enum kinds before
+        # __new__ validates the first call's raw arguments. Lazy schema
+        # binding in __init__ would make explicit choices order dependent.
+        for annotation in get_type_hints(
+            cls.__init__, localns={cls.__name__: cls}
+        ).values():
+            _register_annotation_enums(annotation)
 
     def guard(method, name):
         # Inherited wrappers belong to their declaring class. Rewrap the
@@ -709,7 +716,7 @@ def _checked_public_methods(cls):
                 name.startswith("__") and name.endswith("__")
             )
             if not private:
-                if name == "__notes__":
+                if name == "__notes__" and args:
                     # BaseException.add_note installs a list, then appends
                     # to that same list. Validate its complete schema while
                     # preserving this caller-owned metadata's identity.

@@ -4,6 +4,9 @@ verification_class: statutory_conformance
 admitted_scope: Gross benefits for supported invented configurations and captured
   statutory examples only; no population, behavioral or forecast claim.
 tag_vocabulary:
+- deduction:own_earnings
+- deduction:no_child_in_care
+- deduction:temporary
 - cola_path
 - credits:own_rib
 - credits:widow_basis
@@ -52,6 +55,9 @@ tag_vocabulary:
 - ssfa:wep_regular_pia
 - widow:child_in_care
 supported_classes:
+- deduction:own_earnings
+- deduction:no_child_in_care
+- deduction:temporary
 - cola_path
 - credits:own_rib
 - credits:widow_basis
@@ -159,11 +165,6 @@ invented_only_classes:
     reason: RS 00209.001/.015 provide rules without a numerical example.
     tests:
     - tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents
-  role:spouse_child_in_care:
-    reason: The captures give the exemption from age reduction but no worked-money
-      child-in-care dual-entitlement example.
-    tests:
-    - tests/test_track_b_gross_benefits.py::test_child_in_care_spouse_offset_uses_the_reduced_rib
   ssfa:gpo_ignored:
     reason: GN 02608.100 publishes the repeal boundary, not worked gross-family monetary
       figures.
@@ -1365,7 +1366,7 @@ examples:
   inputs:
     scenarios:
       before:
-        operation: family
+        operation: family_after_deductions
         state: &id003
           kind: retirement
           pia: '400.00'
@@ -1383,7 +1384,7 @@ examples:
         - 2000
         - 1
       after:
-        operation: household
+        operation: household_after_deductions
         month:
         - 2000
         - 1
@@ -1414,7 +1415,7 @@ examples:
               family_maximum: '150'
               worker: *id004
       dual_reference:
-        operation: family
+        operation: family_after_deductions
         state: *id003
         members: *id005
         month:
@@ -1497,7 +1498,7 @@ examples:
   inputs:
     scenarios:
       before:
-        operation: family
+        operation: family_after_deductions
         state: &id006
           kind: retirement
           pia: '400.00'
@@ -1515,7 +1516,7 @@ examples:
         - 2000
         - 1
       after:
-        operation: household
+        operation: household_after_deductions
         month:
         - 2000
         - 1
@@ -1546,7 +1547,7 @@ examples:
               family_maximum: '150'
               worker: *id007
       dual_reference:
-        operation: family
+        operation: family_after_deductions
         state: *id006
         members: *id008
         month:
@@ -1628,7 +1629,7 @@ examples:
   inputs:
     scenarios:
       before:
-        operation: family
+        operation: family_after_deductions
         state: &id009
           kind: retirement
           pia: '600.00'
@@ -1646,7 +1647,7 @@ examples:
         - 2000
         - 1
       after:
-        operation: household
+        operation: household_after_deductions
         month:
         - 2000
         - 1
@@ -1674,7 +1675,7 @@ examples:
               pia: '200.00'
               family_maximum: '300'
       dual_reference:
-        operation: family
+        operation: family_after_deductions
         state: *id009
         members: *id010
         month:
@@ -1757,7 +1758,7 @@ examples:
   inputs:
     scenarios:
       before:
-        operation: family
+        operation: family_after_deductions
         state: &id011
           kind: retirement
           pia: '500.00'
@@ -1775,7 +1776,7 @@ examples:
         - 2000
         - 1
       after:
-        operation: household
+        operation: household_after_deductions
         month:
         - 2000
         - 1
@@ -1806,7 +1807,7 @@ examples:
               family_maximum: '120'
               worker: *id012
       dual_reference:
-        operation: family
+        operation: family_after_deductions
         state: *id011
         members: *id013
         month:
@@ -2059,3 +2060,767 @@ examples:
   - path: caring.result.record_total_whole_dollars
     value: '1678'
     derivation: '215(g): $928 widow plus $750 child.'
+
+- id: gn-02603-060-a1
+  capture_id: poms_gn_02603_060
+  section: A.1
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  inputs:
+    scenarios:
+      case:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          E:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: true
+        households:
+          E: home
+          C3: home
+          C2: home
+          C1: home
+  figure_count: 6
+  expected:
+  - path: case.state.pia
+    value: '300.40'
+    literal: '300.40'
+  - path: case.state.family_maximum
+    value: '548.40'
+    literal: '548.40'
+  - path: case.rows.E.auxiliary_payable
+    value: '0'
+    literal: '0'
+  - path: case.rows.C3.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  - path: case.rows.C2.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  - path: case.rows.C1.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  derived_expected:
+  - path: case.rows.E.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C3.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C2.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C1.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: gn-02603-060-a2
+  capture_id: poms_gn_02603_060
+  section: A.2
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  inputs:
+    scenarios:
+      case:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          C2:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: true
+        households:
+          E: home
+          C2: home
+          C1: home
+  figure_count: 5
+  expected:
+  - path: case.state.pia
+    value: '300.40'
+    literal: '300.40'
+  - path: case.state.family_maximum
+    value: '548.40'
+    literal: '548.40'
+  - path: case.rows.E.auxiliary_payable
+    value: '225.30'
+    literal: '225.30'
+  - path: case.rows.C2.auxiliary_payable
+    value: '0'
+    literal: '0'
+  - path: case.rows.C1.auxiliary_payable
+    value: '225.30'
+    literal: '225.30'
+  derived_expected:
+  - path: case.rows.E.whole_dollar_auxiliary
+    value: '225'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C2.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C1.whole_dollar_auxiliary
+    value: '225'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: gn-02603-060-b1
+  capture_id: poms_gn_02603_060
+  section: B.1
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  inputs:
+    scenarios:
+      case:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          E:
+            reason: own_earnings_test
+            payable: '37.20'
+            permanent: true
+        households:
+          E: home
+          C3: home
+          C2: home
+          C1: home
+  figure_count: 6
+  expected:
+  - path: case.state.pia
+    value: '300.40'
+    literal: '300.40'
+  - path: case.state.family_maximum
+    value: '548.40'
+    literal: '548.40'
+  - path: case.rows.E.auxiliary_payable
+    value: '37.20'
+    literal: '37.20'
+  - path: case.rows.C3.auxiliary_payable
+    value: '170.40'
+    literal: '170.40'
+  - path: case.rows.C2.auxiliary_payable
+    value: '170.40'
+    literal: '170.40'
+  - path: case.rows.C1.auxiliary_payable
+    value: '170.40'
+    literal: '170.40'
+  derived_expected:
+  - path: case.rows.E.whole_dollar_auxiliary
+    value: '37'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C3.whole_dollar_auxiliary
+    value: '170'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C2.whole_dollar_auxiliary
+    value: '170'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C1.whole_dollar_auxiliary
+    value: '170'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: gn-02603-060-c1
+  capture_id: poms_gn_02603_060
+  section: C.1
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  - deduction:temporary
+  inputs:
+    scenarios:
+      case:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          E:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: false
+        households:
+          E: home
+          C3: home
+          C2: home
+          C1: other
+  figure_count: 6
+  expected:
+  - path: case.state.pia
+    value: '300.40'
+    literal: '300.40'
+  - path: case.state.family_maximum
+    value: '548.40'
+    literal: '548.40'
+  - path: case.rows.E.auxiliary_payable
+    value: '0.00'
+    literal: '0.00'
+  - path: case.rows.C3.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  - path: case.rows.C2.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  - path: case.rows.C1.auxiliary_payable
+    value: '137.10'
+    literal: '137.10'
+  derived_expected:
+  - path: case.rows.E.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C3.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C2.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: case.rows.C1.whole_dollar_auxiliary
+    value: '137'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: gn-02603-060-c2
+  capture_id: poms_gn_02603_060
+  section: C.2
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  - deduction:temporary
+  - dual:child
+  inputs:
+    scenarios:
+      temporary:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+          own_benefit:
+            kind: disability
+            pia: '280.00'
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          E:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: false
+        households:
+          E: home
+          C3: home
+          C2: home
+          C1: other
+      permanent:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '300.40'
+          family_maximum: '548.40'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+          own_benefit:
+            kind: disability
+            pia: '280.00'
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          E:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: true
+        households:
+          E: home
+          C3: home
+          C2: home
+          C1: other
+  figure_count: 7
+  expected:
+  - path: temporary.state.pia
+    value: '300.40'
+    literal: '300.40'
+  - path: temporary.state.family_maximum
+    value: '548.40'
+    literal: '548.40'
+  - path: temporary.rows.C2.own_benefit
+    value: '280.00'
+    literal: '280.00'
+  - path: temporary.rows.C2.auxiliary_payable
+    value: '0.00'
+    literal: '0.00'
+  - path: temporary.rows.C3.auxiliary_payable
+    value: '225.30'
+    literal: '225.30'
+  - path: temporary.rows.C1.auxiliary_payable
+    value: '182.80'
+    literal: '182.80'
+  - path: permanent.rows.C1.auxiliary_payable
+    value: '225.30'
+    literal: '225.30'
+  derived_expected:
+  - path: temporary.rows.C2.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: temporary.rows.C3.whole_dollar_auxiliary
+    value: '225'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: temporary.rows.C1.whole_dollar_auxiliary
+    value: '182'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: permanent.rows.C1.whole_dollar_auxiliary
+    value: '225'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: rs-02501-130-no-child-in-care
+  capture_id: poms_rs_02501_130
+  section: B
+  tags:
+  - record:retirement
+  - role:spouse_child_in_care
+  - role:child
+  - maximum:binding
+  - deduction:no_child_in_care
+  inputs:
+    scenarios:
+      november:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 11
+        state:
+          kind: retirement
+          pia: '242.30'
+          family_maximum: '409.40'
+        members:
+        - beneficiary_id: B
+          role: spouse_child_in_care
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          B:
+            reason: no_child_in_care
+            payable: '0'
+            permanent: true
+        households:
+          B: home
+          C2: home
+          C1: home
+      december:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 12
+        state:
+          kind: retirement
+          pia: '242.30'
+          family_maximum: '409.40'
+        members:
+        - beneficiary_id: B
+          role: spouse_child_in_care
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          B:
+            reason: no_child_in_care
+            payable: '0'
+            permanent: true
+        households:
+          B: home
+          C2: home
+          C1: home
+  figure_count: 6
+  expected:
+  - path: november.state.pia
+    value: '242.30'
+    literal: '242.30'
+  - path: november.state.family_maximum
+    value: '409.40'
+    literal: '409.40'
+  - path: november.rows.C2.auxiliary_payable
+    value: '83.50'
+    literal: '83.50'
+  - path: november.rows.C1.auxiliary_payable
+    value: '83.50'
+    literal: '83.50'
+  - path: december.rows.C2.auxiliary_payable
+    value: '83.50'
+    literal: '83.50'
+  - path: december.rows.C1.auxiliary_payable
+    value: '83.50'
+    literal: '83.50'
+  derived_expected:
+  - path: november.rows.C2.whole_dollar_auxiliary
+    value: '83'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: november.rows.C1.whole_dollar_auxiliary
+    value: '83'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: december.rows.C2.whole_dollar_auxiliary
+    value: '83'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: december.rows.C1.whole_dollar_auxiliary
+    value: '83'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: rs-02501-160-separate-households
+  capture_id: poms_rs_02501_160
+  section: B.2
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  - deduction:temporary
+  inputs:
+    scenarios:
+      temporary:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '213.10'
+          family_maximum: '396'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          C3:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: false
+        households:
+          C3: working
+          C2: working
+          E: other
+          C1: other
+      june:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 6
+        state:
+          kind: survivor
+          pia: '213.10'
+          family_maximum: '396'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          C3:
+            reason: own_earnings_test
+            payable: '39'
+            permanent: false
+        households:
+          C3: working
+          C2: working
+          E: other
+          C1: other
+      permanent:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '213.10'
+          family_maximum: '396'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          C3:
+            reason: own_earnings_test
+            payable: '0'
+            permanent: true
+        households:
+          C3: working
+          C2: working
+          E: other
+          C1: other
+      permanent_june:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 6
+        state:
+          kind: survivor
+          pia: '213.10'
+          family_maximum: '396'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions:
+          C3:
+            reason: own_earnings_test
+            payable: '39'
+            permanent: true
+        households:
+          C3: working
+          C2: working
+          E: other
+          C1: other
+  figure_count: 12
+  expected:
+  - path: temporary.rows.E.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: temporary.rows.C3.auxiliary_payable
+    value: '0'
+    literal: '0'
+  - path: temporary.rows.C2.auxiliary_payable
+    value: '132'
+    literal: '132'
+  - path: temporary.rows.C1.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: june.rows.E.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: june.rows.C3.auxiliary_payable
+    value: '39'
+    literal: '39'
+  - path: june.rows.C2.auxiliary_payable
+    value: '119'
+    literal: '119'
+  - path: june.rows.C1.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: permanent.rows.E.auxiliary_payable
+    value: '132'
+    literal: '132'
+  - path: permanent.rows.C1.auxiliary_payable
+    value: '132'
+    literal: '132'
+  - path: permanent_june.rows.E.auxiliary_payable
+    value: '119'
+    literal: '119'
+  - path: permanent_june.rows.C1.auxiliary_payable
+    value: '119'
+    literal: '119'
+  derived_expected:
+  - path: temporary.rows.E.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: temporary.rows.C3.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: temporary.rows.C2.whole_dollar_auxiliary
+    value: '132'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: temporary.rows.C1.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: june.rows.E.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: june.rows.C3.whole_dollar_auxiliary
+    value: '39'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: june.rows.C2.whole_dollar_auxiliary
+    value: '119'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: june.rows.C1.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: permanent.rows.E.whole_dollar_auxiliary
+    value: '132'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: permanent.rows.C1.whole_dollar_auxiliary
+    value: '132'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: permanent_june.rows.E.whole_dollar_auxiliary
+    value: '119'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: permanent_june.rows.C1.whole_dollar_auxiliary
+    value: '119'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+- id: rs-02501-160-basic
+  capture_id: poms_rs_02501_160
+  section: B.1
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  - deduction:own_earnings
+  inputs:
+    scenarios:
+      before:
+        operation: family_after_deductions
+        month:
+        - 2026
+        - 1
+        state:
+          kind: survivor
+          pia: '213.10'
+          family_maximum: '396'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: E
+          role: mother_father
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C1
+          role: child
+        deductions: {}
+        households:
+          C3: home
+          C2: home
+          E: home
+          C1: home
+  figure_count: 6
+  expected:
+  - path: before.state.pia
+    value: '213.10'
+    literal: '213.10'
+  - path: before.state.family_maximum
+    value: '396'
+    literal: '396'
+  - path: before.rows.E.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: before.rows.C3.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: before.rows.C2.auxiliary_payable
+    value: '99'
+    literal: '99'
+  - path: before.rows.C1.auxiliary_payable
+    value: '99'
+    literal: '99'
+  derived_expected:
+  - path: before.rows.E.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: before.rows.C3.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: before.rows.C2.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'
+  - path: before.rows.C1.whole_dollar_auxiliary
+    value: '99'
+    derivation: '215(g): floor the published post-deduction dime rate.'

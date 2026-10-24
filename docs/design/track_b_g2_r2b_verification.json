@@ -1,0 +1,1350 @@
+{
+  "schema_version": 1,
+  "verification_class": "statutory_conformance",
+  "admitted_scope": "Invented cases and captured published examples only; no population, behavioral or forecast claim.",
+  "workspace": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b",
+  "head": "6967142aada78870fdf9c414b371d5e2b7d63352",
+  "environment": {
+    "OMP_NUM_THREADS": "1",
+    "POLARS_MAX_THREADS": "1",
+    "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+    "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+    "PYTHONPATH": "$PWD/src:$PWD"
+  },
+  "preservation": {
+    "uncommitted": true,
+    "no_push": true,
+    "no_network": true,
+    "no_real_data": true,
+    "protected_files_unchanged": true,
+    "checks": {
+      "head": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "6967142aada78870fdf9c414b371d5e2b7d63352\n",
+        "stderr": ""
+      },
+      "log_since_origin_master": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "log",
+          "--oneline",
+          "origin/master..HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "committed_changed_paths": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "diff",
+          "--name-only",
+          "origin/master...HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "working_tree_changed_paths": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "diff",
+          "--name-only"
+        ],
+        "exit_code": 0,
+        "stdout": "docs/design/track_b_g_conformance_report.json\ndocs/design/track_b_g_gross_benefits.md\ndocs/design/track_b_r2_ret_ledger.md\nscripts/track_b_g_conformance_report.py\nsrc/populace_dynamics/track_b/_provenance.py\nsrc/populace_dynamics/track_b/gross_benefits.py\nsrc/populace_dynamics/track_b/ret_ledger.py\ntests/README-tiers.md\ntests/data/track_b/gross_benefit_examples.yaml\ntests/data/track_b/gross_benefit_sources/README.md\ntests/data/track_b/gross_benefit_sources/manifest.json\ntests/test_track_b_gross_benefits.py\ntests/test_track_b_gross_benefits_conformance_report.py\ntests/test_track_b_gross_benefits_fix_round_10_api.py\ntests/test_track_b_gross_benefits_fix_round_10_helpers.py\ntests/test_track_b_gross_benefits_fix_round_10_objects.py\ntests/test_track_b_gross_benefits_fix_round_10_parameters.py\ntests/test_track_b_gross_benefits_fix_round_11_seals.py\ntests/test_track_b_gross_benefits_fix_round_12_contract.py\ntests/test_track_b_gross_benefits_fix_round_13_audit.py\ntests/test_track_b_gross_benefits_fix_round_13_guard.py\ntests/test_track_b_gross_benefits_fix_round_15_receivers.py\ntests/test_track_b_gross_benefits_fix_round_3_rates.py\ntests/test_track_b_gross_benefits_fix_round_5_cohorts.py\ntests/test_track_b_gross_benefits_fix_round_6_cohorts.py\ntests/test_track_b_gross_benefits_fix_round_7_cohorts.py\ntests/test_track_b_gross_benefits_fix_round_7_history.py\ntests/test_track_b_gross_benefits_fix_round_8_entries.py\ntests/test_track_b_gross_benefits_fix_round_8_history.py\ntests/test_track_b_gross_benefits_fix_round_9_outcomes.py\ntests/test_track_b_gross_benefits_fix_round_9_validation.py\ntests/test_track_b_gross_benefits_properties.py\ntests/test_track_b_gross_benefits_registry.py\ntests/test_track_b_gross_benefits_review.py\ntests/test_track_b_gross_benefits_sources_20261011.py\ntests/test_track_b_r3_fix_round_13.py\ntests/test_track_b_ret_ledger.py\ntests/test_track_b_ret_ledger_sources.py\ntests/tier_counts.json\ntests/track_b_gross_benefit_support.py\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "status",
+          "--short"
+        ],
+        "exit_code": 0,
+        "stdout": " M docs/design/track_b_g_conformance_report.json\n M docs/design/track_b_g_gross_benefits.md\n M docs/design/track_b_r2_ret_ledger.md\n M scripts/track_b_g_conformance_report.py\n M src/populace_dynamics/track_b/_provenance.py\n M src/populace_dynamics/track_b/gross_benefits.py\n M src/populace_dynamics/track_b/ret_ledger.py\n M tests/README-tiers.md\n M tests/data/track_b/gross_benefit_examples.yaml\n M tests/data/track_b/gross_benefit_sources/README.md\n M tests/data/track_b/gross_benefit_sources/manifest.json\n M tests/test_track_b_gross_benefits.py\n M tests/test_track_b_gross_benefits_conformance_report.py\n M tests/test_track_b_gross_benefits_fix_round_10_api.py\n M tests/test_track_b_gross_benefits_fix_round_10_helpers.py\n M tests/test_track_b_gross_benefits_fix_round_10_objects.py\n M tests/test_track_b_gross_benefits_fix_round_10_parameters.py\n M tests/test_track_b_gross_benefits_fix_round_11_seals.py\n M tests/test_track_b_gross_benefits_fix_round_12_contract.py\n M tests/test_track_b_gross_benefits_fix_round_13_audit.py\n M tests/test_track_b_gross_benefits_fix_round_13_guard.py\n M tests/test_track_b_gross_benefits_fix_round_15_receivers.py\n M tests/test_track_b_gross_benefits_fix_round_3_rates.py\n M tests/test_track_b_gross_benefits_fix_round_5_cohorts.py\n M tests/test_track_b_gross_benefits_fix_round_6_cohorts.py\n M tests/test_track_b_gross_benefits_fix_round_7_cohorts.py\n M tests/test_track_b_gross_benefits_fix_round_7_history.py\n M tests/test_track_b_gross_benefits_fix_round_8_entries.py\n M tests/test_track_b_gross_benefits_fix_round_8_history.py\n M tests/test_track_b_gross_benefits_fix_round_9_outcomes.py\n M tests/test_track_b_gross_benefits_fix_round_9_validation.py\n M tests/test_track_b_gross_benefits_properties.py\n M tests/test_track_b_gross_benefits_registry.py\n M tests/test_track_b_gross_benefits_review.py\n M tests/test_track_b_gross_benefits_sources_20261011.py\n M tests/test_track_b_r3_fix_round_13.py\n M tests/test_track_b_ret_ledger.py\n M tests/test_track_b_ret_ledger_sources.py\n M tests/tier_counts.json\n M tests/track_b_gross_benefit_support.py\n?? docs/design/track_b_g2_r2b_mutations.json\n?? docs/design/track_b_g2_r2b_report.md\n?? docs/design/track_b_g2_r2b_verification.json\n?? scripts/track_b_r2_cross_head.py\n?? tests/test_track_b_gross_benefits_deductions.py\n?? tests/test_track_b_gross_benefits_savings.py\n?? tests/test_track_b_refusal_notes.py\n?? tests/test_track_b_ret_ledger_deductions.py\n",
+        "stderr": ""
+      },
+      "diff_check": {
+        "command": [
+          "git",
+          "--no-optional-locks",
+          "-c",
+          "core.fsmonitor=false",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  },
+  "changed_files": [
+    "docs/design/track_b_g2_r2b_mutations.json",
+    "docs/design/track_b_g2_r2b_report.md",
+    "docs/design/track_b_g2_r2b_verification.json",
+    "docs/design/track_b_g_conformance_report.json",
+    "docs/design/track_b_g_gross_benefits.md",
+    "docs/design/track_b_r2_ret_ledger.md",
+    "scripts/track_b_g_conformance_report.py",
+    "scripts/track_b_r2_cross_head.py",
+    "src/populace_dynamics/track_b/_provenance.py",
+    "src/populace_dynamics/track_b/gross_benefits.py",
+    "src/populace_dynamics/track_b/ret_ledger.py",
+    "tests/README-tiers.md",
+    "tests/data/track_b/gross_benefit_examples.yaml",
+    "tests/data/track_b/gross_benefit_sources/README.md",
+    "tests/data/track_b/gross_benefit_sources/manifest.json",
+    "tests/test_track_b_gross_benefits.py",
+    "tests/test_track_b_gross_benefits_conformance_report.py",
+    "tests/test_track_b_gross_benefits_deductions.py",
+    "tests/test_track_b_gross_benefits_fix_round_10_api.py",
+    "tests/test_track_b_gross_benefits_fix_round_10_helpers.py",
+    "tests/test_track_b_gross_benefits_fix_round_10_objects.py",
+    "tests/test_track_b_gross_benefits_fix_round_10_parameters.py",
+    "tests/test_track_b_gross_benefits_fix_round_11_seals.py",
+    "tests/test_track_b_gross_benefits_fix_round_12_contract.py",
+    "tests/test_track_b_gross_benefits_fix_round_13_audit.py",
+    "tests/test_track_b_gross_benefits_fix_round_13_guard.py",
+    "tests/test_track_b_gross_benefits_fix_round_15_receivers.py",
+    "tests/test_track_b_gross_benefits_fix_round_3_rates.py",
+    "tests/test_track_b_gross_benefits_fix_round_5_cohorts.py",
+    "tests/test_track_b_gross_benefits_fix_round_6_cohorts.py",
+    "tests/test_track_b_gross_benefits_fix_round_7_cohorts.py",
+    "tests/test_track_b_gross_benefits_fix_round_7_history.py",
+    "tests/test_track_b_gross_benefits_fix_round_8_entries.py",
+    "tests/test_track_b_gross_benefits_fix_round_8_history.py",
+    "tests/test_track_b_gross_benefits_fix_round_9_outcomes.py",
+    "tests/test_track_b_gross_benefits_fix_round_9_validation.py",
+    "tests/test_track_b_gross_benefits_properties.py",
+    "tests/test_track_b_gross_benefits_registry.py",
+    "tests/test_track_b_gross_benefits_review.py",
+    "tests/test_track_b_gross_benefits_savings.py",
+    "tests/test_track_b_gross_benefits_sources_20261011.py",
+    "tests/test_track_b_r3_fix_round_13.py",
+    "tests/test_track_b_refusal_notes.py",
+    "tests/test_track_b_ret_ledger.py",
+    "tests/test_track_b_ret_ledger_deductions.py",
+    "tests/test_track_b_ret_ledger_sources.py",
+    "tests/tier_counts.json",
+    "tests/track_b_gross_benefit_support.py"
+  ],
+  "final_source_sha256": {
+    "src/populace_dynamics/track_b/_provenance.py": "886cbd14bb6461eed6761fee8185b330d71550cb27c53ee5283c785077828404",
+    "src/populace_dynamics/track_b/gross_benefits.py": "e1e6b35c3b547e4dc597235b2d395c49bd906ab29c4b06e682cc36de9f310a1f",
+    "src/populace_dynamics/track_b/ret_ledger.py": "62b896c508de879a4429961331e51f8af8162fef019a15c1804ce9df7b03c4e0",
+    "scripts/track_b_g_conformance_report.py": "3cb5cf9b27b1019daf224040554ea707a0dc96c4962bae8dc2cbaaa8f48ca2e4",
+    "scripts/track_b_r2_cross_head.py": "4f2a1bea264d906ea0fb4cec08a2b233b458bb3a0ca0d09dbe580d6cc78e8178"
+  },
+  "validation_runs": [
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits.py",
+        "tests/test_track_b_gross_benefits_deductions.py"
+      ],
+      "path": "scratch/trackb_lane/g_core_final.log",
+      "sha256": "be6fd18c848dd32e9e383350b1ec79a544c22b0d7af79c3627efe2f6553db013",
+      "summary": "346 passed in 64.90s (0:01:04)"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_dwb.py",
+        "tests/test_track_b_gross_benefits_fix_round_1.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_api.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_helpers.py"
+      ],
+      "path": "scratch/trackb_lane/g_prefix_final.log",
+      "sha256": "34a349d03d004d7a9d741639ea8429c0a48bd032275c5fcf05068f622dcad581",
+      "summary": "988 passed in 188.93s (0:03:08)",
+      "actual_launcher": "Python stdin invoked pytest.main with this argument list; paths selected by filename as recorded here."
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-o",
+        "faulthandler_timeout=120",
+        "tests/test_track_b_gross_benefits_fix_round_10_objects.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_parameters.py",
+        "tests/test_track_b_gross_benefits_fix_round_11_roles.py",
+        "tests/test_track_b_gross_benefits_fix_round_11_seals.py",
+        "tests/test_track_b_gross_benefits_fix_round_12_contract.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_audit.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_boundary.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_guard.py",
+        "tests/test_track_b_gross_benefits_fix_round_15_arguments.py",
+        "tests/test_track_b_gross_benefits_fix_round_15_collections.py",
+        "tests/test_track_b_gross_benefits_fix_round_15_receivers.py",
+        "tests/test_track_b_gross_benefits_fix_round_2_care.py",
+        "tests/test_track_b_gross_benefits_fix_round_2_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_2_periods.py",
+        "tests/test_track_b_gross_benefits_fix_round_3_rates.py",
+        "tests/test_track_b_gross_benefits_fix_round_4_care_floor.py",
+        "tests/test_track_b_gross_benefits_fix_round_4_divorced_care.py",
+        "tests/test_track_b_gross_benefits_fix_round_5_care_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_5_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_6_care_note.py",
+        "tests/test_track_b_gross_benefits_fix_round_6_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_boundary.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_entries.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_citations.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_outcomes.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_validation.py",
+        "tests/test_track_b_gross_benefits_oracle.py",
+        "tests/test_track_b_gross_benefits_own_input_order.py",
+        "tests/test_track_b_gross_benefits_parents_ieds.py",
+        "tests/test_track_b_gross_benefits_parisi.py",
+        "tests/test_track_b_gross_benefits_payment_review.py",
+        "tests/test_track_b_gross_benefits_properties.py",
+        "tests/test_track_b_gross_benefits_registry.py",
+        "tests/test_track_b_gross_benefits_review.py",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "tests/test_track_b_gross_benefits_sources_20261011.py",
+        "tests/test_track_b_gross_benefits_ssfa.py"
+      ],
+      "path": "scratch/trackb_lane/g_remaining_final.log",
+      "sha256": "6f375fea82b61b5628e553be6aacf483642ec9be1c31dd4c6cdfd6184e423f3c",
+      "summary": "2 failed, 6612 passed in 1831.16s (0:30:31)",
+      "actual_launcher": "Python stdin invoked pytest.main; this process imported the audit inventories before their final update.",
+      "known_failures": [
+        "test_cross_layer_public_names_and_members_have_explicit_audit_coverage",
+        "test_every_declared_sealed_class_has_an_adversarial_sample"
+      ],
+      "corrected_by": "final_inventory_files.log; both complete inventory files rerun after updating new-class declarations"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_10_objects.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_audit.py"
+      ],
+      "path": "scratch/trackb_lane/final_inventory_files.log",
+      "sha256": "9d155fdfacd01b11d6184e1effaa087a669b1db1455b9c885d99ec4d3656de36",
+      "summary": "1239 passed in 49.92s"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-o",
+        "faulthandler_timeout=120",
+        "tests/test_track_b_gross_benefits_conformance_report.py"
+      ],
+      "path": "scratch/trackb_lane/g_report_tests.log",
+      "sha256": "7bbb05e509da76f0c8acc201f90a2eb3e611afaf2028c467580b4c0fb6be83ed",
+      "summary": "53 passed in 1336.87s (0:22:16)"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "-o",
+        "faulthandler_timeout=120",
+        "tests/test_track_b_r3_fix_round_13.py",
+        "tests/test_track_b_r3_provenance.py",
+        "tests/test_track_b_r3_sources.py",
+        "tests/test_track_b_r3_validation_once.py",
+        "tests/test_track_b_arf.py",
+        "tests/test_track_b_arf_properties.py",
+        "tests/test_track_b_recompute.py",
+        "tests/test_track_b_recompute_properties.py",
+        "tests/test_track_b_refusal_notes.py",
+        "tests/estimates/test_birth_evidence_artifact.py"
+      ],
+      "path": "scratch/trackb_lane/r3_notes_birth.log",
+      "sha256": "dffe3b56ceb79ab92dd5efdc5ecfa6de5375babc5dfb8bb245e152d612b06cb9",
+      "summary": "1482 passed in 384.01s (0:06:24)"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "-k",
+        "test_nh_age_interaction_is_named_refusal or test_temporary_partial_reading_is_explicit_in_captures"
+      ],
+      "path": "scratch/trackb_lane/final_quotes.log",
+      "sha256": "e4590294c75fdec0ff06151e1cdd4f1eab424095c0ac566b30284e6acbab385a",
+      "summary": "2 passed, 28 deselected in 15.64s"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_13_audit.py",
+        "-k",
+        "RedistributedBeneficiaryMonth or test_cross_layer_public_names_and_members_have_explicit_audit_coverage or test_every_declared_sealed_class_has_an_adversarial_sample"
+      ],
+      "path": "scratch/trackb_lane/final_audit.log",
+      "sha256": "224477f8a38ef7053f03f4c12aa1f7d890c597fac96ee940c02faa109570996d",
+      "summary": "13 passed, 1097 deselected in 15.03s"
+    },
+    {
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/scratch/no-microdata",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/scratch/no-microdata",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests",
+        "-k",
+        "test__given_collected_suite__then_tiers_match_policy_manifest"
+      ],
+      "path": "scratch/trackb_lane/final_tier_policy.log",
+      "sha256": "7044e477a6f0bd8a854372800841f1bffe8eb1198e81fc84d460033e3f65ccba",
+      "summary": "1 passed, 25159 deselected in 189.39s (0:03:09)"
+    }
+  ],
+  "r2_final_review": {
+    "verification_class": "statutory conformance",
+    "scope": "invented cases only",
+    "environment": {
+      "POPULACE_DYNAMICS_PSID_DIR": "$PWD/.no-real-data",
+      "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/.no-real-data",
+      "OMP_NUM_THREADS": "1",
+      "POLARS_MAX_THREADS": "1",
+      "PYTHONPATH": "$PWD/src:$PWD"
+    },
+    "python": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+    "tests": [
+      {
+        "arguments": [
+          "-m",
+          "pytest",
+          "-p",
+          "no:xdist",
+          "-p",
+          "no:cacheprovider",
+          "-q",
+          "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_155_nh_partial_month_preserves_nh_deductions",
+          "tests/test_track_b_gross_benefits_deductions.py"
+        ],
+        "passed": 31,
+        "seconds": 58.0
+      },
+      {
+        "arguments": [
+          "-m",
+          "pytest",
+          "-p",
+          "no:xdist",
+          "-p",
+          "no:cacheprovider",
+          "-q",
+          "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_155_nh_partial_month_preserves_nh_deductions"
+        ],
+        "passed": 1,
+        "seconds": 29.64
+      },
+      {
+        "arguments": [
+          "-m",
+          "pytest",
+          "-p",
+          "no:xdist",
+          "-p",
+          "no:cacheprovider",
+          "-q",
+          "tests/test_track_b_ret_ledger_deductions.py::test_family_context_invalidity_precedes_record_refusal",
+          "tests/test_track_b_ret_ledger.py::test_binding_survivor_maximum_with_zero_rate_cdb_computes_part_b"
+        ],
+        "passed": 3,
+        "seconds": 6.94
+      }
+    ],
+    "cross_head_arguments": [
+      "scripts/track_b_r2_cross_head.py",
+      "--baseline-root",
+      "scratch/trackb_lane/baseline",
+      "--output",
+      "scratch/g2-r2b-r2/cross_head_report.json"
+    ],
+    "cross_head": {
+      "verification_class": "statutory conformance",
+      "scope": "invented cases only; no population, behavioral or forecast claim",
+      "seed": 53014,
+      "r2_stable_rows": 240,
+      "r3_stable_rows": 240,
+      "identical_declared_output_bytes": true,
+      "stable_sha256": "799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55",
+      "transitions": {
+        "baseline": {
+          "rows": 6,
+          "supported": 0,
+          "refused_by_reason": {
+            "deduction_before_reduction_part_b": 6
+          }
+        },
+        "head": {
+          "rows": 6,
+          "supported": 6,
+          "refused_by_reason": {}
+        }
+      },
+      "transition_rows": [
+        {
+          "id": "binding_survivor_own_excess_1",
+          "own_excess": 1,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_60",
+          "own_excess": 60,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_99",
+          "own_excess": 99,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_100",
+          "own_excess": 100,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_555",
+          "own_excess": 555,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_1188",
+          "own_excess": 1188,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        }
+      ]
+    },
+    "collected_test_count_change": 0,
+    "formatting": "Black -l 79 and Ruff clean on changed source/tests/script"
+  },
+  "savings_final_review": {
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "POLARS_MAX_THREADS": "1",
+      "POPULACE_DYNAMICS_PSID_DIR": "$PWD/__nonexistent_data__",
+      "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/__nonexistent_data__",
+      "PYTHONPATH": "$PWD/src:$PWD"
+    },
+    "command": [
+      "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:xdist",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tests/test_track_b_gross_benefits_savings.py",
+      "tests/test_track_b_gross_benefits_fix_round_13_guard.py"
+    ],
+    "summary": "63 passed in 133.91s",
+    "log": "scratch/savings_deduction_history.log"
+  },
+  "savings_dormant_review": {
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "POLARS_MAX_THREADS": "1",
+      "POPULACE_DYNAMICS_PSID_DIR": "$PWD/__nonexistent_data__",
+      "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/__nonexistent_data__",
+      "PYTHONPATH": "$PWD/src:$PWD"
+    },
+    "command": [
+      "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "no:xdist",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tests/test_track_b_gross_benefits_savings.py",
+      "-k",
+      "test_operational_source_rules_are_quoted_from_captures or test_operational_carry_membership_refusal_and_denominator_properties"
+    ],
+    "summary": "2 passed, 15 deselected in 10.20s",
+    "log": "scratch/savings_dormant.log",
+    "log_sha256": "37e66382b2785c29b5758520c010f4bd584eb61c0dae6adb6360db8ee8bc5874"
+  },
+  "tier_recount": {
+    "unit": {
+      "path": "scratch/trackb_lane/final_tier_unit.log",
+      "sha256": "ba1351844e26133240cae46fd1443ff6c2dcf4a1bf8682f18fc5e8b40438602c",
+      "summary": "18629/25160 tests collected (6531 deselected) in 255.82s (0:04:15)",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-m",
+        "unit"
+      ],
+      "count": 18629
+    },
+    "artifact": {
+      "path": "scratch/trackb_lane/final_tier_artifact.log",
+      "sha256": "db437e3b8b92697ea44c2a4f04a75a38baf7a725e5b7c2b08507af9ffdc15cf4",
+      "summary": "4253/25160 tests collected (20907 deselected) in 275.01s (0:04:35)",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-m",
+        "artifact"
+      ],
+      "count": 4253
+    },
+    "integration_psid": {
+      "path": "scratch/trackb_lane/final_tier_integration_psid.log",
+      "sha256": "27a9b1f8a2a1f2507f30d5228bcd0d93e486028620dc6a394501d240f332fe46",
+      "summary": "1450/25160 tests collected (23710 deselected) in 232.67s (0:03:52)",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-m",
+        "integration_psid"
+      ],
+      "count": 1450
+    },
+    "reproduction_legacy": {
+      "path": "scratch/trackb_lane/final_tier_reproduction_legacy.log",
+      "sha256": "b7591a79416b50a266204faf0f24268ad1765e1f21c4cae3eca5bc6d2808278e",
+      "summary": "520/25160 tests collected (24640 deselected) in 304.57s (0:05:04)",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-m",
+        "reproduction_legacy"
+      ],
+      "count": 520
+    },
+    "oracle_policyengine": {
+      "path": "scratch/trackb_lane/final_tier_oracle_policyengine.log",
+      "sha256": "d9d75e51747669bcc1faad83ef67916b34eb50432fb560a825170577fd21db20",
+      "summary": "308/25160 tests collected (24852 deselected) in 208.57s (0:03:28)",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-m",
+        "oracle_policyengine"
+      ],
+      "count": 308
+    }
+  },
+  "formatting": [
+    {
+      "argv": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "black",
+        "-l",
+        "79",
+        "scripts/track_b_g_conformance_report.py",
+        "scripts/track_b_r2_cross_head.py",
+        "src/populace_dynamics/track_b/_provenance.py",
+        "src/populace_dynamics/track_b/gross_benefits.py",
+        "src/populace_dynamics/track_b/ret_ledger.py",
+        "tests/test_track_b_gross_benefits.py",
+        "tests/test_track_b_gross_benefits_conformance_report.py",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_api.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_helpers.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_objects.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_parameters.py",
+        "tests/test_track_b_gross_benefits_fix_round_11_seals.py",
+        "tests/test_track_b_gross_benefits_fix_round_12_contract.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_audit.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_guard.py",
+        "tests/test_track_b_gross_benefits_fix_round_15_receivers.py",
+        "tests/test_track_b_gross_benefits_fix_round_3_rates.py",
+        "tests/test_track_b_gross_benefits_fix_round_5_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_6_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_entries.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_outcomes.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_validation.py",
+        "tests/test_track_b_gross_benefits_properties.py",
+        "tests/test_track_b_gross_benefits_registry.py",
+        "tests/test_track_b_gross_benefits_review.py",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "tests/test_track_b_gross_benefits_sources_20261011.py",
+        "tests/test_track_b_r3_fix_round_13.py",
+        "tests/test_track_b_refusal_notes.py",
+        "tests/test_track_b_ret_ledger.py",
+        "tests/test_track_b_ret_ledger_deductions.py",
+        "tests/test_track_b_ret_ledger_sources.py",
+        "tests/track_b_gross_benefit_support.py"
+      ],
+      "exit_code": 0,
+      "output": "All done! \u2728 \ud83c\udf70 \u2728\n37 files left unchanged.\n"
+    },
+    {
+      "argv": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/track_b_g_conformance_report.py",
+        "scripts/track_b_r2_cross_head.py",
+        "src/populace_dynamics/track_b/_provenance.py",
+        "src/populace_dynamics/track_b/gross_benefits.py",
+        "src/populace_dynamics/track_b/ret_ledger.py",
+        "tests/test_track_b_gross_benefits.py",
+        "tests/test_track_b_gross_benefits_conformance_report.py",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_api.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_helpers.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_objects.py",
+        "tests/test_track_b_gross_benefits_fix_round_10_parameters.py",
+        "tests/test_track_b_gross_benefits_fix_round_11_seals.py",
+        "tests/test_track_b_gross_benefits_fix_round_12_contract.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_audit.py",
+        "tests/test_track_b_gross_benefits_fix_round_13_guard.py",
+        "tests/test_track_b_gross_benefits_fix_round_15_receivers.py",
+        "tests/test_track_b_gross_benefits_fix_round_3_rates.py",
+        "tests/test_track_b_gross_benefits_fix_round_5_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_6_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_cohorts.py",
+        "tests/test_track_b_gross_benefits_fix_round_7_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_entries.py",
+        "tests/test_track_b_gross_benefits_fix_round_8_history.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_outcomes.py",
+        "tests/test_track_b_gross_benefits_fix_round_9_validation.py",
+        "tests/test_track_b_gross_benefits_properties.py",
+        "tests/test_track_b_gross_benefits_registry.py",
+        "tests/test_track_b_gross_benefits_review.py",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "tests/test_track_b_gross_benefits_sources_20261011.py",
+        "tests/test_track_b_r3_fix_round_13.py",
+        "tests/test_track_b_refusal_notes.py",
+        "tests/test_track_b_ret_ledger.py",
+        "tests/test_track_b_ret_ledger_deductions.py",
+        "tests/test_track_b_ret_ledger_sources.py",
+        "tests/track_b_gross_benefit_support.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "final_conformance_regeneration": {
+    "path": "docs/design/track_b_g_conformance_report.json",
+    "sha256": "ee8ef3247a700b4cec92dfc27bbb98b071deaba5566b092cb9c3df4f762be972",
+    "final_sha256": "ee8ef3247a700b4cec92dfc27bbb98b071deaba5566b092cb9c3df4f762be972",
+    "byte_identical": true
+  },
+  "mutations": {
+    "artifact": "docs/design/track_b_g2_r2b_mutations.json",
+    "confirmed": 13,
+    "all_reverted": true
+  },
+  "cost": {
+    "measurements": [
+      {
+        "workload": "g_conformance",
+        "head": "origin_master",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "scripts/track_b_g_conformance_report.py"
+        ],
+        "wall_seconds": 1499.654013249994,
+        "user_cpu_seconds": 144.122114,
+        "system_cpu_seconds": 8.243347,
+        "exit_code": 0,
+        "last_lines": [
+          "Wrote /Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline/docs/design/track_b_g_conformance_report.json: 356400 invented configurations"
+        ],
+        "total_cpu_seconds": 152.365461,
+        "environment": {
+          "OMP_NUM_THREADS": "1",
+          "POLARS_MAX_THREADS": "1",
+          "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline/src:/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline"
+        }
+      },
+      {
+        "workload": "g_conformance",
+        "head": "working_tree",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "scripts/track_b_g_conformance_report.py"
+        ],
+        "wall_seconds": 796.099722333005,
+        "user_cpu_seconds": 163.88692700000001,
+        "system_cpu_seconds": 8.626982000000002,
+        "exit_code": 0,
+        "last_lines": [
+          "Wrote /Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/docs/design/track_b_g_conformance_report.json: 356400 invented configurations"
+        ],
+        "total_cpu_seconds": 172.513909,
+        "environment": {
+          "OMP_NUM_THREADS": "1",
+          "POLARS_MAX_THREADS": "1",
+          "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/src:/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b"
+        }
+      },
+      {
+        "workload": "r2_tests",
+        "head": "origin_master",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-p",
+          "no:xdist",
+          "-p",
+          "no:cacheprovider",
+          "-q",
+          "tests/test_track_b_ret_differential.py",
+          "tests/test_track_b_ret_grace.py",
+          "tests/test_track_b_ret_grace_differential.py",
+          "tests/test_track_b_ret_grace_provenance.py",
+          "tests/test_track_b_ret_ledger.py",
+          "tests/test_track_b_ret_ledger_properties.py",
+          "tests/test_track_b_ret_ledger_readings.py",
+          "tests/test_track_b_ret_ledger_sources.py"
+        ],
+        "wall_seconds": 868.5359836249991,
+        "user_cpu_seconds": 81.33624600000002,
+        "system_cpu_seconds": 5.500299999999999,
+        "exit_code": 0,
+        "last_lines": [
+          "........................................................................ [ 73%]",
+          "........................................................................ [ 82%]",
+          "........................................................................ [ 91%]",
+          "..................................................................       [100%]",
+          "786 passed in 861.05s (0:14:21)"
+        ],
+        "total_cpu_seconds": 86.83654600000001,
+        "environment": {
+          "OMP_NUM_THREADS": "1",
+          "POLARS_MAX_THREADS": "1",
+          "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline/src:/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline"
+        }
+      },
+      {
+        "workload": "r2_tests",
+        "head": "working_tree",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "-m",
+          "pytest",
+          "-p",
+          "no:xdist",
+          "-p",
+          "no:cacheprovider",
+          "-q",
+          "tests/test_track_b_ret_differential.py",
+          "tests/test_track_b_ret_grace.py",
+          "tests/test_track_b_ret_grace_differential.py",
+          "tests/test_track_b_ret_grace_provenance.py",
+          "tests/test_track_b_ret_ledger.py",
+          "tests/test_track_b_ret_ledger_deductions.py",
+          "tests/test_track_b_ret_ledger_properties.py",
+          "tests/test_track_b_ret_ledger_readings.py",
+          "tests/test_track_b_ret_ledger_sources.py"
+        ],
+        "wall_seconds": 911.7418719999987,
+        "user_cpu_seconds": 107.79183,
+        "system_cpu_seconds": 6.463436999999999,
+        "exit_code": 0,
+        "last_lines": [
+          "........................................................................ [ 79%]",
+          "........................................................................ [ 88%]",
+          "........................................................................ [ 96%]",
+          "..........................                                               [100%]",
+          "818 passed in 902.52s (0:15:02)"
+        ],
+        "total_cpu_seconds": 114.255267,
+        "environment": {
+          "OMP_NUM_THREADS": "1",
+          "POLARS_MAX_THREADS": "1",
+          "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/no-microdata",
+          "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/src:/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b"
+        }
+      }
+    ],
+    "caveat": "Single back-to-back observations under concurrent validation load; CPU and wall times are reported separately. The final G pair was rerun after production source freeze. R2 current-head tests also ran after freeze. Baseline R2 has fewer tests; both exact command lists and counts are retained.",
+    "superseded_initial_g_pair": [
+      {
+        "workload": "g_conformance",
+        "head": "origin_master",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "scripts/track_b_g_conformance_report.py"
+        ],
+        "wall_seconds": 1483.483369417001,
+        "user_cpu_seconds": 133.246797,
+        "system_cpu_seconds": 4.74792,
+        "exit_code": 0,
+        "last_lines": [
+          "Wrote /Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/scratch/trackb_lane/baseline/docs/design/track_b_g_conformance_report.json: 356400 invented configurations"
+        ]
+      },
+      {
+        "workload": "g_conformance",
+        "head": "working_tree",
+        "cwd": "/Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b",
+        "command": [
+          "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+          "scripts/track_b_g_conformance_report.py"
+        ],
+        "wall_seconds": 1183.0418077079958,
+        "user_cpu_seconds": 134.834483,
+        "system_cpu_seconds": 5.831826,
+        "exit_code": 0,
+        "last_lines": [
+          "Wrote /Users/maxghenis/.subfleet/worktrees/20261023-090920-trackb-g2-r2b/docs/design/track_b_g_conformance_report.json: 356400 invented configurations"
+        ]
+      }
+    ]
+  },
+  "coverage": {
+    "g_unique_tests": 8004,
+    "g_lattice": {
+      "invalid": 286794,
+      "refused": 60775,
+      "rows": 356400,
+      "supported": 8831
+    },
+    "g_registry_examples": 37,
+    "g_refusal_witnesses": {
+      "denominator": {
+        "invalid": 0,
+        "refused": 37,
+        "rows": 37,
+        "supported": 0
+      },
+      "refused_by_reason": {
+        "administrative_finality": 1,
+        "combined_family_maximum": 1,
+        "deduction_age_work_interaction": 1,
+        "deemed_or_putative_spouse": 1,
+        "delayed_credits_born_before_1917": 1,
+        "di_entitlement_before_july_1980": 1,
+        "dib_after_reduced_rib": 1,
+        "dib_guarantee_pia": 1,
+        "disabled_widow_before_1984": 1,
+        "divorced_spouse_care_history": 1,
+        "divorced_spouse_child_in_care_unknown": 1,
+        "drug_addiction_suspension": 1,
+        "dual_entitlement_sequence": 1,
+        "election_certificate_suspension": 1,
+        "eligibility_before_1983": 1,
+        "foreign_work_deduction": 1,
+        "government_pension_offset": 1,
+        "independently_entitled_divorced_spouse": 1,
+        "maritime_deduction": 1,
+        "multiple_auxiliary_records": 1,
+        "non_aime_formula_pia": 1,
+        "own_rib_history_before_1978": 1,
+        "parent_benefit": 1,
+        "parisi_before_october_1999": 1,
+        "parisi_redistribution_ambiguous": 1,
+        "payment_month_before_1983": 1,
+        "penalty_deduction": 1,
+        "prisoner_suspension": 1,
+        "reduced_benefit_history_before_1978": 1,
+        "savings_clause_403a5": 1,
+        "savings_clause_history_unknown": 1,
+        "savings_clause_membership_change": 1,
+        "savings_clause_rate_procedure": 1,
+        "widow_child_in_care_unknown": 1,
+        "widow_drc_savings_clause": 1,
+        "widow_drc_savings_clause_history_unknown": 1,
+        "workers_compensation_offset": 1
+      },
+      "scope": "Named invented witnesses outside the finite lattice; separate denominator, one valid refusal for every retained UnsupportedReason.",
+      "witnesses": [
+        {
+          "description": "Declared finality protection",
+          "id": "administrative_finality",
+          "reason": "administrative_finality",
+          "status": "refused"
+        },
+        {
+          "description": "One child on retirement and survivor records",
+          "id": "combined_family_maximum",
+          "reason": "combined_family_maximum",
+          "status": "refused"
+        },
+        {
+          "description": "Concurrent number-holder reservations and age reduction need a captured allocation",
+          "id": "deduction_age_work_interaction",
+          "reason": "deduction_age_work_interaction",
+          "status": "refused"
+        },
+        {
+          "description": "Declared deemed spouse",
+          "id": "deemed_or_putative_spouse",
+          "reason": "deemed_or_putative_spouse",
+          "status": "refused"
+        },
+        {
+          "description": "Own RIB has 12 credit months for a 1916 birth",
+          "id": "delayed_credits_born_before_1917",
+          "reason": "delayed_credits_born_before_1917",
+          "status": "refused"
+        },
+        {
+          "description": "Initial DIB entitlement June 1980",
+          "id": "di_entitlement_before_july_1980",
+          "reason": "di_entitlement_before_july_1980",
+          "status": "refused"
+        },
+        {
+          "description": "Own DIB reduced for prior reduced RIB",
+          "id": "dib_after_reduced_rib",
+          "reason": "dib_after_reduced_rib",
+          "status": "refused"
+        },
+        {
+          "description": "Declared DIB guarantee PIA",
+          "id": "dib_guarantee_pia",
+          "reason": "dib_guarantee_pia",
+          "status": "refused"
+        },
+        {
+          "description": "DWB benefit month December 1983",
+          "id": "disabled_widow_before_1984",
+          "reason": "disabled_widow_before_1984",
+          "status": "refused"
+        },
+        {
+          "description": "An aged divorced spouse lacks first-entitlement care history that can change the amount",
+          "id": "divorced_spouse_care_history",
+          "reason": "divorced_spouse_care_history",
+          "status": "refused"
+        },
+        {
+          "description": "A divorced spouse and an entitled child lack a current care attestation",
+          "id": "divorced_spouse_child_in_care_unknown",
+          "reason": "divorced_spouse_child_in_care_unknown",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: drug_addiction_suspension",
+          "id": "drug_addiction_suspension",
+          "reason": "drug_addiction_suspension",
+          "status": "refused"
+        },
+        {
+          "description": "Widow also entitled to own DIB",
+          "id": "dual_entitlement_sequence",
+          "reason": "dual_entitlement_sequence",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: election_certificate_suspension",
+          "id": "election_certificate_suspension",
+          "reason": "election_certificate_suspension",
+          "status": "refused"
+        },
+        {
+          "description": "1982 eligibility with otherwise valid survivor inputs",
+          "id": "eligibility_before_1983",
+          "reason": "eligibility_before_1983",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: foreign_work",
+          "id": "foreign_work_deduction",
+          "reason": "foreign_work_deduction",
+          "status": "refused"
+        },
+        {
+          "description": "Widow GPO before repeal in December 2023",
+          "id": "government_pension_offset",
+          "reason": "government_pension_offset",
+          "status": "refused"
+        },
+        {
+          "description": "IEDS benefit month December 1984",
+          "id": "independently_entitled_divorced_spouse",
+          "reason": "independently_entitled_divorced_spouse",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: maritime",
+          "id": "maritime_deduction",
+          "reason": "maritime_deduction",
+          "status": "refused"
+        },
+        {
+          "description": "One person is divorced spouse and mother/father on two records",
+          "id": "multiple_auxiliary_records",
+          "reason": "multiple_auxiliary_records",
+          "status": "refused"
+        },
+        {
+          "description": "Declared PIA outside the AIME formula",
+          "id": "non_aime_formula_pia",
+          "reason": "non_aime_formula_pia",
+          "status": "refused"
+        },
+        {
+          "description": "Spouse born in 1912 has own RIB PIA 1000 and RF1 but no pre-January-1978 reduction or PIA history",
+          "id": "own_rib_history_before_1978",
+          "reason": "own_rib_history_before_1978",
+          "status": "refused"
+        },
+        {
+          "description": "Two potential parents; one own RIB 780 lies between 75% and 82.5% of PIA 1000",
+          "id": "parent_benefit",
+          "reason": "parent_benefit",
+          "status": "refused"
+        },
+        {
+          "description": "Binding mixed dual/non-dual family in September 1999",
+          "id": "parisi_before_october_1999",
+          "reason": "parisi_before_october_1999",
+          "status": "refused"
+        },
+        {
+          "description": "Binding maximum with credited own RIB and a non-dual child",
+          "id": "parisi_redistribution_ambiguous",
+          "reason": "parisi_redistribution_ambiguous",
+          "status": "refused"
+        },
+        {
+          "description": "December 1982 benefit month",
+          "id": "payment_month_before_1983",
+          "reason": "payment_month_before_1983",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: penalty",
+          "id": "penalty_deduction",
+          "reason": "penalty_deduction",
+          "status": "refused"
+        },
+        {
+          "description": "GN 02603.040 event requires an unimplemented deduction procedure: prisoner_suspension",
+          "id": "prisoner_suspension",
+          "reason": "prisoner_suspension",
+          "status": "refused"
+        },
+        {
+          "description": "Spouse born in 1912 has RF1 on an unreduced 500 benefit but no pre-January-1978 money reduction or unreduced-rate history",
+          "id": "reduced_benefit_history_before_1978",
+          "reason": "reduced_benefit_history_before_1978",
+          "status": "refused"
+        },
+        {
+          "description": "Protected total 1500 falls to 1499.90 after a PIA increase",
+          "id": "savings_clause_403a5",
+          "reason": "savings_clause_403a5",
+          "status": "refused"
+        },
+        {
+          "description": "Governed month begins with unknown prior entitlement months",
+          "id": "savings_clause_history_unknown",
+          "reason": "savings_clause_history_unknown",
+          "status": "refused"
+        },
+        {
+          "description": "One child leaves while operational protection is active",
+          "id": "savings_clause_membership_change",
+          "reason": "savings_clause_membership_change",
+          "status": "refused"
+        },
+        {
+          "description": "A reduced spouse alone has no captured allocation procedure",
+          "id": "savings_clause_rate_procedure",
+          "reason": "savings_clause_rate_procedure",
+          "status": "refused"
+        },
+        {
+          "description": "A widow and an entitled child lack a current care attestation",
+          "id": "widow_child_in_care_unknown",
+          "reason": "widow_child_in_care_unknown",
+          "status": "refused"
+        },
+        {
+          "description": "May 1978 survivor protected from widow deceased-worker DRCs",
+          "id": "widow_drc_savings_clause",
+          "reason": "widow_drc_savings_clause",
+          "status": "refused"
+        },
+        {
+          "description": "Direct survivor snapshot has widow DRCs and a child but lacks May 1978 attestation",
+          "id": "widow_drc_savings_clause_history_unknown",
+          "reason": "widow_drc_savings_clause_history_unknown",
+          "status": "refused"
+        },
+        {
+          "description": "Disability record with declared workers compensation offset",
+          "id": "workers_compensation_offset",
+          "reason": "workers_compensation_offset",
+          "status": "refused"
+        }
+      ]
+    },
+    "g_deduction_extension": {
+      "invalid": 0,
+      "refused": 0,
+      "rows": 16,
+      "supported": 16
+    },
+    "r2_r3_cross_head": {
+      "verification_class": "statutory conformance",
+      "scope": "invented cases only; no population, behavioral or forecast claim",
+      "seed": 53014,
+      "r2_stable_rows": 240,
+      "r3_stable_rows": 240,
+      "identical_declared_output_bytes": true,
+      "stable_sha256": "799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55",
+      "transitions": {
+        "baseline": {
+          "rows": 6,
+          "supported": 0,
+          "refused_by_reason": {
+            "deduction_before_reduction_part_b": 6
+          }
+        },
+        "head": {
+          "rows": 6,
+          "supported": 6,
+          "refused_by_reason": {}
+        }
+      },
+      "transition_rows": [
+        {
+          "id": "binding_survivor_own_excess_1",
+          "own_excess": 1,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_60",
+          "own_excess": 60,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_99",
+          "own_excess": 99,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_100",
+          "own_excess": 100,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_555",
+          "own_excess": 555,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        },
+        {
+          "id": "binding_survivor_own_excess_1188",
+          "own_excess": 1188,
+          "baseline": "deduction_before_reduction_part_b",
+          "head": "supported"
+        }
+      ]
+    }
+  },
+  "validation_notes": [
+    "Full G/R3 combined attempts were interrupted after stalled progress; the requested file surface was verified in smaller groups.",
+    "The broad G remainder run passed 6612 tests and failed two explicit audit inventories imported before their updates. Both entire affected inventory files passed after the updates. Counts in separate runs overlap and must not be summed as unique coverage.",
+    "Four concurrent final tier collection attempts were interrupted to reduce contention and rerun sequentially. No full-suite execution was performed.",
+    "The requested absolute non-deductee monotonicity invariant conflicts with the captured single-full-deduction exception. The executed minimized counterexample and qualified invariant are recorded in the design and report; the existing property has no collection-count change."
+  ]
+}

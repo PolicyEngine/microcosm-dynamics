@@ -830,7 +830,14 @@ def test_every_public_argument_and_declaration_field_declares_a_schema(seed):
     guard = g.SavingsClauseGuard(
         g.YearMonth(2026, 1), earlier_months_unknown=False
     )
-    assert len(GUARD_PROPERTIES) == 5
+    assert set(GUARD_PROPERTIES) == {
+        "next_month",
+        "reading",
+        "protected_total",
+        "protected_since",
+        "refused_since",
+        "unknown_since",
+    }
     for name in GUARD_PROPERTIES:
         getter = getattr(g.SavingsClauseGuard, name).fget
         schemas = provenance._argument_schemas(inspect.unwrap(getter))
@@ -1160,7 +1167,11 @@ def test_all_valid_public_argument_controls_still_compute(pia):
         result = check(
             getattr(g.SavingsClauseGuard, name).fget, {"self": guard}
         )
-        assert result == (month if name == "next_month" else None)
+        expected = {
+            "next_month": month,
+            "reading": g.SavingsClauseReading.SSA_OPERATIONAL,
+        }.get(name)
+        assert result == expected
     ledger = world[ret]["outcomes"][0].ledger
     selected = check(
         ret.RETLedger.for_beneficiary,

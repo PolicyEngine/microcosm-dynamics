@@ -1,0 +1,599 @@
+{
+  "schema_version": 1,
+  "verification_class": "statutory_conformance",
+  "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
+  "confirmed_mutation_count": 13,
+  "counts_by_layer": {
+    "shared_provenance": 1,
+    "g_deductions": 5,
+    "r2": 3,
+    "g_savings": 4
+  },
+  "environment_contract": {
+    "OMP_NUM_THREADS": "1",
+    "POLARS_MAX_THREADS": "1",
+    "microdata": "Both POPULACE_DYNAMICS_PSID_DIR and POPULACE_DYNAMICS_EPUF_DIR pointed to nonexistent paths.",
+    "imports": "PYTHONPATH selected the isolated mutated source copy before the assigned workspace.",
+    "pytest_plugins_disabled": [
+      "xdist",
+      "cacheprovider"
+    ]
+  },
+  "excluded_attempts": [
+    {
+      "id": "discard_causal_age_basis",
+      "reason": "Interrupted fifth savings mutation; no completed failing-test log. Not counted among the 13 confirmed mutations."
+    }
+  ],
+  "mutations": [
+    {
+      "id": "notes_assignment_only",
+      "layer": "shared_provenance",
+      "source": "src/populace_dynamics/track_b/_provenance.py",
+      "change": {
+        "before": "if name == \"__notes__\" and args:",
+        "after": "if name == \"__notes__\":"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_refusal_notes.py",
+        "-k",
+        "deletion_preserves"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[g]",
+        "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[ret]",
+        "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[arf]",
+        "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[recompute]"
+      ],
+      "log": {
+        "path": "scratch/trackb_lane/note_mutation.log",
+        "sha256": "161dc26aaf05b4e2ce6d5d79fa257e302ff9ec1922a7fd9cdf7bf3a85c98c89c",
+        "failure_summary": "4 failed, 16 deselected in 114.45s (0:01:54)",
+        "failed_tests": [
+          "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[g]",
+          "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[ret]",
+          "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[arf]",
+          "tests/test_track_b_refusal_notes.py::test_refusal_note_deletion_preserves_provenance_and_denominator[recompute]"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_guard_present": true,
+        "restored_test_exit_code": null,
+        "verification": "Reverted flag in note_mutation.json; assignment-only guard present in both isolated and production modules."
+      },
+      "metadata_reference": "scratch/trackb_lane/note_mutation.json"
+    },
+    {
+      "id": "deductions_omit_partial_payable",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "reserved += events[oid].payable + max(",
+        "after": "reserved += Fraction(0) + max("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "-k",
+        "test_gn_02603_060_permanent_examples",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_permanent_examples[3-E-payable2-expected2]"
+      ],
+      "log": {
+        "path": "scratch/trackb_lane/deduction_mutation_results.json",
+        "entry": "omit_partial_payable",
+        "sha256": "94f0cb00124743e933ec9c99e43d11d07e553c2ffeb56965d4805e2b44136fa2",
+        "failure_summary": "1 failed, 2 passed, 23 deselected in 6.89s"
+      },
+      "restoration": {
+        "reverted": true,
+        "temporary_source_copy_removed": true,
+        "production_guard_present": true,
+        "production_restoration_marker": "reserved += events[oid].payable + max(",
+        "restored_test_exit_code": null,
+        "verification": "Runner rewrote its saved original after each failure, then TemporaryDirectory removed the isolated source tree. No .deduction-mutations-* tree remains; original production rule is present. Production implementation was never mutated."
+      }
+    },
+    {
+      "id": "deductions_release_separate_household_early",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if households.get(other) == households.get(bid)",
+        "after": "if True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "-k",
+        "test_gn_02603_060_temporary_examples",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_temporary_examples[False-expected0]",
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_temporary_examples[True-expected1]"
+      ],
+      "log": {
+        "path": "scratch/trackb_lane/deduction_mutation_results.json",
+        "entry": "release_separate_household_early",
+        "sha256": "94f0cb00124743e933ec9c99e43d11d07e553c2ffeb56965d4805e2b44136fa2",
+        "failure_summary": "2 failed, 24 deselected in 3.98s"
+      },
+      "restoration": {
+        "reverted": true,
+        "temporary_source_copy_removed": true,
+        "production_guard_present": true,
+        "production_restoration_marker": "if households.get(other) == households.get(bid)",
+        "restored_test_exit_code": null,
+        "verification": "Runner rewrote its saved original after each failure, then TemporaryDirectory removed the isolated source tree. No .deduction-mutations-* tree remains; original production rule is present. Production implementation was never mutated."
+      }
+    },
+    {
+      "id": "deductions_do_not_release_original_share",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if row.beneficiary_id not in eligible), Fraction(0))",
+        "after": "if True), Fraction(0))"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "-k",
+        "test_gn_02603_060_permanent_examples",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_permanent_examples[3-E-payable0-expected0]",
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_permanent_examples[2-C2-payable1-expected1]",
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_permanent_examples[3-E-payable2-expected2]"
+      ],
+      "log": {
+        "path": "scratch/trackb_lane/deduction_mutation_results.json",
+        "entry": "do_not_release_original_share",
+        "sha256": "94f0cb00124743e933ec9c99e43d11d07e553c2ffeb56965d4805e2b44136fa2",
+        "failure_summary": "3 failed, 23 deselected in 4.53s"
+      },
+      "restoration": {
+        "reverted": true,
+        "temporary_source_copy_removed": true,
+        "production_guard_present": true,
+        "production_restoration_marker": "if row.beneficiary_id not in eligible",
+        "restored_test_exit_code": null,
+        "verification": "Runner rewrote its saved original after each failure, then TemporaryDirectory removed the isolated source tree. No .deduction-mutations-* tree remains; original production rule is present. Production implementation was never mutated."
+      }
+    },
+    {
+      "id": "deductions_reverse_own_deduction",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "deduction = old.auxiliary_payable - event.payable",
+        "after": "deduction = old.auxiliary_payable + event.payable"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py",
+        "-k",
+        "test_gn_02603_060_permanent_examples",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions.py::test_gn_02603_060_permanent_examples[3-E-payable2-expected2]"
+      ],
+      "log": {
+        "path": "scratch/trackb_lane/deduction_mutation_results.json",
+        "entry": "reverse_own_deduction",
+        "sha256": "94f0cb00124743e933ec9c99e43d11d07e553c2ffeb56965d4805e2b44136fa2",
+        "failure_summary": "1 failed, 2 passed, 23 deselected in 10.75s"
+      },
+      "restoration": {
+        "reverted": true,
+        "temporary_source_copy_removed": true,
+        "production_guard_present": true,
+        "production_restoration_marker": "deduction = old.auxiliary_payable - event.payable",
+        "restored_test_exit_code": null,
+        "verification": "Runner rewrote its saved original after each failure, then TemporaryDirectory removed the isolated source tree. No .deduction-mutations-* tree remains; original production rule is present. Production implementation was never mutated."
+      }
+    },
+    {
+      "id": "deductions_extend_single_full_exception",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if len(events) == 1",
+        "after": "if True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions.py::test_single_full_permanent_exception_disregards_age_reduction",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions.py::test_single_full_permanent_exception_disregards_age_reduction"
+      ],
+      "log": {
+        "path": "scratch/discontinuity_mutation/mutated.log",
+        "sha256": "5e0bd09cd9cab4c6d4af58757622754383fe86edebd6eb72bd8ed18500f56d04",
+        "failure_summary": "1 failed in 6.41s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_unchanged": true,
+        "production_sha256": "e1e6b35c3b547e4dc597235b2d395c49bd906ab29c4b06e682cc36de9f310a1f",
+        "restored_test_exit_code": 0,
+        "restored_log": "scratch/discontinuity_mutation/restored.log",
+        "restored_log_sha256": "9ad5f31eebb9204c2c34f70ebd9f5ef6de8bc91e8097893eb9bccf6b7b1ae63a",
+        "restored_test_summary": "1 passed in 6.04s",
+        "verification": "Saved original bytes restored in isolated copy, exact production-source equality verified, and the same property test passed on the restored isolated source. Production was never mutated."
+      },
+      "metadata_reference": "scratch/discontinuity_mutation/result.json"
+    },
+    {
+      "id": "r2_drop_redistribution",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "net[k, m] = row.auxiliary_payable",
+        "after": "net[k, m] = net[k, m]"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_permanent_full_and_partial_months"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_permanent_full_and_partial_months"
+      ],
+      "log": {
+        "path": "scratch/g2-r2b-r2/drop_redistribution.txt",
+        "sha256": "c4ac2678418bf8361a61f98f8e796b29142b3d8f6aa6415deacdfc03f79cf020",
+        "failure_summary": "1 failed in 8.85s",
+        "failed_tests": [
+          "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_permanent_full_and_partial_months"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "restored_log": "scratch/g2-r2b-r2/drop_redistribution_restored.txt",
+        "restored_log_sha256": "6c3ef9ae319bd6dcce4d2df6a5c8f2e12df6c0d10d769deeabba4403eefd36a8",
+        "restored_test_summary": "1 passed in 7.63s",
+        "isolated_source_sha256": "27568b175af5acf16c83012ae151584a237886723b3946e55539e07639131d50",
+        "production_guard_present": true,
+        "verification": "Each identical test passed after source restoration. Current isolated-source SHA-256 matches the saved original; production rule is present."
+      },
+      "metadata_reference": "scratch/g2-r2b-r2/mutations.json"
+    },
+    {
+      "id": "r2_temporary_as_permanent",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                    not provisional,",
+        "after": "                    True,"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_separate_household_increases_wait_for_final_deduction"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_separate_household_increases_wait_for_final_deduction"
+      ],
+      "log": {
+        "path": "scratch/g2-r2b-r2/temporary_as_permanent.txt",
+        "sha256": "4e0f770db21f42f139904f5c69795edba587f8f428ad0c8937b6a241c54ba637",
+        "failure_summary": "1 failed in 8.36s",
+        "failed_tests": [
+          "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_160_separate_household_increases_wait_for_final_deduction"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "restored_log": "scratch/g2-r2b-r2/temporary_as_permanent_restored.txt",
+        "restored_log_sha256": "f832f1e1e84adbb268c3e95231944d298493e7c3ef9d4f47544b6103699e803c",
+        "restored_test_summary": "1 passed in 3.47s",
+        "isolated_source_sha256": "27568b175af5acf16c83012ae151584a237886723b3946e55539e07639131d50",
+        "production_guard_present": true,
+        "verification": "Each identical test passed after source restoration. Current isolated-source SHA-256 matches the saved original; production rule is present."
+      },
+      "metadata_reference": "scratch/g2-r2b-r2/mutations.json"
+    },
+    {
+      "id": "r2_drop_nh_reservation",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "worker_deductions=worker_deductions,",
+        "after": "worker_deductions={},"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_155_nh_partial_month_preserves_nh_deductions"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_155_nh_partial_month_preserves_nh_deductions"
+      ],
+      "log": {
+        "path": "scratch/g2-r2b-r2/drop_nh_reservation.txt",
+        "sha256": "527075276827ccee4e7bafb4e9f2e95020a51f9e0be05c0fa6e14cb74ad58d19",
+        "failure_summary": "1 failed in 6.61s",
+        "failed_tests": [
+          "tests/test_track_b_ret_ledger_deductions.py::test_rs_02501_155_nh_partial_month_preserves_nh_deductions"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "restored_log": "scratch/g2-r2b-r2/drop_nh_reservation_restored.txt",
+        "restored_log_sha256": "f36b7145c79a5eea7791442b7fba5e4fe618372de67209c296c0e69d79250b90",
+        "restored_test_summary": "1 passed in 15.50s",
+        "isolated_source_sha256": "27568b175af5acf16c83012ae151584a237886723b3946e55539e07639131d50",
+        "production_guard_present": true,
+        "verification": "Each identical test passed after source restoration. Current isolated-source SHA-256 matches the saved original; production rule is present."
+      },
+      "metadata_reference": "scratch/g2-r2b-r2/mutations.json"
+    },
+    {
+      "id": "savings_remove_age_condition",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "and _operational_age_reduced(prior.result)",
+        "after": "and True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "-k",
+        "test_round_11_cola_fall_requires_age_reduction_operationally"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings.py::test_round_11_cola_fall_requires_age_reduction_operationally"
+      ],
+      "log": {
+        "path": "scratch/savings_mutations/remove_age_condition.log",
+        "sha256": "719585948db1e459ab15bbff971d628b31e7f9b40939306c09c85ffb98c3b921",
+        "failure_summary": "1 failed, 12 deselected in 10.49s",
+        "failed_tests": [
+          "tests/test_track_b_gross_benefits_savings.py::test_round_11_cola_fall_requires_age_reduction_operationally"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_guard_present": true,
+        "restored_test_exit_code": null,
+        "verification": "run_mutations.py restores original text after every run and asserts final equality. All four original fragments are currently present in isolated and production modules."
+      },
+      "runner_reference": "scratch/savings_mutations/run_mutations.py"
+    },
+    {
+      "id": "savings_floor_protected_equal_rates",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "share = _ceil_dime_validated((protected - worker) / len(subject))",
+        "after": "share = _floor_dime_validated((protected - worker) / len(subject))"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "-k",
+        "test_operational_rounding_is_minimum_equal_dime_that_preserves_total"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings.py::test_operational_rounding_is_minimum_equal_dime_that_preserves_total"
+      ],
+      "log": {
+        "path": "scratch/savings_mutations/floor_protected_equal_rates.log",
+        "sha256": "5deae2bca548f2f2a43c9ad5bca5e13e463b0db63d0ca61b2dc6ade7f57fed57",
+        "failure_summary": "1 failed, 12 deselected in 9.81s",
+        "failed_tests": [
+          "tests/test_track_b_gross_benefits_savings.py::test_operational_rounding_is_minimum_equal_dime_that_preserves_total"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_guard_present": true,
+        "restored_test_exit_code": null,
+        "verification": "run_mutations.py restores original text after every run and asserts final equality. All four original fragments are currently present in isolated and production modules."
+      },
+      "runner_reference": "scratch/savings_mutations/run_mutations.py"
+    },
+    {
+      "id": "savings_discard_active_membership_check",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "and membership != self._protected_membership",
+        "after": "and False"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "-k",
+        "test_operational_named_refusals_stay_in_denominator"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings.py::test_operational_named_refusals_stay_in_denominator[UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE]"
+      ],
+      "log": {
+        "path": "scratch/savings_mutations/discard_active_membership_check.log",
+        "sha256": "6ab05a0fc835552644e465b72fd18990d38075ef2ab3309cafb63a2aa96cfb3d",
+        "failure_summary": "1 failed, 1 passed, 11 deselected in 4.48s",
+        "failed_tests": [
+          "tests/test_track_b_gross_benefits_savings.py::test_operational_named_refusals_stay_in_denominator[UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE]"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_guard_present": true,
+        "restored_test_exit_code": null,
+        "verification": "run_mutations.py restores original text after every run and asserts final equality. All four original fragments are currently present in isolated and production modules."
+      },
+      "runner_reference": "scratch/savings_mutations/run_mutations.py"
+    },
+    {
+      "id": "savings_discard_spouse_age_factor",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "_floor_dime_validated(increase * spouse.age_reduction_factor)",
+        "after": "_floor_dime_validated(increase)"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings.py",
+        "-k",
+        "test_operational_spouse_procedure_uses_unrounded_declared_factor"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings.py::test_operational_spouse_procedure_uses_unrounded_declared_factor"
+      ],
+      "log": {
+        "path": "scratch/savings_mutations/discard_spouse_age_factor.log",
+        "sha256": "379658dc64df8c6ed176b29289b6aec1bfc923adef6b9448a92b9ea885844446",
+        "failure_summary": "1 failed, 14 deselected in 9.77s",
+        "failed_tests": [
+          "tests/test_track_b_gross_benefits_savings.py::test_operational_spouse_procedure_uses_unrounded_declared_factor"
+        ]
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_guard_present": true,
+        "restored_test_exit_code": null,
+        "verification": "run_mutations.py restores original text after every run and asserts final equality. All four original fragments are currently present in isolated and production modules."
+      },
+      "runner_reference": "scratch/savings_mutations/run_mutations.py"
+    }
+  ],
+  "restoration_verification_snapshot": {
+    "provenance": {
+      "path": "src/populace_dynamics/track_b/_provenance.py",
+      "sha256_at_verification": "886cbd14bb6461eed6761fee8185b330d71550cb27c53ee5283c785077828404"
+    },
+    "g": {
+      "path": "src/populace_dynamics/track_b/gross_benefits.py",
+      "sha256_at_verification": "cab28ea4748876f8604cfcaf8c1adfa004d5ee18d50b3413a9f41d31c483aa81"
+    },
+    "r2": {
+      "path": "src/populace_dynamics/track_b/ret_ledger.py",
+      "sha256_at_verification": "27568b175af5acf16c83012ae151584a237886723b3946e55539e07639131d50"
+    }
+  },
+  "restoration_snapshot_note": "These hashes identify the source state checked when mutations were consolidated. Subsequent reviewed fixes are separately hashed in the final verification artifact; mutation rules remain restored."
+}

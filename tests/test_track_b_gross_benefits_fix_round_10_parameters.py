@@ -43,7 +43,11 @@ def _helper(field, bad_value, *, birth_year=1940):
 
 
 def _assert_atomic_rejection(field, bad_value, *, birth_year=1940):
-    guard = g.SavingsClauseGuard(MONTH, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        MONTH,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = deepcopy(vars(guard))
     outcomes = []
 
@@ -143,7 +147,11 @@ def test_parameter_field_corruption_preserves_guard_and_denominator(case):
 
 def test_guard_admit_preserves_identity_but_stores_validated_history():
     first = _valid_result()
-    guard = g.SavingsClauseGuard(MONTH, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        MONTH,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     # Numeric strings remain valid inputs, but changing even an equivalent
     # field on a computed result violates its round-11 provenance seal.
     before = vars(guard).copy()

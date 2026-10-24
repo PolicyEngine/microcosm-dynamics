@@ -90,9 +90,24 @@ def _worker_record(raw):
     return g.record_state(g.WorkerRecord(**raw), PARAMS)
 
 
-def _family_output(state, members, month):
-    result = g.family_benefits(
-        state, members, payment_month=month, params=PARAMS, standalone=True
+def _family_output(state, members, month, *, deductions=None, households=None):
+    compute = (
+        g.family_benefits
+        if deductions is None
+        else g.family_benefits_after_deductions
+    )
+    extra = (
+        {}
+        if deductions is None
+        else {"deductions": deductions, "households": households or {}}
+    )
+    result = compute(
+        state,
+        members,
+        payment_month=month,
+        params=PARAMS,
+        standalone=True,
+        **extra,
     )
     rows = result.by_id()
     own = sum((row.own_benefit or F(0) for row in rows.values()), F(0))
@@ -157,14 +172,27 @@ def _family_output(state, members, month):
 def _scenario(raw):
     operation = raw["operation"]
     month = g.YearMonth(*raw.get("month", [2026, 1]))
-    if operation == "family":
+    if operation in ("family", "family_after_deductions"):
         state = (
             _worker_record(raw["worker_record"])
             if "worker_record" in raw
             else _state(raw["state"])
         )
-        return _family_output(state, _members(raw["members"]), month)
-    if operation == "household":
+        extra = {}
+        if operation == "family_after_deductions":
+            extra = {
+                "deductions": {
+                    key: g.BenefitDeduction(
+                        g.DeductionReason(value["reason"]),
+                        F(value.get("payable", "0")),
+                        value.get("permanent", True),
+                    )
+                    for key, value in raw.get("deductions", {}).items()
+                },
+                "households": raw.get("households", {}),
+            }
+        return _family_output(state, _members(raw["members"]), month, **extra)
+    if operation in ("household", "household_after_deductions"):
         records = {
             key: g.HouseholdRecord(
                 record["worker_id"],
@@ -173,9 +201,17 @@ def _scenario(raw):
             )
             for key, record in raw["records"].items()
         }
-        result = g.household_benefits(
-            records, payment_month=month, params=PARAMS
+        compute = (
+            g.household_benefits
+            if operation == "household"
+            else g.household_benefits_after_deductions
         )
+        extra = (
+            {}
+            if operation == "household"
+            else {"deductions": {}, "households": raw.get("households", {})}
+        )
+        result = compute(records, payment_month=month, params=PARAMS, **extra)
         return {
             "result": result,
             "records": {
@@ -423,6 +459,21 @@ CITATION_SECTIONS = {
         ),
     },
     "poms_gn_02603_060": {
+        "A.1": (("1. Full deduction", "2. Full deduction and"),),
+        "A.2": (("2. Full deduction and", "3. Full work deduction"),),
+        "B.1": (
+            (
+                "B. Examples of permanent partial deductions",
+                "C. Examples of temporary deductions",
+            ),
+            ("1. Partial deduction", "2. Partial deduction and"),
+        ),
+        "C.1": (
+            ("1. Temporary work deduction", "2. Temporary work deduction and"),
+        ),
+        "C.2": (
+            ("2. Temporary work deduction and", "To Link to this section"),
+        ),
         "A.5": (
             (
                 "A. Examples of permanent full deductions",
@@ -467,6 +518,13 @@ CITATION_SECTIONS = {
             ("3. Examples", "To Link to this section"),
             ("b. No Increase in Amount", None),
         ),
+    },
+    "poms_rs_02501_130": {
+        "B": (("B. Example of excess earnings", "To Link to this section"),),
+    },
+    "poms_rs_02501_160": {
+        "B.1": (("EXAMPLE 1:", "EXAMPLE 2:"),),
+        "B.2": (("EXAMPLE 2:", "To Link to this section"),),
     },
 }
 
@@ -658,6 +716,11 @@ def test_survivor_snapshot_attestations_are_supported_by_capture_facts():
         for name, raw in example["inputs"]["scenarios"].items()
         if raw.get("state", {}).get("kind") == "survivor"
     }
+    for key, (example, _) in snapshots.items():
+        if example["id"].startswith("gn-02603-060-"):
+            facts[key] = "A parent (E)"
+        elif example["id"].startswith("rs-02501-160-"):
+            facts[key] = "A widow and three children are entitled in January"
     assert set(snapshots) == set(facts)
     for key, (example, state) in snapshots.items():
         assert state["widow_drc_savings_clause"] is False, key
@@ -686,6 +749,9 @@ def test_registry_schema_and_declared_figures_are_complete():
 
 
 FEATURE_CLASSES = {
+    "deduction:own_earnings",
+    "deduction:no_child_in_care",
+    "deduction:temporary",
     "reduction:worker",
     "reduction:spouse",
     "reduction:widow",

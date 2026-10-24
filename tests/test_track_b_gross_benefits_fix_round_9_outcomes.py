@@ -40,7 +40,11 @@ def _benefits():
 
 
 def _guard():
-    return g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    return g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
 
 
 @pytest.mark.parametrize("guarded", (False, True))

@@ -1,5 +1,160 @@
 {
   "admitted_scope": "Gross benefits for supported invented configurations only; no population, behavioral, payment-timing or forecast claim.",
+  "deduction_conformance": {
+    "denominator": {
+      "invalid": 0,
+      "refused": 0,
+      "rows": 16,
+      "supported": 16
+    },
+    "rows": [
+      {
+        "id": "retirement-estimated-full-same",
+        "payables": {
+          "a": "0",
+          "b": "250",
+          "c": "250"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-estimated-full-separate",
+        "payables": {
+          "a": "0",
+          "b": "250",
+          "c": "833/5"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-estimated-partial-same",
+        "payables": {
+          "a": "50",
+          "b": "225",
+          "c": "225"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-estimated-partial-separate",
+        "payables": {
+          "a": "50",
+          "b": "225",
+          "c": "833/5"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-permanent-full-same",
+        "payables": {
+          "a": "0",
+          "b": "250",
+          "c": "250"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-permanent-full-separate",
+        "payables": {
+          "a": "0",
+          "b": "250",
+          "c": "250"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-permanent-partial-same",
+        "payables": {
+          "a": "50",
+          "b": "225",
+          "c": "225"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "retirement-permanent-partial-separate",
+        "payables": {
+          "a": "50",
+          "b": "225",
+          "c": "225"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-estimated-full-same",
+        "payables": {
+          "a": "0",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-estimated-full-separate",
+        "payables": {
+          "a": "0",
+          "b": "750",
+          "c": "5833/10"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-estimated-partial-same",
+        "payables": {
+          "a": "50",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-estimated-partial-separate",
+        "payables": {
+          "a": "50",
+          "b": "750",
+          "c": "5833/10"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-permanent-full-same",
+        "payables": {
+          "a": "0",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-permanent-full-separate",
+        "payables": {
+          "a": "0",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-permanent-partial-same",
+        "payables": {
+          "a": "50",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      },
+      {
+        "id": "survivor-permanent-partial-separate",
+        "payables": {
+          "a": "50",
+          "b": "750",
+          "c": "750"
+        },
+        "status": "supported"
+      }
+    ],
+    "scope": "Separate invented monthly deduction denominator. G v2 had no deduction entry point; no historical lattice row is reclassified."
+  },
   "denominator_kind": "finite invented configuration lattice; no population data or population weights",
   "gross_benefits_version": "track-b-g-v2",
   "lattice": {
@@ -161,6 +316,7 @@
     "refused_by_reason": {
       "administrative_finality": 9831,
       "combined_family_maximum": 4860,
+      "deduction_age_work_interaction": 0,
       "deemed_or_putative_spouse": 9720,
       "delayed_credits_born_before_1917": 0,
       "di_entitlement_before_july_1980": 0,
@@ -169,10 +325,14 @@
       "disabled_widow_before_1984": 0,
       "divorced_spouse_care_history": 0,
       "divorced_spouse_child_in_care_unknown": 196,
+      "drug_addiction_suspension": 0,
       "dual_entitlement_sequence": 6844,
+      "election_certificate_suspension": 0,
       "eligibility_before_1983": 0,
+      "foreign_work_deduction": 0,
       "government_pension_offset": 3240,
       "independently_entitled_divorced_spouse": 0,
+      "maritime_deduction": 0,
       "multiple_auxiliary_records": 0,
       "non_aime_formula_pia": 4971,
       "own_rib_history_before_1978": 0,
@@ -180,9 +340,13 @@
       "parisi_before_october_1999": 832,
       "parisi_redistribution_ambiguous": 340,
       "payment_month_before_1983": 0,
+      "penalty_deduction": 0,
+      "prisoner_suspension": 0,
       "reduced_benefit_history_before_1978": 0,
       "savings_clause_403a5": 0,
       "savings_clause_history_unknown": 0,
+      "savings_clause_membership_change": 0,
+      "savings_clause_rate_procedure": 0,
       "widow_child_in_care_unknown": 168,
       "widow_drc_savings_clause": 4860,
       "widow_drc_savings_clause_history_unknown": 0,
@@ -195,8 +359,11 @@
       "credits:own_rib": 1,
       "credits:widow_basis": 2,
       "credits:worker": 1,
+      "deduction:no_child_in_care": 1,
+      "deduction:own_earnings": 7,
+      "deduction:temporary": 3,
       "dual:all_dual": 0,
-      "dual:child": 2,
+      "dual:child": 3,
       "dual:method_b": 1,
       "dual:method_c": 7,
       "dual:parent": 0,
@@ -205,7 +372,7 @@
       "formula:maximum": 5,
       "historical:refused": 4,
       "ieds": 0,
-      "maximum:binding": 15,
+      "maximum:binding": 23,
       "maximum:disability_aime": 0,
       "maximum:disability_cap": 4,
       "maximum:disability_floor": 0,
@@ -216,8 +383,8 @@
       "parent:one": 0,
       "parent:two": 0,
       "record:disability": 5,
-      "record:retirement": 10,
-      "record:survivor": 9,
+      "record:retirement": 11,
+      "record:survivor": 16,
       "redistribution:own_age_reduced": 2,
       "redistribution:partial": 4,
       "redistribution:zero": 4,
@@ -225,13 +392,13 @@
       "reduction:widow": 4,
       "reduction:worker": 1,
       "rib_lim": 1,
-      "role:child": 17,
+      "role:child": 25,
       "role:disabled_widow": 0,
       "role:divorced_spouse": 0,
-      "role:mother_father": 2,
+      "role:mother_father": 9,
       "role:parent": 0,
       "role:spouse": 11,
-      "role:spouse_child_in_care": 0,
+      "role:spouse_child_in_care": 1,
       "role:surviving_divorced_spouse": 1,
       "role:widow": 7,
       "source:erratum": 1,
@@ -239,8 +406,8 @@
       "ssfa:wep_regular_pia": 0,
       "widow:child_in_care": 2
     },
-    "examples": 29,
-    "figures": 216,
+    "examples": 37,
+    "figures": 270,
     "file": "tests/data/track_b/gross_benefit_examples.yaml",
     "invented_only_classes": {
       "cola_path": {
@@ -327,12 +494,6 @@
           "tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents"
         ]
       },
-      "role:spouse_child_in_care": {
-        "reason": "The captures give the exemption from age reduction but no worked-money child-in-care dual-entitlement example.",
-        "tests": [
-          "tests/test_track_b_gross_benefits.py::test_child_in_care_spouse_offset_uses_the_reduced_rib"
-        ]
-      },
       "ssfa:gpo_ignored": {
         "reason": "GN 02608.100 publishes the repeal boundary, not worked gross-family monetary figures.",
         "tests": [
@@ -347,12 +508,15 @@
         ]
       }
     },
-    "sha256": "9595c8ec4f19b164faef26faadf90649fbf40fc2b18a7639d7deaa8aba3a8da9",
+    "sha256": "a06a3f7158b6b5e4ce6901fd8de94bdf30e485ebbc3e967cdb9422ebd955abb6",
     "supported_classes": [
       "cola_path",
       "credits:own_rib",
       "credits:widow_basis",
       "credits:worker",
+      "deduction:no_child_in_care",
+      "deduction:own_earnings",
+      "deduction:temporary",
       "dual:all_dual",
       "dual:child",
       "dual:method_b",
@@ -398,13 +562,14 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 28,
-      "rows": 28,
+      "refused": 37,
+      "rows": 37,
       "supported": 0
     },
     "refused_by_reason": {
       "administrative_finality": 1,
       "combined_family_maximum": 1,
+      "deduction_age_work_interaction": 1,
       "deemed_or_putative_spouse": 1,
       "delayed_credits_born_before_1917": 1,
       "di_entitlement_before_july_1980": 1,
@@ -413,10 +578,14 @@
       "disabled_widow_before_1984": 1,
       "divorced_spouse_care_history": 1,
       "divorced_spouse_child_in_care_unknown": 1,
+      "drug_addiction_suspension": 1,
       "dual_entitlement_sequence": 1,
+      "election_certificate_suspension": 1,
       "eligibility_before_1983": 1,
+      "foreign_work_deduction": 1,
       "government_pension_offset": 1,
       "independently_entitled_divorced_spouse": 1,
+      "maritime_deduction": 1,
       "multiple_auxiliary_records": 1,
       "non_aime_formula_pia": 1,
       "own_rib_history_before_1978": 1,
@@ -424,9 +593,13 @@
       "parisi_before_october_1999": 1,
       "parisi_redistribution_ambiguous": 1,
       "payment_month_before_1983": 1,
+      "penalty_deduction": 1,
+      "prisoner_suspension": 1,
       "reduced_benefit_history_before_1978": 1,
       "savings_clause_403a5": 1,
       "savings_clause_history_unknown": 1,
+      "savings_clause_membership_change": 1,
+      "savings_clause_rate_procedure": 1,
       "widow_child_in_care_unknown": 1,
       "widow_drc_savings_clause": 1,
       "widow_drc_savings_clause_history_unknown": 1,
@@ -444,6 +617,12 @@
         "description": "One child on retirement and survivor records",
         "id": "combined_family_maximum",
         "reason": "combined_family_maximum",
+        "status": "refused"
+      },
+      {
+        "description": "Concurrent number-holder reservations and age reduction need a captured allocation",
+        "id": "deduction_age_work_interaction",
+        "reason": "deduction_age_work_interaction",
         "status": "refused"
       },
       {
@@ -495,15 +674,33 @@
         "status": "refused"
       },
       {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: drug_addiction_suspension",
+        "id": "drug_addiction_suspension",
+        "reason": "drug_addiction_suspension",
+        "status": "refused"
+      },
+      {
         "description": "Widow also entitled to own DIB",
         "id": "dual_entitlement_sequence",
         "reason": "dual_entitlement_sequence",
         "status": "refused"
       },
       {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: election_certificate_suspension",
+        "id": "election_certificate_suspension",
+        "reason": "election_certificate_suspension",
+        "status": "refused"
+      },
+      {
         "description": "1982 eligibility with otherwise valid survivor inputs",
         "id": "eligibility_before_1983",
         "reason": "eligibility_before_1983",
+        "status": "refused"
+      },
+      {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: foreign_work",
+        "id": "foreign_work_deduction",
+        "reason": "foreign_work_deduction",
         "status": "refused"
       },
       {
@@ -516,6 +713,12 @@
         "description": "IEDS benefit month December 1984",
         "id": "independently_entitled_divorced_spouse",
         "reason": "independently_entitled_divorced_spouse",
+        "status": "refused"
+      },
+      {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: maritime",
+        "id": "maritime_deduction",
+        "reason": "maritime_deduction",
         "status": "refused"
       },
       {
@@ -561,6 +764,18 @@
         "status": "refused"
       },
       {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: penalty",
+        "id": "penalty_deduction",
+        "reason": "penalty_deduction",
+        "status": "refused"
+      },
+      {
+        "description": "GN 02603.040 event requires an unimplemented deduction procedure: prisoner_suspension",
+        "id": "prisoner_suspension",
+        "reason": "prisoner_suspension",
+        "status": "refused"
+      },
+      {
         "description": "Spouse born in 1912 has RF1 on an unreduced 500 benefit but no pre-January-1978 money reduction or unreduced-rate history",
         "id": "reduced_benefit_history_before_1978",
         "reason": "reduced_benefit_history_before_1978",
@@ -576,6 +791,18 @@
         "description": "Governed month begins with unknown prior entitlement months",
         "id": "savings_clause_history_unknown",
         "reason": "savings_clause_history_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "One child leaves while operational protection is active",
+        "id": "savings_clause_membership_change",
+        "reason": "savings_clause_membership_change",
+        "status": "refused"
+      },
+      {
+        "description": "A reduced spouse alone has no captured allocation procedure",
+        "id": "savings_clause_rate_procedure",
+        "reason": "savings_clause_rate_procedure",
         "status": "refused"
       },
       {

@@ -246,7 +246,11 @@ def classify_configuration(case: Configuration) -> tuple[str, str | None]:
 def _savings_witness(*, unknown=False):
     month = g.YearMonth(2025, 11)
     children = [g.Beneficiary(c, g.Role.CHILD) for c in ("c1", "c2")]
-    guard = g.SavingsClauseGuard(month, earlier_months_unknown=unknown)
+    guard = g.SavingsClauseGuard(
+        month,
+        earlier_months_unknown=unknown,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     guard.admit(_family(_retired(), children, month))
     guard.admit(
         _family(
@@ -255,6 +259,69 @@ def _savings_witness(*, unknown=False):
             g.YearMonth(2025, 12),
         )
     )
+
+
+def _deduction_witness(reason, *, age_worker=False):
+    members = [
+        g.Beneficiary("c1", g.Role.CHILD),
+        g.Beneficiary("c2", g.Role.CHILD),
+    ]
+    if age_worker:
+        members[0] = g.Beneficiary(
+            "c1", g.Role.SPOUSE, reduction_months=36, birth_year=1960
+        )
+    return g.family_benefits_after_deductions(
+        _retired(),
+        members,
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={"c1": g.BenefitDeduction(reason)},
+        households={"c1": "home", "c2": "home"},
+        worker_deductions={"c2": F(1)} if age_worker else None,
+        standalone=True,
+    )
+
+
+def _operational_savings_witness(*, membership):
+    month = g.YearMonth(2026, 1)
+    guard = g.SavingsClauseGuard(month, earlier_months_unknown=False)
+    members = (
+        [g.Beneficiary("c1", g.Role.CHILD), g.Beneficiary("c2", g.Role.CHILD)]
+        if membership
+        else [
+            g.Beneficiary(
+                "s", g.Role.SPOUSE, reduction_months=60, birth_year=1960
+            )
+        ]
+    )
+
+    def state(pia, maximum):
+        return g.RecordState(
+            g.FamilyKind.RETIREMENT,
+            F(pia),
+            F(maximum),
+            worker=g.OwnBenefit(
+                g.OwnBenefitKind.OLD_AGE,
+                F(pia),
+                reduction_months=60,
+                birth_year=1960,
+            ),
+        )
+
+    guard.admit(
+        _family(state(1000, 1500 if membership else 1400), members, month)
+    )
+    guard.admit(
+        _family(
+            state(1010, 1500 if membership else 1300),
+            members,
+            g.YearMonth(2026, 2),
+        )
+    )
+    if membership:
+        guard.admit(
+            _family(state(1010, 1500), members[:1], g.YearMonth(2026, 3))
+        )
 
 
 def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
@@ -485,6 +552,47 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
             "Governed month begins with unknown prior entitlement months",
             lambda: _savings_witness(unknown=True),
         ),
+        reasons.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE: (
+            "One child leaves while operational protection is active",
+            lambda: _operational_savings_witness(membership=True),
+        ),
+        reasons.SAVINGS_CLAUSE_RATE_PROCEDURE: (
+            "A reduced spouse alone has no captured allocation procedure",
+            lambda: _operational_savings_witness(membership=False),
+        ),
+        **{
+            refusal: (
+                "GN 02603.040 event requires an unimplemented deduction procedure: "
+                + event.value,
+                lambda event=event: _deduction_witness(event),
+            )
+            for refusal, event in (
+                (
+                    reasons.PRISONER_SUSPENSION,
+                    g.DeductionReason.PRISONER_SUSPENSION,
+                ),
+                (
+                    reasons.DRUG_ADDICTION_SUSPENSION,
+                    g.DeductionReason.DRUG_ADDICTION_SUSPENSION,
+                ),
+                (
+                    reasons.FOREIGN_WORK_DEDUCTION,
+                    g.DeductionReason.FOREIGN_WORK,
+                ),
+                (reasons.PENALTY_DEDUCTION, g.DeductionReason.PENALTY),
+                (reasons.MARITIME_DEDUCTION, g.DeductionReason.MARITIME),
+                (
+                    reasons.ELECTION_CERTIFICATE_SUSPENSION,
+                    g.DeductionReason.ELECTION_CERTIFICATE_SUSPENSION,
+                ),
+            )
+        },
+        reasons.DEDUCTION_AGE_WORK_INTERACTION: (
+            "Concurrent number-holder reservations and age reduction need a captured allocation",
+            lambda: _deduction_witness(
+                g.DeductionReason.OWN_EARNINGS_TEST, age_worker=True
+            ),
+        ),
         reasons.WIDOW_DRC_SAVINGS_CLAUSE: (
             "May 1978 survivor protected from widow deceased-worker DRCs",
             lambda: _family(_survivor(widow_drc_savings_clause=True)),
@@ -658,6 +766,66 @@ def _registry_summary(path: Path) -> dict:
     }
 
 
+def deduction_conformance() -> dict:
+    """Separate invented monthly cases; the original lattice is unchanged."""
+    rows = []
+    for kind, permanent, partial, separate in itertools.product(
+        (g.FamilyKind.RETIREMENT, g.FamilyKind.SURVIVOR),
+        (False, True),
+        (False, True),
+        (False, True),
+    ):
+        state = _retired() if kind is g.FamilyKind.RETIREMENT else _survivor()
+        members = [g.Beneficiary(key, g.Role.CHILD) for key in ("a", "b", "c")]
+        key = f"{kind.value}-{'permanent' if permanent else 'estimated'}-{'partial' if partial else 'full'}-{'separate' if separate else 'same'}"
+        outcome = g.evaluate_family(
+            key,
+            1,
+            lambda state=state, members=members, partial=partial, permanent=permanent, separate=separate: g.family_benefits_after_deductions(
+                state,
+                members,
+                payment_month=NOW,
+                params=PARAMS,
+                deductions={
+                    "a": g.BenefitDeduction(
+                        g.DeductionReason.OWN_EARNINGS_TEST,
+                        F(50) if partial else F(0),
+                        permanent,
+                    )
+                },
+                households={
+                    "a": "home",
+                    "b": "home",
+                    "c": "other" if separate else "home",
+                },
+                standalone=True,
+            ),
+        )
+        row = {
+            "id": key,
+            "status": "supported" if outcome.supported else "refused",
+        }
+        if outcome.supported:
+            row["payables"] = {
+                member.beneficiary_id: str(member.auxiliary_payable)
+                for member in outcome.benefits.beneficiaries
+            }
+        else:
+            row["reason"] = outcome.unsupported.reason.value
+        rows.append(row)
+    counts = Counter(row["status"] for row in rows)
+    return {
+        "scope": "Separate invented monthly deduction denominator. G v2 had no deduction entry point; no historical lattice row is reclassified.",
+        "denominator": {
+            "rows": len(rows),
+            "supported": counts["supported"],
+            "refused": counts["refused"],
+            "invalid": 0,
+        },
+        "rows": rows,
+    }
+
+
 def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
     """Exhaustively classify each cell once, preserving every denominator."""
     statuses = Counter()
@@ -683,6 +851,7 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
         "admitted_scope": "Gross benefits for supported invented configurations only; no population, behavioral, payment-timing or forecast claim.",
         "denominator_kind": "finite invented configuration lattice; no population data or population weights",
         "gross_benefits_version": g.GROSS_BENEFITS_VERSION,
+        "deduction_conformance": deduction_conformance(),
         "lattice": {
             "definition": {
                 "record_kinds": [kind.value for kind in g.FamilyKind],

@@ -879,12 +879,12 @@ def test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share():
 
 
 @pytest.mark.parametrize("child_in_care", [False, "cdb"])
-def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b(
+def test_binding_survivor_maximum_with_zero_rate_cdb_computes_part_b(
     child_in_care,
 ):
-    # A zero auxiliary rate after dual entitlement does not remove that
-    # beneficiary from the family-maximum computation. Widow own work
-    # can release room for the entitled CDB recipient.
+    # Retain technical entitlement and the original share, while applying
+    # GN 02603.050A.2: a zero Parisi payable remains excluded even when
+    # another beneficiary has an own-work deduction.
     params = ssa_params()
     state = g.RecordState(
         g.FamilyKind.SURVIVOR,
@@ -892,22 +892,23 @@ def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b(
         g.retirement_survivor_family_maximum(F(1000), YEAR, params),
         eligibility_year=YEAR,
     )
+    family_members = (
+        g.Beneficiary(
+            "widow",
+            g.Role.WIDOW,
+            reduction_months=60,
+            reduction_period_months=84,
+            child_in_care=child_in_care,
+        ),
+        g.Beneficiary(
+            "cdb",
+            g.Role.CHILD,
+            own_benefit=g.OwnBenefit(g.OwnBenefitKind.DISABILITY, F(650)),
+        ),
+    )
     family = g.family_benefits(
         state,
-        [
-            g.Beneficiary(
-                "widow",
-                g.Role.WIDOW,
-                reduction_months=60,
-                reduction_period_months=84,
-                child_in_care=child_in_care,
-            ),
-            g.Beneficiary(
-                "cdb",
-                g.Role.CHILD,
-                own_benefit=g.OwnBenefit(g.OwnBenefitKind.DISABILITY, F(650)),
-            ),
-        ],
+        family_members,
         payment_month=g.YearMonth(YEAR, 1),
         params=params,
         standalone=True,
@@ -935,10 +936,25 @@ def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b(
         ),
         kind=r.RecordKind.DECEASED,
         family_maximum_binding_months=MONTHS,
+        family_months={
+            month: r.RETFamilyMonth(
+                state,
+                family_members,
+                params,
+                {"widow": "household", "cdb": "household"},
+            )
+            for month in MONTHS
+        },
     )
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.apply_ret_year(case, PARAMS)
-    assert error.value.reason is r.UnsupportedReason.DEDUCTION_BEFORE_REDUCTION
+    result = r.apply_ret_year(case, PARAMS)
+    assert by_month(result, "widow")[1].net_due == F("696.40")
+    assert by_month(result, "widow")[1].payment == 696
+    assert by_month(result, "widow")[1].provisional_payment == 0
+    # GN 02603.050A.2 excludes a zero dual-entitlement rate regardless
+    # of other deductions; work does not revive the CDB's $0 payable.
+    assert all(row.net_due == 0 for row in result.for_beneficiary("cdb"))
+    assert result.crediting_months["widow"] == frozenset({1})
+    assert result.crediting_months["cdb"] == frozenset()
 
 
 @pytest.mark.parametrize(
@@ -976,7 +992,7 @@ def test_requested_suspension_methods_are_refused(method, reason):
     assert error.value.reason is r.UnsupportedReason[reason]
 
 
-def test_auxiliary_excess_with_binding_family_maximum_is_deferred_to_part_b():
+def test_binding_auxiliary_work_needs_declared_g_family_context():
     spouse = beneficiary(
         "spouse",
         rate=200,
@@ -987,7 +1003,7 @@ def test_auxiliary_excess_with_binding_family_maximum_is_deferred_to_part_b():
         ledger(
             beneficiary(), spouse, family_maximum_binding_months=frozenset({1})
         )
-    assert error.value.reason is r.UnsupportedReason.DEDUCTION_BEFORE_REDUCTION
+    assert error.value.reason is r.UnsupportedReason.FAMILY_CONTEXT_REQUIRED
 
 
 def test_nonbinding_number_holder_partial_deduction_precedes_auxiliary_own():

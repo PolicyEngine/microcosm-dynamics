@@ -53,10 +53,12 @@ CONSTANTS = {
 }
 ENUMS = {
     "BeneficiaryCondition",
+    "DeductionReason",
     "FamilyKind",
     "OwnBenefitKind",
     "RecordCondition",
     "Role",
+    "SavingsClauseReading",
     "UnsupportedReason",
 }
 MARKER_ERRORS = {"InvalidFamilyInput", "FamilyTargetBlocked"}
@@ -82,6 +84,11 @@ CLASS_ERRORS.update(
             "spouse_bracket_months": (True, "36", 0, -1),
             "pe_us_revision": TEXT,
         },
+        "BenefitDeduction": {
+            "reason": (None, "own_earnings_test", g.FamilyKind.SURVIVOR),
+            "payable": MONEY,
+            "permanent": BOOL,
+        },
         "BeneficiaryBenefit": {
             "beneficiary_id": TEXT,
             "role": (g.FamilyKind.SURVIVOR, "widow"),
@@ -102,6 +109,10 @@ CLASS_ERRORS.update(
             "whole_dollar_auxiliary": INTEGER,
             "whole_dollar_own": INTEGER,
             "note": (None, 1),
+            "deduction": MONEY,
+            "deduction_reason": (True, "own_earnings_test"),
+            "reserved_work_deduction": MONEY,
+            "age_reduction_factor": (True, None, F(-1), F(2)),
         },
         "FamilyBenefits": {
             "kind": (g.OwnBenefitKind.OLD_AGE, "retirement"),
@@ -119,6 +130,8 @@ CLASS_ERRORS.update(
             },
             "family_maximum_binding": BOOL,
             "redistribution_applied": BOOL,
+            "worker_reduced_for_age": BOOL,
+            "worker_age_reduction_factor": (True, None, F(-1), F(2)),
             "worker_benefit": OPTIONAL_DIMES,
             "whole_dollar_worker": INTEGER,
             "beneficiaries": (None, "invalid", (None,)),
@@ -170,6 +183,7 @@ CLASS_ERRORS.update(
         "SavingsClauseGuard": {
             "first_month": OBJECT,
             "earlier_months_unknown": BOOL,
+            "reading": (None, "ssa_operational", g.FamilyKind.RETIREMENT),
         },
     }
 )
@@ -194,6 +208,24 @@ FUNCTION_ARGUMENTS = {
         "payment_month",
         "params",
         "standalone",
+    ),
+    "family_benefits_after_deductions": (
+        "state",
+        "beneficiaries",
+        "payment_month",
+        "params",
+        "deductions",
+        "households",
+        "standalone",
+        "worker_deductions",
+    ),
+    "household_benefits_after_deductions": (
+        "records",
+        "payment_month",
+        "params",
+        "deductions",
+        "households",
+        "worker_deductions",
     ),
     "family_maximum_bend_points": ("eligibility_year", "params"),
     "family_maximum_formula": ("pia", "eligibility_year", "params"),
@@ -259,6 +291,7 @@ READ_MEMBERS = {
     "FamilyOutcome": {"supported"},
     "FamilyDenominator": {"supported_weight_share"},
     "SavingsClauseGuard": {
+        "reading",
         "next_month",
         "protected_total",
         "protected_since",
@@ -380,6 +413,12 @@ def _argument_errors(function, argument):
             {"auxiliary": float("inf")},
         )
         return values if optional else (None, *values)
+    if argument == "deductions":
+        return (None, [], {1: None}, {"auxiliary": None})
+    if argument == "households":
+        return (None, [], {1: "h"}, {"auxiliary": 1}, {"auxiliary": ""})
+    if argument == "worker_deductions":
+        return ([], {1: F(0)}, {"auxiliary": True}, {"auxiliary": F(-1)})
     if argument == "outcomes":
         return (None, True, "outcome", (None,), (g.FamilyKind.RETIREMENT,))
     if argument == "records":
@@ -447,6 +486,9 @@ def _world(pia):
         "StatutoryRates": g.statutory_rates(PARAMS),
         "OwnBenefit": own,
         "Beneficiary": beneficiary,
+        "BenefitDeduction": g.BenefitDeduction(
+            g.DeductionReason.OWN_EARNINGS_TEST
+        ),
         "WorkerRecord": worker,
         "RecordState": state,
         "BeneficiaryBenefit": result.beneficiaries[0],
@@ -456,7 +498,11 @@ def _world(pia):
         "FamilyOutcome": outcome,
         "FamilyDenominator": g.count_family_outcomes((outcome,)),
     }
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     arguments = {
         "amount": F(pia),
         "pia": F(pia),
@@ -485,6 +531,9 @@ def _world(pia):
         "deductee_payables": {},
         "age_reductions": {},
         "other_deductions": {},
+        "deductions": {},
+        "households": {},
+        "worker_deductions": None,
         "outcomes": (outcome,),
         "records": {"record": household_record},
         "guards": {"record": guard},
