@@ -1,0 +1,382 @@
+{
+  "schema": "open_population_op0_record.v1",
+  "status": "draft",
+  "audit_date": "2026-10-24",
+  "base_commit": "b51ffb576090",
+  "design": {
+    "path": "docs/design/open_population.md",
+    "commit": "5c82dbd9",
+    "sha256": "964356ad282e86bc1b128b93ec226b38fc3bb9bd6fe8a84162179bd608600154",
+    "revision": 12
+  },
+  "registry_snapshot": {
+    "path": "docs/design/track_b_holdout_registry.json",
+    "commit": "daf02425",
+    "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
+    "state": "draft_pr_560_not_merged",
+    "j_candidates": "not_recorded",
+    "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+  },
+  "registry_mutations": {
+    "path": "docs/design/track_b_holdout_registry_mutations.json",
+    "commit": "daf02425",
+    "sha256": "0be8a0c8be8eb7d014587d7bbb58a2b980374a334ccaedf5cd0e25d588fbfa1f"
+  },
+  "status_note": "Draft records, not frozen. Held-out years pending the shared registry and Track B J. Blinded feasibility and power review precedes registration; issue #42 registrations only through coordinator on Max's go.",
+  "manifest_status_semantics": "available means documented source/variable exists, not verified data bytes or an approved selection target. not_available means not established for the requested margin in inspected documentation. validation_only excludes selection. All uncaptured target hashes remain to capture.",
+  "source_catalog": {
+    "nchs": {
+      "name": "NCHS NVSS natality",
+      "url": "https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm",
+      "documentation_url": "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/DVS/natality/UserGuide2015.pdf",
+      "licence_or_terms": "Public-use release under NCHS release policy; applicable file terms must be pinned at capture.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Only catalog, codebook and release policy read; no data file requested.",
+      "read_date": "2026-10-24"
+    },
+    "acs": {
+      "name": "ACS annual 1-year PUMS",
+      "url": "https://www.census.gov/programs-surveys/acs/microdata/documentation.html",
+      "documentation_url": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/ACS2014_PUMS_README.pdf",
+      "licence_or_terms": "Public federal statistical release, free of charge; attribute Census. File-specific conditions remain to confirm.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Dictionaries and ReadMe confirmed; data files deliberately not requested.",
+      "read_date": "2026-10-24"
+    },
+    "oact": {
+      "name": "OACT TR2026 demographic assumptions",
+      "url": "https://www.ssa.gov/oact/tr/2026/lrIndex.html",
+      "documentation_url": "https://www.ssa.gov/oact/Downloadables/CY/index.html",
+      "licence_or_terms": "Public official catalog; separate dataset licence not established.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Catalog readable through web tool; ordinary HTTP request returned 403. No data table/file opened.",
+      "read_date": "2026-10-24"
+    },
+    "census2020": {
+      "name": "2020 Census and 2020 coverage measurement",
+      "url": "https://www.census.gov/programs-surveys/decennial-census/about/coverage-measurement/da.html",
+      "documentation_url": "https://www.census.gov/programs-surveys/decennial-census/about/coverage-measurement/similarities-differences-da-pes.html",
+      "licence_or_terms": "Public federal statistical release; attribute Census. Product-specific conditions remain to confirm.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Coverage documentation read; census and coverage data tables not opened.",
+      "read_date": "2026-10-24"
+    },
+    "census2023": {
+      "name": "Census 2023 national population projections",
+      "url": "https://www.census.gov/data/tables/2023/demo/popproj/2023-summary-tables.html",
+      "documentation_url": "https://www2.census.gov/programs-surveys/popproj/technical-documentation/methodology/methodstatement23.pdf",
+      "licence_or_terms": "Public federal statistical release; attribute Census. File-specific conditions remain to confirm.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Methodology and table catalog read; no projection data file requested.",
+      "read_date": "2026-10-24"
+    },
+    "cbo": {
+      "name": "CBO demographic projections",
+      "url": "https://www.cbo.gov/publication/61879",
+      "documentation_url": "https://www.cbo.gov/recurring-data/57059",
+      "licence_or_terms": "Public official release; separate dataset licence not established.",
+      "public": true,
+      "documentation_reachability": "confirmed",
+      "reachability": "unverified",
+      "reason": "Landing pages and report documentation read; no workbook or CSV requested.",
+      "read_date": "2026-10-24"
+    },
+    "cps_fertility": {
+      "name": "CPS June Fertility Supplement",
+      "url": "https://www.census.gov/programs-surveys/cps/technical-documentation/complete.html",
+      "documentation_url": "https://www.census.gov/programs-surveys/cps/technical-documentation/complete.html",
+      "licence_or_terms": "Public federal survey proposed as parity-seed source; release-specific terms not checked.",
+      "public": true,
+      "documentation_reachability": "unverified",
+      "reachability": "unverified",
+      "reason": "Proposed design source only; release/year and questionnaire mapping need a separate documentation check.",
+      "read_date": null
+    },
+    "popest": {
+      "name": "Census resident population estimates",
+      "url": "https://www.census.gov/programs-surveys/popest/technical-documentation.html",
+      "documentation_url": "https://www.census.gov/programs-surveys/popest/technical-documentation.html",
+      "licence_or_terms": "Public federal statistical source; release-specific terms not checked.",
+      "public": true,
+      "documentation_reachability": "unverified",
+      "reachability": "unverified",
+      "reason": "Design names denominator and report-only role; vintage and exact product not established in this audit.",
+      "read_date": null
+    }
+  },
+  "records": [
+    {
+      "schema": "open_population_op0_record.v1",
+      "id": "gate_birth",
+      "milestone": "OP2",
+      "status": "draft",
+      "verification_class": "retrospective_regression_default",
+      "admitted_scope": "Unaligned births by maternal five-year age group and share male in OP5's roster, conditional on OP3/OP4 flows. Independent prediction only for separately demonstrated unused observations/estimands.",
+      "registry_snapshot": {
+        "path": "docs/design/track_b_holdout_registry.json",
+        "commit": "daf02425",
+        "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
+        "state": "draft_pr_560_not_merged",
+        "j_candidates": "not_recorded",
+        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+      },
+      "source_release": [
+        {
+          "source": "nchs",
+          "release": "Final NVSS natality 2015 candidate, with 2016–2019 and 2023–2024 exposed regression companions; exact table/extract vintage to pin."
+        },
+        {
+          "source": "acs",
+          "release": "2013 1-year PUMS start; 2010–2013 immigrant donor files."
+        },
+        {
+          "source": "cps_fertility",
+          "release": "June supplement release/year unresolved; potential fitted parity seeds only."
+        }
+      ],
+      "variables": [
+        "Resident births; mother's five-year age; infant sex; mother's nativity; MAGER single age and MBSTATE_REC/SEX/IMP_SEX as candidate codebook fields.",
+        "Exposed NCHS ASFRs and female resident exposure denominators; projected persistent parity and sex draw.",
+        "Married-mother share remains report-only until B4 forward marriages."
+      ],
+      "population": "Resident births to women in the declared fertile-age support, projected from OP5. Endpoint age coverage must match the reference; no silent substitution of births to all U.S. occurrences for U.S. resident births.",
+      "universe_bridge": [
+        "NVSS resident birth numerator and resident female denominator must use the same geography and age universe as OP5, including a declared group-quarters contribution.",
+        "NCHS MBSTATE_REC treats U.S. possessions differently from ACS native/foreign-born and does not establish citizenship of parents abroad; nativity comparisons require a frozen bridge.",
+        "PSID use follows the project's data-access record."
+      ],
+      "date_mapping": [
+        "NVSS events refer to calendar year Y; collect OP1's birth-event journal within Y, rather than inferring births from the next stock.",
+        "Use OP5's proposed July 1 2013 start with a declared first partial-year exposure bridge; annual-slice ages must be bridged to mother's age at delivery.",
+        "Pin birth-year sex-ratio estimation data separately: a year used to set that ratio cannot also validate share male independently."
+      ],
+      "exposure_history": [
+        "NCHS 2016–2024 five-year ASFR annual series consumed by scripts/build_gate2_floors.py:626-674,693-743; ratios declared REPORTED, not tuned, not proof of no subsequent selection.",
+        "TR2026 default explicitly selects NCHS 2024 interpolated shape: src/populace_dynamics/baselines/asfr.py:67-126; baselines/tr2026_intermediate.py:84,165-168. This is selected baseline structure.",
+        "2015 outside producer range; infant sex, maternal nativity and observed single-age natality are outside its all-race five-year ASFR extraction. Their nonuse remains bounded to the audited repository; off-repository/other-lane disclosure remains open.",
+        "See exposure inventory for transitive consumers and audit exceptions."
+      ],
+      "holdout_partition": {
+        "held_out_years": [
+          {
+            "source": "nchs",
+            "year": 2015,
+            "status": "pending_registry",
+            "reason": "Candidate only: outside committed annual ASFR range. Do not read until source/estimand exposure, J and registry review clear it."
+          }
+        ],
+        "fit_years": [
+          "Fertility kernel's documented fit support, parity seed source and sex-ratio vintage to pin; no candidate seed chosen from a scored birth estimand."
+        ],
+        "overlaps": [
+          {
+            "with": "gate_pop",
+            "years": [
+              2015
+            ],
+            "reason": "Its 2013→2020 path contains births in this year; disclose shared demographic trajectory and natality source use. Different outcome sources do not prove independence."
+          },
+          {
+            "with": "Track B J",
+            "years": [],
+            "reason": "No J candidates recorded; coordinator must check underlying data/family relation."
+          }
+        ],
+        "registry_rule": "J first; no year is cleared by absence from this incomplete registry.",
+        "excluded_years": [
+          {
+            "years": "2016–2024",
+            "reason": "Age-group ASFRs exposed; regression only."
+          },
+          {
+            "years": "2020–2022",
+            "reason": "Shock-window diagnostics, not admission cells."
+          }
+        ]
+      },
+      "critical_cells": [
+        {
+          "id": "maternal_age_asfr",
+          "estimand": "Resident births per exposed woman-year in seven gate-2 five-year maternal-age bands, with endpoint bridge explicitly fixed.",
+          "eligibility": "Reference metadata, support and precision rules fixed before outcomes."
+        },
+        {
+          "id": "share_male",
+          "estimand": "Male births / births with declared treatment of unknown/imputed sex.",
+          "eligibility": "Sex-ratio pin must use disjoint observations/estimand; otherwise regression."
+        }
+      ],
+      "numerical_tolerances": {
+        "status": "proposal_requires_blinded_review",
+        "reference_classes": [
+          {
+            "source": "nchs",
+            "class": "administrative_and_vital_statistics_aggregates",
+            "procedure": "No manufactured sampling floor. Before lock, pin an allowance for same-target-year revision/vintage dispersion, measurement/concept/coverage bridges and half the published rounding unit. Variation between outcome years is not measurement uncertainty. Numeric allowance remains unset; this blocks freeze."
+          },
+          {
+            "source": "acs",
+            "class": "survey_microdata",
+            "procedure": "Proposal from design §5.3: |ln(candidate/reference)|; survey-design replicates where available, otherwise household-disjoint half-splits; round(mean + 4*sd, 3), at least 20 events on the weaker half, stabilized tolerance <= ln(1.5). A fixed prospective pooling ladder partitions ineligible cells as report-only. Zero references require a separately registered absolute-scale rule."
+          },
+          {
+            "source": "popest",
+            "class": "administrative_aggregate_denominator",
+            "procedure": "No manufactured sampling floor. Before lock, pin an allowance for same-target-year revision/vintage dispersion, measurement/concept/coverage bridges and half the published rounding unit. Variation between outcome years is not measurement uncertainty. Numeric allowance remains unset; this blocks freeze."
+          },
+          {
+            "source": "cps_fertility",
+            "class": "survey_microdata",
+            "procedure": "For parity fit uncertainty only; verify release's replicate design or household-half-split convention before use."
+          }
+        ]
+      },
+      "uncertainty_treatment": {
+        "common": "Simultaneous 95% confidence bounds with Bonferroni over the frozen cell family; include reference, estimation, design and simulation uncertainty. Monte Carlo standard error below one-tenth of each tolerance. Insufficient precision is inconclusive. Never drop a failed/unsupported cell after outcomes.",
+        "candidate": "Resample OP5 housing units by the ACS design and GQ persons separately; resample OP3 donors under their own replicate designs; refit/perturb parity seeds and the fertility law within documented estimation support; propagate mortality/exit and timing bridge uncertainty; repeat person-keyed simulation seeds. Preserve mother/child and family clustering. OP5 resampling applies because this gate projects from OP5."
+      },
+      "pass_conjunction": [
+        "All frozen eligible maternal-age and share-male simultaneous bounds inside source-class tolerances; all support/MC conditions met.",
+        "No known exposure is called independent prediction. Regression failure blocks its corresponding admission; no seed or tolerance selection.",
+        "Named newborn-link and persistent-parity conformance prerequisites pass separately; married-mother share is report-only."
+      ],
+      "power_procedure": {
+        "name": "Nested clustered equivalence and misspecification simulation for birth cells",
+        "status": "not_run_no_real_data",
+        "operating_characteristic": "Proposal: >=0.90 probability of the full pass conjunction under a predeclared concordant scenario, and >=0.90 probability of a fail or inconclusive result under each predeclared substantively wrong age/sex profile. Reviewer chooses effect sizes before outcomes; no claim of demonstrated power.",
+        "inputs": [
+          "Pinned critical-cell event/exposure sizes or blinded authorized counts; same-year vintage/rounding allowances; design effects and covariance; fitted-law/parity uncertainty; OP5/OP3 clustering; simulation seed variance."
+        ],
+        "procedure": [
+          "Run an invented-data effective-size/design-effect grid; perturb one age/sex profile at a time and jointly; refit only development data.",
+          "Nest survey/fitted-law resampling and repeated projection seeds, form Bonferroni simultaneous bounds, estimate the full-conjunction probability and binomial Monte Carlo interval.",
+          "Freeze required effective sizes, alternatives and pooling ladder prospectively; absence of matched counts or >=0.90 support blocks feasibility approval."
+        ]
+      },
+      "target_manifest": [
+        {
+          "id": "birth_age",
+          "source": "nchs",
+          "table": "NVSS final natality annual age-rate release; exact table to capture",
+          "row": "Maternal five-year ages, endpoints to reconcile",
+          "column": "Births and resident-female ASFR denominators",
+          "vintage": "2015 candidate / exposed 2016–2024",
+          "captured_byte_hash": "to capture",
+          "status": "available",
+          "role": "reference"
+        },
+        {
+          "id": "birth_sex",
+          "source": "nchs",
+          "table": "NVSS natality codebook SEX/IMP_SEX; aggregate output to capture",
+          "row": "Male, female, unknown/imputed",
+          "column": "Resident birth counts",
+          "vintage": "2015 candidate",
+          "captured_byte_hash": "to capture",
+          "status": "available",
+          "role": "reference"
+        },
+        {
+          "id": "birth_nativity_single_age",
+          "source": "nchs",
+          "table": "MAGER and MBSTATE_REC codebook; output not selected",
+          "row": "Observed maternal single age / mother's birthplace",
+          "column": "Birth counts; matching denominators not established",
+          "vintage": "2015 candidate",
+          "captured_byte_hash": "to capture",
+          "status": "validation_only",
+          "role": "reference"
+        }
+      ],
+      "fitted_support": [
+        {
+          "component": "fertility",
+          "support": "Candidate16 age/parity/birth-decade kernel; exact training years, ages and parity support to pin from its registration.",
+          "outside_rule": "Propose refuse outside fertile ages and undeclared birth decades; a fixed terminal-decade continuation needs Max's review."
+        },
+        {
+          "component": "parity_seed",
+          "support": "Own children in household proxy or CPS June children-ever-born fit; choice/release unresolved.",
+          "outside_rule": "Unknown remains unknown or named refusal; no silent zero."
+        }
+      ],
+      "access": [
+        {
+          "source_id": "nchs",
+          "name": "NCHS NVSS natality",
+          "url": "https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm",
+          "documentation_url": "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/DVS/natality/UserGuide2015.pdf",
+          "licence_or_terms": "Public-use release under NCHS release policy; applicable file terms must be pinned at capture.",
+          "public": true,
+          "documentation_reachability": "confirmed",
+          "reachability": "unverified",
+          "reason": "Only catalog, codebook and release policy read; no data file requested.",
+          "read_date": "2026-10-24"
+        },
+        {
+          "source_id": "acs",
+          "name": "ACS annual 1-year PUMS",
+          "url": "https://www.census.gov/programs-surveys/acs/microdata/documentation.html",
+          "documentation_url": "https://www2.census.gov/programs-surveys/acs/tech_docs/pums/ACS2014_PUMS_README.pdf",
+          "licence_or_terms": "Public federal statistical release, free of charge; attribute Census. File-specific conditions remain to confirm.",
+          "public": true,
+          "documentation_reachability": "confirmed",
+          "reachability": "unverified",
+          "reason": "Dictionaries and ReadMe confirmed; data files deliberately not requested.",
+          "read_date": "2026-10-24"
+        },
+        {
+          "source_id": "popest",
+          "name": "Census resident population estimates",
+          "url": "https://www.census.gov/programs-surveys/popest/technical-documentation.html",
+          "documentation_url": "https://www.census.gov/programs-surveys/popest/technical-documentation.html",
+          "licence_or_terms": "Public federal statistical source; release-specific terms not checked.",
+          "public": true,
+          "documentation_reachability": "unverified",
+          "reachability": "unverified",
+          "reason": "Design names denominator and report-only role; vintage and exact product not established in this audit.",
+          "read_date": null
+        },
+        {
+          "source_id": "cps_fertility",
+          "name": "CPS June Fertility Supplement",
+          "url": "https://www.census.gov/programs-surveys/cps/technical-documentation/complete.html",
+          "documentation_url": "https://www.census.gov/programs-surveys/cps/technical-documentation/complete.html",
+          "licence_or_terms": "Public federal survey proposed as parity-seed source; release-specific terms not checked.",
+          "public": true,
+          "documentation_reachability": "unverified",
+          "reachability": "unverified",
+          "reason": "Proposed design source only; release/year and questionnaire mapping need a separate documentation check.",
+          "read_date": null
+        }
+      ],
+      "proposals": [
+        "Retain age-ASFR regression arm; reserve 2015 and independently unused sex/nativity/single-age observations only after external exposure confirmation.",
+        "Recommend CPS children-ever-born documentation review before choosing a parity seed; do not choose an unread release now."
+      ],
+      "open_questions": [
+        "Which observations pin sex ratio without consuming the share-male validation target?",
+        "Can the coordinator demonstrate nonuse outside the repository of 2015, sex, nativity and observed single-age outcomes?",
+        "What numeric coverage/concept/vintage allowances and zero-cell rule does Max approve?"
+      ],
+      "citations": [
+        "5c82dbd9:docs/design/open_population.md:291-363",
+        "scripts/fetch_nchs_asfr.py:52-62,257-293,309-360",
+        "scripts/build_gate2_floors.py:626-674,693-743,924-931",
+        "src/populace_dynamics/baselines/asfr.py:67-135",
+        "src/populace_dynamics/baselines/tr2026_intermediate.py:84,165-168",
+        "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/DVS/natality/UserGuide2015.pdf pp.5-6,27"
+      ]
+    }
+  ]
+}
