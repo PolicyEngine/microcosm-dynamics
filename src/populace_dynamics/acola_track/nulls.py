@@ -375,8 +375,8 @@ def build_nulls(*, annual_reduction: Any = "0.01", baseline=None) -> dict:
         "inputs": {"TR2026": inputs, "model_TR2008": model},
         "december_null_registered": False,
         "december_note": (
-            "C1 and M2 include December2030; the registered nulls stop "
-            "at determination year2029. No December null is computed."
+            "C1 and M2 include December 2030; the registered nulls stop "
+            "at determination year 2029. No December null is computed."
         ),
     }
     exact = {}

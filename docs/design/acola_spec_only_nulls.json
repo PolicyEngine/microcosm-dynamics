@@ -114,7 +114,7 @@
     }
   },
   "december_null_registered": false,
-  "december_note": "C1 and M2 include December2030; the registered nulls stop at determination year2029. No December null is computed.",
+  "december_note": "C1 and M2 include December 2030; the registered nulls stop at determination year 2029. No December null is computed.",
   "N": {
     "value": -2.901170402765274,
     "value_decimal": "-2.9011704027652740478515625",
