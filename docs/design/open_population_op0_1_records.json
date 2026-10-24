@@ -305,7 +305,7 @@
       "fitted_support": [
         {
           "component": "fertility",
-          "support": "Candidate16 female person-years; ages 15–49, parity categories0,1,2,3 with 3 meaning3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth3 and only represented cohort/parity exposure. Committed seed metadata lists decades1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no2010+ cohort.",
+          "support": "Candidate 16 female person-years; ages 15–49, parity categories 0,1,2,3 with 3 meaning 3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth 3 and only represented cohort/parity exposure. Committed seed metadata lists decades 1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no 2010+ cohort.",
           "outside_rule": "Historical component initializes absent cells to zero, clips age indices/caps parity and returns zero for unknown cohort. This is existing behavior, not a ratified extrapolation rule for OP2. Recommend refuse unsupported cohort/stratum until Max ratifies a labeled terminal-cohort or other continuation; do not silently claim post 2030 fertility support."
         },
         {
@@ -383,8 +383,8 @@
         "src/populace_dynamics/models/family_transitions/components/fertility.py:28-45,80-94,123-157,170-194",
         "src/populace_dynamics/engine/marital.py:352-374",
         "runs/gate2_hazard_v16.json:8732-8759,12485-12512,16238-16265,19990-20017,23742-23769 (age/parity/cohort metadata only)",
-        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun12.pdf Attachments3,7,8,16",
-        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun14.pdf Attachment7",
+        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun12.pdf Attachments 3,7,8,16",
+        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun14.pdf Attachment 7",
         "gates.yaml:1298",
         "docs/baselines.md:555-557",
         "src/populace_dynamics/baselines/cbo2026_long_term.py:330",
@@ -439,7 +439,7 @@
         "No ACS PUMS reader or data-read invocation established in searched src/scripts/tests; gate2b/2c blocks describe ACS aggregate anchors, not PUMS readers (inventory). This is bounded repository evidence, not proof a person never read ACS elsewhere.",
         "U2 source registry is documentary only; PSID weight documentation describes upstream ACS 2015, 2017, 2019 calibration. Disclose indirect calibration exposure; do not call those ACS years pristine.",
         "2010–2013 will be fitting exposure; 2014 remains unread by this audit. Catalog/dictionary reads do not inspect survey outcomes.",
-        "Conditional upstream exposure: if OP3 timing/exposure bridge consumes OP4 Census 2023 exit assumptions, their ACS 2011–2015 upstream fit includes2014. Independent2014 admission remains unresolved unless the bridge uses an admissibly disjoint assumption source or a reviewed narrower claim. The annual PUMS file staying unread here does not remove that dependency.",
+        "Conditional upstream exposure: if OP3 timing/exposure bridge consumes OP4 Census 2023 exit assumptions, their ACS 2011–2015 upstream fit includes 2014. Independent 2014 admission remains unresolved unless the bridge uses an admissibly disjoint assumption source or a reviewed narrower claim. The annual PUMS file staying unread here does not remove that dependency.",
         "Prior use is reported, not merely proposed: docs/progress.md:331 and docs/progress/progress.json:115 record a 2026-09-06 report-only entrant schedule, a captured/hash-pinned Trustees immigration table and certified-frame donor feasibility check. Current missing native readers do not establish historical nonuse; exact source cells/controls in that older run remain uninspected here.",
         "Microcosm frame documentation names ACS as an upstream source without identifying years/estimands (docs/infrastructure.md:104-106; docs/methodology.md:9-11; docs/funder-summary.md:174-175). Frame-based prior uses cannot clear ACS 2010–2019 without upstream provenance, even if this checkout has no PUMS reader."
       ],
@@ -575,7 +575,7 @@
       "fitted_support": [
         {
           "component": "ACS donor/packet fit",
-          "support": "2010–2013 annual recent-arrival observed stocks; exact age/household/GQ support to document without scoring2014.",
+          "support": "2010–2013 annual recent-arrival observed stocks; exact age/household/GQ support to document without scoring 2014.",
           "outside_rule": "Refuse or frozen coarsening/pooling ladder; never borrow 2014 or invent absent arrival-unit links."
         },
         {
@@ -631,7 +631,7 @@
         "Which recent-arrival YOEP window and joint cell family are ratified?",
         "What resident/SSA-area bridge, arrival-unit rule, parity imputation and family-exit policy does Max approve?",
         "What blinded documentation/counts will establish recent-arrival power?",
-        "Does the OP3 timing bridge consume Census 2023 emigration assumptions fitted upstream on2014? Choose disjoint assumption source or narrower conditional/regression admission before any claimed independent2014 score."
+        "Does the OP3 timing bridge consume Census 2023 emigration assumptions fitted upstream on 2014? Choose disjoint assumption source or narrower conditional/regression admission before any claimed independent 2014 score."
       ],
       "citations": [
         "5c82dbd9:docs/design/open_population.md:159-160,291-363",
@@ -755,7 +755,7 @@
         ]
       },
       "uncertainty_treatment": {
-        "common": "No empirical confidence interval or pass verdict for an unidentified exit composition. Survey-based cohort diagnostics may use design-respecting simultaneous95% bounds, with reference/estimation/candidate/MC uncertainty kept separate; those bounds do not identify exits. Insufficient precision stays inconclusive. Accounting conformance is exact in counts and within reported summation residual in weights.",
+        "common": "No empirical confidence interval or pass verdict for an unidentified exit composition. Survey-based cohort diagnostics may use design-respecting simultaneous 95% bounds, with reference/estimation/candidate/MC uncertainty kept separate; those bounds do not identify exits. Insufficient precision stays inconclusive. Accounting conformance is exact in counts and within reported summation residual in weights.",
         "candidate": "Preserve fixed family clusters in exit units; propagate donor/OP5-start design uncertainty only when that is the actual run's start; include mortality estimation, cohort-survival, coverage/date bridge and simulation uncertainty. For current unidentified exit composition, publish sensitivity envelopes rather than a false sampling confidence interval around a chosen assumption."
       },
       "pass_conjunction": [
@@ -804,7 +804,7 @@
           "id": "em_independent_exits",
           "source": "acs",
           "table": "No independently observed exit table established",
-          "row": "ACS cohort decline2015–2019",
+          "row": "ACS cohort decline 2015–2019",
           "column": "Exit hazard independent of death/coverage/return migration",
           "vintage": "2015–2019",
           "captured_byte_hash": "to capture",
@@ -1023,7 +1023,7 @@
           "id": "nchs_shape_bridge",
           "source": "nchs",
           "table": "Repository derived interpolation from 2024 ASFR bands",
-          "row": "Ages14–49",
+          "row": "Ages 14–49",
           "column": "Normalized age shape scaled to V.A1 TFR",
           "vintage": "2024/2026",
           "captured_byte_hash": "to capture",
@@ -1067,7 +1067,7 @@
           "id": "tr_population",
           "source": "oact",
           "table": "TR2026 V.A3",
-          "row": "July 1 Y; under20/20–64/65+",
+          "row": "July 1 Y; under 20/20–64/65+",
           "column": "Population and dependency ratios; no nativity",
           "vintage": "2026",
           "captured_byte_hash": "to capture",
@@ -1111,7 +1111,7 @@
       "fitted_support": [
         {
           "component": "fertility margin bridge",
-          "support": "NCHS 2024 derived shape ages 14–49, or pinned CBO rates2021–2099 by nativity.",
+          "support": "NCHS 2024 derived shape ages 14–49, or pinned CBO rates 2021–2099 by nativity.",
           "outside_rule": "Max/coordinator chooses registered bridge; OACT unsupported single-age fertility remains not_available. Refuse undeclared extensions."
         },
         {
@@ -1189,7 +1189,7 @@
       "milestone": "OP7",
       "status": "draft",
       "verification_class": "retrodiction_conditional_on_frozen_arm",
-      "admitted_scope": "Unaligned2013→2020 population composition by sex/five-year age and 2019 foreign-born period-of-entry stock, under declared date/universe bridges. Exposed2020 estimands are regression evidence.",
+      "admitted_scope": "Unaligned 2013→2020 population composition by sex/five-year age and 2019 foreign-born period-of-entry stock, under declared date/universe bridges. Exposed 2020 estimands are regression evidence.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
         "commit": "daf02425",
@@ -1201,7 +1201,7 @@
       "source_release": [
         {
           "source": "acs",
-          "release": "2013 annual1-year PUMS start;2019 annual1-year PUMS foreign-born period-of-entry target."
+          "release": "2013 annual 1-year PUMS start; 2019 annual 1-year PUMS foreign-born period-of-entry target."
         },
         {
           "source": "census2020",
@@ -1214,27 +1214,27 @@
       ],
       "variables": [
         "Census sex×five-year age groups built from documented single-age counts, no guessed table labels.",
-        "ACS NATIVITY,CIT,YOEP,AGEP,SEX,TYPE,PWGTP and replicate weights;2013 RELP to 2019 RELSHIPP concept map.",
+        "ACS NATIVITY,CIT,YOEP,AGEP,SEX,TYPE,PWGTP and replicate weights; 2013 RELP to 2019 RELSHIPP concept map.",
         "Start reference date, group-quarters strata and deterministic spouse/parent links only where observed relationship identifies them."
       ],
       "population": "OP5 national ACS 2013 demographic roster with separate household and institutional/noninstitutional GQ strata. Exact matched resident universe and unknown links remain explicit.",
       "universe_bridge": [
         "Recommend preserve GQ mass separately; household-only link reconstruction cannot stand for total residents. ACS two-month residence differs from decennial usual residence.",
         "DA coverage includes all residents and provides sex/single-age coverage ranges; PES excludes all GQ and Remote Alaska and supplies survey SEs. Pin matched DA cells/ranges for full resident age/sex margin, not one unmatched PES national percentage.",
-        "Existing2020 multigenerational facts are exposed; unused age/sex census cells still require coordinator exposure review, not an independence claim based on different table name."
+        "Existing 2020 multigenerational facts are exposed; unused age/sex census cells still require coordinator exposure review, not an independence claim based on different table name."
       ],
       "date_mapping": [
         "Proposal OP5 reference date July 1, 2013, with ACS calendar-year interviews bridged by explicit interview-age/exposure uncertainty; ACS does not itself represent July 1. No invented interview dates treated as observed.",
-        "Census target is April 1, 2020. Recommend a registered within-year stock/exposure bridge from annual event journals; without monthly dates use a declared interpolation/exposure sensitivity and bound its error, not relabel December31 as April 1.",
-        "ACS 2019 target is calendar-year collection: compare a registered exposure-weighted mixture of2019 projection states/ages, with bounds when collection timing is unavailable, not one unqualified annual snapshot.",
+        "Census target is April 1, 2020. Recommend a registered within-year stock/exposure bridge from annual event journals; without monthly dates use a declared interpolation/exposure sensitivity and bound its error, not relabel December 31 as April 1.",
+        "ACS 2019 target is calendar-year collection: compare a registered exposure-weighted mixture of 2019 projection states/ages, with bounds when collection timing is unavailable, not one unqualified annual snapshot.",
         "2013 report-only population estimates use July 1 reference with own vintage; bridge separately."
       ],
       "exposure_history": [
         "Census 2020 multigenerational household figures already cited in baseline/floor anchors: data/external/census_gate2b_anchor_sources.md:50-64; scripts/gate2b_anchor_decomposition.py:59,253-265.",
-        "U2 documents upstream ACS 2019 calibration, so2019 foreign-born target is indirectly exposed to a shared data source even though no PUMS reader found; specific outcome nonuse unresolved.",
-        "ACS 2013 start and OP3's2010–2013 donor fit share inputs; this is candidate-side dependence, not an independent reference comparison.",
-        "Census estimates Vintage 2007/2008 previously used for DI denominators;2013 vintage must be audited separately.",
-        "Vintage 2013 methodology says population estimates control ACS/CPS. The2013 estimates check is a shared-upstream report-only consistency check, not independent validation of the ACS start.",
+        "U2 documents upstream ACS 2019 calibration, so 2019 foreign-born target is indirectly exposed to a shared data source even though no PUMS reader found; specific outcome nonuse unresolved.",
+        "ACS 2013 start and OP3's 2010–2013 donor fit share inputs; this is candidate-side dependence, not an independent reference comparison.",
+        "Census estimates Vintage 2007/2008 previously used for DI denominators; 2013 vintage must be audited separately.",
+        "Vintage 2013 methodology says population estimates control ACS/CPS. The 2013 estimates check is a shared-upstream report-only consistency check, not independent validation of the ACS start.",
         "Microcosm frame documentation names ACS as an upstream source without identifying years/estimands (docs/infrastructure.md:104-106; docs/methodology.md:9-11; docs/funder-summary.md:174-175). Frame-based prior uses cannot clear ACS 2010–2019 without upstream provenance, even if this checkout has no PUMS reader."
       ],
       "holdout_partition": {
@@ -1243,7 +1243,7 @@
             "source": "census2020",
             "year": 2020,
             "status": "pending_registry",
-            "reason": "Tentative sex/age target only; related2020 household estimands exposed. Independent status unresolved."
+            "reason": "Tentative sex/age target only; related 2020 household estimands exposed. Independent status unresolved."
           },
           {
             "source": "acs",
@@ -1261,14 +1261,14 @@
             "years": [
               2013
             ],
-            "reason": "Shared start/donor fit; gate_imm's2014 score remains separately fenced."
+            "reason": "Shared start/donor fit; gate_imm's 2014 score remains separately fenced."
           },
           {
             "with": "emigration_check",
             "years": [
               2019
             ],
-            "reason": "Shared ACS 2019 cohort stocks; Census 2023 assumptions also use2015–2019; diagnostic not independent."
+            "reason": "Shared ACS 2019 cohort stocks; Census 2023 assumptions also use 2015–2019; diagnostic not independent."
           },
           {
             "with": "gate_entrant_earn (OP0.2)",
@@ -1284,7 +1284,7 @@
           }
         ],
         "registry_rule": "J first; no year cleared by absence from incomplete registry.",
-        "exposure_disposition": "Recommend regression label on exposed2020 facts and conservative unresolved exposure label on unestablished cells; do not claim pristine2019/2020 holdouts."
+        "exposure_disposition": "Recommend regression label on exposed 2020 facts and conservative unresolved exposure label on unestablished cells; do not claim pristine 2019/2020 holdouts."
       },
       "critical_cells": [
         {
@@ -1304,7 +1304,7 @@
           {
             "source": "census2020",
             "class": "census_counts",
-            "procedure": "Pin2020 Demographic Analysis net-coverage-error low/middle/high range for the matched resident age/sex cell and add declared concept/date/disclosure-avoidance/rounding allowance. Do not interpret DA range as a sampling SE. Numeric allowance unset; no freeze."
+            "procedure": "Pin 2020 Demographic Analysis net-coverage-error low/middle/high range for the matched resident age/sex cell and add declared concept/date/disclosure-avoidance/rounding allowance. Do not interpret DA range as a sampling SE. Numeric allowance unset; no freeze."
           },
           {
             "source": "acs",
@@ -1330,10 +1330,10 @@
       },
       "uncertainty_treatment": {
         "common": "Simultaneous 95% confidence bounds with Bonferroni over the frozen cell family; include reference, estimation, design and simulation uncertainty. Monte Carlo standard error below one-tenth of each tolerance. Insufficient precision is inconclusive. Never drop a failed/unsupported cell after outcomes.",
-        "candidate": "Resample actual OP5 household units under ACS design, GQ persons separately; couple OP3 donor resamples and shared2013 construction; refit fitted fertility/marital/exit inputs only within declared fit support; include mortality-lane uncertainty, start-date/GQ/April 1/calendar-year bridge uncertainty and simulation seeds. Census reference coverage uncertainty remains distinct from candidate resampling."
+        "candidate": "Resample actual OP5 household units under ACS design, GQ persons separately; couple OP3 donor resamples and shared 2013 construction; refit fitted fertility/marital/exit inputs only within declared fit support; include mortality-lane uncertainty, start-date/GQ/April 1/calendar-year bridge uncertainty and simulation seeds. Census reference coverage uncertainty remains distinct from candidate resampling."
       },
       "pass_conjunction": [
-        "Each registered eligible2020 age/sex and 2019 entry-period bound lies inside its source-specific tolerance; no dropping unsupported cells.",
+        "Each registered eligible 2020 age/sex and 2019 entry-period bound lies inside its source-specific tolerance; no dropping unsupported cells.",
         "Fixed unaligned run/arm, weights and source vintages; date/universe/GQ/link conventions pass conformance; MC precision requirement met.",
         "A realized-control arm admits composition conditional on those controls only. Regression/unresolved exposure cannot support independent predictive admission."
       ],
@@ -1346,7 +1346,7 @@
           "Fitted-law variance and seed variance, shared-start covariance, household/GQ units, date-mapping and realized-control arm assumptions; fixed critical cells/tolerances."
         ],
         "procedure": [
-          "Build invented weighted household/GQ starts and simulate to one fixed2020 gate horizon; compare matched April 1 and calendar-year 2019 projections.",
+          "Build invented weighted household/GQ starts and simulate to one fixed 2020 gate horizon; compare matched April 1 and calendar-year 2019 projections.",
           "Nest candidate resampling/refits and reference coverage envelope; perturb births/flows/timing in prespecified profiles.",
           "Estimate full-conjunction operating characteristic/MC interval; inadequate sample information, coverage bridge or >=0.90 feasibility blocks review approval."
         ],
@@ -1359,7 +1359,7 @@
           "table": "2020 Census DHC PCT12: Sex by Single-Year Age",
           "row": "Sex×single year age; aggregate to prospective five-year groups",
           "column": "April 1, 2020 usual-resident population count",
-          "vintage": "2020 Census DHC release2023",
+          "vintage": "2020 Census DHC release 2023",
           "captured_byte_hash": "to capture",
           "status": "available",
           "role": "reference"
@@ -1378,7 +1378,7 @@
         {
           "id": "pop_2019_entry",
           "source": "acs",
-          "table": "2019 annual1-year PUMS; dictionary NATIVITY/YOEP",
+          "table": "2019 annual 1-year PUMS; dictionary NATIVITY/YOEP",
           "row": "Foreign-born by declared entry period",
           "column": "Weighted stock/share and design replicates",
           "vintage": "2019",
@@ -1401,7 +1401,7 @@
       "fitted_support": [
         {
           "component": "retrodiction laws and assumptions",
-          "support": "Proposed2013-vintage information set through registered fit boundary; exact fertility/marital/mortality/exit supports not yet frozen.",
+          "support": "Proposed 2013-vintage information set through registered fit boundary; exact fertility/marital/mortality/exit supports not yet frozen.",
           "outside_rule": "Refuse law without declared support/continuation. Exposed NCHS or realized controls need separately labeled conditional/regression arm."
         }
       ],
@@ -1468,13 +1468,13 @@
         }
       ],
       "proposals": [
-        "Recommend a fitted-law arm with only demonstrably available2013-vintage assumptions as primary feasibility question; retain realized aggregate controls as a separately labeled composition diagnostic. Max must choose arms.",
+        "Recommend a fitted-law arm with only demonstrably available 2013-vintage assumptions as primary feasibility question; retain realized aggregate controls as a separately labeled composition diagnostic. Max must choose arms.",
         "Recommend July 1, 2013 start, separate GQ strata, and explicit April 1/calendar-year bridges with sensitivity bounds; these are proposals, not conventions already frozen."
       ],
       "open_questions": [
-        "Can a genuinely2013-vintage control/fit set be pinned? If not, which realized-control arm may register and with what narrower scope?",
+        "Can a genuinely 2013-vintage control/fit set be pinned? If not, which realized-control arm may register and with what narrower scope?",
         "Which exact census product/table and matched DA coverage allowance does Max approve?",
-        "Can coordinator resolve2020/2019 exposure, including upstream ACS calibration and shared OP0.2 use?"
+        "Can coordinator resolve 2020/2019 exposure, including upstream ACS calibration and shared OP0.2 use?"
       ],
       "citations": [
         "5c82dbd9:docs/design/open_population.md:162,164,291-363",
@@ -1494,7 +1494,7 @@
       "milestone": "OP10a (OP11a publisher availability)",
       "status": "draft",
       "verification_class": "mechanics_and_conditional_sensitivity",
-      "admitted_scope": "One production horizon to 2100 for TR2026, shorter outputs read as prefixes. Every year past2030 conditional on named assumptions, never validated. OP11a comparisons report agreement/disagreement only.",
+      "admitted_scope": "One production horizon to 2100 for TR2026, shorter outputs read as prefixes. Every year past 2030 conditional on named assumptions, never validated. OP11a comparisons report agreement/disagreement only.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
         "commit": "daf02425",
@@ -1589,7 +1589,7 @@
         ]
       },
       "uncertainty_treatment": {
-        "common": "Future assumptions have no empirical truth interval. Separate scenario sensitivity from candidate start/donor/estimation/seed uncertainty. Invented Leslie differential comparisons use simultaneous95% Monte Carlo bounds, Bonferroni over frozen mechanics cells and MC error below one-tenth of mechanics tolerance.",
+        "common": "Future assumptions have no empirical truth interval. Separate scenario sensitivity from candidate start/donor/estimation/seed uncertainty. Invented Leslie differential comparisons use simultaneous 95% Monte Carlo bounds, Bonferroni over frozen mechanics cells and MC error below one-tenth of mechanics tolerance.",
         "candidate": "Separate stochastic seed/estimation/start/donor uncertainty from structural assumption-path sensitivity; use actual start design, shared family clusters and fitted-law resampling. A scenario envelope is not a probability interval over future truth. A Leslie differential test uses only invented rates/start; simulation mean precision meets its prospectively pinned tolerance."
       },
       "pass_conjunction": [
@@ -1617,7 +1617,7 @@
           "source": "oact",
           "table": "TR2026 V.A3",
           "row": "2050, 2065, 2070 July 1",
-          "column": "Under20,20–64,65+; no nativity",
+          "column": "Under 20,20–64,65+; no nativity",
           "vintage": "2026",
           "captured_byte_hash": "to capture",
           "status": "validation_only",
@@ -1660,7 +1660,7 @@
           "id": "hz_cbo_2050_nativity",
           "source": "cbo",
           "table": "January 2026 outlook landing/report catalog",
-          "row": "2050 within2026–2056 standard release",
+          "row": "2050 within 2026–2056 standard release",
           "column": "Population by nativity not established; maternal fertility nativity is a different estimand",
           "vintage": "2026 release corrected June 2026",
           "captured_byte_hash": "to capture",
@@ -1682,7 +1682,7 @@
       "fitted_support": [
         {
           "component": "fertility",
-          "support": "Candidate16 female person-years; ages 15–49, parity categories0,1,2,3 with 3 meaning3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth3 and only represented cohort/parity exposure. Committed seed metadata lists decades1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no2010+ cohort. Baseline alternatives: derived NCHS 2024 ages 14–49; CBO single-age/nativity 2021–2099.",
+          "support": "Candidate 16 female person-years; ages 15–49, parity categories 0,1,2,3 with 3 meaning 3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth 3 and only represented cohort/parity exposure. Committed seed metadata lists decades 1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no 2010+ cohort. Baseline alternatives: derived NCHS 2024 ages 14–49; CBO single-age/nativity 2021–2099.",
           "outside_rule": "Historical component initializes absent cells to zero, clips age indices/caps parity and returns zero for unknown cohort. This is existing behavior, not a ratified extrapolation rule for OP2. Recommend refuse unsupported cohort/stratum until Max ratifies a labeled terminal-cohort or other continuation; do not silently claim post 2030 fertility support. CBO 2100 also needs a registered bridge or refusal."
         },
         {
@@ -1745,12 +1745,12 @@
         }
       ],
       "proposals": [
-        "Recommend freeze one2100 TR production horizon and publish every post 2030 year as conditional, consistent with Max's already approved principle.",
+        "Recommend freeze one 2100 TR production horizon and publish every post 2030 year as conditional, consistent with Max's already approved principle.",
         "Record Census nativity availability for all three comparison years. Keep CBO requested nativity margins not_available from inspected documentation; ask coordinator to verify a separately documented longer-horizon product before selecting."
       ],
       "open_questions": [
         "Which component continuation rules does Max ratify, and what support will B4/mortality lane admit?",
-        "Does a separately documented CBO release provide2050/2065/2070 population by nativity? Landing-page silence does not prove global absence; no workbook opened.",
+        "Does a separately documented CBO release provide 2050/2065/2070 population by nativity? Landing-page silence does not prove global absence; no workbook opened.",
         "What matrix timing tolerance and seed precision are fixed prospectively?"
       ],
       "citations": [
@@ -1777,14 +1777,14 @@
   "exposure_inventory": [
     {
       "topic": "NCHS producer",
-      "finding": "Final2024 vintage plus2023 cross-check; annual2016–2024 maternal five-year ASFR series; endpoint group definitions and TFR aggregation.2015/SEX/MBSTATE_REC/raw MAGER observations absent from committed selection.",
+      "finding": "Final 2024 vintage plus 2023 cross-check; annual 2016–2024 maternal five-year ASFR series; endpoint group definitions and TFR aggregation.2015/SEX/MBSTATE_REC/raw MAGER observations absent from committed selection.",
       "evidence": [
         "scripts/fetch_nchs_asfr.py:9-25,52-62,82-90,257-293,309-360"
       ]
     },
     {
       "topic": "NCHS annual-rate reader",
-      "finding": "Gate2 floor consumes2016–2023 keys under MAX_YEAR2023; separately compares pooled all/recent fertility to 2024. Ratios reported, not tuned; later structure selection not excluded by that label.",
+      "finding": "Gate 2 floor consumes 2016–2023 keys under MAX_YEAR2023; separately compares pooled all/recent fertility to 2024. Ratios reported, not tuned; later structure selection not excluded by that label.",
       "evidence": [
         "scripts/build_gate2_floors.py:78,626-674,693-743,924-931",
         "src/populace_dynamics/data/transitions.py:113"
@@ -1792,7 +1792,7 @@
     },
     {
       "topic": "NCHS selected baseline shape",
-      "finding": "asfr.py reads2024 rates/TFR and interpolates to ages 14–49; TR2026 default uses nchs2024 and scales annually to OACT TFR. Not unused; interpolation is not observed single-age natality.",
+      "finding": "asfr.py reads 2024 rates/TFR and interpolates to ages 14–49; TR2026 default uses nchs2024 and scales annually to OACT TFR. Not unused; interpolation is not observed single-age natality.",
       "evidence": [
         "src/populace_dynamics/baselines/asfr.py:67-135",
         "src/populace_dynamics/baselines/tr2026_intermediate.py:21-28,84,165-168,222-233"
@@ -1811,7 +1811,7 @@
     },
     {
       "topic": "NCHS input metadata",
-      "finding": "Key-only parse: headline tables2023/2024; annual2016–2024; age-group only, with 10–14 in headline table and 15–49 annual bands. No sex/nativity/raw single-age dimension. Hash578742b151d5656231527175e5e4c29c0554ade8bb56807235d6a75890594f60. No rates copied.",
+      "finding": "Key-only parse: headline tables 2023/2024; annual 2016–2024; age-group only, with 10–14 in headline table and 15–49 annual bands. No sex/nativity/raw single-age dimension. Hash578742b151d5656231527175e5e4c29c0554ade8bb56807235d6a75890594f60. No rates copied.",
       "evidence": [
         "data/external/nchs_asfr_2024.json (keys/provenance/hash only)"
       ]
@@ -1852,7 +1852,7 @@
     },
     {
       "topic": "Population estimates",
-      "finding": "Vintage 2007/2008 national monthly single-age/sex resident estimates used as DI denominators; exact2013 product remains unestablished.",
+      "finding": "Vintage 2007/2008 national monthly single-age/sex resident estimates used as DI denominators; exact 2013 product remains unestablished.",
       "evidence": [
         "scripts/extract_di_asr_2008.py:21-22,241-272,675,863-865",
         "src/populace_dynamics/engine/di_entitlement_rates.py:740"
@@ -1870,14 +1870,14 @@
     },
     {
       "topic": "CPS June / Census 2023",
-      "finding": "No implemented reader or previous source-use hit established in code corpus; approved design proposes them. Census 2023 methodology read now establishes ACS 2011–2015/2015–2019 upstream exit-assumption uses, including potential2014 exposure through OP3.",
+      "finding": "No implemented reader or previous source-use hit established in code corpus; approved design proposes them. Census 2023 methodology read now establishes ACS 2011–2015/2015–2019 upstream exit-assumption uses, including potential 2014 exposure through OP3.",
       "evidence": [
         "5c82dbd9:docs/design/open_population.md:291-307",
         "https://www2.census.gov/programs-surveys/popproj/technical-documentation/methodology/methodstatement23.pdf pp.11-12"
       ]
     },
     {
-      "topic": "Issue42 registrations",
+      "topic": "Issue 42 registrations",
       "finding": "Source-filtered gh issue view inspection found Census household concept/aggregate anchors and NCHS mortality trend registrations, not additional natality/ACS 2010–2019 reads or named use of CPS June, TR2026 V.A2/V.A3, Census 2023 or population estimates. Exact and broader source-name scans were used; no negative search proves external nonuse. Installed gh rejects --comments with --json, so after that failed invocation the comments JSON field was filtered before output. Listed restricted result comment IDs were excluded; displayed numeric text was redacted before inspection.",
       "evidence": [
         "https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4939453260",
@@ -1888,7 +1888,7 @@
     },
     {
       "topic": "Fertility fitted support (metadata only)",
-      "finding": "Candidate16 female person-years; ages 15–49, parity categories0,1,2,3 with 3 meaning3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth3 and only represented cohort/parity exposure. Committed seed metadata lists decades1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no2010+ cohort. Historical component initializes absent cells to zero, clips age indices/caps parity and returns zero for unknown cohort. This is existing behavior, not a ratified extrapolation rule for OP2. Recommend refuse unsupported cohort/stratum until Max ratifies a labeled terminal-cohort or other continuation; do not silently claim post 2030 fertility support.",
+      "finding": "Candidate 16 female person-years; ages 15–49, parity categories 0,1,2,3 with 3 meaning 3+; probabilities keyed by(age,min(parity,3),birth decade). Training uses age-kernel bandwidth 3 and only represented cohort/parity exposure. Committed seed metadata lists decades 1880–2000 by 10 for seeds 0,1,2,4 and 1890–2000 for seed 3; no 2010+ cohort. Historical component initializes absent cells to zero, clips age indices/caps parity and returns zero for unknown cohort. This is existing behavior, not a ratified extrapolation rule for OP2. Recommend refuse unsupported cohort/stratum until Max ratifies a labeled terminal-cohort or other continuation; do not silently claim post 2030 fertility support.",
       "evidence": [
         "src/populace_dynamics/models/family_transitions/components/fertility.py:28-45,80-94,123-157,170-194",
         "src/populace_dynamics/engine/marital.py:352-374",
@@ -1899,13 +1899,13 @@
       "topic": "CPS parity and 2013 estimates documentation now checked",
       "finding": "June 2012/2014 parity codebooks are documented proposals, no outcomes read. June 2012 covers household women 15–50 with children-ever-born/allocation and basic CPS weight.2013 estimates control ACS/CPS, so the ACS-start check remains report-only.",
       "evidence": [
-        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun12.pdf Attachments3,7,16",
+        "https://www2.census.gov/programs-surveys/cps/techdocs/cpsjun12.pdf Attachments 3,7,16",
         "https://www2.census.gov/programs-surveys/popest/technical-documentation/methodology/2010-2013/2013-natstcopr-meth.pdf"
       ]
     },
     {
       "topic": "Completed broad corpus check",
-      "finding": "Expanded filename-whitelisted audit covers1654 files across11 text/code/config extension classes: source/scripts/tests/docs/config/shell/notebooks plus selected allowed aggregate-run metadata and documentary provenance. Excluded data downloads/captures, restricted paths/families, entire paper and benchmarks directories from the completed pass. Output suppressed source values. No additional natality input or in-repository ACS 2010–2019 PUMS reader established. No-hit does not clear upstream frames or external sessions.",
+      "finding": "Expanded filename-whitelisted audit covers 1654 files across 11 text/code/config extension classes: source/scripts/tests/docs/config/shell/notebooks plus selected allowed aggregate-run metadata and documentary provenance. Excluded data downloads/captures, restricted paths/families, entire paper and benchmarks directories from the completed pass. Output suppressed source values. No additional natality input or in-repository ACS 2010–2019 PUMS reader established. No-hit does not clear upstream frames or external sessions.",
       "evidence": [
         "gates.yaml:1298",
         "docs/baselines.md:555-557",
@@ -1915,7 +1915,7 @@
     },
     {
       "topic": "NCHS transitive provenance consumers",
-      "finding": "CBO 2026 and TR2026 provenance call common2026 shared_files_sha256; this hashes NCHS even when CBO fertility uses its own rates. Declarative gate anchor and baseline documentation also name the2024 input.",
+      "finding": "CBO 2026 and TR2026 provenance call common2026 shared_files_sha256; this hashes NCHS even when CBO fertility uses its own rates. Declarative gate anchor and baseline documentation also name the 2024 input.",
       "evidence": [
         "src/populace_dynamics/baselines/cbo2026_long_term.py:330",
         "src/populace_dynamics/baselines/tr2026_intermediate.py:245",
@@ -1934,7 +1934,7 @@
     },
     {
       "topic": "Unspecified upstream frame ACS",
-      "finding": "Microcosm documentation names ACS among source surveys without years/estimands. Independent2010–2019 exposure cannot be established solely by no current reader; coordinator must review upstream frame provenance.",
+      "finding": "Microcosm documentation names ACS among source surveys without years/estimands. Independent 2010–2019 exposure cannot be established solely by no current reader; coordinator must review upstream frame provenance.",
       "evidence": [
         "docs/infrastructure.md:104-106",
         "docs/methodology.md:9-11",
@@ -1943,7 +1943,7 @@
     },
     {
       "topic": "ASFR callback and provenance consumers",
-      "finding": "Baseline fertility step consumes the supplied ASFR callback; TrackA construction requests baseline provenance and therefore shared NCHS identity hashes. The global baseline selector still defaults toTR2008: the NCHS2024 shape default specifically belongs toTR2026Intermediate.",
+      "finding": "Baseline fertility step consumes the supplied ASFR callback; TrackA construction requests baseline provenance and therefore shared NCHS identity hashes. The global baseline selector still defaults to TR2008: the NCHS 2024 shape default specifically belongs to TR2026Intermediate.",
       "evidence": [
         "src/populace_dynamics/baselines/fertility.py:169-174",
         "src/populace_dynamics/baselines/track_a.py:286-287",
@@ -1973,7 +1973,7 @@
     {
       "choice": "gate_pop arms",
       "status": "proposal_for_Max_or_coordinator",
-      "recommendation": "Review feasibility of a primary fitted-law arm with genuinely2013-vintage assumptions; realized aggregate-control arm separate and conditional on those controls. Freeze arm choice/vintages before outcomes; if only realized arm feasible, narrow admission to composition.",
+      "recommendation": "Review feasibility of a primary fitted-law arm with genuinely 2013-vintage assumptions; realized aggregate-control arm separate and conditional on those controls. Freeze arm choice/vintages before outcomes; if only realized arm feasible, narrow admission to composition.",
       "authority": "5c82dbd9:docs/design/open_population.md:164,358"
     },
     {
@@ -2240,14 +2240,14 @@
       "url": "https://www.ssa.gov/oact/tr/2026/lrIndex.html",
       "read_date": "2026-10-24",
       "reachability": "confirmed",
-      "scope": "Demographic table catalog only; ordinary HTTP request403.",
+      "scope": "Demographic table catalog only; ordinary HTTP request 403.",
       "kind": "documentation_metadata_or_catalog"
     },
     {
       "url": "https://www.ssa.gov/oact/TR/2026/V_A_demo.html",
       "read_date": "2026-10-24",
       "reachability": "unverified",
-      "scope": "Header-only HTTP attempt403; no report table opened.",
+      "scope": "Header-only HTTP attempt 403; no report table opened.",
       "kind": "documentation_metadata_or_catalog"
     },
     {
