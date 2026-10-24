@@ -1,0 +1,1478 @@
+[
+  {
+    "varnum": 1,
+    "name": "REPWGT0",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 2,
+    "name": "REPWGT1",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 3,
+    "name": "REPWGT2",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 4,
+    "name": "REPWGT3",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 5,
+    "name": "REPWGT4",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 6,
+    "name": "REPWGT5",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 7,
+    "name": "REPWGT6",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 8,
+    "name": "REPWGT7",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 9,
+    "name": "REPWGT8",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 10,
+    "name": "REPWGT9",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 11,
+    "name": "REPWGT10",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 12,
+    "name": "REPWGT11",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 13,
+    "name": "REPWGT12",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 14,
+    "name": "REPWGT13",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 15,
+    "name": "REPWGT14",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 16,
+    "name": "REPWGT15",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 17,
+    "name": "REPWGT16",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 18,
+    "name": "REPWGT17",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 19,
+    "name": "REPWGT18",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 20,
+    "name": "REPWGT19",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 21,
+    "name": "REPWGT20",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 22,
+    "name": "REPWGT21",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 23,
+    "name": "REPWGT22",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 24,
+    "name": "REPWGT23",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 25,
+    "name": "REPWGT24",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 26,
+    "name": "REPWGT25",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 27,
+    "name": "REPWGT26",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 28,
+    "name": "REPWGT27",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 29,
+    "name": "REPWGT28",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 30,
+    "name": "REPWGT29",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 31,
+    "name": "REPWGT30",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 32,
+    "name": "REPWGT31",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 33,
+    "name": "REPWGT32",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 34,
+    "name": "REPWGT33",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 35,
+    "name": "REPWGT34",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 36,
+    "name": "REPWGT35",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 37,
+    "name": "REPWGT36",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 38,
+    "name": "REPWGT37",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 39,
+    "name": "REPWGT38",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 40,
+    "name": "REPWGT39",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 41,
+    "name": "REPWGT40",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 42,
+    "name": "REPWGT41",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 43,
+    "name": "REPWGT42",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 44,
+    "name": "REPWGT43",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 45,
+    "name": "REPWGT44",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 46,
+    "name": "REPWGT45",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 47,
+    "name": "REPWGT46",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 48,
+    "name": "REPWGT47",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 49,
+    "name": "REPWGT48",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 50,
+    "name": "REPWGT49",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 51,
+    "name": "REPWGT50",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 52,
+    "name": "REPWGT51",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 53,
+    "name": "REPWGT52",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 54,
+    "name": "REPWGT53",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 55,
+    "name": "REPWGT54",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 56,
+    "name": "REPWGT55",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 57,
+    "name": "REPWGT56",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 58,
+    "name": "REPWGT57",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 59,
+    "name": "REPWGT58",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 60,
+    "name": "REPWGT59",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 61,
+    "name": "REPWGT60",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 62,
+    "name": "REPWGT61",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 63,
+    "name": "REPWGT62",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 64,
+    "name": "REPWGT63",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 65,
+    "name": "REPWGT64",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 66,
+    "name": "REPWGT65",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 67,
+    "name": "REPWGT66",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 68,
+    "name": "REPWGT67",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 69,
+    "name": "REPWGT68",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 70,
+    "name": "REPWGT69",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 71,
+    "name": "REPWGT70",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 72,
+    "name": "REPWGT71",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 73,
+    "name": "REPWGT72",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 74,
+    "name": "REPWGT73",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 75,
+    "name": "REPWGT74",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 76,
+    "name": "REPWGT75",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 77,
+    "name": "REPWGT76",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 78,
+    "name": "REPWGT77",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 79,
+    "name": "REPWGT78",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 80,
+    "name": "REPWGT79",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 81,
+    "name": "REPWGT80",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 82,
+    "name": "REPWGT81",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 83,
+    "name": "REPWGT82",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 84,
+    "name": "REPWGT83",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 85,
+    "name": "REPWGT84",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 86,
+    "name": "REPWGT85",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 87,
+    "name": "REPWGT86",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 88,
+    "name": "REPWGT87",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 89,
+    "name": "REPWGT88",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 90,
+    "name": "REPWGT89",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 91,
+    "name": "REPWGT90",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 92,
+    "name": "REPWGT91",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 93,
+    "name": "REPWGT92",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 94,
+    "name": "REPWGT93",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 95,
+    "name": "REPWGT94",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 96,
+    "name": "REPWGT95",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 97,
+    "name": "REPWGT96",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 98,
+    "name": "REPWGT97",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 99,
+    "name": "REPWGT98",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 100,
+    "name": "REPWGT99",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 101,
+    "name": "REPWGT100",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 102,
+    "name": "REPWGT101",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 103,
+    "name": "REPWGT102",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 104,
+    "name": "REPWGT103",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 105,
+    "name": "REPWGT104",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 106,
+    "name": "REPWGT105",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 107,
+    "name": "REPWGT106",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 108,
+    "name": "REPWGT107",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 109,
+    "name": "REPWGT108",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 110,
+    "name": "REPWGT109",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 111,
+    "name": "REPWGT110",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 112,
+    "name": "REPWGT111",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 113,
+    "name": "REPWGT112",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 114,
+    "name": "REPWGT113",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 115,
+    "name": "REPWGT114",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 116,
+    "name": "REPWGT115",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 117,
+    "name": "REPWGT116",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 118,
+    "name": "REPWGT117",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 119,
+    "name": "REPWGT118",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 120,
+    "name": "REPWGT119",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 121,
+    "name": "REPWGT120",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 122,
+    "name": "REPWGT121",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 123,
+    "name": "REPWGT122",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 124,
+    "name": "REPWGT123",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 125,
+    "name": "REPWGT124",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 126,
+    "name": "REPWGT125",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 127,
+    "name": "REPWGT126",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 128,
+    "name": "REPWGT127",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 129,
+    "name": "REPWGT128",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 130,
+    "name": "REPWGT129",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 131,
+    "name": "REPWGT130",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 132,
+    "name": "REPWGT131",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 133,
+    "name": "REPWGT132",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 134,
+    "name": "REPWGT133",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 135,
+    "name": "REPWGT134",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 136,
+    "name": "REPWGT135",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 137,
+    "name": "REPWGT136",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 138,
+    "name": "REPWGT137",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 139,
+    "name": "REPWGT138",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 140,
+    "name": "REPWGT139",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 141,
+    "name": "REPWGT140",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 142,
+    "name": "REPWGT141",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 143,
+    "name": "REPWGT142",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 144,
+    "name": "REPWGT143",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 145,
+    "name": "REPWGT144",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 146,
+    "name": "REPWGT145",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 147,
+    "name": "REPWGT146",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 148,
+    "name": "REPWGT147",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 149,
+    "name": "REPWGT148",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 150,
+    "name": "REPWGT149",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 151,
+    "name": "REPWGT150",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 152,
+    "name": "REPWGT151",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 153,
+    "name": "REPWGT152",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 154,
+    "name": "REPWGT153",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 155,
+    "name": "REPWGT154",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 156,
+    "name": "REPWGT155",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 157,
+    "name": "REPWGT156",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 158,
+    "name": "REPWGT157",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 159,
+    "name": "REPWGT158",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 160,
+    "name": "REPWGT159",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 161,
+    "name": "REPWGT160",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 162,
+    "name": "REPWGT161",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 163,
+    "name": "REPWGT162",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 164,
+    "name": "REPWGT163",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 165,
+    "name": "REPWGT164",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 166,
+    "name": "REPWGT165",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 167,
+    "name": "REPWGT166",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 168,
+    "name": "REPWGT167",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 169,
+    "name": "REPWGT168",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 170,
+    "name": "REPWGT169",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 171,
+    "name": "REPWGT170",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 172,
+    "name": "REPWGT171",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 173,
+    "name": "REPWGT172",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 174,
+    "name": "REPWGT173",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 175,
+    "name": "REPWGT174",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 176,
+    "name": "REPWGT175",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 177,
+    "name": "REPWGT176",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 178,
+    "name": "REPWGT177",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 179,
+    "name": "REPWGT178",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 180,
+    "name": "REPWGT179",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 181,
+    "name": "REPWGT180",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 182,
+    "name": "REPWGT181",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 183,
+    "name": "REPWGT182",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 184,
+    "name": "REPWGT183",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 185,
+    "name": "REPWGT184",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 186,
+    "name": "REPWGT185",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 187,
+    "name": "REPWGT186",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 188,
+    "name": "REPWGT187",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 189,
+    "name": "REPWGT188",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 190,
+    "name": "REPWGT189",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 191,
+    "name": "REPWGT190",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 192,
+    "name": "REPWGT191",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 193,
+    "name": "REPWGT192",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 194,
+    "name": "REPWGT193",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 195,
+    "name": "REPWGT194",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 196,
+    "name": "REPWGT195",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 197,
+    "name": "REPWGT196",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 198,
+    "name": "REPWGT197",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 199,
+    "name": "REPWGT198",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 200,
+    "name": "REPWGT199",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 201,
+    "name": "REPWGT200",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 202,
+    "name": "REPWGT201",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 203,
+    "name": "REPWGT202",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 204,
+    "name": "REPWGT203",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 205,
+    "name": "REPWGT204",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 206,
+    "name": "REPWGT205",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 207,
+    "name": "REPWGT206",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 208,
+    "name": "REPWGT207",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 209,
+    "name": "REPWGT208",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 210,
+    "name": "REPWGT209",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 211,
+    "name": "REPWGT210",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 212,
+    "name": "REPWGT211",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 213,
+    "name": "REPWGT212",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 214,
+    "name": "REPWGT213",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 215,
+    "name": "REPWGT214",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 216,
+    "name": "REPWGT215",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 217,
+    "name": "REPWGT216",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 218,
+    "name": "REPWGT217",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 219,
+    "name": "REPWGT218",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 220,
+    "name": "REPWGT219",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 221,
+    "name": "REPWGT220",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 222,
+    "name": "REPWGT221",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 223,
+    "name": "REPWGT222",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 224,
+    "name": "REPWGT223",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 225,
+    "name": "REPWGT224",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 226,
+    "name": "REPWGT225",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 227,
+    "name": "REPWGT226",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 228,
+    "name": "REPWGT227",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 229,
+    "name": "REPWGT228",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 230,
+    "name": "REPWGT229",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 231,
+    "name": "REPWGT230",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 232,
+    "name": "REPWGT231",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 233,
+    "name": "REPWGT232",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 234,
+    "name": "REPWGT233",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 235,
+    "name": "REPWGT234",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 236,
+    "name": "REPWGT235",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 237,
+    "name": "REPWGT236",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 238,
+    "name": "REPWGT237",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 239,
+    "name": "REPWGT238",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 240,
+    "name": "REPWGT239",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 241,
+    "name": "REPWGT240",
+    "label": "",
+    "dtype": "float"
+  },
+  {
+    "varnum": 242,
+    "name": "SSUID",
+    "label": "",
+    "dtype": "string"
+  },
+  {
+    "varnum": 243,
+    "name": "SPANEL",
+    "label": "",
+    "dtype": "integer"
+  },
+  {
+    "varnum": 244,
+    "name": "SWAVE",
+    "label": "",
+    "dtype": "integer"
+  },
+  {
+    "varnum": 245,
+    "name": "PNUM",
+    "label": "",
+    "dtype": "integer"
+  },
+  {
+    "varnum": 246,
+    "name": "MONTHCODE",
+    "label": "",
+    "dtype": "integer"
+  }
+]

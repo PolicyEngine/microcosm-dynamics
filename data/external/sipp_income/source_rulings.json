@@ -1,0 +1,186 @@
+{
+  "description": "Hand-maintained rulings on conflicts between Census sources for one release. build_registry.py stops while a label conflict (2018-2021 storage schema against dictionary; 2022-2025 API against dictionary) or a suppression conflict it detects has no entry here, and while a ruling names a conflict it does not observe. An entry whose resolution is null is open: the concept is refused in that release and the alternatives stay named. Universe anomalies clear a misprinted universe. Every resolution cites committed evidence in this folder or the release's own metadata.",
+  "label_conflicts": {
+    "2018/EJSOWNRE": {
+      "resolution": "user_note",
+      "evidence": [
+        "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz"
+      ],
+      "reason": "Census's user note '2018 SIPP: Metadata for Rental Properties and Other Real Estate' (February 11, 2022) says the originally published description, universe description and universe were incorrect, and states the correct metadata verbatim; the label and universe here are quoted from it. pu2018_schema.json still carries the original 'without a spouse' description.",
+      "label": "Owned any other real estate jointly during the reference period [for respondents with a spouse or civil union partner in the household; this joint ownership question is asked of only one spouse or partner, and this response is copied to both spouses'/partners' records].",
+      "universe": "EOWN_RE= 1 and [(EMS_EHC = 1 for MONTHCODE = 12 and EMS = 1) or EREGDOMPART = 1 for MONTHCODE = 12]"
+    },
+    "2018/EJSOWNRP": {
+      "resolution": "user_note",
+      "evidence": [
+        "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz"
+      ],
+      "reason": "Same user note as 2018/EJSOWNRE, which gives EJSOWNRP's correct description and universe verbatim. The 2018 dictionary's description agrees with the note but its universe reads '(EMS_EHC = 1 for MONTHCODE = 12 or EMS = 1)', so both are taken from the note; pu2018_schema.json still carries the original 'without a spouse' description.",
+      "label": "Owned any rental properties jointly during the reference period [for respondents with a spouse or civil union partner in the household; this joint ownership question is asked of only one spouse or partner, and this response is copied to both spouses'/partners' records].",
+      "universe": "EOWN_RP = 1 and [(EMS_EHC = 1 for MONTHCODE = 12 and EMS = 1) or EREGDOMPART = 1 for MONTHCODE = 12]"
+    },
+    "2020/TDIS6AMT": {
+      "resolution": null,
+      "status": "open",
+      "alternatives": {
+        "dictionary": "How much did ... receive in disability income from a Local government pension this month (1-12)?",
+        "schema": "How much did ... receive in disability income from a State government pension this month (1-12)?"
+      },
+      "reason": "The 2020 dictionary and pu2020_schema.json name different payers for disability source 6, and no captured user note or release note resolves it. The 2018 and 2022 metadata call source 6 a local government pension and source 5 a state government pension, which favours the dictionary, but the 2020 release's own sources disagree, so the concept is refused in 2020."
+    },
+    "2020/EDIS8MNYN": {
+      "resolution": null,
+      "status": "open",
+      "alternatives": {
+        "dictionary": "Did ... receive disability income from a U.S. Government railroad retirement in this month of the reference period (1-12)?",
+        "schema": "Did ... receive disability income from a Military retirement pension in this month of the reference period (1-12)?"
+      },
+      "reason": "The 2020 dictionary and pu2020_schema.json name different payers for monthly disability source 8 (railroad versus military), and no captured Census note resolves it. EDISTYP8YN is railroad retirement in every release's metadata, which favours the dictionary, but the concept is refused in 2020 while the release's own sources disagree."
+    }
+  },
+  "code_conflicts": {
+    "2021/ESSI_BRSN": {
+      "resolution": null,
+      "status": "open",
+      "as_published": {
+        "1": "Aged (65 or over)",
+        "2": "Blind or disabled",
+        "3": "Other"
+      },
+      "alternatives": {
+        "as_published": {
+          "1": "Aged (65 or over)",
+          "2": "Blind or disabled",
+          "3": "Other"
+        },
+        "census_2018_correction_order": {
+          "1": "Blind or disabled",
+          "2": "Aged (65 or over)",
+          "3": "Other"
+        }
+      },
+      "evidence": [
+        "user_notes/2018/2018-reason-ssi-recpt-answ-catg.html.gz"
+      ],
+      "reason": "The 2021 dictionary lists ESSI_BRSN's categories in exactly the order Census's user note '2018 SIPP: Incorrect Metadata for Reason SSI Receipt Began' (November 24, 2020) calls a listing error (1 Aged, 2 Blind or disabled), while 2018-2020 and 2023-2025 list 1 Blind or disabled, 2 Aged. No note says whether the 2021 order is the same error or a real recoding, so code 1 has two possible meanings and the concept is refused in 2021."
+    },
+    "2022/ESSI_BRSN": {
+      "resolution": null,
+      "status": "open",
+      "as_published": {
+        "1": "Aged (65 or over)",
+        "2": "Blind or disabled",
+        "3": "Other"
+      },
+      "alternatives": {
+        "as_published": {
+          "1": "Aged (65 or over)",
+          "2": "Blind or disabled",
+          "3": "Other"
+        },
+        "census_2018_correction_order": {
+          "1": "Blind or disabled",
+          "2": "Aged (65 or over)",
+          "3": "Other"
+        }
+      },
+      "evidence": [
+        "user_notes/2018/2018-reason-ssi-recpt-answ-catg.html.gz"
+      ],
+      "reason": "The 2022 variable API and dictionary both publish the order that the 2018 user note calls a listing error; 2023-2025 revert to 1 Blind or disabled, 2 Aged. Refused in 2022 for the same reason as 2021."
+    }
+  },
+  "corrected_releases": {
+    "social_security_amount": {
+      "variable": "TSSSAMT",
+      "releases": [
+        2018,
+        2019,
+        2020,
+        2021
+      ],
+      "corrected_on": "2025-07-24",
+      "evidence": [
+        "2018_release_notes.pdf",
+        "2019_release_notes.pdf",
+        "2020_release_notes.pdf",
+        "2021_release_notes.pdf",
+        "user_notes/2022/2022-prior-process-err-affct-soc-sec-self-amts.html.gz"
+      ],
+      "reason": "Census re-released the 2014-2021 public-use files on July 24, 2025 after a processing error added Medicare Part B, C and D deductions to TSSSAMT. The user note applies 'only ... to SIPP data downloaded prior to 7/24/2025'. The variable keeps its name and metadata in the current dictionaries, so the registry cannot tell the vintages apart, and the reader admits TSSSAMT for these releases only when the caller states the staged files were downloaded on or after the correction date."
+    }
+  },
+  "release_family_conflicts": [
+    {
+      "release": 2020,
+      "pattern": "civil union|EREGDOMPART|domestic partner",
+      "fields": [
+        "dictionary_label",
+        "universe",
+        "universe_description"
+      ],
+      "resolution": null,
+      "status": "open",
+      "evidence": [
+        "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+      ],
+      "alternatives": {
+        "dictionary": "The 2020 dictionary and storage schema print the 2019 definitions: EJS/TJS items cover respondents with a spouse or civil union partner in the household (universe includes EREGDOMPART = 1), and EJO/TJO items exclude both.",
+        "user_note": "Census's user note '2020 SIPP: Universe for Jointly Held Assets and Debts' (March 8, 2022): EREGDOMPART was removed in the 2020 SIPP; EJS/TJS items cover spouses only; assets held jointly with a civil union partner are EJO/TJO; civil union partners are in universe only for unsecured-debt items with an EO prefix and report only their individually held debt. It gives the 2020 description and universe verbatim for EJSOWNCHK and EJOOWNCHK only."
+      },
+      "reason": "The release's own metadata and Census's user note disagree on who EJS and EJO items cover in 2020. The note gives exact 2020 metadata only for the checking-account pair, so adopting it for the other items would mean writing labels and universes Census never published. The affected concept-years are refused until a ruling; the person-level recodes (TVAL_*, TINC_*, TDEBT_*) and household totals stay admitted."
+    }
+  ],
+  "suppression_conflicts": {
+    "2018/EDIS8MNYN": {
+      "resolution": null,
+      "status": "open",
+      "alternatives": {
+        "schema": "Suppressed",
+        "dictionary": "Did ... receive disability income from a U.S. Government railroad retirement in this month of the reference period (1-12)?"
+      },
+      "evidence": [],
+      "reason": "pu2018_schema.json labels EDIS8MNYN 'Suppressed' while the 2018 dictionary documents it in full, so whether the 2018 public file carries values is unsettled by the release's own metadata. Refused in 2018."
+    }
+  },
+  "universe_anomalies": [
+    {
+      "id": "2021-ERETTYP",
+      "releases": [
+        2021
+      ],
+      "variables": [
+        "ERETTYP1YN",
+        "ERETTYP2YN",
+        "ERETTYP3YN",
+        "ERETTYP4YN",
+        "ERETTYP5YN",
+        "ERETTYP6YN",
+        "ERETTYP7YN",
+        "ERETTYP8YN"
+      ],
+      "printed": "ERETANY = 1 and EPENANY = 1",
+      "evidence": [],
+      "reason": "The 2021 dictionary prints this universe for every ERETTYPnYN, but ERETANY's own 2021 universe requires EPENANY=2, so as printed it is empty; the 2022-2025 dictionaries print 'ERETANY = 1 OR EPENANY = 1'. The registry carries no universe for these concept-years."
+    },
+    {
+      "id": "2024-2025-TRET",
+      "releases": [
+        2024,
+        2025
+      ],
+      "variables": [
+        "TRET1AMT",
+        "TRET2AMT",
+        "TRET3AMT",
+        "TRET4AMT",
+        "TRET5AMT",
+        "TRET6AMT",
+        "TRET7AMT"
+      ],
+      "printed": "ERETTYP8YN = 1 and (EPENLUMP = 2 or EPENREG = 1)",
+      "evidence": [],
+      "reason": "The 2024 and 2025 dictionaries give every retirement-income amount TRET1AMT-TRET8AMT the universe of source 8 (ERETTYP8YN), while each amount's label names its own source and the 2023 dictionary gives TRETnAMT the universe ERETTYPnYN = 1. The registry carries no universe for TRET1AMT-TRET7AMT in these releases."
+    }
+  ]
+}

@@ -1,0 +1,1864 @@
+[
+  {
+    "release": 2022,
+    "concept": "education_savings_1_beneficiary",
+    "variable": "EESAV1BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "education_savings_1_owner",
+    "variable": "EESAV1OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "education_savings_2_beneficiary",
+    "variable": "EESAV2BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "education_savings_2_owner",
+    "variable": "EESAV2OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "education_savings_3_beneficiary",
+    "variable": "EESAV3BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "education_savings_3_owner",
+    "variable": "EESAV3OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "half_sample",
+    "variable": "GHLFSAM",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "2"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "household_business_equity",
+    "variable": "THEQ_BUS",
+    "api": [
+      [
+        "-9999999999",
+        "9999999999"
+      ]
+    ],
+    "dictionary": null,
+    "dictionary_verified": false,
+    "admitted": [
+      [
+        "-9999999999",
+        "9999999999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "household_id_at_interview",
+    "variable": "SHHADID",
+    "api": [],
+    "dictionary": [
+      [
+        "11",
+        "49"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "11",
+        "49"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "household_shelter_payer_1",
+    "variable": "ERMU_PAYER1",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "household_shelter_payer_2",
+    "variable": "ERMU_PAYER2",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "household_shelter_payer_3",
+    "variable": "ERMU_PAYER3",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "person_number",
+    "variable": "PNUM",
+    "api": [],
+    "dictionary": [
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "sample_unit_id",
+    "variable": "SSUID",
+    "api": [],
+    "dictionary": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "ssi_child_benefit_owner",
+    "variable": "ESSI_OWN",
+    "api": [
+      [
+        "60",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "variance_stratum",
+    "variable": "GVARSTR",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "240"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "240"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "vehicle_1_owner_1",
+    "variable": "EVEH1OWNER1",
+    "api": [
+      [
+        "101",
+        "407"
+      ]
+    ],
+    "dictionary": [
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "101",
+        "407"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "vehicle_2_owner_3",
+    "variable": "EVEH2OWNER3",
+    "api": [
+      [
+        "101",
+        "407"
+      ]
+    ],
+    "dictionary": [
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "101",
+        "407"
+      ]
+    ]
+  },
+  {
+    "release": 2022,
+    "concept": "weight",
+    "variable": "WPFINWGT",
+    "api": [
+      [
+        "0",
+        "999999999999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_1_beneficiary",
+    "variable": "EESAV1BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_1_owner",
+    "variable": "EESAV1OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_2_beneficiary",
+    "variable": "EESAV2BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_2_owner",
+    "variable": "EESAV2OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_3_beneficiary",
+    "variable": "EESAV3BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "education_savings_3_owner",
+    "variable": "EESAV3OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "half_sample",
+    "variable": "GHLFSAM",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "2"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "household_id_at_interview",
+    "variable": "SHHADID",
+    "api": [],
+    "dictionary": [
+      [
+        "11",
+        "49"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "11",
+        "49"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "household_shelter_payer_1",
+    "variable": "ERMU_PAYER1",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "household_shelter_payer_2",
+    "variable": "ERMU_PAYER2",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "household_shelter_payer_3",
+    "variable": "ERMU_PAYER3",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "sample_unit_id",
+    "variable": "SSUID",
+    "api": [],
+    "dictionary": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "ssi_child_benefit_owner",
+    "variable": "ESSI_OWN",
+    "api": [
+      [
+        "60",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "variance_stratum",
+    "variable": "GVARSTR",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "240"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "240"
+      ]
+    ]
+  },
+  {
+    "release": 2023,
+    "concept": "weight",
+    "variable": "WPFINWGT",
+    "api": [
+      [
+        "0",
+        "10000000"
+      ]
+    ],
+    "dictionary": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_1_beneficiary",
+    "variable": "EESAV1BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_1_owner",
+    "variable": "EESAV1OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_2_beneficiary",
+    "variable": "EESAV2BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_2_owner",
+    "variable": "EESAV2OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_3_beneficiary",
+    "variable": "EESAV3BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "education_savings_3_owner",
+    "variable": "EESAV3OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "half_sample",
+    "variable": "GHLFSAM",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "2"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "household_id_at_interview",
+    "variable": "SHHADID",
+    "api": [],
+    "dictionary": [
+      [
+        "11",
+        "49"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "11",
+        "49"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "household_shelter_payer_1",
+    "variable": "ERMU_PAYER1",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "household_shelter_payer_2",
+    "variable": "ERMU_PAYER2",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "household_shelter_payer_3",
+    "variable": "ERMU_PAYER3",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "sample_unit_id",
+    "variable": "SSUID",
+    "api": [],
+    "dictionary": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "ssi_child_benefit_owner",
+    "variable": "ESSI_OWN",
+    "api": [
+      [
+        "60",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "variance_stratum",
+    "variable": "GVARSTR",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "240"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "240"
+      ]
+    ]
+  },
+  {
+    "release": 2024,
+    "concept": "weight",
+    "variable": "WPFINWGT",
+    "api": [
+      [
+        "0",
+        "10000000"
+      ]
+    ],
+    "dictionary": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_1_beneficiary",
+    "variable": "EESAV1BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_1_owner",
+    "variable": "EESAV1OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_2_beneficiary",
+    "variable": "EESAV2BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_2_owner",
+    "variable": "EESAV2OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_3_beneficiary",
+    "variable": "EESAV3BENEF",
+    "api": [
+      [
+        "70",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "education_savings_3_owner",
+    "variable": "EESAV3OWNER",
+    "api": [
+      [
+        "70",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "70",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "half_sample",
+    "variable": "GHLFSAM",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "2"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "2"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "household_id_at_interview",
+    "variable": "SHHADID",
+    "api": [],
+    "dictionary": [
+      [
+        "11",
+        "49"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "11",
+        "49"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "household_shelter_payer_1",
+    "variable": "ERMU_PAYER1",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "household_shelter_payer_2",
+    "variable": "ERMU_PAYER2",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "household_shelter_payer_3",
+    "variable": "ERMU_PAYER3",
+    "api": [
+      [
+        "60",
+        "499"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "70"
+      ],
+      [
+        "101",
+        "499"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "sample_unit_id",
+    "variable": "SSUID",
+    "api": [],
+    "dictionary": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "99999999999999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "ssi_child_benefit_owner",
+    "variable": "ESSI_OWN",
+    "api": [
+      [
+        "60",
+        "999"
+      ]
+    ],
+    "dictionary": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "60",
+        "499"
+      ],
+      [
+        "999",
+        "999"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "variance_stratum",
+    "variable": "GVARSTR",
+    "api": [],
+    "dictionary": [
+      [
+        "1",
+        "240"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "1",
+        "240"
+      ]
+    ]
+  },
+  {
+    "release": 2025,
+    "concept": "weight",
+    "variable": "WPFINWGT",
+    "api": [
+      [
+        "0",
+        "10000000"
+      ]
+    ],
+    "dictionary": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ],
+    "dictionary_verified": true,
+    "admitted": [
+      [
+        "0",
+        "9999999.999999"
+      ]
+    ]
+  }
+]
