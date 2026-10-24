@@ -393,9 +393,9 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
 
     spec = U2CohortSpec()
     ruled = (
-        "section 16 default adopted by Max, d514 (2026-09-28); the U2 "
-        "rulings record must be materialized in the section 15 block "
-        "before a registered run (section 20 step 5)"
+        "section 16 default adopted by Max, d514 (2026-09-28); recorded in "
+        "U2's rulings record, the section 15 block's decisions (section 20 "
+        "step 5)"
     )
     return (
         psid2010.PendingDecision(
