@@ -12,6 +12,7 @@ from hypothesis import strategies as st
 from populace_dynamics.income_resources.ssi.contract import (
     CONTRACT_PATH,
     ContractRefusal,
+    _validate_value,
     load_contract,
     resolve_inputs,
 )
@@ -22,8 +23,15 @@ INVENTED_VALUES = {
     "bool": False,
     "float": 17.25,
     "int": 3,
-    "Enum": "INVENTED_EXPLICIT_ENUM",
 }
+ENUM_ROWS = [row for row in ENGINE_ROWS if row["value_type"] == "Enum"]
+
+
+def invented_value(row, data):
+    """An invented explicit value of the row's type; enums use a member."""
+    if row["value_type"] == "Enum":
+        return data.draw(st.sampled_from(row["enum_members"]))
+    return INVENTED_VALUES[row["value_type"]]
 
 
 def test_contract_covers_every_inventoried_input_and_population():
@@ -98,11 +106,12 @@ def test_every_missing_input_refuses_without_an_opted_in_assumption(
 @given(
     row=st.sampled_from(ENGINE_ROWS),
     population=st.sampled_from(CONTRACT["populations"]),
+    data=st.data(),
 )
 def test_explicit_invented_values_survive_source_and_refusal_cells(
-    row, population
+    row, population, data
 ):
-    value = INVENTED_VALUES[row["value_type"]]
+    value = invented_value(row, data)
     resolved = resolve_inputs(
         population,
         {row["name"]: value},
@@ -217,7 +226,13 @@ def test_wrong_scalar_types_refuse_without_coercion(row, data):
         "bool": st.one_of(st.integers(), st.text()),
         "float": st.one_of(st.booleans(), st.text()),
         "int": st.one_of(st.booleans(), st.text()),
-        "Enum": st.one_of(st.booleans(), st.integers(), st.just("")),
+        "Enum": st.one_of(
+            st.booleans(),
+            st.integers(),
+            st.text().filter(
+                lambda text: text not in row.get("enum_members", ())
+            ),
+        ),
     }
     value = data.draw(wrong_types[row["value_type"]])
     with pytest.raises(ContractRefusal) as exc:
@@ -226,6 +241,50 @@ def test_wrong_scalar_types_refuse_without_coercion(row, data):
         )
     assert exc.value.condition == "INPUT_CONTRACT_GAP"
     assert exc.value.inputs == (row["name"],)
+
+
+def test_enum_rows_carry_the_pinned_members():
+    inventory = json.loads(
+        CONTRACT_PATH.with_name("inventory.json").read_text()
+    )
+    members = {
+        item["name"]: item["enum_members"]
+        for item in inventory["inputs"]
+        if item["value_type"] == "Enum"
+    }
+    assert ENUM_ROWS
+    assert {row["name"]: row["enum_members"] for row in ENUM_ROWS} == members
+    assert all(row["enum_members"] for row in ENUM_ROWS)
+
+
+@settings(deadline=None)
+@given(row=st.sampled_from(ENUM_ROWS), data=st.data())
+def test_enum_input_is_admitted_exactly_when_it_names_a_member(row, data):
+    value = data.draw(
+        st.one_of(st.sampled_from(row["enum_members"]), st.text())
+    )
+    try:
+        resolved = resolve_inputs(
+            "PSID",
+            {row["name"]: value},
+            entity=row["entity"],
+            input_names=(row["name"],),
+        )
+    except ContractRefusal as error:
+        assert value not in row["enum_members"]
+        assert error.condition == "INPUT_CONTRACT_GAP"
+        assert error.inputs == (row["name"],)
+    else:
+        assert value in row["enum_members"]
+        assert resolved.values == {row["name"]: value}
+
+
+@settings(deadline=None)
+@given(value=st.text())
+def test_enum_row_without_members_admits_no_value(value):
+    row = {"name": "INVENTED_ENUM_INPUT", "value_type": "Enum"}
+    with pytest.raises(ContractRefusal):
+        _validate_value(row, value)
 
 
 @settings(deadline=None)

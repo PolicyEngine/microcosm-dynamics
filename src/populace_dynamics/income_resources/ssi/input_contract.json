@@ -303,6 +303,19 @@
     {
       "category": "immigration and qualifying quarters",
       "entity": "Person",
+      "enum_members": [
+        "CITIZEN",
+        "LEGAL_PERMANENT_RESIDENT",
+        "REFUGEE",
+        "ASYLEE",
+        "DEPORTATION_WITHHELD",
+        "CUBAN_HAITIAN_ENTRANT",
+        "CONDITIONAL_ENTRANT",
+        "PAROLED_ONE_YEAR",
+        "UNDOCUMENTED",
+        "DACA",
+        "TPS"
+      ],
       "kind": "engine",
       "name": "immigration_status",
       "period": "YEAR",

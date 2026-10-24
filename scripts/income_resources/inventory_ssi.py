@@ -107,6 +107,28 @@ def expression(node: ast.AST | None) -> Any:
         return ast.unparse(node)
 
 
+def enum_members(tree: ast.Module, name: Any) -> list[str] | None:
+    """Member names of an Enum class defined in the variable's own module.
+
+    Returns None when ``possible_values`` names no such class, so that an
+    input whose members cannot be read is refused rather than left open.
+    """
+    for node in tree.body:
+        if (
+            isinstance(node, ast.ClassDef)
+            and node.name == name
+            and any(expression(base) == "Enum" for base in node.bases)
+        ):
+            return [
+                target.id
+                for item in node.body
+                if isinstance(item, ast.Assign)
+                for target in item.targets
+                if isinstance(target, ast.Name)
+            ]
+    return None
+
+
 def distribution_version(package: Path) -> str:
     """Read installed metadata, without importing policyengine_us."""
     matches = sorted(package.parent.glob("policyengine_us-*.dist-info"))
@@ -301,6 +323,10 @@ def parse_variables(
                 ),
                 "helper_functions": sorted(visited_helpers),
             }
+            if dtype == "Enum":
+                records[node.name]["enum_members"] = enum_members(
+                    tree, expression(attrs.get("possible_values"))
+                )
             if node.name not in boundaries:
                 pending.extend(
                     paths[name]
@@ -358,6 +384,8 @@ def inventory_release(
             readers[dependency].add(name)
     for name, record in inputs.items():
         record["read_by"] = sorted(readers[name])
+        if record["value_type"] == "Enum" and not record.get("enum_members"):
+            raise ValueError(f"Unresolved enum members for input {name}")
     parameters = []
     prefixes = {
         p

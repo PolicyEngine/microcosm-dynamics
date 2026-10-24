@@ -275,6 +275,19 @@
       "default_origin": "explicit",
       "dependencies": [],
       "entity": "Person",
+      "enum_members": [
+        "CITIZEN",
+        "LEGAL_PERMANENT_RESIDENT",
+        "REFUGEE",
+        "ASYLEE",
+        "DEPORTATION_WITHHELD",
+        "CUBAN_HAITIAN_ENTRANT",
+        "CONDITIONAL_ENTRANT",
+        "PAROLED_ONE_YEAR",
+        "UNDOCUMENTED",
+        "DACA",
+        "TPS"
+      ],
       "formula_names": [
         "formula"
       ],
@@ -1593,6 +1606,19 @@
       "default_origin": "explicit",
       "dependencies": [],
       "entity": "Person",
+      "enum_members": [
+        "CITIZEN",
+        "LEGAL_PERMANENT_RESIDENT",
+        "REFUGEE",
+        "ASYLEE",
+        "DEPORTATION_WITHHELD",
+        "CUBAN_HAITIAN_ENTRANT",
+        "CONDITIONAL_ENTRANT",
+        "PAROLED_ONE_YEAR",
+        "UNDOCUMENTED",
+        "DACA",
+        "TPS"
+      ],
       "formula_names": [
         "formula"
       ],
@@ -2303,6 +2329,12 @@
         "is_ssi_disabled"
       ],
       "entity": "Person",
+      "enum_members": [
+        "AGED",
+        "BLIND",
+        "DISABLED",
+        "NONE"
+      ],
       "formula_names": [
         "formula"
       ],
@@ -2488,6 +2520,12 @@
         "ssi_receives_shelter_from_others_in_household"
       ],
       "entity": "Person",
+      "enum_members": [
+        "OWN_HOUSEHOLD",
+        "ANOTHER_PERSONS_HOUSEHOLD",
+        "CHILD_IN_PARENTAL_HOUSEHOLD",
+        "MEDICAL_TREATMENT_FACILITY"
+      ],
       "formula_names": [
         "formula"
       ],

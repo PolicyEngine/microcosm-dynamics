@@ -4,7 +4,9 @@ POPULACE_DYNAMICS_PE_US_PYTHON_SSI0 selects the separate interpreter and
 assigns this module to oracle_policyengine without changing tier policy.
 """
 
+import json
 import os
+import subprocess
 from dataclasses import replace
 from pathlib import Path
 
@@ -15,9 +17,12 @@ from populace_dynamics.income_resources.ssi.records import (
     SSIResult,
 )
 from populace_dynamics.income_resources.ssi.runner import (
+    CHILD,
     DEFAULT_PYTHON,
     PYTHON_ENV,
     SSIRunner,
+    load_pin,
+    prepare,
 )
 
 from .ssi_invented import invented_case
@@ -145,3 +150,50 @@ def test_compatible_batch_matches_independent_household_runs():
     assert pooled.denominator == 4
     assert runner.accounting.attempted == runner.accounting.accepted == 6
     assert runner.accounting.refused == 0
+
+
+def test_one_invalid_request_fails_alone_in_a_pooled_worker_batch():
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    first = invented_case(
+        "INVENTED_ISOLATION_SINGLE",
+        social_security=3600,
+        bank_account_assets=1900,
+    )
+    second = invented_case(
+        "INVENTED_ISOLATION_COUPLE",
+        couple=True,
+        employment_income=6000,
+        bank_account_assets=2900,
+    )
+    references = SSIRunner(python, timeout=1800).run_many([first, second])
+    assert all(
+        isinstance(item, SSIResult) for item in references.outcomes
+    ), references.outcomes
+    jobs = [
+        prepare(replace(case, case_id=f"INVENTED_ISOLATION_{index}"))[0]
+        for index, case in enumerate((first, second, first, second))
+    ]
+    # The contract refuses this name, so only a contract defect could send
+    # it. The worker must still keep it from refusing its companions.
+    jobs[3]["people"][0]["immigration_status"] = "INVENTED_INVALID_STATUS"
+    process = subprocess.run(
+        [str(python), str(CHILD)],
+        input=json.dumps({"pin": load_pin(), "cases": jobs}),
+        text=True,
+        capture_output=True,
+        timeout=3600,
+        check=False,
+    )
+    assert process.returncode == 0, process.stderr[-2000:]
+    raw = json.loads(process.stdout)["cases"]
+    assert len(raw) == 4
+    assert "INVENTED_INVALID_STATUS" in raw[3]["error"]
+    for index in range(3):
+        reference = references.outcomes[index % 2]
+        assert "error" not in raw[index], raw[index]
+        assert (
+            tuple(float(person["ssi"]) for person in raw[index]["person"])
+            == reference.federal_ssi
+        )

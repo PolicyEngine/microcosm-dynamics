@@ -193,3 +193,51 @@ def test_core_default_drift_refuses_inventory(tmp_path):
     )
     with pytest.raises(ValueError, match="Core primitive defaults differ"):
         inventory.validate_core_defaults(package)
+
+
+INVENTED_ENUM_INPUT = """class InventedStatus(Enum):
+    INVENTED_FIRST = "Invented first"
+    INVENTED_SECOND = "Invented second"
+
+
+class invented_status(Variable):
+    value_type = Enum
+    entity = Person
+    possible_values = {possible_values}
+    default_value = {possible_values}.INVENTED_FIRST
+    definition_period = YEAR
+"""
+
+
+def package_with_enum_input(tmp_path, possible_values):
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_status.py").write_text(
+        INVENTED_ENUM_INPUT.format(possible_values=possible_values)
+    )
+    path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+    path.write_text(
+        path.read_text().replace(
+            'person("invented_age", period)',
+            'person("invented_age", period) + '
+            'person("invented_status", period)',
+        )
+    )
+    return package
+
+
+def test_enum_input_members_are_read_from_its_source(tmp_path):
+    package = package_with_enum_input(tmp_path, "InventedStatus")
+    result = inventory.inventory_release(package)
+    status = next(
+        v for v in result["inputs"] if v["name"] == "invented_status"
+    )
+    assert status["enum_members"] == ["INVENTED_FIRST", "INVENTED_SECOND"]
+    assert status["default"] == "INVENTED_FIRST"
+    numeric = next(v for v in result["inputs"] if v["name"] == "invented_age")
+    assert "enum_members" not in numeric
+
+
+def test_enum_input_without_readable_members_refuses_inventory(tmp_path):
+    package = package_with_enum_input(tmp_path, "InventedImportedStatus")
+    with pytest.raises(ValueError, match="Unresolved enum members"):
+        inventory.inventory_release(package)

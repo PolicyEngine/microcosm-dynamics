@@ -87,8 +87,10 @@ their annual values. Actual monthly receipt and payment timing wait for SSI9.
 - Booleans require boolean scalars; counts require nonnegative integral
   numbers; numeric inputs must be finite; resources are nonnegative; ages
   lie in the interface range 0–125. Reported income losses remain signed.
-  Enum inputs require a nonempty string, whose member name the public engine
-  validates.
+  Enum inputs must name a member of the pinned enum. The inventory reads the
+  member names from the enum's source, the contract row carries them, and a
+  row without them admits no value. So an invalid name refuses its own case
+  as `INPUT_CONTRACT_GAP` before any calculation.
 - Uncontracted inputs refuse instead of being passed through or silently
   dropped.
 - Sources name D1, D2 or WP1 and a citation. Refusals name a condition and the

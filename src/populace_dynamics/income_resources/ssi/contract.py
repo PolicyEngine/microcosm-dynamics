@@ -57,8 +57,10 @@ def _validate_value(row: Mapping[str, Any], value: Any) -> None:
     if value_type == "bool":
         valid = isinstance(value, bool)
     elif value_type == "Enum":
-        # The public engine validates the pinned enum's member names.
-        valid = isinstance(value, str) and bool(value.strip())
+        # A row names its pinned enum's members, read from source by the
+        # inventory. A row without them admits no value, so an invalid name
+        # refuses its own case here instead of failing inside the engine.
+        valid = isinstance(value, str) and value in row.get("enum_members", ())
     elif value_type in ("float", "int"):
         try:
             valid = (

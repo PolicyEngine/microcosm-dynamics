@@ -20,6 +20,7 @@ from populace_dynamics.income_resources.ssi.records import (
     MaritalUnit,
     Person,
     RetirementAccount,
+    SSIResult,
 )
 from populace_dynamics.income_resources.ssi.runner import (
     OUTPUTS,
@@ -463,4 +464,159 @@ def test_worker_keeps_policy_changes_out_of_combined_batches(
         ]
         if different_policy
         else [("batch", 4)]
+    )
+
+
+def invented_worker_case(index, *, valid=True, policy=1, pooled=True):
+    """An invented worker request; ``valid`` stands in for an engine check."""
+    from populace_dynamics.income_resources.ssi import _child
+
+    case = dict.fromkeys(_child.HOUSEHOLD_ARGUMENTS, {})
+    case.update(
+        year=2026,
+        reform={"INVENTED_PARAMETER": policy},
+        extra_variables=["ssi"],
+        people={"INVENTED_ID": index, "INVENTED_VALID": valid},
+    )
+    if pooled:
+        case["person_links"] = [{"person_id": f"INVENTED_{index}"}]
+    return case
+
+
+def run_invented_worker(cases, calls=None):
+    """Run the worker on invented requests with stubbed public interfaces.
+
+    The stub engine raises for an invalid request whether it runs alone or
+    pooled, as the pinned enum validator does, and a pool's results agree
+    with single runs. So any dependence on companions is the worker's.
+    """
+    from populace_dynamics.income_resources.ssi import _child
+
+    calls = [] if calls is None else calls
+
+    def value(arguments):
+        people = arguments["people"]
+        if not people["INVENTED_VALID"]:
+            raise ValueError("Invalid value(s) ['INVENTED_INVALID_STATUS']")
+        amount = arguments["reform"]["INVENTED_PARAMETER"]
+        return {"person": [{"ssi": 1000 * amount + people["INVENTED_ID"]}]}
+
+    def household(**arguments):
+        calls.append("household")
+        return value(arguments)
+
+    def batch(requests, pe):
+        calls.append(("batch", len(requests)))
+        return [value(request) for request in requests]
+
+    pe = ModuleType("policyengine")
+    pe.us = SimpleNamespace(calculate_household=household)
+    dataset = ModuleType("dataset_worker")
+    dataset.calculate_dataset_batch = batch
+    job = {"pin": {"versions": {}, "record_sha256": {}}, "cases": cases}
+    stdout = io.StringIO()
+    with (
+        patch.dict(
+            sys.modules, {"policyengine": pe, "dataset_worker": dataset}
+        ),
+        patch.object(sys, "stdin", io.StringIO(json.dumps(job))),
+        patch.object(sys, "stdout", stdout),
+    ):
+        _child.main()
+    return json.loads(stdout.getvalue())["cases"]
+
+
+@pytest.mark.parametrize("size", [3, 4, 5])
+def test_one_failing_request_fails_alone_in_a_pooled_batch(size):
+    cases = [
+        invented_worker_case(index, valid=index != 1) for index in range(size)
+    ]
+    calls = []
+    outcomes = run_invented_worker(cases, calls)
+    assert outcomes[1] == {
+        "error": "ValueError: Invalid value(s) ['INVENTED_INVALID_STATUS']"
+    }
+    assert [
+        outcome for index, outcome in enumerate(outcomes) if index != 1
+    ] == [
+        {"person": [{"ssi": 1000 + index}]}
+        for index in range(size)
+        if index != 1
+    ]
+    # Four or more compatible requests pool; a failed pool reruns each alone.
+    assert (
+        calls == ([("batch", size)] if size > 3 else []) + ["household"] * size
+    )
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    valid=st.lists(st.booleans(), max_size=8),
+    pooled=st.booleans(),
+    deviant=st.none() | st.integers(min_value=0, max_value=7),
+    unlinked=st.none() | st.integers(min_value=0, max_value=7),
+)
+def test_worker_outcomes_do_not_depend_on_companions(
+    valid, pooled, deviant, unlinked
+):
+    # Batches are compatible unless one request's policy differs or one
+    # request lacks links, so pools of four or more are drawn often.
+    cases = [
+        invented_worker_case(
+            index,
+            valid=is_valid,
+            policy=2 if index == deviant else 1,
+            pooled=pooled and index != unlinked,
+        )
+        for index, is_valid in enumerate(valid)
+    ]
+    together = run_invented_worker(cases)
+    assert len(together) == len(cases)
+    for case, outcome in zip(cases, together, strict=True):
+        assert outcome == run_invented_worker([case])[0]
+        assert ("error" in outcome) == (not case["people"]["INVENTED_VALID"])
+
+
+def test_invalid_enum_name_refuses_only_its_own_case_before_dispatch():
+    from .ssi_invented import invented_case
+
+    cases = [invented_case(f"INVENTED_CASE_{index}") for index in range(3)]
+    cases.append(
+        invented_case(
+            "INVENTED_CASE_INVALID",
+            immigration_status="INVENTED_INVALID_STATUS",
+        )
+    )
+    sent = []
+
+    def worker(command, *, input, **kwargs):
+        job = json.loads(input)
+        sent.append(job["cases"])
+        person = dict.fromkeys(OUTPUTS, 0)
+        return SimpleNamespace(
+            returncode=0,
+            stdout=json.dumps(
+                {
+                    "versions": {},
+                    "cases": [{"person": [person]} for _ in job["cases"]],
+                }
+            ),
+        )
+
+    with patch(
+        "populace_dynamics.income_resources.ssi.runner.subprocess.run",
+        side_effect=worker,
+    ):
+        result = SSIRunner(sys.executable).run_many(cases)
+    assert [len(batch) for batch in sent] == [3]
+    assert [case["case_id"] for case in sent[0]] == [
+        f"INVENTED_CASE_{index}" for index in range(3)
+    ]
+    assert result.refusal_counts == {"INPUT_CONTRACT_GAP": 1}
+    assert result.outcomes[3].inputs == ("immigration_status",)
+    assert [outcome.case_id for outcome in result.outcomes[:3]] == [
+        f"INVENTED_CASE_{index}" for index in range(3)
+    ]
+    assert all(
+        isinstance(outcome, SSIResult) for outcome in result.outcomes[:3]
     )

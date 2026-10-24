@@ -50,6 +50,37 @@ def compatible_batch(cases):
     )
 
 
+def calculate_one(case, pe):
+    """One case through its own public calculation path, or its error."""
+    try:
+        if case.get("backend") == "dataset":
+            from dataset_worker import calculate_dataset
+
+            return calculate_dataset(case, pe)
+        arguments = {key: case[key] for key in HOUSEHOLD_ARGUMENTS}
+        result = pe.us.calculate_household(**arguments)
+        return {"person": result["person"]}
+    except Exception as error:
+        return {"error": f"{type(error).__name__}: {error}"}
+
+
+def calculate_cases(requests, pe):
+    """Results in request order; no case's outcome depends on another's.
+
+    A compatible batch is pooled into one calculation. If that calculation
+    fails, the failure says only that some case failed, so every case is
+    then calculated alone and only those that fail alone report an error.
+    """
+    if compatible_batch(requests):
+        try:
+            from dataset_worker import calculate_dataset_batch
+
+            return calculate_dataset_batch(requests, pe)
+        except Exception:
+            pass
+    return [calculate_one(case, pe) for case in requests]
+
+
 def main():
     job = json.load(sys.stdin)
     pin = job["pin"]
@@ -87,34 +118,7 @@ def main():
         with contextlib.redirect_stdout(io.StringIO()):
             import policyengine as pe
 
-            requests = job["cases"]
-            if compatible_batch(requests):
-                try:
-                    from dataset_worker import calculate_dataset_batch
-
-                    cases = calculate_dataset_batch(requests, pe)
-                except Exception as error:
-                    cases = [
-                        {"error": f"{type(error).__name__}: {error}"}
-                        for _ in requests
-                    ]
-            else:
-                for case in requests:
-                    try:
-                        if case.get("backend") == "dataset":
-                            from dataset_worker import calculate_dataset
-
-                            cases.append(calculate_dataset(case, pe))
-                        else:
-                            arguments = {
-                                key: case[key] for key in HOUSEHOLD_ARGUMENTS
-                            }
-                            result = pe.us.calculate_household(**arguments)
-                            cases.append({"person": result["person"]})
-                    except Exception as error:
-                        cases.append(
-                            {"error": f"{type(error).__name__}: {error}"}
-                        )
+            cases = calculate_cases(job["cases"], pe)
     json.dump(
         {"versions": versions, "cases": cases}, sys.stdout, allow_nan=False
     )

@@ -190,25 +190,27 @@ def build() -> dict:
     rows = []
     for item in inventory["inputs"]:
         name = item["name"]
-        rows.append(
-            {
-                "name": name,
-                "kind": "engine",
-                "entity": item["entity"],
-                "period": item["period"],
-                "value_type": item["value_type"],
-                "category": category(name),
-                "populations": {
-                    population: mapping[population].get(
-                        name,
-                        refuse(
-                            f"Missing {name}: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use."
-                        ),
-                    )
-                    for population in POPULATIONS
-                },
-            }
-        )
+        row = {
+            "name": name,
+            "kind": "engine",
+            "entity": item["entity"],
+            "period": item["period"],
+            "value_type": item["value_type"],
+            "category": category(name),
+            "populations": {
+                population: mapping[population].get(
+                    name,
+                    refuse(
+                        f"Missing {name}: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use."
+                    ),
+                )
+                for population in POPULATIONS
+            },
+        }
+        if item["value_type"] == "Enum":
+            # The pinned enum's member names, read from its source.
+            row["enum_members"] = item["enum_members"]
+        rows.append(row)
     contexts = {
         "household_links": (
             "links",
