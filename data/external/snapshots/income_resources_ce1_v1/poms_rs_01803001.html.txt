@@ -1,0 +1,523 @@
+
+
+
+
+SSA - POMS: RS 01803.001 - Net Earnings From SE &mdash; General Rule - 03/17/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+document._domino_target = "_self";
+function _doClick(v, o, t) {
+  var returnValue = false;
+  var url="/poms.nsf/lnx/0301803001!OpenDocument&Click=" + v;
+  if (o.href != null) {
+    o.href = url;
+    returnValue = true;
+  } else {
+    if (t == null)
+      t = document._domino_target;
+    window.open(url, t);
+  }
+  return returnValue;
+}
+// -->
+
+
+
+
+
+
+
+
+
+	appProfile = {"ProfileName":"PublicPolicyNet",
+"Status":"Enabled",
+"HTTP_POMS":"https://policy.ssa.gov",
+"NSF_POMS":"poms.nsf",
+"HTTP_POMSArchive":"https://policy.ssa.gov",
+"NSF_POMSArchive":"pomsarchive.nsf",
+"HTTP_Reference":"https://policy.ssa.gov",
+"NSF_Reference":"reference.nsf",
+"HTTP_ReferenceArchive":"https://policy.ssa.gov",
+"NSF_ReferenceArchive":"referencearchive.nsf",
+"HTTP_YUILibraries":"https://policy.ssa.gov",
+"NSF_YUILibraries":"web20/yui280.nsf",
+"defaultPage":"/home!readform"
+};	
+	//getFields will return a comma separated list of fields stored in the appProfile object
+	appProfile.getFields = function() {
+		var fieldsList;
+		for(var x in appProfile) {
+			if(typeof this[x] != 'function') {
+				if(fieldsList == undefined) { 
+					fieldsList = x; 
+				} else { 
+					fieldsList += ", "+x;
+				}
+			}
+		}
+		return fieldsList;
+	} // getFields
+	//get will return the object stored for the passed FieldName
+	appProfile.get = function(strFieldName) {
+		strFieldName = (typeof strFieldName == 'undefined') ? this.ProfileName : strFieldName;	
+		return this[strFieldName];
+	} // get
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+
+
+
+
+ 
+Skip to content
+
+
+
+
+
+
+
+    
+
+        
+
+            
+Social Security
+
+        
+
+        
+
+            
+
+                
+
+                    
+
+                
+Search
+
+            
+
+                
+
+                    
+
+                
+Menu
+
+            
+
+                
+
+                    
+
+                
+Languages
+
+            
+
+                
+
+                    
+
+                
+Sign in / up
+
+        
+
+    
+
+
+
+
+
+
+Program Operations Manual System (POMS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+Effective Dates: 03/17/1998 - Present
+
+	
+ 
+Previous
+ | 
+Next
+
+	
+
+
+
+
+
+   
+TN 9 (02-98)
+
+   
+RS 01803.001 
+Net Earnings From SE — General Rule
+   
+
+   
+   
+   
+
+      
+
+         
+POLICY
+         
+
+      
+
+      
+
+         
+The earnings of self-employed individuals are called net earnings from self-employment
+            (NESE) and self-employment income (SEI). Entitlement is based on SEI and deductions
+            are based on NESE.
+         
+
+         
+The Omnibus Budget Reconciliation Act (OBRA) of 1989, P.L. 98-21, added sections 164(f)
+            and 1402(a)(12) of the Internal Revenue Code and section 211(a)(11) of the Social
+            Security Act to provide for a new deduction of 7.65% (100% - 7.65% = 92.35% or 0.9235)
+            when computing NESE. This is a mandatory deduction effective with taxable years beginning
+            after 12/31/89.
+         
+
+      
+
+   
+
+   
+   
+
+
+
+
+
+
+
+
+
+
+To Link to this section - Use this URL: 
+http://policy.ssa.gov/poms.nsf/lnx/0301803001
+RS 01803.001 - Net Earnings From SE &mdash; General Rule - 03/17/1998
+
+
+Batch run: 
+07/03/2014
+
+
+Rev:
+03/17/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+
+
+
+
+
+
+Important Information:
+
+
+
+
+Accessibility
+
+
+FOIA
+
+
+Open Government
+
+
+Glossary
+
+
+Privacy
+
+
+Report Fraud, Waste or Abuse
+
+
+Site Map
+
+
+Website Policies
+
+
+
+
+
+
+
+
+
+Other Government Websites:
+
+
+
+
+Benefits.gov
+
+
+Disability.gov
+
+
+Healthcare.gov
+
+
+MyMoney.gov
+
+
+Regulations.gov
+
+
+USA.gov
+
+
+Other Government Sites
+
+
+
+
+
+
+
+
+
+Follow:
+
+
+
+
+Twitter
+
+
+Facebook
+
+
+YouTube
+
+
+Blog
+
+
+More Social Media
+
+
+
+
+
+
+
+This website is produced and published at U.S. taxpayer expense.
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

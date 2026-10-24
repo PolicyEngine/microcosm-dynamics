@@ -1,0 +1,1918 @@
+[
+  {
+    "rule_id": "clergy_1968_1972",
+    "family": "clergy_religious_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "1972-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "poms_rs_01901600.html",
+        "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e",
+        "authority": "POMS RS 01901.600 (2024-06-26)",
+        "location": "A.2-A.4 and B"
+      },
+      {
+        "capture": "poms_nl_00711065.html",
+        "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e",
+        "authority": "POMS NL 00711.065 (1999-05-04)",
+        "location": "1331, 1331.1-1331.3"
+      },
+      {
+        "capture": "poms_rs_01802064.html",
+        "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
+        "authority": "POMS RS 01802.064 (2024-03-22)",
+        "location": "Operating policy"
+      }
+    ],
+    "trigger_facts": [
+      "ministerial_service",
+      "religious_order_service",
+      "clergy_remuneration",
+      "clergy_or_religious_exemption",
+      "nonresident_alien_status",
+      "place_of_work"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Compulsory self-employment coverage applies for taxable years ending after 1967 absent an effective exemption; foreign-ministry restrictions remain through 1972.",
+    "parameters": {
+      "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
+      "self_employment_default": "covered_self_employment",
+      "cases": [
+        {
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
+          },
+          "consequence": "covered",
+          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          },
+          "consequence": "noncovered",
+          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "not established"
+          },
+          "consequence": "unresolved",
+          "description": "Do not infer exemption status from clergy occupation."
+        }
+      ],
+      "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
+      "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
+      "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
+      "foreign_ministry": "For taxable years beginning after 1967 through 1972, a US citizen serving abroad must be an employee of a US employer or serve a congregation predominantly composed of US citizens (POMS NL 00711.065 1331.1).",
+      "effective_exemption_consequence": "noncovered"
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"Form 4361\" \"statistics\" ministers exemptions",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe filing, processing, and tax form instructions; no published stock, rate, or prevalence bound found."
+        },
+        {
+          "query": "\"Form 4361\" \"number\" \"approved\" ministers",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe approved forms and IRS processing criteria; no published prevalence bound found."
+        },
+        {
+          "query": "\"ministers\" \"exemptions\" \"percent\"",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published exemption prevalence bound found."
+        },
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "clergy_1973_1981",
+    "family": "clergy_religious_service",
+    "effective_start": "1973-01-01",
+    "effective_end": "1981-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "poms_rs_01901600.html",
+        "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e",
+        "authority": "POMS RS 01901.600 (2024-06-26)",
+        "location": "A.2-A.4 and B"
+      },
+      {
+        "capture": "poms_nl_00711065.html",
+        "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e",
+        "authority": "POMS NL 00711.065 (1999-05-04)",
+        "location": "1331, 1331.1-1331.3"
+      },
+      {
+        "capture": "poms_rs_01802064.html",
+        "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
+        "authority": "POMS RS 01802.064 (2024-03-22)",
+        "location": "Operating policy"
+      }
+    ],
+    "trigger_facts": [
+      "ministerial_service",
+      "religious_order_service",
+      "clergy_remuneration",
+      "clergy_or_religious_exemption",
+      "nonresident_alien_status",
+      "place_of_work"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "From taxable years beginning in 1973, qualifying US citizen ministry abroad no longer needs a US employer or a predominantly US citizen congregation.",
+    "parameters": {
+      "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
+      "self_employment_default": "covered_self_employment",
+      "cases": [
+        {
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
+          },
+          "consequence": "covered",
+          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          },
+          "consequence": "noncovered",
+          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "not established"
+          },
+          "consequence": "unresolved",
+          "description": "Do not infer exemption status from clergy occupation."
+        }
+      ],
+      "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
+      "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
+      "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
+      "foreign_ministry": "Covered if a US citizen, subject to minister exemption and other 411 rules; nationality and residency facts remain necessary.",
+      "effective_exemption_consequence": "noncovered"
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"Form 4361\" \"statistics\" ministers exemptions",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe filing, processing, and tax form instructions; no published stock, rate, or prevalence bound found."
+        },
+        {
+          "query": "\"Form 4361\" \"number\" \"approved\" ministers",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe approved forms and IRS processing criteria; no published prevalence bound found."
+        },
+        {
+          "query": "\"ministers\" \"exemptions\" \"percent\"",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published exemption prevalence bound found."
+        },
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "clergy_1982_2026",
+    "family": "clergy_religious_service",
+    "effective_start": "1982-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "poms_rs_01901600.html",
+        "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e",
+        "authority": "POMS RS 01901.600 (2024-06-26)",
+        "location": "A.2-A.4 and B"
+      },
+      {
+        "capture": "poms_nl_00711065.html",
+        "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e",
+        "authority": "POMS NL 00711.065 (1999-05-04)",
+        "location": "1331, 1331.1-1331.3"
+      },
+      {
+        "capture": "poms_rs_01802064.html",
+        "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
+        "authority": "POMS RS 01802.064 (2024-03-22)",
+        "location": "Operating policy"
+      },
+      {
+        "capture": "irs_p517_2025.pdf",
+        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "printed pages 4-7"
+      }
+    ],
+    "trigger_facts": [
+      "ministerial_service",
+      "religious_order_service",
+      "clergy_remuneration",
+      "clergy_or_religious_exemption",
+      "nonresident_alien_status",
+      "place_of_work"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Qualifying ministry is self-employment unless an effective exemption applies; cantor and later coverage-election histories are recorded.",
+    "parameters": {
+      "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
+      "self_employment_default": "covered_self_employment",
+      "cases": [
+        {
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
+          },
+          "consequence": "covered",
+          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          },
+          "consequence": "noncovered",
+          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
+        },
+        {
+          "when": {
+            "clergy_or_religious_exemption": "not established"
+          },
+          "consequence": "unresolved",
+          "description": "Do not infer exemption status from clergy occupation."
+        }
+      ],
+      "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
+      "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
+      "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
+      "foreign_ministry": "Nationality, residency, and totalization rules of 411 apply; clergy exemption facts remain necessary.",
+      "cantor": "Effective January 1, 1982, a cantor is treated as an ordained minister if the cantor and congregation agree on the relationship (RS 01901.600 B.4.b).",
+      "effective_exemption_consequence": "noncovered"
+    },
+    "worked_examples": [
+      {
+        "example_id": "irs517_rev_hayden_austin_exemption",
+        "income_year": 2022,
+        "citation": {
+          "capture": "irs_p517_2025.html",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+          "authority": "IRS Publication 517 (2025)",
+          "location": "Effective date of exemption; Example Rev. Hayden Austin"
+        },
+        "source_passage": "Rev. Hayden Austin, ordained in 2022, had $400 or more in net self-employment earnings, in both 2022 and 2025, part of which was from her services as a minister. Rev. Austin files an application for exemption on February 19, 2026. If an exemption is granted, it is effective for 2022 and the following years.",
+        "expected_rule_id": "clergy_1982_2026",
+        "expected_parameters": {
+          "effective_exemption_consequence": "noncovered"
+        }
+      }
+    ],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"Form 4361\" \"statistics\" ministers exemptions",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe filing, processing, and tax form instructions; no published stock, rate, or prevalence bound found."
+        },
+        {
+          "query": "\"Form 4361\" \"number\" \"approved\" ministers",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results describe approved forms and IRS processing criteria; no published prevalence bound found."
+        },
+        {
+          "query": "\"ministers\" \"exemptions\" \"percent\"",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published exemption prevalence bound found."
+        },
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "electing_church_1968_1983",
+    "family": "electing_church_employee_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "1983-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "B-D"
+      },
+      {
+        "capture": "poms_rs_01901660.html",
+        "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9",
+        "authority": "POMS RS 01901.660 (2010-06-14)",
+        "location": "A.1-A.4 and B"
+      }
+    ],
+    "trigger_facts": [
+      "church_employee_service",
+      "clergy_or_religious_exemption",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "The 3121(w) church employer election did not exist; ordinary church employee coverage follows the then effective nonprofit employer waiver and small remuneration rules.",
+    "parameters": {
+      "employer_election_available": false,
+      "coverage_family": "nonprofit_service",
+      "ministerial_service_separate": true
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "electing_church_1984_1985",
+    "family": "electing_church_employee_service",
+    "effective_start": "1984-01-01",
+    "effective_end": "1985-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "poms_rs_01901660.html",
+        "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9",
+        "authority": "POMS RS 01901.660 (2010-06-14)",
+        "location": "A.1-A.4 and B"
+      }
+    ],
+    "trigger_facts": [
+      "church_employee_service",
+      "clergy_or_religious_exemption",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered_above_threshold",
+    "identification_class": "awaiting_ce2",
+    "description": "Church election service is excluded from employment but covered as self-employment from 1984; the original 411(a)(13) threshold is per employer.",
+    "parameters": {
+      "employer_election_available": true,
+      "employment_consequence": "Excluded employment under 410(a)(8)(B).",
+      "self_employment_consequence": "covered_self_employment",
+      "church_se_threshold_cents": 10000,
+      "church_election_service_start": "1984-01-01",
+      "cases": [
+        {
+          "when": {
+            "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
+          },
+          "consequence": "covered_above_threshold",
+          "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies."
+        },
+        {
+          "when": {
+            "church_employee_service": "unrelated trade or business"
+          },
+          "consequence": "covered",
+          "description": "Not excluded from employment by 410(a)(8)(B); apply other families."
+        }
+      ],
+      "personal_religious_exemption": "Apply the year-specific religious sect exemption rule from the self-employment registry. The historical interaction of 1402(g), church employee income, and 3127 is not resolved by employer election alone; no current exemption rule is backcast here.",
+      "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
+      "threshold_aggregation_unit": "same_employer_employee_taxable_year",
+      "threshold_concept": "Remuneration from one employer described in 410(a)(8)(B); less than $100 is excluded and the 411(b)(2) $400 threshold does not apply.",
+      "expense_rule": "No allowable deductions except 411(a)(11) under then effective 411(a)(13).",
+      "se_computation_family": "church_employee_self_employment"
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "electing_church_1986_2026",
+    "family": "electing_church_employee_service",
+    "effective_start": "1986-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "poms_rs_01901660.html",
+        "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9",
+        "authority": "POMS RS 01901.660 (2010-06-14)",
+        "location": "A.1-A.4 and B"
+      }
+    ],
+    "trigger_facts": [
+      "church_employee_service",
+      "clergy_or_religious_exemption",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered_above_threshold",
+    "identification_class": "awaiting_ce2",
+    "description": "Separate church employee computation under 411(i) begins for taxable years after 1985, distinct from 1984 coverage and the $100 threshold.",
+    "parameters": {
+      "employer_election_available": true,
+      "employment_consequence": "Excluded employment under 410(a)(8)(B).",
+      "self_employment_consequence": "covered_self_employment",
+      "church_se_threshold_cents": 10000,
+      "church_election_service_start": "1984-01-01",
+      "cases": [
+        {
+          "when": {
+            "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
+          },
+          "consequence": "covered_above_threshold",
+          "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies."
+        },
+        {
+          "when": {
+            "church_employee_service": "unrelated trade or business"
+          },
+          "consequence": "covered",
+          "description": "Not excluded from employment by 410(a)(8)(B); apply other families."
+        }
+      ],
+      "personal_religious_exemption": "Apply the year-specific religious sect exemption rule from the self-employment registry. The historical interaction of 1402(g), church employee income, and 3127 is not resolved by employer election alone; no current exemption rule is backcast here.",
+      "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
+      "threshold_aggregation_unit": "person_taxable_year_church_employee_unit",
+      "threshold_concept": "Church gross income without deductions under 411(i)(1), subject to 411(i)(3) deduction coordination; the separate $100 threshold applies.",
+      "se_computation_family": "church_employee_self_employment"
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "federal_1968_1972",
+    "family": "federal_retirement_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "1972-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340 (2024-06-14)",
+        "location": "A-C"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "federal_service",
+      "federal_retirement_system",
+      "occupation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Pre-1984 federal coverage depends on the exclusions in former 410(a)(5)-(6), including federal retirement-system and statutory instrumentality exclusions.",
+    "parameters": {
+      "coverage_default": "covered unless a statutory exclusion applies",
+      "cases": [
+        {
+          "when": {
+            "federal_retirement_system": "established by a law of the United States"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(A) as in effect in January 1983."
+        },
+        {
+          "when": {
+            "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(5) as in effect in January 1983."
+        },
+        {
+          "when": {
+            "federal_service": "exempt-1950 instrumentality and retirement system"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there."
+        },
+        {
+          "when": {
+            "occupation": "President/Vice President/Congress/legislative employee"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(C) as in effect in January 1983."
+        }
+      ],
+      "persistent_exclusions": [
+        "Federal penal inmate",
+        "specified Federal hospital student employees other than medical/dental interns/residents",
+        "temporary emergency employees",
+        "other independent statutory exclusions"
+      ],
+      "federal_home_loan_bank_transition": {
+        "enactment": "1972-10-30",
+        "ordinary_coverage_start": "1973-01-01",
+        "conditional_retroactivity": "For employees present on Jan1,1973, service after 1965 may be covered if required taxes paid byJuly1,1973 or agreed later date (PL92-603 section125)."
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "federal_1973_1983",
+    "family": "federal_retirement_service",
+    "effective_start": "1973-01-01",
+    "effective_end": "1983-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340 (2024-06-14)",
+        "location": "A-C"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "federal_service",
+      "federal_retirement_system",
+      "occupation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Pre-1984 exclusion regime continues; Federal home loan bank ordinary coverage now applies, subject to other exclusions.",
+    "parameters": {
+      "coverage_default": "covered unless a statutory exclusion applies",
+      "cases": [
+        {
+          "when": {
+            "federal_retirement_system": "established by a law of the United States"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(A) as in effect in January 1983."
+        },
+        {
+          "when": {
+            "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(5) as in effect in January 1983."
+        },
+        {
+          "when": {
+            "federal_service": "exempt-1950 instrumentality and retirement system"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there."
+        },
+        {
+          "when": {
+            "occupation": "President/Vice President/Congress/legislative employee"
+          },
+          "consequence": "noncovered",
+          "description": "410(a)(6)(C) as in effect in January 1983."
+        }
+      ],
+      "persistent_exclusions": [
+        "Federal penal inmate",
+        "specified Federal hospital student employees other than medical/dental interns/residents",
+        "temporary emergency employees",
+        "other independent statutory exclusions"
+      ],
+      "federal_home_loan_bank_transition": {
+        "enactment": "1972-10-30",
+        "ordinary_coverage_start": "1973-01-01",
+        "conditional_retroactivity": "For employees present on Jan1,1973, service after 1965 may be covered if required taxes paid byJuly1,1973 or agreed later date (PL92-603 section125)."
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "federal_1984_1986",
+    "family": "federal_retirement_service",
+    "effective_start": "1984-01-01",
+    "effective_end": "1986-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340 (2024-06-14)",
+        "location": "A-C"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "federal_service",
+      "federal_retirement_system",
+      "occupation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Newly hired federal employees are covered; the January 1983 grandfather and special exceptions remain conditional facts.",
+    "parameters": {
+      "coverage_default": "covered unless grandfathered or independently excluded",
+      "continuity_reference_date": "1983-12-31",
+      "continuity_maximum_separation_days": 365,
+      "persistent_exclusions": [
+        "Federal penal inmate",
+        "specified Federal hospital student employees other than medical/dental interns/residents",
+        "temporary emergency employees",
+        "other independent statutory exclusions"
+      ],
+      "cases": [
+        {
+          "when": {
+            "federal_service": "first hired after 1983"
+          },
+          "consequence": "covered",
+          "description": "Coverage of newly hired Federal employees."
+        },
+        {
+          "when": {
+            "federal_service": "excluded under January 1983 law and continuously performing that service sinceDec31,1983"
+          },
+          "consequence": "noncovered",
+          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies."
+        },
+        {
+          "when": {
+            "federal_retirement_system": "reemployed CSRS annuitant"
+          },
+          "consequence": "noncovered",
+          "description": "Subject to statutory exceptions, including covered high federal officials and approved waiver-of-offset service; Medicare is a separate concept."
+        },
+        {
+          "when": {
+            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
+          },
+          "consequence": "covered",
+          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides."
+        }
+      ],
+      "continuity_preserving_service": [
+        "eligible transfer/detail to international organization",
+        "American Institute in Taiwan",
+        "uniformed service with restoration/reemployment rights",
+        "qualifying Indian tribal organization employment (PL99-221 section3(b), retroactive returns after 1983)"
+      ],
+      "named_options": [
+        {
+          "group": "exactly_365_day_federal_separation",
+          "name": "statutory_less_than_366_days",
+          "conditions": {
+            "federal_service": "exactly365 consecutive separation days"
+          },
+          "consequence": "noncovered if other grandfather conditions apply",
+          "source": {
+            "capture": "lii_42_410.html",
+            "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+            "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+            "location": "410(a) and amendment/effective-date notes"
+          },
+          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than366 days as continuous."
+        },
+        {
+          "group": "exactly_365_day_federal_separation",
+          "name": "poms_365_days_or_more",
+          "conditions": {
+            "federal_service": "exactly365 consecutive separation days"
+          },
+          "consequence": "covered if no independent exclusion applies",
+          "source": {
+            "capture": "poms_rs_01901340.html",
+            "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+            "authority": "POMS RS 01901.340 (2024-06-14)",
+            "location": "A-C"
+          },
+          "explanation": "RS01901.340 B.2 says365 days or more; CE1 leaves this conflict open."
+        }
+      ],
+      "retired_federal_judges": "410(a)(5) and409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive PL99-272 amendment; do not classify from ordinary judge title alone."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "federal_1987_2026",
+    "family": "federal_retirement_service",
+    "effective_start": "1987-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340 (2024-06-14)",
+        "location": "A-C"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "federal_service",
+      "federal_retirement_system",
+      "occupation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "The new-hire/grandfather regime continues and qualifying FERS or FSPS elections override the grandfather exemption.",
+    "parameters": {
+      "coverage_default": "covered unless grandfathered or independently excluded",
+      "continuity_reference_date": "1983-12-31",
+      "continuity_maximum_separation_days": 365,
+      "persistent_exclusions": [
+        "Federal penal inmate",
+        "specified Federal hospital student employees other than medical/dental interns/residents",
+        "temporary emergency employees",
+        "other independent statutory exclusions"
+      ],
+      "cases": [
+        {
+          "when": {
+            "federal_service": "first hired after 1983"
+          },
+          "consequence": "covered",
+          "description": "Coverage of newly hired Federal employees."
+        },
+        {
+          "when": {
+            "federal_service": "excluded under January 1983 law and continuously performing that service sinceDec31,1983"
+          },
+          "consequence": "noncovered",
+          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies."
+        },
+        {
+          "when": {
+            "federal_retirement_system": "reemployed CSRS annuitant"
+          },
+          "consequence": "noncovered",
+          "description": "Subject to statutory exceptions, including covered high federal officials and approved waiver-of-offset service; Medicare is a separate concept."
+        },
+        {
+          "when": {
+            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
+          },
+          "consequence": "covered",
+          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides."
+        }
+      ],
+      "continuity_preserving_service": [
+        "eligible transfer/detail to international organization",
+        "American Institute in Taiwan",
+        "uniformed service with restoration/reemployment rights",
+        "qualifying Indian tribal organization employment (PL99-221 section3(b), retroactive returns after 1983)"
+      ],
+      "named_options": [
+        {
+          "group": "exactly_365_day_federal_separation",
+          "name": "statutory_less_than_366_days",
+          "conditions": {
+            "federal_service": "exactly365 consecutive separation days"
+          },
+          "consequence": "noncovered if other grandfather conditions apply",
+          "source": {
+            "capture": "lii_42_410.html",
+            "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+            "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+            "location": "410(a) and amendment/effective-date notes"
+          },
+          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than366 days as continuous."
+        },
+        {
+          "group": "exactly_365_day_federal_separation",
+          "name": "poms_365_days_or_more",
+          "conditions": {
+            "federal_service": "exactly365 consecutive separation days"
+          },
+          "consequence": "covered if no independent exclusion applies",
+          "source": {
+            "capture": "poms_rs_01901340.html",
+            "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+            "authority": "POMS RS 01901.340 (2024-06-14)",
+            "location": "A-C"
+          },
+          "explanation": "RS01901.340 B.2 says365 days or more; CE1 leaves this conflict open."
+        }
+      ],
+      "retired_federal_judges": "410(a)(5) and409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive PL99-272 amendment; do not classify from ordinary judge title alone.",
+      "fers_election": "From effective date of qualifying FERS/FSPS election, 410(a)(5)(H) overrides grandfather exclusion; PL99-335, later PL100-647 and 1997 open-enrollment authorities are listed in410 notes.",
+      "legislative_branch": "410(a)(5)(G): test Dec31,1983 retirement participation, lump-sum withdrawals, and cessation of coverage, including statutory requalification provisions."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "nonprofit_1968_1977",
+    "family": "nonprofit_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "1977-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "B-D"
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO501-NPO505"
+      }
+    ],
+    "trigger_facts": [
+      "nonprofit_organization",
+      "nonprofit_coverage_waiver",
+      "nonprofit_employee_concurrence",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered_above_threshold",
+    "identification_class": "awaiting_ce2",
+    "description": "Before mandatory coverage, eligible nonprofit employees require an effective actual or deemed waiver; the separate small-remuneration exclusion applies.",
+    "parameters": {
+      "cases": [
+        {
+          "when": {
+            "nonprofit_coverage_waiver": "valid and effective",
+            "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+          },
+          "consequence": "covered_above_threshold",
+          "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions."
+        },
+        {
+          "when": {
+            "nonprofit_coverage_waiver": "none or terminated"
+          },
+          "consequence": "noncovered",
+          "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate."
+        }
+      ],
+      "waiver_effective_date_options": [
+        "quarter of filing",
+        "quarter following filing",
+        "any of20 preceding quarters (for waivers filed after 1965)"
+      ],
+      "waiver_history": [
+        {
+          "law": "PL94-563 as amended byPL95-216",
+          "service_effect": "after 1950 to extent actual/deemed waiver covers service",
+          "constructive_filing": "Three consecutive paid quarters beginning with/afterSeptember 1973 quarter, subject to refund/validation exceptions inRS01901.540 D.7-D.8."
+        },
+        {
+          "law": "PL98-21 section102(d)",
+          "date": "1983-03-31",
+          "effect": "No waiver termination on/afterMarch31,1983."
+        }
+      ],
+      "other_exclusions_still_apply": true,
+      "threshold": {
+        "amount_cents": 5000,
+        "comparison": "at_least",
+        "aggregation_unit": "same_employer_employee_calendar_quarter",
+        "concept": "remuneration for service to a qualifying tax-exempt organization",
+        "source": "Former410(a)(10)(A); repealed for remuneration and service after 1977 byPL95-216 section351."
+      },
+      "threshold_id": "nonprofit_remuneration_quarter"
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "nonprofit_1978_1983",
+    "family": "nonprofit_service",
+    "effective_start": "1978-01-01",
+    "effective_end": "1983-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "B-D"
+      }
+    ],
+    "trigger_facts": [
+      "nonprofit_organization",
+      "nonprofit_coverage_waiver",
+      "nonprofit_employee_concurrence",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered_above_threshold",
+    "identification_class": "awaiting_ce2",
+    "description": "Waiver requirement continues; from 1978 the nonprofit small-remuneration rule uses $100 per employer per year.",
+    "parameters": {
+      "cases": [
+        {
+          "when": {
+            "nonprofit_coverage_waiver": "valid and effective",
+            "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+          },
+          "consequence": "covered_above_threshold",
+          "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions."
+        },
+        {
+          "when": {
+            "nonprofit_coverage_waiver": "none or terminated"
+          },
+          "consequence": "noncovered",
+          "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate."
+        }
+      ],
+      "waiver_effective_date_options": [
+        "quarter of filing",
+        "quarter following filing",
+        "any of20 preceding quarters (for waivers filed after 1965)"
+      ],
+      "waiver_history": [
+        {
+          "law": "PL94-563 as amended byPL95-216",
+          "service_effect": "after 1950 to extent actual/deemed waiver covers service",
+          "constructive_filing": "Three consecutive paid quarters beginning with/afterSeptember 1973 quarter, subject to refund/validation exceptions inRS01901.540 D.7-D.8."
+        },
+        {
+          "law": "PL98-21 section102(d)",
+          "date": "1983-03-31",
+          "effect": "No waiver termination on/afterMarch31,1983."
+        }
+      ],
+      "other_exclusions_still_apply": true,
+      "threshold": {
+        "amount_cents": 10000,
+        "comparison": "at_least",
+        "aggregation_unit": "same_employer_employee_calendar_year",
+        "concept": "remuneration for service to qualifying501(a)/521 organization, excluding401(a)trusts",
+        "source": "409(a)(14), originally409(p); PL95-216 section351 after 1977."
+      },
+      "threshold_id": "nonprofit_remuneration_year",
+      "named_options": [
+        {
+          "group": "nonprofit_1978_1983_threshold_source_discrepancy",
+          "name": "statutory_annual_100",
+          "threshold_id": "nonprofit_remuneration_year",
+          "citation": {
+            "capture": "lii_42_409.html",
+            "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+            "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+            "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+          },
+          "explanation": "409(p), now 409(a)(14), added by Public Law 95-216 for remuneration and services after 1977, uses $100 annual remuneration."
+        },
+        {
+          "group": "nonprofit_1978_1983_threshold_source_discrepancy",
+          "name": "poms_notice_quarter_50",
+          "threshold_id": "nonprofit_remuneration_quarter",
+          "citation": {
+            "capture": "poms_nl_00902500.html",
+            "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+            "authority": "POMS NL00902.500 (2004-05-27)",
+            "location": "NPO503"
+          },
+          "explanation": "The notice paragraph describes $50 quarterly earnings for pre-1984 coverage without distinguishing the 1978 law change; preserve this discrepancy rather than silently treating the notice as the post-1977 law."
+        }
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "nonprofit_1984_2026",
+    "family": "nonprofit_service",
+    "effective_start": "1984-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "B-D"
+      }
+    ],
+    "trigger_facts": [
+      "nonprofit_organization",
+      "amount",
+      "reporting_unit",
+      "month_or_exposure"
+    ],
+    "consequence": "covered_above_threshold",
+    "identification_class": "awaiting_ce2",
+    "description": "Mandatory nonprofit employment coverage begins January 1, 1984; the $100 annual remuneration exclusion and other service exclusions remain.",
+    "parameters": {
+      "mandatory_coverage_start": "1984-01-01",
+      "threshold": {
+        "amount_cents": 10000,
+        "comparison": "at_least",
+        "aggregation_unit": "same_employer_employee_calendar_year",
+        "concept": "remuneration for service to qualifying501(a)/521 organization, excluding401(a)trusts"
+      },
+      "other_exclusions_still_apply": true,
+      "church_election_family": "electing_church_employee_service",
+      "federal_employee_nonprofit_special_case": "PL98-369 section 2601(e): employees required to participate inCSRS for nonprofit service can be treated as service for aUS instrumentality.",
+      "threshold_id": "nonprofit_remuneration_year"
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "railroad_1968_2026",
+    "family": "railroad_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901580.html",
+        "sha256": "d69a4e83bbac40eb02b2d3177b6e5f0337eeceda0d41d0303f4aec737c736a08",
+        "authority": "POMS RS 01901.580 (2004-11-02)",
+        "location": "A",
+        "quote": "Work covered under the Railroad Retirement Act (RRA) is excluded from Social Security coverage."
+      }
+    ],
+    "trigger_facts": [
+      "railroad_covered_employer",
+      "railroad_covered_service"
+    ],
+    "consequence": "noncovered",
+    "identification_class": "awaiting_ce2",
+    "description": "Services as a railroad employee or employee representative defined in 26 U.S.C. 3231 are excluded from OASDI employment.",
+    "parameters": {
+      "scope": "OASDI employment and payroll coverage only; railroad compensation may be used under separate benefit coordination statutes, not inferred here.",
+      "history": "1984 technical recodification replaced reference to former 1939 Code 1532 with 1986 Code 3231 without changing existing rights/status."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "religious_order_1968_1983",
+    "family": "religious_order_vow_of_poverty",
+    "effective_start": "1968-01-01",
+    "effective_end": "1983-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "govinfo_statute86_pg1329.pdf",
+        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+        "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
+        "location": "section 123, printed pages 1354-1356"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901620.html",
+        "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f",
+        "authority": "POMS RS 01901.620 (2024-07-02)",
+        "location": "A-B"
+      },
+      {
+        "capture": "irs_p517_2025.pdf",
+        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "printed pages 4-7"
+      }
+    ],
+    "trigger_facts": [
+      "religious_order_service",
+      "clergy_or_religious_exemption",
+      "clergy_remuneration",
+      "nonresident_alien_status",
+      "place_of_work"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "A poverty vow ordinarily excludes coverage; an order's effective 3121(r) election can create covered deemed employment, including statutorily permitted retroactive coverage.",
+    "parameters": {
+      "poverty_vow_self_employment_excluded": true,
+      "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
+      "cases": [
+        {
+          "when": {
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+            "clergy_or_religious_exemption": "no effective 3121(r) election"
+          },
+          "consequence": "noncovered",
+          "description": "A poverty vow excludes self-employment and employee employment absent an order election."
+        },
+        {
+          "when": {
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+            "clergy_or_religious_exemption": "effective 3121(r) election"
+          },
+          "consequence": "covered",
+          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor."
+        },
+        {
+          "when": {
+            "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+          },
+          "consequence": "covered",
+          "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions."
+        }
+      ],
+      "election_irrevocable": true,
+      "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
+      "retroactive_election": {
+        "maximum_preceding_calendar_quarters": 20,
+        "conditions": "The individual performed the service as a member and is alive on the first day of the quarter in which the election is filed."
+      },
+      "deemed_wages": {
+        "concept": "Fair market value of board, lodging, clothing, and other perquisites",
+        "minimum_cents": 10000,
+        "aggregation_unit": "member_month",
+        "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
+        "threshold_id": "religious_order_deemed_wages_monthly_floor"
+      },
+      "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+      "lay_employee_coordination": "Before 1984, former 3121(r)(4) requires an existing 3121(k) waiver to become irrevocable or a new waiver to be filed with an effective date no later than the order coverage election."
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "religious_order_1984_2026",
+    "family": "religious_order_vow_of_poverty",
+    "effective_start": "1984-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(c)(4)-(5) and closing sentence"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r), 1977 amendment and effective-date notes"
+      },
+      {
+        "capture": "poms_rs_01901620.html",
+        "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f",
+        "authority": "POMS RS 01901.620 (2024-07-02)",
+        "location": "A-B"
+      },
+      {
+        "capture": "irs_p517_2025.pdf",
+        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "printed pages 4-7"
+      }
+    ],
+    "trigger_facts": [
+      "religious_order_service",
+      "clergy_or_religious_exemption",
+      "clergy_remuneration",
+      "nonresident_alien_status",
+      "place_of_work"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "An order coverage election can deem poverty vow members covered employees; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
+    "parameters": {
+      "poverty_vow_self_employment_excluded": true,
+      "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
+      "cases": [
+        {
+          "when": {
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+            "clergy_or_religious_exemption": "no effective 3121(r) election"
+          },
+          "consequence": "noncovered",
+          "description": "A poverty vow excludes self-employment and employee employment absent an order election."
+        },
+        {
+          "when": {
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+            "clergy_or_religious_exemption": "effective 3121(r) election"
+          },
+          "consequence": "covered",
+          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor."
+        },
+        {
+          "when": {
+            "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+          },
+          "consequence": "covered",
+          "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions."
+        }
+      ],
+      "election_irrevocable": true,
+      "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
+      "retroactive_election": {
+        "maximum_preceding_calendar_quarters": 20,
+        "conditions": "The individual performed the service as a member and is alive on the first day of the quarter in which the election is filed."
+      },
+      "deemed_wages": {
+        "concept": "Fair market value of board, lodging, clothing, and other perquisites",
+        "minimum_cents": 10000,
+        "aggregation_unit": "member_month",
+        "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
+        "threshold_id": "religious_order_deemed_wages_monthly_floor"
+      },
+      "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+      "lay_employee_coordination": "Former 3121(r)(4) was repealed by Public Law 98-21 section 102(b)(3)(B), effective for services after 1983."
+    },
+    "worked_examples": [
+      {
+        "example_id": "irs517_chris_green_order_agent",
+        "income_year": 2025,
+        "citation": {
+          "capture": "irs_p517_2025.html",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+          "authority": "IRS Publication517 (2025)",
+          "location": "Members of Religious Orders; Example Pat Brown and Chris Green"
+        },
+        "source_passage": "Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA.",
+        "expected_rule_id": "religious_order_1984_2026",
+        "expected_parameters": {
+          "poverty_vow_self_employment_excluded": true
+        }
+      }
+    ],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "searches": [
+        {
+          "query": "\"vow of poverty\" \"number\" coverage",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "No published prevalence bound found."
+        },
+        {
+          "query": "\"church\" \"Form 8274\" \"number\" employees",
+          "domains": [
+            "irs.gov",
+            "secure.ssa.gov"
+          ],
+          "result": "Results identify forms and filing rules; no published affected-employee prevalence bound found."
+        }
+      ]
+    },
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "state_local_1968_1983",
+    "family": "section_218_and_mandatory_state_local",
+    "effective_start": "1968-01-01",
+    "effective_end": "1983-04-19",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "A-D"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "section_218_group",
+      "section_218_position",
+      "public_retirement_system_participation"
+    ],
+    "consequence": "noncovered",
+    "identification_class": "awaiting_ce2",
+    "description": "Section 218 agreements may cover state/local service; the statutory exclusion otherwise applies subject to enumerated exceptions.",
+    "parameters": {
+      "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
+      "section_218_first": true,
+      "cases": [
+        {
+          "when": {
+            "section_218_position": "covered by effective agreement/modification"
+          },
+          "consequence": "covered",
+          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
+        },
+        {
+          "when": {
+            "section_218_position": "not covered"
+          },
+          "consequence": "noncovered",
+          "description": "State/local exclusion applies unless covered transportation or another statutory exception applies."
+        }
+      ],
+      "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
+      "agreement_trigger_evidence": [
+        "employing entity",
+        "agreement/modification number and effective date",
+        "coverage group",
+        "position",
+        "optional/required exclusion",
+        "referendum and employee election where applicable"
+      ],
+      "agreement_termination": "Pre-1983 termination law applies; historical termination must be established from the agreement record."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "state_local_1983_1991",
+    "family": "section_218_and_mandatory_state_local",
+    "effective_start": "1983-04-20",
+    "effective_end": "1991-07-01",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "statute_97_pg65.pdf",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
+        "location": "sections 101-103, printed pages 67-72"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "A-D"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "section_218_group",
+      "section_218_position",
+      "public_retirement_system_participation"
+    ],
+    "consequence": "noncovered",
+    "identification_class": "awaiting_ce2",
+    "description": "Section 218 coverage remains voluntary, but no agreement or coverage group may terminate on or after April 20, 1983.",
+    "parameters": {
+      "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
+      "section_218_first": true,
+      "cases": [
+        {
+          "when": {
+            "section_218_position": "covered by effective agreement/modification"
+          },
+          "consequence": "covered",
+          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
+        },
+        {
+          "when": {
+            "section_218_position": "not covered"
+          },
+          "consequence": "noncovered",
+          "description": "State/local exclusion applies unless covered transportation or another statutory exception applies."
+        }
+      ],
+      "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
+      "agreement_trigger_evidence": [
+        "employing entity",
+        "agreement/modification number and effective date",
+        "coverage group",
+        "position",
+        "optional/required exclusion",
+        "referendum and employee election where applicable"
+      ],
+      "agreement_termination_prohibited_since": "1983-04-20"
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "state_local_1991_2026",
+    "family": "section_218_and_mandatory_state_local",
+    "effective_start": "1991-07-02",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "A-D"
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "A and B.6"
+      },
+      {
+        "capture": "poms_rs_0301505042.html",
+        "sha256": "b1f3b3c916cff0ec4a97958d062d21ec1f1ae4ed0a2a67d7f6ae134901960cf6",
+        "authority": "POMS RS 01505.042 (2016-11-30)",
+        "location": "B development facts"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "section_218_group",
+      "section_218_position",
+      "public_retirement_system_participation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "First establish Section 218 coverage; if absent, nonmembers of a qualified retirement system have mandatory coverage, subject to statutory exclusions.",
+    "parameters": {
+      "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
+      "section_218_first": true,
+      "cases": [
+        {
+          "when": {
+            "section_218_position": "covered by effective agreement/modification"
+          },
+          "consequence": "covered",
+          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
+        },
+        {
+          "when": {
+            "section_218_position": "not covered",
+            "public_retirement_system_participation": "not a member of an IRS-qualified system"
+          },
+          "consequence": "covered",
+          "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies."
+        },
+        {
+          "when": {
+            "section_218_position": "not covered",
+            "public_retirement_system_participation": "member of an IRS-qualified system"
+          },
+          "consequence": "noncovered",
+          "description": "The state/local exclusion remains unless another statutory exception applies."
+        }
+      ],
+      "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
+      "agreement_trigger_evidence": [
+        "employing entity",
+        "agreement/modification number and effective date",
+        "coverage group",
+        "position",
+        "optional/required exclusion",
+        "referendum and employee election where applicable"
+      ],
+      "agreement_termination_prohibited_since": "1983-04-20",
+      "mandatory_start": "1991-07-02",
+      "retirement_system_definition": "Qualified retirement system under IRS standards in 26 CFR 31.3121(b)(7)-2, not merely the broader Section 218 referendum retirement-system concept.",
+      "mandatory_exclusions": [
+        "unemployment relief",
+        "patient or inmate",
+        "temporary emergency service",
+        "election worker below applicable year threshold",
+        "solely fee-paid service treated as self-employment",
+        "student employee covered by 410(a)(10)",
+        "other applicable 410(a) exclusions"
+      ]
+    },
+    "worked_examples": [
+      {
+        "example_id": "poms_city_part_time_cafeteria",
+        "income_year": 2015,
+        "citation": {
+          "capture": "poms_sl_50001570.html",
+          "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+          "authority": "POMS SL 50001.570 (2015-12-17)",
+          "location": "A and B.6"
+        },
+        "source_passage": "A City’s Section 218 Agreement excludes part-time positions that require less than 20 hours of work per week. The City’s cafeteria has part-time employees who work part-time 15 hours per week. The City’s retirement system membership is only for employees who work in full-time positions. Therefore, part-time employees of the cafeteria are subject to mandatory Social Security and Medicare.",
+        "expected_rule_id": "state_local_1991_2026",
+        "expected_parameters": {
+          "mandatory_start": "1991-07-02",
+          "section_218_first": true
+        }
+      }
+    ],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null
+  },
+  {
+    "rule_id": "state_local_territories_history_open",
+    "family": "state_local_territorial_service",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a) and amendment/effective-date notes"
+      }
+    ],
+    "trigger_facts": [
+      "government_level",
+      "federal_retirement_system",
+      "public_retirement_system_participation"
+    ],
+    "consequence": "noncovered",
+    "identification_class": "awaiting_ce2",
+    "description": "District of Columbia, Guam, and American Samoa have special rules in 410(a)(7)(C)-(E).",
+    "parameters": {
+      "current_sections": [
+        "410(a)(7)(C)",
+        "410(a)(7)(D)",
+        "410(a)(7)(E)"
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": "Historical territorial effective dates and interacting federal retirement-system exceptions have not all been captured; refuse rather than apply current text retrospectively."
+  }
+]

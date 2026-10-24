@@ -1,0 +1,102 @@
+[
+  {
+    "definition_id": "4.B2.c11",
+    "status": "TABLE_DEFINITION_UNVERIFIED",
+    "source_text_verified": true,
+    "source_definition": "wage and salary workers with Social Security(OASDI) taxable earnings; Represents total number in specified type of employment. Persons with both types of covered employment during the year are included in each type.",
+    "citations": [
+      {
+        "capture": "supplement2025_4b.html",
+        "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+        "authority": "SSA Annual Statistical Supplement 2025, section4.B",
+        "location": "#table4.b2, caption, count headers and footnote a (HTML lines966-995/2120 or14840-14865/15813)",
+        "quote": "Represents total number in specified type of employment. Persons with both types of covered employment during the year are included in each type."
+      }
+    ],
+    "reason": "The published caption, count headings and footnote establish type and overlap, but do not specify operational membership for zero taxable self-employment after the wage-first maximum, net earnings below the statutory minimum, or the distinction between covered employment and positive taxable amounts. CE1 does not infer equivalence to a positive base. CE5 must keep these mapped fields absent until that membership rule is verified.",
+    "verified_relations": [
+      "dual types included in each type"
+    ],
+    "table_values_computed": false
+  },
+  {
+    "definition_id": "4.B2.c12",
+    "status": "TABLE_DEFINITION_UNVERIFIED",
+    "source_text_verified": true,
+    "source_definition": "self-employed workers with Social Security(OASDI) taxable earnings; Represents total number in specified type of employment. Persons with both types of covered employment during the year are included in each type.",
+    "citations": [
+      {
+        "capture": "supplement2025_4b.html",
+        "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+        "authority": "SSA Annual Statistical Supplement 2025, section4.B",
+        "location": "#table4.b2, caption, count headers and footnote a (HTML lines966-995/2120 or14840-14865/15813)",
+        "quote": "Represents total number in specified type of employment. Persons with both types of covered employment during the year are included in each type."
+      }
+    ],
+    "reason": "The published caption, count headings and footnote establish type and overlap, but do not specify operational membership for zero taxable self-employment after the wage-first maximum, net earnings below the statutory minimum, or the distinction between covered employment and positive taxable amounts. CE1 does not infer equivalence to a positive base. CE5 must keep these mapped fields absent until that membership rule is verified.",
+    "verified_relations": [
+      "dual types included in each type"
+    ],
+    "table_values_computed": false
+  },
+  {
+    "definition_id": "4.B11.total",
+    "status": "TABLE_DEFINITION_UNVERIFIED",
+    "source_text_verified": true,
+    "source_definition": "unduplicated total workers with Social Security(OASDI) taxable earnings; Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total.",
+    "citations": [
+      {
+        "capture": "supplement2025_4b.html",
+        "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+        "authority": "SSA Annual Statistical Supplement 2025, section4.B",
+        "location": "#table4.b11, caption, count headers and footnote a (HTML lines966-995/2120 or14840-14865/15813)",
+        "quote": "Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total."
+      }
+    ],
+    "reason": "The published caption, count headings and footnote establish type and overlap, but do not specify operational membership for zero taxable self-employment after the wage-first maximum, net earnings below the statutory minimum, or the distinction between covered employment and positive taxable amounts. CE1 does not infer equivalence to a positive base. CE5 must keep these mapped fields absent until that membership rule is verified.",
+    "verified_relations": [
+      "dual types included once in total and in each type"
+    ],
+    "table_values_computed": false
+  },
+  {
+    "definition_id": "4.B11.wage",
+    "status": "TABLE_DEFINITION_UNVERIFIED",
+    "source_text_verified": true,
+    "source_definition": "wage and salary workers with Social Security(OASDI) taxable earnings; Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total.",
+    "citations": [
+      {
+        "capture": "supplement2025_4b.html",
+        "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+        "authority": "SSA Annual Statistical Supplement 2025, section4.B",
+        "location": "#table4.b11, caption, count headers and footnote a (HTML lines966-995/2120 or14840-14865/15813)",
+        "quote": "Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total."
+      }
+    ],
+    "reason": "The published caption, count headings and footnote establish type and overlap, but do not specify operational membership for zero taxable self-employment after the wage-first maximum, net earnings below the statutory minimum, or the distinction between covered employment and positive taxable amounts. CE1 does not infer equivalence to a positive base. CE5 must keep these mapped fields absent until that membership rule is verified.",
+    "verified_relations": [
+      "dual types included once in total and in each type"
+    ],
+    "table_values_computed": false
+  },
+  {
+    "definition_id": "4.B11.self_employment",
+    "status": "TABLE_DEFINITION_UNVERIFIED",
+    "source_text_verified": true,
+    "source_definition": "self-employed workers with Social Security(OASDI) taxable earnings; Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total.",
+    "citations": [
+      {
+        "capture": "supplement2025_4b.html",
+        "sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+        "authority": "SSA Annual Statistical Supplement 2025, section4.B",
+        "location": "#table4.b11, caption, count headers and footnote a (HTML lines966-995/2120 or14840-14865/15813)",
+        "quote": "Workers with earnings in both wage and salary employment and self-employment are counted in each type of employment but only once in the total."
+      }
+    ],
+    "reason": "The published caption, count headings and footnote establish type and overlap, but do not specify operational membership for zero taxable self-employment after the wage-first maximum, net earnings below the statutory minimum, or the distinction between covered employment and positive taxable amounts. CE1 does not infer equivalence to a positive base. CE5 must keep these mapped fields absent until that membership rule is verified.",
+    "verified_relations": [
+      "dual types included once in total and in each type"
+    ],
+    "table_values_computed": false
+  }
+]

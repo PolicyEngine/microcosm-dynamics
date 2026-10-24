@@ -1,0 +1,136 @@
+{
+  "church_employee_income": {
+    "cap_applied_for_RET": false,
+    "church_100_floor_applied_for_RET": false,
+    "eligible_concept": "gross church employee income under411(i), unreduced by business expenses; then411(a)(11)deduction where applicable",
+    "ordinary_losses_offset_church_unit": false,
+    "other_400_floor_applied_for_RET": false,
+    "threshold_reason": "403(f)(5)(B)uses net earnings/net loss, not411(b)self-employment income"
+  },
+  "citations": [
+    {
+      "authority": "42 USC403(f)(5)",
+      "capture": "lii_42usc403.html",
+      "location": "403(f)(5)(A),(B),(D)",
+      "sha256": "089ec01fbef104c50892cc9097a12a5a259d3b58c0f335a16f6d67f0021df41a"
+    },
+    {
+      "authority": "42 USC411",
+      "capture": "lii_42_411.html",
+      "location": "411(a)(11),(b)(2),(i)",
+      "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+    },
+    {
+      "authority": "SSA POMS RS02505.055",
+      "capture": "poms_rs_02505055.html",
+      "location": "B.1 How to Count NESE;B.4 How to Count Net Loss",
+      "sha256": "46ca096b43003f1ec3c6c999276e8018feac633dd6b9caba16644cbe3523fb89"
+    }
+  ],
+  "concept_id": "ret_self_employment_earnings",
+  "factor_history": [
+    {
+      "citation": {
+        "authority": "PublicLaw98-21",
+        "capture": "govinfo_statute97_pg65.pdf",
+        "location": "124(c)(3),(d)(2):411(a)(11)deduction begins taxable years after1989",
+        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+      },
+      "effective_end": "1989-12-31",
+      "effective_start": "1968-01-01",
+      "negative_net_loss_factor": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "positive_profit_factor": {
+        "denominator": 1,
+        "numerator": 1
+      }
+    },
+    {
+      "below_400_named_options": [
+        {
+          "citation": {
+            "authority": "42USC411",
+            "capture": "lii_42_411.html",
+            "location": "411(a)(11),411(b)(2)",
+            "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+          },
+          "description": "Read411(a)(11)deduction as applying to positive net earnings regardless of the separate411(b)(2)self-employment-income floor;design2.3 states the400floor does not apply toRET.",
+          "name": "411_a_11_uniform_positive_profit_factor"
+        },
+        {
+          "citation": {
+            "authority": "SSA POMS RS02505.055",
+            "capture": "poms_rs_02505055.html",
+            "location": "B.1",
+            "sha256": "46ca096b43003f1ec3c6c999276e8018feac633dd6b9caba16644cbe3523fb89"
+          },
+          "description": "POMS says deduction is not applied when resulting amount is less than400;actual net profit is earnings for deduction purposes.",
+          "name": "poms_below_400_unreduced_profit",
+          "quote": "However, the deduction is not applied to net profit when the resulting amount is less than $400. In this case the actual new profit is the earnings for deduction purposes."
+        }
+      ],
+      "citation": {
+        "authority": "SSA POMS RS02505.055",
+        "capture": "poms_rs_02505055.html",
+        "location": "B.1,B.4",
+        "sha256": "46ca096b43003f1ec3c6c999276e8018feac633dd6b9caba16644cbe3523fb89"
+      },
+      "effective_end": "2026-12-31",
+      "effective_start": "1990-01-01",
+      "negative_net_loss_factor": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "positive_profit_factor": {
+        "denominator": 10000,
+        "numerator": 9235
+      }
+    }
+  ],
+  "ministerial_service": {
+    "1402_e_exempt_earnings_still_RET_net_earnings": true,
+    "ignore_trade_or_business_exclusions": [
+      "411(c)(1)",
+      "411(c)(4)",
+      "411(c)(5)"
+    ],
+    "religious_sect_411_c_6_exclusion": "not among exceptions waived by403(f)(5)(B)(i);establish underlying facts"
+  },
+  "reference_years": "income/taxable years,never interview years",
+  "rounding": {
+    "RET_deduction_rounding": "POMS B.1 says round SEI to next lowest dollar when applying deductions under earnings test;do not infer intermediate component rounding",
+    "coverage_base_factor_rounding": "none prescribed in411(a)(11);exact rational arithmetic",
+    "earnings_record_posting_rounding": {
+      "citation": {
+        "authority": "SSA POMS RM03846.035",
+        "capture": "poms_rm_03846035.html",
+        "location": "introductory paragraphs andA-B",
+        "sha256": "746364a9dbe3c128bca49c52fef1badb5a747ab8b823576e6cd04184a4d4681f"
+      },
+      "processing_effective_date": "1969-08-01",
+      "rule": "Calendar-year SEI established/adjusted is increased to next higher dollar except maximum;an earnings-record posting convention,not automatically coverage-base arithmetic"
+    }
+  },
+  "source_disagreements": [
+    {
+      "named_options": [
+        "411_a_11_uniform_positive_profit_factor",
+        "poms_below_400_unreduced_profit"
+      ],
+      "question": "RET_FACTOR_BELOW_400",
+      "status": "open_no_choice"
+    },
+    {
+      "citation": {
+        "authority": "SSA POMS RS01803.001",
+        "capture": "poms_rs_01803001.html",
+        "location": "policy paragraph",
+        "sha256": "cf33240a5532ef036077fffd9c3933dbd5b68d59f7a1525fb89e88e069d07ccb"
+      },
+      "description": "POMS RS01803.001 calls the deduction legislation OBRA1989 but printsPL98-21;actualPL98-21section124(c)(3),(d)(2)amended411andmade deduction effective1990. Keep primary statutory citation.",
+      "question": "POMS_RS01803001_ACT_LABEL"
+    }
+  ]
+}

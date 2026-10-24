@@ -1,0 +1,178 @@
+[
+  {
+    "capture": "uscode_2026_42_410.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section410&num=0&edition=prelim",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "govinfo_1982_42_410_missing.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1982-title42/pdf/USCODE-1982-title42-chap7-subchapII-sec410.pdf",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "Govinfo returned HTML Page Not Found with HTTP 200, not historical statute"
+  },
+  {
+    "capture": "poms_sl_50001501.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1950001501",
+    "retrieved_at": "2026-10-24T20:58:52Z",
+    "bytes": 28428,
+    "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+    "status": 200
+  },
+  {
+    "capture": "poms_sl_50001570.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1950001570",
+    "retrieved_at": "2026-10-24T20:58:52Z",
+    "bytes": 25125,
+    "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01901540.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901540",
+    "retrieved_at": "2026-10-24T20:58:53Z",
+    "bytes": 57192,
+    "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01802064.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802064",
+    "retrieved_at": "2026-10-24T20:58:53Z",
+    "bytes": 17442,
+    "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
+    "status": 200
+  },
+  {
+    "capture": "poms_rm_04907001.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0104907001",
+    "retrieved_at": "2026-10-24T20:58:53Z",
+    "bytes": 34340,
+    "sha256": "9cbf2033b11f5231386869536083e56c7624eac88c1f066926d46a2845d1da06",
+    "status": 200
+  },
+  {
+    "capture": "irs_p517_2025.pdf",
+    "url": "https://www.irs.gov/pub/irs-pdf/p517.pdf",
+    "retrieved_at": "2026-10-24T20:58:53Z",
+    "bytes": 1363199,
+    "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+    "status": 200
+  },
+  {
+    "capture": "uscode_2026_42_410.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid%3AUSC-prelim-title42-section410&num=0&edition=prelim",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "uscode_1994_42_410.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap7-subchapII-sec410.htm",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP 200 Page Not Found HTML, not historical statute"
+  },
+  {
+    "capture": "uscode_2026_26_3121.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid%3AUSC-prelim-title26-section3121&num=0&edition=prelim",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "poms_rs_01901590.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901590",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "poms_rs_01901340.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901340",
+    "retrieved_at": "2026-10-24T21:00:42Z",
+    "bytes": 50196,
+    "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01901580.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901580",
+    "retrieved_at": "2026-10-24T21:00:42Z",
+    "bytes": 17875,
+    "sha256": "d69a4e83bbac40eb02b2d3177b6e5f0337eeceda0d41d0303f4aec737c736a08",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01901600.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901600",
+    "retrieved_at": "2026-10-24T21:00:42Z",
+    "bytes": 36770,
+    "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01901620.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901620",
+    "retrieved_at": "2026-10-24T21:00:42Z",
+    "bytes": 22170,
+    "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f",
+    "status": 200
+  },
+  {
+    "capture": "poms_rs_01901640.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901640",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "poms_rs_01901660.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901660",
+    "retrieved_at": "2026-10-24T21:00:42Z",
+    "bytes": 23473,
+    "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9",
+    "status": 200
+  },
+  {
+    "capture": "statute_97_pg65.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf",
+    "retrieved_at": "2026-10-24T21:00:45Z",
+    "bytes": 18999106,
+    "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+    "status": 200
+  },
+  {
+    "capture": "uscode_119_121_42_410.html",
+    "url": "https://uscode.house.gov/us/usc/119-121/t42/s410/",
+    "status": "SOURCE_UNAVAILABLE",
+    "reason": "HTTP Error 404: Not Found"
+  },
+  {
+    "capture": "uscode_119_120_26_3121.html",
+    "url": "https://uscode.house.gov/us/usc/119-120/t26/s3121/",
+    "retrieved_at": "2026-10-24T21:02:43Z",
+    "bytes": 288683,
+    "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+    "status": 200
+  },
+  {
+    "capture": "poms_nl_00711065.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0900711065",
+    "retrieved_at": "2026-10-24T21:02:43Z",
+    "bytes": 65627,
+    "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e",
+    "status": 200
+  },
+  {
+    "capture": "poms_nl_00902500.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0900902500",
+    "retrieved_at": "2026-10-24T21:02:43Z",
+    "bytes": 290689,
+    "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+    "status": 200
+  },
+  {
+    "capture": "statute_94_pg2263.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-94/pdf/STATUTE-94-Pg2263.pdf",
+    "retrieved_at": "2026-10-24T21:17:23Z",
+    "bytes": 772770,
+    "sha256": "06b4876899c90768ba2fc5e82fa07b6ed5c8d39335f59fb9716e4d27ccb4c1f4",
+    "status": 200
+  }
+]

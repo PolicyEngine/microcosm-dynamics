@@ -1,0 +1,148 @@
+SCHEDULE SE                                                                                                                                 OMB No. 1545-0074
+
+(Form 1040)
+Department of the Treasury
+                                                              Self-Employment Tax                                                              2008
+                                                                                                                                              Attachment
+Internal Revenue Service (99) © Attach to Form 1040.   © See Instructions for Schedule SE (Form 1040).                                        Sequence No. 17
+Name of person with self-employment income (as shown on Form 1040)         Social security number of person
+                                                                           with self-employment income ©
+
+Who Must File Schedule SE
+You must file Schedule SE if:
+● You had net earnings from self-employment from other than church employee income (line 4 of Short Schedule SE or line 4c of
+  Long Schedule SE) of $400 or more, or
+● You had church employee income of $108.28 or more. Income from services you performed as a minister or a member of a
+  religious order is not church employee income (see page SE-1).
+Note. Even if you had a loss or a small amount of income from self-employment, it may be to your benefit to file Schedule SE and
+use either “optional method” in Part II of Long Schedule SE (see page SE-4).
+Exception. If your only self-employment income was from earnings as a minister, member of a religious order, or Christian Science
+practitioner and you filed Form 4361 and received IRS approval not to be taxed on those earnings, do not file Schedule SE. Instead,
+write “Exempt—Form 4361” on Form 1040, line 57.
+
+May I Use Short Schedule SE or Must I Use Long Schedule SE?
+Note. Use this flowchart only if you must file Schedule SE. If unsure, see Who Must File Schedule SE, above.
+                                                              Did you receive wages or tips in 2008?
+
+
+                                 No                                                                                    Yes
+                                Ä                         Ä                                                          Ä
+  Are you a minister, member of a religious order, or Christian
+                                                                   Yes                 Was the total of your wages and tips subject to social security   Yes
+  Science practitioner who received IRS approval not to be taxed         Ä                                                                                      Ä
+                                                                                       or railroad retirement (tier 1) tax plus your net earnings from
+  on earnings from these sources, but you owe self-employment
+                                                                                       self-employment more than $102,000?
+  tax on other earnings?
+
+                                 No                                                                                   No
+                                Ä                                                                                    Ä
+
+  Are you using one of the optional methods to figure your net     Yes                 Did you receive tips subject to social security or Medicare tax   Yes
+                                                                         Ä                                                                                     Ä
+  earnings (see page SE-4)?                                                            that you did not report to your employer?
+
+
+                                                                                                                      No
+                                 No                                                                                  Ä
+                                Ä
+                                                                                  No   Did you report any wages on Form 8919, Uncollected Social         Yes
+  Did you receive church employee income reported on Form          Yes        Ä                                                                                Ä
+                                                                         Ä             Security and Medicare Tax on Wages?
+  W-2 of $108.28 or more?
+
+                                 No
+                                Ä                                                                                                                               Ä
+             You may use Short Schedule SE below                                   Ä                You must use Long Schedule SE on page 2
+
+
+
+Section A—Short Schedule SE. Caution. Read above to see if you can use Short Schedule SE.
+
+ 1a Net farm profit or (loss) from Schedule F, line 36, and farm partnerships, Schedule K-1 (Form
+    1065), box 14, code A                                                                                                           1a
+  b If you received social security retirement or disability benefits, enter the amount of Conservation Reserve
+    Program payments included on Schedule F, line 6b, or listed on Schedule K-1 (Form 1065), box 20, code X                         1b (                            )
+ 2     Net profit or (loss) from Schedule C, line 31; Schedule C-EZ, line 3; Schedule K-1 (Form 1065),
+       box 14, code A (other than farming); and Schedule K-1 (Form 1065-B), box 9, code J1. Ministers
+       and members of religious orders, see page SE-1 for types of income to report on this line. See
+       page SE-3 for other income to report                                                                                          2
+ 3     Combine lines 1a, 1b, and 2                                                                                                   3
+ 4     Net earnings from self-employment. Multiply line 3 by 92.35% (.9235). If less than $400,
+       do not file this schedule; you do not owe self-employment tax                                      ©                          4
+ 5     Self-employment tax. If the amount on line 4 is:
+       ● $102,000 or less, multiply line 4 by 15.3% (.153). Enter the result here and on Form 1040, line 57.
+       ● More than $102,000, multiply line 4 by 2.9% (.029). Then, add $12,648 to the result.
+       Enter the total here and on Form 1040, line 57                                                                                5
+ 6     Deduction for one-half of self-employment tax. Multiply line 5 by
+       50% (.5). Enter the result here and on Form 1040, line 27                      6
+For Paperwork Reduction Act Notice, see Form 1040 instructions.                              Cat. No. 11358Z                   Schedule SE (Form 1040) 2008
+Schedule SE (Form 1040) 2008                                                                  Attachment Sequence No. 17                     Page 2
+Name of person with self-employment income (as shown on Form 1040)                     Social security number of person
+                                                                                       with self-employment income ©
+
+Section B—Long Schedule SE
+    Part I      Self-Employment Tax
+Note. If your only income subject to self-employment tax is church employee income, skip lines 1 through 4b. Enter -0- on line
+4c and go to line 5a. Income from services you performed as a minister or a member of a religious order is not church employee
+income. See page SE-1.
+    A     If you are a minister, member of a religious order, or Christian Science practitioner and you filed Form 4361, but you
+          had $400 or more of other net earnings from self-employment, check here and continue with Part I                     ©
+
+    1a Net farm profit or (loss) from Schedule F, line 36, and farm partnerships, Schedule K-1 (Form 1065),
+       box 14, code A. Note. Skip lines 1a and 1b if you use the farm optional method (see page SE-4)                     1a
+     b If you received social security retirement or disability benefits, enter the amount of Conservation Reserve
+       Program payments included on Schedule F, line 6b, or listed on Schedule K-1 (Form 1065), box 20, code X            1b (                         )
+
+    2  Net profit or (loss) from Schedule C, line 31; Schedule C-EZ, line 3; Schedule K-1 (Form 1065), box
+       14, code A (other than farming); and Schedule K-1 (Form 1065-B), box 9, code J1. Ministers and
+       members of religious orders, see page SE-1 for types of income to report on this line. See page
+       SE-3 for other income to report. Note. Skip this line if you use the nonfarm optional method (see
+       page SE-4)                                                                                                          2
+    3 Combine lines 1a, 1b, and 2                                                                                          3
+    4a If line 3 is more than zero, multiply line 3 by 92.35% (.9235). Otherwise, enter amount from line 3                4a
+     b If you elect one or both of the optional methods, enter the total of lines 15 and 17 here                          4b
+     c Combine lines 4a and 4b. If less than $400, stop; you do not owe self-employment tax. Exception.
+       If less than $400 and you had church employee income, enter -0- and continue                      ©                4c
+    5a Enter your church employee income from Form W-2. See page SE-1
+       for definition of church employee income                                     5a
+     b Multiply line 5a by 92.35% (.9235). If less than $100, enter -0-                                                   5b
+    6  Net earnings from self-employment. Add lines 4c and 5b                                                              6
+    7  Maximum amount of combined wages and self-employment earnings subject to social security
+       tax or the 6.2% portion of the 7.65% railroad retirement (tier 1) tax for 2008                                      7       102,000     00
+    8a Total social security wages and tips (total of boxes 3 and 7 on Form(s)
+       W-2) and railroad retirement (tier 1) compensation. If $102,000 or
+       more, skip lines 8b through 10, and go to line 11                          8a
+     b Unreported tips subject to social security tax (from Form 4137, line 10)   8b
+     c Wages subject to social security tax (from Form 8919, line 10)             8c
+        d Add lines 8a, 8b, and 8c                                                                                        8d
+ 9        Subtract line 8d from line 7. If zero or less, enter -0- here and on line 10 and go to line 11          ©        9
+10        Multiply the smaller of line 6 or line 9 by 12.4% (.124)                                                        10
+11        Multiply line 6 by 2.9% (.029)                                                                                  11
+12        Self-employment tax. Add lines 10 and 11. Enter here and on Form 1040, line 57                                  12
+13        Deduction for one-half of self-employment tax. Multiply line 12 by
+          50% (.5). Enter the result here and on Form 1040, line 27                   13
+    Part II     Optional Methods To Figure Net Earnings (see page SE-4)
+Farm Optional Method. You may use this method only if (a) your gross farm income1 was not more
+than $6,300, or (b) your net farm profits2 were less than $4,548.
+14 Maximum income for optional methods                                                                                    14           4,200    00
+15 Enter the smaller of: two-thirds (2⁄ 3 ) of gross farm income1 (not less than zero) or $4,200. Also
+     include this amount on line 4b above                                                                                 15
+Nonfarm Optional Method. You may use this method only if (a) your net nonfarm profits3 were less
+than $4,548 and also less than 72.189% of your gross nonfarm income,4 and (b) you had net earnings
+from self-employment of at least $400 in 2 of the prior 3 years.
+Caution. You may use this method no more than five times.
+16 Subtract line 15 from line 14                                                                                          16
+17 Enter the smaller of: two-thirds (2⁄ 3 ) of gross nonfarm income4 (not less than zero) or the amount
+     on line 16. Also include this amount on line 4b above                                                                17
+1                                                                          3
+    From Sch. F, line 11, and Sch. K-1 (Form 1065), box 14, code B.            From Sch. C, line 31; Sch. C-EZ, line 3; Sch. K-1 (Form 1065), box
+2
+                                                                               14, code A; and Sch. K-1 (Form 1065-B), box 9, code J1.
+    From Sch. F, line 36, and Sch. K-1 (Form 1065), box 14, code
+                                                                           4
+    A—minus the amount you would have entered on line 1b had you not           From Sch. C, line 7; Sch. C-EZ, line 1; Sch. K-1 (Form 1065), box 14,
+    used the optional method.                                                  code C; and Sch. K-1 (Form 1065-B), box 9, code J2.
+
+                                                                                                                      Schedule SE (Form 1040) 2008
+

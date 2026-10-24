@@ -1,0 +1,427 @@
+[
+  {
+    "file": "poms_rs_01803002.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803002",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 18941,
+    "sha256": "296dc3070792cc7db1b9c73a19b9c5dbd71ab1e97c755e89bbcd53f675939529"
+  },
+  {
+    "file": "poms_rs_01804001.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301804001",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 20488,
+    "sha256": "2cc221fe71fed3acd4dd40d42d83625d8d7dec024fbabccd6eb355c94d206f85"
+  },
+  {
+    "file": "poms_rs_01802234.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802234",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 18522,
+    "sha256": "c7efaeea6a1eeab6022beefec6a3fdf5bb958a07decc94986574c6ea9f1f2f3e"
+  },
+  {
+    "file": "poms_rs_01802060.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802060",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 19811,
+    "sha256": "32be4cf69bd5ef1f4c139c5049de68dc22afcc67a2b96af909cbdf825812534b"
+  },
+  {
+    "file": "poms_rs_02505055.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0302505055",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 23066,
+    "sha256": "46ca096b43003f1ec3c6c999276e8018feac633dd6b9caba16644cbe3523fb89"
+  },
+  {
+    "file": "poms_rs_01803001.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803001",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 17256,
+    "sha256": "cf33240a5532ef036077fffd9c3933dbd5b68d59f7a1525fb89e88e069d07ccb"
+  },
+  {
+    "file": "uscode_42_411_2023.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-2023-title42-section411&num=0&edition=2023",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T20:59:37Z"
+  },
+  {
+    "file": "uscode_42_411_1994.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-1994-title42-section411&num=0&edition=1994",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T20:59:37Z"
+  },
+  {
+    "file": "irs_p517_2025.html",
+    "url": "https://www.irs.gov/publications/p517",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 361352,
+    "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+  },
+  {
+    "file": "irs_schedule_se_2025.pdf",
+    "url": "https://www.irs.gov/pub/irs-pdf/f1040sse.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 80290,
+    "sha256": "05bc2b3e1dfca65d8c6fc6d652af4fa3736e953c6575d6e9f82590484677d347"
+  },
+  {
+    "file": "irs_schedule_se_instructions_2025.pdf",
+    "url": "https://www.irs.gov/pub/irs-pdf/i1040sse.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "size": 176326,
+    "sha256": "ea9e3120706f9d5e21ce1c6cbec256b5e2e2bf02c44759773d9236462cf4d800"
+  },
+  {
+    "file": "govinfo_usc1964_42_411.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1964-title42/pdf/USCODE-1964-title42-chap7-subchapII-sec411.pdf",
+    "status": "UNAVAILABLE",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "reason": "HTTP 200 redirects to GovInfo Page Not Found; body not a historical statute"
+  },
+  {
+    "file": "govinfo_usc1970_42_411.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1970-title42/pdf/USCODE-1970-title42-chap7-subchapII-sec411.pdf",
+    "status": "UNAVAILABLE",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "reason": "HTTP 200 redirects to GovInfo Page Not Found; body not a historical statute"
+  },
+  {
+    "file": "govinfo_usc1982_42_411.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1982-title42/pdf/USCODE-1982-title42-chap7-subchapII-sec411.pdf",
+    "status": "UNAVAILABLE",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "reason": "HTTP 200 redirects to GovInfo Page Not Found; body not a historical statute"
+  },
+  {
+    "file": "govinfo_usc1988_42_411.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1988-title42/pdf/USCODE-1988-title42-chap7-subchapII-sec411.pdf",
+    "status": "UNAVAILABLE",
+    "retrieved_at": "2026-10-24T20:59:37Z",
+    "reason": "HTTP 200 redirects to GovInfo Page Not Found; body not a historical statute"
+  },
+  {
+    "file": "uscode_42_411_prelim.html",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid%3AUSC-prelim-title42-section411&num=0&edition=prelim",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:00:52Z"
+  },
+  {
+    "file": "govinfo_usc1994_42_411.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap7-subchapII-sec411.htm",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 200 GovInfo Page Not Found",
+    "retrieved_at": "2026-10-24T21:00:52Z"
+  },
+  {
+    "file": "govinfo_usc1994_42_411.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/pdf/USCODE-1994-title42-chap7-subchapII-sec411.pdf",
+    "status": "UNAVAILABLE",
+    "reason": "Not PDF content",
+    "retrieved_at": "2026-10-24T21:00:52Z"
+  },
+  {
+    "file": "govinfo_statute81_pg821.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-81/pdf/STATUTE-81-Pg821.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:52Z",
+    "size": 21021449,
+    "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+  },
+  {
+    "file": "govinfo_statute86_pg1329.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 31269765,
+    "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+  },
+  {
+    "file": "govinfo_statute97_pg65.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 18999106,
+    "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+  },
+  {
+    "file": "govinfo_statute100_pg2915.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg2915.pdf",
+    "status": "UNAVAILABLE",
+    "reason": "Not PDF content",
+    "retrieved_at": "2026-10-24T21:00:53Z"
+  },
+  {
+    "file": "poms_rm_03846035.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0103846035",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 20580,
+    "sha256": "746364a9dbe3c128bca49c52fef1badb5a747ab8b823576e6cd04184a4d4681f"
+  },
+  {
+    "file": "poms_rs_01804050.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301804050",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 17163,
+    "sha256": "8ca3ea07c6f6e9449746d66d8f30f19d59a67ccb972c2f77b46f1913986424a9"
+  },
+  {
+    "file": "poms_rs_01803010.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803010",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:00:53Z"
+  },
+  {
+    "file": "irs_schedule_se_2011.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2011.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 153456,
+    "sha256": "f639b7a6b81ea22d386130dac53d5a7cccba84fbf54ae6442568cd17eaa9a16d"
+  },
+  {
+    "file": "irs_schedule_se_2012.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2012.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:00:53Z",
+    "size": 156371,
+    "sha256": "99ea6d8a7252dd83b070a61fc1668f5b2db3a269bd740437443fab0c1731553f"
+  },
+  {
+    "file": "poms_rs_01803160.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0303160",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:04:15Z"
+  },
+  {
+    "file": "poms_rs_01803170.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0303170",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:04:15Z"
+  },
+  {
+    "file": "poms_rs_01803180.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0303180",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:04:15Z"
+  },
+  {
+    "file": "poms_rs_01803185.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0303185",
+    "status": "UNAVAILABLE",
+    "reason": "HTTP 404",
+    "retrieved_at": "2026-10-24T21:04:15Z"
+  },
+  {
+    "file": "poms_rs_01803_toc.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803000",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:03:21Z",
+    "size": 31874,
+    "sha256": "7a5ea57f2bd8bef15fd6f42161e3024d4dda72b8aa5eac31fc32dc6b4977e42b"
+  },
+  {
+    "file": "poms_rs_01803160.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803160",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:04:25Z",
+    "size": 25242,
+    "sha256": "d779550cbbed8ba6774d01054ed996e4c682215510e576f43f05ea683b60b44b"
+  },
+  {
+    "file": "poms_rs_01803170.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803170",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:04:25Z",
+    "size": 16794,
+    "sha256": "ef8afe38331709b08516fd15a8e19f72ef11b0e93230b2811999249ddb5edadf"
+  },
+  {
+    "file": "poms_rs_01803180.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803180",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:04:25Z",
+    "size": 22312,
+    "sha256": "3ca7c4bdf902230ab179dd06023ed195130d499f89721e97e2260e2c7a72eb74"
+  },
+  {
+    "file": "poms_rs_01803185.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301803185",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:04:25Z",
+    "size": 17306,
+    "sha256": "24d9e9cc20276a1a93c20501852892371d022cf538c54082c70f921fed26a552"
+  },
+  {
+    "file": "irs_schedule_se_2008.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2008.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 304592,
+    "sha256": "94ed7b76529ed8270fc7132aa2c68119c9977b29a76049e8c258c02ebea8a9ed"
+  },
+  {
+    "file": "irs_schedule_se_2009.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2009.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 68343,
+    "sha256": "6644ed97cb30866b052ecb11b55701f33736130bc6826ebd32a95230b967edf9"
+  },
+  {
+    "file": "irs_schedule_se_2010.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2010.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 102126,
+    "sha256": "e9984e568e0ade3b2ea4ecd93d01db85c5a0c14ffb3915f8f749d1cd45114a36"
+  },
+  {
+    "file": "irs_schedule_se_2013.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2013.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 163025,
+    "sha256": "4b412967e1b73d4ff7e0dcd779a4ee577b87eb0f1468e14772d13f8107a97882"
+  },
+  {
+    "file": "irs_schedule_se_2014.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2014.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 155524,
+    "sha256": "763f68df5cec68e44742ee693207fd241c335b571f57f87b3096dcc817204d85"
+  },
+  {
+    "file": "irs_schedule_se_2015.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2015.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:12Z",
+    "size": 156715,
+    "sha256": "18d156b748768daa20917a5c8916f704319084c32200c386d95febcbaeb655ce"
+  },
+  {
+    "file": "irs_schedule_se_2016.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2016.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 164730,
+    "sha256": "a37053ca569e98cb2647a836844949bf06171018f797d68e4e60aca5143b4bed"
+  },
+  {
+    "file": "irs_schedule_se_2017.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2017.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 158667,
+    "sha256": "aefe3565f69e47ccea2beaca0822a0c3cbd3b83bc9c48f326c4c54369fe24180"
+  },
+  {
+    "file": "irs_schedule_se_2018.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2018.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 160135,
+    "sha256": "d9252d7f7d8202a341204f79c19a3238cbbf2e917173d1c72133f47f987d7eb7"
+  },
+  {
+    "file": "irs_schedule_se_2019.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2019.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 94606,
+    "sha256": "79cf20b576733e8e994e37300b81c217e49f600452bebda989d60ad34ce95b38"
+  },
+  {
+    "file": "irs_schedule_se_2020.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2020.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 81272,
+    "sha256": "60a44d23087c4631d27f8114f65297ce11994446fe1e4d97e717554bc5c51186"
+  },
+  {
+    "file": "irs_schedule_se_2021.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2021.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:26Z",
+    "size": 74722,
+    "sha256": "474ef0024350fcc7aa2d2c879b28f362e6fdc11e41ef9ea3fba9e6f51ee01e51"
+  },
+  {
+    "file": "irs_schedule_se_2022.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2022.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:29Z",
+    "size": 74178,
+    "sha256": "60900671b35f6076b3dd6b24ede232d7e40da1c4dc4eaac49f84257d3a4dc269"
+  },
+  {
+    "file": "irs_schedule_se_2023.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2023.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:29Z",
+    "size": 79915,
+    "sha256": "ae11beaaedd525f47155e1692c7f7e5386c912c334912978f5f87507dcdc0b30"
+  },
+  {
+    "file": "irs_schedule_se_2024.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--2024.pdf",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:29Z",
+    "size": 80296,
+    "sha256": "ac8ba97e554b67275d0e888d709e0ecadc9b45634c52cd934fa9bdcfd15179b0"
+  },
+  {
+    "file": "govinfo_plaw_108publ203.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-108publ203/html/PLAW-108publ203.htm",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:40Z",
+    "size": 166935,
+    "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+  },
+  {
+    "file": "poms_rs_00301250.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0300301250",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:07:42Z",
+    "size": 43627,
+    "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
+  },
+  {
+    "file": "lii_42_413.html",
+    "url": "https://www.law.cornell.edu/uscode/text/42/413",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:09:12Z",
+    "size": 113691,
+    "sha256": "2dc803f32773ee70e257a7de9a04ccdd04018f55d42078b93bec198bcd832cd3"
+  },
+  {
+    "file": "lii_26_1402.html",
+    "url": "https://www.law.cornell.edu/uscode/text/26/1402",
+    "status": "captured",
+    "retrieved_at": "2026-10-24T21:18:20Z",
+    "size": 202238,
+    "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
+  }
+]
