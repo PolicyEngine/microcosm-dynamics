@@ -1307,6 +1307,324 @@ def test_a_run_of_commits_cannot_hide_a_change_it_undoes(
     assert registry.history_problems(repository, base, full=full, imports={})
 
 
+# A pull request's own commits, from its fork point -----------------------
+
+
+def branch(repository: Path, name: str) -> None:
+    git(repository, "checkout", "-q", "-b", name)
+
+
+def switch(repository: Path, name: str) -> None:
+    git(repository, "checkout", "-q", name)
+
+
+def merge_with(repository: Path, other: str, resolution) -> str:
+    """Merge ``other`` into the current branch, resolving the registry to
+    ``resolution`` (``None`` leaves no registry)."""
+    git(
+        repository,
+        "merge",
+        "-q",
+        "--no-ff",
+        "--no-commit",
+        "-s",
+        "ours",
+        other,
+    )
+    path = repository / registry.REGISTRY
+    if resolution is not None:
+        write(repository, registry.REGISTRY, resolution)
+    elif path.exists():
+        path.unlink()
+    return commit_all(repository, f"merge {other}")
+
+
+def grown(document, *indices: int) -> dict:
+    """``document`` (or a new registry) with a lone candidate appended
+    for each index."""
+    entries = [make_entry(index, [f"s_c:{2000 + index}"]) for index in indices]
+    if document is None:
+        return make_registry(entries)
+    document = copy.deepcopy(document)
+    document["entries"].extend(entries)
+    return document
+
+
+def own_work(repository: Path, text: str) -> str:
+    write(repository, "notes.md", text)
+    return commit_all(repository, text)
+
+
+def reported(problems: list[str]) -> set[str]:
+    """The commits, as 12-character labels, that ``problems`` name."""
+    return {problem.split(": ", 1)[0].split("..")[-1] for problem in problems}
+
+
+def head_of(repository: Path) -> str:
+    return git(repository, "rev-parse", "HEAD").strip()
+
+
+@pytest.mark.parametrize("merged", [False, True])
+def test_a_pull_request_from_before_the_registry_passes(
+    tmp_path, no_ci_env, merged
+):
+    """A pull request branched before the registry existed has own
+    commits without one. They are compared from the fork point, which
+    had none, not with the base, which has one; a master merge brings
+    the landed registry in unchanged."""
+    repository = init_repository(tmp_path)
+    branch(repository, "pr")
+    own_work(repository, "one")
+    own_work(repository, "two")
+    switch(repository, "master")
+    commit_registry(repository, registered(["candidate"]), "registry lands")
+    landed = grown(registered(["candidate"]), 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    if merged:
+        merge_with(repository, "master", landed)
+        own_work(repository, "three")
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert problems == []
+
+
+@pytest.mark.parametrize("merged", [False, True])
+def test_a_pull_request_passes_while_master_grows(tmp_path, no_ci_env, merged):
+    """A pull request that adds its own registration is compared with
+    the registry it was built on, not with a base that has since added
+    others; a master merge must keep the landed entries first."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    commit_registry(repository, grown(first, 5), "own registration")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    if merged:
+        merge_with(repository, "master", grown(landed, 5))
+        own_work(repository, "after the merge")
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert problems == []
+
+
+@pytest.mark.parametrize(
+    "change", ["rewrite", "delete", "drop_landed", "merge_drops_landed"]
+)
+def test_own_commits_after_a_master_merge_are_checked(
+    tmp_path, no_ci_env, change
+):
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    if change == "merge_drops_landed":
+        bad = merge_with(repository, "master", first)
+    else:
+        merge_with(repository, "master", landed)
+        if change == "rewrite":
+            rewritten = copy.deepcopy(landed)
+            rewritten["entries"][0]["unit_keys"] = ["s_c:2199"]
+            bad = commit_registry(repository, rewritten, "rewrite")
+        elif change == "delete":
+            git(repository, "rm", "-q", registry.REGISTRY)
+            bad = commit_all(repository, "delete")
+        else:
+            bad = commit_registry(repository, first, "drop a landed entry")
+    commit_registry(repository, landed, "restore")
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert reported(problems) == {bad[:12]}
+
+
+@pytest.mark.parametrize("merged", [False, True])
+def test_a_pull_request_cannot_hide_a_change_it_undoes(
+    tmp_path, no_ci_env, merged
+):
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    built_on = first
+    if merged:
+        merge_with(repository, "master", landed)
+        built_on = landed
+    changed = copy.deepcopy(built_on)
+    changed["entries"][0]["unit_keys"] = ["s_c:2199"]
+    bad = commit_registry(repository, changed, "change")
+    commit_registry(repository, built_on, "undo")
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert reported(problems) == {bad[:12]}
+
+
+@pytest.mark.parametrize("keeps_own_order", [True, False])
+def test_a_merge_of_unlanded_history_extends_its_own_predecessor(
+    tmp_path, no_ci_env, keeps_own_order
+):
+    """Only landed history (an ancestor of the base) replaces a merge's
+    predecessor. Another unlanded branch is not trusted: the merge must
+    extend the pull request's own last registry."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    base = commit_registry(repository, first, "registry")
+    branch(repository, "side")
+    commit_registry(repository, grown(first, 7), "side registration")
+    switch(repository, "master")
+    branch(repository, "pr")
+    commit_registry(repository, grown(first, 5), "own registration")
+    resolution = grown(first, 5, 7) if keeps_own_order else grown(first, 7, 5)
+    merge = merge_with(repository, "side", resolution)
+    problems = registry.history_problems(
+        repository, base, head_of(repository), full=False
+    )
+    assert reported(problems) == (set() if keeps_own_order else {merge[:12]})
+
+
+def test_a_merge_of_two_landed_lines_is_reported(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    older = commit_registry(repository, grown(first, 1), "master grows")
+    base = commit_registry(repository, grown(first, 1, 2), "and again")
+    switch(repository, "pr")
+    tree = git(repository, "rev-parse", "HEAD^{tree}").strip()
+    octopus = git(
+        repository,
+        "commit-tree",
+        tree,
+        "-p",
+        "HEAD",
+        "-p",
+        older,
+        "-p",
+        base,
+        "-m",
+        "octopus",
+    ).strip()
+    git(repository, "update-ref", "refs/heads/pr", octopus)
+    problems = registry.history_problems(repository, base, octopus, full=False)
+    assert any("more than one line of landed history" in p for p in problems)
+    assert reported(problems) == {octopus[:12]}
+
+
+@pytest.mark.parametrize(
+    "flag, code",
+    [("--parents", 128), ("--parents", 0), ("--is-ancestor", 128)],
+)
+def test_unreadable_parents_or_ancestry_raise(
+    tmp_path, no_ci_env, monkeypatch, flag, code
+):
+    """A git failure while reading a commit's parents or ancestry raises
+    ``LookupError`` rather than choose a predecessor by default."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    merge_with(repository, "master", landed)
+    head = head_of(repository)
+    assert registry.history_problems(repository, base, head, full=False) == []
+    real = registry._git
+
+    def failing(repo, *args):
+        if flag in args:
+            return subprocess.CompletedProcess(args, code, "", "injected")
+        return real(repo, *args)
+
+    monkeypatch.setattr(registry, "_git", failing)
+    with pytest.raises(LookupError):
+        registry.history_problems(repository, base, head, full=False)
+
+
+PR_STEPS = st.lists(
+    st.sampled_from(
+        ["master", "own", "noop", "rewrite", "delete", "restore", "merge"]
+    ),
+    max_size=7,
+)
+
+
+@settings(max_examples=25, deadline=None)
+@given(registered_first=st.booleans(), steps=PR_STEPS)
+def test_only_commits_that_remove_or_rewrite_entries_are_reported(
+    tmp_path_factory, registered_first, steps
+):
+    """Over generated graphs of master commits, own commits and master
+    merges, the pull request's own commits that are reported are exactly
+    those whose registry removes or rewrites an entry of its predecessor
+    (the last valid own registry, or the landed one a merge brings in)."""
+    repository = init_repository(tmp_path_factory.mktemp("graph"))
+    landed = registered(["candidate"]) if registered_first else None
+    if landed is not None:
+        commit_registry(repository, landed, "registry")
+    branch(repository, "pr")
+    valid, own, broken, behind, index = landed, [], False, False, 0
+    expected = set()
+    for step in steps:
+        index += 1
+        if step == "master":
+            switch(repository, "master")
+            landed = grown(landed, 100 + index)
+            commit_registry(repository, landed, "master grows")
+            switch(repository, "pr")
+            behind = True
+            continue
+        if step == "rewrite" and valid is not None and valid["entries"]:
+            rewritten = copy.deepcopy(valid)
+            rewritten["entries"][0]["unit_keys"] = ["s_c:2199"]
+            commit = commit_registry(repository, rewritten, "rewrite")
+            broken = True
+        elif step == "delete" and valid is not None:
+            git(repository, "rm", "-q", "--ignore-unmatch", registry.REGISTRY)
+            commit = commit_all(repository, "delete")
+            broken = True
+        elif step == "own":
+            valid = grown(valid, index)
+            own.append(index)
+            commit = commit_registry(repository, valid, "own registration")
+            broken = False
+        elif step == "restore" and valid is not None:
+            commit = commit_registry(repository, valid, "restore")
+            broken = False
+        elif step == "merge" and behind:
+            valid = grown(landed, *own) if landed is not None else valid
+            commit = merge_with(repository, "master", valid)
+            broken, behind = False, False
+        else:
+            commit = own_work(repository, f"note {index}")
+        if broken:
+            expected.add(commit[:12])
+    switch(repository, "master")
+    base = head_of(repository)
+    head = git(repository, "rev-parse", "pr").strip()
+    problems = registry.history_problems(repository, base, head, full=False)
+    assert reported(problems) == expected
+
+
 def test_a_pull_request_head_is_read_from_its_event(tmp_path, monkeypatch):
     event = tmp_path / "event.json"
     sha = "a" * 40

@@ -39,7 +39,9 @@ This module enforces its rules:
   consecutive first-parent commits since it (each snapshot validated
   against its own commit's tree), and between a pull request's own
   commits, an entry's identity and units never change and its lists only
-  extend. A newly created registry is admitted against an empty one;
+  extend. A pull request's own commits are compared from its fork point,
+  and a merge that brings in landed history extends that history's
+  registry. A newly created registry is admitted against an empty one;
 - the registry stays incomplete until its completion record, B0.2's
   mechanical exposure inventory, exists.
 
@@ -1178,6 +1180,44 @@ def _commit(repository: Path, ref: str) -> str | None:
     return found.stdout.strip() if found.returncode == 0 else None
 
 
+def _parents(repository: Path, commit: str) -> list[str]:
+    """``commit``'s parents, first parent first. Raises ``LookupError``
+    when git cannot list them."""
+    found = _git(repository, "rev-list", "--parents", "-n", "1", commit)
+    listed = found.stdout.split()
+    if found.returncode != 0 or listed[:1] != [commit]:
+        raise LookupError(f"cannot list the parents of {str(commit)[:80]}")
+    return listed[1:]
+
+
+def _is_ancestor(repository: Path, ancestor: str, descendant: str) -> bool:
+    """Whether ``ancestor`` is an ancestor of ``descendant`` (or the same
+    commit). Raises ``LookupError`` when git cannot answer."""
+    found = _git(
+        repository, "merge-base", "--is-ancestor", ancestor, descendant
+    )
+    if found.returncode not in (0, 1):
+        raise LookupError(
+            f"cannot tell whether {str(ancestor)[:80]} is an ancestor of "
+            f"{str(descendant)[:80]}"
+        )
+    return found.returncode == 0
+
+
+def _landed_parents(repository: Path, commit: str, base: str) -> list[str]:
+    """The parents through which a merge ``commit`` brings in landed
+    history: each parent after the first that is an ancestor of ``base``
+    and not already an ancestor of the first parent. Empty for a commit
+    that is not a merge."""
+    parents = _parents(repository, commit)
+    return [
+        parent
+        for parent in parents[1:]
+        if _is_ancestor(repository, parent, base)
+        and not _is_ancestor(repository, parent, parents[0])
+    ]
+
+
 def _event() -> Mapping[str, Any]:
     """The GitHub event payload at ``GITHUB_EVENT_PATH``. Raises
     ``LookupError`` when it cannot be read or is not a JSON object."""
@@ -1289,12 +1329,24 @@ def history_problems(
     ``head``, so a run of commits cannot hide a change a later commit
     undoes.
 
+    The walk starts from the registry at the first listed commit's first
+    parent: where these commits leave landed history, which for a pull
+    request's own commits is its fork point, not ``base``. A pull request
+    branched before the registry existed, or before ``base`` changed it,
+    is so compared with the registry it was built on. A merge whose other
+    parent brings in landed history (an ancestor of ``base`` that its
+    first parent lacks) is compared with that parent's registry instead,
+    and must extend it; a merge bringing in more than one line of landed
+    history is reported.
+
     With ``full``, each snapshot is validated against its own commit's
     tree. A snapshot that fails is reported and is not used as the next
-    one's predecessor. Each valid snapshot must append only to the last
-    valid one; a newly created registry is admitted against an empty
+    one's predecessor. Each valid snapshot must append only to its
+    predecessor: the last valid one, or the landed registry a merge
+    brings in. A newly created registry is admitted against an empty
     registry. Without ``full``, as for a pull request's own commits, only
-    the append-only rule is checked."""
+    the append-only rule is checked. Raises ``LookupError`` when git
+    cannot list the commits, their parents or their ancestry."""
     listed = _git(
         repository,
         "rev-list",
@@ -1304,17 +1356,34 @@ def history_problems(
     )
     if listed.returncode != 0:
         raise LookupError(f"cannot list commits from {base} to {head}")
+    commits = listed.stdout.split()
     problems: list[str] = []
-    try:
-        previous = registry_at(repository, base)
-    except ValueError as error:
-        problems.append(f"{base[:12]}: {error}")
-        previous = None
-    if not isinstance(previous, Mapping):
-        previous = None
-    previous_commit = base
-    for commit in listed.stdout.split():
+
+    def landed_registry(commit: str) -> Mapping[str, Any] | None:
+        try:
+            found = registry_at(repository, commit)
+        except ValueError as error:
+            problems.append(f"{commit[:12]}: {error}")
+            return None
+        return found if isinstance(found, Mapping) else None
+
+    previous_commit, previous = base, None
+    start = _parents(repository, commits[0])[:1] if commits else [base]
+    if start:
+        previous_commit = start[0]
+        previous = landed_registry(previous_commit)
+    for commit in commits:
         label = commit[:12]
+        landed = _landed_parents(repository, commit, base)
+        if len(landed) > 1:
+            problems.append(
+                f"{label}: a merge brings in more than one line of landed "
+                "history"
+            )
+            continue
+        if landed:
+            previous_commit = landed[0]
+            previous = landed_registry(previous_commit)
         try:
             current = registry_at(repository, commit)
         except ValueError as error:
