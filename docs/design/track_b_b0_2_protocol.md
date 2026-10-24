@@ -1,6 +1,6 @@
 # Track B B0.2: structural-audit protocol
 
-**Status: version 1, DRAFT, 2026-10-23. Not yet frozen. No count has run.**
+**Status: version 1, DRAFT, 2026-10-24. Not yet frozen. No count has run.**
 
 Design section 5.2 (line 286) says B0's structural-audit protocol is
 frozen before any count or power summary is computed. This file is that
@@ -30,6 +30,25 @@ revised before any freeze:
   replace subtraction-based complementary suppression, after two
   executed recoveries of small cells.
 - **One run:** a frozen-status check and an attempt record.
+
+Review round 2 (Sol, at `0644b717`) asked for changes again, and the
+block was revised before any freeze:
+- **Audit metadata:** the committed file had reported how many targets
+  were audited, which an executed fixture used to narrow a remainder to
+  four sizes. The disclosure block now holds only the base, the rules
+  and the status. No program the audit runs depends on a true size, so
+  a reader can rerun it, and every target it finds narrow is treated as
+  disclosed.
+- **Intervals:** a published multiple stands for max(B, m − B/2) to
+  m + B/2 − 1, matching the coarsening rule.
+- **Writes:** both files are written to temporary names, flushed and
+  linked into place, so a failure leaves no partial file.
+- **Nonblocking findings, also answered:** relations across unit types
+  are part of the audit's model; a single fixed base replaces the
+  ladder; a target is wide on two verified points, without a proven
+  optimum; and tests now cover a fractional age of 62.5, negative
+  inputs to coarsening, the solver's exact-optimum setting and the
+  attempt record's flush.
 
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
@@ -209,24 +228,30 @@ stay byte-identical.
 
 ### Disclosure rule
 
-PSID's Conditions of Use, as agreed at the July 2026 download, allow
-"aggregate statistical reporting" only. Max's ruling d1899 adds "no
-small-cell counts on GitHub". Suppressing small cells, and their
-complements by subtraction, is not enough: integer and nonnegativity
-bounds, and remainders that are never published, can still pin a small
-cell exactly (review round 1 of this protocol). So the committed output
-is coarsened, then audited, by these rules.
+PSID outputs are aggregate statistics only, and no small cell is
+committed, per the project's data-access record. Suppressing small
+cells, and their complements by subtraction, is not enough: integer and
+nonnegativity bounds, and remainders that are never published, can still
+pin a small cell exactly (review round 1 of this protocol). Auditing the
+published values alone is not enough either: anything else the committed
+file says about the audit, including whether it passed, is evidence a
+reader can use (review round 2). So the committed output is coarsened at
+one fixed base, then audited against everything it discloses, by these
+rules.
 
-- **Coarsening at base B.**
+- **Coarsening at base B = 10.**
   - A count of 0 is written as 0.
   - A count from 1 to B − 1 is written as the string `"<B"`.
   - A count of B or more is written as the nearest multiple of B,
-    rounding halves up.
+    rounding halves up. So a published multiple m stands for every
+    integer from max(B, m − B/2) to m + B/2 − 1; a published B stands
+    for B to 3B/2 − 1.
   - Effective sizes are coarsened in the same way, from their own values.
   - Every count type is coarsened alike: persons, rows, pairs,
     households, strata and clusters.
-  - B starts at 10.
-- **Sets and atoms.**
+  - B is fixed. There is no ladder of bases: publishing at a larger base
+    after a smaller one failed would disclose that it failed.
+- **Sets, atoms and targets.**
   - Every published count is the size of one set of units of one type.
     The types are persons; one wave's households; strata; and clusters
     (stratum and cluster together). A row, a pair or an
@@ -235,59 +260,153 @@ is coarsened, then audited, by these rules.
   - For each unit type, the atoms are the classes of units that belong
     to exactly the same published sets. Every published count is a sum
     of atom sizes.
+  - The targets are every atom, and every difference between a published
+    set and a published proper subset of it of the same unit type,
+    whatever their true sizes. Examples of differences are a roster's
+    persons in no band, and `R_FULL` persons in B2 households who are not
+    in `R_B2`. A target is sensitive when its true size is from 1 to 9.
   - Sets and atoms stay in memory, and their sizes stay in the local
     copy. Neither is committed.
-- **Sensitive quantities.** These are:
-  - every atom whose true size is from 1 to 9; and
-  - every difference between a published set and a published subset of
-    it whose true size is from 1 to 9. Examples are a roster's persons in
-    no band, and `R_FULL` persons in B2 households who are not in `R_B2`.
-- **The audit.** For each sensitive quantity, the script solves two
-  integer programs for the quantity's size: a minimum and a maximum.
-  Integer, because an attacker may use integrality; a continuous
-  relaxation's range can be wider than the integer one.
-  - **Variables:** nonnegative integer atom sizes.
-  - **Published counts:** every published value constrains the sum of
-    its set's atoms to an interval:
-    - exactly 0 for 0;
-    - from 1 to B − 1 for `"<B"`;
-    - from m − B/2 to m + B/2 − 1 for a published multiple m.
-  - **Effective sizes:** each published effective size e also bounds a
-    count from below, because an effective size never exceeds the count
-    of units, or clusters, it is computed over. A Kish size bounds its
-    set's persons. A cluster-worst size bounds its households, or its
-    design clusters. The bound is max(0, e − B/2) for a multiple e, and
-    1 for `"<B"`.
-  - **Protection:** a quantity is protected when its maximum and minimum
-    differ by at least 4, so that at least five sizes remain possible. A
-    program that does not reach a proven optimum within 60 seconds
-    counts as unprotected. The release passes when every sensitive
-    quantity is protected.
-- **The ladder.**
-  - If the audit fails at B = 10, B becomes 50, then 100, then 500. The
-    audit reruns each time on the same counts.
-  - The first B that passes is used for the whole committed file.
-  - If none passes, the committed file holds only the disclosure block,
-    and the counts stay in the local copy.
-- **The disclosure block.** It records:
-  - B and the coarsening rule;
-  - the protection rule;
-  - for each B tried, how many quantities were audited and how many
-    failed.
+- **What a reader can use.** The audit works over nonnegative integer
+  atom sizes, subject to:
+  - **published counts:** each published value confines its set's count
+    to exactly the integers that coarsen to it: 0 for 0; 1 to B − 1 for
+    `"<B"`; max(B, m − B/2) to m + B/2 − 1 for a multiple m;
+  - **effective sizes:** an effective size never exceeds the count of
+    units, or clusters, it is computed over, and a positive one needs at
+    least one. So a published effective size e bounds a count from
+    below: by 0 for 0, by 1 for `"<B"`, and by max(B, e − B/2) for a
+    multiple e. A Kish size bounds its set's persons. A cluster-worst
+    size bounds its households, or its design clusters;
+  - **relations between unit types,** for each set counted in all four
+    types: its households, and its design clusters, number at most its
+    persons; its design strata number at most its design clusters; and
+    it has no persons unless it has households, design clusters and
+    design strata. A relation is registered for a set only where the
+    rows that build the set guarantee it, whatever the counts:
+    - households at most persons, when no person has two rows and every
+      row with an interview number has a person;
+    - design clusters at most persons, when no person has two rows and
+      every row has a person;
+    - persons only with households, when every person's row has an
+      interview number; and persons only with design strata, when every
+      person's row has a stratum;
+    - strata at most clusters, and persons only with clusters, always,
+      since each stratum comes with a cluster of its own and every row
+      yields a cluster.
 
-  It never names a failing quantity.
-- **Local copy.** The unsuppressed counts, the atom sizes and the audit
-  results are written to a second file, outside the repository, in
-  B0.2's evidence folder. That file is never committed.
+    So the relations are structure, fixed before any size is used. A
+    registered relation that the true sets violate is a defect, and the
+    script stops;
+  - **the release's own disclosures,** below.
+- **The audit.**
+  - A target is **wide** when two integer atom-size vectors, each
+    satisfying every constraint exactly, give it sizes at least 4 apart,
+    so that at least five sizes remain possible. The script finds such
+    vectors with integer programs (`scipy.optimize.milp`, one HiGHS
+    thread, 60 seconds per program) and checks each in exact integer
+    arithmetic before using it.
+  - A target is **irrelevant** when it is proven unable to take a size
+    from 1 to 9.
+  - Any other target is **narrow**, including one whose programs reach
+    no answer in time.
+- **No program sees a true size.** Every program, its window and the
+  order of targets are set from the publication, the atoms, the
+  relations and the targets disclosed so far:
+  - **A pool of points.** The script first solves one program for any
+    feasible vector, and eight more pushed along fixed directions of
+    ±1 per atom, drawn from a seeded generator (seed 20261024). Each
+    accepts the first integer point found. Every verified point is kept,
+    and so is every point a later search finds.
+  - **Per target, in the registry's fixed order:** wide at once if the
+    pool's points give it sizes 4 apart. Otherwise, if the pool's least
+    value is 10 or more, a continuous relaxation whose minimum exceeds
+    9.5 proves it irrelevant. Otherwise the script searches for a point
+    at least 4 above the pool's least value, and one at least 4 below
+    its greatest. A point found makes it wide. If both searches are
+    proven infeasible, the target's exact minimum and maximum, within
+    the window that holds every pool value, decide it.
+  - **The truth enters once:** a narrow target of true size 1 to 9
+    withholds the release. If no pool program finds a point in time,
+    nothing can be shown wide, and the release is withheld.
+  - A release with no atom has no target, and runs no program.
+- **Disclosure rounds.** Since no program sees a true size, each round's
+  narrow targets are the same for every atom-size vector with this
+  publication, and a reader who knows this rule can rerun it for any of
+  them. A release tells that reader exactly that every narrow target
+  lies outside 1 to 9. So each narrow target of true size 10 or more
+  becomes **disclosed**: the constraints gain that its size is 0 or at
+  least 10, and the pool drops any point this rules out. Every target
+  not yet disclosed is then classified again, and so on, until a round
+  discloses no new target.
+- **What a release guarantees.** The release passes when no sensitive
+  target is ever narrow. The vectors a reader holding the release cannot
+  rule out are then exactly those satisfying every constraint and every
+  disclosure, and every sensitive target ranges over at least five sizes
+  among them. If a sensitive target is narrow, the audit stops and the
+  counts are withheld.
+- **What the audit assumes, and its limits.**
+  - The reader is assumed to know the atoms, how they nest and the
+    registered relations, which is more than the committed file shows,
+    but not the atoms' sizes: any atom may be empty.
+  - The atoms are the classes of units that occur in the data. A reader
+    who could list every class that might occur, and rerun the audit
+    for each choice of which ones are empty, could learn which classes
+    occur, and so that each of those holds at least one unit. The audit
+    does not model that channel. Assuming instead that every atom is
+    nonempty pins atoms exactly in ordinary tables (a `"<10"` set of
+    nine atoms forces each to 1), so no realistic release would pass.
+  - The protected targets are atoms and single-subset differences. Other
+    unions of atoms, such as a set minus the union of several of its
+    subsets, are not targets: no release can protect every union of
+    atoms. The natural complements in this release, such as the
+    unknown-age cells, are published sets.
+  - Relations across unit types are those listed. Others a reader might
+    know, such as how many clusters each stratum has, are not modeled.
+  - An unanswered program counts against release, so machine speed can
+    withhold a release or add a disclosure, but never weaken one. Time
+    limits are the one input to a program's answer that the publication
+    does not fix; the guarantee above treats a timed-out program as
+    giving the same answer on every rerun.
+- **The disclosure block.** It records B, the coarsening rule, the
+  protection rule and the status, `released` or `withheld`. Nothing else
+  about the audit is committed, since every other figure (targets,
+  narrow or disclosed targets, rounds, programs, times) depends on true
+  sizes.
+- **A withheld release.** The committed file then holds the provenance
+  record and the disclosure block, and no counts. The counts stay in the
+  local copy. A later attempt is a new protocol version, ruled on before
+  it runs, and must treat this version's withheld status as public.
+- **Local copy.** The unsuppressed counts, the atom sizes and the audit's
+  targets, classifications, rounds and times are written to a second
+  file, outside the repository, in B0.2's evidence folder. That file is
+  never committed.
 - **Tests.** Unit tests check coarsening and the audit on invented
-  tables. They include each attack review round 1 executed:
+  tables. They include each attack reviews of this protocol executed:
   - integer bounds pinning hidden bands;
   - an unpublished remainder;
-  - an effective size bounding a count.
+  - an effective size bounding a count;
+  - public audit counts narrowing a remainder (round 2): the committed
+    file must be byte-identical across every remainder the audit
+    protects.
 
-  They also include a table that needs the ladder to reach B = 50.
+  They also check:
+  - **against an exhaustive reader,** on small random tables and on
+    tables that withhold: every atom-size vector with the same
+    publication is enumerated, the rule is rerun on each, and the
+    script's decision, disclosures and classifications must match. The
+    vectors whose rerun releases must be exactly the final constraint
+    set, and every sensitive target of a released table must range over
+    at least five sizes among them;
+  - **that no program sees a true size:** two tables with the same
+    publication and atoms hand the solver the same programs in the same
+    order, up to the point where one withholds;
+  - **that relations are structure:** each is registered only when its
+    rows guarantee it, and a violated one stops the script;
+  - **the output writes:** an interrupted or failed write leaves no
+    partial file under a final name.
 
-The threshold of 10, the protection width of 4 and the ladder are
+The threshold of 10, the protection width of 4 and the base of 10 are
 version 1's. If Max or the coordinator sets others before the freeze,
 this section changes before it freezes; after the freeze, a change is a
 new version.
@@ -299,11 +418,14 @@ new version.
   `track_b_b0_2_counts.v1`. It holds the coarsened counts and the
   disclosure block, under the disclosure rule. The unsuppressed copy
   goes outside the repository. The script refuses to overwrite a file,
-  or to write under `runs/`. The record carries:
-  - the repository head;
-  - the script's SHA-256;
-  - every opened PSID file's SHA-256;
-  - the requested-label allowlist.
+  or to write under `runs/`.
+  - Both files are serialized in full, then each is written to a
+    temporary file in its own directory, flushed to disk, and given its
+    final name by a hard link that fails if the name exists. A failure
+    leaves no partial file under a final name. The local copy is written
+    first.
+  - The record carries the repository head, the script's SHA-256, every
+    opened PSID file's SHA-256 and the requested-label allowlist.
 - **One run.** It runs once, from a clean worktree at the commit that
   freezes this protocol, with at most four BLAS and OpenMP threads and
   `OMP_WAIT_POLICY=PASSIVE`.

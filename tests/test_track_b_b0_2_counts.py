@@ -7,12 +7,13 @@ import json
 import os
 import sys
 from contextlib import contextmanager
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import event, example, given, settings
 from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,7 +24,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6"
+    "28c08c516ae08aa8bacfd7b303d76482c95e963eb9ecc3a36a0188bff899ad4d"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -591,19 +592,20 @@ def test_b3_lag_pairs_keep_nonempty_2009_origins():
 
 
 def test_known_age_partition_and_reader_maximum_are_hand_counted():
-    ages = [0, 999, -1, 125.5, 126, float("nan"), 1, 24, 80, 81, 125]
+    # 62.5 is an interior fraction: unknown, not in a band (review 2).
+    ages = [0, 999, -1, 125.5, 62.5, 126, float("nan"), 1, 24, 80, 81, 125]
     counts = _counts(
         _inputs([_row(i, age=age) for i, age in enumerate(ages, 1)])
     )
     roster = counts["rosters"]["R_FULL"]
-    assert roster["overall"]["persons"] == 11
-    assert roster["unknown_age"]["persons"] == 6
+    assert roster["overall"]["persons"] == 12
+    assert roster["unknown_age"]["persons"] == 7
     assert roster["by_age_band"]["1_24"]["persons"] == 2
     assert roster["by_age_band"]["80_plus"]["persons"] == 3
     assert (
         sum(item["persons"] for item in roster["by_age_band"].values())
         + roster["unknown_age"]["persons"]
-        == 11
+        == 12
     )
     proxy = counts["rosters"]["R_TA_PROXY"]
     assert proxy["overall"]["persons"] == 3
@@ -641,6 +643,179 @@ def _table_registry(sets, *, unit_type="persons"):
     return counts, registry
 
 
+def _atom_table(rows, sizes):
+    """Published sets built from atoms of the given sizes: atom ``a`` holds
+    the units ``(a, 0)`` to ``(a, sizes[a] - 1)``."""
+    return _table_registry(
+        {
+            f"row_{j}": {(a, i) for a in row for i in range(sizes[a])}
+            for j, row in enumerate(rows)
+        }
+    )
+
+
+def _release_public_bytes(inputs):
+    people, labor, anchor, design = inputs
+    validity = _validity(labor)
+    raw = script.structural_counts(people, validity, anchor, design)
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    published, disclosure, private = script.release_counts(raw, registry)
+    public = _bytes({"counts": published, "disclosure": disclosure})
+    return public, disclosure, private["audit"]
+
+
+def _own_strata(inputs):
+    """Give every person a stratum of their own. One shared stratum makes
+    the strata count of a one-person band, which is at most its clusters
+    and persons, narrow, so the audit rightly withholds."""
+    people, labor, anchor, design = inputs
+    design = design.copy()
+    design["stratum"] = design["person_id"]
+    return people, labor, anchor, design
+
+
+def _release_panel(persons=60):
+    """Persons in every wave, ages spread over the bands, some sharing a
+    household; large enough that the audit releases."""
+    return _own_strata(
+        _inputs(
+            [
+                _row(
+                    person,
+                    wave,
+                    20 + (person * 7) % 55 + wave - 2011,
+                    relationship=10 if person % 3 else 20,
+                    weight=1.0 + person % 4,
+                    interview=person if person % 3 else person - 1,
+                )
+                for person in range(1, persons + 1)
+                for wave in WAVES
+            ]
+        )
+    )
+
+
+def _sensitive(audit):
+    return [
+        target
+        for target in audit["targets"]
+        if 1 <= target["true_size"] < script.DISCLOSURE_THRESHOLD
+    ]
+
+
+# An enumeration oracle for the disclosure rule, written independently of
+# the script's integer programs: one unit type, atoms of any size from 0.
+def _oracle_coarsen(value):
+    if value == 0:
+        return 0
+    if value < 10:
+        return "<10"
+    return (2 * value + 10) // 20 * 10
+
+
+def _oracle_targets(rows, atoms):
+    found = {(a,) for a in range(atoms)}
+    sets = [frozenset(row) for row in rows]
+    for big in sets:
+        for small in sets:
+            if small and small < big:
+                found.add(tuple(sorted(big - small)))
+    return sorted(found)
+
+
+def _oracle_candidates(rows, sizes):
+    """Every atom-size vector whose publication equals the truth's."""
+    from itertools import product
+
+    published = [_oracle_coarsen(sum(sizes[a] for a in row)) for row in rows]
+    highest = [
+        max(v for v in range(100) if _oracle_coarsen(v) == value)
+        for value in published
+    ]
+    caps = [
+        min(highest[j] for j, row in enumerate(rows) if a in row)
+        for a in range(len(sizes))
+    ]
+    grid = np.array(list(product(*(range(cap + 1) for cap in caps))))
+    totals = [grid[:, list(row)].sum(axis=1) for row in rows]
+    keep = np.ones(len(grid), dtype=bool)
+    for total, value in zip(totals, published, strict=True):
+        keep &= np.array([_oracle_coarsen(int(t)) == value for t in total])
+    return grid[keep]
+
+
+def _oracle_class(values):
+    if values.max() - values.min() >= 4:
+        return "wide"
+    if not np.any((values >= 1) & (values <= 9)):
+        return "irrelevant"
+    return "narrow"
+
+
+def _oracle_release(rows, sizes, grid, targets):
+    """The rule by enumeration: status, disclosed targets, the final
+    candidate mask and each target's final classification."""
+    values = {t: grid[:, list(t)].sum(axis=1) for t in targets}
+    mask = np.ones(len(grid), dtype=bool)
+    disclosed = []
+    while True:
+        classes = {
+            t: _oracle_class(values[t][mask])
+            for t in targets
+            if t not in disclosed
+        }
+        narrow = [t for t, result in classes.items() if result == "narrow"]
+        if any(1 <= sum(sizes[a] for a in t) <= 9 for t in narrow):
+            return "withheld", disclosed, mask, classes
+        if not narrow:
+            classes.update({t: "narrow" for t in disclosed})
+            return "released", disclosed, mask, classes
+        disclosed.extend(narrow)
+        for t in narrow:
+            mask &= ~((values[t] >= 1) & (values[t] <= 9))
+
+
+@st.composite
+def _atom_tables(draw):
+    """Two or three atoms, each given a distinct nonempty set of rows to
+    belong to, so every draw is a valid table. Rows left empty or repeated
+    are dropped; distinct atoms leave at least two rows."""
+    width = draw(st.integers(2, 4))
+    atoms = draw(st.integers(2, 3))
+    subsets = [
+        frozenset(rows)
+        for size in range(1, width + 1)
+        for rows in combinations(range(width), size)
+    ]
+    signatures = draw(st.permutations(subsets))[:atoms]
+    rows = []
+    for j in range(width):
+        row = tuple(a for a in range(atoms) if j in signatures[a])
+        if row and row not in rows:
+            rows.append(row)
+    sizes = draw(st.lists(st.integers(1, 14), min_size=atoms, max_size=atoms))
+    return rows, sizes
+
+
+def _script_atoms(rows, atoms, registry):
+    """Map the script's atom columns to the oracle's atoms by the rows
+    each belongs to."""
+    model = script.build_model(registry)
+    matrix = model["matrix"].toarray()
+    mapping = {}
+    for column in range(matrix.shape[1]):
+        names = {
+            model["paths"][r][0] for r in np.flatnonzero(matrix[:, column])
+        }
+        (atom,) = [
+            a
+            for a in range(atoms)
+            if {f"row_{j}" for j, row in enumerate(rows) if a in row} == names
+        ]
+        mapping[column] = atom
+    return mapping
+
+
 @pytest.mark.parametrize(
     ("base", "values", "expected"),
     [
@@ -669,7 +844,7 @@ def test_coarsening_boundaries_round_halves_up(base, values, expected):
     assert script.count_interval(base, base) == (base, base + base // 2 - 1)
 
 
-@pytest.mark.parametrize("base", script.DISCLOSURE_BASES)
+@pytest.mark.parametrize("base", [10, 50])
 def test_count_intervals_are_exact_preimages_of_coarsening(base):
     """Each interval is exactly the integers that coarsen to its value,
     found by enumeration rather than from the interval rule."""
@@ -682,12 +857,30 @@ def test_count_intervals_are_exact_preimages_of_coarsening(base):
             assert values == list(range(low, high + 1)), published
 
 
-def test_a_published_base_bounds_its_effective_count_from_base(
-    monkeypatch,
-):
-    """An effective size published as B means the size is at least B,
-    so its count is at least B, not B/2. A remainder of 7 inside a set
-    of 12 whose Kish size is 10 therefore has a minimum of 1."""
+@pytest.mark.parametrize("value", [-1, -0.5, float("nan"), float("inf")])
+def test_coarsening_refuses_negative_and_nonfinite_values(value):
+    with pytest.raises(ValueError, match="finite and nonnegative"):
+        script.coarsen(value, 10)
+
+
+def test_the_fixed_base_is_ten_with_no_ladder():
+    assert script.DISCLOSURE_BASE == 10
+    assert script.DISCLOSURE_THRESHOLD == 10
+    assert script.PROTECTION_WIDTH == 4
+    assert not hasattr(script, "DISCLOSURE_BASES")
+
+
+@pytest.mark.parametrize(
+    ("published", "bound"),
+    [(0, 0), ("<10", 1), (10, 10), (20, 15), (30, 25), (100, 95)],
+)
+def test_an_effective_size_bounds_its_count_from_below(published, bound):
+    """An effective size never exceeds its count, and a positive one needs
+    a unit; a published multiple e means at least max(B, e - B/2)."""
+    assert script.effective_count_bound(published, 10) == bound
+
+
+def test_a_published_effective_size_lifts_its_count_interval(monkeypatch):
     counts, registry = _table_registry(
         {"persons": set(range(12)), "part": set(range(5))}
     )
@@ -695,23 +888,41 @@ def test_a_published_base_bounds_its_effective_count_from_base(
     registry.effective(("kish_n_eff",), ("persons",))
     original = script.count_interval
     # Broaden the count intervals so only the effective bound can lift
-    # the remainder's minimum above 0.
+    # the persons row's lower bound above 0.
     monkeypatch.setattr(
         script,
         "count_interval",
         lambda value, base: (0, original(value, base)[1]),
     )
-    audit = script.audit_counts(counts, registry, 10)
-    remainder = [q for q in audit["quantities"] if q["true_size"] == 7]
-    assert remainder and remainder[0]["minimum"] == 1
+    model = script.build_model(registry)
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    row = model["path_rows"][("persons",)]
+    assert lower[row] == 10 and upper[row] == 14
+    system = script.AuditSystem(model, lower, upper, [], [])
+    remainder = next(t for t in model["targets"] if t["true_size"] == 7)
+    minimum, _ = system.extreme(
+        remainder["columns"], -1, None, None, seconds=60
+    )
+    assert minimum == 1  # 10 persons less at most 9 in the part
 
 
-@pytest.mark.parametrize("size", range(11))
-def test_sensitive_atom_threshold_includes_one_through_nine(size):
+@pytest.mark.parametrize("size", range(13))
+def test_only_a_narrow_target_of_true_size_one_to_nine_withholds(
+    size, monkeypatch
+):
+    """Pin one atom exactly: the release is withheld only when its true
+    size is from 1 to 9."""
     counts, registry = _table_registry({"persons": set(range(size))})
+    monkeypatch.setattr(
+        script,
+        "count_interval",
+        lambda value, base: (size, size),
+    )
     audit = script.audit_counts(counts, registry, 10)
-    assert audit["audited"] == int(1 <= size <= 9)
-    assert audit["failed"] == 0
+    assert audit["status"] == ("withheld" if 1 <= size <= 9 else "released")
+    if size:
+        (target,) = audit["targets"]
+        assert target["result"] == ("narrow" if size <= 9 else "irrelevant")
 
 
 def test_disclosure_registry_covers_all_statistics_and_correct_unit_types():
@@ -743,32 +954,129 @@ def test_disclosure_registry_covers_all_statistics_and_correct_unit_types():
         isinstance(cluster, tuple) and len(cluster) == 2
         for cluster in clusters
     )
+    # Complete rows guarantee all six relations for every frame.
+    relations = {
+        (kind, left[-1], right[-1])
+        for kind, left, right in registry.relations
+        if left[:-1] == prefix
+    }
+    assert relations == {
+        ("at_most", "households", "persons"),
+        ("at_most", "design_clusters", "persons"),
+        ("at_most", "design_strata", "design_clusters"),
+        ("nonempty", "persons", "households"),
+        ("nonempty", "persons", "design_clusters"),
+        ("nonempty", "persons", "design_strata"),
+    }
+
+
+@pytest.mark.parametrize(
+    ("change", "lost"),
+    [
+        ("none", set()),
+        (
+            "missing_person",
+            {
+                ("at_most", "households", "persons"),
+                ("at_most", "design_clusters", "persons"),
+            },
+        ),
+        (
+            "repeated_person",
+            {
+                ("at_most", "households", "persons"),
+                ("at_most", "design_clusters", "persons"),
+            },
+        ),
+        ("missing_interview", {("nonempty", "persons", "households")}),
+        ("missing_stratum", {("nonempty", "persons", "design_strata")}),
+    ],
+)
+def test_relations_are_registered_only_where_rows_guarantee_them(change, lost):
+    frame = pd.DataFrame(
+        {
+            "person_id": [1.0, 2.0, 3.0],
+            "interview": [10.0, 10.0, 20.0],
+            "stratum": [1.0, 1.0, 2.0],
+            "cluster": [5.0, 5.0, 6.0],
+        }
+    )
+    if change == "missing_person":
+        frame.loc[2, "person_id"] = np.nan
+    elif change == "repeated_person":
+        frame.loc[2, "person_id"] = 1.0
+    elif change == "missing_interview":
+        frame.loc[2, "interview"] = np.nan
+    elif change == "missing_stratum":
+        frame.loc[2, "stratum"] = np.nan
+    relations = script.frame_relations(frame)
+    assert len(relations) == 6
+    assert {key for key, held in relations.items() if not held} == lost
+
+
+def test_a_violated_relation_is_a_defect_not_data():
+    counts, registry = _table_registry({"few": {1}, "many": {1, 2}})
+    registry.relate("at_most", ("many",), ("few",))
+    with pytest.raises(ValueError, match="guaranteed relation fails"):
+        script.audit_counts(counts, registry)
+    with pytest.raises(ValueError, match="unknown relation"):
+        registry.relate("equal", ("many",), ("few",))
+
+
+def test_relations_constrain_counts_across_unit_types():
+    """With every count free from 0 to 9, "at most" excludes more
+    households than persons, and "nonempty" excludes persons without a
+    household."""
+    counts, registry = _table_registry({"persons": set(range(3))})
+    registry.add(("households",), "households_2011", {"h1", "h2"})
+    counts["households"] = 2
+    registry.relate("at_most", ("households",), ("persons",))
+    registry.relate("nonempty", ("persons",), ("households",))
+    model = script.build_model(registry)
+    relations = script.model_relations(registry, model)
+    rows = model["matrix"].shape[0]
+    system = script.AuditSystem(
+        model,
+        np.zeros(rows, dtype=np.int64),
+        np.full(rows, 9, dtype=np.int64),
+        relations,
+        [],
+    )
+    persons = model["unit_types"].index("persons")
+    households = model["unit_types"].index("households_2011")
+    point = np.zeros(system.atoms, dtype=np.int64)
+    point[persons], point[households] = 1, 2
+    assert not system.feasible(point)  # two households, one person
+    point[persons], point[households] = 2, 0
+    assert not system.feasible(point)  # persons but no household
+    point[persons], point[households] = 2, 2
+    assert system.feasible(point)
+    point[persons], point[households] = 0, 0
+    assert system.feasible(point)
 
 
 def test_disclosure_integer_hidden_band_attack_is_blocked_on_full_release():
-    inputs = _inputs(
-        [
-            *[_row(person, age=29) for person in range(1, 19)],
-            _row(19, age=63),
-            _row(20, age=66),
-        ]
+    inputs = _own_strata(
+        _inputs(
+            [
+                *[_row(person, age=29) for person in range(1, 19)],
+                _row(19, age=63),
+                _row(20, age=66),
+            ]
+        )
     )
-    people, labor, anchor, design = inputs
     raw = _counts(inputs)
     assert raw["rosters"]["R_FULL"]["overall"]["persons"] == 20
     assert raw["rosters"]["R_FULL"]["by_age_band"]["25_44"]["persons"] == 18
+    people, labor, anchor, design = inputs
     registry = script.disclosure_registry(
         people, _validity(labor), anchor, design
     )
     published, disclosure, private = script.release_counts(raw, registry)
-    assert published and disclosure["base"] in (10, 50, 100, 500)
-    assert private["audits"][-1]["failed"] == 0
-    assert all(
-        item["maximum"] - item["minimum"] >= 4
-        for item in private["audits"][-1]["quantities"]
-    )
+    assert disclosure["status"] == "released" and published
+    assert all(t["result"] == "wide" for t in _sensitive(private["audit"]))
     assert (
-        published["rosters"]["R_FULL"]["by_age_band"]["25_44"]["persons"] != 18
+        published["rosters"]["R_FULL"]["by_age_band"]["25_44"]["persons"] == 20
     )
 
 
@@ -790,14 +1098,52 @@ def test_disclosure_unpublished_coresident_remainder_is_audited():
     full = registry.sets[("rosters", "R_FULL", "overall", "persons")][1]
     domain = registry.sets[("rosters", "R_B2", "overall", "persons")][1]
     assert full - domain == {21}
-    published, _, private = script.release_counts(raw, registry)
-    assert published
-    sensitive = [
-        q
-        for q in private["audits"][-1]["quantities"]
-        if q["unit_type"] == "persons" and q["true_size"] == 1
+    published, disclosure, private = script.release_counts(raw, registry)
+    assert disclosure["status"] == "released" and published
+    remainder = [
+        t
+        for t in private["audit"]["targets"]
+        if t["unit_type"] == "persons" and t["true_size"] == 1
     ]
-    assert sensitive and all(q["protected"] for q in sensitive)
+    assert remainder and all(t["result"] == "wide" for t in remainder)
+
+
+def _coresident_remainder_inputs(coresidents):
+    """Round 2's attack: ten heads aged 29, the first with weight 10, and
+    ``coresidents`` more persons aged 29 in the first head's household."""
+    return _inputs(
+        [
+            *[
+                _row(person, age=29, weight=10.0 if person == 1 else 1.0)
+                for person in range(1, 11)
+            ],
+            *[
+                _row(100 + i, age=29, relationship=30, interview=1)
+                for i in range(coresidents)
+            ],
+        ]
+    )
+
+
+def test_the_committed_file_is_identical_for_every_protected_remainder():
+    """Round 2 read a remainder of 1 to 4 from public audit counts. The
+    public block now holds only the base, the rules and the status, so
+    every remainder the audit protects gives the same bytes."""
+    released = [
+        _release_public_bytes(_coresident_remainder_inputs(r))
+        for r in range(5)
+    ]
+    assert {disclosure["status"] for _, disclosure, _ in released} == {
+        "released"
+    }
+    assert len({public for public, _, _ in released}) == 1
+    for _, disclosure, _ in released:
+        assert set(disclosure) == {
+            "base",
+            "coarsening_rule",
+            "protection_rule",
+            "status",
+        }
 
 
 def test_disclosure_audits_multi_atom_published_subset_differences():
@@ -808,11 +1154,16 @@ def test_disclosure_audits_multi_atom_published_subset_differences():
             "distinguish": {10, 11},
         }
     )
-    audit = script.audit_counts(counts, registry, 10)
-    differences = [q for q in audit["quantities"] if q["kind"] == "difference"]
+    model = script.build_model(registry)
+    differences = [t for t in model["targets"] if t["kind"] == "difference"]
     assert any(
-        q["true_size"] == 5 and len(q["atoms"]) == 2 for q in differences
+        t["true_size"] == 5 and len(t["columns"]) == 2 for t in differences
     )
+    # An empty published set is no one's subset.
+    counts, registry = _table_registry({"total": {1, 2}, "none": set()})
+    assert [t["kind"] for t in script.build_model(registry)["targets"]] == [
+        "atom"
+    ]
 
 
 def test_effective_size_attack_registers_household_and_design_lower_bounds():
@@ -841,140 +1192,174 @@ def test_effective_size_attack_registers_household_and_design_lower_bounds():
     assert registry.effective_bounds[
         (*prefix, "household_cluster_worst_n_eff")
     ] == (*prefix, "households")
-    published, _, private = script.release_counts(counts, registry)
-    assert published and private["audits"][-1]["failed"] == 0
+    published, disclosure, _ = script.release_counts(counts, registry)
+    assert disclosure["status"] == "released" and published
 
 
-def test_audit_applies_effective_bound_independently_of_count_interval(
-    monkeypatch,
-):
-    counts, registry = _table_registry({"persons": set(range(5))})
-    counts["kish_n_eff"] = 5.0
-    registry.effective(("kish_n_eff",), ("persons",))
-    original = script.count_interval
-    # With identical monotone coarsening, a valid effective bound is
-    # redundant with its count's lower bound. Broaden only that count
-    # interval to exercise the required effective-size constraint itself.
-    monkeypatch.setattr(
-        script,
-        "count_interval",
-        lambda value, base: (0, original(value, base)[1]),
-    )
-    audit = script.audit_counts(counts, registry, 10)
-    assert audit["quantities"][0]["minimum"] == 1
-
-
-def _singleton_table(size, *, partial=None):
-    sets = {"total": set(range(size))}
-    sets.update({f"cell_{i}": {i} for i in range(size)})
-    if partial is not None:
-        for size_part in (partial,) if isinstance(partial, int) else partial:
-            sets[f"partial_{size_part}"] = set(range(size_part))
-    return _table_registry(sets)
-
-
-def test_disclosure_ladder_reaches_50_and_requires_width_four():
-    counts, registry = _singleton_table(21)
-    initial = script.audit_counts(counts, registry, 10)
-    assert initial["failed"] == 21
-    assert all(q["maximum"] - q["minimum"] == 3 for q in initial["quantities"])
-    published, disclosure, private = script.release_counts(counts, registry)
-    assert disclosure["base"] == 50
-    assert [attempt["base"] for attempt in disclosure["attempts"]] == [10, 50]
-    assert private["audits"][-1]["failed"] == 0
-    assert set(published.values()) == {"<50"}
-
-
-def test_disclosure_no_base_passes_and_names_no_failing_quantity():
-    # Positive cells in the 14/74/149 subsets fill their count upper
-    # bounds at B=10/50/100; at B=500 the 499-person total does so.
-    counts, registry = _singleton_table(499, partial=(14, 74, 149))
-    published, disclosure, private = script.release_counts(counts, registry)
-    assert published == {}
-    assert disclosure["base"] is None
-    assert [attempt["base"] for attempt in disclosure["attempts"]] == [
-        10,
-        50,
-        100,
-        500,
-    ]
-    assert all(attempt["failed"] for attempt in disclosure["attempts"])
-    assert all(
-        set(attempt) == {"base", "audited", "failed"}
-        for attempt in disclosure["attempts"]
-    )
-    assert private["audits"][0]["atom_sizes"]["persons"] == [1] * 499
-    assert "cell_" not in json.dumps(disclosure)
-    assert "atoms" not in json.dumps(disclosure)
-
-
-def test_disclosure_public_has_no_small_values_sets_or_atom_fields():
-    people, labor, anchor, design = _invariance_inputs()
+def test_disclosure_public_block_holds_only_base_rules_and_status():
+    people, labor, anchor, design = _release_panel()
     validity = _validity(labor)
     raw = script.structural_counts(people, validity, anchor, design)
     registry = script.disclosure_registry(people, validity, anchor, design)
     published, disclosure, private = script.release_counts(raw, registry)
-    base = disclosure["base"]
-    assert base is not None
+    assert disclosure == {
+        "base": 10,
+        "coarsening_rule": script.COARSENING_RULE,
+        "protection_rule": script.PROTECTION_RULE,
+        "status": "released",
+    }
     for path, value in script._leaves(published):
         assert not isinstance(value, (set, frozenset))
         if isinstance(value, (int, float)):
-            assert value == 0 or value >= base, (path, value)
+            assert value == 0 or value >= 10, (path, value)
     public_bytes = _bytes({"counts": published, "disclosure": disclosure})
     for forbidden in (
         b'"sets"',
         b'"atoms"',
         b'"atom_sizes"',
         b'"true_size"',
-        b'"minimum"',
-        b'"maximum"',
+        b'"targets"',
+        b'"rounds"',
+        b'"range"',
     ):
         assert forbidden not in public_bytes
-    assert "atom_sizes" in private["audits"][0]
+    assert "atom_sizes" in private["audit"]
+
+
+def test_a_withheld_release_publishes_status_and_no_counts(monkeypatch):
+    counts, registry = _table_registry({"persons": {1, 2, 3}})
+    monkeypatch.setattr(script, "count_interval", lambda value, base: (3, 3))
+    published, disclosure, private = script.release_counts(counts, registry)
+    assert published == {}
+    assert disclosure["status"] == "withheld"
+    assert set(disclosure) == {
+        "base",
+        "coarsening_rule",
+        "protection_rule",
+        "status",
+    }
+    assert private["audit"]["atom_sizes"] == {"persons": [3]}
+
+
+@settings(max_examples=100, deadline=None)
+@given(_atom_tables())
+@example(([(0, 1), (0,), (1,)], [9, 7]))
+@example(([(0, 1), (0,), (1,)], [10, 1]))
+def test_audit_agrees_with_an_exhaustive_reader(table):
+    """The integer-program audit and the enumeration oracle reach the same
+    decision, disclosures and classifications. Then the oracle checks the
+    rule itself: a reader who reruns it on every vector with the same
+    publication keeps exactly the final candidates, and every sensitive
+    target keeps a range of width 4 or more among them."""
+    rows, sizes = table
+    counts, registry = _atom_table(rows, sizes)
+    audit = script.audit_counts(counts, registry, 10)
+    mapping = _script_atoms(rows, len(sizes), registry)
+    grid = _oracle_candidates(rows, sizes)
+    targets = _oracle_targets(rows, len(sizes))
+    status, disclosed, mask, classes = _oracle_release(
+        rows, sizes, grid, targets
+    )
+    script_targets = {
+        tuple(sorted(mapping[c] for c in t["columns"])): t
+        for t in audit["targets"]
+    }
+    assert set(script_targets) == set(targets)
+    assert audit["status"] == status
+    event(f"{status} after {len(audit['rounds'])} round(s)")
+    if status != "released":
+        return
+    assert {
+        tuple(sorted(mapping[c] for c in audit["targets"][i]["columns"]))
+        for i in audit["disclosed"]
+    } == set(disclosed)
+    for target, result in classes.items():
+        assert script_targets[target]["result"] == result, target
+    kept = np.array(
+        [
+            _oracle_release(rows, list(point), grid, targets)[0] == "released"
+            for point in grid
+        ]
+    )
+    assert np.array_equal(kept, mask)
+    for target in targets:
+        if 1 <= sum(sizes[a] for a in target) <= 9:
+            values = grid[kept][:, list(target)].sum(axis=1)
+            assert values.max() - values.min() >= 4, target
+
+
+def _program_transcript(rows, sizes):
+    """Every program the audit hands the solver, in order."""
+    counts, registry = _atom_table(rows, sizes)
+    transcript = []
+    original = script.AuditSystem._program
+
+    def recording(self, objective, extra, seconds, integral=True, gap=0.0):
+        parts = [np.asarray(objective, dtype=float).tobytes()]
+        for constraint in (self.constraint, *extra):
+            matrix = constraint.A
+            matrix = matrix.toarray() if hasattr(matrix, "toarray") else matrix
+            for array in (matrix, constraint.lb, constraint.ub):
+                parts.append(np.asarray(array, dtype=float).tobytes())
+        transcript.append(
+            (hashlib.sha256(b"|".join(parts)).hexdigest(), integral, gap)
+        )
+        return original(self, objective, extra, seconds, integral, gap)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(script.AuditSystem, "_program", recording)
+        audit = script.audit_counts(counts, registry, 10)
+    return transcript, audit
+
+
+@settings(max_examples=60, deadline=None)
+@given(_atom_tables(), st.data())
+def test_audit_programs_depend_only_on_the_publication(table, data):
+    """Two tables with the same publication and the same atoms hand the
+    solver the same programs in the same order, up to the point where one
+    of them withholds. True sizes enter only the withholding test."""
+    rows, sizes = table
+    grid = _oracle_candidates(rows, sizes)
+    grid = grid[np.all(grid > 0, axis=1)]  # same atoms exist
+    other = [int(v) for v in grid[data.draw(st.integers(0, len(grid) - 1))]]
+    first, first_audit = _program_transcript(rows, sizes)
+    second, second_audit = _program_transcript(rows, other)
+    shorter = min(len(first), len(second))
+    assert first[:shorter] == second[:shorter]
+    if first_audit["status"] == second_audit["status"] == "released":
+        assert first == second
+        assert first_audit["disclosed"] == second_audit["disclosed"]
+        assert [t["result"] for t in first_audit["targets"]] == [
+            t["result"] for t in second_audit["targets"]
+        ]
 
 
 @pytest.mark.parametrize(
     "sizes", [(1, 1, 1), (1, 2, 3), (3, 3, 4), (3, 7, 8), (1, 2, 10)]
 )
 def test_integer_audit_extrema_agree_with_bruteforce(sizes):
-    from itertools import product
-
-    a, b, c = (
-        set(range(sum(sizes[:i]), sum(sizes[: i + 1]))) for i in range(3)
-    )
-    counts, registry = _table_registry({"ab": a | b, "ac": a | c, "bc": b | c})
-    model = script.build_atom_models(registry)["persons"]
-    matrix = model["matrix"].toarray().astype(int)
-
-    def preimage(published):
-        values = [
-            v for v in range(0, 60) if script.coarsen(v, 10) == published
-        ]
-        return min(values), max(values)
-
-    bounds = [preimage(script.coarsen(count, 10)) for count in counts.values()]
-    maximum = max(upper for _, upper in bounds)
-    feasible = [
-        np.array(candidate)
-        for candidate in product(range(maximum + 1), repeat=3)
-        if all(
-            low <= observed <= high
-            for observed, (low, high) in zip(
-                matrix @ candidate, bounds, strict=True
-            )
+    rows = [(0, 1), (0, 2), (1, 2)]
+    counts, registry = _atom_table(rows, list(sizes))
+    model = script.build_model(registry)
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    system = script.AuditSystem(model, lower, upper, [], [])
+    mapping = _script_atoms(rows, len(sizes), registry)
+    grid = _oracle_candidates(rows, list(sizes))
+    assert len(grid)
+    for target in model["targets"]:
+        atoms = [mapping[c] for c in target["columns"]]
+        values = grid[:, atoms].sum(axis=1)
+        maximum, _ = system.extreme(
+            target["columns"], 1, None, None, seconds=60
         )
-    ]
-    assert feasible
-    audit = script.audit_counts(counts, registry, 10)
-    for quantity in audit["quantities"]:
-        values = [
-            int(candidate[quantity["atoms"]].sum()) for candidate in feasible
-        ]
-        assert quantity["minimum"] == min(values)
-        assert quantity["maximum"] == max(values)
+        minimum, _ = system.extreme(
+            target["columns"], -1, None, None, seconds=60
+        )
+        assert (minimum, maximum) == (values.min(), values.max())
     if sizes == (1, 1, 1):
-        # Continuous relaxation has maximum 8.5, attained at (8.5,.5,.5).
-        assert {q["maximum"] for q in audit["quantities"]} == {8}
+        # The continuous relaxation's maximum is 8.5, at (8.5, .5, .5).
+        column = model["targets"][0]["columns"]
+        assert system.extreme(column, 1, None, None, seconds=60)[0] == 8
 
 
 def test_atom_grouping_and_sparse_matrix_on_test_sized_population():
@@ -989,38 +1374,215 @@ def test_atom_grouping_and_sparse_matrix_on_test_sized_population():
         for i in range(40)
     }
     counts, registry = _table_registry(sets)
-    model = script.build_atom_models(registry)["persons"]
+    model = script.build_model(registry)
     assert issparse(model["matrix"])
     assert len(model["sizes"]) <= len(groups)
     assert model["matrix"].shape[0] < len(sets)  # duplicate sets share rows
-    published, disclosure, _ = script.release_counts(counts, registry)
-    assert published and disclosure["attempts"][-1]["failed"] == 0
-    assert disclosure["attempts"][-1]["audited"] > 0
+    published, disclosure, private = script.release_counts(counts, registry)
+    assert disclosure["status"] == "released" and published
+    assert _sensitive(private["audit"])
 
 
-def test_audit_requires_proven_optimum_and_sixty_second_integer_programs(
+def test_witnesses_are_checked_exactly_and_never_taken_from_the_solver(
     monkeypatch,
 ):
+    """A solver answer that is fractional or breaks a constraint is no
+    witness, so it can never make a target wide."""
     from types import SimpleNamespace
 
+    counts, registry = _table_registry({"persons": {1, 2, 3}})
+    model = script.build_model(registry)
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    system = script.AuditSystem(model, lower, upper, [], [])
+    for answer in ([2.5], [12.0], [-1.0], [0.0]):
+        result = SimpleNamespace(status=0, x=np.array(answer), fun=0.0)
+        assert system._witness(result) is None, answer
+    good = SimpleNamespace(status=0, x=np.array([5.0 + 1e-9]), fun=0.0)
+    assert system._witness(good).tolist() == [5]
+    assert system._witness(good, [0], 6, None) is None  # outside window
+
+
+def test_programs_use_one_thread_sixty_seconds_and_exact_optima(monkeypatch):
     calls = []
+    original = script.milp
 
-    def no_optimum(objective, **kwargs):
-        calls.append(kwargs)
-        return SimpleNamespace(status=1, success=False, fun=None)
+    def recording(objective, **kwargs):
+        calls.append(kwargs["options"])
+        return original(objective, **kwargs)
 
-    monkeypatch.setattr(script, "milp", no_optimum)
+    monkeypatch.setattr(script, "milp", recording)
+    counts, registry = _atom_table([(0, 1), (0,)], [3, 9])
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["status"] == "released" and calls
+    assert all(call["threads"] == 1 for call in calls)
+    assert all(call["time_limit"] == 60 for call in calls)
+    directions = calls[: 1 + script.POOL_DIRECTIONS]
+    assert all(call["mip_rel_gap"] == 1.0 for call in directions)
+    assert all(call["mip_rel_gap"] == 0.0 for call in calls[len(directions) :])
+
+
+def test_unanswered_programs_withhold(monkeypatch):
+    from types import SimpleNamespace
+
+    def no_answer(objective, **kwargs):
+        return SimpleNamespace(status=1, success=False, x=None, fun=None)
+
+    monkeypatch.setattr(script, "milp", no_answer)
     counts, registry = _table_registry({"persons": {1}})
     published, disclosure, private = script.release_counts(counts, registry)
-    assert published == {}
-    assert len(calls) == 8
-    assert all(np.all(call["integrality"] == 1) for call in calls)
-    assert all(call["options"]["time_limit"] == 60 for call in calls)
-    assert all(attempt["failed"] == 1 for attempt in disclosure["attempts"])
+    assert published == {} and disclosure["status"] == "withheld"
+    assert private["audit"]["pool"] == 0
+
+
+def test_an_undetermined_sensitive_target_withholds(monkeypatch):
+    """Seed points exist, but no later program answers: a sensitive target
+    the pool cannot show wide is narrow, so the release is withheld."""
+    from types import SimpleNamespace
+
+    original = script.milp
+    calls = []
+
+    def first_seed_only(objective, **kwargs):
+        calls.append(1)
+        if len(calls) == 1:
+            return original(objective, **kwargs)
+        return SimpleNamespace(status=1, success=False, x=None, fun=None)
+
+    monkeypatch.setattr(script, "milp", first_seed_only)
+    counts, registry = _table_registry({"persons": {1}})
+    audit = script.audit_counts(counts, registry, 10)
+    (target,) = audit["targets"]
+    assert audit["status"] == "withheld" and audit["pool"] == 1
+    assert target["result"] == "narrow"
+    assert target["proof"] == "undetermined"
+
+
+def test_a_target_the_pool_shows_wide_runs_no_program():
+    pool = script.WitnessPool(2)
+    pool.add(np.array([1, 0]))
+    pool.add(np.array([6, 0]))
+    record, witness = script.classify(
+        None, {"columns": (0,), "true_size": 3}, pool, seconds=60
+    )
+    assert record == {"programs": [], "result": "wide", "proof": "pool"}
+    assert witness is None
+    with pytest.raises(ValueError):
+        script.WitnessPool(2).values([0])  # an empty pool proves nothing
+
+
+@pytest.mark.parametrize(
+    ("relaxed", "result"),
+    [(9.6, "irrelevant"), (9.5, "narrow"), (9.0, "narrow"), (None, "narrow")],
+)
+def test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half(
+    relaxed, result
+):
+    """With every pool value 10 or more, a relaxation minimum above 9.5
+    settles the target; anything else falls through to the programs, here
+    stubbed to give an integer range of 9 to 11."""
+
+    class Stub:
+        def relaxed_minimum(self, columns, *, seconds):
+            return relaxed
+
+        def search(self, columns, low=None, high=None, *, seconds):
+            return 2, None
+
+        def extreme(self, columns, sense, low, high, *, seconds):
+            return (11 if sense == 1 else 9), np.array([10])
+
+    pool = script.WitnessPool(1)
+    pool.add(np.array([10]))
+    pool.add(np.array([11]))
+    record, _ = script.classify(
+        Stub(), {"columns": (0,), "true_size": 10}, pool, seconds=60
+    )
+    assert record["result"] == result
+    assert record["programs"][0] == "relaxation"
+
+
+def _two_atom_disclosure():
+    """Atom 0 holds 12 units and atom 1 holds 3, published as their union
+    (20, so 15-24) and atom 1 alone (<10), so atom 0 can take 6 to 23."""
+    rows = [(0, 1), (1,)]
+    counts, registry = _atom_table(rows, [12, 3])
+    column = {atom: c for c, atom in _script_atoms(rows, 2, registry).items()}
+    return counts, registry, column
+
+
+def test_a_disclosed_target_stays_outside_one_to_nine():
+    """A disclosed target's size is 0 or at least 10, in the exact check
+    and in every program the solver runs."""
+    counts, registry, column = _two_atom_disclosure()
+    model = script.build_model(registry)
+    lower, upper = script.published_bounds(counts, registry, model, 10)
+    (target,) = [
+        t
+        for t in model["targets"]
+        if t["kind"] == "atom" and list(t["columns"]) == [column[0]]
+    ]
+    before = script.AuditSystem(model, lower, upper, [], [])
+    after = script.AuditSystem(model, lower, upper, [], [target])
+    point = np.zeros(2, dtype=np.int64)
+    point[column[0]], point[column[1]] = 7, 9
+    assert before.feasible(point) and not after.feasible(point)
+    assert before.search([column[0]], 1, 9, seconds=60)[1] is not None
+    status, witness = after.search([column[0]], 1, 9, seconds=60)
+    assert status == 2 and witness is None
+    assert before.extreme([column[0]], -1, None, None, seconds=60)[0] == 6
+    assert after.extreme([column[0]], -1, None, None, seconds=60)[0] == 10
+
+
+def test_a_narrow_target_outside_one_to_nine_starts_another_round(
+    monkeypatch,
+):
+    """Round 1 finds atom 0 (true size 12) narrow, forced here since small
+    tables rarely produce one. It is disclosed; the pool drops the points
+    the disclosure rules out; and every other target is classified again
+    under it, in a second round that discloses nothing more."""
+    counts, registry, column = _two_atom_disclosure()
+    original = script.classify
+    calls = []
+
+    def forcing(system, target, pool, *, seconds):
+        points = pool.points[: pool.size]
+        calls.append(
+            {
+                "disclosed": list(system.disclosed),
+                "pool_feasible": all(system.feasible(p) for p in points),
+                "pool_low": bool(np.any(points[:, column[0]] <= 9)),
+            }
+        )
+        if not system.disclosed and target["columns"] == (column[0],):
+            return {
+                "programs": [],
+                "result": "narrow",
+                "proof": "forced",
+            }, None
+        return original(system, target, pool, seconds=seconds)
+
+    monkeypatch.setattr(script, "classify", forcing)
+    audit = script.audit_counts(counts, registry, 10)
+    forced = [
+        i for i, t in enumerate(audit["targets"]) if t.get("proof") == "forced"
+    ]
+    assert len(forced) == 1
+    assert audit["status"] == "released"
+    assert audit["disclosed"] == forced
+    assert [r["disclosed"] for r in audit["rounds"]] == [forced, []]
+    first = [c for c in calls if not c["disclosed"]]
+    second = [c for c in calls if c["disclosed"]]
+    assert len(first) == len(audit["targets"])
+    assert second and all(c["disclosed"] == [(column[0],)] for c in second)
+    # The first round's pool held a point with atom 0 at 9 or less, which
+    # the disclosure rules out; the second round's pool holds none.
+    assert any(c["pool_low"] for c in first)
+    assert all(c["pool_feasible"] for c in calls)
+    assert not any(c["pool_low"] for c in second)
     assert all(
-        q["minimum"] is None and q["maximum"] is None
-        for audit in private["audits"]
-        for q in audit["quantities"]
+        audit["targets"][i]["round"] == 2
+        for i in range(len(audit["targets"]))
+        if i not in forced and audit["targets"][i]["result"] != "irrelevant"
     )
 
 
@@ -1171,7 +1733,19 @@ def test_main_refuses_dangling_output_symlinks_before_read(
 
 @pytest.fixture
 def invented_main(tmp_path, monkeypatch):
-    people, labor, anchor, design = _worked_rosters()
+    """main() on the worked rosters. Their design counts are small enough
+    that the audit withholds them."""
+    return _main_environment(tmp_path, monkeypatch, _worked_rosters())
+
+
+@pytest.fixture
+def released_main(tmp_path, monkeypatch):
+    """main() on a panel the audit releases."""
+    return _main_environment(tmp_path, monkeypatch, _release_panel())
+
+
+def _main_environment(tmp_path, monkeypatch, inputs):
+    people, labor, anchor, design = inputs
     allowlist = {"invented": {"variable": "X1", "label": "AGE"}}
     supplied = (people, _validity(labor), anchor, design, allowlist)
     input_root = tmp_path / "synthetic_inputs"
@@ -1198,8 +1772,13 @@ def invented_main(tmp_path, monkeypatch):
     monkeypatch.setattr(
         script.psid2010, "record_files_read", record_files_read
     )
+    domain = script.structural_counts(*supplied[:-1])["rosters"]["R_B2"]
     baseline = tmp_path / "b01.json"
-    baseline.write_text(json.dumps({"counts": {"domain_persons": 2}}))
+    baseline.write_text(
+        json.dumps(
+            {"counts": {"domain_persons": domain["overall"]["persons"]}}
+        )
+    )
     monkeypatch.setattr(script, "B0_1_COUNTS", baseline)
     monkeypatch.setattr(script, "EVIDENCE_DIR", tmp_path)
     protocol = tmp_path / "protocol.md"
@@ -1215,8 +1794,8 @@ def invented_main(tmp_path, monkeypatch):
     return supplied, baseline, calls
 
 
-def test_main_records_provenance_and_checks_b01_size(tmp_path, invented_main):
-    supplied, baseline, calls = invented_main
+def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
+    supplied, baseline, calls = released_main
     out = tmp_path / "counts.json"
     assert (
         script.main(
@@ -1246,11 +1825,13 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, invented_main):
     )
     assert record["counts"] == coarsened
     assert record["disclosure"] == disclosure
-    assert disclosure["base"] in (10, 50, 100, 500)
-    assert disclosure["attempts"][-1]["failed"] == 0
+    assert disclosure["status"] == "released" and disclosure["base"] == 10
     assert "disclosure_audit" not in record
     local_record = json.loads((tmp_path / "local.json").read_text())
     assert local_record["counts"] == raw_counts
+    # Everything in the local audit but its timing is reproducible.
+    for audit in (local_record["disclosure_audit"], local_audit):
+        audit["audit"].pop("seconds")
     assert local_record["disclosure_audit"] == local_audit
     assert local_record["repository_head"] == record["repository_head"]
     assert record["geometry"]["collection_waves"] == list(WAVES)
@@ -1290,7 +1871,11 @@ def test_main_rejects_b01_size_mismatch(tmp_path, invented_main):
     assert not out.exists()
 
 
-def test_main_uses_exclusive_open_if_output_appears_during_read(
+def _partials(directory):
+    return sorted(path.name for path in directory.glob(".*.partial"))
+
+
+def test_main_never_overwrites_an_output_that_appears_during_read(
     tmp_path, monkeypatch, invented_main
 ):
     supplied, _, _ = invented_main
@@ -1306,9 +1891,10 @@ def test_main_uses_exclusive_open_if_output_appears_during_read(
             ["--out", str(out), "--local-copy", str(tmp_path / "local.json")]
         )
     assert out.read_text() == "preserve these bytes"
+    assert not _partials(tmp_path)
 
 
-def test_main_uses_exclusive_open_if_local_copy_appears_during_read(
+def test_main_never_overwrites_a_local_copy_that_appears_during_read(
     tmp_path, monkeypatch, invented_main
 ):
     supplied, _, _ = invented_main
@@ -1323,7 +1909,92 @@ def test_main_uses_exclusive_open_if_local_copy_appears_during_read(
     with pytest.raises(FileExistsError):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert local.read_text() == "preserve local race bytes"
-    assert not out.exists()
+    assert not out.exists() and not _partials(tmp_path)
+
+
+@pytest.mark.parametrize("failure", ["write", "fsync", "close", "link"])
+def test_write_new_leaves_no_file_under_its_name_on_failure(
+    failure, tmp_path, monkeypatch
+):
+    """Round 2 left a 20-byte public file after a disk-full error. Now a
+    failure at any step leaves neither the final name nor the temporary."""
+    target = tmp_path / "counts.json"
+    original = getattr(script.os, failure)
+
+    def failing(*args, **kwargs):
+        if failure == "close":
+            original(*args, **kwargs)
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(script.os, failure, failing)
+    with pytest.raises(OSError, match="No space left"):
+        script.write_new(target, b'{"counts": {}}\n' * 1000)
+    monkeypatch.undo()
+    assert not target.exists() and not _partials(tmp_path)
+
+
+def test_write_new_writes_every_byte_and_refuses_an_existing_name(tmp_path):
+    target = tmp_path / "counts.json"
+    data = bytes(range(256)) * 4096
+    script.write_new(target, data)
+    assert target.read_bytes() == data
+    with pytest.raises(FileExistsError):
+        script.write_new(target, b"other")
+    assert target.read_bytes() == data and not _partials(tmp_path)
+
+
+def test_write_new_completes_short_writes(tmp_path, monkeypatch):
+    original = script.os.write
+    sizes = []
+
+    def short(descriptor, view):
+        sizes.append(len(view))
+        return original(descriptor, view[:7])
+
+    monkeypatch.setattr(script.os, "write", short)
+    target = tmp_path / "counts.json"
+    script.write_new(target, b"0123456789" * 5)
+    monkeypatch.undo()
+    assert target.read_bytes() == b"0123456789" * 5 and len(sizes) == 8
+
+
+def test_main_public_write_failure_keeps_complete_local_copy_and_attempt(
+    tmp_path, monkeypatch, invented_main
+):
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    original = script.write_new
+
+    def public_fails(path, data):
+        if path == out:
+            raise OSError(28, "No space left on device")
+        original(path, data)
+
+    monkeypatch.setattr(script, "write_new", public_fails)
+    with pytest.raises(OSError, match="No space left"):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert not out.exists() and not _partials(tmp_path)
+    assert json.loads(local.read_text())["counts"]
+    assert script._attempt_path(local).exists()
+    with pytest.raises(SystemExit, match="refusing to overwrite"):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+
+
+def test_attempt_record_is_flushed_to_disk(tmp_path, monkeypatch):
+    synced = []
+    original = script.os.fsync
+
+    def recording(descriptor):
+        synced.append(descriptor)
+        original(descriptor)
+
+    monkeypatch.setattr(script.os, "fsync", recording)
+    script._start_attempt(tmp_path / "local.json", "b" * 40, "c" * 64)
+    assert len(synced) == 1
+    record = json.loads(
+        script._attempt_path(tmp_path / "local.json").read_text()
+    )
+    assert record["repository_head"] == "b" * 40
 
 
 @pytest.mark.parametrize(
@@ -1474,29 +2145,45 @@ def test_main_refuses_local_copy_outside_fixed_evidence_folder(
     assert not calls and not local.exists()
 
 
-def test_main_failed_disclosure_writes_only_disclosure_block(
-    tmp_path, monkeypatch, invented_main
+def test_main_withheld_release_commits_provenance_and_status_only(
+    tmp_path, invented_main
 ):
+    """The worked rosters' audit withholds: the committed file holds the
+    provenance and the status, and the counts stay in the local copy."""
     disclosure = {
-        "base": None,
-        "coarsening_rule": "fixture",
-        "protection_rule": "fixture",
-        "attempts": [
-            {"base": base, "audited": 1, "failed": 1}
-            for base in (10, 50, 100, 500)
-        ],
+        "base": 10,
+        "coarsening_rule": script.COARSENING_RULE,
+        "protection_rule": script.PROTECTION_RULE,
+        "status": "withheld",
     }
-    monkeypatch.setattr(
-        script,
-        "release_counts",
-        lambda counts, registry: ({}, disclosure, {"audits": []}),
-    )
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"
     assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
-    assert json.loads(out.read_text()) == {"disclosure": disclosure}
-    assert json.loads(local.read_text())["counts"] == script.structural_counts(
+    record = json.loads(out.read_text())
+    assert "counts" not in record and "disclosure_audit" not in record
+    assert record["disclosure"] == disclosure
+    assert record["schema"] == script.SCHEMA
+    assert record["repository_head"] == "b" * 40
+    assert set(record) == {
+        "schema",
+        "repository_head",
+        "worktree_clean",
+        "script_sha256",
+        "b0_1_counts_sha256",
+        "psid_files_opened_sha256",
+        "requested_label_allowlist",
+        "geometry",
+        "disclosure",
+    }
+    local_record = json.loads(local.read_text())
+    assert local_record["counts"] == script.structural_counts(
         *invented_main[0][:-1]
+    )
+    audit = local_record["disclosure_audit"]["audit"]
+    assert audit["status"] == "withheld"
+    assert any(
+        target["result"] == "narrow" and 1 <= target["true_size"] <= 9
+        for target in audit["targets"]
     )
 
 
@@ -1947,7 +2634,9 @@ def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
             "ER30001": 1,
             "ER30002": person,
             "ER34106": 1950,
-            "ER31996": 5,
+            # A stratum per person: six persons in one design cluster
+            # would pin that cluster's count, and the audit would withhold.
+            "ER31996": person,
             "ER31997": 7,
             "FORBIDDEN_INDIVIDUAL": 999,
         }
@@ -2012,5 +2701,5 @@ def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
     old = ("rosters", "R_FULL", "by_age_band", "80_plus", "persons")
     assert registry.sets[unknown][1] == {1001, 1002}
     assert registry.sets[unknown][1].isdisjoint(registry.sets[old][1])
-    published, _, private = script.release_counts(counts, registry)
-    assert published and private["audits"][-1]["failed"] == 0
+    published, disclosure, _ = script.release_counts(counts, registry)
+    assert disclosure["status"] == "released" and published

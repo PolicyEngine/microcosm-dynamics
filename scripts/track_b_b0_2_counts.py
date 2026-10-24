@@ -12,8 +12,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import subprocess
+import time
 import warnings
 from collections import Counter
 from collections.abc import Mapping
@@ -26,7 +28,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from scipy.optimize import Bounds, LinearConstraint, milp
-from scipy.sparse import csc_matrix
+from scipy.sparse import csr_matrix, hstack, vstack
 
 from populace_dynamics.cohorts import age67, psid2010
 from populace_dynamics.data import family, panels, psid
@@ -49,12 +51,29 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6"
+    "28c08c516ae08aa8bacfd7b303d76482c95e963eb9ecc3a36a0188bff899ad4d"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
-DISCLOSURE_BASES = (10, 50, 100, 500)
+DISCLOSURE_BASE = 10
 PROTECTION_WIDTH = 4
+PROGRAM_SECONDS = 60.0
+POOL_SEED = 20261024
+POOL_DIRECTIONS = 8
+POOL_LIMIT = 1024
+RELATIONS = ("at_most", "nonempty")
+COARSENING_RULE = (
+    "0 stays 0; 1 to B-1 is <B; otherwise the nearest multiple of B, "
+    "halves up; effective sizes alike, from their own values"
+)
+PROTECTION_RULE = (
+    "every atom and published-set difference of true size 1-9 has an "
+    "integer range of width >= 4, shown by two exactly verified integer "
+    "points, under the published values, the guaranteed cross-type "
+    "relations and every target the release discloses to lie outside 1-9; "
+    "every program is set from the publication alone, and a target not "
+    "shown wide within 60 seconds per program is narrow"
+)
 CellPath = tuple[str, ...]
 WAVES = tuple(range(1999, 2024, 2))
 LAGS = (2, 4)
@@ -371,11 +390,13 @@ def _leaves(record: dict, prefix: CellPath = ()):
 
 
 class SetRegistry:
-    """Every count's private unit set and effective-size count bound."""
+    """Every count's private unit set, its effective-size count bound and
+    the relations between counts of different unit types."""
 
     def __init__(self):
         self.sets: dict[CellPath, tuple[str, frozenset]] = {}
         self.effective_bounds: dict[CellPath, CellPath] = {}
+        self.relations: list[tuple[str, CellPath, CellPath]] = []
 
     def add(self, path: CellPath, unit_type: str, units) -> None:
         if path in self.sets or path in self.effective_bounds:
@@ -388,6 +409,17 @@ class SetRegistry:
         if count_path not in self.sets:
             raise ValueError("effective-size bound needs a registered count")
         self.effective_bounds[path] = count_path
+
+    def relate(self, kind: str, left: CellPath, right: CellPath) -> None:
+        """Record that ``count(left) <= count(right)`` ("at_most"), or that
+        ``count(left) >= 1`` implies ``count(right) >= 1`` ("nonempty").
+        Only relations the rows guarantee are recorded (``frame_relations``),
+        and the audit uses every one of them."""
+        if kind not in RELATIONS:
+            raise ValueError(f"unknown relation: {kind}")
+        if left not in self.sets or right not in self.sets:
+            raise ValueError("a relation needs two registered counts")
+        self.relations.append((kind, left, right))
 
 
 def coarsen(value: int | float, base: int) -> int | str:
@@ -414,162 +446,516 @@ def count_interval(value: int | str, base: int) -> tuple[int, int]:
     return max(int(value - base // 2), base), int(value + base // 2 - 1)
 
 
-def build_atom_models(registry: SetRegistry) -> dict[str, dict]:
-    """Group identical sets, then identical unit memberships, using sparse A.
-
-    Atoms partition the union of registered sets for each unit type. No
-    unit identifiers or memberships are serialized. scipy's milp API has
-    no initial-solution argument; the true sizes are retained and checked
-    as a feasible witness before solving instead.
-    """
-    grouped = {}
-    for path, (unit_type, units) in registry.sets.items():
-        grouped.setdefault(unit_type, {}).setdefault(units, []).append(path)
-    models = {}
-    for unit_type, groups in grouped.items():
-        sets = list(groups)
-        paths = [groups[units][0] for units in sets]
-        path_rows = {
-            path: i for i, units in enumerate(sets) for path in groups[units]
-        }
-        memberships = {}
-        for i, units in enumerate(sets):
-            for unit in units:
-                memberships.setdefault(unit, []).append(i)
-        sizes = Counter(tuple(signature) for signature in memberships.values())
-        signatures = sorted(sizes)
-        row_indices = []
-        col_indices = []
-        for column, signature in enumerate(signatures):
-            row_indices.extend(signature)
-            col_indices.extend([column] * len(signature))
-        matrix = csc_matrix(
-            (np.ones(len(row_indices)), (row_indices, col_indices)),
-            shape=(len(sets), len(signatures)),
-        )
-        targets = {}
-        true_sizes = np.array([sizes[s] for s in signatures], dtype=int)
-        for i, size in enumerate(true_sizes):
-            if 1 <= size < DISCLOSURE_THRESHOLD:
-                targets[(i,)] = {"kind": "atom"}
-        # Identical objectives denote the same sensitive unit set and are
-        # audited once, including differences that are themselves atoms.
-        for i, superset in enumerate(sets):
-            for j, subset in enumerate(sets):
-                if not 1 <= len(superset) - len(subset) < DISCLOSURE_THRESHOLD:
-                    continue
-                if subset.issubset(superset):
-                    objective = tuple(
-                        k
-                        for k, signature in enumerate(signatures)
-                        if i in signature and j not in signature
-                    )
-                    targets.setdefault(
-                        objective,
-                        {
-                            "kind": "difference",
-                            "superset": list(paths[i]),
-                            "subset": list(paths[j]),
-                        },
-                    )
-        models[unit_type] = {
-            "paths": paths,
-            "path_rows": path_rows,
-            "signatures": signatures,
-            "sizes": true_sizes,
-            "matrix": matrix,
-            "targets": targets,
-        }
-    return models
+def effective_count_bound(value: int | str, base: int) -> int:
+    """The least count of units consistent with a published effective
+    size: an effective size never exceeds the count it is computed over,
+    and a positive one needs at least one unit."""
+    if value == 0:
+        return 0
+    if value == f"<{base}":
+        return 1
+    return max(base, math.ceil(value - base / 2))
 
 
-def _audit_models(
-    counts: dict, registry: SetRegistry, models: dict, base: int
-) -> dict:
-    quantities = []
-    for unit_type, model in models.items():
-        matrix = model["matrix"]
-        lower, upper = np.array(
-            [
-                count_interval(coarsen(_cell(counts, path), base), base)
-                for path in model["paths"]
-            ],
-            dtype=float,
-        ).T
-        for path, count_path in registry.effective_bounds.items():
-            if registry.sets[count_path][0] != unit_type:
+def build_model(registry: SetRegistry) -> dict:
+    """Rows, atoms and targets for the audit.
+
+    A row is one distinct set; paths with identical sets of one unit type
+    share it. An atom is the class of units of one type that belong to
+    exactly the same rows, so every count is a sum of atom sizes. The
+    targets are every atom, and every difference between a row and a
+    proper subset of it of the same type, each audited once whatever its
+    true size. No unit identifier or membership leaves memory."""
+    grouped: dict[tuple[str, frozenset], list[CellPath]] = {}
+    for path, key in registry.sets.items():
+        grouped.setdefault(key, []).append(path)
+    keys = list(grouped)
+    path_rows = {
+        path: row for row, key in enumerate(keys) for path in grouped[key]
+    }
+    memberships: dict[tuple[str, Any], list[int]] = {}
+    for row, (unit_type, units) in enumerate(keys):
+        for unit in units:
+            memberships.setdefault((unit_type, unit), []).append(row)
+    sizes = Counter(
+        (unit_type, tuple(rows))
+        for (unit_type, _), rows in memberships.items()
+    )
+    atoms = sorted(sizes)
+    row_indices: list[int] = []
+    col_indices: list[int] = []
+    for column, (_, signature) in enumerate(atoms):
+        row_indices.extend(signature)
+        col_indices.extend([column] * len(signature))
+    matrix = csr_matrix(
+        (
+            np.ones(len(row_indices), dtype=np.int64),
+            (row_indices, col_indices),
+        ),
+        shape=(len(keys), len(atoms)),
+    )
+    true_sizes = np.array([sizes[atom] for atom in atoms], dtype=np.int64)
+    unit_types = [unit_type for unit_type, _ in atoms]
+    row_atoms = [
+        matrix.indices[matrix.indptr[row] : matrix.indptr[row + 1]]
+        for row in range(len(keys))
+    ]
+    targets: dict[tuple[int, ...], dict] = {}
+    for column in range(len(atoms)):
+        targets[(column,)] = {"kind": "atom", "unit_type": unit_types[column]}
+    shared = (matrix @ matrix.T).toarray()
+    for subset in range(len(keys)):
+        if shared[subset, subset] == 0:
+            continue
+        inner = set(row_atoms[subset].tolist())
+        for superset in np.flatnonzero(
+            shared[subset] == shared[subset, subset]
+        ):
+            if superset == subset or keys[superset][0] != keys[subset][0]:
                 continue
-            effective = coarsen(_cell(counts, path), base)
-            # An effective size never exceeds its count, so the count is
-            # at least the smallest effective size that coarsens to the
-            # published value: 1 under "<B", B for B itself.
-            if effective == f"<{base}":
-                bound = 1
-            elif effective == 0:
-                bound = 0
+            # A distinct row holding every atom of ``subset`` is a proper
+            # superset, so the difference is nonempty.
+            columns = tuple(
+                int(c) for c in row_atoms[superset] if int(c) not in inner
+            )
+            targets.setdefault(
+                columns,
+                {
+                    "kind": "difference",
+                    "unit_type": keys[subset][0],
+                    "superset": list(grouped[keys[superset]][0]),
+                    "subset": list(grouped[keys[subset]][0]),
+                },
+            )
+    target_list = [
+        {
+            "columns": columns,
+            **detail,
+            "true_size": int(true_sizes[list(columns)].sum()),
+        }
+        for columns, detail in targets.items()
+    ]
+    return {
+        "paths": [grouped[key][0] for key in keys],
+        "path_rows": path_rows,
+        "matrix": matrix,
+        "sizes": true_sizes,
+        "unit_types": unit_types,
+        "targets": target_list,
+    }
+
+
+def published_bounds(
+    counts: dict, registry: SetRegistry, model: dict, base: int
+) -> tuple[np.ndarray, np.ndarray]:
+    """Each row's count interval from its published value, raised by any
+    published effective size computed over it."""
+    rows = model["matrix"].shape[0]
+    lower = np.zeros(rows, dtype=np.int64)
+    upper = np.full(rows, np.iinfo(np.int64).max, dtype=np.int64)
+    for path, row in model["path_rows"].items():
+        low, high = count_interval(coarsen(_cell(counts, path), base), base)
+        lower[row] = max(lower[row], low)
+        upper[row] = min(upper[row], high)
+    for path, count_path in registry.effective_bounds.items():
+        row = model["path_rows"][count_path]
+        bound = effective_count_bound(coarsen(_cell(counts, path), base), base)
+        lower[row] = max(lower[row], bound)
+    return lower, upper
+
+
+def model_relations(
+    registry: SetRegistry, model: dict
+) -> list[tuple[str, int, int]]:
+    """The registry's relations as rows. They are guaranteed by the rows
+    that built them, so a true set violating one is a defect, not data."""
+    relations = set()
+    for kind, left, right in registry.relations:
+        a = len(registry.sets[left][1])
+        b = len(registry.sets[right][1])
+        if not ((a <= b) if kind == "at_most" else (a == 0 or b >= 1)):
+            raise ValueError(f"a guaranteed relation fails: {kind} {left}")
+        relations.add(
+            (kind, model["path_rows"][left], model["path_rows"][right])
+        )
+    return sorted(relations)
+
+
+class AuditSystem:
+    """The published constraints, the cross-type relations and the targets
+    disclosed to lie outside 1 to 9, over integer atom sizes.
+
+    The reader is assumed to know which atoms are possible but not their
+    sizes, so any atom may be empty.
+
+    Variables are the atom sizes, then one binary per disclosed target:
+    0 forces that target's size to 0, 1 forces it to at least the
+    threshold. Every solver answer used as a witness is rounded and checked
+    here in exact integer arithmetic, so a protection claim never rests on
+    solver tolerances."""
+
+    def __init__(self, model, lower, upper, relations, disclosed):
+        matrix = model["matrix"]
+        self.matrix = matrix
+        self.atoms = matrix.shape[1]
+        self.lower = lower
+        self.upper = upper
+        self.relations = relations
+        self.disclosed = [tuple(target["columns"]) for target in disclosed]
+        csc = matrix.tocsc()
+        self.cap = np.array(
+            [
+                int(
+                    upper[csc.indices[csc.indptr[c] : csc.indptr[c + 1]]].min()
+                )
+                for c in range(self.atoms)
+            ],
+            dtype=np.int64,
+        )
+        binaries = len(self.disclosed)
+        blocks = [hstack([matrix, csr_matrix((matrix.shape[0], binaries))])]
+        low = [lower.astype(float)]
+        high = [upper.astype(float)]
+        for kind, a, b in relations:
+            if kind == "at_most":
+                row = matrix[a] - matrix[b]
             else:
-                bound = max(base, effective - base / 2)
-            row = model["path_rows"][count_path]
-            lower[row] = max(lower[row], bound)
-        actual = matrix @ model["sizes"]
-        if np.any(actual < lower) or np.any(actual > upper):
+                # count(a) <= upper(a) * count(b): count(b) = 0 forces
+                # count(a) = 0.
+                row = matrix[a] - int(upper[a]) * matrix[b]
+            blocks.append(hstack([row, csr_matrix((1, binaries))]))
+            low.append(np.array([-np.inf]))
+            high.append(np.array([0.0]))
+        for index, columns in enumerate(self.disclosed):
+            indicator = np.zeros(self.atoms)
+            indicator[list(columns)] = 1
+            bound = float(self.cap[list(columns)].sum())
+            for coefficient, lo, hi in (
+                (-bound, -np.inf, 0.0),
+                (-float(DISCLOSURE_THRESHOLD), 0.0, np.inf),
+            ):
+                binary = np.zeros(binaries)
+                binary[index] = coefficient
+                blocks.append(csr_matrix(np.concatenate([indicator, binary])))
+                low.append(np.array([lo]))
+                high.append(np.array([hi]))
+        self.constraint = LinearConstraint(
+            vstack(blocks).tocsr(), np.concatenate(low), np.concatenate(high)
+        )
+        self.variables = self.atoms + binaries
+        self.bounds = Bounds(
+            0, np.concatenate([self.cap, np.ones(binaries)]).astype(float)
+        )
+
+    def feasible(self, sizes: np.ndarray) -> bool:
+        """Whether integer atom sizes satisfy every constraint exactly."""
+        if sizes.shape != (self.atoms,) or np.any(sizes < 0):
+            return False
+        totals = self.matrix @ sizes
+        if np.any(totals < self.lower) or np.any(totals > self.upper):
+            return False
+        for kind, a, b in self.relations:
+            if kind == "at_most" and totals[a] > totals[b]:
+                return False
+            if kind == "nonempty" and totals[a] >= 1 and totals[b] < 1:
+                return False
+        for columns in self.disclosed:
+            size = int(sizes[list(columns)].sum())
+            if 1 <= size < DISCLOSURE_THRESHOLD:
+                return False
+        return True
+
+    def _program(self, objective, extra, seconds, integral=True, gap=0.0):
+        with warnings.catch_warnings():
+            # HiGHS receives threads verbatim. Both its internal threads
+            # and the required BLAS environment stay at one.
+            warnings.filterwarnings(
+                "ignore",
+                message="Unrecognized options detected.*",
+                category=RuntimeWarning,
+            )
+            return milp(
+                objective,
+                integrality=np.full(self.variables, int(integral)),
+                bounds=self.bounds,
+                constraints=[self.constraint, *extra],
+                options={
+                    "time_limit": seconds,
+                    "mip_rel_gap": gap,
+                    "threads": 1,
+                },
+            )
+
+    def _witness(self, result, columns=None, low=None, high=None):
+        if result.x is None:
+            return None
+        values = np.asarray(result.x[: self.atoms], dtype=float)
+        sizes = np.rint(values)
+        if np.any(np.abs(values - sizes) > 1e-6):
+            return None
+        sizes = sizes.astype(np.int64)
+        if not self.feasible(sizes):
+            return None
+        if columns is not None:
+            size = int(sizes[list(columns)].sum())
+            if (low is not None and size < low) or (
+                high is not None and size > high
+            ):
+                return None
+        return sizes
+
+    def _window(self, columns, low, high):
+        row = np.zeros(self.variables)
+        row[list(columns)] = 1
+        return LinearConstraint(
+            row,
+            -np.inf if low is None else low,
+            np.inf if high is None else high,
+        )
+
+    def search(self, columns, low=None, high=None, *, seconds):
+        """A verified integer point whose target size is in [low, high],
+        and the solver's status: 2 proves that no such point exists."""
+        result = self._program(
+            np.zeros(self.variables),
+            [self._window(columns, low, high)],
+            seconds,
+        )
+        return int(result.status), self._witness(result, columns, low, high)
+
+    def extreme(self, columns, sense, low, high, *, seconds):
+        """The proven optimum of the target size (sense 1 maximizes, -1
+        minimizes) within [low, high], with its verified witness, or None
+        when the solver proves no optimum."""
+        objective = np.zeros(self.variables)
+        objective[list(columns)] = -sense
+        result = self._program(
+            objective, [self._window(columns, low, high)], seconds
+        )
+        witness = self._witness(result, columns, low, high)
+        if int(result.status) != 0 or witness is None:
+            return None
+        return int(witness[list(columns)].sum()), witness
+
+    def relaxed_minimum(self, columns, *, seconds) -> float | None:
+        """The continuous relaxation's minimum of the target size, a lower
+        bound on every integer value, or None."""
+        objective = np.zeros(self.variables)
+        objective[list(columns)] = 1
+        result = self._program(objective, [], seconds, integral=False)
+        return float(result.fun) if int(result.status) == 0 else None
+
+    def direction(self, weights, *, seconds):
+        """A verified point pushed along a fixed linear direction. It only
+        seeds the witness pool, so the first integer point HiGHS accepts
+        will do; no optimum is needed."""
+        objective = np.concatenate(
+            [weights, np.zeros(self.variables - self.atoms)]
+        )
+        return self._witness(self._program(objective, [], seconds, gap=1.0))
+
+
+class WitnessPool:
+    """Verified feasible points, kept as rows so that a target's values over
+    all of them are one vectorized sum. Every point comes from a program
+    that uses no true size, so the pool is the same for every table with
+    the same publication; at most ``POOL_LIMIT`` points are kept."""
+
+    def __init__(self, atoms: int):
+        self.points = np.empty((16, atoms), dtype=np.int64)
+        self.size = 0
+
+    def add(self, point: np.ndarray) -> None:
+        if self.size >= POOL_LIMIT:
+            return
+        if self.size == len(self.points):
+            grown = np.empty((2 * self.size, self.points.shape[1]), np.int64)
+            grown[: self.size] = self.points[: self.size]
+            self.points = grown
+        self.points[self.size] = point
+        self.size += 1
+
+    def keep(self, system: AuditSystem) -> None:
+        """Drop points that a newly disclosed target makes infeasible."""
+        kept = [
+            row
+            for row in range(self.size)
+            if system.feasible(self.points[row])
+        ]
+        self.points[: len(kept)] = self.points[kept]
+        self.size = len(kept)
+
+    def values(self, columns: list[int]) -> tuple[int, int]:
+        """The least and greatest target size over the pool."""
+        values = self.points[: self.size, columns].sum(axis=1)
+        return int(values.min()), int(values.max())
+
+
+def classify(system: AuditSystem, target: dict, pool: WitnessPool, *, seconds):
+    """Whether one target's integer range under ``system`` is at least the
+    protection width ("wide"), cannot reach 1 to 9 ("irrelevant"), or is
+    neither proven ("narrow"). A wide verdict always rests on two verified
+    integer points; anything unproven is narrow.
+
+    Every program here is set from the pool and the system alone, never
+    from the target's true size, so a reader holding the publication can
+    rerun it. The pool must hold at least one point."""
+    columns = list(target["columns"])
+    low, high = pool.values(columns)
+    record = {"programs": []}
+    if high - low >= PROTECTION_WIDTH:
+        return {**record, "result": "wide", "proof": "pool"}, None
+    if low >= DISCLOSURE_THRESHOLD:
+        relaxed = system.relaxed_minimum(columns, seconds=seconds)
+        record["programs"].append("relaxation")
+        # Every integer value is at least the relaxation's minimum; the
+        # half-unit margin absorbs solver tolerance.
+        if relaxed is not None and relaxed > DISCLOSURE_THRESHOLD - 0.5:
+            return {**record, "result": "irrelevant"}, None
+    proven_absent = True
+    for window_low, window_high in (
+        (low + PROTECTION_WIDTH, None),
+        (None, high - PROTECTION_WIDTH),
+    ):
+        if window_high is not None and window_high < 0:
+            continue
+        status, witness = system.search(
+            columns, window_low, window_high, seconds=seconds
+        )
+        record["programs"].append(status)
+        if witness is not None:
+            return {**record, "result": "wide", "proof": "search"}, witness
+        proven_absent = proven_absent and status == 2
+    if not proven_absent:
+        return {**record, "result": "narrow", "proof": "undetermined"}, None
+    # No size lies outside this window, which holds every pool value.
+    window = (max(0, high - PROTECTION_WIDTH + 1), low + PROTECTION_WIDTH - 1)
+    extremes = [
+        system.extreme(columns, sense, *window, seconds=seconds)
+        for sense in (1, -1)
+    ]
+    record["programs"].extend(["maximum", "minimum"])
+    if any(extreme is None for extreme in extremes):
+        return {**record, "result": "narrow", "proof": "undetermined"}, None
+    (maximum, upper_point), (minimum, lower_point) = extremes
+    record["range"] = [minimum, maximum]
+    if maximum - minimum >= PROTECTION_WIDTH:
+        return {**record, "result": "wide", "proof": "optima"}, upper_point
+    if minimum >= DISCLOSURE_THRESHOLD or maximum == 0:
+        return {**record, "result": "irrelevant", "proof": "optima"}, None
+    return {**record, "result": "narrow", "proof": "optima"}, None
+
+
+def audit_counts(
+    counts: dict,
+    registry: SetRegistry,
+    base: int = DISCLOSURE_BASE,
+    *,
+    seconds: float = PROGRAM_SECONDS,
+) -> dict:
+    """Decide whether the counts may be released at ``base``.
+
+    Every program, its window and the order of targets depend only on the
+    publication, the registry's structure and the targets disclosed so
+    far. True sizes enter only the test that withholds: a target of true
+    size 1 to 9 found narrow. So each round's narrow targets are the same
+    for every table with this publication, and a release tells a reader
+    exactly that every narrow target lies outside 1 to 9. Each narrow
+    target is therefore added to the constraints as disclosed, and every
+    target not yet disclosed is classified again, until a round adds none.
+    Every target of true size 1 to 9 is then wide under everything a
+    release discloses."""
+    started = time.monotonic()
+    _validate_registry(counts, registry)
+    model = build_model(registry)
+    lower, upper = published_bounds(counts, registry, model, base)
+    relations = model_relations(registry, model)
+    targets = model["targets"]
+    truth = model["sizes"]
+    disclosed: list[int] = []
+    settled: dict[int, dict] = {}
+    rounds = []
+    status = "released"
+    pool = WitnessPool(len(truth))
+    if targets:
+        system = AuditSystem(model, lower, upper, relations, [])
+        if not system.feasible(truth):
             raise ValueError(
                 "true atom sizes violate the published constraints"
             )
-        constraints = LinearConstraint(matrix, lower, upper)
-        for atoms, detail in model["targets"].items():
-            objective = np.zeros(matrix.shape[1])
-            objective[list(atoms)] = 1
-            extrema = []
-            statuses = []
-            for sign in (1, -1):
-                # HiGHS receives threads verbatim. Both its internal
-                # threads and the required BLAS environment stay at one.
-                with warnings.catch_warnings():
-                    warnings.filterwarnings(
-                        "ignore",
-                        message="Unrecognized options detected.*",
-                        category=RuntimeWarning,
-                    )
-                    result = milp(
-                        sign * objective,
-                        integrality=np.ones(matrix.shape[1]),
-                        bounds=Bounds(0, np.inf),
-                        constraints=constraints,
-                        options={
-                            "time_limit": 60.0,
-                            "mip_rel_gap": 0.0,
-                            "threads": 1,
-                        },
-                    )
-                optimal = result.status == 0 and result.success
-                statuses.append(int(result.status))
-                extrema.append(float(sign * result.fun) if optimal else None)
-            minimum, maximum = extrema
-            protected = (
-                minimum is not None
-                and maximum is not None
-                and maximum - minimum >= PROTECTION_WIDTH
+        generator = np.random.default_rng(POOL_SEED)
+        seeds = [np.zeros(system.atoms)] + [
+            generator.choice([-1.0, 1.0], size=system.atoms)
+            for _ in range(POOL_DIRECTIONS)
+        ]
+        for weights in seeds:
+            point = system.direction(weights, seconds=seconds)
+            if point is not None:
+                pool.add(point)
+        if pool.size == 0:
+            # No program found a point, so nothing can be shown wide.
+            status = "withheld"
+    # With no atom there is nothing to protect and no program to run.
+    while status == "released" and targets:
+        system = AuditSystem(
+            model, lower, upper, relations, [targets[i] for i in disclosed]
+        )
+        pool.keep(system)
+        added = []
+        for index in range(len(targets)):
+            if index in disclosed:
+                continue
+            if settled.get(index, {}).get("result") == "irrelevant":
+                # Constraints only tighten, so it stays out of 1 to 9.
+                continue
+            outcome, witness = classify(
+                system, targets[index], pool, seconds=seconds
             )
-            quantities.append(
-                {
-                    "unit_type": unit_type,
-                    "atoms": list(atoms),
-                    **detail,
-                    "true_size": int(model["sizes"][list(atoms)].sum()),
-                    "minimum": minimum,
-                    "maximum": maximum,
-                    "solver_status": statuses,
-                    "protected": protected,
-                }
-            )
+            settled[index] = {**outcome, "round": len(rounds) + 1}
+            if witness is not None:
+                pool.add(witness)
+            if outcome["result"] != "narrow":
+                continue
+            if 1 <= targets[index]["true_size"] < DISCLOSURE_THRESHOLD:
+                status = "withheld"
+                break
+            added.append(index)
+        rounds.append({"round": len(rounds) + 1, "disclosed": added})
+        if not added:
+            break
+        disclosed.extend(added)
     return {
         "base": base,
-        "quantities": quantities,
-        "audited": len(quantities),
-        "failed": sum(not quantity["protected"] for quantity in quantities),
+        "status": status,
+        "rounds": rounds,
+        "disclosed": disclosed,
+        "targets": [
+            {
+                "unit_type": target["unit_type"],
+                "kind": target["kind"],
+                "columns": list(target["columns"]),
+                **{
+                    key: target[key]
+                    for key in ("superset", "subset")
+                    if key in target
+                },
+                "true_size": target["true_size"],
+                **settled.get(index, {"result": "unclassified"}),
+            }
+            for index, target in enumerate(targets)
+        ],
+        "relations": len(relations),
+        "pool": pool.size,
+        "seconds": round(time.monotonic() - started, 3),
         "atom_sizes": {
-            kind: model["sizes"].tolist() for kind, model in models.items()
+            unit_type: [
+                int(size)
+                for size, kind in zip(
+                    model["sizes"], model["unit_types"], strict=True
+                )
+                if kind == unit_type
+            ]
+            for unit_type in dict.fromkeys(model["unit_types"])
         },
     }
 
@@ -588,40 +974,51 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
             )
 
 
-def audit_counts(counts: dict, registry: SetRegistry, base: int) -> dict:
-    """Run both integer optimizations for every sensitive quantity at B."""
-    _validate_registry(counts, registry)
-    return _audit_models(counts, registry, build_atom_models(registry), base)
-
-
 def release_counts(
-    counts: dict, registry: SetRegistry
+    counts: dict, registry: SetRegistry, base: int = DISCLOSURE_BASE
 ) -> tuple[dict, dict, dict]:
-    """Use the first passing base; public metadata never names a quantity."""
-    _validate_registry(counts, registry)
-    models = build_atom_models(registry)
-    audits = []
+    """Coarsen and audit once at the fixed base. The public block holds the
+    base, the rules and the status, and nothing the audit computed."""
+    audit = audit_counts(counts, registry, base)
     published = {}
-    selected = None
-    for base in DISCLOSURE_BASES:
-        audit = _audit_models(counts, registry, models, base)
-        audits.append(audit)
-        if audit["failed"] == 0:
-            selected = base
-            published = deepcopy(counts)
-            for path, value in _leaves(counts):
-                _put(published, path, coarsen(value, base))
-            break
+    if audit["status"] == "released":
+        published = deepcopy(counts)
+        for path, value in _leaves(counts):
+            _put(published, path, coarsen(value, base))
     disclosure = {
-        "base": selected,
-        "coarsening_rule": "0 stays 0; 1 to B-1 is <B; otherwise nearest multiple of B, halves up; applies also to effective sizes",
-        "protection_rule": "integer maximum minus minimum >= 4; both proven optimal within 60 seconds per program",
-        "attempts": [
-            {key: audit[key] for key in ("base", "audited", "failed")}
-            for audit in audits
-        ],
+        "base": base,
+        "coarsening_rule": COARSENING_RULE,
+        "protection_rule": PROTECTION_RULE,
+        "status": audit["status"],
     }
-    return published, disclosure, {"audits": audits}
+    return published, disclosure, {"audit": audit}
+
+
+def frame_relations(frame: pd.DataFrame) -> dict[tuple[str, str, str], bool]:
+    """Which cross-type relations the frame's rows guarantee, whatever the
+    counts. A relation is registered only where its rows guarantee it, so
+    the audit's relations are structure, fixed before any size is used.
+
+    A household, or a design cluster, comes from at least one row, so when
+    every such row carries a person and no person has two rows, distinct
+    households (clusters) hold distinct persons. A stratum always comes
+    with a cluster of its own, and any row yields a cluster."""
+    has_person = frame["person_id"].notna()
+    one_row_each = bool(frame.loc[has_person, "person_id"].is_unique)
+    return {
+        ("at_most", "households", "persons"): one_row_each
+        and bool((has_person | frame["interview"].isna()).all()),
+        ("at_most", "design_clusters", "persons"): one_row_each
+        and bool(has_person.all()),
+        ("at_most", "design_strata", "design_clusters"): True,
+        ("nonempty", "persons", "households"): bool(
+            frame.loc[has_person, "interview"].notna().all()
+        ),
+        ("nonempty", "persons", "design_clusters"): True,
+        ("nonempty", "persons", "design_strata"): bool(
+            frame.loc[has_person, "stratum"].notna().all()
+        ),
+    }
 
 
 def disclosure_registry(
@@ -653,6 +1050,9 @@ def disclosure_registry(
         }
         for metric, (unit_type, members) in units.items():
             registry.add((*prefix, metric), unit_type, members)
+        for (kind, left, right), guaranteed in frame_relations(frame).items():
+            if guaranteed:
+                registry.relate(kind, (*prefix, left), (*prefix, right))
         for effective, count in (
             ("kish_n_eff", "persons"),
             ("household_cluster_worst_n_eff", "households"),
@@ -903,6 +1303,35 @@ def _check_runtime() -> None:
     _check_protocol()
 
 
+def write_new(path: Path, data: bytes) -> None:
+    """Write ``data`` to a new file at ``path`` in one step.
+
+    The bytes go to a temporary file in the same directory, which is
+    flushed to disk and then hard-linked to ``path``; the link fails if
+    ``path`` exists. Any failure removes the temporary file and leaves
+    nothing at ``path``, so no partial file ever has a final name."""
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.partial")
+    descriptor = os.open(
+        temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644
+    )
+    try:
+        try:
+            view = memoryview(data)
+            while view:
+                view = view[os.write(descriptor, view) :]
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -975,32 +1404,22 @@ def main(argv: list[str] | None = None) -> int:
     registry = disclosure_registry(person_wave, validity, anchor, design)
     coarsened, disclosure, local_audit = release_counts(counts, registry)
     payload["disclosure_audit"] = local_audit
-    public_payload = {"disclosure": disclosure}
+    provenance = {
+        key: value
+        for key, value in payload.items()
+        if key not in ("counts", "disclosure_audit")
+    }
+    public_payload = {**provenance, "disclosure": disclosure}
     if coarsened:
-        public_payload = {
-            **{
-                key: value
-                for key, value in payload.items()
-                if key != "disclosure_audit"
-            },
-            "counts": coarsened,
-            "disclosure": disclosure,
-        }
-    # Reserve both paths exclusively before writing either payload. If the
-    # second reservation fails, remove only the first file we just created.
-    with out.open("x", encoding="utf-8") as stream:
-        try:
-            local_stream = local.open("x", encoding="utf-8")
-        except OSError:
-            out.unlink()
-            raise
-        with local_stream:
-            local_stream.write(
-                json.dumps(payload, indent=2, sort_keys=True) + "\n"
-            )
-            stream.write(
-                json.dumps(public_payload, indent=2, sort_keys=True) + "\n"
-            )
+        public_payload["counts"] = coarsened
+    local_bytes = (
+        json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    ).encode()
+    public_bytes = (
+        json.dumps(public_payload, indent=2, sort_keys=True) + "\n"
+    ).encode()
+    write_new(local, local_bytes)
+    write_new(out, public_bytes)
     print(out)
     return 0
 
