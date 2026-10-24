@@ -17,8 +17,10 @@ estimate.*
   21 October 2026 (decision d1802) and approved this design, with its
   methodology, on 23 October 2026 (decision d1922). The approval starts
   first attempts, and only first attempts, of the group section 3.4 marks
-  buildable now: F0, S0.1, SM1, SM2, ED1, GR1, GR2a, F1, F2a and F4. F0R
-  follows F0 and Max's second Registration 18 comment. S0.2 follows F0R
+  buildable now: F0, S0.1, SM1, SM2, ED1, GR1, GR2a, F1, F2a and F4's
+  build. F4's replication check waits on S0.2. F0 also needs a fresh
+  blind builder lane and the coordinator's tier-count slot. F0R follows F0
+  and Max's second Registration 18 comment. S0.2 follows F0R
   and the ruling that lifts the A-COLA restrictions, on a validation-only
   lane. Every other milestone waits on what section 3.4 names. The design
   itself authorizes no registration, real-data run, comparator access or
