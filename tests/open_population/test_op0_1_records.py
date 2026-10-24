@@ -52,6 +52,12 @@ MANIFEST_FIELDS = {
     "status",
 }
 MANIFEST_STATUSES = {"available", "not_available", "validation_only"}
+# Natality years whose values the repository's code prints
+# (scripts/fetch_nchs_asfr.py:119, tests/test_nchs_asfr.py:46 and
+# baselines/asfr.py:22,124). They are exposed, so no natality record may
+# hold one out as an unused observation.
+CODE_PRINTED_NATALITY_YEARS = {2023, 2024}
+NATALITY_SOURCES = {"nchs"}
 POWER_FIELDS = {
     "name",
     "operating_characteristic",
@@ -186,3 +192,33 @@ def test_access_distinguishes_documentation_from_data_reachability():
             }
             if source["documentation_reachability"] == "confirmed":
                 assert source["read_date"] == "2026-10-24"
+
+
+def test_oact_death_probabilities_are_validation_only():
+    """Design section 4: OP6 selects nothing against OACT's death q."""
+    entries = [
+        entry
+        for record in load_records()["records"]
+        for entry in record["target_manifest"]
+        if "death probabilities" in entry["table"].casefold()
+    ]
+    assert entries
+    for entry in entries:
+        assert entry["status"] == "validation_only", entry["id"]
+        assert "no_op6_selection" in entry["role"], entry["id"]
+
+
+def test_code_printed_natality_years_are_exposed_not_held_out():
+    records = {record["id"]: record for record in load_records()["records"]}
+    for record in records.values():
+        for year in record["holdout_partition"]["held_out_years"]:
+            if year["source"] in NATALITY_SOURCES:
+                assert year["year"] not in CODE_PRINTED_NATALITY_YEARS, record[
+                    "id"
+                ]
+    excluded = set()
+    birth = records["gate_birth"]["holdout_partition"]
+    for entry in birth["excluded_years"]:
+        first, _, last = str(entry["years"]).partition("–")
+        excluded.update(range(int(first), int(last or first) + 1))
+    assert CODE_PRINTED_NATALITY_YEARS <= excluded

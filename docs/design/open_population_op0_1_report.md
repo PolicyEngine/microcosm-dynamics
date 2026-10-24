@@ -15,7 +15,7 @@ Commits on `openpop-op0-1-audit-20261024`:
 
 No history was rewritten.
 
-Validation: `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py` — **5 passed**; `.venv/bin/black --check -l 79 tests/open_population/test_op0_1_records.py` and `.venv/bin/ruff check tests/open_population/test_op0_1_records.py` — **passed**. Python is 3.14.7. The test was run in one process. No power simulation or real-data calculation ran. `tests/tier_counts.json` and `tests/README-tiers.md` remain untouched; the coordinator owns the expected global tier-count update.
+Validation: `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py` — **5 passed**; `.venv/bin/black --check -l 79 tests/open_population/test_op0_1_records.py` and `.venv/bin/ruff check tests/open_population/test_op0_1_records.py` — **passed**. Python is 3.14.7. The test was run in one process. No power simulation or real-data calculation ran. `tests/tier_counts.json` and `tests/README-tiers.md` remain untouched; the coordinator owns the expected global tier-count update. After the independent review, two tests were added (OACT's death probabilities are `validation_only`; no natality year whose value the code prints is held out): **7 passed**.
 
 ## 2. Settled facts, proposals and open points per record
 
@@ -126,6 +126,7 @@ Repository references are to the assigned base `b51ffb576090` unless a different
 - `scripts/build_gate2_floors.py:78,626-674,693-743,924-931`.
 - `scripts/build_gate2b_floors.py:818-872`.
 - `scripts/build_gate2c_floors.py:1031-1069`.
+- `scripts/describe_baseline.py:114-122` (added after review).
 - `scripts/build_gate_w1_floors.py:649-660,696-704`.
 - `scripts/extract_di_asr_2008.py:21-22,241-272,675,863-865`.
 - `scripts/fetch_nchs_asfr.py:119 (incidental hardcoded constant display; value omitted)`.
@@ -157,6 +158,8 @@ Repository references are to the assigned base `b51ffb576090` unless a different
 - `src/populace_dynamics/engine/marital.py:352-374`.
 - `src/populace_dynamics/models/family_transitions/components/fertility.py:28-45,80-94,123-157,170-194`.
 - `tests/baselines/test_asfr_and_claim_tables.py:41,49,53,59,73`.
+- `tests/baselines/test_baseline_invariants.py:270-275` (added after review).
+- `tests/baselines/test_invented_smoke.py:265-267,310` (added after review).
 - `tests/test_gate2_floors.py:42,454`.
 - `tests/test_nchs_asfr.py:21`.
 

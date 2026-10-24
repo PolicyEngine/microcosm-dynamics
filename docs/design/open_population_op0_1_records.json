@@ -1810,6 +1810,15 @@
       ]
     },
     {
+      "topic": "Derived-shape consumers",
+      "finding": "A description script prints the selected baseline's TFR and age-specific rates; a baseline invariant test checks that TR2026's age-specific rates sum to its V.A1 TFR every year; an invented-roster smoke test drives AsfrFertilityStep with the baseline's age-specific rates. They consume the already-disclosed NCHS 2024 shape and add no candidate-year exposure.",
+      "evidence": [
+        "scripts/describe_baseline.py:114-122",
+        "tests/baselines/test_baseline_invariants.py:270-275",
+        "tests/baselines/test_invented_smoke.py:265-267,310"
+      ]
+    },
+    {
       "topic": "NCHS input metadata",
       "finding": "Key-only parse: headline tables 2023/2024; annual 2016–2024; age-group only, with 10–14 in headline table and 15–49 annual bands. No sex/nativity/raw single-age dimension. Hash578742b151d5656231527175e5e4c29c0554ade8bb56807235d6a75890594f60. No rates copied.",
       "evidence": [

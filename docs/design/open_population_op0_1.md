@@ -857,6 +857,10 @@ Evidence: `src/populace_dynamics/baselines/asfr.py:67-135`; `src/populace_dynami
 
 Evidence: `scripts/build_gate2_floors.py:696,1222`; `src/populace_dynamics/baselines/common2026.py:25,97,113`; `tests/test_nchs_asfr.py:21`; `tests/test_gate2_floors.py:42,454`; `tests/baselines/test_asfr_and_claim_tables.py:41,49,53,59,73`.
 
+**Derived-shape consumers.** Three more consumers use the TR2026 baseline's derived NCHS 2024 shape: a description script prints the selected baseline's TFR and age-specific rates; a baseline invariant test checks that TR2026's age-specific rates sum to its V.A1 TFR every year; and an invented-roster smoke test drives `AsfrFertilityStep` with the baseline's age-specific rates. They consume the already-disclosed 2024 shape and add no candidate-year exposure.
+
+Evidence: `scripts/describe_baseline.py:114-122`; `tests/baselines/test_baseline_invariants.py:270-275`; `tests/baselines/test_invented_smoke.py:265-267,310`.
+
 **NCHS input metadata.** Key-only parse: headline tables 2023/2024; annual 2016–2024; age-group only, with 10–14 in headline table and 15–49 annual bands. No sex/nativity/raw single-age dimension. Hash578742b151d5656231527175e5e4c29c0554ade8bb56807235d6a75890594f60. No rates copied.
 
 Evidence: `data/external/nchs_asfr_2024.json (keys/provenance/hash only)`.
@@ -997,6 +1001,6 @@ These incidents are disclosed without their values. No claim of completely unexp
 
 ## Verification and handoff
 
-The documentation-only unit test validates six complete draft records, pending held-out years, registry commit/hash, target manifests and unrun named power procedures. It imports no model code and reads only `docs/design/`. Run `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py`; Black 79 and Ruff apply to that test. Tier count files remain untouched as instructed; their repository-wide policy count is deliberately deferred to the coordinator.
+The documentation-only unit test validates six complete draft records, pending held-out years, registry commit/hash, target manifests and unrun named power procedures; after review it also checks that OACT's death probabilities are `validation_only` and that no natality year whose value the code prints is held out. It imports no model code and reads only `docs/design/`. Run `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py`; Black 79 and Ruff apply to that test. Tier count files remain untouched as instructed; their repository-wide policy count is deliberately deferred to the coordinator.
 
 See [the report](open_population_op0_1_report.md) for commit IDs, test results and the official-page ledger.
