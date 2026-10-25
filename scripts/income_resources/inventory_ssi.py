@@ -109,108 +109,238 @@ def expression(node: ast.AST | None) -> Any:
         return ast.unparse(node)
 
 
-def module_bindings(tree: ast.Module, name: str) -> list[ast.stmt]:
-    """Top-level statements that bind ``name`` in a module."""
-    bound = []
-    for node in tree.body:
-        if isinstance(
-            node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
-        ):
-            names = [node.name]
-        elif isinstance(node, ast.Assign):
-            names = [
-                item.id
-                for target in node.targets
-                for item in ast.walk(target)
-                if isinstance(item, ast.Name)
-            ]
-        elif isinstance(node, (ast.AnnAssign, ast.AugAssign)):
-            names = [
-                item.id
-                for item in ast.walk(node.target)
-                if isinstance(item, ast.Name)
-            ]
-        elif isinstance(node, (ast.Import, ast.ImportFrom)):
-            names = [
-                alias.asname or alias.name.split(".")[0]
-                for alias in node.names
-            ]
-        else:
-            # Conditional, looped or guarded bindings cannot be read
-            # statically, so any mention of the name counts against it.
-            names = [
-                item.id
-                for item in ast.walk(node)
-                if isinstance(item, ast.Name)
-            ]
-        if name in names:
-            bound.append(node)
-    return bound
+MODEL_API = "policyengine_us.model_api"
+# Forms that bind a name in some scope: definitions, except handlers, match
+# captures and, from Python 3.12, type parameters.
+DEFINITIONS = (
+    ast.ClassDef,
+    ast.FunctionDef,
+    ast.AsyncFunctionDef,
+    ast.ExceptHandler,
+    ast.MatchAs,
+    ast.MatchStar,
+) + tuple(
+    getattr(ast, kind)
+    for kind in ("TypeVar", "ParamSpec", "TypeVarTuple")
+    if hasattr(ast, kind)
+)
+# Builtins and frame attributes that reach a namespace without a static
+# binding. Reflection past these is left to the pinned-engine oracle.
+REFLECTIVE = frozenset(
+    {
+        "compile",
+        "delattr",
+        "eval",
+        "exec",
+        "f_builtins",
+        "f_globals",
+        "f_locals",
+        "getattr",
+        "globals",
+        "locals",
+        "setattr",
+        "vars",
+    }
+)
+# The Enum class method that PE-US formulas call.
+ENUM_API = frozenset({"encode"})
 
 
-def enum_members(tree: ast.Module, name: Any) -> list[str] | None:
-    """Member names of an Enum class defined in the variable's own module.
+def binding_sites(tree: ast.AST, name: str) -> list[ast.AST]:
+    """Every node under ``tree`` that binds or declares ``name``, in any scope.
 
-    Returns None, so that an input whose members cannot be read is refused
-    rather than left open, unless ``possible_values`` names a class that:
-
-    - is the module's only binding of that name, subclasses ``Enum`` alone
-      and has no decorators or class keywords;
-    - holds only a leading docstring, ``pass``, methods and assignments of
-      a string or integer literal, or of an earlier member, to public names;
-    - names each member once, and no member shares a method's name.
-
-    Annotated, tuple, private and ``_sunder_`` targets, nested classes and
-    other values can change membership in ways a static read cannot settle.
+    Counting every scope refuses more than Python would rebind, which is the
+    safe direction. An attribute store counts, since code can rebind a class
+    attribute or another module's global through it.
     """
-    if not isinstance(name, str):
-        return None
-    bindings = module_bindings(tree, name)
-    if len(bindings) != 1:
-        return None
-    node = bindings[0]
-    if (
-        not isinstance(node, ast.ClassDef)
-        or [expression(base) for base in node.bases] != ["Enum"]
-        or node.keywords
-        or node.decorator_list
+    sites = []
+    for item in ast.walk(tree):
+        if isinstance(item, ast.Name):
+            names = [] if isinstance(item.ctx, ast.Load) else [item.id]
+        elif isinstance(item, ast.Attribute):
+            names = [] if isinstance(item.ctx, ast.Load) else [item.attr]
+        elif isinstance(item, DEFINITIONS):
+            names = [item.name]
+        elif isinstance(item, ast.MatchMapping):
+            names = [item.rest]
+        elif isinstance(item, (ast.Global, ast.Nonlocal)):
+            names = item.names
+        elif isinstance(item, ast.alias):
+            names = [item.asname or item.name.split(".")[0]]
+        elif isinstance(item, ast.arg):
+            names = [item.arg]
+        else:
+            names = []
+        if name in names:
+            sites.append(item)
+    return sites
+
+
+def plain_attribute(variable: ast.ClassDef, attr: str) -> ast.expr | None:
+    """The value a variable binds to ``attr`` by its one plain assignment."""
+    sites = binding_sites(variable, attr)
+    for item in variable.body:
+        if (
+            isinstance(item, ast.Assign)
+            and len(item.targets) == 1
+            and sites == item.targets
+        ):
+            return item.value
+    return None
+
+
+def static_module(tree: ast.Module, cls: ast.ClassDef) -> bool:
+    """Whether a module's own code can change ``cls`` only in ways read here.
+
+    The module imports nothing but the model API, and that only before the
+    class; it binds ``Enum`` nowhere; and it names no reflective builtin or
+    frame attribute, nor any name or attribute with a leading underscore.
+    """
+    position = tree.body.index(cls)
+    imports = [
+        item
+        for item in ast.walk(tree)
+        if isinstance(item, (ast.Import, ast.ImportFrom))
+    ]
+    if any(
+        not (
+            isinstance(item, ast.ImportFrom)
+            and item.module == MODEL_API
+            and item.level == 0
+            and [alias.name for alias in item.names] == ["*"]
+            and any(item is top for top in tree.body[:position])
+        )
+        for item in imports
     ):
-        return None
+        return False
+    for item in ast.walk(tree):
+        if isinstance(item, ast.Name):
+            names = [item.id]
+        elif isinstance(item, ast.Attribute):
+            names = [item.attr]
+        else:
+            continue
+        if any(name in REFLECTIVE or name.startswith("_") for name in names):
+            return False
+    return not binding_sites(tree, "Enum")
+
+
+def class_members(cls: ast.ClassDef) -> list[str] | None:
+    """Members of an Enum class body that holds only literal assignments.
+
+    The body holds a leading docstring, ``pass`` and single assignments of
+    distinct string or integer literals to public names, each named once.
+    Methods are refused: a decorator can make one a member, and creation
+    hooks such as ``__init__`` can add or drop members. An equal value would
+    make an alias, which the engine's ``Enum.encode`` does not accept.
+    """
     members = []
-    methods = set()
-    for index, item in enumerate(node.body):
+    values = []
+    for index, item in enumerate(cls.body):
         if (
             index == 0
             and isinstance(item, ast.Expr)
             and isinstance(item.value, ast.Constant)
             and isinstance(item.value.value, str)
-        ):
+        ) or isinstance(item, ast.Pass):
             continue
-        if isinstance(item, ast.Pass):
-            continue
-        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            methods.add(item.name)
-            continue
-        literal = (
+        if not (
             isinstance(item, ast.Assign)
+            and len(item.targets) == 1
+            and isinstance(item.targets[0], ast.Name)
             and isinstance(item.value, ast.Constant)
             and type(item.value.value) in (str, int)
-        )
-        alias = (
-            isinstance(item, ast.Assign)
-            and isinstance(item.value, ast.Name)
-            and item.value.id in members
-        )
-        if not (literal or alias) or not all(
-            isinstance(target, ast.Name) and not target.id.startswith("_")
-            for target in item.targets
         ):
             return None
-        members.extend(target.id for target in item.targets)
+        members.append(item.targets[0].id)
+        values.append(item.value.value)
     # Enum itself refuses a member named ``mro``.
-    if len(set(members)) != len(members) or set(members) & (methods | {"mro"}):
+    if (
+        not members
+        or any(name.startswith("_") or name == "mro" for name in members)
+        or len(set(members)) < len(members)
+        or len(set(values)) < len(values)
+    ):
         return None
-    return members or None
+    return members
+
+
+def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
+    """Member names of the Enum class an enum variable names in its module.
+
+    Returns None, so that an input whose members cannot be read is refused
+    rather than left open, unless:
+
+    - the variable is its name's one binding in the module, subclasses
+      ``Variable`` alone with no decorators or keywords, and binds
+      ``value_type``, ``possible_values`` and ``default_value`` once each,
+      by plain assignment, to ``Enum``, a class name and one of that class's
+      members, with no attribute store to those names in the module;
+    - the class name has one binding anywhere in the module: a top-level
+      class, before the variable, that subclasses ``Enum`` alone, with no
+      decorators, keywords or type parameters;
+    - the module's own code meets ``static_module``, and outside the class
+      reads it only as ``possible_values``, a member or ``encode``;
+    - the class body meets ``class_members``.
+
+    Code in another module that changes the class is beyond a read of this
+    one; the pinned-engine oracle checks the release as the engine loads it.
+    """
+    attrs = ("value_type", "possible_values", "default_value")
+    value_type, possible, default = (
+        plain_attribute(variable, attr) for attr in attrs
+    )
+    if not (
+        binding_sites(tree, variable.name) == [variable]
+        and [expression(base) for base in variable.bases] == ["Variable"]
+        and not variable.keywords
+        and not variable.decorator_list
+        and not any(
+            isinstance(site, ast.Attribute)
+            for attr in attrs
+            for site in binding_sites(tree, attr)
+        )
+        and isinstance(value_type, ast.Name)
+        and value_type.id == "Enum"
+        and isinstance(possible, ast.Name)
+        and isinstance(default, ast.Attribute)
+        and isinstance(default.value, ast.Name)
+        and default.value.id == possible.id
+    ):
+        return None
+    sites = binding_sites(tree, possible.id)
+    cls = sites[0] if len(sites) == 1 else None
+    if not (
+        isinstance(cls, ast.ClassDef)
+        and any(cls is item for item in tree.body)
+        and tree.body.index(cls) < tree.body.index(variable)
+        and [expression(base) for base in cls.bases] == ["Enum"]
+        and not cls.keywords
+        and not cls.decorator_list
+        and not getattr(cls, "type_params", None)
+        and static_module(tree, cls)
+    ):
+        return None
+    members = class_members(cls)
+    if members is None or default.attr not in members:
+        return None
+    reads = {id(possible), id(default.value)} | {
+        id(item.value)
+        for item in ast.walk(tree)
+        if isinstance(item, ast.Attribute)
+        and isinstance(item.ctx, ast.Load)
+        and isinstance(item.value, ast.Name)
+        and item.value.id == possible.id
+        and (item.attr in members or item.attr in ENUM_API)
+    }
+    if any(
+        isinstance(item, ast.Name)
+        and item.id == possible.id
+        and id(item) not in reads
+        for item in ast.walk(tree)
+    ):
+        return None
+    return members
 
 
 def distribution_version(package: Path) -> str:
@@ -408,17 +538,7 @@ def parse_variables(
                 "helper_functions": sorted(visited_helpers),
             }
             if dtype == "Enum":
-                possible = expression(attrs.get("possible_values"))
-                members = enum_members(tree, possible)
-                # A default outside its own class's members would enter
-                # unchecked, so the members stay unresolved.
-                if members is not None and (
-                    expression(attrs.get("default_value"))
-                    != f"{possible}.{default}"
-                    or default not in members
-                ):
-                    members = None
-                records[node.name]["enum_members"] = members
+                records[node.name]["enum_members"] = enum_members(tree, node)
             if node.name not in boundaries:
                 pending.extend(
                     paths[name]

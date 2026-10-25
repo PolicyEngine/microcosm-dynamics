@@ -200,47 +200,38 @@ def test_installed_pin_mismatch_refuses_before_calculation(monkeypatch):
     assert runner.accounting.attempted == runner.accounting.refused == 1
 
 
-# Runs in the pinned interpreter. Each enum class is executed alone from the
-# installed source, under that release's own Enum base, without importing
-# the country model.
+# Runs in the pinned interpreter. It loads the country model as the engine
+# does and reads each enum variable's class from it, so code anywhere in the
+# release that rebinds or changes a class shows here.
 ENUM_CHILD = """
-import ast, hashlib, importlib.util, json, sys
+import hashlib, inspect, json, sys
 from pathlib import Path
-from policyengine_core.enums import Enum
+from policyengine_us import CountryTaxBenefitSystem
 
-spec = importlib.util.find_spec("policyengine_us")
-package = Path(spec.submodule_search_locations[0])
+system = CountryTaxBenefitSystem()
 observed = []
-for record in json.load(sys.stdin):
-    path = package / record["path"]
-    text = path.read_text()
-    tree = ast.parse(text)
-    variable = next(
-        node for node in tree.body
-        if isinstance(node, ast.ClassDef) and node.name == record["name"]
-    )
-    possible = next(
-        ast.unparse(item.value) for item in variable.body
-        if isinstance(item, ast.Assign)
-        and any(getattr(t, "id", None) == "possible_values" for t in item.targets)
-    )
-    source = next(
-        ast.get_source_segment(text, node) for node in tree.body
-        if isinstance(node, ast.ClassDef) and node.name == possible
-    )
-    namespace = {"Enum": Enum}
-    exec(source, namespace)
+for name in json.load(sys.stdin):
+    variable = system.variables[name]
+    cls = variable.possible_values
+    path = Path(inspect.getsourcefile(cls))
     observed.append({
-        "name": record["name"],
+        "name": name,
+        "path": path.as_posix(),
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        "members": list(namespace[possible].__members__),
+        "bases": [
+            f"{base.__module__}.{base.__qualname__}" for base in cls.__bases__
+        ],
+        "members": list(cls.__members__),
+        "canonical": [member.name for member in cls],
+        "default": variable.default_value.name,
     })
 json.dump(observed, sys.stdout)
 """
 
 
 def test_inventory_enum_members_match_the_pinned_enum_classes():
-    """Differential: the static members against the pinned Enum's own."""
+    """Differential: the static members against the classes the pinned
+    engine loads."""
     python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
     if not python.is_file():
         pytest.skip(f"SSI0 interpreter absent: {python}")
@@ -257,7 +248,7 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
     assert any(r in inventory["inputs"] for r in records)
     completed = subprocess.run(
         [str(python), "-I", "-c", ENUM_CHILD],
-        input=json.dumps(records),
+        input=json.dumps([r["name"] for r in records]),
         capture_output=True,
         text=True,
         timeout=600,
@@ -266,7 +257,11 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
     observed = json.loads(completed.stdout)
     assert [r["name"] for r in observed] == [r["name"] for r in records]
     for record, pinned in zip(records, observed, strict=True):
-        # The source read is the pinned file, and its members agree.
+        # The class the engine loads comes from the pinned file and subclasses
+        # policyengine_core's Enum, and its members, with no aliases, agree.
+        assert pinned["path"].endswith("/policyengine_us/" + record["path"])
         assert pinned["sha256"] == record["sha256"]
+        assert pinned["bases"] == ["policyengine_core.enums.enum.Enum"]
+        assert pinned["members"] == pinned["canonical"]
         assert pinned["members"] == record["enum_members"]
-        assert record["default"] in record["enum_members"]
+        assert pinned["default"] == record["default"]

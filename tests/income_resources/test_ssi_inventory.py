@@ -7,9 +7,14 @@ are Python source text invented solely to check extraction invariants.
 from __future__ import annotations
 
 import ast
+import builtins
 import enum
 import importlib.util
+import symtable
+import sys
+import types
 import warnings
+from collections import defaultdict
 from pathlib import Path
 
 import pytest
@@ -254,25 +259,41 @@ MEMBER_NAMES = st.lists(
 )
 
 
-def write_enum_input(
-    package, class_source, possible_values, default="INVENTED_DEFAULT"
+def invented_enum_module(
+    class_source, name, default, forms=(), late_class=False
 ):
-    """Write an invented enum input and make the invented SSI read it.
+    """Source of a module holding an invented enum class and its variable.
 
-    ``default`` is the member name, or a dotted reference to another class.
+    ``forms`` are ``(place, text)`` pairs inserted at the module's head,
+    between the class and the variable, at its tail, or at the head or tail
+    of the variable's body. ``late_class`` defines the class last.
     """
-    reference = default if "." in default else f"{possible_values}.{default}"
-    (package / "variables/input/invented_status.py").write_text(
-        class_source + f"""
-
-class invented_status(Variable):
-    value_type = Enum
-    entity = Person
-    possible_values = {possible_values}
-    default_value = {reference}
-    definition_period = YEAR
-"""
+    placed = defaultdict(list)
+    for place, form in forms:
+        placed[place].append(form)
+    body = "".join(
+        "    " + line.replace("\n", "\n    ") + "\n"
+        for line in placed["body_head"]
+        + [
+            "value_type = Enum",
+            "entity = Person",
+            f"possible_values = {name}",
+            f"default_value = {name}.{default}",
+            "definition_period = YEAR",
+        ]
+        + placed["body_tail"]
     )
+    variable = "class invented_status(Variable):\n" + body
+    middle = [class_source, *placed["between"], variable]
+    if late_class:
+        middle = middle[::-1]
+    parts = [*placed["head"], *middle, *placed["tail"]]
+    return "\n\n".join(part.rstrip("\n") for part in parts) + "\n"
+
+
+def write_enum_module(package, source):
+    """Write an invented enum module and make the invented SSI read it."""
+    (package / "variables/input/invented_status.py").write_text(source)
     path = package / "variables/gov/ssa/ssi/invented_ssi.py"
     path.write_text(
         path.read_text().replace(
@@ -283,6 +304,17 @@ class invented_status(Variable):
     )
 
 
+def write_enum_input(package, class_source, possible_values, default):
+    """``default`` is the member name, or a dotted reference to a class."""
+    module, _, member = default.rpartition(".")
+    source = invented_enum_module(class_source, possible_values, member)
+    if module:
+        source = source.replace(
+            f"default_value = {possible_values}.", f"default_value = {module}."
+        )
+    write_enum_module(package, source)
+
+
 def enum_class(name, members, base="Enum"):
     body = "".join(
         f'    {member} = "{member.lower()}"\n' for member in members
@@ -290,16 +322,17 @@ def enum_class(name, members, base="Enum"):
     return f"class {name}({base}):\n" + (body or "    pass\n")
 
 
+def input_record(package):
+    result = inventory.inventory_release(package)
+    return next(v for v in result["inputs"] if v["name"] == "invented_status")
+
+
 @settings(deadline=None, max_examples=25)
 @given(name=ENUM_NAMES, members=MEMBER_NAMES)
 def test_enum_members_round_trip_from_source(tmp_path_factory, name, members):
     package = invented_package(tmp_path_factory.mktemp("invented_enum"))
     write_enum_input(package, enum_class(name, members), name, members[0])
-    result = inventory.inventory_release(package)
-    status = next(
-        v for v in result["inputs"] if v["name"] == "invented_status"
-    )
-    assert status["enum_members"] == members
+    assert input_record(package)["enum_members"] == members
 
 
 @settings(deadline=None, max_examples=25)
@@ -319,15 +352,23 @@ def test_enum_input_with_unreadable_members_refuses_inventory(
         source = enum_class(name, [])
     else:
         source = enum_class(name, members, base="InventedBase")
-    write_enum_input(package, source, name)
+    # The default names a member of the intended class, so the defect alone
+    # refuses; an empty class has no member to name, so either check does.
+    write_enum_input(package, source, name, members[0])
     with pytest.raises(ValueError, match="Unresolved enum members"):
         inventory.inventory_release(package)
 
 
-# Statement kinds for invented Enum class bodies. The first five are the
-# forms the reader admits; the rest must make it refuse.
-ADMITTED_STATEMENTS = ("literal", "integer", "alias", "method", "pass")
+# Statement kinds for invented Enum class bodies. The reader admits the
+# first three; each of the rest must make it refuse.
+ADMITTED_STATEMENTS = ("literal", "integer", "pass")
 REFUSED_STATEMENTS = (
+    "alias",
+    "equal_value",
+    "chained",
+    "method",
+    "decorated",
+    "dunder",
     "annotated",
     "tuple",
     "private",
@@ -338,12 +379,53 @@ REFUSED_STATEMENTS = (
     "nested",
     "late_docstring",
     "duplicate",
+    "mro",
 )
 
 
+def class_statement(kind, name, index, earlier):
+    """One invented class-body line, and the member value it adds if any.
+
+    ``earlier`` is the latest member's ``(name, value source)``, or None.
+    Kinds that need an earlier member fall back to ``pass`` without one.
+    """
+    if kind == "literal":
+        return f'{name} = "{name.lower()}"', f'"{name.lower()}"'
+    if kind == "integer":
+        return f"{name} = {index}", str(index)
+    if kind in ("pass", "alias", "equal_value", "duplicate") and not earlier:
+        return "pass", None
+    lines = {
+        "pass": "pass",
+        "alias": f"{name} = {earlier[0]}" if earlier else "",
+        "equal_value": f"{name} = {earlier[1]}" if earlier else "",
+        "duplicate": f'{earlier[0]} = "invented repeat"' if earlier else "",
+        "chained": f'{name} = {name}_TWIN = "{name.lower()}"',
+        "method": f"def invented_method_{index}(self):\n    return {index}",
+        "decorated": f"@str\ndef {name}(self):\n    return {index}",
+        # Each later member's creation drops the first one.
+        "dunder": (
+            "def __init__(self, *args):\n"
+            "    members = type(self)._member_map_\n"
+            "    members.pop(next(iter(members), None), None)"
+        ),
+        "annotated": f'{name}: str = "{name.lower()}"',
+        "tuple": f"{name}, {name}_PAIR = 1, 2",
+        "private": f"_{name} = {index}",
+        "sunder": '_ignore_ = ["INVENTED_IGNORED"]',
+        "call": f"{name} = auto()",
+        "lambda": f"{name} = lambda self: {index}",
+        "boolean": f"{name} = True",
+        "nested": f"class {name.title()}:\n    pass",
+        "late_docstring": '"""Invented later string."""',
+        "mro": 'mro = "invented mro"',
+    }
+    return lines[kind], None
+
+
 @st.composite
-def invented_enum_source(draw):
-    """Source of an invented Enum class, and whether a refused form occurs."""
+def invented_enum_body(draw):
+    """An invented Enum class, its first member, and whether it is refused."""
     names = draw(
         st.lists(
             st.from_regex(r"INVENTED_[A-Z]{1,6}", fullmatch=True),
@@ -352,118 +434,495 @@ def invented_enum_source(draw):
             unique=True,
         )
     )
+    # Admitted statements, with at most one refused kind among them, so
+    # that about half the bodies are read and each refusal has one cause.
     kinds = draw(
-        st.lists(
-            st.sampled_from(ADMITTED_STATEMENTS + REFUSED_STATEMENTS),
-            min_size=1,
-            max_size=8,
-        )
+        st.lists(st.sampled_from(ADMITTED_STATEMENTS), min_size=1, max_size=7)
     )
+    refused_kind = draw(st.none() | st.sampled_from(REFUSED_STATEMENTS))
+    if refused_kind:
+        kinds.insert(draw(st.integers(0, len(kinds))), refused_kind)
     docstring = draw(st.booleans())
-    lines = ['    """Invented enum."""'] if docstring else []
+    lines = ['"""Invented enum."""'] if docstring else []
     members = []
     refused = False
     for index, kind in enumerate(kinds):
-        name = names[index]
-        earlier = members[-1] if members else None
-        if kind == "literal":
-            line = f'{name} = "{name.lower()}"'
-        elif kind == "integer":
-            line = f"{name} = {index}"
-        elif kind == "alias":
-            line = f"{name} = {earlier}" if earlier else "pass"
-        elif kind == "method":
-            line = (
-                f"def invented_method_{index}(self):\n        return {index}"
-            )
-        elif kind == "pass":
-            line = "pass"
-        elif kind == "annotated":
-            line = f'{name}: str = "{name.lower()}"'
-        elif kind == "tuple":
-            line = f"{name}, {name}_PAIR = 1, 2"
-        elif kind == "private":
-            line = f"_{name} = {index}"
-        elif kind == "sunder":
-            line = '_ignore_ = ["INVENTED_IGNORED"]'
-        elif kind == "call":
-            line = f"{name} = auto()"
-        elif kind == "lambda":
-            line = f"{name} = lambda self: {index}"
-        elif kind == "boolean":
-            line = f"{name} = True"
-        elif kind == "nested":
-            line = f"class {name.title()}:\n        pass"
-        elif kind == "late_docstring":
-            line = '"""Invented later string."""'
-        else:
-            line = f'{earlier} = "invented repeat"' if earlier else "pass"
-        if kind in ("literal", "integer") or (kind == "alias" and earlier):
-            members.append(name)
+        line, value = class_statement(
+            kind, names[index], index, (members[-1] if members else None)
+        )
+        if value is not None:
+            members.append((names[index], value))
         # A string that opens the body is a docstring, not a refused form.
-        late = kind == "late_docstring" and (docstring or index > 0)
-        if kind in REFUSED_STATEMENTS and kind not in (
-            "late_docstring",
-            "duplicate",
-        ):
-            refused = True
-        refused = refused or late or (kind == "duplicate" and bool(earlier))
-        lines.append("    " + line)
-    source = "class InventedEnum(Enum):\n" + "\n".join(lines) + "\n"
-    return source, kinds, refused
+        if kind == "late_docstring":
+            refused = refused or docstring or index > 0
+        elif kind in REFUSED_STATEMENTS:
+            refused = refused or line != "pass"
+        lines.append(line)
+    source = "class InventedEnum(Enum):\n" + "".join(
+        "    " + line.replace("\n", "\n    ") + "\n" for line in lines
+    )
+    first = members[0][0] if members else "INVENTED_NONE"
+    return source, first, refused or not members
+
+
+# Module and variable forms: (place, text, observable). The reader admits
+# the first four. Each of the rest must make it refuse; an observable one
+# also changes what Python gives the variable.
+ADMITTED_FORMS = {
+    "model_api": ("head", "from policyengine_us.model_api import *", False),
+    "member_read": ("tail", "INVENTED_CHOICE = {name}.{member}", False),
+    "helper": (
+        "tail",
+        "def invented_helper():\n    return {name}.{member}",
+        False,
+    ),
+    "formula": (
+        "body_tail",
+        "def formula(person, period, parameters):\n"
+        "    return {name}.encode(person)",
+        False,
+    ),
+}
+REFUSED_FORMS = {
+    "rebind": ("between", "{name} = InventedOtherEnum", True),
+    "walrus": (
+        "between",
+        "INVENTED_SPARE = ({name} := InventedOtherEnum)",
+        True,
+    ),
+    "conditional_class": (
+        "between",
+        'if True:\n    class {name}(Enum):\n        INVENTED_OTHER = "other"',
+        True,
+    ),
+    "try_import": (
+        "between",
+        "try:\n    from invented_module import {name}\n"
+        "except ImportError:\n    pass",
+        True,
+    ),
+    "plain_import": ("between", "from invented_module import {name}", True),
+    "aliased_import": (
+        "between",
+        "from invented_module import InventedOtherEnum as {name}",
+        True,
+    ),
+    "guarded_import": (
+        "between",
+        "if True:\n    from invented_module import {name}",
+        True,
+    ),
+    "star_import": ("between", "from invented_module import *", True),
+    "late_model_api": (
+        "between",
+        "from policyengine_us.model_api import *",
+        False,
+    ),
+    "function_global": (
+        "between",
+        "def invented_rebind():\n    global {name}\n"
+        "    {name} = InventedOtherEnum\n\n\ninvented_rebind()",
+        True,
+    ),
+    "class_global": (
+        "between",
+        "class InventedShadow:\n    global {name}\n"
+        "    {name} = InventedOtherEnum",
+        True,
+    ),
+    "match_capture": (
+        "between",
+        "match InventedOtherEnum:\n    case {name}:\n        pass",
+        True,
+    ),
+    "mapping_rest": (
+        "between",
+        'match {{"key": InventedOtherEnum}}:\n'
+        "    case {{**{name}}}:\n        pass",
+        True,
+    ),
+    "match_star": (
+        "between",
+        "match [InventedOtherEnum]:\n    case [*{name}]:\n        pass",
+        True,
+    ),
+    "parameter": ("tail", "def invented_helper({name}):\n    pass", False),
+    "for_target": (
+        "between",
+        "for {name} in (InventedOtherEnum,):\n    pass",
+        True,
+    ),
+    "except_name": (
+        "between",
+        "try:\n    raise ValueError\nexcept ValueError as {name}:\n    pass",
+        True,
+    ),
+    "delete": ("tail", "del {name}", False),
+    "alias_read": ("between", "InventedAlias = {name}", False),
+    "member_pop": ("between", '{name}._member_map_.pop("{member}")', True),
+    "globals": (
+        "between",
+        'globals()["{name}"] = InventedOtherEnum',
+        True,
+    ),
+    "exec": ("between", 'exec("{name} = InventedOtherEnum")', True),
+    "function_globals": (
+        "between",
+        '(lambda: None).__globals__["{name}"] = InventedOtherEnum',
+        True,
+    ),
+    "frame_globals": (
+        "between",
+        "(item for item in ()).gi_frame"
+        '.f_globals["{name}"] = InventedOtherEnum',
+        True,
+    ),
+    "attribute_store": (
+        "between",
+        "InventedOtherBase.{name} = InventedOtherEnum",
+        False,
+    ),
+    "enum_bound": ("head", "Enum = InventedOtherBase", False),
+    "body_rebind": ("body_head", "{name} = InventedOtherEnum", True),
+    "body_import": (
+        "body_head",
+        "from invented_module import InventedOtherEnum as {name}",
+        True,
+    ),
+    "annotated_twice": (
+        "body_tail",
+        "possible_values: type = InventedOtherEnum",
+        True,
+    ),
+    "body_walrus": (
+        "body_tail",
+        "invented_spare = (possible_values := InventedOtherEnum)",
+        True,
+    ),
+    "default_twice": (
+        "body_tail",
+        "default_value = InventedOtherEnum.INVENTED_OTHER",
+        True,
+    ),
+    "value_type_twice": ("body_tail", "value_type = float", False),
+    "global_declared": ("body_head", "global possible_values", True),
+    "variable_attribute_store": (
+        "tail",
+        "invented_status.possible_values = InventedOtherEnum",
+        True,
+    ),
+    "variable_rebind": ("tail", "invented_status = None", True),
+}
+
+
+class InventedOtherEnum(enum.Enum):
+    INVENTED_OTHER = "other"
+
+
+class InventedOtherBase(enum.Enum):
+    """An invented Enum base that is not the model API's."""
+
+
+def invented_import(name, *args, **kwargs):
+    """Stand-in imports: the model API, and a module that shadows the class."""
+    module = types.ModuleType(name)
+    if name == inventory.MODEL_API:
+        vars(module).update(
+            Enum=enum.Enum,
+            Variable=type("Variable", (), {}),
+            Person=None,
+            YEAR=None,
+        )
+    elif name == "invented_module":
+        module.InventedEnum = module.InventedOtherEnum = InventedOtherEnum
+    else:
+        raise ImportError(name)
+    return module
 
 
 def python_enum_members(source):
-    """Members Python's own Enum gives the source, or None if it refuses."""
-    namespace = {"Enum": enum.Enum, "auto": enum.auto}
+    """``(members, canonical names, default)`` Python gives the variable.
+
+    None if the module fails, or the variable's class or default is not an
+    Enum and one of its members.
+    """
+    namespace = {
+        "__builtins__": vars(builtins) | {"__import__": invented_import},
+        "Enum": enum.Enum,
+        "Variable": type("Variable", (), {}),
+        "Person": None,
+        "YEAR": None,
+        "auto": enum.auto,
+        "InventedOtherEnum": InventedOtherEnum,
+        "InventedOtherBase": InventedOtherBase,
+    }
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             exec(source, namespace)  # noqa: S102 - invented source only
+        variable = namespace["invented_status"]
+        cls = variable.possible_values
+        default = variable.default_value
+        if not (isinstance(cls, enum.EnumMeta) and isinstance(default, cls)):
+            return None
+        return list(cls.__members__), [item.name for item in cls], default.name
     except Exception:
         return None
-    return list(namespace["InventedEnum"].__members__)
 
 
-@settings(deadline=None, max_examples=300)
+def read_members(source):
+    """The reader's members for the invented variable in a module source."""
+    tree = ast.parse(source)
+    variable = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef) and node.name == "invented_status"
+    )
+    return inventory.enum_members(tree, variable)
+
+
+@st.composite
+def invented_enum_source(draw):
+    """An invented module, and whether a refused form occurs in it."""
+    class_source, member, refused = draw(invented_enum_body())
+    chosen = draw(
+        st.lists(st.sampled_from(sorted(ADMITTED_FORMS)), unique=True)
+    )
+    refused_form = draw(st.none() | st.sampled_from(sorted(REFUSED_FORMS)))
+    if refused_form:
+        chosen.insert(draw(st.integers(0, len(chosen))), refused_form)
+    late_class = draw(st.sampled_from((False, False, False, True)))
+    forms = [
+        (place, text.format(name="InventedEnum", member=member))
+        for kind in chosen
+        for place, text, _ in [(ADMITTED_FORMS | REFUSED_FORMS)[kind]]
+    ]
+    source = invented_enum_module(
+        class_source, "InventedEnum", member, forms, late_class
+    )
+    refused = refused or late_class or bool(set(chosen) & set(REFUSED_FORMS))
+    return source, member, refused
+
+
+@settings(deadline=None, max_examples=400)
 @given(invented_enum_source())
 def test_static_enum_members_agree_with_python_enum(generated):
-    """Differential: the static reader against Python's Enum semantics."""
-    source, kinds, refused = generated
-    read = inventory.enum_members(ast.parse(source), "InventedEnum")
+    """Differential: the static reader against the module as Python runs it."""
+    source, member, refused = generated
+    read = read_members(source)
+    python = python_enum_members(source)
     if read is not None:
-        # Whatever the reader admits, Python's Enum defines identically.
-        assert read == python_enum_members(source)
+        # Whatever the reader admits, Python defines identically, with no
+        # alias that the engine's encode would refuse, and the same default.
+        assert python == (read, read, member)
     if refused:
         assert read is None
-    elif set(kinds) <= set(ADMITTED_STATEMENTS) and python_enum_members(
-        source
-    ):
+    else:
         # The admitted forms, with at least one member, are read.
-        assert read == python_enum_members(source)
+        assert python is not None
+        assert read == python[0]
 
 
 INVENTED_ENUM_CLASS = 'class InventedEnum(Enum):\n    INVENTED_ONE = "one"\n'
+INVENTED_ENUM_MODULE = invented_enum_module(
+    INVENTED_ENUM_CLASS, "InventedEnum", "INVENTED_ONE"
+)
+
+
+def test_invented_enum_module_is_read():
+    assert read_members(INVENTED_ENUM_MODULE) == ["INVENTED_ONE"]
+    assert python_enum_members(INVENTED_ENUM_MODULE) == (
+        ["INVENTED_ONE"],
+        ["INVENTED_ONE"],
+        "INVENTED_ONE",
+    )
+
+
+@pytest.mark.parametrize("kind", sorted(REFUSED_FORMS))
+def test_forms_that_can_change_the_class_are_unread(kind):
+    place, text, observable = REFUSED_FORMS[kind]
+    form = text.format(name="InventedEnum", member="INVENTED_ONE")
+    source = invented_enum_module(
+        INVENTED_ENUM_CLASS, "InventedEnum", "INVENTED_ONE", [(place, form)]
+    )
+    assert read_members(source) is None
+    if observable:
+        # The form is not only refused: Python gives a different answer.
+        assert python_enum_members(source) != python_enum_members(
+            INVENTED_ENUM_MODULE
+        )
+
+
+INVENTED_NAME = "InventedName"
+# The constructs that bind a name under the language reference's "Naming and
+# binding", with global declarations, then forms that only read it. Star
+# imports, which bind every public name of a module, are refused outright.
+BINDING_FORMS = (
+    "{n} = 1",
+    "{n} += 1",
+    "{n}: int",
+    "{n}: int = 1",
+    "x = ({n} := 1)",
+    "for {n} in x:\n    pass",
+    "with x as {n}:\n    pass",
+    "with x as ({n}, y):\n    pass",
+    "try:\n    pass\nexcept E as {n}:\n    pass",
+    "import {n}",
+    "import {n}.sub",
+    "import m as {n}",
+    "from m import {n}",
+    "from m import x as {n}",
+    "def {n}():\n    pass",
+    "async def {n}():\n    pass",
+    "class {n}:\n    pass",
+    "def f({n}):\n    pass",
+    "def f(*{n}):\n    pass",
+    "def f(**{n}):\n    pass",
+    "def f(*, {n}):\n    pass",
+    "lambda {n}: 0",
+    "[{n} for {n} in x]",
+    "match x:\n    case {n}:\n        pass",
+    "match x:\n    case [*{n}]:\n        pass",
+    "match x:\n    case {{**{n}}}:\n        pass",
+    "match x:\n    case [y] as {n}:\n        pass",
+    "del {n}",
+    "global {n}",
+)
+READING_FORMS = (
+    "print({n})",
+    "{n}.attr",
+    "{n}[0] = 1",
+    "x = {n}",
+    "import m.{n}",
+    "from m import {n} as y",
+    "def f():\n    return {n}",
+    "f(**{n})",
+)
+
+
+def symtable_binds(source, name):
+    """Whether CPython's symbol table binds or declares ``name`` anywhere."""
+    pending = [symtable.symtable(source, "<invented>", "exec")]
+    while pending:
+        table = pending.pop()
+        pending.extend(table.get_children())
+        if name in table.get_identifiers():
+            symbol = table.lookup(name)
+            if (
+                symbol.is_assigned()
+                or symbol.is_imported()
+                or symbol.is_parameter()
+                or symbol.is_declared_global()
+            ):
+                return True
+    return False
+
+
+@pytest.mark.parametrize("form", BINDING_FORMS + READING_FORMS)
+def test_binding_sites_agree_with_the_symbol_table(form):
+    """Differential: binding sites against CPython's own scope analysis."""
+    text = form.format(n=INVENTED_NAME)
+    nested = "    " + text.replace("\n", "\n    ")
+    for source in (text, "def g():\n" + nested, "class G:\n" + nested):
+        expected = form in BINDING_FORMS
+        assert symtable_binds(source, INVENTED_NAME) is expected
+        sites = inventory.binding_sites(ast.parse(source), INVENTED_NAME)
+        assert bool(sites) is expected
 
 
 @pytest.mark.parametrize(
-    "other",
+    "form",
     (
-        INVENTED_ENUM_CLASS,
-        "InventedEnum = InventedOtherEnum\n",
-        "from invented_module import InventedEnum\n",
-        "if INVENTED_FLAG:\n    InventedEnum = InventedOtherEnum\n",
-        "InventedEnum.INVENTED_TWO = 2\n",
+        pytest.param(
+            "try:\n    pass\nexcept* E as {n}:\n    pass",
+            marks=pytest.mark.skipif(
+                sys.version_info < (3, 11), reason="except* syntax"
+            ),
+        ),
+        *(
+            pytest.param(
+                form,
+                marks=pytest.mark.skipif(
+                    sys.version_info < (3, 12), reason="PEP 695 syntax"
+                ),
+            )
+            for form in (
+                "type {n} = int",
+                "def f[{n}]():\n    pass",
+                "class C[*{n}]:\n    pass",
+                "def f[**{n}]():\n    pass",
+            )
+        ),
     ),
 )
-def test_enum_name_bound_twice_in_its_module_is_unread(other):
-    for source in (INVENTED_ENUM_CLASS + other, other + INVENTED_ENUM_CLASS):
-        assert (
-            inventory.enum_members(ast.parse(source), "InventedEnum") is None
+def test_newer_binding_syntax_gives_binding_sites(form):
+    source = form.format(n=INVENTED_NAME)
+    assert symtable_binds(source, INVENTED_NAME)
+    assert inventory.binding_sites(ast.parse(source), INVENTED_NAME)
+
+
+def test_attribute_stores_count_as_binding_sites():
+    # The symbol table does not track them, but one module can rebind
+    # another's global through one, so they count.
+    for form in ("x.{n} = 1", "del x.{n}", "x.{n} += 1"):
+        source = form.format(n=INVENTED_NAME)
+        assert not symtable_binds(source, INVENTED_NAME)
+        assert inventory.binding_sites(ast.parse(source), INVENTED_NAME)
+
+
+def test_enum_class_defined_after_its_variable_is_unread():
+    source = invented_enum_module(
+        INVENTED_ENUM_CLASS, "InventedEnum", "INVENTED_ONE", late_class=True
+    )
+    assert python_enum_members(source) is None
+    assert read_members(source) is None
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 syntax")
+@pytest.mark.parametrize(
+    "form",
+    (
+        "class InventedEnum[InventedType](Enum):",
+        "def invented_helper[InventedEnum]():\n    pass\n\n\n"
+        "class InventedEnum(Enum):",
+    ),
+)
+def test_type_parameters_are_unread(form):
+    source = INVENTED_ENUM_MODULE.replace("class InventedEnum(Enum):", form)
+    assert read_members(source) is None
+
+
+@pytest.mark.parametrize("kind", sorted(REFUSED_STATEMENTS))
+def test_class_statements_that_can_change_membership_are_unread(kind):
+    line, _ = class_statement(
+        kind, "INVENTED_TWO", 1, ("INVENTED_ONE", '"one"')
+    )
+    source = invented_enum_module(
+        INVENTED_ENUM_CLASS + "    " + line.replace("\n", "\n    ") + "\n",
+        "InventedEnum",
+        "INVENTED_ONE",
+    )
+    assert read_members(source) is None
+
+
+def test_methods_are_refused_because_they_can_change_membership():
+    # A reader that skipped methods as non-members would give these classes
+    # INVENTED_ONE and INVENTED_LAST. A decorator makes the method a member,
+    # and the __init__ hook drops members as later ones are created.
+    for kind in ("decorated", "dunder"):
+        line, _ = class_statement(
+            kind, "INVENTED_MID", 1, ("INVENTED_ONE", '"one"')
         )
-    assert inventory.enum_members(
-        ast.parse(INVENTED_ENUM_CLASS), "InventedEnum"
-    ) == ["INVENTED_ONE"]
+        source = (
+            INVENTED_ENUM_CLASS
+            + "    "
+            + line.replace("\n", "\n    ")
+            + '\n    INVENTED_LAST = "last"\n'
+        )
+        namespace = {"Enum": enum.Enum}
+        exec(source, namespace)  # noqa: S102 - invented source only
+        members = list(namespace["InventedEnum"].__members__)
+        assert members != ["INVENTED_ONE", "INVENTED_LAST"]
 
 
 @pytest.mark.parametrize(
@@ -476,15 +935,65 @@ def test_enum_name_bound_twice_in_its_module_is_unread(other):
     ),
 )
 def test_enum_class_with_other_bases_or_decorators_is_unread(header):
-    source = header + '\n    INVENTED_ONE = "one"\n'
-    assert inventory.enum_members(ast.parse(source), "InventedEnum") is None
+    source = INVENTED_ENUM_MODULE.replace("class InventedEnum(Enum):", header)
+    assert read_members(source) is None
+
+
+@pytest.mark.parametrize(
+    "header",
+    (
+        "class invented_status(Variable, InventedMixin):",
+        "class invented_status(InventedBase):",
+        "class invented_status(Variable, metaclass=InventedMeta):",
+        "@invented_decorator\nclass invented_status(Variable):",
+    ),
+)
+def test_enum_variable_with_other_bases_or_decorators_is_unread(header):
+    # A decorator or another base can replace or change the variable that
+    # the engine loads.
+    source = INVENTED_ENUM_MODULE.replace(
+        "class invented_status(Variable):", header
+    )
+    assert read_members(source) is None
 
 
 def test_enum_member_named_mro_is_unread():
     # Python's Enum refuses this name, so the reader must not admit it.
-    source = 'class InventedEnum(Enum):\n    mro = "one"\n'
+    source = INVENTED_ENUM_MODULE.replace(
+        '    INVENTED_ONE = "one"\n',
+        '    INVENTED_ONE = "one"\n    mro = "x"\n',
+    )
     assert python_enum_members(source) is None
-    assert inventory.enum_members(ast.parse(source), "InventedEnum") is None
+    assert read_members(source) is None
+
+
+@pytest.mark.parametrize(
+    "kind",
+    ("body_rebind", "body_import", "annotated_twice", "walrus", "try_import"),
+)
+def test_enum_input_bound_outside_a_plain_read_refuses_inventory(
+    tmp_path, kind
+):
+    # The five forms that put one member list in the input record while the
+    # variable held another, end to end through the inventory.
+    place, text, _ = REFUSED_FORMS[kind]
+    form = text.format(name="InventedStatus", member="INVENTED_FIRST")
+    source = invented_enum_module(
+        enum_class("InventedStatus", ["INVENTED_FIRST", "INVENTED_SECOND"]),
+        "InventedStatus",
+        "INVENTED_FIRST",
+        [(place, form)],
+    )
+    package = invented_package(tmp_path / "control")
+    write_enum_module(package, source.replace(form, ""))
+    assert input_record(package)["enum_members"] == [
+        "INVENTED_FIRST",
+        "INVENTED_SECOND",
+    ]
+    package = invented_package(tmp_path / "form")
+    write_enum_module(package, source)
+    with pytest.raises(ValueError, match="Unresolved enum members"):
+        inventory.inventory_release(package)
 
 
 @settings(deadline=None, max_examples=25)
