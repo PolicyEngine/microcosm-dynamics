@@ -38,6 +38,10 @@ This module joins the two without importing ``policyengine_us``:
    changed by more than float noise (a cent, or four float32 steps at the
    read's size where that is more): a step at a bracket edge taken on
    float32 noise, not a mechanism.
+6. **Named variables.**  :func:`run_policyengine_us_variables` returns
+   requested variables over their native entities, with ordered entity
+   IDs and decoded enums. Each case has a fresh simulation, so a caller
+   can impose counterfactual inputs in otherwise identical situations.
 
 ``household_net_income`` in policyengine-us 2.18.0
 (``variables/household/income/household/household_net_income.py:10-18``)
@@ -90,6 +94,8 @@ __all__ = [
     "Decomposition",
     "DefinitionDriftError",
     "NET_INCOME_DEFINITION",
+    "NamedVariableResult",
+    "NamedVariableRun",
     "PE_US_PYTHON_ENV",
     "PolicyEngineRun",
     "PolicyEngineUSInstallation",
@@ -114,6 +120,7 @@ __all__ = [
     "person_inputs_from_situation",
     "resolve_pe_us_python",
     "run_policyengine_us",
+    "run_policyengine_us_variables",
     "small_changes",
     "to_cents",
     "to_situation",
@@ -800,6 +807,63 @@ json.dump({"installation": installation(), "cases": out}, sys.stdout)
 """
 
 
+#: Native-entity values, including decoded enum names. Each case receives a
+#: fresh simulation; only its tax-benefit system is shared with other cases
+#: having the same parameter overrides. No household aggregation is applied.
+_NAMED_VARIABLE_SOURCE = _INSTALLATION_SOURCE + _SIMULATION_SOURCE + r"""
+import policyengine_us
+
+
+def named_simulation_for(case):
+    overrides = case.get("parameter_overrides") or {}
+    key = json.dumps(overrides, sort_keys=True)
+    if key not in _systems:
+        _systems[key] = simulation_for(case).tax_benefit_system
+    return Simulation(
+        situation=case["situation"], tax_benefit_system=_systems[key]
+    )
+
+
+results = []
+for case in job["cases"]:
+    sim = named_simulation_for(case)
+    values = {}
+    variable_entities = {}
+    for name in job["variables"]:
+        variable = sim.tax_benefit_system.variables[name]
+        calculated = sim.calculate(name, period)
+        if hasattr(calculated, "decode_to_str"):
+            calculated = calculated.decode_to_str()
+        values[name] = calculated.tolist()
+        variable_entities[name] = variable.entity.plural
+    entity_ids = {
+        population.entity.plural: [str(value) for value in population.ids]
+        for population in sim.populations.values()
+    }
+    states = sim.calculate("state_code", period).decode_to_str()
+    results.append(
+        {
+            "case_id": case["case_id"],
+            "state_code": [str(state) for state in states],
+            "values": values,
+            "entity_ids": entity_ids,
+            "variable_entities": variable_entities,
+        }
+    )
+json.dump(
+    {
+        "policyengine_us_version": metadata.version("policyengine-us"),
+        "policyengine_core_version": metadata.version("policyengine-core"),
+        "policyengine_us_package": policyengine_us.__file__,
+        "installation": installation(),
+        "cases": results,
+    },
+    sys.stdout,
+    allow_nan=False,
+)
+"""
+
+
 @dataclass(frozen=True)
 class RunCase:
     """One PolicyEngine-US simulation: a situation and its options.
@@ -914,6 +978,35 @@ class RunResult:
     python: str
     installation: PolicyEngineUSInstallation | None = None
     source: Mapping[str, Any] | None = None
+
+
+@dataclass(frozen=True)
+class NamedVariableRun:
+    """Requested variables over their native entities, in entity-ID order.
+
+    ``variable_entities`` gives the plural entity name for each variable;
+    ``entity_ids`` gives that entity's ordered IDs. Numeric values are
+    floats, booleans remain booleans and enum values are decoded strings.
+    """
+
+    case_id: str
+    state_code: str
+    values: Mapping[str, tuple[float | bool | str, ...]]
+    entity_ids: Mapping[str, tuple[str, ...]]
+    variable_entities: Mapping[str, str]
+
+
+@dataclass(frozen=True)
+class NamedVariableResult:
+    """Native-entity runs and the checked installation that computed them."""
+
+    runs: Mapping[str, NamedVariableRun]
+    policyengine_us_version: str
+    policyengine_core_version: str
+    policyengine_us_package: str
+    python: str
+    installation: PolicyEngineUSInstallation
+    source: Mapping[str, Any]
 
 
 def resolve_pe_us_python(python: str | os.PathLike | None = None) -> Path:
@@ -1389,6 +1482,216 @@ def run_policyengine_us(
         policyengine_us_version=str(payload["policyengine_us_version"]),
         policyengine_core_version=str(payload["policyengine_core_version"]),
         policyengine_us_package=str(payload["policyengine_us_package"]),
+        python=str(interpreter),
+        installation=installation,
+        source=source,
+    )
+
+
+def _named_ids(values: Any, label: str) -> tuple[str, ...]:
+    """Validate identifiers without silently coercing malformed output."""
+
+    if not isinstance(values, (list, tuple)) or any(
+        not isinstance(value, str) or not value.strip() for value in values
+    ):
+        raise ValueError(f"{label}: needs nonempty string IDs")
+    if len(set(values)) != len(values):
+        raise ValueError(f"{label}: IDs must be unique")
+    return tuple(values)
+
+
+def _named_values(values: Any, label: str) -> tuple[float | bool | str, ...]:
+    if not isinstance(values, list):
+        raise ValueError(f"{label}: expected an array of scalar values")
+    out: list[float | bool | str] = []
+    for value in values:
+        if isinstance(value, (bool, str)):
+            out.append(value)
+        elif isinstance(value, (int, float)) and math.isfinite(value):
+            out.append(float(value))
+        else:
+            raise ValueError(f"{label}: expected finite scalar values")
+    return tuple(out)
+
+
+def run_policyengine_us_variables(
+    cases: Sequence[RunCase],
+    *,
+    year: int,
+    variables: Sequence[str],
+    python: str | os.PathLike | None = None,
+    timeout: float = 1800.0,
+    expected_package_record_digest: str | None = None,
+    required_version: str | None = None,
+) -> NamedVariableResult:
+    """Calculate named variables in fresh simulations, without aggregation.
+
+    Situations and parameter overrides use :class:`RunCase`; ``memo`` is
+    unused because ``variables`` specifies every requested output. Values
+    retain their native entity order, with IDs and variable-to-entity names
+    returned explicitly. Enum results are decoded strings.
+
+    Every call checks the source and installed files using the same bridge
+    checks as :func:`run_policyengine_us`. ``required_version`` additionally
+    requires an exact release, and ``expected_package_record_digest`` can
+    pin its published package files. The checked installation must still
+    match after calculation. Malformed, duplicate or nonfinite results are
+    refused instead of being coerced into a partial result.
+    """
+
+    if isinstance(year, bool) or not isinstance(year, int):
+        raise TypeError(f"year must be an integer, not {year!r}")
+    if isinstance(variables, (str, bytes)) or not variables:
+        raise ValueError("variables must be a nonempty sequence of names")
+    names = tuple(variables)
+    if any(
+        not isinstance(name, str)
+        or re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", name) is None
+        for name in names
+    ):
+        raise ValueError("variables must be nonempty variable names")
+    if len(set(names)) != len(names):
+        raise ValueError("variable names must be unique")
+    ids = _named_ids([case.case_id for case in cases], "case ids")
+    if not ids:
+        raise ValueError("cases must be nonempty")
+    if required_version is not None and (
+        not isinstance(required_version, str) or not required_version.strip()
+    ):
+        raise ValueError("required_version must be a nonempty string")
+    for case in cases:
+        if not isinstance(case.situation, Mapping):
+            raise ValueError(f"{case.case_id}: situation must be a mapping")
+        if len(case.situation.get("households", {})) != 1:
+            raise ValueError(f"{case.case_id}: needs exactly one household")
+        for entity, entries in case.situation.items():
+            if not isinstance(entity, str) or not isinstance(entries, Mapping):
+                raise ValueError(f"{case.case_id}: malformed entity mapping")
+            _named_ids(list(entries), f"{case.case_id}/{entity}")
+    interpreter = _interpreter(python)
+    installation, source = _checked_installation(
+        interpreter,
+        require_published=True,
+        verify_files=True,
+        expected_package_record_digest=expected_package_record_digest,
+    )
+    if (
+        required_version is not None
+        and installation.version != required_version
+    ):
+        raise UnpublishedSourceError(
+            f"policyengine-us {installation.version} is not the required "
+            f"version {required_version}"
+        )
+    job = {
+        "year": year,
+        "variables": names,
+        "cases": [
+            {
+                "case_id": case.case_id,
+                "situation": case.situation,
+                "parameter_overrides": dict(case.parameter_overrides),
+            }
+            for case in cases
+        ],
+    }
+    payload = _run_child(
+        interpreter,
+        _NAMED_VARIABLE_SOURCE,
+        json.dumps(job, allow_nan=False),
+        timeout,
+    )
+    try:
+        if not isinstance(payload, dict):
+            raise ValueError("expected a result object")
+        ran = PolicyEngineUSInstallation.from_payload(
+            interpreter, payload["installation"]
+        )
+        if ran != installation:
+            raise ValueError("installation changed after its source check")
+        if (
+            payload["policyengine_us_version"] != installation.version
+            or payload["policyengine_core_version"]
+            != installation.core_version
+        ):
+            raise ValueError("version metadata differs from the installation")
+        by_id = {case.case_id: case for case in cases}
+        runs: dict[str, NamedVariableRun] = {}
+        raw_cases = payload["cases"]
+        if not isinstance(raw_cases, list):
+            raise ValueError("expected a case array")
+        for raw in raw_cases:
+            case_id = raw["case_id"]
+            if case_id not in by_id or case_id in runs:
+                raise ValueError("returned unknown or duplicate cases")
+            states = _named_ids(raw["state_code"], f"{case_id}/state")
+            if not states or len(set(states)) != 1:
+                raise ValueError(f"{case_id}: expected one state")
+            state = states[0]
+            if (
+                by_id[case_id].expected_state is not None
+                and state != by_id[case_id].expected_state
+            ):
+                raise ValueError(
+                    f"{case_id}: situation resolved to {state}, not "
+                    f"{by_id[case_id].expected_state} (check STATE_FIPS)"
+                )
+            if not isinstance(raw["entity_ids"], dict):
+                raise ValueError(f"{case_id}: expected entity IDs")
+            entity_ids = {
+                entity: _named_ids(values, f"{case_id}/{entity}")
+                for entity, values in raw["entity_ids"].items()
+            }
+            if any(
+                not isinstance(entity, str) or not entity.strip()
+                for entity in entity_ids
+            ):
+                raise ValueError(f"{case_id}: malformed entity names")
+            if (
+                not isinstance(raw["values"], dict)
+                or set(raw["values"]) != set(names)
+                or not isinstance(raw["variable_entities"], dict)
+                or set(raw["variable_entities"]) != set(names)
+            ):
+                raise ValueError(f"{case_id}: returned other variables")
+            values = {
+                name: _named_values(raw["values"][name], f"{case_id}/{name}")
+                for name in names
+            }
+            variable_entities = raw["variable_entities"]
+            for name, entity in variable_entities.items():
+                if (
+                    not isinstance(entity, str)
+                    or entity not in entity_ids
+                    or len(values[name]) != len(entity_ids[entity])
+                ):
+                    raise ValueError(f"{case_id}/{name}: entity shape differs")
+            for entity, entries in by_id[case_id].situation.items():
+                if entity not in entity_ids or set(entries) != set(
+                    entity_ids[entity]
+                ):
+                    raise ValueError(f"{case_id}/{entity}: entity IDs differ")
+            runs[case_id] = NamedVariableRun(
+                case_id=case_id,
+                state_code=state,
+                values=values,
+                entity_ids=entity_ids,
+                variable_entities=dict(variable_entities),
+            )
+        if set(runs) != set(ids):
+            raise ValueError("the runner returned other cases")
+        package = payload["policyengine_us_package"]
+        if not isinstance(package, str) or not package:
+            raise ValueError("missing package path")
+    except (KeyError, TypeError, ValueError, AttributeError) as error:
+        raise PolicyEngineUSUnavailable(
+            f"malformed named-variable result: {error}"
+        ) from error
+    return NamedVariableResult(
+        runs=runs,
+        policyengine_us_version=installation.version,
+        policyengine_core_version=installation.core_version,
+        policyengine_us_package=package,
         python=str(interpreter),
         installation=installation,
         source=source,
