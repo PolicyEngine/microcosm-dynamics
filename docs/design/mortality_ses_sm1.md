@@ -192,10 +192,11 @@ weight, fixed weight, baseline expected deaths, applied expected deaths,
 factor, clipped persons, signed clipping residual, infeasibility,
 normalization basis and persons target, plus the unclassified counts.
 `clipped_persons` counts free rows whose scaled probability
-`q_base * relative_risk * factor` exceeds one at the cell's final factor;
-a row exactly at one is not counted. In a cell whose target exceeds its
-free capacity, it counts every free row with positive baseline q, since
-all of them saturate.
+`q_base * relative_risk * factor` exceeds one at the cell's exact final
+factor (the logged `factor` is its float64 rounding, so a row at one can
+appear to exceed it); a row exactly at one is not counted. In a cell
+whose target exceeds its free capacity, it counts every free row with
+positive baseline q, since all of them saturate.
 `clipping_residual = baseline - applied`. It is nonzero only on
 infeasible cells: iterative capping conserves every feasible cell, and the
 float path verifies that rather than assuming it.
