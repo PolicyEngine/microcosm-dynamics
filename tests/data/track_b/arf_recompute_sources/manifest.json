@@ -460,8 +460,9 @@
         "https://www.law.cornell.edu/uscode/text/42/415"
       ],
       "retrieved_at_utc": "2026-10-11T11:37:16Z",
-      "bytes": 20306,
-      "sha256": "f63cf9e32dc15729810857525f2f0f1070f9bba6b02653e1efa57c6d0195c28c"
+      "bytes": 21424,
+      "sha256": "6e35d38fcf7a31e13338acd8a0ae3bc5a1acd82a980e424d61344b6634b01966",
+      "note": "The Pub. L. 92-603 \u00a7102(i) and \u00a7102(g) note excerpts were added from a re-fetch at 2026-10-23T15:21:00Z whose 402 body matched the pinned SHA-256 byte for byte."
     },
     {
       "id": "ssa_pub_05_10069_arf_recompute_excerpts",
