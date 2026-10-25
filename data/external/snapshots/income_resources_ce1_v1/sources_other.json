@@ -50,6 +50,13 @@
   {
     "file": "ssa_coverage_thresholds.html",
     "reason": "HTTP 403",
+    "resolution": {
+      "archive_timestamp": "20261013081352",
+      "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+      "retrieved_at": "2026-10-24T22:15:15Z",
+      "status": "answered_by_archived_capture"
+    },
     "status": "SOURCE_BLOCKED",
     "url": "https://www.ssa.gov/oact/cola/CovThresh.html"
   },

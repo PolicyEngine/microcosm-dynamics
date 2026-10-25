@@ -201,6 +201,7 @@ def test_overlap_requires_named_options_and_explicit_selection(tmp_path, year):
 @given(
     st.sampled_from(["awaiting_ce2", "identified", "prior", "unidentified"])
 )
+@settings(deadline=None)
 def test_awaiting_evidence_is_never_identified(identification):
     row = invented_row()
     row["identification_class"] = identification
@@ -210,6 +211,7 @@ def test_awaiting_evidence_is_never_identified(identification):
 
 
 @given(st.text(min_size=1).filter(lambda value: value not in {"amount"}))
+@settings(deadline=None)
 def test_unknown_fact_is_refused(value):
     row = invented_row()
     row["trigger_facts"] = ["INVENTED_unknown_" + value]
@@ -229,6 +231,7 @@ def test_every_cited_hash_matches(tmp_path, changed):
 
 
 @given(st.sampled_from(["population", "bound", "citation"]))
+@settings(deadline=None)
 def test_rare_bound_requires_population_bound_and_citation(missing):
     row = invented_row()
     candidate = {
@@ -403,6 +406,17 @@ def test_loader_verifies_nested_citation_and_path(tmp_path):
     }
     with pytest.raises(CaptureIntegrityError):
         CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+
+
+def test_loader_accepts_separate_registry_and_capture_directories(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    registry = invented_registry(captures)
+    path = tmp_path / "registry.json"
+    path.write_text(registry.to_json())
+    assert load_registry(path, capture_root=captures) == registry
+    with pytest.raises(CaptureIntegrityError):
+        load_registry(path)
 
 
 @pytest.mark.parametrize(

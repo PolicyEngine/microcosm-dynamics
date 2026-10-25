@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="cfr.xsl"?>
+<CFRGRANULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CFRMergedXML.xsd">
+    <FDSYS>
+        <CFRTITLE>20</CFRTITLE>
+        <CFRTITLETEXT>Employees' Benefits</CFRTITLETEXT>
+        <VOL>2</VOL>
+        <DATE>2024-04-01</DATE>
+        <ORIGINALDATE>2024-04-01</ORIGINALDATE>
+        <COVERONLY>false</COVERONLY>
+        <TITLE>Work for a communist organization.</TITLE>
+        <GRANULENUM>404.1035</GRANULENUM>
+        <HEADING>Section 404.1035</HEADING>
+        <ANCESTORS>
+            <PARENT HEADING="Title 20" SEQ="4">Employees' Benefits</PARENT>
+            <PARENT HEADING="CHAPTER III" SEQ="3">SOCIAL SECURITY ADMINISTRATION</PARENT>
+            <PARENT HEADING="PART 404" SEQ="2">FEDERAL OLD-AGE, SURVIVORS AND DISABILITY INSURANCE (1950- )</PARENT>
+            <PARENT HEADING="Subpart K" SEQ="1">Employment, Wages, Self-Employment, and Self-Employment Income</PARENT>
+            <PARENT HEADING="" SEQ="0">Work Excluded from Employment</PARENT>
+        </ANCESTORS>
+    </FDSYS>
+    <SECTION>
+        <SECTNO>§ 404.1035</SECTNO>
+        <SUBJECT>Work for a communist organization.</SUBJECT>
+        <P>If you work as an employee of an organization which is registered, or which is required by a final order of the Subversive Activities Control Board to register under the Internal Security Act of 1950 as a communist action, communist-front, or communist-infiltrated organization, your work is excluded from employment. The exclusion is effective with the calendar year in which the organization is registered or the final order is in effect.</P>
+    </SECTION>
+</CFRGRANULE>

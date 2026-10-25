@@ -1200,6 +1200,13 @@
   {
     "file": "ssa_coverage_thresholds.html",
     "reason": "HTTP 403",
+    "resolution": {
+      "archive_timestamp": "20261013081352",
+      "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+      "retrieved_at": "2026-10-24T22:15:15Z",
+      "status": "answered_by_archived_capture"
+    },
     "status": "SOURCE_BLOCKED",
     "url": "https://www.ssa.gov/oact/cola/CovThresh.html"
   },
@@ -1213,7 +1220,7 @@
   },
   {
     "bytes": 18999106,
-    "file": "statute_97_pg65.pdf",
+    "file": "govinfo_statute97_pg65.pdf",
     "provenance": "plain request",
     "retrieved_at": "2026-10-24T21:00:45Z",
     "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
@@ -1282,5 +1289,1020 @@
     "reason": "HTTP 404",
     "status": "UNAVAILABLE",
     "url": "https://uscode.house.gov/view.xhtml?req=granuleid%3AUSC-prelim-title42-section411&num=0&edition=prelim"
+  },
+  {
+    "archive_timestamp": "20261013081352",
+    "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+    "bytes": 37375,
+    "file": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+    "provenance": "decompressed from pinned archived gzip bytes",
+    "retrieved_at": "2026-10-24T22:15:15Z",
+    "sha256": "5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d",
+    "url": "https://www.ssa.gov/OACT/COLA/CovThresh.html"
+  },
+  {
+    "archive_timestamp": "20261013081352",
+    "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+    "bytes": 11477,
+    "file": "ssa_oact_cola_covthresh_wayback_20261013081352.html.gz",
+    "provenance": "orchestrator-supplied Internet Archive copy; gzip as served",
+    "retrieved_at": "2026-10-24T22:15:15Z",
+    "sha256": "2937171d715a48ba1388865c4f3c28a8b8cb13b38170349bcc73bb054dea4738",
+    "url": "https://www.ssa.gov/OACT/COLA/CovThresh.html"
+  },
+  {
+    "attempted_at": "2026-10-25T01:30:24Z",
+    "file": "ssa_ssb_1972_clergy_exemptions.pdf",
+    "purpose": "Potential historical prevalence bound for 26 USC1402(e) exemptions; unread and not used",
+    "reason": "HTTP 403 on plain request; no retry or alternative route",
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf"
+  },
+  {
+    "attempt_date": "2026-10-25",
+    "purpose": "Potential prevalence source for territorial foreign-worker exclusions",
+    "reason": "HTTP 403 on plain request; no retry or alternative route",
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.gao.gov/products/gao-11-805t"
+  },
+  {
+    "attempt_date": "2026-10-25",
+    "purpose": "Potential prevalence source for foreign agricultural service",
+    "reason": "HTTP 403 on plain request; no retry or alternative route",
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.gao.gov/products/gao-25-106389"
+  },
+  {
+    "attempt_date": "2026-10-25",
+    "purpose": "Potential prevalence source for Guam Philippine temporary service",
+    "reason": "HTTP 403 on plain request; no retry or alternative route",
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.gao.gov/products/nsiad-91-192"
+  },
+  {
+    "bytes": 848159,
+    "file": "govinfo_statute88_pg420.pdf",
+    "provenance": "Official Statutes at Large granule; Public Law 93-368 section 10, 88 Stat. 422.",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf"
+  },
+  {
+    "bytes": 28795,
+    "file": "poms_rs_01802400.html",
+    "provenance": "SSA POMS RS 01802.400; community-property allocation history and published examples.",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802400"
+  },
+  {
+    "bytes": 22016,
+    "file": "poms_rs_01901300.html",
+    "provenance": "SSA POMS RS 01901.300; District of Columbia coverage history.",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "sha256": "384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104",
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901300"
+  },
+  {
+    "bytes": 22059,
+    "file": "poms_rs_01901320.html",
+    "provenance": "SSA POMS RS 01901.320; American Samoa, Guam and CNMI coverage histories.",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
+    "status": "captured",
+    "url": "https://secure.ssa.gov/apps10/poms.nsf/lnx/0301901320"
+  },
+  {
+    "bytes": 128616,
+    "file": "irs_schedule_se_1984.pdf",
+    "provenance": "IRS Schedule SE for 1984; historical church remuneration and ordinary-income/loss computation.",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf"
+  },
+  {
+    "bytes": 127742,
+    "file": "irs_schedule_se_1985.pdf",
+    "provenance": "IRS Schedule SE for 1985; historical church remuneration and ordinary-income/loss computation.",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf"
+  },
+  {
+    "bytes": 4293993,
+    "file": "irs_form1040_instructions_1985.pdf",
+    "provenance": "IRS Form 1040 instructions for 1985, printed page 31; Schedule SE church-employee instructions for lines 9 and 13.",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf"
+  },
+  {
+    "bytes": 69072,
+    "file": "uscode_1994_42_411.html",
+    "provenance": "Official 1994 United States Code section granule; former church-remuneration text and amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec411.htm"
+  },
+  {
+    "bytes": 83953,
+    "file": "uscode_1994_42_409.html",
+    "provenance": "Official 1994 United States Code section granule; annual nonprofit remuneration threshold and 1977 amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:38Z",
+    "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec409.htm"
+  },
+  {
+    "bytes": 77847,
+    "file": "uscode_2013_42_411.html",
+    "provenance": "Official 2013 United States Code section granule; optional-method lower and upper limits in subsection (k).",
+    "retrieved_at": "2026-10-25T02:04:38Z",
+    "sha256": "ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2013-title42/html/USCODE-2013-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 4593,
+    "file": "irs_schedule_se_1984.pdf.txt",
+    "provenance": {
+      "derived_from": "irs_schedule_se_1984.pdf",
+      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "pdf_pages": [
+        1
+      ],
+      "printed_pages": [
+        1
+      ],
+      "source_sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373"
+    },
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf"
+  },
+  {
+    "bytes": 4603,
+    "file": "irs_schedule_se_1985.pdf.txt",
+    "provenance": {
+      "derived_from": "irs_schedule_se_1985.pdf",
+      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "pdf_pages": [
+        1
+      ],
+      "printed_pages": [
+        1
+      ],
+      "source_sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8"
+    },
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf"
+  },
+  {
+    "bytes": 8190,
+    "file": "irs_form1040_instructions_1985.pdf.txt",
+    "provenance": {
+      "derived_from": "irs_form1040_instructions_1985.pdf",
+      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "pdf_pages": [
+        31
+      ],
+      "printed_pages": [
+        31
+      ],
+      "source_sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5"
+    },
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf"
+  },
+  {
+    "bytes": 16242,
+    "file": "govinfo_statute88_pg420.pdf.txt",
+    "provenance": {
+      "derived_from": "govinfo_statute88_pg420.pdf",
+      "method": "pdftotext -layout; full source granule",
+      "source_sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c"
+    },
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "sha256": "7f2ef40b0c26fafdf8909000a6fea0161651828d5620203b31720315c5f2844d",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf"
+  },
+  {
+    "bytes": 29449191,
+    "file": "federal_register_1975_07_10.pdf",
+    "provenance": "Official Federal Register issue; final20CFR404.1053(c)(5),40FR29071-29072. Current CFR section XML is small but omits the pre1974 rule. No smaller official historical section rendition was located; the full issue is retained as a necessary fallback. Retrieval UTC records completion of the captured-byte write.",
+    "retrieved_at": "2026-10-25T02:16:45Z",
+    "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf"
+  },
+  {
+    "bytes": 16197,
+    "file": "federal_register_1975_07_10.pdf.txt",
+    "provenance": {
+      "derived_from": "federal_register_1975_07_10.pdf",
+      "method": "pdftotext -f13 -l14 -raw; preserve the reading order of the two source pages",
+      "pdf_pages": [
+        13,
+        14
+      ],
+      "printed_pages": [
+        29071,
+        29072
+      ],
+      "source_sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84"
+    },
+    "retrieved_at": "2026-10-25T02:16:45Z",
+    "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf"
+  },
+  {
+    "bytes": 139768,
+    "file": "ce1c_usc2023_42_410.html",
+    "provenance": "United States Code, 2023 edition, section 410 and editorial amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 78804,
+    "file": "ce1c_usc2023_42_411.html",
+    "provenance": "United States Code, 2023 edition, section 411 and editorial amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "59d9f7f54e7f6300766143087a91b556916e3f92c9760a547dc67d065fde29e1",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 282259,
+    "file": "ce1c_usc2024_26_3121.html",
+    "provenance": "United States Code, 2024 edition, section 3121 and fishing amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap21-subchapC-sec3121.htm"
+  },
+  {
+    "bytes": 7419,
+    "file": "ce1c_usc2024_26_3508.html",
+    "provenance": "United States Code, 2024 edition, section 3508 and effective-date notes.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap25-sec3508.htm"
+  },
+  {
+    "bytes": 276756,
+    "file": "ce1c_usc2024_26_1.html",
+    "provenance": "United States Code, 2024 edition, section 1; Tax Reform Act of 1986 section 151(d) and 1988 corrections applicability notes.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapA-partI-sec1.htm"
+  },
+  {
+    "bytes": 637962,
+    "file": "ce1c_plaw104_188.html",
+    "provenance": "Official act HTML; sections 1116 and 1118, 110 Stat. 1762-1764.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-104publ188/html/PLAW-104publ188.htm"
+  },
+  {
+    "bytes": 230166,
+    "file": "ce1c_plaw113_295.html",
+    "provenance": "Official act HTML; section 221(a)(99)(C)(ii) and 221(b), 128 Stat. 4052,4055.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "b4adf62c8774ef8b064f086f10264d77b1d5f0425889919067c3c325c2f6718d",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-113publ295/html/PLAW-113publ295.htm"
+  },
+  {
+    "bytes": 6088,
+    "file": "ce1c_plaw115_243.html",
+    "provenance": "Official act HTML; Tribal Social Security Fairness Act of 2018, section 2.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-115publ243/html/PLAW-115publ243.htm"
+  },
+  {
+    "bytes": 2054,
+    "file": "ce1c_cfr2024_20_404_1017.xml",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; sharefarmer wage exclusion and self-employment treatment.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "41b51eaac204c8b616ed09b2956c11c60f37bdff8da806564be867ab8838658d",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1017.xml"
+  },
+  {
+    "bytes": 2059,
+    "file": "ce1c_cfr2024_20_404_1031.xml",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; older fishing cash-pay language retained as a named source disagreement.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "f808068af55a669085dd0ec4f9159271fe7e54b219a9b804645460e9cb18ca8f",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1031.xml"
+  },
+  {
+    "bytes": 1706,
+    "file": "ce1c_cfr2024_20_404_1035.xml",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; unrevised communist-organization exclusion retained as a named source disagreement.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "c65772e3961f9339197539354f7f1d8f1921b1f0cde1d35bc2ee7b7fdbc311be",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1035.xml"
+  },
+  {
+    "bytes": 64891,
+    "file": "ce1c_poms_rs_01901700.html",
+    "provenance": "POMS RS 01901.700, revision September 8, 2026; Revenue Ruling 59-354 background, agreements and posted-earns credit distinction.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901700"
+  },
+  {
+    "bytes": 24119,
+    "file": "ce1c_poms_rs_01802232.html",
+    "provenance": "POMS RS 01802.232, revision June 16, 1997; conditional direct-seller treatment.",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "sha256": "7869d2fd505951090e99709f2de4a9e252bd9bacebd21fffea53e46333a6d2ae",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802232"
+  },
+  {
+    "bytes": 78804,
+    "file": "uscode_2024_42_411.html",
+    "provenance": "Official 2024 United States Code section; modifiers and amendment/effective-date notes.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 130770,
+    "file": "uscode_2024_26_162.html",
+    "provenance": "Official 2024 United States Code section; health-insurance deduction and historical notes.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapB-partVI-sec162.htm"
+  },
+  {
+    "bytes": 7551,
+    "file": "uscode_2024_26_7873.html",
+    "provenance": "Official 2024 United States Code section; treaty fishing conditions and retroactive effective date.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleF-chap80-subchapC-sec7873.htm"
+  },
+  {
+    "bytes": 125312,
+    "file": "uscode_2024_42_416.html",
+    "provenance": "Official 2024 United States Code section; retirement age in subsection(l) and amendment history.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "01d4f66dc81614c56bf5ed494102c291003ae116dd00b6b39575c9ceaaf07f19",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec416.htm"
+  },
+  {
+    "bytes": 5552,
+    "file": "cfr_2024_20_4041081.xml",
+    "provenance": "Official 2024 20 CFR404.1081; accounting, business aggregation and partnership rules.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "ec9e86ab383ef8d3b196c3755c96d6a4348e27e1a8aff45d6b354a783d378060",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1081.xml"
+  },
+  {
+    "bytes": 12198,
+    "file": "cfr_2024_20_4041082.xml",
+    "provenance": "Official 2024 20 CFR404.1082; rental-income rule, limitations and published examples.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1082.xml"
+  },
+  {
+    "bytes": 359285,
+    "file": "govinfo_plaw_111publ240.html",
+    "provenance": "Public Law111-240 section2042; temporary2010 health-insurance deduction for SE-tax NESE.",
+    "retrieved_at": "2026-10-25T02:37:51Z",
+    "sha256": "a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-111publ240/html/PLAW-111publ240.htm"
+  },
+  {
+    "bytes": 24847693,
+    "file": "govinfo_statute79_pg286.pdf",
+    "provenance": "Public Law89-97, Social Security Amendments of1965; section325,79Stat399. Whole-act fallback because official HTML/txt/ocr/text renditions were Page Not Found.",
+    "retrieved_at": "2026-10-25T02:37:55Z",
+    "sha256": "37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf"
+  },
+  {
+    "bytes": 3620,
+    "file": "govinfo_statute79_pg286.pdf.txt",
+    "provenance": {
+      "derived_from": "govinfo_statute79_pg286.pdf",
+      "method": "pdftotext -f114 -l114 -layout; single cited source page",
+      "pdf_pages": [
+        114
+      ],
+      "printed_pages": [
+        399
+      ],
+      "source_sha256": "37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14"
+    },
+    "retrieved_at": "2026-10-25T02:37:55Z",
+    "sha256": "6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63",
+    "status": "captured",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf"
+  },
+  {
+    "bytes": 114234,
+    "file": "uscode_1994_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1994,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:09Z",
+    "sha256": "5f11b90bdea54f8a3608469bba60e298805f379c11180dc52c7a714177377f68",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title26/html/USCODE-1994-title26-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 127466,
+    "file": "uscode_1994_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1994,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:09Z",
+    "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec410.htm"
+  },
+  {
+    "bytes": 127466,
+    "file": "uscode_1995_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1995,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:19Z",
+    "sha256": "c6b37287a15392d88b96efbc579181c3a64f3dbee7f70e490b4bd4df2d2ccaac",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1995-title42/html/USCODE-1995-title42-chap6-subchapII_2-sec410.htm"
+  },
+  {
+    "bytes": 117757,
+    "file": "uscode_1997_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1997,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:20Z",
+    "sha256": "84bd6ecf02f1d369fefaf64c512099030ebbf3d9204429d1b4da02737eaf6ad3",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1997-title26/html/USCODE-1997-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 131092,
+    "file": "uscode_1997_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1997,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:19Z",
+    "sha256": "93939bca4925df02bf9debddebc685c842dbbcbf1ff0e67b05c6ec1f7a0b318a",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 71041,
+    "file": "uscode_1997_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 1997,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:19Z",
+    "sha256": "a88f64af261326670d0051b68368c1798c1f69ced7fd079694d4e92e6b3c8cf9",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 119807,
+    "file": "uscode_2000_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2000,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:12Z",
+    "sha256": "28020a518edcc11a87e1aa6a6b852bce4238fac76e0b1240ca15855f9ef61f4b",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2000-title26/html/USCODE-2000-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 132697,
+    "file": "uscode_2000_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2000,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:09Z",
+    "sha256": "6c621076708106113a503ceb93d485a7d767996ccad551b04424e05f4217fb38",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2000-title42/html/USCODE-2000-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 71020,
+    "file": "uscode_2000_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2000,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:12Z",
+    "sha256": "624df0c3d2503f3038cb5befe7cc877738e77d18d0814ee9282573a3987d221c",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2000-title42/html/USCODE-2000-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 132994,
+    "file": "uscode_2004_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2004,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:21Z",
+    "sha256": "95714e0f48176c6110b0b44ae77770336fdd244e8c6bff8b935f0b8fb3e4b921",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2004-title42/html/USCODE-2004-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 73089,
+    "file": "uscode_2004_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2004,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:21Z",
+    "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2004-title42/html/USCODE-2004-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 120701,
+    "file": "uscode_2006_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2006,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:13Z",
+    "sha256": "6b59e20758d19d2b6de04140b0aa15e93389f604c734c77a53abe8217d0d2d9d",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2006-title26/html/USCODE-2006-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 133255,
+    "file": "uscode_2006_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2006,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:12Z",
+    "sha256": "f079430d1c91ee2f5946804cd86a818392ab17f48ca80a6ace3f69e6482da7db",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2006-title42/html/USCODE-2006-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 73089,
+    "file": "uscode_2006_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2006,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:13Z",
+    "sha256": "f9fa67fb2d85bbe216b90590ce5f5c080aa8448cc08cf78150c681e1510979a8",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2006-title42/html/USCODE-2006-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 121439,
+    "file": "uscode_2007_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2007,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:21Z",
+    "sha256": "fc654b8997e70ec2d989f12102eb3ff84305c4899144bd2ce667e41f8072d81a",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2007-title26/html/USCODE-2007-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 73885,
+    "file": "uscode_2007_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2007,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:21Z",
+    "sha256": "701a5797aee86cb6ff994c589f353585d3e04a03e89b919f560f692cd2ff5d6a",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2007-title42/html/USCODE-2007-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 125397,
+    "file": "uscode_2008_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2008,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:23Z",
+    "sha256": "b94297ea8dd6abd8a9c4d4d701ce1ea0306e41f4e6858b30fc9d9f0c48ae5213",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2008-title26/html/USCODE-2008-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 136693,
+    "file": "uscode_2008_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2008,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:23Z",
+    "sha256": "43612b206d55ddac7a36f4f42cffc3ca8e5305989c1c5033be56e1d5eadba8f8",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2008-title42/html/USCODE-2008-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 77593,
+    "file": "uscode_2008_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2008,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:23Z",
+    "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2008-title42/html/USCODE-2008-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 126636,
+    "file": "uscode_2010_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2010,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:23Z",
+    "sha256": "39604c4eae8a6568b07e6120739bb8d8e27fbb51842493b5320afca051bfd45c",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2010-title26/html/USCODE-2010-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 127519,
+    "file": "uscode_2012_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2012,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:14Z",
+    "sha256": "93ce25d38904f289e998eab10dbc47c8a952f22319a40463f6bddd48beb29070",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2012-title26/html/USCODE-2012-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 137621,
+    "file": "uscode_2012_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2012,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:14Z",
+    "sha256": "a11b5f7fbf2827566d7c42ef6a567b2efb8e8e96cf03186ab4f7dd69aacd5bbb",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 78167,
+    "file": "uscode_2012_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2012,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:14Z",
+    "sha256": "3943dbedbfee61b4c2c0f2e2c3e7ab4b880cbc7036d06f94a262ff768d239b0a",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 137304,
+    "file": "uscode_2014_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2014,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:24Z",
+    "sha256": "acfa00ffe273f79fe5663919565b8f7819ae97ae437210cdca747d8fa1cdb061",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2014-title42/html/USCODE-2014-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 128346,
+    "file": "uscode_2018_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2018,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:16Z",
+    "sha256": "8da43542c88095151fe62ee5af9d581d23503692dc57c4a3c1edf54f8cd67358",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2018-title26/html/USCODE-2018-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 138070,
+    "file": "uscode_2018_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2018,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:15Z",
+    "sha256": "c4c6208eff6a70577b49d1ba4a2d47b2c976b59a02443d225519211db4a8b0f8",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2018-title42/html/USCODE-2018-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": 78465,
+    "file": "uscode_2018_42_411.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2018,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 411,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:15Z",
+    "sha256": "d4ec5a54cf40a23d09be5a978f6d64bd8588656f2cb3648b792c0e166647040a",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2018-title42/html/USCODE-2018-title42-chap7-subchapII-sec411.htm"
+  },
+  {
+    "bytes": 128872,
+    "file": "uscode_2024_26_1402.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2024,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 1402,
+      "title": 26
+    },
+    "retrieved_at": "2026-10-25T02:36:18Z",
+    "sha256": "557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap2-sec1402.htm"
+  },
+  {
+    "bytes": 139768,
+    "file": "uscode_2024_42_410.html",
+    "provenance": {
+      "actual_section_heading_verified": true,
+      "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.",
+      "collection": "United States Code",
+      "edition_label": 2024,
+      "format": "official section HTML",
+      "publisher": "U.S. Government Publishing Office",
+      "section": 410,
+      "title": 42
+    },
+    "retrieved_at": "2026-10-25T02:36:16Z",
+    "sha256": "d8618e7d8bbcffae1d81a07cb2890fabaa60f8d274a58c7a5100be19cd94ee15",
+    "status": "retrieved",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec410.htm"
+  },
+  {
+    "bytes": null,
+    "file": null,
+    "http_status": 503,
+    "reason": "Plain request returned Please Retry later in15Seconds refresh/challenge page; stopped with no retry or alternate endpoint.",
+    "recorded_at": "2026-10-25T02:43:23Z",
+    "request_time_limitation": "Exact request/retrieval second was not retained. recorded_at is the UTC audit timestamp, not retrieval time.",
+    "retrieved_at": null,
+    "sha256": null,
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.govinfo.gov/metadata/granule/USCODE-2014-title42/USCODE-2014-title42-chap7-subchapII-sec410/mods.xml"
+  },
+  {
+    "bytes": null,
+    "file": null,
+    "http_status": 403,
+    "reason": "Earlier registry_audit plain request refused; no retry, alternate host or attempt to obtain the linked LoC files.",
+    "recorded_at": "2026-10-25T02:43:23Z",
+    "request_time_limitation": "Earlier agent did not retain exact request/retrieval second. recorded_at is this UTC audit timestamp, not retrieval time.",
+    "retrieved_at": null,
+    "sha256": null,
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.loc.gov/item/uscode1970-028042007/?fo=json"
+  },
+  {
+    "bytes": 1335168,
+    "file": "ce1c_irs_pub51_2023.pdf",
+    "provenance": "IRS Publication 51 (2023), printed/PDF page 12, example explicitly concerning 2022.",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
+  },
+  {
+    "bytes": 192853,
+    "derivation_command": "pdftotext -layout INPUT.pdf OUTPUT.pdf.txt",
+    "derived_from": "ce1c_irs_pub51_2023.pdf",
+    "derived_from_sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+    "file": "ce1c_irs_pub51_2023.pdf.txt",
+    "provenance": "Text derivative generated with pdftotext -layout; no content editing.",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
+  },
+  {
+    "bytes": 33721,
+    "file": "ce1c_poms_rs_02101125.html",
+    "provenance": "POMS RS 02101.125, revised May 5, 2011; B Examples A-B.",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "sha256": "d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0302101125"
+  },
+  {
+    "bytes": 35902,
+    "file": "ce1c_poms_sl_30001334.html",
+    "provenance": "POMS State and Local Coverage Handbook SL 30001.334, revised January 29, 2020; F.1 Examples 1-4.",
+    "retrieved_at": "2026-10-25T02:39:45Z",
+    "sha256": "c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1930001334"
   }
 ]

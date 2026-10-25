@@ -1,0 +1,37 @@
+[
+  {
+    "file": "ce1c_irs_pub51_2023.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "bytes": 1335168,
+    "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+    "provenance": "IRS Publication 51 (2023), printed/PDF page 12, example explicitly concerning 2022."
+  },
+  {
+    "file": "ce1c_irs_pub51_2023.pdf.txt",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "bytes": 192853,
+    "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
+    "provenance": "Text derivative generated with pdftotext -layout; no content editing.",
+    "derived_from": "ce1c_irs_pub51_2023.pdf",
+    "derived_from_sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+    "derivation_command": "pdftotext -layout INPUT.pdf OUTPUT.pdf.txt"
+  },
+  {
+    "file": "ce1c_poms_rs_02101125.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0302101125",
+    "retrieved_at": "2026-10-25T02:39:46Z",
+    "bytes": 33721,
+    "sha256": "d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b",
+    "provenance": "POMS RS 02101.125, revised May 5, 2011; B Examples A-B."
+  },
+  {
+    "file": "ce1c_poms_sl_30001334.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1930001334",
+    "retrieved_at": "2026-10-25T02:39:45Z",
+    "bytes": 35902,
+    "sha256": "c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41",
+    "provenance": "POMS State and Local Coverage Handbook SL 30001.334, revised January 29, 2020; F.1 Examples 1-4."
+  }
+]

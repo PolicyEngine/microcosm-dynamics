@@ -4,8 +4,10 @@ Published worked examples retain their cited passages. These tests use no
 survey observations and do not implement the CE3 component classifier.
 """
 
+import gzip
 import hashlib
 import json
+import re
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -18,24 +20,30 @@ from populace_dynamics.income_resources.coverage_rules import (
     TRIGGER_FACTS,
     CoverageRegistry,
     CoverageRegistryError,
+    CoverageRule,
     OpenRuleError,
     ThresholdUnavailableError,
     load_registry,
     source_text,
 )
 
+REGISTRY_ARTIFACT = (
+    Path(__file__).resolve().parents[2]
+    / "data"
+    / "external"
+    / "income_resources_ce1"
+    / "coverage_rules.json"
+)
+PUBLISHED_CASES = [
+    (row["rule_id"], example["example_id"])
+    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    for example in row["worked_examples"]
+]
+
 
 @pytest.fixture(scope="module")
 def registry():
-    artifact = (
-        Path(__file__).resolve().parents[2]
-        / "data"
-        / "external"
-        / "snapshots"
-        / "income_resources_ce1_v1"
-        / "coverage_rules.json"
-    )
-    return load_registry(artifact)
+    return load_registry(REGISTRY_ARTIFACT)
 
 
 def citations(value):
@@ -49,16 +57,120 @@ def citations(value):
             yield from citations(child)
 
 
+def test_canonical_registry_matches_research_fragments(registry):
+    root = CAPTURE_DIRECTORY.parent.parent / "income_resources_ce1"
+
+    def read(name):
+        return json.loads((root / name).read_text())
+
+    assert PUBLISHED_CASES, "CE1 needs published conformance cases"
+    assert len(PUBLISHED_CASES) == len(set(PUBLISHED_CASES))
+    rows = [
+        CoverageRule.from_dict(row).to_dict()
+        for name in (
+            "government_rules.json",
+            "se_rules.json",
+            "other_rules.json",
+            "se_modifier_rules.json",
+        )
+        for row in read(name)
+    ]
+    assert {r["rule_id"]: r for r in rows} == {
+        r.rule_id: r.to_dict() for r in registry.rules
+    }
+    thresholds = [
+        threshold
+        for name in (
+            "thresholds_government.json",
+            "thresholds_se.json",
+            "thresholds_other.json",
+        )
+        for threshold in read(name)
+    ]
+    canonical = registry.to_dict()
+    assert {t["threshold_id"]: t for t in thresholds} == {
+        t["threshold_id"]: t for t in canonical["thresholds"]
+    }
+    ret = read("earnings_test_root.json")
+    ret["self_employment_guidance"] = read("earnings_test_se.json")
+    ret["historical_research"] = read("ret_history_government.json")
+    ret["definition_modifier_research"] = read("ret_history_modifiers.json")
+    assert ret == canonical["earnings_test"]
+    assert (
+        read("table_definitions_root.json") == canonical["table_definitions"]
+    )
+
+
 def test_every_pinned_citation_matches_its_capture(registry):
     found = list(citations(registry.to_dict()))
     assert found
+    digests = {}
+    texts = {}
     for citation in found:
         path = CAPTURE_DIRECTORY / citation["capture"]
-        assert (
-            hashlib.sha256(path.read_bytes()).hexdigest() == citation["sha256"]
-        )
+        if path not in digests:
+            digests[path] = hashlib.sha256(path.read_bytes()).hexdigest()
+        assert digests[path] == citation["sha256"]
         if citation.get("quote"):
-            assert " ".join(citation["quote"].split()) in source_text(path)
+            if path not in texts:
+                texts[path] = source_text(path)
+            assert " ".join(citation["quote"].split()) in texts[path]
+
+
+def test_archived_threshold_table_matches_every_published_year(registry):
+    name = "ssa_oact_cola_covthresh_wayback_20261013081352.html"
+    html = (CAPTURE_DIRECTORY / name).read_text()
+    rows = re.findall(
+        r'<td align="center">(\d{4})</td>\s*'
+        r"<td>\$?([\d,]+)</td>\s*<td>\$?([\d,]+)</td>",
+        html,
+    )
+    assert len(rows) == 33
+    assert {int(row[0]) for row in rows} == set(range(1994, 2027))
+    for year, domestic, election in rows:
+        assert registry.threshold("domestic_cash_annual", int(year)) == int(
+            domestic.replace(",", "")
+        )
+        assert registry.threshold(
+            "election_remuneration_annual", int(year)
+        ) == int(election.replace(",", ""))
+    assert (
+        gzip.decompress((CAPTURE_DIRECTORY / (name + ".gz")).read_bytes())
+        == (CAPTURE_DIRECTORY / name).read_bytes()
+    )
+    inventory = json.loads(
+        (CAPTURE_DIRECTORY / "source_inventory.json").read_text()
+    )
+    blocked = next(
+        row
+        for row in inventory
+        if row.get("url") == "https://www.ssa.gov/oact/cola/CovThresh.html"
+    )
+    assert blocked["status"] == "SOURCE_BLOCKED"
+    assert blocked["reason"] == "HTTP 403"
+    assert blocked["resolution"]["status"] == "answered_by_archived_capture"
+    assert blocked["resolution"]["capture"] == name
+
+
+@settings(deadline=None)
+@given(st.integers(1968, 1993))
+def test_archived_pre1994_footnote_agrees_with_quarterly_statute(
+    registry, year
+):
+    threshold = next(
+        t
+        for t in registry.thresholds
+        if t["threshold_id"] == "domestic_cash_quarterly"
+    )
+    assert registry.threshold("domestic_cash_quarterly", year) == 50
+    assert threshold["aggregation_scope"] == "calendar_quarter"
+    assert any(
+        c["capture"] == "lii_42_409.html" for c in threshold["citations"]
+    )
+    assert any(
+        c.get("quote", "").startswith("Prior to 1994")
+        for c in threshold["citations"]
+    )
 
 
 @settings(deadline=None)
@@ -136,31 +248,35 @@ def test_real_loader_is_row_order_independent_and_round_trips(
     assert json.loads(restored.to_json()) == restored.to_dict()
 
 
-def test_published_examples_conform_to_legal_lookup(registry):
-    examples = [
-        (rule, example)
-        for rule in registry.rules
-        for example in rule.worked_examples
-    ]
-    assert examples, "CE1 needs published guidance conformance examples"
-    for rule, example in examples:
-        citation = example["citation"]
-        passage = " ".join(example["source_passage"].split())
-        assert passage in source_text(CAPTURE_DIRECTORY / citation["capture"])
-        returned = registry.lookup(rule.family, example["income_year"])
-        matched = [
-            r for r in returned if r.rule_id == example["expected_rule_id"]
-        ]
-        assert len(matched) == 1
-        for key, value in example["expected_parameters"].items():
-            assert matched[0].parameters[key] == value
-        for threshold_id, amount in example.get(
-            "expected_thresholds", {}
-        ).items():
-            assert (
-                registry.threshold(threshold_id, example["income_year"])
-                == amount
-            )
+@pytest.mark.parametrize(
+    ("rule_id", "example_id"),
+    PUBLISHED_CASES,
+    ids=[example_id for _, example_id in PUBLISHED_CASES],
+)
+def test_published_examples_conform_to_legal_lookup(
+    registry, rule_id, example_id
+):
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    example = next(
+        e for e in rule.worked_examples if e["example_id"] == example_id
+    )
+    citation = example["citation"]
+    passage = " ".join(example["source_passage"].split())
+    assert passage in source_text(CAPTURE_DIRECTORY / citation["capture"])
+    assert example["expected_rule_id"] == rule.rule_id
+    if example.get("income_year_basis") == (
+        "source_edition_lookup_year_for_undated_published_example"
+    ):
+        assert example["income_year"] == example["source_edition_year"]
+    returned = registry.lookup(rule.family, example["income_year"])
+    matched = [r for r in returned if r.rule_id == example["expected_rule_id"]]
+    assert len(matched) == 1
+    for key, value in example["expected_parameters"].items():
+        assert matched[0].parameters[key] == value
+    for threshold_id, amount in example.get("expected_thresholds", {}).items():
+        assert (
+            registry.threshold(threshold_id, example["income_year"]) == amount
+        )
 
 
 @settings(deadline=None)
@@ -199,6 +315,58 @@ def test_state_local_change_occurs_after_july_first_1991(registry):
     assert len(registry.lookup(family, 1991)) == 2
 
 
+def test_primary_act_boundaries_preserve_midyear_changes(registry):
+    for family, boundary, before_id, after_id in (
+        (
+            "communist_organization_service",
+            date(2014, 12, 19),
+            "communist_organization_service_1968",
+            "communist_organization_service_2014_1219",
+        ),
+        (
+            "tribal_council_service",
+            date(2018, 9, 20),
+            "tribal_council_service_1968",
+            "tribal_council_service_2018_0920",
+        ),
+    ):
+        assert (
+            registry.lookup_date(family, boundary - timedelta(days=1))[
+                0
+            ].rule_id
+            == before_id
+        )
+        assert registry.lookup_date(family, boundary)[0].rule_id == after_id
+        assert len(registry.lookup(family, boundary.year)) == 2
+
+
+def test_community_income_uses_operational_taxable_year_change(registry):
+    before = registry.lookup("self_employment_community_income", 1979)[0]
+    after = registry.lookup("self_employment_community_income", 1980)[0]
+    assert before.rule_id == "se_community_income_1968_1979"
+    assert after.rule_id == "se_community_income_1980_2026"
+    assert (
+        after.parameters["operational_taxable_year_condition"][
+            "first_included_month"
+        ]
+        == "1980-10"
+    )
+    assert after.parameters["statutory_text_amendment_date"] == "2004-03-02"
+
+
+@settings(deadline=None)
+@given(st.integers(1985, 2026))
+def test_fishing_additional_cash_is_a_per_trip_upper_bound(registry, year):
+    threshold = next(
+        t
+        for t in registry.thresholds
+        if t["threshold_id"] == "fishing_additional_cash_per_trip"
+    )
+    assert threshold["comparison"] == "at_most"
+    assert threshold["aggregation_scope"] == "employer_employee_trip"
+    assert registry.threshold(threshold["threshold_id"], year) == 100
+
+
 def test_open_source_history_refuses_instead_of_backcasting(registry):
     open_rules = [r for r in registry.rules if r.open_reason]
     assert open_rules
@@ -222,6 +390,15 @@ def test_ret_concept_records_disregarded_limits_and_both_deeming_conditions(
     assert len(ret["deeming_rule"]["required_conditions"]) == 2
     assert len(ret["gross_income_exclusions_D"]) == 2
     assert not ret["self_employment"]["thresholds_apply"]
+
+
+@settings(deadline=None)
+@given(st.integers(1968, 2026))
+def test_ret_concept_refuses_years_with_unverified_dependencies(
+    registry, year
+):
+    with pytest.raises(OpenRuleError):
+        registry.earnings_test_concept(year)
 
 
 def test_table_availability_does_not_infer_a_membership_rule(registry):

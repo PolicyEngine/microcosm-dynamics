@@ -25,8 +25,9 @@ Invariants (property tests in ``tests/income_resources``):
 * Row order does not affect validation, lookup or canonical JSON round trips.
 
 Threshold amounts use the record's unit (dollars unless stated as days).
-Threshold computation returns exact Fractions. No classification, tax cap or empirical
-prior is implemented here. A published example tests a legal lookup and its
+Each record retains its lower- or upper-bound comparison and aggregation.
+Threshold computation returns exact Fractions. No classification, tax cap or
+empirical prior is implemented here. A published example tests a legal lookup and its
 parameters, not a classifier that belongs to CE3.
 """
 
@@ -55,7 +56,10 @@ CAPTURE_DIRECTORY = (
     Path(__file__).resolve().parents[3]
     / "data/external/snapshots/income_resources_ce1_v1"
 )
-REGISTRY_PATH = CAPTURE_DIRECTORY / "coverage_rules.json"
+REGISTRY_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "data/external/income_resources_ce1/coverage_rules.json"
+)
 
 # Legal facts absent from the retired campaign's broad field-purpose list.
 CE1_FIELD_PURPOSES = (
@@ -90,6 +94,46 @@ CE1_FIELD_PURPOSES = (
     "nonprofit_organization",
     "nonprofit_coverage_waiver",
     "nonprofit_employee_concurrence",
+    "agricultural_share_arrangement",
+    "communist_organization_registration",
+    "fishing_catch_share_arrangement",
+    "fishing_crew_size",
+    "fishing_additional_cash_conditions",
+    "historical_fica_treatment",
+    "newspaper_service_arrangement",
+    "direct_seller_contract",
+    "tribal_council_service",
+    "tribal_federal_recognition",
+    "tribal_coverage_agreement",
+    "historical_earnings_posting",
+    "country_of_residence",
+    "american_employer",
+    "congregation_predominantly_us_citizens",
+    "community_property_income",
+    "business_operator_spouse",
+    "joint_business_distributive_shares",
+    "substantially_all_business_management_and_control",
+    "agent_or_employee_participation",
+    "rental_arrangement_requires_material_participation",
+    "rental_income",
+    "real_estate_dealer_status",
+    "services_to_occupants",
+    "dividend_or_interest_income",
+    "securities_dealer_status",
+    "property_disposition_type",
+    "net_operating_loss_deduction",
+    "residence_period",
+    "foreign_earned_income_exclusion",
+    "possession_income_exclusion",
+    "tribal_fishing_rights_income",
+    "tribal_fishing_qualified_entity",
+    "health_insurance_deduction",
+    "partner_death_date",
+    "partnership_taxable_year",
+    "taxable_year",
+    "clergy_retirement_benefit",
+    "benefit_type",
+    "early_retirement_age_year",
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 
@@ -512,12 +556,14 @@ class CoverageRegistry:
                     "person_month",
                     "calendar_month",
                     "employer_employee_month",
+                    "employer_employee_trip",
                 },
                 "threshold aggregation scope",
             )
             _text(threshold.get("eligible_concept"), "eligible concept")
             _require(
-                threshold.get("comparison") in {"at_least", "greater_than"},
+                threshold.get("comparison")
+                in {"at_least", "greater_than", "at_most"},
                 "threshold comparison",
             )
             _require(bool(threshold.get("citations")), "threshold citations")
@@ -854,11 +900,23 @@ class CoverageRegistry:
         return concept
 
 
-def load_registry(path: Path | str = REGISTRY_PATH) -> CoverageRegistry:
-    """Load deterministic JSON and verify every cited capture's hash."""
+def load_registry(
+    path: Path | str = REGISTRY_PATH, *, capture_root: Path | None = None
+) -> CoverageRegistry:
+    """Load JSON and verify captures, kept separately for the CE1 registry.
+
+    Custom registries default to adjacent captures; callers can supply an
+    explicit capture directory without allowing citations to escape it.
+    """
     path = Path(path)
+    if capture_root is None:
+        capture_root = (
+            CAPTURE_DIRECTORY
+            if path.resolve() == REGISTRY_PATH.resolve()
+            else path.parent
+        )
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         raise RegistryValidationError(f"cannot load registry: {path}") from exc
-    return CoverageRegistry.from_dict(raw, capture_root=path.parent)
+    return CoverageRegistry.from_dict(raw, capture_root=capture_root)

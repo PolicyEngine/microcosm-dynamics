@@ -136,7 +136,7 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | poms_sl_50001570.html | https://secure.ssa.gov/poms.nsf/lnx/1950001570 | 2026-10-24T20:58:52Z | 25125 | `5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8` |
 | poms_sl_90015501.html | https://secure.ssa.gov/poms.nsf/lnx/1990015501 | 2026-10-24T20:59:15Z | 28457 | `dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d` |
 | statute_94_pg2263.pdf | https://www.govinfo.gov/content/pkg/STATUTE-94/pdf/STATUTE-94-Pg2263.pdf | 2026-10-24T21:17:23Z | 772770 | `06b4876899c90768ba2fc5e82fa07b6ed5c8d39335f59fb9716e4d27ccb4c1f4` |
-| statute_97_pg65.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:45Z | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` |
+| govinfo_statute97_pg65.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:45Z | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` |
 | supplement2025_4b.html | https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html | 2026-07-27T13:02:54Z | 488165 | `c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449` |
 | uscode_119_120_26_3121.html | https://uscode.house.gov/us/usc/119-120/t26/s3121/ | 2026-10-24T21:02:43Z | 288683 | `b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405` |
 
@@ -178,3 +178,123 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | UNAVAILABLE | https://uscode.house.gov/view.xhtml?req=granuleid:USC-1994-title42-section411&num=0&edition=1994 | HTTP 404 |
 | UNAVAILABLE | https://uscode.house.gov/view.xhtml?req=granuleid:USC-2023-title42-section411&num=0&edition=2023 | HTTP 404 |
 | UNAVAILABLE | https://uscode.house.gov/view.xhtml?req=granuleid%3AUSC-prelim-title42-section411&num=0&edition=prelim | HTTP 404 |
+
+## Archived coverage-threshold capture
+
+Original URL: https://www.ssa.gov/OACT/COLA/CovThresh.html
+
+Archive URL: https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html
+
+Snapshot: `20261013081352`. Retrieval UTC: `2026-10-24T22:15:15Z`.
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| ssa_oact_cola_covthresh_wayback_20261013081352.html | 37375 | `5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d` |
+| ssa_oact_cola_covthresh_wayback_20261013081352.html.gz | 11477 | `2937171d715a48ba1388865c4f3c28a8b8cb13b38170349bcc73bb054dea4738` |
+
+The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered by this archived copy.
+
+## Additional refused prevalence-source requests
+
+| URL | Attempt UTC | Status |
+|---|---|---|
+| https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf | 2026-10-25T01:30:24Z | SOURCE_BLOCKED, HTTP 403 |
+| https://www.gao.gov/products/gao-11-805t | 2026-10-25 | SOURCE_BLOCKED, HTTP 403 |
+| https://www.gao.gov/products/gao-25-106389 | 2026-10-25 | SOURCE_BLOCKED, HTTP 403 |
+| https://www.gao.gov/products/nsiad-91-192 | 2026-10-25 | SOURCE_BLOCKED, HTTP 403 |
+
+## Additional pinned primary sources
+
+| File | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| govinfo_statute88_pg420.pdf | https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf | 2026-10-25T02:04:36Z | 848159 | 57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c |
+| poms_rs_01802400.html | https://secure.ssa.gov/poms.nsf/lnx/0301802400 | 2026-10-25T02:04:36Z | 28795 | ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b |
+| poms_rs_01901300.html | https://secure.ssa.gov/poms.nsf/lnx/0301901300 | 2026-10-25T02:04:36Z | 22016 | 384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104 |
+| poms_rs_01901320.html | https://secure.ssa.gov/apps10/poms.nsf/lnx/0301901320 | 2026-10-25T02:04:36Z | 22059 | 7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b |
+| irs_schedule_se_1984.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf | 2026-10-25T02:04:37Z | 128616 | e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373 |
+| irs_schedule_se_1985.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf | 2026-10-25T02:04:37Z | 127742 | db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8 |
+| irs_form1040_instructions_1985.pdf | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 4293993 | 84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5 |
+| uscode_1994_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec411.htm | 2026-10-25T02:04:37Z | 69072 | 40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1 |
+| uscode_1994_42_409.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec409.htm | 2026-10-25T02:04:38Z | 83953 | 260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27 |
+| uscode_2013_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2013-title42/html/USCODE-2013-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:04:38Z | 77847 | ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8 |
+| irs_schedule_se_1984.pdf.txt | https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf | 2026-10-25T02:04:37Z | 4593 | b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb |
+| irs_schedule_se_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf | 2026-10-25T02:04:37Z | 4603 | 3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa |
+| irs_form1040_instructions_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 8190 | 55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68 |
+| govinfo_statute88_pg420.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf | 2026-10-25T02:04:36Z | 16242 | 7f2ef40b0c26fafdf8909000a6fea0161651828d5620203b31720315c5f2844d |
+| federal_register_1975_07_10.pdf | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 29449191 | ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84 |
+| federal_register_1975_07_10.pdf.txt | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 16197 | 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 |
+| ce1c_usc2023_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:04:52Z | 139768 | 8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2 |
+| ce1c_usc2023_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:04:52Z | 78804 | 59d9f7f54e7f6300766143087a91b556916e3f92c9760a547dc67d065fde29e1 |
+| ce1c_usc2024_26_3121.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap21-subchapC-sec3121.htm | 2026-10-25T02:04:52Z | 282259 | 17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab |
+| ce1c_usc2024_26_3508.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap25-sec3508.htm | 2026-10-25T02:04:52Z | 7419 | f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0 |
+| ce1c_usc2024_26_1.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapA-partI-sec1.htm | 2026-10-25T02:04:52Z | 276756 | 725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a |
+| ce1c_plaw104_188.html | https://www.govinfo.gov/content/pkg/PLAW-104publ188/html/PLAW-104publ188.htm | 2026-10-25T02:04:52Z | 637962 | 7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db |
+| ce1c_plaw113_295.html | https://www.govinfo.gov/content/pkg/PLAW-113publ295/html/PLAW-113publ295.htm | 2026-10-25T02:04:52Z | 230166 | b4adf62c8774ef8b064f086f10264d77b1d5f0425889919067c3c325c2f6718d |
+| ce1c_plaw115_243.html | https://www.govinfo.gov/content/pkg/PLAW-115publ243/html/PLAW-115publ243.htm | 2026-10-25T02:04:52Z | 6088 | c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5 |
+| ce1c_cfr2024_20_404_1017.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1017.xml | 2026-10-25T02:04:52Z | 2054 | 41b51eaac204c8b616ed09b2956c11c60f37bdff8da806564be867ab8838658d |
+| ce1c_cfr2024_20_404_1031.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1031.xml | 2026-10-25T02:04:52Z | 2059 | f808068af55a669085dd0ec4f9159271fe7e54b219a9b804645460e9cb18ca8f |
+| ce1c_cfr2024_20_404_1035.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1035.xml | 2026-10-25T02:04:52Z | 1706 | c65772e3961f9339197539354f7f1d8f1921b1f0cde1d35bc2ee7b7fdbc311be |
+| ce1c_poms_rs_01901700.html | https://secure.ssa.gov/poms.nsf/lnx/0301901700 | 2026-10-25T02:04:52Z | 64891 | b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df |
+| ce1c_poms_rs_01802232.html | https://secure.ssa.gov/poms.nsf/lnx/0301802232 | 2026-10-25T02:04:52Z | 24119 | 7869d2fd505951090e99709f2de4a9e252bd9bacebd21fffea53e46333a6d2ae |
+
+## Additional pinned primary sources
+
+| File | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| uscode_2024_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:37:51Z | 78804 | 3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb |
+| uscode_2024_26_162.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapB-partVI-sec162.htm | 2026-10-25T02:37:51Z | 130770 | 3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a |
+| uscode_2024_26_7873.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleF-chap80-subchapC-sec7873.htm | 2026-10-25T02:37:51Z | 7551 | 380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772 |
+| uscode_2024_42_416.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec416.htm | 2026-10-25T02:37:51Z | 125312 | 01d4f66dc81614c56bf5ed494102c291003ae116dd00b6b39575c9ceaaf07f19 |
+| cfr_2024_20_4041081.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1081.xml | 2026-10-25T02:37:51Z | 5552 | ec9e86ab383ef8d3b196c3755c96d6a4348e27e1a8aff45d6b354a783d378060 |
+| cfr_2024_20_4041082.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1082.xml | 2026-10-25T02:37:51Z | 12198 | ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455 |
+| govinfo_plaw_111publ240.html | https://www.govinfo.gov/content/pkg/PLAW-111publ240/html/PLAW-111publ240.htm | 2026-10-25T02:37:51Z | 359285 | a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4 |
+| govinfo_statute79_pg286.pdf | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 24847693 | 37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14 |
+| govinfo_statute79_pg286.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 3620 | 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 |
+
+## Additional pinned primary sources
+
+| File | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| uscode_1994_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title26/html/USCODE-1994-title26-chap2-sec1402.htm | 2026-10-25T02:36:09Z | 114234 | 5f11b90bdea54f8a3608469bba60e298805f379c11180dc52c7a714177377f68 |
+| uscode_1994_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec410.htm | 2026-10-25T02:36:09Z | 127466 | c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b |
+| uscode_1995_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-1995-title42/html/USCODE-1995-title42-chap6-subchapII_2-sec410.htm | 2026-10-25T02:36:19Z | 127466 | c6b37287a15392d88b96efbc579181c3a64f3dbee7f70e490b4bd4df2d2ccaac |
+| uscode_1997_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-1997-title26/html/USCODE-1997-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:20Z | 117757 | 84bd6ecf02f1d369fefaf64c512099030ebbf3d9204429d1b4da02737eaf6ad3 |
+| uscode_1997_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:19Z | 131092 | 93939bca4925df02bf9debddebc685c842dbbcbf1ff0e67b05c6ec1f7a0b318a |
+| uscode_1997_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:19Z | 71041 | a88f64af261326670d0051b68368c1798c1f69ced7fd079694d4e92e6b3c8cf9 |
+| uscode_2000_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2000-title26/html/USCODE-2000-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:12Z | 119807 | 28020a518edcc11a87e1aa6a6b852bce4238fac76e0b1240ca15855f9ef61f4b |
+| uscode_2000_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2000-title42/html/USCODE-2000-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:09Z | 132697 | 6c621076708106113a503ceb93d485a7d767996ccad551b04424e05f4217fb38 |
+| uscode_2000_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2000-title42/html/USCODE-2000-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:12Z | 71020 | 624df0c3d2503f3038cb5befe7cc877738e77d18d0814ee9282573a3987d221c |
+| uscode_2004_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2004-title42/html/USCODE-2004-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:21Z | 132994 | 95714e0f48176c6110b0b44ae77770336fdd244e8c6bff8b935f0b8fb3e4b921 |
+| uscode_2004_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2004-title42/html/USCODE-2004-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:21Z | 73089 | 440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1 |
+| uscode_2006_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2006-title26/html/USCODE-2006-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:13Z | 120701 | 6b59e20758d19d2b6de04140b0aa15e93389f604c734c77a53abe8217d0d2d9d |
+| uscode_2006_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2006-title42/html/USCODE-2006-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:12Z | 133255 | f079430d1c91ee2f5946804cd86a818392ab17f48ca80a6ace3f69e6482da7db |
+| uscode_2006_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2006-title42/html/USCODE-2006-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:13Z | 73089 | f9fa67fb2d85bbe216b90590ce5f5c080aa8448cc08cf78150c681e1510979a8 |
+| uscode_2007_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2007-title26/html/USCODE-2007-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:21Z | 121439 | fc654b8997e70ec2d989f12102eb3ff84305c4899144bd2ce667e41f8072d81a |
+| uscode_2007_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2007-title42/html/USCODE-2007-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:21Z | 73885 | 701a5797aee86cb6ff994c589f353585d3e04a03e89b919f560f692cd2ff5d6a |
+| uscode_2008_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2008-title26/html/USCODE-2008-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:23Z | 125397 | b94297ea8dd6abd8a9c4d4d701ce1ea0306e41f4e6858b30fc9d9f0c48ae5213 |
+| uscode_2008_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2008-title42/html/USCODE-2008-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:23Z | 136693 | 43612b206d55ddac7a36f4f42cffc3ca8e5305989c1c5033be56e1d5eadba8f8 |
+| uscode_2008_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2008-title42/html/USCODE-2008-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:23Z | 77593 | f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46 |
+| uscode_2010_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2010-title26/html/USCODE-2010-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:23Z | 126636 | 39604c4eae8a6568b07e6120739bb8d8e27fbb51842493b5320afca051bfd45c |
+| uscode_2012_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2012-title26/html/USCODE-2012-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:14Z | 127519 | 93ce25d38904f289e998eab10dbc47c8a952f22319a40463f6bddd48beb29070 |
+| uscode_2012_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:14Z | 137621 | a11b5f7fbf2827566d7c42ef6a567b2efb8e8e96cf03186ab4f7dd69aacd5bbb |
+| uscode_2012_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:14Z | 78167 | 3943dbedbfee61b4c2c0f2e2c3e7ab4b880cbc7036d06f94a262ff768d239b0a |
+| uscode_2014_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2014-title42/html/USCODE-2014-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:24Z | 137304 | acfa00ffe273f79fe5663919565b8f7819ae97ae437210cdca747d8fa1cdb061 |
+| uscode_2018_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2018-title26/html/USCODE-2018-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:16Z | 128346 | 8da43542c88095151fe62ee5af9d581d23503692dc57c4a3c1edf54f8cd67358 |
+| uscode_2018_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2018-title42/html/USCODE-2018-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:15Z | 138070 | c4c6208eff6a70577b49d1ba4a2d47b2c976b59a02443d225519211db4a8b0f8 |
+| uscode_2018_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2018-title42/html/USCODE-2018-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:36:15Z | 78465 | d4ec5a54cf40a23d09be5a978f6d64bd8588656f2cb3648b792c0e166647040a |
+| uscode_2024_26_1402.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap2-sec1402.htm | 2026-10-25T02:36:18Z | 128872 | 557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275 |
+| uscode_2024_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:36:16Z | 139768 | d8618e7d8bbcffae1d81a07cb2890fabaa60f8d274a58c7a5100be19cd94ee15 |
+
+## Additional unavailable or blocked requests
+
+- https://www.govinfo.gov/metadata/granule/USCODE-2014-title42/USCODE-2014-title42-chap7-subchapII-sec410/mods.xml: SOURCE_BLOCKED; Plain request returned Please Retry later in15Seconds refresh/challenge page; stopped with no retry or alternate endpoint.; retrieved_at=None; recorded_at=2026-10-25T02:43:23Z.
+- https://www.loc.gov/item/uscode1970-028042007/?fo=json: SOURCE_BLOCKED; Earlier registry_audit plain request refused; no retry, alternate host or attempt to obtain the linked LoC files.; retrieved_at=None; recorded_at=2026-10-25T02:43:23Z.
+
+## Additional pinned primary sources
+
+| File | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| ce1c_irs_pub51_2023.pdf | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 1335168 | d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65 |
+| ce1c_irs_pub51_2023.pdf.txt | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 192853 | 58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654 |
+| ce1c_poms_rs_02101125.html | https://secure.ssa.gov/poms.nsf/lnx/0302101125 | 2026-10-25T02:39:46Z | 33721 | d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b |
+| ce1c_poms_sl_30001334.html | https://secure.ssa.gov/poms.nsf/lnx/1930001334 | 2026-10-25T02:39:45Z | 35902 | c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41 |

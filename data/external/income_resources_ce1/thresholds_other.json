@@ -1,0 +1,1079 @@
+[
+  {
+    "threshold_id": "agricultural_employee_cash",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Cash remuneration from one agricultural employer to one employee in the calendar year.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 150,
+      "1969": 150,
+      "1970": 150,
+      "1971": 150,
+      "1972": 150,
+      "1973": 150,
+      "1974": 150,
+      "1975": 150,
+      "1976": 150,
+      "1977": 150,
+      "1978": 150,
+      "1979": 150,
+      "1980": 150,
+      "1981": 150,
+      "1982": 150,
+      "1983": 150,
+      "1984": 150,
+      "1985": 150,
+      "1986": 150,
+      "1987": 150,
+      "1988": 150,
+      "1989": 150,
+      "1990": 150,
+      "1991": 150,
+      "1992": 150,
+      "1993": 150,
+      "1994": 150,
+      "1995": 150,
+      "1996": 150,
+      "1997": 150,
+      "1998": 150,
+      "1999": 150,
+      "2000": 150,
+      "2001": 150,
+      "2002": 150,
+      "2003": 150,
+      "2004": 150,
+      "2005": 150,
+      "2006": 150,
+      "2007": 150,
+      "2008": 150,
+      "2009": 150,
+      "2010": 150,
+      "2011": 150,
+      "2012": 150,
+      "2013": 150,
+      "2014": 150,
+      "2015": 150,
+      "2016": 150,
+      "2017": 150,
+      "2018": 150,
+      "2019": 150,
+      "2020": 150,
+      "2021": 150,
+      "2022": 150,
+      "2023": 150,
+      "2024": 150,
+      "2025": 150,
+      "2026": 150
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402020.html",
+        "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
+        "authority": "SSA POMS RS 01402.020",
+        "location": "C.1-C.2"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "409(a)(7)(B)(i)"
+      }
+    ],
+    "indexing": null,
+    "description": "Fixed150/year, one alternative to the era-specific days or employer-payroll test.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "agricultural_employer_payroll",
+    "aggregation_scope": "employer_year",
+    "eligible_concept": "Employer expenditures for all agricultural labor in one calendar year.",
+    "comparison": "at_least",
+    "published_values": {
+      "1988": 2500,
+      "1989": 2500,
+      "1990": 2500,
+      "1991": 2500,
+      "1992": 2500,
+      "1993": 2500,
+      "1994": 2500,
+      "1995": 2500,
+      "1996": 2500,
+      "1997": 2500,
+      "1998": 2500,
+      "1999": 2500,
+      "2000": 2500,
+      "2001": 2500,
+      "2002": 2500,
+      "2003": 2500,
+      "2004": 2500,
+      "2005": 2500,
+      "2006": 2500,
+      "2007": 2500,
+      "2008": 2500,
+      "2009": 2500,
+      "2010": 2500,
+      "2011": 2500,
+      "2012": 2500,
+      "2013": 2500,
+      "2014": 2500,
+      "2015": 2500,
+      "2016": 2500,
+      "2017": 2500,
+      "2018": 2500,
+      "2019": 2500,
+      "2020": 2500,
+      "2021": 2500,
+      "2022": 2500,
+      "2023": 2500,
+      "2024": 2500,
+      "2025": 2500,
+      "2026": 2500
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402020.html",
+        "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
+        "authority": "SSA POMS RS 01402.020",
+        "location": "C.1"
+      },
+      {
+        "capture": "poms_rs_01402025.html",
+        "sha256": "de0c04135c4b30f85f395607ee4c84700ae70ea6a5620673fef1259fc1e59acf",
+        "authority": "SSA POMS RS 01402.025",
+        "location": "Policy"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "409(a)(7)(B)(ii)"
+      }
+    ],
+    "indexing": null,
+    "description": "Employer-wide2500alternative from1988; unavailable for the specified seasonal hand-harvest employees.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "agricultural_time_days",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Days agricultural employee works for one employer in the calendar year, receiving cash pay computed on a time basis.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 20,
+      "1969": 20,
+      "1970": 20,
+      "1971": 20,
+      "1972": 20,
+      "1973": 20,
+      "1974": 20,
+      "1975": 20,
+      "1976": 20,
+      "1977": 20,
+      "1978": 20,
+      "1979": 20,
+      "1980": 20,
+      "1981": 20,
+      "1982": 20,
+      "1983": 20,
+      "1984": 20,
+      "1985": 20,
+      "1986": 20,
+      "1987": 20
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402020.html",
+        "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
+        "authority": "SSA POMS RS 01402.020",
+        "location": "C.2"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "1987 amendment notes, former agricultural20-day test"
+      }
+    ],
+    "indexing": null,
+    "description": "This threshold is in days, not dollars. It is an alternative to the150cash test for1968-1987.",
+    "monotone": true,
+    "unit": "days"
+  },
+  {
+    "threshold_id": "cash_tips_monthly",
+    "aggregation_scope": "calendar_month",
+    "eligible_concept": "Cash tips received in employment for one employer by an employee in the calendar month.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 20,
+      "1969": 20,
+      "1970": 20,
+      "1971": 20,
+      "1972": 20,
+      "1973": 20,
+      "1974": 20,
+      "1975": 20,
+      "1976": 20,
+      "1977": 20,
+      "1978": 20,
+      "1979": 20,
+      "1980": 20,
+      "1981": 20,
+      "1982": 20,
+      "1983": 20,
+      "1984": 20,
+      "1985": 20,
+      "1986": 20,
+      "1987": 20,
+      "1988": 20,
+      "1989": 20,
+      "1990": 20,
+      "1991": 20,
+      "1992": 20,
+      "1993": 20,
+      "1994": 20,
+      "1995": 20,
+      "1996": 20,
+      "1997": 20,
+      "1998": 20,
+      "1999": 20,
+      "2000": 20,
+      "2001": 20,
+      "2002": 20,
+      "2003": 20,
+      "2004": 20,
+      "2005": 20,
+      "2006": 20,
+      "2007": 20,
+      "2008": 20,
+      "2009": 20,
+      "2010": 20,
+      "2011": 20,
+      "2012": 20,
+      "2013": 20,
+      "2014": 20,
+      "2015": 20,
+      "2016": 20,
+      "2017": 20,
+      "2018": 20,
+      "2019": 20,
+      "2020": 20,
+      "2021": 20,
+      "2022": 20,
+      "2023": 20,
+      "2024": 20,
+      "2025": 20,
+      "2026": 20
+    },
+    "citations": [
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42USC409(a)(10),currentlaw and1965notes",
+        "location": "409(a)(10); 1965 enactment and effective-date notes"
+      }
+    ],
+    "indexing": null,
+    "description": "Noncash tips remain excluded. Cash-tip threshold applies by employer-employee-month.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "casual_cash_annual",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Cash remuneration from one employer for nonbusiness nondomestic services in one calendar year.",
+    "comparison": "at_least",
+    "published_values": {
+      "1978": 100,
+      "1979": 100,
+      "1980": 100,
+      "1981": 100,
+      "1982": 100,
+      "1983": 100,
+      "1984": 100,
+      "1985": 100,
+      "1986": 100,
+      "1987": 100,
+      "1988": 100,
+      "1989": 100,
+      "1990": 100,
+      "1991": 100,
+      "1992": 100,
+      "1993": 100,
+      "1994": 100,
+      "1995": 100,
+      "1996": 100,
+      "1997": 100,
+      "1998": 100,
+      "1999": 100,
+      "2000": 100,
+      "2001": 100,
+      "2002": 100,
+      "2003": 100,
+      "2004": 100,
+      "2005": 100,
+      "2006": 100,
+      "2007": 100,
+      "2008": 100,
+      "2009": 100,
+      "2010": 100,
+      "2011": 100,
+      "2012": 100,
+      "2013": 100,
+      "2014": 100,
+      "2015": 100,
+      "2016": 100,
+      "2017": 100,
+      "2018": 100,
+      "2019": 100,
+      "2020": 100,
+      "2021": 100,
+      "2022": 100,
+      "2023": 100,
+      "2024": 100,
+      "2025": 100,
+      "2026": 100
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01901520.html",
+        "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476",
+        "authority": "SSA POMS RS 01901.520",
+        "location": "C.1"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "409(a)(6)(C)"
+      }
+    ],
+    "indexing": null,
+    "description": "",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "casual_cash_quarterly",
+    "aggregation_scope": "calendar_quarter",
+    "eligible_concept": "Cash remuneration from one employer for nonbusiness nondomestic services in one calendar quarter.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 50,
+      "1969": 50,
+      "1970": 50,
+      "1971": 50,
+      "1972": 50,
+      "1973": 50,
+      "1974": 50,
+      "1975": 50,
+      "1976": 50,
+      "1977": 50
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01901520.html",
+        "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476",
+        "authority": "SSA POMS RS 01901.520",
+        "location": "C.2"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "1977 amendment notes"
+      }
+    ],
+    "indexing": null,
+    "description": "",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "domestic_cash_annual",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Cash remuneration from one employer to one employee for domestic services in the calendar year.",
+    "comparison": "at_least",
+    "published_values": {
+      "1994": 1000,
+      "1995": 1000,
+      "1996": 1000,
+      "1997": 1000,
+      "1998": 1100,
+      "1999": 1100,
+      "2000": 1200,
+      "2001": 1300,
+      "2002": 1300,
+      "2003": 1400,
+      "2004": 1400,
+      "2005": 1400,
+      "2006": 1500,
+      "2007": 1500,
+      "2008": 1600,
+      "2009": 1700,
+      "2010": 1700,
+      "2011": 1700,
+      "2012": 1800,
+      "2013": 1800,
+      "2014": 1900,
+      "2015": 1900,
+      "2016": 2000,
+      "2017": 2000,
+      "2018": 2100,
+      "2019": 2100,
+      "2020": 2200,
+      "2021": 2300,
+      "2022": 2400,
+      "2023": 2600,
+      "2024": 2700,
+      "2025": 2800,
+      "2026": 3000
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402216.html",
+        "sha256": "e535abe2282e2e7f6eab472eab2da2df380b201aaaf44454665e23cfd5ceca05",
+        "authority": "SSA POMS RS 01402.216",
+        "location": "A:1994-1998 values"
+      },
+      {
+        "capture": "lii_26_3121.html",
+        "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+        "authority": "26 USC 3121(x), current law captured2026-10-24",
+        "location": "3121(x)"
+      },
+      {
+        "capture": "irs_pub926_2008.pdf",
+        "sha256": "2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc",
+        "authority": "IRS Publication 926 (2008)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2009.pdf",
+        "sha256": "aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab",
+        "authority": "IRS Publication 926 (2009)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2010.pdf",
+        "sha256": "19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350",
+        "authority": "IRS Publication 926 (2010)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2011.pdf",
+        "sha256": "efe71fab0cebfd45a79fef68771ab7fde1d2678b6d1cf8251ea36c66ab523a06",
+        "authority": "IRS Publication 926 (2011)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2012.pdf",
+        "sha256": "bb0104e3c3f822ee6edefebf3b6f440436765d24bfc4c39b9ea663e379500216",
+        "authority": "IRS Publication 926 (2012)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2013.pdf",
+        "sha256": "5685f2c266a49727afa1453a9c14caa380582c3a4c1c71318abbc6eb9fa4ef7b",
+        "authority": "IRS Publication 926 (2013)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2014.pdf",
+        "sha256": "6e68e5d1f89440eba31bb0ad76a93ec039edec40c0a76758f93c7440d67e1395",
+        "authority": "IRS Publication 926 (2014)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2015.pdf",
+        "sha256": "ab8009488d7b7385b5db87d612a230e35b8a90127d891321e7c0dba80837ebaf",
+        "authority": "IRS Publication 926 (2015)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2016.pdf",
+        "sha256": "d2bfd05cee0aff3cf0d9f04a23fd1acc5c096cd584a7b6d57c88adae6dd4b051",
+        "authority": "IRS Publication 926 (2016)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2017.pdf",
+        "sha256": "51c8acee1cf1e68c5293b105ee4dd7e8e91fbe2f5b584c5d530e3e91d7883ba5",
+        "authority": "IRS Publication 926 (2017)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2018.pdf",
+        "sha256": "0ec94bf3be3a2c42ecfe1bd317b06ca7b9eff42aa884f9dd8264b2f1a9175893",
+        "authority": "IRS Publication 926 (2018)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2019.pdf",
+        "sha256": "10edd57ad64b445187548b8ba5fb46ff5d4fd28854e64c229d854df07c721eae",
+        "authority": "IRS Publication 926 (2019)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2020.pdf",
+        "sha256": "de29f1f1566d7c111fb134985468fb1c2578bcad4cfee10f2b28d02ee3779d2d",
+        "authority": "IRS Publication 926 (2020)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2021.pdf",
+        "sha256": "c3a83427f9ee43469fef5037ca508dd2a8feabe903a5a4ad3e81c0cafbdaa164",
+        "authority": "IRS Publication 926 (2021)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2022.pdf",
+        "sha256": "f4a28adbfb8e9d64d341cc85995f90f850976b280167a4dfaaef0209d4ca52f0",
+        "authority": "IRS Publication 926 (2022)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2023.pdf",
+        "sha256": "d90591781aff2490149f001f4a9a9856001c8b2b793a00ba8688eeaed3872235",
+        "authority": "IRS Publication 926 (2023)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2024.pdf",
+        "sha256": "e0f2397a2d34d661c82e2e3a19012a42ad00387b2bec58aac0b8be8838def2b4",
+        "authority": "IRS Publication 926 (2024)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2025.pdf",
+        "sha256": "1e25a16919cb96ef49aa6fef40cd3aa99b5009427bf5cc7067c5127c97ddf2b7",
+        "authority": "IRS Publication 926 (2025)",
+        "location": "Table 1, domestic cash coverage threshold"
+      },
+      {
+        "capture": "irs_pub926_2026.html",
+        "sha256": "d52a3a6b5a481a13668586196522e9113f0252fabc61df1d003c95b128d4bd38",
+        "authority": "IRS Publication 926 (2026)",
+        "location": "What is New; Social Security and Medicare Taxes"
+      },
+      {
+        "capture": "irs_pub15_1999.pdf",
+        "sha256": "4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a",
+        "authority": "IRS Publication15 (1999)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2000.pdf",
+        "sha256": "0b260e568bb67a518416ba6bed5cdc9009b98f3ddcd9cbbbecf0fe8cf471c1cf",
+        "authority": "IRS Publication15 (2000)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2001.pdf",
+        "sha256": "bcca2c54a7b9add4e07a50db85886117d2628439068bc21c30d34e1fead6065e",
+        "authority": "IRS Publication15 (2001)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2002.pdf",
+        "sha256": "de232610a85d471a8a6a8bc36ddb763cd8f4308a0b6a14ee19637867a1ef3cf8",
+        "authority": "IRS Publication15 (2002)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2003.pdf",
+        "sha256": "dc10b5026ca0f8cdf677ebcc4078fd9de608585fb4792c57124cbecd622e04aa",
+        "authority": "IRS Publication15 (2003)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2004.pdf",
+        "sha256": "885d1e0ea9ca9057266067c148db6ea065dfc1591de3a3b22cfaa92bf8231161",
+        "authority": "IRS Publication15 (2004)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2005.pdf",
+        "sha256": "6f3867d20acd1c0fff2323026c66c47e0e13c8815460eb0f71bd5a169fc67401",
+        "authority": "IRS Publication15 (2005)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2006.pdf",
+        "sha256": "7b807cecffec8425c49b297a205236f69a927ca4041b986572c9d2dde5743c66",
+        "authority": "IRS Publication15 (2006)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "irs_pub15_2007.pdf",
+        "sha256": "d56262a59664f59649c5ea28db568d4e9a14706adae0923aa7bcb14ae364c670",
+        "authority": "IRS Publication15 (2007)",
+        "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
+      },
+      {
+        "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+        "sha256": "5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d",
+        "authority": "SSA Employment Coverage Thresholds, archived copy of published table",
+        "location": "Coverage thresholds for domestic employees and election officials/workers, 1994-2026"
+      }
+    ],
+    "indexing": {
+      "kind": "awi",
+      "base_amount": 1000,
+      "base_index_year": 1993,
+      "base_index": null,
+      "lag_years": 2,
+      "round_to": 100,
+      "rounding": "floor",
+      "floor": null,
+      "first_year": 1996,
+      "last_year": 2026
+    },
+    "description": "1994-1995 fixed at1000; 1996+ index1000 by AWI(year-2)/AWI1993, round down100. Named AWI inputs required when published threshold is absent. No prior-year floor has been inferred from current3121(x).",
+    "monotone": false,
+    "unit": "dollars",
+    "archived_published_table": {
+      "original_url": "https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "archive_timestamp": "20261013081352",
+      "retrieved_at": "2026-10-24T22:15:15Z",
+      "published_years": [
+        1994,
+        2026
+      ],
+      "transport_citation": {
+        "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html.gz",
+        "sha256": "2937171d715a48ba1388865c4f3c28a8b8cb13b38170349bcc73bb054dea4738",
+        "authority": "SSA Employment Coverage Thresholds, archived gzip transport bytes",
+        "location": "Internet Archive snapshot 20261013081352, as served"
+      }
+    }
+  },
+  {
+    "threshold_id": "domestic_cash_quarterly",
+    "aggregation_scope": "calendar_quarter",
+    "eligible_concept": "Cash remuneration for one employer-employee domestic-service relationship in one calendar quarter.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 50,
+      "1969": 50,
+      "1970": 50,
+      "1971": 50,
+      "1972": 50,
+      "1973": 50,
+      "1974": 50,
+      "1975": 50,
+      "1976": 50,
+      "1977": 50,
+      "1978": 50,
+      "1979": 50,
+      "1980": 50,
+      "1981": 50,
+      "1982": 50,
+      "1983": 50,
+      "1984": 50,
+      "1985": 50,
+      "1986": 50,
+      "1987": 50,
+      "1988": 50,
+      "1989": 50,
+      "1990": 50,
+      "1991": 50,
+      "1992": 50,
+      "1993": 50
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402215.html",
+        "sha256": "3e91a5b94b9f053a45afbcb34421db1c6d107b6ed0cf1bd4500fd52cb4dc6b07",
+        "authority": "SSA POMS RS 01402.215",
+        "location": "A-B"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
+        "location": "former 409(a)(6)(B), reproduced in 1994 amendment notes"
+      },
+      {
+        "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+        "sha256": "5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d",
+        "authority": "SSA Employment Coverage Thresholds, archived copy of published table",
+        "location": "Footnote a; cross-checked against former 42 USC409(a)(6)(B), reproduced in its 1994 amendment notes",
+        "quote": "Prior to 1994, the threshold wage amount was $50 per calendar quarter for domestic employees."
+      }
+    ],
+    "indexing": null,
+    "description": "Statutory fixed $50/quarter. Distinct employers never combine. Once met, all cash remuneration for the quarter is wages.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "election_remuneration_annual",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Remuneration for election official/worker service from one employer in the calendar year.",
+    "comparison": "at_least",
+    "published_values": {
+      "1978": 100,
+      "1979": 100,
+      "1980": 100,
+      "1981": 100,
+      "1982": 100,
+      "1983": 100,
+      "1984": 100,
+      "1985": 100,
+      "1986": 100,
+      "1987": 100,
+      "1988": 100,
+      "1989": 100,
+      "1990": 100,
+      "1991": 100,
+      "1992": 100,
+      "1993": 100,
+      "1994": 100,
+      "1995": 1000,
+      "1996": 1000,
+      "1997": 1000,
+      "1998": 1000,
+      "1999": 1000,
+      "2000": 1100,
+      "2001": 1100,
+      "2002": 1200,
+      "2003": 1200,
+      "2004": 1200,
+      "2005": 1200,
+      "2006": 1300,
+      "2007": 1300,
+      "2008": 1400,
+      "2009": 1500,
+      "2010": 1500,
+      "2011": 1500,
+      "2012": 1500,
+      "2013": 1600,
+      "2014": 1600,
+      "2015": 1600,
+      "2016": 1700,
+      "2017": 1800,
+      "2018": 1800,
+      "2019": 1800,
+      "2020": 1900,
+      "2021": 2000,
+      "2022": 2000,
+      "2023": 2200,
+      "2024": 2300,
+      "2025": 2400,
+      "2026": 2500
+    },
+    "citations": [
+      {
+        "capture": "poms_sl_90015501.html",
+        "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d",
+        "authority": "SSA POMS SL90015.501",
+        "location": "D,1978-2016published thresholds"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42USC418(c)(8)(B),currentlaw captured2026-10-24",
+        "location": "418(c)(8)(B)"
+      },
+      {
+        "capture": "irs_pub15_2017.pdf",
+        "sha256": "5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742",
+        "authority": "IRS Publication15 (2017)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2018.pdf",
+        "sha256": "4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524",
+        "authority": "IRS Publication15 (2018)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2019.pdf",
+        "sha256": "897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d",
+        "authority": "IRS Publication15 (2019)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2020.pdf",
+        "sha256": "1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03",
+        "authority": "IRS Publication15 (2020)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2021.pdf",
+        "sha256": "4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577",
+        "authority": "IRS Publication15 (2021)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2022.pdf",
+        "sha256": "da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929",
+        "authority": "IRS Publication15 (2022)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2023.pdf",
+        "sha256": "8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3",
+        "authority": "IRS Publication15 (2023)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2024.pdf",
+        "sha256": "3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0",
+        "authority": "IRS Publication15 (2024)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2025.pdf",
+        "sha256": "168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0",
+        "authority": "IRS Publication15 (2025)",
+        "location": "What is New; election-workers threshold"
+      },
+      {
+        "capture": "irs_pub15_2026.html",
+        "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
+        "authority": "IRS Publication15(2026)",
+        "location": "What is New; Social Security and Medicare Taxes"
+      },
+      {
+        "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+        "sha256": "5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d",
+        "authority": "SSA Employment Coverage Thresholds, archived copy of published table",
+        "location": "Coverage thresholds for domestic employees and election officials/workers, 1994-2026"
+      }
+    ],
+    "indexing": {
+      "kind": "awi",
+      "base_amount": 1000,
+      "base_index_year": 1997,
+      "base_index": null,
+      "lag_years": 2,
+      "round_to": 100,
+      "rounding": "nearest",
+      "floor": null,
+      "first_year": 2000,
+      "last_year": 2026
+    },
+    "description": "1995-1999fixed1000;2000+ index1000 byAWI(year-2)/AWI1997, nearest100 with50ties upward. Agreement lower thresholds/no exclusion may supersede this statutory ceiling. No prior-year floor inferred.",
+    "monotone": false,
+    "unit": "dollars",
+    "archived_published_table": {
+      "original_url": "https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "archive_timestamp": "20261013081352",
+      "retrieved_at": "2026-10-24T22:15:15Z",
+      "published_years": [
+        1994,
+        2026
+      ],
+      "transport_citation": {
+        "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html.gz",
+        "sha256": "2937171d715a48ba1388865c4f3c28a8b8cb13b38170349bcc73bb054dea4738",
+        "authority": "SSA Employment Coverage Thresholds, archived gzip transport bytes",
+        "location": "Internet Archive snapshot 20261013081352, as served"
+      }
+    }
+  },
+  {
+    "threshold_id": "election_remuneration_quarterly",
+    "aggregation_scope": "calendar_quarter",
+    "eligible_concept": "Election official/worker remuneration under a Section218 optional exclusion, one calendar quarter.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 50,
+      "1969": 50,
+      "1970": 50,
+      "1971": 50,
+      "1972": 50,
+      "1973": 50,
+      "1974": 50,
+      "1975": 50,
+      "1976": 50,
+      "1977": 50
+    },
+    "citations": [
+      {
+        "capture": "poms_sl_90015501.html",
+        "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d",
+        "authority": "SSA POMS SL90015.501",
+        "location": "D,1968-1977history"
+      },
+      {
+        "capture": "govinfo_statute81_pg821.pdf",
+        "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7",
+        "authority": "Public Law90-248 section116(c),81Stat840-841",
+        "location": "printedpp840-841"
+      }
+    ],
+    "indexing": null,
+    "description": "Agreement-specific lower thresholds or no exclusion control instead of this statutory ceiling when applicable.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "homeworker_cash_annual",
+    "aggregation_scope": "employer_employee_year",
+    "eligible_concept": "Cash remuneration from one employer to one statutory home worker in the stated period; crossing the cash test makes both cash and noncash pay wages.",
+    "comparison": "at_least",
+    "published_values": {
+      "1978": 100,
+      "1979": 100,
+      "1980": 100,
+      "1981": 100,
+      "1982": 100,
+      "1983": 100,
+      "1984": 100,
+      "1985": 100,
+      "1986": 100,
+      "1987": 100,
+      "1988": 100,
+      "1989": 100,
+      "1990": 100,
+      "1991": 100,
+      "1992": 100,
+      "1993": 100,
+      "1994": 100,
+      "1995": 100,
+      "1996": 100,
+      "1997": 100,
+      "1998": 100,
+      "1999": 100,
+      "2000": 100,
+      "2001": 100,
+      "2002": 100,
+      "2003": 100,
+      "2004": 100,
+      "2005": 100,
+      "2006": 100,
+      "2007": 100,
+      "2008": 100,
+      "2009": 100,
+      "2010": 100,
+      "2011": 100,
+      "2012": 100,
+      "2013": 100,
+      "2014": 100,
+      "2015": 100,
+      "2016": 100,
+      "2017": 100,
+      "2018": 100,
+      "2019": 100,
+      "2020": 100,
+      "2021": 100,
+      "2022": 100,
+      "2023": 100,
+      "2024": 100,
+      "2025": 100,
+      "2026": 100
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402230.html",
+        "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
+        "authority": "SSA POMS RS01402.230",
+        "location": "A-B,1951-1977and1978+cash thresholds"
+      }
+    ],
+    "indexing": null,
+    "description": "Common-law employees are covered without this occupational-group cash-pay test.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "homeworker_cash_quarterly",
+    "aggregation_scope": "calendar_quarter",
+    "eligible_concept": "Cash remuneration from one employer to one statutory home worker in the stated period; crossing the cash test makes both cash and noncash pay wages.",
+    "comparison": "at_least",
+    "published_values": {
+      "1968": 50,
+      "1969": 50,
+      "1970": 50,
+      "1971": 50,
+      "1972": 50,
+      "1973": 50,
+      "1974": 50,
+      "1975": 50,
+      "1976": 50,
+      "1977": 50
+    },
+    "citations": [
+      {
+        "capture": "poms_rs_01402230.html",
+        "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
+        "authority": "SSA POMS RS01402.230",
+        "location": "A-B,1951-1977and1978+cash thresholds"
+      }
+    ],
+    "indexing": null,
+    "description": "Common-law employees are covered without this occupational-group cash-pay test.",
+    "monotone": true,
+    "unit": "dollars"
+  },
+  {
+    "threshold_id": "fishing_additional_cash_per_trip",
+    "aggregation_scope": "employer_employee_trip",
+    "eligible_concept": "Additional cash remuneration to a qualifying catch-share crew member per trip, when the statutory cash conditions and conditional retrospective applicability are established.",
+    "comparison": "at_most",
+    "published_values": {
+      "1985": 100,
+      "1986": 100,
+      "1987": 100,
+      "1988": 100,
+      "1989": 100,
+      "1990": 100,
+      "1991": 100,
+      "1992": 100,
+      "1993": 100,
+      "1994": 100,
+      "1995": 100,
+      "1996": 100,
+      "1997": 100,
+      "1998": 100,
+      "1999": 100,
+      "2000": 100,
+      "2001": 100,
+      "2002": 100,
+      "2003": 100,
+      "2004": 100,
+      "2005": 100,
+      "2006": 100,
+      "2007": 100,
+      "2008": 100,
+      "2009": 100,
+      "2010": 100,
+      "2011": 100,
+      "2012": 100,
+      "2013": 100,
+      "2014": 100,
+      "2015": 100,
+      "2016": 100,
+      "2017": 100,
+      "2018": 100,
+      "2019": 100,
+      "2020": 100,
+      "2021": 100,
+      "2022": 100,
+      "2023": 100,
+      "2024": 100,
+      "2025": 100,
+      "2026": 100
+    },
+    "citations": [
+      {
+        "capture": "ce1c_plaw104_188.html",
+        "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db",
+        "authority": "Public Law 104-188 section1116(a)(2)-(3)",
+        "location": "Additional cash amount does not exceed100 per trip; minimum-catch and additional-duty conditions; applicability after1994 and conditional1985-1994",
+        "quote": "which does not exceed $100 per trip;"
+      }
+    ],
+    "indexing": null,
+    "monotone": true,
+    "description": "This is an upper bound, not a minimum earnings exemption. For1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
+    "unit": "dollars"
+  }
+]

@@ -266,8 +266,15 @@
 # URL https://www.govinfo.gov/content/pkg/STATUTE-94/pdf/STATUTE-94-Pg2263.pdf
 2026-10-24T21:17:23Z 06b4876899c90768ba2fc5e82fa07b6ed5c8d39335f59fb9716e4d27ccb4c1f4 772770 statute_94_pg2263.pdf
 # URL https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf
-2026-10-24T21:00:45Z eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb 18999106 statute_97_pg65.pdf
+2026-10-24T21:00:45Z eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb 18999106 govinfo_statute97_pg65.pdf
 # URL https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html
 2026-07-27T13:02:54Z c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449 488165 supplement2025_4b.html
 # URL https://uscode.house.gov/us/usc/119-120/t26/s3121/
 2026-10-24T21:02:43Z b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405 288683 uscode_119_120_26_3121.html
+
+# Archived SSA employment coverage thresholds; original SOURCE_BLOCKED retained.
+# URL https://www.ssa.gov/OACT/COLA/CovThresh.html
+# Archive https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html
+# Snapshot UTC 2026-10-13T08:13:52Z
+2026-10-24T22:15:15Z 5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d 37375 ssa_oact_cola_covthresh_wayback_20261013081352.html
+2026-10-24T22:15:15Z 2937171d715a48ba1388865c4f3c28a8b8cb13b38170349bcc73bb054dea4738 11477 ssa_oact_cola_covthresh_wayback_20261013081352.html.gz
