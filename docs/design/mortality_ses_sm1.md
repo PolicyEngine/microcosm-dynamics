@@ -161,6 +161,9 @@ cannot make reliably:
   itself);
 - a row whose scaled probability `q_base * relative_risk * factor` lies
   within 1e-9 of one, at any capping round;
+- after the last round, an uncapped free row within 1e-9 of one. This
+  catches zero-weight rows, which take the factor without setting it, so
+  their clipping changes only the log's clipped count;
 - a feasible result that misses conservation by more than 1e-12,
   relative to the cell's expected deaths.
 
@@ -171,7 +174,8 @@ total, and a remaining target by about 12u of it. Each guarded quantity
 exceeds m times that total, so its relative error is at most about
 12u/m, roughly 1.3e-12, and so are the factor's and every returned
 probability's. That is far below the 1e-9 margin for cap decisions, so
-every cap decision the float path makes is the exact one. A row within
+every cap decision and clip count the float path makes is the exact one.
+A row within
 1e-9 of one is different: rounding can put it on the wrong side of one,
 and whether it caps decides the factor of every other row. Rows with tiny
 weight can then end up with very different probabilities while the
@@ -199,14 +203,18 @@ equality. Permutation checks are exact where supported by stable sums;
 weight scaling and adapter comparisons use the stated tolerance. An
 independent exact oracle in the tests, in rational arithmetic, finds the
 capped rows by searching over how many rows cap rather than by iterating.
-The normalizer must match it to `rtol=1e-11, atol=1e-15`, about seven
-times the float path's error bound. Three generators feed that check:
+The normalizer must match its probabilities to `rtol=1e-11, atol=1e-15`,
+about seven times the float path's error bound, and its clipped count,
+infeasibility flag and normalization basis exactly. Four generators feed
+that check:
 - cells across float magnitudes, near-one q and arbitrary fixed
   probabilities;
 - cells whose dominant row sits at the cap, a few units of rounding
   either way, beside rows of tiny weight;
 - cells of ordinary magnitude whose fixed deaths cancel all but a share
-  near m of the cell's deaths, where the float path's error is largest.
+  near m of the cell's deaths, where the float path's error is largest;
+- cells whose zero-weight rows sit a few units of rounding either side of
+  one, sometimes after a first round that caps a dominant row.
 
 Intended monotonicity applies among free rows with the same baseline q in
 a cell, holding other dimensions constant. This is the setting supplied
@@ -274,7 +282,7 @@ before being characterized as a mechanism defect.
 | Row/weight invariance and one-risk cells | Stable reductions, exact common-risk path | Permutation/scaling examples and properties; `test_one_free_risk_group_returns_baseline_probability` |
 | Weightless free support with a zero target: unit-weight factor, logged as basis `persons` | Unit-weight allocation in both arithmetic paths of `normalizer.py`; `normalization_basis` and `persons_target` log columns; the model's optional `cell_log` | `test_weightless_support_counts_persons_equally`, `test_weightless_support_uses_unit_weights_on_the_decimal_path`, `test_weightless_cells_count_persons_equally`, `test_weightless_cells_take_the_vanishing_weight_limit`, `test_model_gives_weightless_cells_their_unit_weight_probabilities`; the normalizer properties draw zero weights |
 | Infeasible weightless cells follow the weighted rules (the vanishing-weight limit) | Infeasibility decided before the unit-weight rule | `test_fixed_excess_zeroes_weightless_free_rows_on_both_paths`, `test_fixed_shortfall_saturates_weightless_support_on_both_paths`, `test_weightless_infeasible_cells_follow_the_weighted_rules`, `test_weightless_cells_take_the_vanishing_weight_limit` |
-| Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check, the cap-decision check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`, `test_a_cap_decision_at_one_is_decided_exactly`, `test_compounded_cancellation_is_decided_exactly`; the oracle property's examples, `test_cap_boundaries_beside_tiny_weights_match_the_oracle` and `test_cancellation_near_the_margin_matches_the_oracle` |
+| Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check, the cap-decision check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`, `test_a_cap_decision_at_one_is_decided_exactly`, `test_compounded_cancellation_is_decided_exactly`, `test_a_zero_weight_row_at_one_is_counted_exactly`; the oracle property's examples, `test_cap_boundaries_beside_tiny_weights_match_the_oracle`, `test_cancellation_near_the_margin_matches_the_oracle` and `test_weightless_rows_at_one_match_the_oracle` |
 | A target that exactly fills the weighted support takes the smallest capping factor | The Decimal path's tie branch | The oracle property's two tie examples |
 | Differential adapter arithmetic; intended clipping and weightless-infeasible differences | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended divergences |
 | Time path and alternative path isolation | Path protocol and hold-last default | `test_pluggable_path_changes_only_named_year`, generated hold-last/refusal property |

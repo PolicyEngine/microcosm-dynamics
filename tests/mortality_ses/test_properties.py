@@ -188,8 +188,8 @@ def exact_cell(base, risk, fixed, prescribed, weights):
 
     It uses rational arithmetic and finds the capped rows by trying each
     count of largest-q*RR rows in turn, rather than iterating the factor
-    as the normalizer does.  Returns probabilities, the infeasible flag
-    and the normalization basis.
+    as the normalizer does.  Returns probabilities, the infeasible flag,
+    the normalization basis and the number of free rows clipped at one.
     """
     b, r, p, w = (
         [Fraction(float(x)) for x in values]
@@ -208,19 +208,23 @@ def exact_cell(base, risk, fixed, prescribed, weights):
         target = sum(b[i] for i in support)
     capacity = sum((allocation[i] for i in support), Fraction(0))
     if target <= 0:
-        return [float(x) for x in q], target < 0, basis
+        return [float(x) for x in q], target < 0, basis, 0
     if target > capacity:
         for i in support:
             q[i] = Fraction(1)
-        return [float(x) for x in q], True, basis
+        return [float(x) for x in q], True, basis, len(support)
     raw = [b[i] * r[i] for i in rows]
+
+    def clipped(factor):
+        return sum(raw[i] * factor > 1 for i in free)
+
     if target == capacity:
         # Every weighted row must reach one; zero-allocation rows take the
         # smallest factor that does that.
         factor = max(1 / raw[i] for i in support if allocation[i] > 0)
         for i in free:
             q[i] = min(Fraction(1), raw[i] * factor)
-        return [float(x) for x in q], False, basis
+        return [float(x) for x in q], False, basis, clipped(factor)
     ranked = sorted(
         (i for i in support if allocation[i] > 0),
         key=lambda i: raw[i],
@@ -237,7 +241,7 @@ def exact_cell(base, risk, fixed, prescribed, weights):
         raise AssertionError("no capped set satisfies the cell")
     for i in free:
         q[i] = min(Fraction(1), raw[i] * factor)
-    return [float(x) for x in q], False, basis
+    return [float(x) for x in q], False, basis, clipped(factor)
 
 
 def wide(low, high):
@@ -351,6 +355,15 @@ def invented_wide_cells(draw):
         np.array([1, 0.0009989, 0.0000044]),
     )
 )
+@example(  # A weightless row at one once went uncounted as clipped.
+    (
+        np.array([0.25, 0.5, 0.5]),
+        np.array([1, 3, 14 / 3]),
+        np.zeros(3, dtype=bool),
+        np.array([0.25, 0.5, 0.5]),
+        np.array([1, 1, 0]),
+    )
+)
 def test_normalizer_matches_an_exact_oracle_across_magnitudes(inputs):
     assert_matches_oracle(*inputs)
 
@@ -367,12 +380,13 @@ def assert_matches_oracle(base, risk, fixed, prescribed, weights):
     q, log = normalize_probabilities(
         base, risk, fixed, prescribed, cells, weights
     )
-    expected, infeasible, basis = exact_cell(
+    expected, infeasible, basis, clipped = exact_cell(
         base, risk, fixed, prescribed, weights
     )
     np.testing.assert_allclose(q, expected, rtol=ORACLE_RTOL, atol=1e-15)
     assert bool(log.loc[0, "infeasible"]) == infeasible
     assert log.loc[0, "normalization_basis"] == basis
+    assert log.loc[0, "clipped_persons"] == clipped
     assert ((0 <= q) & (q <= 1)).all()
     if not infeasible:
         applied = sum(
@@ -481,6 +495,59 @@ def test_cancellation_near_the_margin_matches_the_oracle(inputs):
     assert_matches_oracle(*inputs)
 
 
+@st.composite
+def invented_weightless_cap_cells(draw):
+    """Weightless rows within a few units of rounding of one.
+
+    Weighted rows set the factor, optionally after a first round that caps
+    one dominant row; none of the others caps.  Their exact factor is a
+    ratio of rational sums, so each weightless row's risk can be placed a
+    drawn number of float steps from where its scaled probability is
+    exactly one, on either side.  The rows take that factor without
+    setting it, so they test only the clipped count and their own
+    probabilities.
+    """
+    size = draw(st.integers(1, 5))
+    rows = dict(min_size=size, max_size=size)
+    base = draw(st.lists(st.floats(0.01, 0.2), **rows))
+    risk = draw(st.lists(st.floats(0.5, 2), **rows))
+    weights = draw(st.lists(st.floats(0.1, 10), **rows))
+    deaths = sum(
+        Fraction(w) * Fraction(b) for w, b in zip(weights, base, strict=True)
+    )
+    scaled = sum(
+        Fraction(w) * Fraction(b) * Fraction(r)
+        for w, b, r in zip(weights, base, risk, strict=True)
+    )
+    if draw(st.booleans()):
+        # This row caps in the first round; the rest share what remains.
+        dominant = float(deaths) * draw(st.floats(0.1, 1.5))
+        base, risk = [0.5, *base], [1000.0, *risk]
+        weights = [dominant, *weights]
+        deaths -= Fraction(dominant) / 2
+    factor = deaths / scaled
+    for _ in range(draw(st.integers(1, 3))):
+        q0 = draw(st.floats(0.05, 0.95))
+        r0 = float(1 / (Fraction(q0) * factor))
+        for _ in range(abs(steps := draw(st.integers(-4, 4)))):
+            r0 = float(np.nextafter(r0, np.inf if steps > 0 else 0))
+        base, risk, weights = [*base, q0], [*risk, r0], [*weights, 0.0]
+    base = np.asarray(base)
+    return (
+        base,
+        np.asarray(risk),
+        np.zeros(len(base), dtype=bool),
+        base,
+        np.asarray(weights),
+    )
+
+
+@ORACLE_PROPERTY
+@given(invented_weightless_cap_cells())
+def test_weightless_rows_at_one_match_the_oracle(inputs):
+    assert_matches_oracle(*inputs)
+
+
 def test_cascading_caps_match_the_oracle():
     """Each capping round pushes the next row over one."""
     base = np.full(6, 0.9)
@@ -489,9 +556,11 @@ def test_cascading_caps_match_the_oracle():
     fixed = np.zeros(6, dtype=bool)
     cells = [(2021, "male", 90)] * 6
     q, log = normalize_probabilities(base, risk, fixed, base, cells, weights)
-    expected, infeasible, _ = exact_cell(base, risk, fixed, base, weights)
+    expected, infeasible, _, clipped = exact_cell(
+        base, risk, fixed, base, weights
+    )
     np.testing.assert_allclose(q, expected, rtol=1e-12, atol=1e-15)
-    assert log.loc[0, "clipped_persons"] >= 3
+    assert log.loc[0, "clipped_persons"] == clipped >= 3
     assert not infeasible
     assert_conserved(q, base, cells, weights, log)
 

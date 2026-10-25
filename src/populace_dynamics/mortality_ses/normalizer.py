@@ -44,8 +44,9 @@ CELL_LOG_COLUMNS = (
 _FLOAT_MARGIN = 1e-3
 # Under that error a row whose scaled probability is this close to one
 # may cap or not, and which it does decides the factor every other row
-# gets.  Such a cell also goes to the Decimal path.  The margin is far
-# above the error bound, so every other cap decision is the exact one.
+# gets, or, for a zero-allocation row, the log's clipped count.  Such a
+# cell also goes to the Decimal path.  The margin is far above the error
+# bound, so every other cap decision and clip count is the exact one.
 _CAP_MARGIN = 1e-9
 # A feasible float cell that misses conservation by more than this,
 # relative to its expected deaths, is recomputed on the Decimal path.
@@ -277,6 +278,11 @@ def _normalize_cell(base, rr, w, is_fixed, prescribed):
             remaining = target - _stable_sum(allocation[capped])
             if remaining <= _FLOAT_MARGIN * scale:
                 return exact()
+        # The loop checked every row that sets the factor.  Zero-allocation
+        # rows take the factor without setting it, so whether one clips
+        # changes only the log's count, but that count must be exact too.
+        if np.any(free & ~capped & (np.abs(raw * factor - 1) <= _CAP_MARGIN)):
+            return exact()
         result[free] = np.minimum(1, raw[free] * factor)
         result[capped] = 1
         capped |= free & (raw * factor > 1)

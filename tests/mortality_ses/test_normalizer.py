@@ -278,6 +278,20 @@ def test_a_cap_decision_at_one_is_decided_exactly():
     assert not log.iloc[0].infeasible
 
 
+def test_a_zero_weight_row_at_one_is_counted_exactly():
+    # The weightless third row takes the factor without setting it.
+    # Exactly, its scaled probability exceeds one by about 6e-17, so it
+    # clips; rounded, it lands on one and would not be counted.
+    with patch.object(
+        normalizer, "_decimal_cell", wraps=normalizer._decimal_cell
+    ) as exact:
+        q, log = normalize([0.25, 0.5, 0.5], [1, 3, 14 / 3], weights=[1, 1, 0])
+    exact.assert_called_once()
+    np.testing.assert_allclose(q, [3 / 28, 9 / 14, 1], rtol=1e-15)
+    assert log.iloc[0].clipped_persons == 1
+    assert not log.iloc[0].infeasible
+
+
 def test_compounded_cancellation_is_decided_exactly():
     # Fixed deaths cancel most of the cell's deaths, and capping cancels
     # most of the rest.  What remains is too small, relative to the totals
