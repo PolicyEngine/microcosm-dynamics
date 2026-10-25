@@ -767,22 +767,102 @@ def invented_adapter_cells(draw):
     return base, fixed, prescribed, weights, groups % 2, 50 + groups // 2
 
 
+def exact_adapter_cell(base, fixed, prescribed, weights):
+    """The adapter's formula for one cell, in exact arithmetic.
+
+    ``_net_of_di_origin`` multiplies a cell's free rows by
+    ``max(P - D, 0) / E`` and clips at one, where ``P`` is the cell's
+    baseline deaths, ``D`` its fixed rows' deaths and ``E`` its free rows'
+    baseline deaths; with no fixed row or no free deaths the factor is one.
+    Also returns whether the adapter's float64 factor is unreliable: when
+    ``P - D`` or ``E`` is within a thousandth of ``max(P, D)``, the
+    subtraction can cancel, absorb ``E`` or overflow the division.  Exact
+    sums keep an ``E`` that would underflow in float64.
+    """
+    weight = [Fraction(w) for w in weights]
+    population = sum(
+        w * Fraction(b) for w, b in zip(weight, base, strict=True)
+    )
+    fixed_deaths = sum(
+        weight[i] * Fraction(prescribed[i]) for i in np.flatnonzero(fixed)
+    )
+    free_deaths = sum(
+        weight[i] * Fraction(base[i]) for i in np.flatnonzero(~fixed)
+    )
+    factor, unreliable = Fraction(1), False
+    if fixed.any():
+        scale = max(population, fixed_deaths) / 1000
+        gap = abs(population - fixed_deaths)
+        unreliable = 0 < free_deaths <= scale or 0 < gap <= scale
+        if free_deaths > 0:
+            factor = max(population - fixed_deaths, 0) / free_deaths
+    q = [
+        p if f else float(min(1, Fraction(b) * factor))
+        for b, f, p in zip(base, fixed, prescribed, strict=True)
+    ]
+    return np.asarray(q, dtype=float), unreliable
+
+
 @PROPERTY
 @given(invented_adapter_cells())
+@example(  # The adapter's factor overflows on a subnormal free row.
+    (
+        np.array([2.225073858507e-311, 0.5]),
+        np.array([False, True]),
+        np.array([2.225073858507e-311, 0.0]),
+        np.array([1.0, 1.0]),
+        np.zeros(2, dtype=int),
+        np.full(2, 50),
+    )
+)
+@example(  # Its baseline deaths absorb the free deaths: factor zero.
+    (
+        np.array([0.5, 0.8, 3e-301]),
+        np.array([False, True, False]),
+        np.array([0.5, 0.8, 3e-301]),
+        np.array([0.0, 4.0, 16.0]),
+        np.zeros(3, dtype=int),
+        np.full(3, 50),
+    )
+)
+@example(  # The same with subnormal free deaths, beside a weightless row.
+    (
+        np.array([5e-324, 0.5074563290805952, 0.5537272658366658]),
+        np.array([False, False, True]),
+        np.array([5e-324, 0.5074563290805952, 0.5537272658366658]),
+        np.array([1.6873477097608718, 0.0, 18.517829151607195]),
+        np.zeros(3, dtype=int),
+        np.full(3, 50),
+    )
+)
+@example(  # Its subtraction cancels to an error above the tolerance.
+    (
+        np.array([0.9, 1.192092896e-07, 0.5543192935511442]),
+        np.array([False, False, True]),
+        np.array([0.9, 1.192092896e-07, 0.5543192935511442]),
+        np.array([0.0, 2.00001, 0.05000000000000001]),
+        np.zeros(3, dtype=int),
+        np.full(3, 50),
+    )
+)
 def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
     """Includes zero weights, infeasible cells and weightless free rows.
 
-    The one intended exception besides clipping is an infeasible cell
-    whose free support weighs nothing.
+    Besides clipping, one intended exception skips the cell: an
+    infeasible cell whose free support weighs nothing.  Every other cell
+    matches the adapter's formula evaluated exactly, at the oracle's
+    tolerance, and the adapter's float64 result except where that is
+    unreliable (``exact_adapter_cell``), a second intended exception.
     """
     base, fixed, prescribed, weights, sex, age = inputs
     cells = [(2021, SEXES[s], int(a)) for s, a in zip(sex, age, strict=True)]
     q, log = normalize_probabilities(
         base, np.ones(len(base)), fixed, prescribed, cells, weights
     )
-    old, _ = _net_of_di_origin(
-        prescribed, base, fixed, sex, age, weights, SINGLE_YEAR_AGE_BANDS
-    )
+    with np.errstate(over="ignore"):  # The adapter's intended overflow.
+        old, _ = _net_of_di_origin(
+            prescribed, base, fixed, sex, age, weights, SINGLE_YEAR_AGE_BANDS
+        )
     for row in log.itertuples(index=False):
         if row.clipped_persons:
             continue  # Intended: iterative capping versus one-pass clipping.
@@ -793,6 +873,16 @@ def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
         if row.infeasible and support.any() and not weights[support].any():
             # Intended: the adapter leaves weightless rows at factor one,
             # while the brief's infeasible-cell rules hold for any weight.
+            continue
+        exact, unreliable = exact_adapter_cell(
+            base[mask], fixed[mask], prescribed[mask], weights[mask]
+        )
+        np.testing.assert_allclose(
+            q[mask], exact, rtol=ORACLE_RTOL, atol=1e-15
+        )
+        if unreliable:
+            # Intended: the adapter's float64 factor cancels, absorbs the
+            # free deaths or overflows here; SM1 meets the exact formula.
             continue
         np.testing.assert_allclose(q[mask], old[mask], rtol=RTOL, atol=ATOL)
 

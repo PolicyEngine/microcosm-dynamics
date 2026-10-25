@@ -193,10 +193,11 @@ factor, clipped persons, signed clipping residual, infeasibility,
 normalization basis and persons target, plus the unclassified counts.
 `clipped_persons` counts free rows whose scaled probability
 `q_base * relative_risk * factor` exceeds one at the cell's exact final
-factor (the logged `factor` is its float64 rounding, so a row at one can
-appear to exceed it); a row exactly at one is not counted. In a cell
-whose target exceeds its free capacity, it counts every free row with
-positive baseline q, since all of them saturate.
+factor (the logged `factor` approximates it in float64, within the stated
+error bound on the float path, so a row at one can appear to exceed it);
+a row exactly at one is not counted. In a cell whose target exceeds its
+free capacity, it counts every free row with positive baseline q, since
+all of them saturate.
 `clipping_residual = baseline - applied`. It is nonzero only on
 infeasible cells: iterative capping conserves every feasible cell, and the
 float path verifies that rather than assuming it.
@@ -240,7 +241,14 @@ bind. Tests label the normalizer's iterative redistribution versus the
 adapter's one-pass clipping as an intended difference. A second intended
 difference: in an infeasible cell whose free support weighs nothing, the
 adapter leaves the factor at one, while the rules above zero or saturate
-those rows. No shared-module change is required.
+those rows. A third: the adapter forms its factor `max(P - D, 0) / E` in
+float64 with no guard on the subtraction or the division. Where `P - D` or
+the free deaths `E` lies within a thousandth of `max(P, D)`, its factor
+can lose precision, absorb the free deaths or overflow. The differential
+test therefore holds every unclipped cell to the adapter's formula
+evaluated exactly, at the oracle's tolerance, and compares the adapter's
+float64 result only outside those cells. No shared-module change is
+required.
 
 At the scale of a projection frame (1,000,000 invented rows in 242
 cells), `evaluate` takes about 1.4 seconds on the build host, and the
@@ -290,7 +298,7 @@ before being characterized as a mechanism defect.
 | Infeasible weightless cells follow the weighted rules (the vanishing-weight limit) | Infeasibility decided before the unit-weight rule | `test_fixed_excess_zeroes_weightless_free_rows_on_both_paths`, `test_fixed_shortfall_saturates_weightless_support_on_both_paths`, `test_weightless_infeasible_cells_follow_the_weighted_rules`, `test_weightless_cells_take_the_vanishing_weight_limit` |
 | Float decisions too close to call go to the Decimal path | `_ambiguous`, the remaining-target check, the cap-decision check and the conservation check in `normalizer.py` | `test_roundoff_cannot_erase_a_capped_cells_deaths`, `test_rounded_target_and_capacity_tie_is_decided_exactly`, `test_cancelling_target_is_decided_exactly`, `test_a_cap_decision_at_one_is_decided_exactly`, `test_compounded_cancellation_is_decided_exactly`, `test_a_zero_weight_row_at_one_is_counted_exactly`; the oracle property's examples, `test_cap_boundaries_beside_tiny_weights_match_the_oracle`, `test_cancellation_near_the_margin_matches_the_oracle` and `test_weightless_rows_at_one_match_the_oracle` |
 | A target that exactly fills the weighted support takes the smallest capping factor | The Decimal path's tie branch | The oracle property's two tie examples |
-| Differential adapter arithmetic; intended clipping and weightless-infeasible differences | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities; named intended divergences |
+| Differential adapter arithmetic; intended clipping, weightless-infeasible and adapter float64 differences | Same uncapped algebra, iterative cap | Private-adapter differential examples and properties, including `test_unit_risk_matches_adapter_on_every_unclipped_cell` over zero weights, infeasible cells and arbitrary fixed probabilities, which also holds every unclipped cell to the adapter's formula evaluated exactly (`exact_adapter_cell`); named intended divergences |
 | Time path and alternative path isolation | Path protocol and hold-last default | `test_pluggable_path_changes_only_named_year`, generated hold-last/refusal property |
 | Determinism and no RNG consumption | Pure `evaluate` | Repeated-call examples, generator state and patched-generator property |
 | Refusals | Specification, frame and interface validation | Nonfinite/nonpositive risks, missing columns, unknown/unclassified values, age mismatch and `probabilities` attribute examples and properties |
