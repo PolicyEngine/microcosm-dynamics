@@ -139,7 +139,12 @@ def test_a_pull_requests_own_commits_append_only():
             "a merge commit; its endpoint is admitted against an empty "
             "registry above"
         )
-    assert registry.history_problems(ROOT, base_commit, head, full=False) == []
+    assert (
+        registry.history_problems(
+            ROOT, base_commit, head, full=False, pull_request=True
+        )
+        == []
+    )
 
 
 def test_every_first_parent_commit_since_the_base_appends_only():
