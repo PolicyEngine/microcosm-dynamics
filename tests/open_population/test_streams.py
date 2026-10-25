@@ -455,12 +455,60 @@ def test_cached_root_follows_exact_int_seeds_compared_exactly():
     Seeds past ``int64``, past float precision and past float range are
     valid, and a seed equal to the cached seed's negative is refused, so the
     cache must build and compare the seeds themselves, exactly. Seeds
-    ``2**1100 + 5200`` and ``5200`` agree in their low 1,100 bits.
+    ``2**64 + 5200`` and ``2**1100 + 5200`` agree in their low 64 bits, and
+    ``2**1100 + 5200`` and ``5200`` in their low 1,100.
     """
     draw = np.array(0, dtype=object)
     registry = ProjectionRNGRegistry(draw, 7)
     direct = DirectRNGStreams(draw, 7)
-    for value in (0, 2**53, 2**53 + 1, 2**64, 2**64 + 1, 2**1100, 0, -10400):
+    for value in (0, 2**53, 2**53 + 1, 2**64 + 1, 2**64, 2**1100, 0, -10400):
+        draw[()] = value
+        for method, tail_length in _TAIL_LENGTHS.items():
+            args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+            compare = _compare_for(method)
+            assert _outcome(direct, method, args, compare) == _outcome(
+                registry, method, args, compare
+            ), (value, method)
+
+
+_EXACT_DRAWS = st.one_of(st.integers(0, 40), st.integers(0, 2**1200))
+
+
+@st.composite
+def _exact_int_draw_walks(draw):
+    """Walk an exact ``int`` draw through changes a lossy key could miss."""
+    values = [draw(_EXACT_DRAWS)]
+    for _ in range(draw(st.integers(1, 4))):
+        previous = values[-1]
+        bit = draw(st.integers(0, 1200))
+        values.append(
+            draw(
+                st.sampled_from(
+                    (
+                        draw(_EXACT_DRAWS),
+                        previous ^ (1 << bit),
+                        previous + (1 << bit),
+                        -previous - 10400,
+                    )
+                )
+            )
+        )
+    return values
+
+
+@settings(max_examples=60, deadline=None)
+@given(values=_exact_int_draw_walks())
+def test_cached_root_follows_generated_exact_int_walks(values):
+    """Any walk of an exact ``int`` draw gets the registry's streams (§2.1).
+
+    Each step changes the draw to a fresh value, flips or adds one bit, or
+    sets the seed to the cached seed's negative, so a key that drops bits,
+    reduces by a small modulus or ignores the sign is caught.
+    """
+    draw = np.array(0, dtype=object)
+    registry = ProjectionRNGRegistry(draw, 7)
+    direct = DirectRNGStreams(draw, 7)
+    for value in values:
         draw[()] = value
         for method, tail_length in _TAIL_LENGTHS.items():
             args = (1, MODULE_ORDER[0], *(3,) * tail_length)

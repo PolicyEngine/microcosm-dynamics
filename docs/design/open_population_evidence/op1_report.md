@@ -14,7 +14,8 @@ entrants. The seam appends entrants before mortality
 arrivals before delegating the call
 (`src/populace_dynamics/open_population/harness.py:226–235`).
 
-Base: `7e635bba`, branch `openpop-op1-harness-20261024`.
+Base: `7e635bba`, branch `openpop-op1-harness-20261024`. `daa1f58d` merged
+master `4e20c6e4` into the branch.
 
 The build's sandbox could not write `.git`, so the main session committed
 its tree in logical steps on this branch: `7d321aef` (the fast path, its
@@ -212,7 +213,7 @@ combination, for all six methods, of:
 `test_non_integer_draw_refusals_match_registry` adds four non-integer draws
 and an `np.int64` one against malformed horizons and periods, and
 `test_generated_malformed_addresses_match_registry` adds 80 Hypothesis
-examples over all of these. Eight tests pin the root's state:
+examples over all of these. Nine tests pin the root's state:
 - `test_returned_sequences_do_not_share_the_cached_root` and
   `test_returned_generators_do_not_share_the_cached_root`: every method,
   including the tagged child emigration draws from and the period-zero
@@ -221,10 +222,12 @@ examples over all of these. Eight tests pin the root's state:
   NumPy and object type mutated in place, including to a seed whose hash
   equals the cached one's, and an overflowing `np.uint64` draw under
   `np.errstate(over="raise")`;
-- `test_cached_root_follows_exact_int_seeds_compared_exactly`: exact `int`
-  draws past `int64`, past float precision and past float range, a seed
-  that matches an earlier one in its low 1,100 bits, and a draw whose seed
-  is the cached seed's negative, through every method;
+- `test_cached_root_follows_exact_int_seeds_compared_exactly` and
+  `test_cached_root_follows_generated_exact_int_walks`: exact `int` draws
+  past `int64`, past float precision and past float range, seeds that match
+  an earlier one in their low 64 or 1,100 bits, and a draw whose seed is the
+  cached seed's negative, through every method. The second walks generated
+  draws by fresh values, one-bit flips, one-bit steps and negations;
 - `test_root_ignores_an_equal_seed_of_another_type` and
   `test_root_ignores_an_equal_seed_set_on_the_frozen_field`: a draw changed
   in place to an equal float, `Fraction`, `Decimal`, complex, NumPy
@@ -283,7 +286,7 @@ sandbox, so the main session reran them on the committed code. The timings
 in this section are pytest's own reported wall times, not measurements in
 `op1_run_size.json`. The build's sandboxed run of the required command
 reported 231 passed in 660.26 s, with the 2100 test dropped; on this host
-the command takes under 10 s.
+the command takes 8 to 15 s.
 
 The build dropped its production run to 2100 because its sandboxed pytest
 run reported 62 s for it. On this host, `pytest --durations` reports
@@ -292,12 +295,13 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **333 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 8 to 14 s by pytest's report (one-minute load 34 to
-91). At `0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests
-added 37, review r3's fix 30, review r4's fix 3, review r5's fix 20, review
-r6's fix 10 and review r7's fix 1. It covers the self-contained horizon test,
-the reversed-roster example, the gate metadata refusals and every reducer
+The required command gives **334 passed and 1 strict xfail, with 2 existing
+fixture warnings**. Its time varies with host load: runs by the author and
+reviews r8 and r9 took 8 to 15 s by pytest's report. At `0d0c073c` it gave
+232 passed in about 8 s; review r2's refusal tests added 37, review r3's fix
+30, review r4's fix 3, review r5's fix 20, review r6's fix 10, review r7's fix
+1 and review r9's fix 1. It covers the self-contained horizon test, the
+reversed-roster example, the gate metadata refusals and every reducer
 identity, reachability and initializer check.
 
 ```sh
@@ -305,11 +309,12 @@ identity, reachability and initializer check.
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **230 tests**, all classified as `unit` (seven modules,
-including the original six). That is 170 more than the 60 reviewed at r1,
-101 more than the 129 reviewed at r2, 64 more than the 166 reviewed at r3,
-34 more than the 196 reviewed at r4, 31 more than the 199 reviewed at r5,
-11 more than the 219 reviewed at r6 and 1 more than the 229 reviewed at r7.
+Collection gives **231 tests**, all classified as `unit` (seven modules,
+including the original six). That is 171 more than the 60 reviewed at r1,
+102 more than the 129 reviewed at r2, 65 more than the 166 reviewed at r3,
+35 more than the 196 reviewed at r4, 32 more than the 199 reviewed at r5,
+12 more than the 219 reviewed at r6, 2 more than the 229 reviewed at r7 and
+1 more than the 230 reviewed at r8 and r9.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -318,13 +323,17 @@ is clean.
 .venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
 .venv/bin/ruff check src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
 git diff --check
-git diff --stat 7e635bba
-git diff --exit-code 7e635bba -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs tests/tier_counts.json tests/README-tiers.md
+git diff --stat 4e20c6e4
+git diff --exit-code 4e20c6e4 -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs tests/tier_counts.json tests/README-tiers.md
 ```
 
-The scope comparison over the sealed and shared paths is empty. The three
-new files, `open_population/streams.py`, `tests/open_population/__init__.py`
-and `tests/open_population/test_streams.py`, lie within the allowed scope.
+The scope comparison over the sealed and shared paths, against master
+`4e20c6e4`, is empty. Before review r9's fix these commands named
+`7e635bba`, the base before that merge. Against it they show only master's
+own changes to those paths, identical to `git diff 7e635bba 4e20c6e4`. The
+three new files, `open_population/streams.py`,
+`tests/open_population/__init__.py` and
+`tests/open_population/test_streams.py`, lie within the allowed scope.
 The test modules, including the new stream module, classify as `unit` under
 the repository's `_classify_test_module`. The shared tier inventories are
 unchanged; their update waits for the coordinator's slot.
@@ -475,7 +484,7 @@ Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findin
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
 | r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14, as Hypothesis draws; 6 or 7; 1) |
-| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10 or 11) |
 | No cache, or seeds compared with `is not` | Survive as intended: they change cost only |
 | `not cached[0] == seed`; entropy rebuilt from the seed; default pool size (always 4); wrap by modulo | Survive: equivalent |
 | A refused seed cached | Survived. This row first called it equivalent, which was wrong: a negative `int` seed reaches the cache (review r6). It is now killed |
@@ -504,7 +513,7 @@ r6 also showed that a cache keyed by the seed's hash (its M16) passed every test
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
 | r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14; 6 or 7; 1) |
-| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10 or 11) |
 | No cache; seeds compared with `is not`; a non-`int` seed clears the cache | Survive as intended: they change cost only |
 | `not ==`; key compared by subtraction; default pool size; wrap by modulo; a negative `int` also bypasses; `isinstance` for the exact check; a typed key without the `int` check | Survive: equivalent, as r6 found with its probes |
 | Entropy rebuilt from the seed | Survives: equivalent for streams and refusals, as r6 found; it emits a second overflow warning under `np.errstate(over="warn")` |
@@ -535,14 +544,42 @@ Review r8 (Opus 5.5 delta check at `42be3231`) approved, with one minor finding,
 
 | Finding | Fix and test that pins it |
 |---|---|
-| 1: the new test never moved between two seeds that agree in their low bits, and never went past 2^64 + 5201. The code was correct on all of these inputs, but five contrived mutants passed every test: the cached seed compared by its sign and low 64 bits (K6) or modulo 2^72 (K1), stored as a float (S9) or, when large, reduced modulo 2^64 (S14), and the root built from the seed modulo 2^128 (S13) | r8's verified fix adds a draw of 2^1100 before the second 0. Seeds 2^1100 + 5200 and 5200 agree in their low 1,100 bits, and 2^1100 is past float range. It kills all five and loses no kill. No finite set of draws pins a cache that changes only above some size; this raises that size from 2^64 to 2^1100. |
+| 1: the new test never moved between two seeds that agree in their low 64 bits, and never went past 2^64 + 5201. The code was correct on all of these inputs, but five contrived mutants passed every test: the cached seed compared by its sign and low 64 bits (K6) or modulo 2^72 (K1), stored as a float (S9) or, when large, reduced modulo 2^64 (S14), and the root built from the seed modulo 2^128 for non-negative seeds (S13) | r8's verified fix adds a draw of 2^1100 before the second 0. Seeds 2^1100 + 5200 and 5200 agree in their low 1,100 bits, and 2^1100 is past float range. It kills all five and loses no kill. It pins a key or root that goes wrong on any single seed up to 2^1100 + 5200. A key that compares two large seeds loosely, or drops a large seed's sign, could still pass; review r9 found such keys (see below). |
 
 | Mutation (r6's, r7's and r8's harnesses; stream and exit tests, 164) | Result |
 |---|---|
 | r8's five non-equivalent survivors: K6; K1; S9; S14; S13 | Killed (1 each) |
-| r8's 11 killed mutants: the key without its low bit (K2), by bit length (K3), not compared past 2^63 (K4), by `math.isclose` (K5), only by bit length past 2^64 (K7) or by its low 32 bits and bits from 64 up (K8); a memo keyed by hash (S11); the root from the seed modulo 2^64 (S12); the previous seed stored with the new root (S15); the cached root reused when the seed moves by 1 past 2^53 (S16); large seeds reusing a large cached root (X9) | Killed (1; 2; 1; 1; 1; 1; 1; 1; 2; 1; 1) |
+| r8's 11 killed mutants: the key without its low bit (K2), by bit length (K3), not compared past 2^63 (K4), by `math.isclose` (K5), only by bit length past 2^64 (K7) or by its low 32 bits and bits from 64 up (K8); a memo keyed by hash (S11); the root from the seed modulo 2^64 for non-negative seeds (S12); the previous seed stored with the new root (S15); the cached root reused when the seed moves by 1 past 2^53 (S16); large seeds reusing a large cached root (X9) | Killed (1; 2; 1; 1; 1; 1; 1; 1; 2; 1; 1) |
 | r8's equivalent survivors: an unbounded memo per seed (S10); seeds past 2^64 bypass the cache (X8) | Survive: they change memory or cost only, as r8 found with its probes |
 | r7's 32 mutants and r6's 50 | Every verdict above holds. The key masked to 64 bits (R3) gains the new test as a kill (3). R5, r7's 13 equivalents and r6's 11 still survive, the `6361b4c0` and `dee1e1b7` files still fail 15 and 28 tests, and the Hypothesis-dependent counts stay within their ranges |
+
+### Review r9
+
+Review r9 (Opus 5.5 delta check at `5f276453`; its review names its model) approved, with one minor finding and four nits, and found the code correct. It confirmed the coordinator's four checks and 22,176 four-way identities across the registry, `dee1e1b7`, `6361b4c0` and `5f276453`, closed r8's finding, and reproduced every author mutant output. It tried 12 new mutants: 4 were killed, 6 survived without being equivalent, and 2 differed from the registry only past 2^1101, beyond the committed draws.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: lossy cache keys that go wrong for seeds below 2^1100 still passed every test. Six contrived mutants survived: the cached seed compared modulo 3 (K9) or modulo 2^89 − 1 (K10), by its low 64 bits when both seeds pass 2^64 (K11), by bit length and low 64 bits (K12), by bit length when a seed passes 2^1024 (K13), and without its sign when the seed passes 2^64 (G1). No finite list of draws can rule out every lossy key | Both of r9's verified options. The draws 2^64 and 2^64 + 1 swap places, so the walk moves from seed 2^64 + 5200 to 2^1100 + 5200: they agree in their low 64 bits and differ by a multiple of 3. And `test_cached_root_follows_generated_exact_int_walks`, r9's candidate unchanged, is a Hypothesis property test of the invariant itself: any walk of an exact `int` draw, by fresh values, one-bit flips, one-bit steps and negations, gets the registry's streams. Together they kill five of the six, K9 and K11 by both tests and K12, K13 and G1 by the property test alone, with no kill lost across 114 mutants. K10 survives (below). |
+| Nit: the r8 finding said "agree in their low bits", which the step from 0 to 2^53 already did | It says low 64 bits. |
+| Nit: S12 and S13 were described without "for non-negative seeds"; as worded, they fail five tests | Both rows say it. |
+| Nit: "raises that size from 2^64 to 2^1100" claimed more than the draw pins | The r8 row says what the draw pins and what it leaves. |
+| Nit: the timing range was the author's unrecorded observation, and one of r9's runs fell outside it | The required-command paragraph gives the range over the author's and reviews' runs and says it varies with host load. §3's opening paragraph, which said "under 10 s", gives the same range. |
+
+Rerunning §3's commands for this fix, the author found that its scope commands still named `7e635bba`, the base before the master merge `daa1f58d`. Against it the sealed and shared paths show master's own changes to `track_b/holdout_registry.py` and the two tier files. §1 now names the merge, and §3's commands name master `4e20c6e4`, which reviews r3 to r9 used for the coordinator's sealed-path check. Against it they are empty.
+
+| Mutation (r6's, r7's, r8's and r9's harnesses; stream and exit tests, 165) | Result |
+|---|---|
+| r9's K9 and K11 | Killed (2 each): the reordered draws and the property test |
+| r9's K12, K13 and G1 | Killed (1 each), by the property test alone |
+| r9's K10, the key modulo 2^89 − 1 | Survives. A one-bit flip or step moves a seed by a power of two, never by a multiple of an odd modulus, and a fresh value almost never matches the cached seed modulo 2^89 − 1. Only the exact comparison in `streams.py` rules this key out |
+| r9's K14, the key modulo 2^1101 | Survives the full run. A walk catches it only by flipping or stepping a bit from 1,101 up; the property test alone killed it in 7 of 10 seeded runs |
+| r9's S18, the root from the seed modulo 2^1101 for non-negative seeds | Killed (1), by the property test alone, whose draws reach 2^1200 |
+| r9's four killed mutants: the key modulo 2^1100 (K16) or by popcount and bit length (K18); the root from the seed modulo 2^1100 for non-negative seeds (S17); a seed past 2^1024 keeping the previous root (S22) | Still killed (1; 2; 2; 2). K18, S17 and S22 gain the property test. In this run K16 fails only the old test; the property test alone killed it in 7 of 10 seeded runs |
+| S12 and S13 for every seed (r9's S12u and S13u) | Killed (6 each): the five r9 found and the property test |
+| r8's 18 mutants | Every verdict above holds. Fourteen killed mutants gain the property test. The memo keyed by hash (S11) and the cached root reused past 2^53 (S16) keep their one kill, and S10 and X8 survive |
+| r7's 32 mutants and the two revisions | Every verdict above holds. Twelve killed mutants gain the property test: R1, R2, R3, R4, R7, R8, S4, S5, S6, S7, S8 and E3. R5 and r7's 13 equivalents survive. `6361b4c0` still fails 15 tests and passes the property test; `dee1e1b7` fails 29, the property test among them |
+| r6's 50 mutants | The same 39 are killed and the same 11 survive. Eight gain the property test: C2, C3, C4, C5, C6, M9, M12 and N3. The Hypothesis-dependent counts stay within their ranges, except that the period-zero lookup skipped (A5) failed `test_generated_malformed_addresses_match_registry` for the first time, 11 against 10. The r5 and r6 tables now give "10 or 11" |
+| The property test alone, with a fresh Hypothesis database, seeds 1 to 10 | Passes at the head in 10 of 10 runs, in 0.5 to 0.8 s. Kills K9, K11, K12, K13, K18, G1, S17, S18 and S22 in 10 of 10, K14 and K16 in 7 of 10, and K10 in none |
 
 ## 5. Remaining work and restricted-files statement
 
