@@ -4,6 +4,7 @@ POPULACE_DYNAMICS_PE_US_PYTHON_SSI0 deliberately contains the static oracle
 tier substring without reusing the older bridge environment variable.
 """
 
+import ast
 import json
 import os
 import subprocess
@@ -34,6 +35,13 @@ from populace_dynamics.income_resources.ssi.runner import (
 )
 
 from .ssi_invented import invented_case
+from .test_ssi_inventory import (
+    ADMITTED_FORMS,
+    REFUSED_FORMS,
+    invented_enum_module,
+    read_members,
+)
+from .test_ssi_inventory import inventory as inventory_script
 
 
 def invented_runner():
@@ -223,6 +231,7 @@ for name in json.load(sys.stdin):
         ],
         "members": list(cls.__members__),
         "canonical": [member.name for member in cls],
+        "indices": [member.index for member in cls],
         "default": variable.default_value.name,
     })
 json.dump(observed, sys.stdout)
@@ -265,3 +274,154 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
         assert pinned["members"] == pinned["canonical"]
         assert pinned["members"] == record["enum_members"]
         assert pinned["default"] == record["default"]
+        # Each member encodes as its position, as the engine's Enum numbers
+        # them; a store through a member could change that and not the
+        # membership.
+        assert pinned["indices"] == list(range(len(pinned["members"])))
+
+
+# Runs in the pinned interpreter. It loads each invented module through the
+# engine's own loader, one new variable each, and reports what the engine
+# reads, or the error that stopped the load.
+INVENTED_MODULE_CHILD = """
+import json, sys, tempfile
+from pathlib import Path
+from policyengine_us import CountryTaxBenefitSystem
+
+system = CountryTaxBenefitSystem()
+observed = []
+with tempfile.TemporaryDirectory() as folder:
+    for index, source in enumerate(json.load(sys.stdin)):
+        path = Path(folder) / f"invented_module_{index}.py"
+        path.write_text(source)
+        before = set(system.variables)
+        try:
+            system.add_variables_from_file(str(path))
+            (name,) = set(system.variables) - before
+            variable = system.variables[name]
+            cls = variable.possible_values
+            observed.append({
+                "members": list(cls.__members__),
+                "canonical": [member.name for member in cls],
+                "indices": [member.index for member in cls],
+                "default": variable.default_value.name,
+            })
+        except Exception as error:
+            observed.append({"error": type(error).__name__})
+json.dump(observed, sys.stdout)
+"""
+INVENTED_ENGINE_PREFIX = (
+    "from policyengine_us.model_api import *\n\n\n"
+    "class InventedOtherEnum(Enum):\n"
+    '    INVENTED_OTHER = "other"\n\n\n'
+)
+INVENTED_TWO_MEMBERS = ["INVENTED_ONE", "INVENTED_TWO"]
+
+
+def invented_engine_module(kinds):
+    """An invented two-member module with the named forms, for the engine,
+    which requires a label."""
+    forms = [("body_head", 'label = "Invented status"')] + [
+        (place, text.format(name="InventedEnum", member="INVENTED_TWO"))
+        for kind in kinds
+        for place, text, _ in [(ADMITTED_FORMS | REFUSED_FORMS)[kind]]
+    ]
+    class_source = "class InventedEnum(Enum):\n" + "".join(
+        f'    {member} = "{member.lower()}"\n'
+        for member in INVENTED_TWO_MEMBERS
+    )
+    return INVENTED_ENGINE_PREFIX + invented_enum_module(
+        class_source, "InventedEnum", "INVENTED_ONE", forms
+    )
+
+
+def test_invented_modules_load_in_the_engine_as_the_reader_reads_them():
+    """Differential: the static reader against the pinned engine's loader,
+    including forms the harness's stand-in Variable cannot show."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    admitted = [[], *([kind] for kind in sorted(ADMITTED_FORMS))]
+    admitted.append(sorted(ADMITTED_FORMS))
+    # The engine calls a variable's own set to read its attributes, and a
+    # store through a member renumbers it: both load without an error.
+    silent = [["variable_method"], ["member_store"]]
+    sources = [
+        invented_engine_module(kinds).replace(
+            "invented_status", f"invented_status_{index}"
+        )
+        for index, kinds in enumerate(admitted + silent)
+    ]
+    completed = subprocess.run(
+        [str(python), "-I", "-c", INVENTED_MODULE_CHILD],
+        input=json.dumps(sources),
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    observed = json.loads(completed.stdout)
+    plain = {
+        "members": INVENTED_TWO_MEMBERS,
+        "canonical": INVENTED_TWO_MEMBERS,
+        "indices": [0, 1],
+        "default": "INVENTED_ONE",
+    }
+    for kinds, engine in zip(admitted + silent, observed, strict=True):
+        read = read_members(invented_engine_module(kinds))
+        if kinds in silent:
+            assert read is None
+            assert "error" not in engine and engine != plain
+        else:
+            assert read == INVENTED_TWO_MEMBERS
+            assert engine == plain
+
+
+def test_engine_attributes_are_those_the_pinned_variable_reads():
+    """The reader's allowed variable attributes against the pinned core's
+    Variable constructor, read statically."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    completed = subprocess.run(
+        [
+            str(python),
+            "-I",
+            "-c",
+            "import policyengine_core.variables.variable as module; "
+            "print(module.__file__)",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    tree = ast.parse(Path(completed.stdout.strip()).read_bytes())
+    variable = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef) and node.name == "Variable"
+    )
+    constructor = next(
+        node
+        for node in variable.body
+        if isinstance(node, ast.FunctionDef) and node.name == "__init__"
+    )
+    # The names it passes to self.set, and those it pops from attr itself.
+    read = set()
+    for call in ast.walk(constructor):
+        if not (
+            isinstance(call, ast.Call)
+            and isinstance(call.func, ast.Attribute)
+            and isinstance(call.func.value, ast.Name)
+        ):
+            continue
+        owner, method = call.func.value.id, call.func.attr
+        position = {("self", "set"): 1, ("attr", "pop"): 0}.get(
+            (owner, method)
+        )
+        if position is not None:
+            argument = call.args[position]
+            assert isinstance(argument, ast.Constant)
+            read.add(argument.value)
+    assert read == inventory_script.ENGINE_ATTRIBUTES

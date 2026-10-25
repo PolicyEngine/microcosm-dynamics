@@ -3,8 +3,10 @@
 Invariants: every variable and parameter in the federal SSI trees appears;
 every dependency reaches another inventoried variable or an explicit input;
 formula boundaries are named, rather than allowing an implicit model default;
-an enum input's members come only from a class whose membership a static
-read settles, and include its default, or the inventory refuses; the output
+each variable's value_type is one plain assignment of a primitive type or
+Enum, or the inventory refuses; an enum input's members come only from a
+class whose membership a static read settles, and include its default, or
+the inventory refuses; source is decoded as Python decodes it; the output
 is deterministic for the same source and distribution metadata.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
@@ -73,7 +75,7 @@ def sha256(path: Path) -> str:
 def validate_core_defaults(package: Path) -> dict[str, str]:
     """Refuse drift in the source of implicit primitive defaults."""
     path = package.parent / "policyengine_core/variables/config.py"
-    tree = ast.parse(path.read_text())
+    tree = ast.parse(path.read_bytes())
     table = next(
         item.value
         for item in tree.body
@@ -144,6 +146,42 @@ REFLECTIVE = frozenset(
 )
 # The Enum class method that PE-US formulas call.
 ENUM_API = frozenset({"encode"})
+# The attribute names that policyengine_core's Variable constructor reads,
+# through set or by popping them; the SSI0 oracle checks this against the
+# pinned release.
+ENGINE_ATTRIBUTES = frozenset(
+    {
+        "adds",
+        "calculate_output",
+        "category",
+        "cerfa_field",
+        "default_value",
+        "defined_for",
+        "definition_period",
+        "documentation",
+        "end",
+        "entity",
+        "exhaustive_parameter_dependencies",
+        "hidden_input",
+        "index_in_module",
+        "is_period_size_independent",
+        "label",
+        "max_length",
+        "max_value",
+        "metadata",
+        "min_value",
+        "module_name",
+        "possible_values",
+        "quantity_type",
+        "reference",
+        "requires_computation_after",
+        "set_input",
+        "subtracts",
+        "unit",
+        "uprating",
+        "value_type",
+    }
+)
 
 
 def binding_sites(tree: ast.AST, name: str) -> list[ast.AST]:
@@ -193,8 +231,13 @@ def static_module(tree: ast.Module, cls: ast.ClassDef) -> bool:
     """Whether a module's own code can change ``cls`` only in ways read here.
 
     The module imports nothing but the model API, and that only before the
-    class; it binds ``Enum`` nowhere; and it names no reflective builtin or
-    frame attribute, nor any name or attribute with a leading underscore.
+    class; it binds neither ``Enum`` nor ``Variable``, whose spellings the
+    reader takes to be the model API's; it stores or deletes no attribute,
+    since a store can reach the class, a member, the variable or a base
+    through any alias; and no identifier in it is a reflective builtin or
+    frame attribute or has a leading underscore. Identifiers are every
+    string field of the syntax tree outside literals: names, attributes,
+    definitions, parameters, keywords and pattern keywords.
     """
     position = tree.body.index(cls)
     imports = [
@@ -214,15 +257,19 @@ def static_module(tree: ast.Module, cls: ast.ClassDef) -> bool:
     ):
         return False
     for item in ast.walk(tree):
-        if isinstance(item, ast.Name):
-            names = [item.id]
-        elif isinstance(item, ast.Attribute):
-            names = [item.attr]
-        else:
-            continue
-        if any(name in REFLECTIVE or name.startswith("_") for name in names):
+        if isinstance(item, ast.Attribute) and not isinstance(
+            item.ctx, ast.Load
+        ):
             return False
-    return not binding_sites(tree, "Enum")
+        if isinstance(item, ast.Constant):
+            continue
+        for _, value in ast.iter_fields(item):
+            for name in value if isinstance(value, list) else [value]:
+                if isinstance(name, str) and (
+                    name in REFLECTIVE or name.startswith("_")
+                ):
+                    return False
+    return not (binding_sites(tree, "Enum") or binding_sites(tree, "Variable"))
 
 
 def class_members(cls: ast.ClassDef) -> list[str] | None:
@@ -265,6 +312,38 @@ def class_members(cls: ast.ClassDef) -> list[str] | None:
     return members
 
 
+def plain_variable_body(variable: ast.ClassDef) -> bool:
+    """Whether a variable's body holds only engine attributes and formulas.
+
+    That is a leading docstring, single assignments to names in
+    ``ENGINE_ATTRIBUTES``, and formula functions with no decorators. Any
+    other binding could override one of ``Variable``'s methods, such as
+    ``set``, which the engine calls to read ``value_type``,
+    ``possible_values`` and ``default_value``. The engine refuses a name it
+    does not read, but an override can remove its own name first.
+    """
+    return all(
+        (
+            index == 0
+            and isinstance(item, ast.Expr)
+            and isinstance(item.value, ast.Constant)
+            and isinstance(item.value.value, str)
+        )
+        or (
+            isinstance(item, ast.Assign)
+            and len(item.targets) == 1
+            and isinstance(item.targets[0], ast.Name)
+            and item.targets[0].id in ENGINE_ATTRIBUTES
+        )
+        or (
+            isinstance(item, ast.FunctionDef)
+            and item.name.startswith("formula")
+            and not item.decorator_list
+        )
+        for index, item in enumerate(variable.body)
+    )
+
+
 def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
     """Member names of the Enum class an enum variable names in its module.
 
@@ -272,10 +351,10 @@ def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
     rather than left open, unless:
 
     - the variable is its name's one binding in the module, subclasses
-      ``Variable`` alone with no decorators or keywords, and binds
-      ``value_type``, ``possible_values`` and ``default_value`` once each,
-      by plain assignment, to ``Enum``, a class name and one of that class's
-      members, with no attribute store to those names in the module;
+      ``Variable`` alone with no decorators or keywords, meets
+      ``plain_variable_body``, and binds ``value_type``, ``possible_values``
+      and ``default_value`` once each, by plain assignment, to ``Enum``, a
+      class name and one of that class's members;
     - the class name has one binding anywhere in the module: a top-level
       class, before the variable, that subclasses ``Enum`` alone, with no
       decorators, keywords or type parameters;
@@ -295,11 +374,7 @@ def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
         and [expression(base) for base in variable.bases] == ["Variable"]
         and not variable.keywords
         and not variable.decorator_list
-        and not any(
-            isinstance(site, ast.Attribute)
-            for attr in attrs
-            for site in binding_sites(tree, attr)
-        )
+        and plain_variable_body(variable)
         and isinstance(value_type, ast.Name)
         and value_type.id == "Enum"
         and isinstance(possible, ast.Name)
@@ -405,7 +480,7 @@ def parse_variables(
     helpers = {}
     # Federal helper functions are also part of the static dependency closure.
     for path in roots:
-        for node in ast.parse(path.read_text()).body:
+        for node in ast.parse(path.read_bytes()).body:
             if isinstance(node, ast.FunctionDef):
                 helpers[node.name] = node
     pending = list(roots)
@@ -415,7 +490,7 @@ def parse_variables(
         if path in visited:
             continue
         visited.add(path)
-        tree = ast.parse(path.read_text())
+        tree = ast.parse(path.read_bytes())
         classes = [
             node
             for node in tree.body
@@ -432,7 +507,19 @@ def parse_variables(
                 for target in item.targets
                 if isinstance(target, ast.Name)
             }
-            dtype = expression(attrs.get("value_type"))
+            # The engine reads value_type from the class namespace, so an
+            # annotated, aliased, repeated or attribute-stored binding could
+            # make an Enum input whose members are never read.
+            value_type = plain_attribute(node, "value_type")
+            if not (
+                isinstance(value_type, ast.Name)
+                and value_type.id in (*TYPE_DEFAULTS, "Enum")
+            ) or any(
+                isinstance(site, ast.Attribute)
+                for site in binding_sites(tree, "value_type")
+            ):
+                raise ValueError(f"Unresolved value_type for {node.name}")
+            dtype = value_type.id
             default = expression(attrs.get("default_value"))
             if "default_value" not in attrs:
                 if dtype not in TYPE_DEFAULTS:

@@ -466,8 +466,9 @@ def invented_enum_body(draw):
 
 
 # Module and variable forms: (place, text, observable). The reader admits
-# the first four. Each of the rest must make it refuse; an observable one
-# also changes what Python gives the variable.
+# the first six. Each of the rest must make it refuse; an observable one
+# also changes what Python gives the variable. Some unobservable ones change
+# what the engine gives it, which the harness's Variable cannot show.
 ADMITTED_FORMS = {
     "model_api": ("head", "from policyengine_us.model_api import *", False),
     "member_read": ("tail", "INVENTED_CHOICE = {name}.{member}", False),
@@ -482,6 +483,14 @@ ADMITTED_FORMS = {
         "    return {name}.encode(person)",
         False,
     ),
+    "dated_formula": (
+        "body_tail",
+        "def formula_2020(person, period, parameters):\n"
+        "    return {name}.{member}",
+        False,
+    ),
+    # A literal is not an identifier, whatever it spells.
+    "underscore_text": ("body_tail", 'label = "_invented exec"', False),
 }
 REFUSED_FORMS = {
     "rebind": ("between", "{name} = InventedOtherEnum", True),
@@ -559,6 +568,8 @@ REFUSED_FORMS = {
     ),
     "delete": ("tail", "del {name}", False),
     "alias_read": ("between", "InventedAlias = {name}", False),
+    # Outside its body the class is read only as a member or encode.
+    "class_method_read": ("tail", "INVENTED_ORDER = {name}.mro()", False),
     "member_pop": ("between", '{name}._member_map_.pop("{member}")', True),
     "globals": (
         "between",
@@ -612,6 +623,87 @@ REFUSED_FORMS = {
         True,
     ),
     "variable_rebind": ("tail", "invented_status = None", True),
+    # Attribute names held as strings in the tree: pattern keywords and
+    # definitions.
+    "pattern_keyword": (
+        "between",
+        "match (lambda: None):\n"
+        "    case object(__globals__=invented_globals):\n"
+        '        invented_globals["{name}"] = InventedOtherEnum',
+        True,
+    ),
+    "pattern_frame": (
+        "between",
+        "try:\n    raise ValueError\n"
+        "except ValueError as invented_error:\n"
+        "    match invented_error:\n"
+        "        case object(__traceback__=object(\n"
+        "            tb_frame=object(f_locals=invented_names)\n"
+        "        )):\n"
+        '            invented_names["{name}"] = InventedOtherEnum',
+        True,
+    ),
+    "module_getattr": (
+        "tail",
+        "def __getattr__(name):\n    return InventedOtherEnum",
+        False,
+    ),
+    # The variable's base is read by its spelling, and the engine reads the
+    # variable's attributes through Variable.set.
+    "variable_bound": ("head", "Variable = InventedOtherBase", True),
+    "variable_subclass": (
+        "between",
+        "class Variable(Variable, metaclass=InventedVariableMeta):\n    pass",
+        True,
+    ),
+    "variable_set": (
+        "between",
+        "class Variable(Variable):\n"
+        "    def set(self, attributes, name, **options):\n"
+        "        return InventedOtherEnum",
+        False,
+    ),
+    # The engine's loader takes this one silently, since it also drops its
+    # own name from the attributes the engine checks; see test_ssi_engine.
+    "variable_method": (
+        "body_tail",
+        "def set(self, attributes, name, **options):\n"
+        '    attributes.pop("set", None)\n'
+        '    if name == "possible_values":\n'
+        "        attributes.pop(name)\n"
+        "        return InventedOtherEnum\n"
+        '    if name == "default_value":\n'
+        "        attributes.pop(name)\n"
+        "        return InventedOtherEnum.INVENTED_OTHER\n"
+        "    return super().set(attributes, name, **options)",
+        False,
+    ),
+    "assigned_method": ("body_tail", "set = InventedOtherBase", False),
+    "unknown_attribute": ("body_tail", 'invented_note = "note"', False),
+    # A decorator runs code as the class body runs, and a string after the
+    # docstring is no attribute; the reader refuses even harmless ones.
+    "decorated_formula": (
+        "body_tail",
+        "@staticmethod\ndef formula(person, period, parameters):\n"
+        "    return {name}.{member}",
+        False,
+    ),
+    "late_body_text": ("body_tail", '"""Invented note."""', False),
+    "base_store": ("tail", "Variable.set = None", False),
+    # A store through a member changes its encoding index, not membership.
+    "member_store": ("tail", "{name}.{member}.index = 0", False),
+    "member_alias_store": (
+        "tail",
+        "INVENTED_SPARE = {name}.{member}\nINVENTED_SPARE.index = 0",
+        False,
+    ),
+    # Only the model API's absolute star import may come before the class.
+    "helper_star_import": ("head", "from invented_helpers import *", True),
+    "relative_model_api": (
+        "head",
+        "from .policyengine_us.model_api import *",
+        False,
+    ),
 }
 
 
@@ -623,8 +715,16 @@ class InventedOtherBase(enum.Enum):
     """An invented Enum base that is not the model API's."""
 
 
+class InventedVariableMeta(type):
+    """Answers a variable's enum attributes ahead of the variable's body."""
+
+    possible_values = property(lambda cls: InventedOtherEnum)
+    default_value = property(lambda cls: InventedOtherEnum.INVENTED_OTHER)
+
+
 def invented_import(name, *args, **kwargs):
-    """Stand-in imports: the model API, and a module that shadows the class."""
+    """Stand-in imports: the model API, a module that shadows the class, and
+    one that shadows Variable."""
     module = types.ModuleType(name)
     if name == inventory.MODEL_API:
         vars(module).update(
@@ -635,6 +735,8 @@ def invented_import(name, *args, **kwargs):
         )
     elif name == "invented_module":
         module.InventedEnum = module.InventedOtherEnum = InventedOtherEnum
+    elif name == "invented_helpers":
+        module.Variable = InventedVariableMeta("Variable", (), {})
     else:
         raise ImportError(name)
     return module
@@ -655,6 +757,7 @@ def python_enum_members(source):
         "auto": enum.auto,
         "InventedOtherEnum": InventedOtherEnum,
         "InventedOtherBase": InventedOtherBase,
+        "InventedVariableMeta": InventedVariableMeta,
     }
     try:
         with warnings.catch_warnings():
@@ -878,6 +981,23 @@ def test_enum_class_defined_after_its_variable_is_unread():
     assert read_members(source) is None
 
 
+def test_enum_class_nested_in_a_block_is_unread():
+    # Its one binding is not a top-level statement, so the reader does not
+    # place it before the variable.
+    nested = "if True:\n    " + INVENTED_ENUM_CLASS.replace("\n", "\n    ")
+    source = INVENTED_ENUM_MODULE.replace(INVENTED_ENUM_CLASS, nested)
+    assert python_enum_members(source) is not None
+    assert read_members(source) is None
+
+
+def test_variable_of_another_value_type_is_unread():
+    # The engine ignores possible_values unless value_type is Enum.
+    source = INVENTED_ENUM_MODULE.replace(
+        "value_type = Enum", "value_type = int"
+    )
+    assert read_members(source) is None
+
+
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 syntax")
 @pytest.mark.parametrize(
     "form",
@@ -905,7 +1025,7 @@ def test_class_statements_that_can_change_membership_are_unread(kind):
     assert read_members(source) is None
 
 
-def test_methods_are_refused_because_they_can_change_membership():
+def test_methods_that_change_membership_are_refused():
     # A reader that skipped methods as non-members would give these classes
     # INVENTED_ONE and INVENTED_LAST. A decorator makes the method a member,
     # and the __init__ hook drops members as later ones are created.
@@ -923,6 +1043,8 @@ def test_methods_are_refused_because_they_can_change_membership():
         exec(source, namespace)  # noqa: S102 - invented source only
         members = list(namespace["InventedEnum"].__members__)
         assert members != ["INVENTED_ONE", "INVENTED_LAST"]
+        module = invented_enum_module(source, "InventedEnum", "INVENTED_ONE")
+        assert read_members(module) is None
 
 
 @pytest.mark.parametrize(
@@ -1011,3 +1133,76 @@ def test_enum_default_outside_its_members_refuses_inventory(
     write_enum_input(package, enum_class(name, members), name, default)
     with pytest.raises(ValueError, match="Unresolved enum members"):
         inventory.inventory_release(package)
+
+
+def python_variable(source):
+    """The invented variable class Python defines from a module source.
+
+    Bytes are decoded as Python decodes a source file, cookie included.
+    """
+    namespace = {
+        "Enum": enum.Enum,
+        "Variable": type("Variable", (), {}),
+        "Person": None,
+        "YEAR": None,
+    }
+    code = compile(source, "<invented>", "exec")
+    exec(code, namespace)  # noqa: S102 - invented source only
+    return namespace["invented_status"]
+
+
+# value_type bindings that leave Enum in the class namespace, where the
+# engine reads it, though no single plain assignment says so.
+VALUE_TYPE_FORMS = {
+    "annotated": ("value_type: type = Enum", []),
+    "alias": (
+        "value_type = InventedEnumType",
+        [("head", "InventedEnumType = Enum")],
+    ),
+    "rebound": (
+        "value_type = float",
+        [("body_tail", "value_type: type = Enum")],
+    ),
+    "attribute_store": (
+        "value_type = float",
+        [("tail", "invented_status.value_type = Enum")],
+    ),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(VALUE_TYPE_FORMS))
+def test_value_type_outside_one_plain_assignment_refuses_inventory(
+    tmp_path, kind
+):
+    line, forms = VALUE_TYPE_FORMS[kind]
+    source = invented_enum_module(
+        enum_class("InventedStatus", ["INVENTED_FIRST", "INVENTED_SECOND"]),
+        "InventedStatus",
+        "INVENTED_FIRST",
+        forms,
+    ).replace("    value_type = Enum\n", f"    {line}\n")
+    assert vars(python_variable(source))["value_type"] is enum.Enum
+    package = invented_package(tmp_path)
+    write_enum_module(package, source)
+    with pytest.raises(ValueError, match="Unresolved value_type"):
+        inventory.inventory_release(package)
+
+
+def test_source_is_decoded_as_python_decodes_it(tmp_path):
+    # Under this cookie "+AAo-" is a newline, so Python reads a second
+    # member where a UTF-8 read sees a comment.
+    source = "# coding: utf-7\n" + invented_enum_module(
+        "class InventedStatus(Enum):\n"
+        '    INVENTED_FIRST = "first"\n'
+        '    # +AAo-    INVENTED_SECOND = "second"\n',
+        "InventedStatus",
+        "INVENTED_FIRST",
+    )
+    raw = source.encode("ascii")
+    members = ["INVENTED_FIRST", "INVENTED_SECOND"]
+    assert list(python_variable(raw).possible_values.__members__) == members
+    assert read_members(raw.decode("utf-8")) == members[:1]
+    assert read_members(raw) == members
+    package = invented_package(tmp_path)
+    write_enum_module(package, source)
+    assert input_record(package)["enum_members"] == members
