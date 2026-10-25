@@ -1,5 +1,7 @@
 """Differential checks for OP1's direct stream addresses, design §5.4."""
 
+import warnings
+from decimal import Decimal
 from itertools import product
 
 import numpy as np
@@ -183,6 +185,8 @@ def _generator_identity(generator):
     )
 
 
+# Periods, horizons, tails and draws that no engine caller passes; each
+# probes one step of the registry's refusal order (design §2.1).
 _MALFORMED_PERIODS = (
     0,
     1,
@@ -195,9 +199,38 @@ _MALFORMED_PERIODS = (
     np.int64(2),
     True,
     None,
+    np.float64(1.0),
+    np.float32(1.5),
+    np.bool_(True),
+    Decimal(1),
+    Decimal("1.5"),
+    np.array(1),
+    np.array([1]),
 )
-_MALFORMED_HORIZONS = (7, 0, 7.0, 7.5, np.float64(7.0), np.int64(7))
-_MALFORMED_TAILS = (0, 3, -1, 1.5, np.int64(2))
+_MALFORMED_HORIZONS = (
+    7,
+    0,
+    7.0,
+    7.5,
+    np.float64(7.0),
+    np.int64(7),
+    2**63 - 1,
+    2**64,
+    np.int64(2**63 - 1),
+    np.uint64(2**64 - 1),
+)
+_MALFORMED_TAILS = (
+    0,
+    3,
+    -1,
+    1.5,
+    np.int64(2),
+    np.bool_(True),
+    np.array(1),
+    np.int64(2**63 - 1),
+    np.uint64(2**64 - 1),
+)
+_MALFORMED_DRAWS = (0.0, 1.5, Decimal(1), np.float64(2.0), np.int64(3))
 _MALFORMED_MODULES = (MODULE_ORDER[0], MODULE_ORDER[-1].value, "unknown")
 _TAIL_LENGTHS = {
     "seed_sequence": 0,
@@ -209,66 +242,99 @@ _TAIL_LENGTHS = {
 }
 
 
+def _compare_for(method):
+    """Pick the identity summary for a method's return type."""
+    if method == "seed_sequence":
+        return _sequence_identity
+    return _generator_identity
+
+
+def _assert_outcomes_match(draw_index, n_periods, method, args):
+    """Both classes return one stream or raise one refusal (design §2.1)."""
+    compare = _compare_for(method)
+    # NumPy integer tails wrap on ``+ 1`` in both classes alike.
+    with warnings.catch_warnings(), np.errstate(over="ignore"):
+        warnings.simplefilter("ignore")
+        expected = _outcome(
+            ProjectionRNGRegistry(draw_index, n_periods), method, args, compare
+        )
+        actual = _outcome(
+            DirectRNGStreams(draw_index, n_periods), method, args, compare
+        )
+    assert actual == expected, (draw_index, n_periods, method, args)
+
+
 @pytest.mark.parametrize("n_periods", _MALFORMED_HORIZONS)
 @pytest.mark.parametrize("method", tuple(_TAIL_LENGTHS))
 def test_combined_and_malformed_refusals_match_registry(method, n_periods):
-    """Refusal order and type match the registry (design §2.1).
+    """Refusal order, type and message match the registry (design §2.1).
 
     Every combination of period, module and tail is tried, including a bad
     module with a bad period, a negative tag or child with a bad module,
-    period-zero tagged calls that never resolve the module, and non-integer
-    horizons, periods, tags and children.  At each address both classes
-    return the same stream or raise the same exception with the same
-    message.
+    period-zero tagged calls that never resolve the module, non-integer and
+    array periods, tags and children, horizons whose spawn count overflows
+    ``ssize_t`` or wraps negative, and NumPy integer children that wrap.  At
+    each address both classes return the same stream or raise the same
+    exception with the same message.
     """
-    registry = ProjectionRNGRegistry(0, n_periods)
-    direct = DirectRNGStreams(0, n_periods)
-    compare = (
-        _sequence_identity
-        if method == "seed_sequence"
-        else _generator_identity
-    )
     tails = product(_MALFORMED_TAILS, repeat=_TAIL_LENGTHS[method])
     for tail, period, module in product(
         tuple(tails), _MALFORMED_PERIODS, _MALFORMED_MODULES
     ):
-        args = (period, module, *tail)
-        expected = _outcome(registry, method, args, compare)
-        actual = _outcome(direct, method, args, compare)
-        assert actual == expected, (method, n_periods, args)
+        _assert_outcomes_match(0, n_periods, method, (period, module, *tail))
 
 
-@settings(max_examples=60, deadline=None)
+@pytest.mark.parametrize("method", tuple(_TAIL_LENGTHS))
+def test_non_integer_draw_refusals_match_registry(method):
+    """A malformed draw is refused at the registry's step (design §2.1).
+
+    The registry builds its root seed before spawning or indexing, so a
+    non-integer draw must fail there even when the horizon or period is also
+    malformed.
+    """
+    tails = product((0, 1.5), repeat=_TAIL_LENGTHS[method])
+    for draw_index, n_periods, tail, period, module in product(
+        _MALFORMED_DRAWS,
+        (7, 7.5, 2**64),
+        tuple(tails),
+        (0, 1, 1.5, None),
+        _MALFORMED_MODULES[::2],
+    ):
+        _assert_outcomes_match(
+            draw_index, n_periods, method, (period, module, *tail)
+        )
+
+
+@settings(max_examples=80, deadline=None)
 @given(
+    draw_index=st.one_of(
+        st.integers(0, 2**16), st.sampled_from(_MALFORMED_DRAWS)
+    ),
     n_periods=st.one_of(
-        st.integers(0, 12), st.sampled_from((7.0, 7.5, np.float64(3.0)))
+        st.integers(0, 12), st.sampled_from(_MALFORMED_HORIZONS)
     ),
     period=st.one_of(
         st.integers(-2, 14),
         st.floats(-1, 14, allow_nan=False),
         st.none(),
         st.booleans(),
+        st.sampled_from(_MALFORMED_PERIODS),
     ),
     module=st.sampled_from((*MODULE_ORDER, "unknown")),
     tail=st.lists(
-        st.one_of(st.integers(-2, 2**16), st.floats(0, 4, allow_nan=False)),
+        st.one_of(
+            st.integers(-2, 2**16),
+            st.floats(0, 4, allow_nan=False),
+            st.sampled_from(_MALFORMED_TAILS),
+        ),
         min_size=2,
         max_size=2,
     ),
     method=st.sampled_from(tuple(_TAIL_LENGTHS)),
 )
 def test_generated_malformed_addresses_match_registry(
-    n_periods, period, module, tail, method
+    draw_index, n_periods, period, module, tail, method
 ):
-    """Hypothesis extends the refusal grid's address space (design §2.1)."""
-    registry = ProjectionRNGRegistry(0, n_periods)
-    direct = DirectRNGStreams(0, n_periods)
-    compare = (
-        _sequence_identity
-        if method == "seed_sequence"
-        else _generator_identity
-    )
+    """Hypothesis extends the refusal grids' address space (design §2.1)."""
     args = (period, module, *tail[: _TAIL_LENGTHS[method]])
-    assert _outcome(direct, method, args, compare) == _outcome(
-        registry, method, args, compare
-    )
+    _assert_outcomes_match(draw_index, n_periods, method, args)

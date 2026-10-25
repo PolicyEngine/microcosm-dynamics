@@ -21,7 +21,8 @@ its tree in logical steps on this branch: `7d321aef` (the fast path, its
 tests and the reducer exclusions), `a8c627a8` (the review fixes) and
 `0d0c073c` (a production test at the registered 2100 horizon). The
 measurement and this report followed in `3d69b1fc`. Review r2's three minor
-findings are fixed in the next commit (§4). No history was rewritten.
+findings are fixed in `1647a4ba`, and review r3's minor finding in the commit
+after the master merge `daa1f58d` (§4). No history was rewritten.
 
 `run_production(initial, modules,
 ProductionRequest("tr2026_intermediate"), ...)` projects to 2100.
@@ -140,7 +141,7 @@ OP10a. The small-run figures above are planning estimates, not a
 demonstrated scaling law.
 
 The fast-path invariant is: **at every valid stream address, the direct
-stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:75–87`
+stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:109–123`
 constructs the same entropy and spawn keys as `engine/rng.py:61–100` and
 `:102–156`; its tagged period-zero cases preserve the separate root and
 spawned-child convention. Tests compare entropy, spawn key, pool size,
@@ -148,23 +149,58 @@ eight state words and four draws across the specified exhaustive grid and
 24 generated examples. The exact emigration test independently uses the
 sealed registry, rather than the fast class.
 
-A second invariant covers refusals: **at every address, valid or not, the
-direct class returns the registry's stream or raises the registry's
-exception, with the same type and message**. Validation therefore runs in
-the registry's order: the module (`engine/rng.py:73`), then the period
-interval, then the integer checks that the registry's `spawn(n_periods + 1)`
-and list lookup make (`engine/rng.py:62–67`), and for a tagged child at
-period zero, the root and then its `spawn(child_index + 1)`
-(`engine/rng.py:142–144`).
-`streams.py` mirrors those two integer checks with `operator.index`.
+A second invariant covers refusals: **wherever the registry returns or
+raises, the direct class does the same, with the same stream or the same
+exception type and message**. The direct class therefore repeats the
+registry's steps in its order, without building the children:
+
+1. the module (`engine/rng.py:73`), then the period interval (`:62–65`);
+2. the root seed (`:66`), built once per instance and cached
+   (`open_population/streams.py:91–100`). A refused draw seed is not cached,
+   so a non-integer draw fails at this step on every call, ahead of a
+   malformed horizon or period;
+3. `spawn(n_periods + 1)` (`:67`). `_spawned_length` refuses a negative
+   count with spawn's `ValueError`, then takes `len(range(count))`, which
+   refuses a non-integer or a count past `ssize_t` with spawn's own message;
+4. the list lookup (`:67`). `_spawned_position` indexes an empty list, so a
+   non-index type or an index past `ssize_t` gets CPython's own message, and
+   then checks the index against the spawned length. The spawn key holds the
+   Python `int` position, as the registry's does.
+
+A tagged child at period zero repeats the tagged root, its
+`spawn(child_index + 1)` and its lookup (`engine/rng.py:142–144`).
+
+The one exception is a spawn count the registry cannot complete. `spawn`
+returns a list of `count` children, so its time and memory grow with the
+count. On this host `spawn(10**6)` took 2.45 s and reached a peak RSS of
+412 MiB, against 0.26 s and 72 MiB for `spawn(10**5)`. At that rate a count
+near 2^32 would need hours and terabytes, so the registry never finishes,
+while the direct class returns at once. The engine's counts are `n_periods + 1`, where
+`n_periods = end_year - start_year` (`engine/loop.py:216`): 76 in the
+measured runs to 2100. The loop numbers periods from 1
+(`engine/loop.py:268–270`), so it never asks for a period-zero tagged child.
+
 `test_combined_and_malformed_refusals_match_registry` tries every
-combination of 11 periods (including −1, past the horizon, 0.0, 1.5, 7.0,
-`np.int64`, `True` and `None`), three modules (one unknown) and five tail
-values (including −1, 1.5 and `np.int64`) for all six methods, at six
-horizons (including 7.0, 7.5 and `np.float64`).
-`test_generated_malformed_addresses_match_registry` extends it with 60
-Hypothesis examples. Six refusal mutants, including review r2's N10
-(module and period checks reversed), each fail these tests.
+combination, for all six methods, of:
+- 18 periods: −1, past the horizon, 0.0, 1.5, 7.0, `np.int64`, `True`,
+  `None`, `np.float64`, `np.float32`, `np.bool_`, two `Decimal`s, a 0-d
+  array and a one-element array, besides valid ones;
+- three modules, one of them unknown;
+- nine tail values, including −1, 1.5, `np.bool_`, a 0-d array and NumPy
+  integers that wrap on `+ 1`;
+- ten horizons: 7.0, 7.5, `np.float64`, counts past `ssize_t`, and NumPy
+  integers whose count wraps negative or to zero.
+
+`test_non_integer_draw_refusals_match_registry` adds five malformed draws
+against malformed horizons and periods, and
+`test_generated_malformed_addresses_match_registry` adds 80 Hypothesis
+examples over all of these. Review r3's probe of 2,352 further addresses
+(negative floats, ±inf, NaN, `np.uint64`, 2^64, strings, `Fraction`,
+complex and more) finds no difference, and 4,556 period-zero tagged-child
+identities still hold. On this host the direct path costs 6.1 µs per draw at
+period 5 and horizon 75, against 5.9 µs before these checks and 204 µs on
+the registry (process CPU time, seven interleaved repetitions of 2,000
+draws; not in `op1_run_size.json`).
 
 ## 3. Tests, collection, style and scope
 
@@ -183,10 +219,10 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **269 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 9.5 s by pytest's report (one-minute load 85). At
-`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests add
-37. It covers the self-contained
+The required command gives **299 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in 6.5 s by pytest's report (one-minute load 22). At
+`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added
+37 and review r3's fix adds 30. It covers the self-contained
 horizon test, the reversed-roster example, the gate metadata refusals and
 every reducer identity, reachability and initializer check.
 
@@ -195,9 +231,9 @@ every reducer identity, reachability and initializer check.
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **166 tests**, all classified as `unit` (seven modules,
-including the original six). That is 106 more than the 60 reviewed at r1,
-and 37 more than the 129 reviewed at r2.
+Collection gives **196 tests**, all classified as `unit` (seven modules,
+including the original six). That is 136 more than the 60 reviewed at r1,
+67 more than the 129 reviewed at r2 and 30 more than the 166 reviewed at r3.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -276,7 +312,7 @@ Review r2 (delta review at `3d69b1fc`) approved with three minor findings.
 |---|---|
 | 1: the report's load range and unsupported timing figures | §2 now gives the JSON's load ranges. §3 labels each timing as a pytest wall time, outside the JSON, and gives the host figures from a rerun. |
 | 2: refusal precedence lacked a test; mutant N10 survived | `test_combined_and_malformed_refusals_match_registry` and `test_generated_malformed_addresses_match_registry` compare type and message at combined invalid addresses (§2). N10 now fails them. |
-| 3: a non-integer horizon was accepted where the registry refuses it | `_require_spawn_count` and `_require_list_index` in `open_population/streams.py` mirror the registry's spawn and list-lookup refusals, in its order. The period-zero tagged child builds its root before checking its spawn count. Float and `np.float64` horizons, float periods and float children are in the refusal grid. |
+| 3: a non-integer horizon was accepted where the registry refuses it | `1647a4ba` added integer checks for the registry's spawn and list lookup, in its order, and built the period-zero tagged root before its spawn count. Review r3's fix replaced those checks with exact mirrors (below). Float and `np.float64` horizons, float periods and float children are in the refusal grid. |
 
 | Mutation of the r2 fix | Result |
 |---|---|
@@ -286,6 +322,30 @@ Review r2 (delta review at `3d69b1fc`) approved with three minor findings.
 | List-index check removed | Killed |
 | Spawn-count and list-index checks swapped | Killed |
 | Period-zero child spawn-count check removed | Killed |
+
+### Review r3
+
+Review r3 (Opus 5.5 delta check at `daa1f58d`, which merged master `4e20c6e4`) approved. Its 16 mutants of the r2 fix were killed except one equivalent on every input the engine passes. It had one minor finding.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: the refusal invariant was stated too broadly. 288 of 2,352 exotic addresses differed: NumPy float, bool and `Decimal` periods got a differently spelled message; a 0-d integer array period was served by the registry and refused here; a non-integer draw failed at a later step; a period-zero `np.True_` child failed differently; and spawn counts of 2^64 or more were refused only by the registry | `_spawned_length`, `_spawned_position` and the cached root (§2) repeat the registry's steps exactly. The report states the invariant wherever the registry returns or raises, and names the one exception, counts it cannot complete. The refusal grid adds every input class above, NumPy integers that wrap, counts past `ssize_t` and malformed draws. The probe's 2,352 addresses now agree. |
+
+| Mutation of the r3 fix | Result |
+|---|---|
+| `streams.py` at `1647a4ba` | Killed (41 refusal cases) |
+| Root built after the spawn and lookup | Killed |
+| Negative-count check removed | Killed |
+| Spawn length by `operator.index` instead of `len(range(...))` | Killed |
+| Length bound check removed | Killed by the horizon `np.uint64(2**64 - 1)`, whose count wraps to zero |
+| `ssize_t` re-raise removed | Killed |
+| Spawn key holds the raw period | Killed |
+| Period-zero child key holds the raw child | Killed |
+| Period-zero child lookup skipped | Killed |
+| Lookup by `operator.index`, no list probe | Killed |
+| Period-zero spawn before its tagged root | Killed |
+| Review r3's A12: spawn count `n_periods` instead of `n_periods + 1` | Killed (it survived r3) |
+| Root rebuilt on every call instead of cached | Survives as intended: it changes cost only |
 
 ## 5. Remaining work and restricted-files statement
 

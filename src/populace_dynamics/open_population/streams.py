@@ -9,7 +9,9 @@ The sealed loop continues to use its own registry.
 from __future__ import annotations
 
 import operator
+import sys
 from dataclasses import dataclass
+from functools import cached_property
 
 import numpy as np
 
@@ -24,27 +26,48 @@ from populace_dynamics.engine.rng import (
 )
 
 
-def _require_spawn_count(count: object) -> None:
-    """Refuse a non-integer count as ``SeedSequence.spawn`` does (§2.1).
+def _spawned_length(count: object) -> int:
+    """Return the length of ``SeedSequence.spawn(count)``'s list (§2.1).
 
     The registry spawns ``n_periods + 1`` period children and
     ``child_index + 1`` tagged children (``engine/rng.py:67``, ``:144``).
+    ``spawn`` refuses a negative count, then iterates a range whose bound
+    must convert to a C ``ssize_t``. For every count that ``x + 1`` can
+    produce, the same two steps here raise the same exception and message,
+    without building the children.
     """
-    operator.index(count)
+    if count < 0:
+        raise ValueError("n_children must be non-negative")
+    return len(range(count))
 
 
-def _require_list_index(period: object) -> None:
-    """Refuse a non-integer period as the registry's lookup does (§2.1).
+def _spawned_position(length: int, index: object) -> int:
+    """Return the spawned child at ``index``, as the list lookup does (§2.1).
 
-    The registry indexes its list of period children (``engine/rng.py:67``).
+    The registry indexes its list of spawned children (``engine/rng.py:67``,
+    ``:144``), and the child's spawn key holds the Python ``int`` position.
+    Indexing an empty list raises CPython's own ``TypeError`` for a
+    non-index type and its own ``IndexError`` for an index too large for
+    ``ssize_t``; an index that fits is then checked against ``length``,
+    which a NumPy integer count that wrapped to zero can leave empty.
     """
-    try:
-        operator.index(period)
-    except TypeError:
-        raise TypeError(
-            "list indices must be integers or slices, not "
-            f"{type(period).__name__}"
-        ) from None
+    if type(index) is not int or not (
+        -sys.maxsize - 1 <= index <= sys.maxsize
+    ):
+        try:
+            [][index]
+        except IndexError:
+            position = operator.index(index)
+            if not -sys.maxsize - 1 <= position <= sys.maxsize:
+                raise
+        else:  # pragma: no cover - the period and child checks refuse slices
+            raise TypeError(f"unexpected list index {index!r}")
+    else:
+        position = index
+    # The period and child checks refuse negative indices before this.
+    if not position < length:
+        raise IndexError("list index out of range")
+    return position
 
 
 @dataclass(frozen=True)
@@ -65,6 +88,17 @@ class DirectRNGStreams:
         """Use the inherited ensemble root seed (design §2.1)."""
         return DRAW_SEED_BASE + self.draw_index
 
+    @cached_property
+    def _root(self) -> np.random.SeedSequence:
+        """Build the registry's root once per instance (design §2.1).
+
+        The registry builds this root on every period lookup
+        (``engine/rng.py:66``). Its entropy depends only on the draw, so one
+        copy serves every address. A refused draw seed is not cached, so it
+        is refused at the same step on every call.
+        """
+        return np.random.SeedSequence([self.draw_seed, GATE_M6_TAG])
+
     def _validate_period(self, period: int) -> None:
         """Keep the registry's supported period interval (design §2.1)."""
         if not 0 <= period <= self.n_periods:
@@ -78,12 +112,14 @@ class DirectRNGStreams:
         """Extend the inherited module spawn key directly (design §2.1)."""
         resolved = ProjectionModule(module)
         self._validate_period(period)
-        # The registry's spawn and list lookup refuse non-integers here.
-        _require_spawn_count(self.n_periods + 1)
-        _require_list_index(period)
+        # The registry's order: its root, its spawn, then its list lookup.
+        root = self._root
+        length = _spawned_length(self.n_periods + 1)
+        position = _spawned_position(length, period)
         return np.random.SeedSequence(
-            [self.draw_seed, GATE_M6_TAG],
-            spawn_key=(period, _MODULE_INDEX[resolved], *tail),
+            root.entropy,
+            spawn_key=(position, _MODULE_INDEX[resolved], *tail),
+            pool_size=root.pool_size,
         )
 
     def seed_sequence(
@@ -150,12 +186,13 @@ class DirectRNGStreams:
                 "component_tag and child_index must be non-negative"
             )
         if period == 0:
-            # Validate as the registry does: the root, then its spawn count.
+            # The registry's order: the tagged root, its spawn, its lookup.
             tagged = np.random.SeedSequence([self.draw_seed, component_tag])
-            _require_spawn_count(child_index + 1)
+            length = _spawned_length(child_index + 1)
+            position = _spawned_position(length, child_index)
             sequence = np.random.SeedSequence(
                 tagged.entropy,
-                spawn_key=(child_index,),
+                spawn_key=(position,),
                 pool_size=tagged.pool_size,
             )
         else:
