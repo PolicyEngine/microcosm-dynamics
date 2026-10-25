@@ -1,0 +1,2324 @@
+{
+  "format_revision": 1,
+  "scope": "Development source/artifact access outside src/ and tests/, including delegated access, authorized automated-test reads, generated outputs, removed helpers, and conservative scratch inventories. File contents were not reopened merely to construct this inventory except permitted source for the static birth-evidence traversal.",
+  "declarations": {
+    "b2_cell_result_or_2012_2014_gap_encountered": false,
+    "survey_data_read": false,
+    "network_access_used": false,
+    "prohibited_checkout_or_evidence_directory_accessed": false,
+    "sparse_hidden_file_read": false
+  },
+  "automated_birth_evidence": {
+    "production_source_paths_outside_src_tests": [
+      "scripts/build_mortality_floors.py",
+      "scripts/registered_m6_candidate2_inputs.py",
+      "scripts/registered_m6_candidate3_inputs.py",
+      "scripts/registered_m6_inputs.py"
+    ],
+    "reachable_source_files_outside_src_tests": [
+      "scripts/build_mortality_floors.py",
+      "scripts/first_estimates_birth_evidence.py",
+      "scripts/registered_m6_candidate2_inputs.py",
+      "scripts/registered_m6_candidate3_inputs.py",
+      "scripts/registered_m6_inputs.py"
+    ],
+    "reachable_source_module_count": 105,
+    "historical_artifact_listed_without_manual_content_read": "runs/first_estimates_birth_evidence_draw0.json"
+  },
+  "recovery_scenario_artifacts": [
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw0/test_t3_retrospective_selectio0/t3_selection_L4.json",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t2_second_order_recovery_0/t2_second_order.json",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t7_persistent_heterogenei0/t7_persistent_heterogeneity.json",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw2/test_t3_retrospective_selectio0/t3_selection_L8.json",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw3/test_t3_retrospective_selectio0/t3_selection_L16.json"
+  ],
+  "dedicated_temporary_roots_enumerated": [
+    "/private/tmp/p2-exact-full",
+    "/private/tmp/p2-exact-final-paths",
+    "/private/tmp/track_b_p2_recovery_20261023",
+    "/private/tmp/track_b_p2_regression_20261023",
+    "/private/tmp/track_b_p2_regression_final",
+    "/private/tmp/track_b_p2_mutation_5",
+    "/private/tmp/track_b_p2_mutation_6",
+    "/private/tmp/track_b_p2_mutation_14"
+  ],
+  "hypothesis_storage_enumerated": ".hypothesis",
+  "completion_note": "Completed: final path revalidation exited 0 with 26 passed in 7220.79s (2:00:20). All 70 final exact cases are covered by 24 final contract cases, 26 final path cases, and 20 unchanged clock/restart cases; five recovery scenarios also passed. Inventory refreshed after completion using metadata only within already-listed dedicated temporary roots and workspace caches.",
+  "files": [
+    {
+      "path": ".hypothesis/.gitignore",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/02ccbf24466ddf5f",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/0314643a5e85b3ad",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/067b1b5d063409a7",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/083641dd32c51b3c",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/0aeebecd3fcb2c94",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/0baa0fe9c7eaf72d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/0d1362a6c4f4f917",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/10b6e28e44648055",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/17c31a1522d19772",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/18ecaf5c91077f4f",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/249f8f2fb2f91b8a",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/2511b2c1f5221bfc",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/28097f0d00575464",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/28b398039ba1584b",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/2b4bf4d6cc3617ed",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/304a5b9e46795ef2",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/30d477c06eaf5f4c",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/34002cdf6fff1740",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/34081b89c1ead915",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/3acd1fc63796d763",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/3b240fc10f1ebb30",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/3f1215027139b400",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/4183c4a2f3adfe79",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/42a31542583a305f",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/453abfaf61b012ae",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/4ab4d5e7670fa4d0",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/5392236db6c269e9",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/56abd1c7be0ce54a",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/5ef9c9c9d13cc681",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/607f2fafaf844ee6",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/61b3f616512ecefe",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/63334f7dcf46d9ee",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/63c171997131721f",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/65bdc3c6cfc6a869",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/6aa7b48ec47d9713",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/6c9b904a055e5743",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/70533646e69f1ffd",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/83f6ae214c7f18bf",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/857c7417c5f3171d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/88460fa0f6d80b1d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/8cf40eacbb18baf2",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/962c4995e8cbbe9f",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/976ebe9385b6f356",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/9adbec1569bdafd3",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/9bf6d9ca5ef48238",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/9da16723dff60a57",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/9edcf819af7820cf",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a12b1b067714d24c",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a42b715b4cafd348",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a4584dc4d5c5e3fd",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a5447601b80a8783",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a591a533008e6020",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/a9a6cbf859bf1c8d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/aaf47bf92189ce5c",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/abfb96dfc0dfaa5e",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/b2bd159a7fe9db18",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/be0666ff7b1adab9",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/c46bf6f170b73f6e",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/cab64f4354efbe58",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/ccea679a23479027",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d065f1e2ce03f3ba",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d0b2d069106e046d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d0bf90a4e43cbde0",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d285b940ab213a03",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d613a897edfae558",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d655fe4ef33c598d",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/d80959c6af1a147e",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/ea03e1e81db4fc84",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/eb37f0919c0f21bf",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/ec4df785ad9d0d5a",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/ed3f7d182cedb30b",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".hypothesis/constants/fa5aac80574a4e20",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the assigned workspace's Hypothesis storage; may include pre-existing files; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/.gitignore",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/0.15.22/14700770400616031389",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/0.15.22/3525762492052950579",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/0.15.22/4943967180446773097",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/0.15.22/9642181980842070422",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/0.15.22/9787276372205989813",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": ".ruff_cache/CACHEDIR.TAG",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of local test/formatting cache; contents not reopened."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/Users/maxghenis/.agents/skills/gitnexus-exploring/SKILL.md",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Permitted exploration instructions or pinned estimator implementation cited by the specification/amendment."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/_trackb-p2-dev/populace-pinned/packages/populace-fit/src/populace/fit/qrf.py",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Permitted exploration instructions or pinned estimator implementation cited by the specification/amendment."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/__pycache__/p2_mutation_runner.cpython-314.pyc",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Python import cache of the local mutation runner."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/create_p2_exact_tests.py",
+      "access": [
+        "write",
+        "explicit_read",
+        "delete"
+      ],
+      "reasons": [
+        "Temporary construction helper removed after use."
+      ],
+      "present_at_inventory": false,
+      "deleted_after_use": true
+    },
+    {
+      "path": "/private/tmp/p2-exact-final-contract.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/p2-exact-final-paths.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/p2-exact-full.log",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated exact, regression or mutation run log."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_black_final.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/p2_final_worker_sample.txt",
+      "access": [
+        "attempted_generated_output"
+      ],
+      "reasons": [
+        "Conservative inclusion of the named output attempted by failed native worker sampling; no output file was known and its contents were not opened."
+      ],
+      "present_at_inventory": false,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/p2_guard_after.json",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_guard_before.json",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_mutation_runner.py",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated development runner; read by execution and formatting/linting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_resume_adapter.py",
+      "access": [
+        "write",
+        "explicit_read",
+        "delete"
+      ],
+      "reasons": [
+        "Temporary construction helper removed after use."
+      ],
+      "present_at_inventory": false,
+      "deleted_after_use": true
+    },
+    {
+      "path": "/private/tmp/p2_ruff_final.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/p2_source_checks.py",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated development runner; read by execution and formatting/linting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_source_checks_final.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/p2_v1_equality/after.json",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_v1_equality/before.fit.pickle",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_v1_equality/before.json",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_v1_equality/before.paths.f64",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Invented-panel direct v1 equality or source-guard evidence.",
+        "Before/after byte comparison or final evidence reporting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/p2_v1_equality_snapshot.py",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated development runner; read by execution and formatting/linting."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_1.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_10.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_11.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_12.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_13.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_14.log",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated exact, regression or mutation run log.",
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_14/test_t7_persistent_heterogenei0/t7_persistent_heterogeneity.json",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_14/test_t7_persistent_heterogeneicurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_2.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_3.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_4.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_5.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_5/test_t2_second_order_recovery_0/t2_second_order.json",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_6.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_6/test_t3_retrospective_selectio0/t3_selection_L4.json",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_7.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_7_initial.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_8.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_9.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Frozen mutation output; original first T4 log preserved separately."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_runner_14.log",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated exact, regression or mutation run log.",
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_runner_1_13.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_mutation_runner_7_assertion.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw0/test_t3_retrospective_selectio0/t3_selection_L4.json",
+      "access": [
+        "write",
+        "explicit_read",
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Frozen 32-panel recovery scenario output used for the combined recovery report.",
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw0/test_t3_retrospective_selectiocurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t2_second_order_recovery_0/t2_second_order.json",
+      "access": [
+        "write",
+        "explicit_read",
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Frozen 32-panel recovery scenario output used for the combined recovery report.",
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t2_second_order_recovery_current",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t7_persistent_heterogenei0/t7_persistent_heterogeneity.json",
+      "access": [
+        "write",
+        "explicit_read",
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Frozen 32-panel recovery scenario output used for the combined recovery report.",
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t7_persistent_heterogeneicurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw2/test_t3_retrospective_selectio0/t3_selection_L8.json",
+      "access": [
+        "write",
+        "explicit_read",
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Frozen 32-panel recovery scenario output used for the combined recovery report.",
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw2/test_t3_retrospective_selectiocurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw3/test_t3_retrospective_selectio0/t3_selection_L16.json",
+      "access": [
+        "write",
+        "explicit_read",
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Frozen 32-panel recovery scenario output used for the combined recovery report.",
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_recovery_20261023/popen-gw3/test_t3_retrospective_selectiocurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression.log",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Dedicated exact, regression or mutation run log."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu0/__init__.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu0/consumer.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu0/hidden.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu0/leaf.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu1/__init__.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu1/consumer.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu1/hidden.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu1/leaf.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu2/__init__.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu2/consumer.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu2/hidden.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu2/leaf.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclucurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclu0/__init__.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclu0/consumer.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclu0/hidden.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclu0/leaf.py",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory.",
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclucurrent",
+      "access": [
+        "test_generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of this task's dedicated pytest/recovery/mutation scratch tree; contents not opened for this inventory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final.log",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Created/read during final verification and mutation audit."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": false
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclu0/__init__.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclu0/consumer.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclu0/hidden.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclu0/leaf.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu0/__init__.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu0/consumer.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu0/hidden.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu0/leaf.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu1/__init__.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu1/consumer.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu1/hidden.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu1/leaf.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu2/__init__.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu2/consumer.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu2/hidden.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu2/leaf.py",
+      "access": [
+        "generated_or_read"
+      ],
+      "reasons": [
+        "Conservative metadata-only enumeration of the dedicated test temporary directory."
+      ],
+      "present_at_inventory": true,
+      "conservative_inclusion": true
+    },
+    {
+      "path": "CLAUDE.md",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/analysis/m6_rank_refresh_engine_synthetic.json",
+      "access": [
+        "automated_test_read"
+      ],
+      "reasons": [
+        "Read by the explicitly requested rank-refresh synthetic-smoke regression test; invented-data artifact, listed without opening its contents for this inventory."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/.p2_refit_snippet.py",
+      "access": [
+        "explicit_read",
+        "delete"
+      ],
+      "reasons": [
+        "Preparatory refit draft folded into P2 and removed."
+      ],
+      "present_at_inventory": false,
+      "deleted_after_use": true
+    },
+    {
+      "path": "docs/design/track_b_p2_access_inventory.json",
+      "access": [
+        "write",
+        "explicit_read"
+      ],
+      "reasons": [
+        "This access inventory, generated and validated as development evidence."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_mutations.json",
+      "access": [
+        "explicit_read",
+        "write"
+      ],
+      "reasons": [
+        "P2 contract, results, execution disclosure, mutation record or source report.",
+        "Generated P2 development evidence."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_recovery.json",
+      "access": [
+        "explicit_read",
+        "write"
+      ],
+      "reasons": [
+        "P2 contract, results, execution disclosure, mutation record or source report.",
+        "Generated P2 development evidence."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_review_notes.md",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format.",
+        "P2 contract, results, execution disclosure, mutation record or source report."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_source_audit.md",
+      "access": [
+        "explicit_read",
+        "write"
+      ],
+      "reasons": [
+        "P2 contract, results, execution disclosure, mutation record or source report.",
+        "Generated P2 development evidence."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_spec.md",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format.",
+        "P2 contract, results, execution disclosure, mutation record or source report."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_spec_amendment_1.md",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format.",
+        "P2 contract, results, execution disclosure, mutation record or source report."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_p2_test_execution.md",
+      "access": [
+        "explicit_read",
+        "write"
+      ],
+      "reasons": [
+        "P2 contract, results, execution disclosure, mutation record or source report.",
+        "Generated P2 development evidence."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "docs/design/track_b_r2_ret_ledger_mutations.json",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "pyproject.toml",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "runs/first_estimates_birth_evidence_draw0.json",
+      "access": [
+        "automated_test_read"
+      ],
+      "reasons": [
+        "Read by the explicitly requested birth-evidence tests; unrelated historical birth artifact. This inventory builder did not open its contents."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/build_mortality_floors.py",
+      "access": [
+        "automated_test_read",
+        "explicit_read"
+      ],
+      "reasons": [
+        "Birth-evidence identity seal production-source path.",
+        "Authorized birth-evidence import-reachability AST traversal; source only."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/first_estimates_birth_evidence.py",
+      "access": [
+        "explicit_read",
+        "write",
+        "automated_test_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format.",
+        "Seal exclusion extended for the P2 sibling source.",
+        "Authorized birth-evidence import-reachability AST traversal; source only."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/registered_m6_candidate2_inputs.py",
+      "access": [
+        "byte_comparison",
+        "automated_test_read",
+        "explicit_read"
+      ],
+      "reasons": [
+        "B1/reconstructed source-guard comparison against 2ef10532 and the B1 baseline; only present paths read through git.",
+        "Birth-evidence identity seal production-source path.",
+        "Authorized birth-evidence import-reachability AST traversal; source only."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/registered_m6_candidate3_inputs.py",
+      "access": [
+        "byte_comparison",
+        "automated_test_read",
+        "explicit_read"
+      ],
+      "reasons": [
+        "B1/reconstructed source-guard comparison against 2ef10532 and the B1 baseline; only present paths read through git.",
+        "Birth-evidence identity seal production-source path.",
+        "Authorized birth-evidence import-reachability AST traversal; source only."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/registered_m6_inputs.py",
+      "access": [
+        "byte_comparison",
+        "automated_test_read",
+        "explicit_read"
+      ],
+      "reasons": [
+        "B1/reconstructed source-guard comparison against 2ef10532 and the B1 baseline; only present paths read through git.",
+        "Birth-evidence identity seal production-source path.",
+        "Authorized birth-evidence import-reachability AST traversal; source only."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/select_m6_qstar_train_only.py",
+      "access": [
+        "explicit_read"
+      ],
+      "reasons": [
+        "Development instructions, frozen contract, cited source or mutation-ledger format."
+      ],
+      "present_at_inventory": true
+    },
+    {
+      "path": "scripts/smoke_m6_rank_refresh_engine.py",
+      "access": [
+        "automated_test_read"
+      ],
+      "reasons": [
+        "Executed by the explicitly requested rank-refresh synthetic-smoke regression test; this inventory builder did not open its contents."
+      ],
+      "present_at_inventory": true
+    }
+  ],
+  "automated_requested_regression_reads": [
+    "scripts/smoke_m6_rank_refresh_engine.py",
+    "docs/analysis/m6_rank_refresh_engine_synthetic.json"
+  ],
+  "dedicated_temporary_directories_enumerated": [
+    "/private/tmp/p2-exact-final-paths",
+    "/private/tmp/p2-exact-full",
+    "/private/tmp/track_b_p2_mutation_14",
+    "/private/tmp/track_b_p2_mutation_14/test_t7_persistent_heterogenei0",
+    "/private/tmp/track_b_p2_mutation_14/test_t7_persistent_heterogeneicurrent",
+    "/private/tmp/track_b_p2_mutation_5",
+    "/private/tmp/track_b_p2_mutation_5/test_t2_second_order_recovery_0",
+    "/private/tmp/track_b_p2_mutation_5/test_t2_second_order_recovery_current",
+    "/private/tmp/track_b_p2_mutation_6",
+    "/private/tmp/track_b_p2_mutation_6/test_t3_retrospective_selectio0",
+    "/private/tmp/track_b_p2_mutation_6/test_t3_retrospective_selectiocurrent",
+    "/private/tmp/track_b_p2_recovery_20261023",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw0/test_t3_retrospective_selectio0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw0/test_t3_retrospective_selectiocurrent",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t2_second_order_recovery_0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t2_second_order_recovery_current",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t7_persistent_heterogenei0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw1/test_t7_persistent_heterogeneicurrent",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw2",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw2/test_t3_retrospective_selectio0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw2/test_t3_retrospective_selectiocurrent",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw3",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw3/test_t3_retrospective_selectio0",
+    "/private/tmp/track_b_p2_recovery_20261023/popen-gw3/test_t3_retrospective_selectiocurrent",
+    "/private/tmp/track_b_p2_regression_20261023",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw1",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu0",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu1",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclu2",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw1/test_source_reachability_inclucurrent",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw2",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclu0",
+    "/private/tmp/track_b_p2_regression_20261023/popen-gw2/test_source_reachability_inclucurrent",
+    "/private/tmp/track_b_p2_regression_final",
+    "/private/tmp/track_b_p2_regression_final/popen-gw1",
+    "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclu0",
+    "/private/tmp/track_b_p2_regression_final/popen-gw1/test_source_reachability_inclucurrent",
+    "/private/tmp/track_b_p2_regression_final/popen-gw2",
+    "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu0",
+    "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu1",
+    "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclu2",
+    "/private/tmp/track_b_p2_regression_final/popen-gw2/test_source_reachability_inclucurrent"
+  ],
+  "workspace_cache_roots_enumerated": [
+    ".hypothesis",
+    ".ruff_cache"
+  ]
+}

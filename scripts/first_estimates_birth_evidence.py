@@ -340,6 +340,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_b/holdout_registry.py"),
     # S1 development and future registration; no historical projection imports.
     Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
+    # P2 is used only by development and any future registration;
+    # nothing in the historical projection imports it.
+    Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
@@ -423,6 +426,16 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # SM1 is opt-in and absent from the historical projection call graph.
+    Path("src/populace_dynamics/mortality_ses/__init__.py"),
+    Path("src/populace_dynamics/mortality_ses/specification.py"),
+    Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+    Path("src/populace_dynamics/mortality_ses/model.py"),
+    Path("src/populace_dynamics/mortality_ses/step.py"),
+    # The PSID income and wealth readers (D1a) are opt-in source readers;
+    # nothing in the historical projection imports them.
+    Path("src/populace_dynamics/data/psid_income_wealth.py"),
+    Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
