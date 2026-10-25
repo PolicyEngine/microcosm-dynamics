@@ -14,6 +14,7 @@ import pytest
 
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
+from tests.track_b_arf_recompute_support import source_text
 from tests.track_b_gross_benefit_support import ssa_params
 
 PARAMS = ssa_params()
@@ -536,24 +537,15 @@ def test_explicit_exceptional_history_is_refused_by_name(reason):
     assert caught.value.reason is reason
 
 
-def test_spouse_reentitlement_before_fra_is_explicitly_refused():
-    claim = a.ARFClaim(
-        a.ARFBenefitKind.SPOUSE,
-        date(1960, 1, 2),
-        (2022, 1),
-        F(650),
-        nonentitlement_months={(2022, 2)},
-        conditions={a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA},
-    )
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        a.apply_arf(claim, payment_month=(2024, 1), params=PARAMS)
-    assert (
-        caught.value.reason
-        is a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
-    )
+def test_spouse_reentitled_before_fra_keeps_original_months_until_fra():
+    """402(q)(1)(B): only the 62 and FRA months use the adjusted period.
 
-
-def test_spouse_reentitlement_before_fra_is_detected_from_termination_history():
+    Source conflict us:oasdi-arf-spouse-reentitlement-credits. Invented
+    1960-01-02 spouse, $650 unreduced, first reduced 2022-01, terminated
+    2022-02 and reentitled 2022-03. Every month before FRA keeps the 60
+    original months (35 percent, $422.50); the January 2027 ARF removes
+    the terminated month (59 months, reduction $224.80, $425.20).
+    """
     claim = a.ARFClaim(
         a.ARFBenefitKind.SPOUSE,
         date(1960, 1, 2),
@@ -561,15 +553,28 @@ def test_spouse_reentitlement_before_fra_is_detected_from_termination_history():
         F(650),
         nonentitlement_months={(2022, 2)},
     )
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        a.apply_arf(claim, payment_month=(2024, 1), params=PARAMS)
-    assert (
-        caught.value.reason
-        is a.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
-    )
-    # The same known history has a settled final adjustment at FRA.
+    plain = replace(claim, nonentitlement_months=frozenset())
+    for payment in ((2022, 3), (2024, 1), (2026, 12)):
+        result = a.apply_arf(claim, payment_month=payment, params=PARAMS)
+        assert result.crediting_months == frozenset()
+        assert result.effective_adjustment_month is None
+        assert result.original_reduction_months == 60
+        assert result.adjusted_reduction_months == 60
+        assert result.benefit == F("422.50")
+        assert (
+            result.benefit
+            == a.apply_arf(plain, payment_month=payment, params=PARAMS).benefit
+        )
     result = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
     assert result.adjusted_reduction_months == 59
+    assert result.crediting_months == frozenset({g.YearMonth(2022, 2)})
+    assert result.benefit == F("425.20")
+
+
+def test_spouse_reentitlement_is_no_longer_a_coverage_reason():
+    """The settled timing leaves no named refusal to declare."""
+    values = {reason.value for reason in a.ARFUnsupportedReason}
+    assert "arf_spouse_reentitlement_before_fra" not in values
 
 
 def test_dual_spouse_after_spouse_before_arf_is_refused():
@@ -612,6 +617,17 @@ def test_historic_survivor_fra_conflict_is_refused():
     # POMS FRA65; CFR FRA62 gives1000. Neither reading is paid by R3.
     assert g.survivor_age_reduced(F(1000), 36, 60, PARAMS) == F(829)
     assert F(1000) - F(829) == F(171)
+    # The conflict cannot change a supported amount: under either FRA every
+    # reduced entitlement of the cohort is first entitled before 1978, which
+    # arf_initial_entitlement_before_1978 refuses independently.
+    for birth in (date(1911, 1, 2), date(1912, 1, 1)):
+        for fra_years in (62, 65):
+            assert a.age_attainment_month(birth, fra_years * 12) < g.YearMonth(
+                1978, 1
+            )
+    assert "for months after December 1972." in " ".join(
+        source_text("lii_usc_402q_415f_excerpts").split()
+    )
 
 
 def test_widow_nonbinding_child_care_readings_are_explicit():
