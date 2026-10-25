@@ -631,8 +631,8 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "govinfo_statute86_pg1329.pdf",
-        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Public Law 92-603, Social Security Amendments of 1972",
         "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972"
       },
@@ -690,8 +690,8 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "govinfo_statute86_pg1329.pdf",
-              "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Public Law 92-603, Social Security Amendments of 1972",
               "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972"
             },
@@ -1997,16 +1997,16 @@
         "location": "section10(a)-(c),88Stat422"
       },
       {
-        "capture": "federal_register_1975_07_10.pdf",
-        "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+        "capture": "federal_register_1975_07_10_extract.pdf",
+        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
         "authority": "20 CFR404.1053(c)(5),final1975regulation",
-        "location": "40FR29071-29072;published1975-07-10;PDFpages13-14"
+        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
       },
       {
-        "capture": "federal_register_1975_07_10.pdf.txt",
+        "capture": "federal_register_1975_07_10_extract.pdf.txt",
         "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
         "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-        "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
       }
     ],
     "consequence": "noncovered",
@@ -2058,16 +2058,16 @@
               "location": "section10(a)-(c),88Stat422"
             },
             {
-              "capture": "federal_register_1975_07_10.pdf",
-              "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+              "capture": "federal_register_1975_07_10_extract.pdf",
+              "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
               "authority": "20 CFR404.1053(c)(5),final1975regulation",
-              "location": "40FR29071-29072;published1975-07-10;PDFpages13-14"
+              "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
             },
             {
-              "capture": "federal_register_1975_07_10.pdf.txt",
+              "capture": "federal_register_1975_07_10_extract.pdf.txt",
               "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
               "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-              "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+              "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -2110,16 +2110,16 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "federal_register_1975_07_10.pdf",
-        "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+        "capture": "federal_register_1975_07_10_extract.pdf",
+        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
         "authority": "20 CFR404.1053(c)(5),final1975regulation",
-        "location": "40FR29071-29072;published1975-07-10;PDFpages13-14"
+        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
       },
       {
-        "capture": "federal_register_1975_07_10.pdf.txt",
+        "capture": "federal_register_1975_07_10_extract.pdf.txt",
         "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
         "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-        "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
       }
     ],
     "consequence": "covered",
@@ -2154,16 +2154,16 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "federal_register_1975_07_10.pdf",
-              "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+              "capture": "federal_register_1975_07_10_extract.pdf",
+              "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
               "authority": "20 CFR404.1053(c)(5),final1975regulation",
-              "location": "40FR29071-29072;published1975-07-10;PDFpages13-14"
+              "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
             },
             {
-              "capture": "federal_register_1975_07_10.pdf.txt",
+              "capture": "federal_register_1975_07_10_extract.pdf.txt",
               "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
               "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-              "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+              "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -2242,10 +2242,10 @@
         "example_id": "cfr1975_farm_agent_example_5",
         "income_year": 1974,
         "citation": {
-          "capture": "federal_register_1975_07_10.pdf.txt",
+          "capture": "federal_register_1975_07_10_extract.pdf.txt",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
           "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-          "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+          "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
         },
         "source_passage": "Example 5. J owned a farm several miles from the town in which he lived. He rented the farm to K under an ar\u00ad rangement which contemplated J\u2019s mate\u00ad rial participation in the management of production of wheat. J furnished one- half the seed and fertilizer and all the farm equipment and livestock. He em\u00ad ployed H to perform all the services in advising, consulting, and inspecting which were contemplated by the arrange\u00ad ment, effective with taxable years begin\u00ad ning after December 31, 1973. J is not materially participating in the manage\u00ad ment of production of wheat by K. The work done by J\u2019s employee, H, is not attributable to J in determining the ex\u00ad tent of J\u2019s participation. J\u2019s rental in\u00ad come from the arrangement is not to be included in computing his net earn\u00ad ings from self-employment.",
         "expected_rule_id": "se_material_participation_1974_2026",
@@ -2258,10 +2258,10 @@
         "example_id": "cfr1975_farm_agent_example_6",
         "income_year": 1974,
         "citation": {
-          "capture": "federal_register_1975_07_10.pdf.txt",
+          "capture": "federal_register_1975_07_10_extract.pdf.txt",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
           "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-          "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order"
+          "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
         },
         "source_passage": "Example 6. Assume the same facts as in the previous example except that J appointed the X Bank as his agent to enter into the rental arrangement with K and to perform the services which were contemplated by the arrangement, ef\u00ad fective with taxable years beginning after December 31, 1973. J is not materially participating in the management of pro\u00ad duction of wheat by K because the work done by X Bank is not attributable to J in determining the extent of J\u2019s par\u00ad ticipation. J\u2019s rental income from the arrangement would not be included in computing his net earnings from self- employment.",
         "expected_rule_id": "se_material_participation_1974_2026",
@@ -2767,9 +2767,9 @@
       },
       {
         "authority": "Public Law92-603,86 Stat.1329(1972)",
-        "capture": "govinfo_statute86_pg1329.pdf",
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
         "location": "section121,printedpp1353-1354",
-        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -2815,9 +2815,9 @@
           "primary_history_citations": [
             {
               "authority": "Public Law92-603,86 Stat.1329(1972)",
-              "capture": "govinfo_statute86_pg1329.pdf",
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
               "location": "section121,printedpp1353-1354",
-              "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -3967,9 +3967,9 @@
       },
       {
         "authority": "Public Law90-248, 81 Stat.821 (1968)",
-        "capture": "govinfo_statute81_pg821.pdf",
+        "capture": "govinfo_statute81_pg821_extract.pdf",
         "location": "section118, printed pp841-842",
-        "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+        "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
       }
     ],
     "consequence": "noncovered",
@@ -4005,9 +4005,9 @@
           "primary_history_citations": [
             {
               "authority": "Public Law90-248, 81 Stat.821 (1968)",
-              "capture": "govinfo_statute81_pg821.pdf",
+              "capture": "govinfo_statute81_pg821_extract.pdf",
               "location": "section118, printed pp841-842",
-              "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+              "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -4474,9 +4474,9 @@
       },
       {
         "authority": "Public Law 98-21, 97 Stat. 65 (1983)",
-        "capture": "govinfo_statute97_pg65.pdf",
+        "capture": "govinfo_statute97_pg65_extract.pdf",
         "location": "section 124(c)(3), printed p. 90; section 124(d)(2), printed p. 91",
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
       },
       {
         "authority": "SSA POMS RS 01803.002, procedure 5",
@@ -4555,9 +4555,9 @@
           "primary_history_citations": [
             {
               "authority": "Public Law 98-21, 97 Stat. 65 (1983)",
-              "capture": "govinfo_statute97_pg65.pdf",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
               "location": "section 124(c)(3), printed p. 90; section 124(d)(2), printed p. 91",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
             },
             {
               "authority": "SSA POMS RS 01803.002, procedure 5",

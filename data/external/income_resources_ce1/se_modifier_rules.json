@@ -727,8 +727,8 @@
         "location": "1972 amendment/effective-date notes for Pub L92-603 section124(a),(c)"
       },
       {
-        "capture": "govinfo_statute86_pg1329.pdf",
-        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Pub L92-603, Social Security Amendments of1972",
         "location": "section124(a),(c),86Stat1357"
       }
@@ -770,8 +770,8 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "govinfo_statute86_pg1329.pdf",
-              "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Pub L92-603, Social Security Amendments of1972",
               "location": "section124(a),(c),86Stat1357"
             }
@@ -807,8 +807,8 @@
     "effective_end": "1981-12-31",
     "citations": [
       {
-        "capture": "govinfo_statute86_pg1329.pdf",
-        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Pub L92-603, Social Security Amendments of1972",
         "location": "section124(a),(c),86Stat1357"
       },
@@ -849,8 +849,8 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "govinfo_statute86_pg1329.pdf",
-              "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Pub L92-603, Social Security Amendments of1972",
               "location": "section124(a),(c),86Stat1357"
             }
@@ -886,8 +886,8 @@
     "effective_end": "1983-12-31",
     "citations": [
       {
-        "capture": "govinfo_statute97_pg65.pdf",
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "capture": "govinfo_statute97_pg65_extract.pdf",
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
         "authority": "Pub L98-21, Social Security Amendments of1983",
         "location": "section323(b)(2)(B),(c)(2),97Stat121"
       }
@@ -922,8 +922,8 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "govinfo_statute97_pg65.pdf",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
               "authority": "Pub L98-21, Social Security Amendments of1983",
               "location": "section323(b)(2)(B),(c)(2),97Stat121"
             }
@@ -959,8 +959,8 @@
     "effective_end": "2026-12-31",
     "citations": [
       {
-        "capture": "govinfo_statute97_pg65.pdf",
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "capture": "govinfo_statute97_pg65_extract.pdf",
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
         "authority": "Pub L98-21, Social Security Amendments of1983",
         "location": "section323(b)(2)(A),(c)(2),97Stat121"
       },
@@ -1000,8 +1000,8 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "govinfo_statute97_pg65.pdf",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
               "authority": "Pub L98-21, Social Security Amendments of1983",
               "location": "section323(b)(2)(A),(c)(2),97Stat121"
             }

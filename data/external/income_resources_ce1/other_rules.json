@@ -6412,10 +6412,10 @@
         "location": "410(a)(10), 1972 amendment/effective-date notes"
       },
       {
-        "capture": "govinfo_statute86_pg1329.pdf",
-        "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
-        "location": "printed p.1359 (PDF p.31)"
+        "location": "printed p.1359 (original PDF p.31; extract p.7)"
       }
     ],
     "trigger_facts": [
@@ -6454,10 +6454,10 @@
               "location": "A; C"
             },
             {
-              "capture": "govinfo_statute86_pg1329.pdf",
-              "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126",
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
-              "location": "printed p.1359 (PDF p.31)"
+              "location": "printed p.1359 (original PDF p.31; extract p.7)"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",

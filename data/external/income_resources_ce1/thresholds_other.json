@@ -903,8 +903,8 @@
         "location": "D,1968-1977history"
       },
       {
-        "capture": "govinfo_statute81_pg821.pdf",
-        "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7",
+        "capture": "govinfo_statute81_pg821_extract.pdf",
+        "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f",
         "authority": "Public Law90-248 section116(c),81Stat840-841",
         "location": "printedpp840-841"
       }

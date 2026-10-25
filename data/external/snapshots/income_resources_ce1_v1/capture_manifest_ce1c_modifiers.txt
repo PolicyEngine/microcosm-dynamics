@@ -26,10 +26,11 @@
 # URL: https://www.govinfo.gov/content/pkg/PLAW-111publ240/html/PLAW-111publ240.htm
 # Provenance: "Public Law111-240 section2042; temporary2010 health-insurance deduction for SE-tax NESE."
 
-2026-10-25T02:37:55Z 37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14 24847693 govinfo_statute79_pg286.pdf
+# Extract of govinfo_statute79_pg286.pdf (24847693 bytes, sha256 37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14): original PDF pages 1,114,115,138; qpdf --deterministic-id --empty --pages govinfo_statute79_pg286.pdf 1,114,115,138 -- govinfo_statute79_pg286_extract.pdf (qpdf version 12.4.2)
+2026-10-25T02:37:55Z 183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129 761274 govinfo_statute79_pg286_extract.pdf
 # URL: https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf
 # Provenance: "Public Law89-97, Social Security Amendments of1965; section325,79Stat399. Whole-act fallback because official HTML/txt/ocr/text renditions were Page Not Found."
 
-2026-10-25T02:37:55Z 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 3620 govinfo_statute79_pg286.pdf.txt
+2026-10-25T02:37:55Z 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 3620 govinfo_statute79_pg286_extract.pdf.txt
 # URL: https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf
-# Provenance: {"derived_from": "govinfo_statute79_pg286.pdf", "source_sha256": "37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14", "method": "pdftotext -f114 -l114 -layout; single cited source page", "pdf_pages": [114], "printed_pages": [399]}
+# Provenance: {"derived_from": "govinfo_statute79_pg286_extract.pdf", "source_sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129", "method": "pdftotext -f2 -l2 -layout", "pdf_pages": [2], "printed_pages": [399], "original_pdf_pages": [114]}

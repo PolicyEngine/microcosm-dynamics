@@ -27,8 +27,8 @@
       "location": "section 3, printed page 2264"
     },
     {
-      "capture": "govinfo_statute97_pg65.pdf",
-      "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+      "capture": "govinfo_statute97_pg65_extract.pdf",
+      "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
       "authority": "Public Law 98-21,97 Stat. 65 (1983)",
       "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126"
     },
@@ -73,8 +73,8 @@
       "authority": "Public Law 98-21section 201(c)(1)(B), clarified byPublic Law 98-369section 2662(c)(1)",
       "citations": [
         {
-          "capture": "govinfo_statute97_pg65.pdf",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
           "authority": "Public Law 98-21,97 Stat. 65 (1983)",
           "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126"
         },
@@ -100,8 +100,8 @@
       "authority": "Public Law 98-21section 324(c)(4), subject to324(d) as amended",
       "citations": [
         {
-          "capture": "govinfo_statute97_pg65.pdf",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
           "authority": "Public Law 98-21,97 Stat. 65 (1983)",
           "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126"
         },

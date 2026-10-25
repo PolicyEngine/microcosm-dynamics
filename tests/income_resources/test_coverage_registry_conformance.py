@@ -117,6 +117,76 @@ def test_every_pinned_citation_matches_its_capture(registry):
             assert " ".join(citation["quote"].split()) in texts[path]
 
 
+MANIFEST_ENTRY = re.compile(
+    r"^(?P<time>.+) (?P<sha256>[0-9a-f]{64}) (?P<size>\d+) (?P<name>\S+)$"
+)
+CAPTURE_METADATA = re.compile(
+    r"^(capture_manifest.*\.txt|sources_.*\.json|source_inventory\.json"
+    r"|SOURCE_INVENTORY\.md)$"
+)
+
+
+def test_capture_folder_and_manifests_list_the_same_bytes():
+    entries = []
+    for manifest in sorted(CAPTURE_DIRECTORY.glob("capture_manifest*.txt")):
+        for line in manifest.read_text().splitlines():
+            entry = MANIFEST_ENTRY.match(line)
+            if entry and not line.startswith("#"):
+                entries.append(entry)
+    assert entries
+    for entry in entries:
+        data = (CAPTURE_DIRECTORY / entry["name"]).read_bytes()
+        assert len(data) == int(entry["size"]), entry["name"]
+        assert hashlib.sha256(data).hexdigest() == entry["sha256"]
+    captures = {
+        path.name
+        for path in CAPTURE_DIRECTORY.iterdir()
+        if path.is_file() and not CAPTURE_METADATA.match(path.name)
+    }
+    assert captures == {entry["name"] for entry in entries}
+
+
+def structured_provenance(row):
+    value = row.get("provenance")
+    return value if isinstance(value, dict) else {}
+
+
+def test_page_extracts_record_their_originals():
+    inventory = json.loads(
+        (CAPTURE_DIRECTORY / "source_inventory.json").read_text()
+    )
+    extracts = [
+        row
+        for row in inventory
+        if "extracted_from" in structured_provenance(row)
+    ]
+    names = {row["file"] for row in extracts}
+    assert len(names) == 5
+    for row in extracts:
+        data = (CAPTURE_DIRECTORY / row["file"]).read_bytes()
+        assert hashlib.sha256(data).hexdigest() == row["sha256"]
+        original = row["provenance"]["extracted_from"]
+        assert not (CAPTURE_DIRECTORY / original["file"]).exists()
+        assert original["bytes"] > len(data)
+        assert re.fullmatch(r"[0-9a-f]{64}", original["sha256"])
+        pages = row["provenance"]["original_pdf_pages"]
+        assert pages == sorted(set(pages))
+        assert pages[0] == 1 and pages[-1] <= original["pages"]
+    derived = [
+        row
+        for row in inventory
+        if structured_provenance(row).get("derived_from") in names
+    ]
+    assert len(derived) == 2
+    for row in derived:
+        extract = next(
+            r
+            for r in extracts
+            if r["file"] == row["provenance"]["derived_from"]
+        )
+        assert row["provenance"]["source_sha256"] == extract["sha256"]
+
+
 def test_archived_threshold_table_matches_every_published_year(registry):
     name = "ssa_oact_cola_covthresh_wayback_20261013081352.html"
     html = (CAPTURE_DIRECTORY / name).read_text()

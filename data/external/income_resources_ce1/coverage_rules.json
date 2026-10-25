@@ -47,21 +47,21 @@
       "citations": [
         {
           "authority": "Pub L89-97, Social Security Amendments of1965",
-          "capture": "govinfo_statute79_pg286.pdf",
-          "location": "section325(a)(1)-(2),(b),79Stat399; PDFpage114",
-          "sha256": "37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14"
+          "capture": "govinfo_statute79_pg286_extract.pdf",
+          "location": "section 325(a)(1)-(2), (b), 79 Stat. 399; original PDF page 114, extract page 2",
+          "sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129"
         },
         {
           "authority": "Text derivative of official Pub L89-97",
-          "capture": "govinfo_statute79_pg286.pdf.txt",
-          "location": "PDFpage114/printed79Stat399; pdftotext-layout derivative; source PDF hash recorded in manifest",
+          "capture": "govinfo_statute79_pg286_extract.pdf.txt",
+          "location": "original PDF page 114 (extract page 2), printed 79 Stat. 399; pdftotext -layout derivative of the extract; extract and original hashes recorded in the manifest",
           "sha256": "6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63"
         },
         {
           "authority": "Pub L98-21, Social Security Amendments of1983",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section201(a),(c),97Stat107-109",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42USC416, official2024 United States Code section granule",
@@ -95,14 +95,14 @@
           "citations": [
             {
               "authority": "Pub L89-97, Social Security Amendments of1965",
-              "capture": "govinfo_statute79_pg286.pdf",
-              "location": "section325(a)(1)-(2),(b),79Stat399; PDFpage114",
-              "sha256": "37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14"
+              "capture": "govinfo_statute79_pg286_extract.pdf",
+              "location": "section 325(a)(1)-(2), (b), 79 Stat. 399; original PDF page 114, extract page 2",
+              "sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129"
             },
             {
               "authority": "Text derivative of official Pub L89-97",
-              "capture": "govinfo_statute79_pg286.pdf.txt",
-              "location": "PDFpage114/printed79Stat399; pdftotext-layout derivative; source PDF hash recorded in manifest",
+              "capture": "govinfo_statute79_pg286_extract.pdf.txt",
+              "location": "original PDF page 114 (extract page 2), printed 79 Stat. 399; pdftotext -layout derivative of the extract; extract and original hashes recorded in the manifest",
               "sha256": "6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63"
             }
           ],
@@ -132,9 +132,9 @@
           "citations": [
             {
               "authority": "Pub L98-21, Social Security Amendments of1983",
-              "capture": "govinfo_statute97_pg65.pdf",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
               "location": "section201(a),(c),97Stat107-109",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
             },
             {
               "authority": "42USC416, official2024 United States Code section granule",
@@ -268,9 +268,9 @@
         },
         {
           "authority": "Public Law 98-21,97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "26 U.S.C. 3121, Office of Law Revision Counsel release 119-120",
@@ -332,9 +332,9 @@
           "citations": [
             {
               "authority": "Public Law 98-21,97 Stat. 65 (1983)",
-              "capture": "govinfo_statute97_pg65.pdf",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
               "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
             },
             {
               "authority": "42 U.S.C. 403, assignment-pinned LII capture 2026-10-21",
@@ -358,9 +358,9 @@
           "citations": [
             {
               "authority": "Public Law 98-21,97 Stat. 65 (1983)",
-              "capture": "govinfo_statute97_pg65.pdf",
+              "capture": "govinfo_statute97_pg65_extract.pdf",
               "location": "section 201, printed pages 107-109; section 324(c)(4) and(d), printed pages 125-126",
-              "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
             },
             {
               "authority": "26 U.S.C. 3121, Office of Law Revision Counsel release 119-120",
@@ -578,9 +578,9 @@
         {
           "citation": {
             "authority": "PublicLaw98-21",
-            "capture": "govinfo_statute97_pg65.pdf",
+            "capture": "govinfo_statute97_pg65_extract.pdf",
             "location": "124(c)(3),(d)(2):411(a)(11)deduction begins taxable years after1989",
-            "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+            "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
           },
           "effective_end": "1989-12-31",
           "effective_start": "1968-01-01",
@@ -680,9 +680,9 @@
             {
               "citation": {
                 "authority": "PublicLaw98-21,SocialSecurityAmendmentsof1983",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section124(c)(3),97Stat90;section124(d)(2),97Stat91",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               "name": "Social_Security_Amendments_of_1983",
               "status": "operational_primary_source"
@@ -702,9 +702,9 @@
           "question": "POMS_RS01803001_ACT_LABEL",
           "resolution_citation": {
             "authority": "PublicLaw98-21,SocialSecurityAmendmentsof1983",
-            "capture": "govinfo_statute97_pg65.pdf",
+            "capture": "govinfo_statute97_pg65_extract.pdf",
             "location": "section124(c)(3),97Stat90;section124(d)(2),97Stat91",
-            "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+            "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
           },
           "status": "resolved_by_primary_amending_act"
         }
@@ -6083,15 +6083,15 @@
       "citations": [
         {
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -6168,9 +6168,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS RS 01901.340 (2024-06-14)",
@@ -6180,9 +6180,9 @@
               },
               {
                 "authority": "Public Law 98-21, Social Security Amendments of 1983",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -6209,9 +6209,9 @@
         "continuity_source_disagreement_resolution": {
           "citation": {
             "authority": "Public Law 98-21, Social Security Amendments of 1983",
-            "capture": "govinfo_statute97_pg65.pdf",
+            "capture": "govinfo_statute97_pg65_extract.pdf",
             "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-            "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+            "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
           },
           "explanation": "The enacted1983text says the separation does not exceed365consecutive days. Exactly365days therefore preserves continuity when the other grandfather conditions hold.",
           "operational_option": "statutory_less_than_366_days",
@@ -6277,15 +6277,15 @@
       "citations": [
         {
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -6362,9 +6362,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS RS 01901.340 (2024-06-14)",
@@ -6374,9 +6374,9 @@
               },
               {
                 "authority": "Public Law 98-21, Social Security Amendments of 1983",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -6458,9 +6458,9 @@
         "continuity_source_disagreement_resolution": {
           "citation": {
             "authority": "Public Law 98-21, Social Security Amendments of 1983",
-            "capture": "govinfo_statute97_pg65.pdf",
+            "capture": "govinfo_statute97_pg65_extract.pdf",
             "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
-            "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+            "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
           },
           "explanation": "The enacted1983text says the separation does not exceed365consecutive days. Exactly365days therefore preserves continuity when the other grandfather conditions hold.",
           "operational_option": "statutory_less_than_366_days",
@@ -9309,9 +9309,9 @@
       "citations": [
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
@@ -9361,9 +9361,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS RS 01901.540 (2008-08-29)",
@@ -10253,9 +10253,9 @@
       "citations": [
         {
           "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section 123, printed pages 1354-1356",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "IRS Publication 517 (2025)",
@@ -10347,9 +10347,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section 123, printed pages 1354-1356",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               },
               {
                 "authority": "POMS RS 01901.620 (2024-07-02)",
@@ -10391,9 +10391,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section 123, printed pages 1354-1356",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               },
               {
                 "authority": "POMS RS 01901.620 (2024-07-02)",
@@ -10473,9 +10473,9 @@
       "citations": [
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "IRS Publication 517 (2025)",
@@ -10573,9 +10573,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS RS 01901.620 (2024-07-02)",
@@ -10659,9 +10659,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS RS 01901.620 (2024-07-02)",
@@ -10828,9 +10828,9 @@
       "citations": [
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -10900,9 +10900,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS SL 50001.501 (2020-01-29)",
@@ -10945,9 +10945,9 @@
       "citations": [
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "sections 101-103, printed pages 67-72",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -11017,9 +11017,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "sections 101-103, printed pages 67-72",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "POMS SL 50001.501 (2020-01-29)",
@@ -11983,9 +11983,9 @@
         },
         {
           "authority": "Public Law 92-603, Social Security Amendments of 1972",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -12024,9 +12024,9 @@
             "primary_history_citations": [
               {
                 "authority": "Public Law 92-603, Social Security Amendments of 1972",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               },
               {
                 "authority": "Public Law 108-203, Social Security Protection Act of 2004",
@@ -13331,14 +13331,14 @@
       "citations": [
         {
           "authority": "20 CFR404.1053(c)(5),final1975regulation",
-          "capture": "federal_register_1975_07_10.pdf",
-          "location": "40FR29071-29072;published1975-07-10;PDFpages13-14",
-          "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84"
+          "capture": "federal_register_1975_07_10_extract.pdf",
+          "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+          "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
         },
         {
           "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-          "capture": "federal_register_1975_07_10.pdf.txt",
-          "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+          "capture": "federal_register_1975_07_10_extract.pdf.txt",
+          "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
         },
         {
@@ -13392,14 +13392,14 @@
               },
               {
                 "authority": "20 CFR404.1053(c)(5),final1975regulation",
-                "capture": "federal_register_1975_07_10.pdf",
-                "location": "40FR29071-29072;published1975-07-10;PDFpages13-14",
-                "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84"
+                "capture": "federal_register_1975_07_10_extract.pdf",
+                "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+                "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
               },
               {
                 "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-                "capture": "federal_register_1975_07_10.pdf.txt",
-                "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+                "capture": "federal_register_1975_07_10_extract.pdf.txt",
+                "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
                 "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
               }
             ],
@@ -13450,14 +13450,14 @@
       "citations": [
         {
           "authority": "20 CFR404.1053(c)(5),final1975regulation",
-          "capture": "federal_register_1975_07_10.pdf",
-          "location": "40FR29071-29072;published1975-07-10;PDFpages13-14",
-          "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84"
+          "capture": "federal_register_1975_07_10_extract.pdf",
+          "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+          "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
         },
         {
           "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-          "capture": "federal_register_1975_07_10.pdf.txt",
-          "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+          "capture": "federal_register_1975_07_10_extract.pdf.txt",
+          "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
         },
         {
@@ -13498,14 +13498,14 @@
             "primary_history_citations": [
               {
                 "authority": "20 CFR404.1053(c)(5),final1975regulation",
-                "capture": "federal_register_1975_07_10.pdf",
-                "location": "40FR29071-29072;published1975-07-10;PDFpages13-14",
-                "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84"
+                "capture": "federal_register_1975_07_10_extract.pdf",
+                "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+                "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
               },
               {
                 "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-                "capture": "federal_register_1975_07_10.pdf.txt",
-                "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+                "capture": "federal_register_1975_07_10_extract.pdf.txt",
+                "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
                 "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
               }
             ],
@@ -13586,8 +13586,8 @@
         {
           "citation": {
             "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-            "capture": "federal_register_1975_07_10.pdf.txt",
-            "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+            "capture": "federal_register_1975_07_10_extract.pdf.txt",
+            "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
             "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
           },
           "example_id": "cfr1975_farm_agent_example_5",
@@ -13602,8 +13602,8 @@
         {
           "citation": {
             "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-            "capture": "federal_register_1975_07_10.pdf.txt",
-            "location": "40FR29071-29072(PDFpages13-14),raw extraction in column reading order",
+            "capture": "federal_register_1975_07_10_extract.pdf.txt",
+            "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
             "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
           },
           "example_id": "cfr1975_farm_agent_example_6",
@@ -13622,9 +13622,9 @@
       "citations": [
         {
           "authority": "Pub L92-603, Social Security Amendments of1972",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section124(a),(c),86Stat1357",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
@@ -13661,9 +13661,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub L92-603, Social Security Amendments of1972",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section124(a),(c),86Stat1357",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -13708,9 +13708,9 @@
       "citations": [
         {
           "authority": "Pub L92-603, Social Security Amendments of1972",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section124(a),(c),86Stat1357",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
@@ -13747,9 +13747,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub L92-603, Social Security Amendments of1972",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section124(a),(c),86Stat1357",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -13787,9 +13787,9 @@
       "citations": [
         {
           "authority": "Pub L98-21, Social Security Amendments of1983",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section323(b)(2)(B),(c)(2),97Stat121",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         }
       ],
       "consequence": "covered",
@@ -13820,9 +13820,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub L98-21, Social Security Amendments of1983",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section323(b)(2)(B),(c)(2),97Stat121",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -13860,9 +13860,9 @@
       "citations": [
         {
           "authority": "Pub L98-21, Social Security Amendments of1983",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section323(b)(2)(A),(c)(2),97Stat121",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
@@ -13899,9 +13899,9 @@
             "primary_history_citations": [
               {
                 "authority": "Pub L98-21, Social Security Amendments of1983",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section323(b)(2)(A),(c)(2),97Stat121",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -14864,9 +14864,9 @@
       "citations": [
         {
           "authority": "Public Law92-603,86 Stat.1329(1972)",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section121,printedpp1353-1354",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -14904,9 +14904,9 @@
             "primary_history_citations": [
               {
                 "authority": "Public Law92-603,86 Stat.1329(1972)",
-                "capture": "govinfo_statute86_pg1329.pdf",
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section121,printedpp1353-1354",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -16938,9 +16938,9 @@
       "citations": [
         {
           "authority": "Public Law90-248, 81 Stat.821 (1968)",
-          "capture": "govinfo_statute81_pg821.pdf",
+          "capture": "govinfo_statute81_pg821_extract.pdf",
           "location": "section118, printed pp841-842",
-          "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+          "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
         },
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -16977,9 +16977,9 @@
             "primary_history_citations": [
               {
                 "authority": "Public Law90-248, 81 Stat.821 (1968)",
-                "capture": "govinfo_statute81_pg821.pdf",
+                "capture": "govinfo_statute81_pg821_extract.pdf",
                 "location": "section118, printed pp841-842",
-                "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+                "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -17711,9 +17711,9 @@
       "citations": [
         {
           "authority": "Public Law 98-21, 97 Stat. 65 (1983)",
-          "capture": "govinfo_statute97_pg65.pdf",
+          "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 124(c)(3), printed p. 90; section 124(d)(2), printed p. 91",
-          "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
           "authority": "IRS Schedule SE (Form 1040), 2025",
@@ -17773,9 +17773,9 @@
             "primary_history_citations": [
               {
                 "authority": "Public Law 98-21, 97 Stat. 65 (1983)",
-                "capture": "govinfo_statute97_pg65.pdf",
+                "capture": "govinfo_statute97_pg65_extract.pdf",
                 "location": "section 124(c)(3), printed p. 90; section 124(d)(2), printed p. 91",
-                "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+                "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
               },
               {
                 "authority": "SSA POMS RS 01803.002, procedure 5",
@@ -18530,9 +18530,9 @@
       "citations": [
         {
           "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
-          "capture": "govinfo_statute86_pg1329.pdf",
-          "location": "printed p.1359 (PDF p.31)",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
+          "location": "printed p.1359 (original PDF p.31; extract p.7)",
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -18582,9 +18582,9 @@
               },
               {
                 "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
-                "capture": "govinfo_statute86_pg1329.pdf",
-                "location": "printed p.1359 (PDF p.31)",
-                "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+                "capture": "govinfo_statute86_pg1329_extract.pdf",
+                "location": "printed p.1359 (original PDF p.31; extract p.7)",
+                "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
               }
             ],
             "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
@@ -20173,9 +20173,9 @@
         },
         {
           "authority": "Public Law90-248 section116(c),81Stat840-841",
-          "capture": "govinfo_statute81_pg821.pdf",
+          "capture": "govinfo_statute81_pg821_extract.pdf",
           "location": "printedpp840-841",
-          "sha256": "cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7"
+          "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
         }
       ],
       "comparison": "at_least",
@@ -20564,9 +20564,9 @@
       "citations": [
         {
           "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-          "capture": "govinfo_statute86_pg1329.pdf",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section 123, printed pages 1354-1356",
-          "sha256": "dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126"
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         {
           "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",

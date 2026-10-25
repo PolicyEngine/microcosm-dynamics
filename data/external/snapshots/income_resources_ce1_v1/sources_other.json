@@ -501,72 +501,81 @@
     "retrieved_at": "2026-10-24T21:04:06Z",
     "sha256": "97c3c88b3c4ac364af3cc444b25edb2e85b9f80a9832899c46dd35fa34ffc85c",
     "size_bytes": 1717364,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--1999.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--1999.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2000.pdf",
     "retrieved_at": "2026-10-24T21:04:06Z",
     "sha256": "91d65a8f01563c361c7a9a98e3882a2aad70ef44d9b3663c2cc8b073031b6d60",
     "size_bytes": 1594840,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2000.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2000.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2001.pdf",
     "retrieved_at": "2026-10-24T21:04:06Z",
     "sha256": "7d1656aa5987903bf16abf83ddd6934128f589460b068833478d6d705e591d73",
     "size_bytes": 1813457,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2001.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2001.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2002.pdf",
     "retrieved_at": "2026-10-24T21:04:06Z",
     "sha256": "ce343d4919f6e83dd8d4f0c1f92256269facdf1a7efdd57db550c954138e4ce0",
     "size_bytes": 1785900,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2002.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2002.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2003.pdf",
     "retrieved_at": "2026-10-24T21:04:07Z",
     "sha256": "1dfffd0656c220e25398f447d19e32f913a078a68d64c9a4869769bda34a81a7",
     "size_bytes": 2121747,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2003.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2003.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2004.pdf",
     "retrieved_at": "2026-10-24T21:04:07Z",
     "sha256": "76320cdc1d06bcc06cfb8c8f74c66bb2ea86abccecd848ab8c526f8de447f7fb",
     "size_bytes": 2137525,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2004.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2004.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2005.pdf",
     "retrieved_at": "2026-10-24T21:04:07Z",
     "sha256": "f15d227d97cc428e5f12cb54e4208303342a537274b2459da9e88215b9c162e2",
     "size_bytes": 1970709,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2005.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2005.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2006.pdf",
     "retrieved_at": "2026-10-24T21:04:07Z",
     "sha256": "861caefae0ac145bc073a996c8b387e9374bd2b8cbcb8a49c04b4f41f5307258",
     "size_bytes": 4596673,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2006.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2006.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub17_2007.pdf",
     "retrieved_at": "2026-10-24T21:04:08Z",
     "sha256": "56dee95488e8746da3e0b33d643f80d452f37f8d2458d1bdeca5e85d11c55f88",
     "size_bytes": 2661214,
-    "status": "captured",
-    "url": "https://www.irs.gov/pub/irs-prior/p17--2007.pdf"
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2007.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
   },
   {
     "file": "irs_pub15_1999.pdf",

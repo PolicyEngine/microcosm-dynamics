@@ -54,11 +54,12 @@
 # URL: https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf
 # Provenance: {"derived_from": "govinfo_statute88_pg420.pdf", "source_sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c", "method": "pdftotext -layout; full source granule"}
 
-2026-10-25T02:16:45Z ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84 29449191 federal_register_1975_07_10.pdf
+# Extract of federal_register_1975_07_10.pdf (29449191 bytes, sha256 ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84): original PDF pages 1,13,14; qpdf --deterministic-id --empty --pages federal_register_1975_07_10.pdf 1,13,14 -- federal_register_1975_07_10_extract.pdf (qpdf version 12.4.2)
+2026-10-25T02:16:45Z 8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b 630595 federal_register_1975_07_10_extract.pdf
 # URL: https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf
 # Provenance: "Official Federal Register issue; final20CFR404.1053(c)(5),40FR29071-29072. Current CFR section XML is small but omits the pre1974 rule. No smaller official historical section rendition was located; the full issue is retained as a necessary fallback. Retrieval UTC records completion of the captured-byte write."
 
-2026-10-25T02:16:45Z 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 16197 federal_register_1975_07_10.pdf.txt
+2026-10-25T02:16:45Z 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 16197 federal_register_1975_07_10_extract.pdf.txt
 # URL: https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf
-# Provenance: {"derived_from": "federal_register_1975_07_10.pdf", "source_sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84", "method": "pdftotext -f13 -l14 -raw; preserve the reading order of the two source pages", "pdf_pages": [13, 14], "printed_pages": [29071, 29072]}
+# Provenance: {"derived_from": "federal_register_1975_07_10_extract.pdf", "source_sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b", "method": "pdftotext -f2 -l3 -raw", "pdf_pages": [2, 3], "printed_pages": [29071, 29072], "original_pdf_pages": [13, 14]}
 

@@ -5,9 +5,9 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | Capture | URL | Retrieval UTC | Bytes | SHA-256 |
 |---|---|---|---:|---|
 | govinfo_plaw_108publ203.html | https://www.govinfo.gov/content/pkg/PLAW-108publ203/html/PLAW-108publ203.htm | 2026-10-24T21:07:40Z | 166935 | `d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35` |
-| govinfo_statute81_pg821.pdf | https://www.govinfo.gov/content/pkg/STATUTE-81/pdf/STATUTE-81-Pg821.pdf | 2026-10-24T21:00:52Z | 21021449 | `cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7` |
-| govinfo_statute86_pg1329.pdf | https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf | 2026-10-24T21:00:53Z | 31269765 | `dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126` |
-| govinfo_statute97_pg65.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:53Z | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` |
+| govinfo_statute81_pg821_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-81/pdf/STATUTE-81-Pg821.pdf | 2026-10-24T21:00:52Z | 975404 | `f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f` |
+| govinfo_statute86_pg1329_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf | 2026-10-24T21:00:53Z | 1899665 | `5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0` |
+| govinfo_statute97_pg65_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:53Z | 3445893 | `82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad` |
 | irs_p517_2025.html | https://www.irs.gov/publications/p517 | 2026-10-24T20:59:37Z | 361352 | `2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82` |
 | irs_p517_2025.pdf | https://www.irs.gov/pub/irs-pdf/p517.pdf | 2026-10-24T20:58:53Z | 1363199 | `42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451` |
 | irs_pub15_1999.pdf | https://www.irs.gov/pub/irs-prior/p15--1999.pdf | 2026-10-24T21:10:23Z | 330756 | `4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a` |
@@ -29,15 +29,15 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | irs_pub15_2024.pdf | https://www.irs.gov/pub/irs-prior/p15--2024.pdf | 2026-10-24T20:59:55Z | 1638730 | `3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0` |
 | irs_pub15_2025.pdf | https://www.irs.gov/pub/irs-prior/p15--2025.pdf | 2026-10-24T20:59:55Z | 1638723 | `168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0` |
 | irs_pub15_2026.html | https://www.irs.gov/publications/p15 | 2026-10-24T20:59:23Z | 624774 | `38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4` |
-| irs_pub17_1999.pdf | https://www.irs.gov/pub/irs-prior/p17--1999.pdf | 2026-10-24T21:04:06Z | 1717364 | `97c3c88b3c4ac364af3cc444b25edb2e85b9f80a9832899c46dd35fa34ffc85c` |
-| irs_pub17_2000.pdf | https://www.irs.gov/pub/irs-prior/p17--2000.pdf | 2026-10-24T21:04:06Z | 1594840 | `91d65a8f01563c361c7a9a98e3882a2aad70ef44d9b3663c2cc8b073031b6d60` |
-| irs_pub17_2001.pdf | https://www.irs.gov/pub/irs-prior/p17--2001.pdf | 2026-10-24T21:04:06Z | 1813457 | `7d1656aa5987903bf16abf83ddd6934128f589460b068833478d6d705e591d73` |
-| irs_pub17_2002.pdf | https://www.irs.gov/pub/irs-prior/p17--2002.pdf | 2026-10-24T21:04:06Z | 1785900 | `ce343d4919f6e83dd8d4f0c1f92256269facdf1a7efdd57db550c954138e4ce0` |
-| irs_pub17_2003.pdf | https://www.irs.gov/pub/irs-prior/p17--2003.pdf | 2026-10-24T21:04:07Z | 2121747 | `1dfffd0656c220e25398f447d19e32f913a078a68d64c9a4869769bda34a81a7` |
-| irs_pub17_2004.pdf | https://www.irs.gov/pub/irs-prior/p17--2004.pdf | 2026-10-24T21:04:07Z | 2137525 | `76320cdc1d06bcc06cfb8c8f74c66bb2ea86abccecd848ab8c526f8de447f7fb` |
-| irs_pub17_2005.pdf | https://www.irs.gov/pub/irs-prior/p17--2005.pdf | 2026-10-24T21:04:07Z | 1970709 | `f15d227d97cc428e5f12cb54e4208303342a537274b2459da9e88215b9c162e2` |
-| irs_pub17_2006.pdf | https://www.irs.gov/pub/irs-prior/p17--2006.pdf | 2026-10-24T21:04:07Z | 4596673 | `861caefae0ac145bc073a996c8b387e9374bd2b8cbcb8a49c04b4f41f5307258` |
-| irs_pub17_2007.pdf | https://www.irs.gov/pub/irs-prior/p17--2007.pdf | 2026-10-24T21:04:08Z | 2661214 | `56dee95488e8746da3e0b33d643f80d452f37f8d2458d1bdeca5e85d11c55f88` |
+| irs_pub17_1999.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--1999.pdf | 2026-10-24T21:04:06Z | 1717364 | `97c3c88b3c4ac364af3cc444b25edb2e85b9f80a9832899c46dd35fa34ffc85c` |
+| irs_pub17_2000.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2000.pdf | 2026-10-24T21:04:06Z | 1594840 | `91d65a8f01563c361c7a9a98e3882a2aad70ef44d9b3663c2cc8b073031b6d60` |
+| irs_pub17_2001.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2001.pdf | 2026-10-24T21:04:06Z | 1813457 | `7d1656aa5987903bf16abf83ddd6934128f589460b068833478d6d705e591d73` |
+| irs_pub17_2002.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2002.pdf | 2026-10-24T21:04:06Z | 1785900 | `ce343d4919f6e83dd8d4f0c1f92256269facdf1a7efdd57db550c954138e4ce0` |
+| irs_pub17_2003.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2003.pdf | 2026-10-24T21:04:07Z | 2121747 | `1dfffd0656c220e25398f447d19e32f913a078a68d64c9a4869769bda34a81a7` |
+| irs_pub17_2004.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2004.pdf | 2026-10-24T21:04:07Z | 2137525 | `76320cdc1d06bcc06cfb8c8f74c66bb2ea86abccecd848ab8c526f8de447f7fb` |
+| irs_pub17_2005.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2005.pdf | 2026-10-24T21:04:07Z | 1970709 | `f15d227d97cc428e5f12cb54e4208303342a537274b2459da9e88215b9c162e2` |
+| irs_pub17_2006.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2006.pdf | 2026-10-24T21:04:07Z | 4596673 | `861caefae0ac145bc073a996c8b387e9374bd2b8cbcb8a49c04b4f41f5307258` |
+| irs_pub17_2007.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2007.pdf | 2026-10-24T21:04:08Z | 2661214 | `56dee95488e8746da3e0b33d643f80d452f37f8d2458d1bdeca5e85d11c55f88` |
 | irs_pub926_2008.pdf | https://www.irs.gov/pub/irs-prior/p926--2008.pdf | 2026-10-24T20:59:53Z | 1027949 | `2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc` |
 | irs_pub926_2009.pdf | https://www.irs.gov/pub/irs-prior/p926--2009.pdf | 2026-10-24T20:59:52Z | 1209711 | `aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab` |
 | irs_pub926_2010.pdf | https://www.irs.gov/pub/irs-prior/p926--2010.pdf | 2026-10-24T20:59:52Z | 1215096 | `19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350` |
@@ -136,7 +136,7 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | poms_sl_50001570.html | https://secure.ssa.gov/poms.nsf/lnx/1950001570 | 2026-10-24T20:58:52Z | 25125 | `5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8` |
 | poms_sl_90015501.html | https://secure.ssa.gov/poms.nsf/lnx/1990015501 | 2026-10-24T20:59:15Z | 28457 | `dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d` |
 | statute_94_pg2263.pdf | https://www.govinfo.gov/content/pkg/STATUTE-94/pdf/STATUTE-94-Pg2263.pdf | 2026-10-24T21:17:23Z | 772770 | `06b4876899c90768ba2fc5e82fa07b6ed5c8d39335f59fb9716e4d27ccb4c1f4` |
-| govinfo_statute97_pg65.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:45Z | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` |
+| govinfo_statute97_pg65_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:45Z | 3445893 | `82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad` |
 | supplement2025_4b.html | https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html | 2026-07-27T13:02:54Z | 488165 | `c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449` |
 | uscode_119_120_26_3121.html | https://uscode.house.gov/us/usc/119-120/t26/s3121/ | 2026-10-24T21:02:43Z | 288683 | `b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405` |
 
@@ -221,8 +221,8 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 | irs_schedule_se_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf | 2026-10-25T02:04:37Z | 4603 | 3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa |
 | irs_form1040_instructions_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 8190 | 55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68 |
 | govinfo_statute88_pg420.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf | 2026-10-25T02:04:36Z | 16242 | 7f2ef40b0c26fafdf8909000a6fea0161651828d5620203b31720315c5f2844d |
-| federal_register_1975_07_10.pdf | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 29449191 | ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84 |
-| federal_register_1975_07_10.pdf.txt | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 16197 | 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 |
+| federal_register_1975_07_10_extract.pdf | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 630595 | 8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b |
+| federal_register_1975_07_10_extract.pdf.txt | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 16197 | 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 |
 | ce1c_usc2023_42_410.html | https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec410.htm | 2026-10-25T02:04:52Z | 139768 | 8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2 |
 | ce1c_usc2023_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:04:52Z | 78804 | 59d9f7f54e7f6300766143087a91b556916e3f92c9760a547dc67d065fde29e1 |
 | ce1c_usc2024_26_3121.html | https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap21-subchapC-sec3121.htm | 2026-10-25T02:04:52Z | 282259 | 17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab |
@@ -248,8 +248,8 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 | cfr_2024_20_4041081.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1081.xml | 2026-10-25T02:37:51Z | 5552 | ec9e86ab383ef8d3b196c3755c96d6a4348e27e1a8aff45d6b354a783d378060 |
 | cfr_2024_20_4041082.xml | https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1082.xml | 2026-10-25T02:37:51Z | 12198 | ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455 |
 | govinfo_plaw_111publ240.html | https://www.govinfo.gov/content/pkg/PLAW-111publ240/html/PLAW-111publ240.htm | 2026-10-25T02:37:51Z | 359285 | a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4 |
-| govinfo_statute79_pg286.pdf | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 24847693 | 37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14 |
-| govinfo_statute79_pg286.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 3620 | 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 |
+| govinfo_statute79_pg286_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 761274 | 183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129 |
+| govinfo_statute79_pg286_extract.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf | 2026-10-25T02:37:55Z | 3620 | 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 |
 
 ## Additional pinned primary sources
 
@@ -298,3 +298,24 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 | ce1c_irs_pub51_2023.pdf.txt | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 192853 | 58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654 |
 | ce1c_poms_rs_02101125.html | https://secure.ssa.gov/poms.nsf/lnx/0302101125 | 2026-10-25T02:39:46Z | 33721 | d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b |
 | ce1c_poms_sl_30001334.html | https://secure.ssa.gov/poms.nsf/lnx/1930001334 | 2026-10-25T02:39:45Z | 35902 | c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41 |
+
+## Page-range extracts
+
+Five whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's size and SHA-256 identify the bytes the extract was cut from; the originals are in this pull request's commit history.
+
+| Extract | Original | Original bytes | Original SHA-256 | Original PDF pages kept | Kept for |
+|---|---|---:|---|---|---|
+| govinfo_statute86_pg1329_extract.pdf | govinfo_statute86_pg1329.pdf (165 pages) | 31269765 | `dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126` | 1,25,26,27,28,29,31,32,38,165 | first page; sections 121, 123 and 124 (86 Stat. 1353-1357); section 129 (86 Stat. 1359-1360); section 140 (86 Stat. 1366); approval date (86 Stat. 1493) |
+| govinfo_statute81_pg821_extract.pdf | govinfo_statute81_pg821.pdf (115 pages) | 21021449 | `cf9e4671ce31f72d02b306a1a0c76341423f564ebad9905556cc4396372b56a7` | 1,20,21,22,115 | first page; sections 116 and 118 (81 Stat. 840-842); approval date (81 Stat. 935) |
+| govinfo_statute97_pg65_extract.pdf | govinfo_statute97_pg65.pdf (108 pages) | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` | 1,3,4,5,6,7,8,25,26,27,43,44,45,57,58,59,60,61,62,108 | first page; sections 101-103 (97 Stat. 67-72); section 124 (97 Stat. 89-91); section 201 (97 Stat. 107-109); sections 323 and 324 (97 Stat. 121-126); approval date (97 Stat. 172) |
+| govinfo_statute79_pg286_extract.pdf | govinfo_statute79_pg286.pdf (138 pages) | 24847693 | `37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14` | 1,114,115,138 | first page; section 325 (79 Stat. 399-400); approval date (79 Stat. 423) |
+| federal_register_1975_07_10_extract.pdf | federal_register_1975_07_10.pdf (172 pages) | 29449191 | `ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84` | 1,13,14 | cover; FR Doc. 75-17887, 40 FR 29071-29072, from its heading to its filing line |
+
+Command: `qpdf --deterministic-id --empty --pages <original> <pages> -- <extract>` (qpdf version 12.4.2).
+
+## Removed uncited captures
+
+No registry row cites these files, so they are not retained. The inventory rows above keep each PDF's URL, size and SHA-256.
+
+- irs_pub17_1999.pdf, irs_pub17_2000.pdf, irs_pub17_2001.pdf, irs_pub17_2002.pdf, irs_pub17_2003.pdf, irs_pub17_2004.pdf, irs_pub17_2005.pdf, irs_pub17_2006.pdf, irs_pub17_2007.pdf: IRS Publication 17, 1999-2007.
+- govinfo_statute86_pg1329.pdf.txt, govinfo_statute81_pg821.pdf.txt, govinfo_statute97_pg65.pdf.txt: whole-act text renderings of the originals, with no manifest entry.

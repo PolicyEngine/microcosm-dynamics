@@ -38,9 +38,9 @@
     {
       "citation": {
         "authority": "PublicLaw98-21",
-        "capture": "govinfo_statute97_pg65.pdf",
+        "capture": "govinfo_statute97_pg65_extract.pdf",
         "location": "124(c)(3),(d)(2):411(a)(11)deduction begins taxable years after1989",
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb"
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
       },
       "effective_end": "1989-12-31",
       "effective_start": "1968-01-01",
@@ -144,8 +144,8 @@
           "name": "Social_Security_Amendments_of_1983",
           "status": "operational_primary_source",
           "citation": {
-            "capture": "govinfo_statute97_pg65.pdf",
-            "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+            "capture": "govinfo_statute97_pg65_extract.pdf",
+            "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
             "authority": "PublicLaw98-21,SocialSecurityAmendmentsof1983",
             "location": "section124(c)(3),97Stat90;section124(d)(2),97Stat91"
           }
@@ -162,8 +162,8 @@
         }
       ],
       "resolution_citation": {
-        "capture": "govinfo_statute97_pg65.pdf",
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
+        "capture": "govinfo_statute97_pg65_extract.pdf",
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
         "authority": "PublicLaw98-21,SocialSecurityAmendmentsof1983",
         "location": "section124(c)(3),97Stat90;section124(d)(2),97Stat91"
       }
