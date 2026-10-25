@@ -22,16 +22,23 @@ definitions may span more than one physical table; the reader merges them and
 refuses a code whose tables define it differently. Definitions come only from
 the chart's own State section, and a State named only in a date line, with no
 section heading, refuses. Paragraphs and headings end where HTML ends them,
-end tag or not, and a paragraph, div or heading is read from its own text, so
-a State heading in a block left open still names its State. A heading is
-read whole and also line by line, a line being its text between the blocks
-HTML keeps inside it, so a block after a heading's words does not hide its
-State, claimant or date; a heading whose lines name two States refuses. A
-claimant line that names a State other than its section's refuses, since the
-section's own heading was not read; before any State heading, the chart
-refuses instead. Every definition table of a section precedes its
-first chart; a definition table after a chart refuses, because the source does
-not say which earlier chart it serves. A jointly published code
+end tag or not, and every block that ends a paragraph, apart from a table or
+rule, is read from its own text. So a State heading in a block left open
+still names its State, and a list item, section or blockquote reads the same
+after a closed heading as inside one left open. A block is read whole and
+also line by line, a line being its text between ``br`` tags and the blocks
+HTML keeps inside it, without zero-width characters, so a block or ``br``
+after a heading's words does not hide its State, claimant or date. Every
+line passes the same State guards: a line that dates another State refuses,
+a claimant line that names a State other than its section's refuses, since
+the heading of the State it names was not read, and a block whose lines head
+two States refuses. A heading whose first line names a State other than its
+section's, as "New York (NJ)" does in Nevada's section, refuses too. Before
+any State heading, the chart refuses instead. A postal code after a State's
+name must be that State's, and "Washington, D.C." names the District.
+Every definition table of a section precedes its first chart; a definition
+table after a chart refuses, because the source does not say which earlier
+chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
 lists. A chart code that no definition table defines stays undefined and is
 recorded in ``poms_open_questions.json``; no definition is inferred for it.
@@ -40,7 +47,6 @@ recorded in ``poms_open_questions.json``; no definition is inferred for it.
 from __future__ import annotations
 
 import re
-from copy import deepcopy
 from dataclasses import replace
 from datetime import date, datetime
 from decimal import Decimal
@@ -81,6 +87,15 @@ _STATES = (
     "Washington",
     "Wisconsin",
 )
+_POSTAL_CODES = dict(
+    zip(
+        _STATES,
+        "CA DE DC HI IA MA MI MT NV NJ NY PA RI UT VT WA WI".split(),
+        strict=True,
+    )
+)
+# "Washington, D.C." and "Washington DC" name the District, not the State.
+_DISTRICT_ALIAS = r"Washington,?\s+D\.?\s?C\b\.?"
 _MONTHS = (
     "January February March April May June July August September October "
     "November December"
@@ -92,24 +107,31 @@ _DATE = re.compile(
     re.IGNORECASE,
 )
 _HEADINGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
-# A div can carry a State heading as a paragraph does.
-_BLOCKS = _HEADINGS | {"p", "div"}
-# What ends a block's own text. A paragraph or div ends at the next block.
-# HTML keeps a div, section or paragraph inside a heading, so a heading's
-# text runs on through them; a table, which HTML also nests in a heading
-# left open, is never heading text.
-_TEXT_STOPS = {"p": PARAGRAPH_CLOSERS, "div": PARAGRAPH_CLOSERS} | {
+# Every block that ends a paragraph, apart from a table or rule, is read
+# from its own text, so a list item, section or blockquote reads the same
+# after a heading as inside one left open, where HTML keeps it.
+_BLOCKS = _HEADINGS | (PARAGRAPH_CLOSERS - {"table", "hr"})
+# What ends a block's own text. A block other than a heading ends at the
+# next block. HTML keeps any other block inside a heading left open, so a
+# heading's text runs on through them and ends at a heading or table; a
+# table, which HTML also nests in a heading left open, is never heading text.
+_TEXT_STOPS = {block: PARAGRAPH_CLOSERS for block in _BLOCKS} | {
     heading: _HEADINGS | {"table"} for heading in _HEADINGS
 }
 
 
+# A br ends a line as a block nested in a heading does.
+_LINE_BREAKS = PARAGRAPH_CLOSERS | {"br"}
+
+
 def _lines(element: ET.Element) -> list[str]:
-    """A block's own text, split where a block nested in it starts or ends.
+    """A block's own text, split at a ``br`` and where a block nested in it
+    starts or ends, without zero-width characters.
 
     The text stops at the first block that ends the element
     (``_TEXT_STOPS``). Before that only a heading can hold a nested block,
-    so a paragraph or div has at most one line. The walk does not recurse,
-    so deep nesting cannot exhaust the interpreter stack.
+    so a block other than a heading splits only at a ``br``. The walk does not
+    recurse, so deep nesting cannot exhaust the interpreter stack.
     """
     stops = _TEXT_STOPS[element.tag]
     lines: list[list[str]] = [[element.text or ""]]
@@ -120,39 +142,42 @@ def _lines(element: ET.Element) -> list[str]:
         if child is None:
             walk.pop()
             if walk:
-                if node.tag in PARAGRAPH_CLOSERS:
+                if node.tag in _LINE_BREAKS:
                     lines.append([])
                 lines[-1].append(node.tail or "")
             continue
         if child.tag in stops:
             break
-        if child.tag in PARAGRAPH_CLOSERS:
+        if child.tag in _LINE_BREAKS:
             lines.append([])
         lines[-1].append(child.text or "")
         walk.append((child, iter(child)))
-    texts = (" ".join(" ".join(line).split()) for line in lines)
+    texts = (" ".join(_blank(" ".join(line)).split()) for line in lines)
     return [text for text in texts if text]
 
 
 def _own_text(element: ET.Element) -> str:
     """Normalize a block's own text, up to the first block that ends it.
 
-    This is ``normalized_text`` when no such block nests inside the
-    element. A heading left open is read without the next heading or the
-    table the tree nests under it.
+    This is ``normalized_text`` without zero-width characters when no such
+    block nests inside the element. A heading left open is read without the
+    next heading or the table the tree nests under it.
     """
     return " ".join(_lines(element))
 
 
 def _state_heading(name: str, text: str) -> bool:
+    names = re.escape(name)
+    if name == "District of Columbia":
+        names += "|" + _DISTRICT_ALIAS
     return bool(
         re.fullmatch(
             r"(?:[A-Z]\.\s*)?"
             r"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|\s*-\s*)"
-            r"|Procedure\s*-\s*)?" + re.escape(name)
-            # The 2009 and 2010 sections append a postal code, as in
-            # "New Jersey (NJ)".
-            + r"(?:\s*\([A-Z]{2}\))?",
+            rf"|Procedure\s*-\s*)?(?:{names})"
+            # The 2009 and 2010 sections append the State's postal code, as
+            # in "New Jersey (NJ)".
+            + rf"(?:\s*\({_POSTAL_CODES[name]}\))?",
             text,
             re.IGNORECASE,
         )
@@ -193,12 +218,8 @@ def _claimant_line(text: str) -> re.Match[str] | None:
 
 
 def _named_states(text: str) -> list[str]:
-    # "Washington, D.C." names the District, not the State of Washington.
     text = re.sub(
-        r"\bWashington,?\s+D\.?\s?C\b\.?",
-        "District of Columbia",
-        text,
-        flags=re.I,
+        r"\b" + _DISTRICT_ALIAS, "District of Columbia", text, flags=re.I
     )
     return [
         name
@@ -329,13 +350,12 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
             # Only the block's own text: a table or heading nested under a
             # heading left open is read in turn, not as part of it.
             text = _own_text(element)
-            # HTML keeps a paragraph or div inside a heading, after its
-            # words or around them, so a heading is also read line by line.
-            # Its whole text comes first, and a whole-text State date line
-            # stays a date line.
-            candidates = [text]
-            if element.tag in _HEADINGS and not _state_date_line(text):
-                candidates += _lines(element)
+            # HTML keeps other blocks inside a heading left open, after its
+            # words or around them, and a br breaks a line, so a block is
+            # also read line by line. Its whole text comes first, and a
+            # whole-text State date line stays a date line.
+            lines = [] if _state_date_line(text) else _lines(element)
+            candidates = [text, *lines]
             headed = [
                 name
                 for name in _STATES
@@ -350,8 +370,12 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 dates = ()
                 definitions = []
                 charted = False
-            dated = _state_date_line(text)
-            if dated and state != dated:
+            # Every line is checked, so a date line nested in a heading
+            # cannot carry another State's date into this section.
+            if any(
+                _state_date_line(line) not in {None, state}
+                for line in candidates
+            ):
                 # Definitions are collected per section heading; a State
                 # named only in a date line has none of its own, so the
                 # reader refuses rather than reuse another State's.
@@ -367,23 +391,39 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         )
                     )
                     break
+            matches = []
             for line in candidates:
                 match = _claimant_line(line)
-                if match:
-                    named = _named_states(line)
-                    if state is not None and named and state not in named:
-                        # The section heading that should have named this
-                        # State was not read, so refuse rather than chart it
-                        # under the State before it.
-                        raise TableStructureError(
-                            "POMS claimant line names another State"
-                        )
-                    claimant = (
-                        "couple"
-                        if match[1].lower() == "couple"
-                        else "individual"
+                if not match:
+                    continue
+                # Every claimant line is guarded, not only the first, so a
+                # block's whole text cannot cover a line nested in it.
+                named = _named_states(line)
+                if state is not None and named and state not in named:
+                    # The section heading that should have named this State
+                    # was not read, so refuse rather than chart it under the
+                    # State before it.
+                    raise TableStructureError(
+                        "POMS claimant line names another State"
                     )
-                    break
+                matches.append(match)
+            if matches:
+                claimant = (
+                    "couple"
+                    if matches[0][1].lower() == "couple"
+                    else "individual"
+                )
+            if (
+                element.tag in _HEADINGS
+                and state is not None
+                and lines
+                and set(_named_states(lines[0])) - {state}
+            ):
+                # A heading's own first words name a State in a form no
+                # section heading takes, so its section was not read.
+                raise TableStructureError(
+                    "POMS heading names a State it does not head"
+                )
         return True
 
     # Document order without recursion, so deep nesting cannot exhaust the
@@ -398,20 +438,23 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
 
 def _payment_rows(table: ET.Element) -> tuple[tuple[CellToken, ...], ...]:
     """Split publisher-stacked subrows while reusing the shared span logic."""
-    clone = deepcopy(table)
-    originals = [c for c in table.iter() if c.tag in {"td", "th"}]
-    copied = [c for c in clone.iter() if c.tag in {"td", "th"}]
+    # The span logic reads a skeleton of the table whose cells hold only a
+    # key to the original cell. It is built without recursion, as deepcopy
+    # is not, so a deeply nested cell cannot crash the interpreter.
     lookup = {}
-    for index, (original, cell) in enumerate(
-        zip(originals, copied, strict=True)
-    ):
-        key = f"poms-cell-{index}"
-        lookup[key] = original
-        cell.text = key
-        for child in list(cell):
-            cell.remove(child)
+    skeleton = ET.Element(table.tag, table.attrib)
+    pending = [(table, skeleton)]
+    while pending:
+        original, copy = pending.pop()
+        for child in original:
+            node = ET.SubElement(copy, child.tag, child.attrib)
+            if child.tag in {"td", "th"}:
+                node.text = f"poms-cell-{len(lookup)}"
+                lookup[node.text] = child
+            else:
+                pending.append((child, node))
     rows = []
-    for row in expand_html_table(clone):
+    for row in expand_html_table(skeleton):
         elements = [lookup.get(token.text) for token in row]
         tokens = [
             _cell_token(element) if element is not None else CellToken("")

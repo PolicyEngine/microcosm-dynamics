@@ -181,19 +181,40 @@ PARAGRAPH_CLOSERS = frozenset(
 class _HTMLTree(HTMLParser):
     """Build a tolerant stdlib tree; publishers' void tags never nest.
 
-    Paragraphs, headings, cells, rows, table sections and captions end
-    where the WHATWG parsing rules end them, even when the source omits the
-    end tag, so a paragraph never holds the headings and tables that follow
-    it. ``table`` closes an open paragraph as in standards mode; every
-    pinned HTML capture declares a doctype. Any h1-h6 end tag ends the open
-    heading in scope, whichever its level. A caption, colgroup or table
-    section start tag ends the open cell, row, section or caption of its
-    table, and a row or cell start tag ends an open caption. ``col`` is not
-    modelled that way, since HTML places it in an open colgroup, as every
-    ``col`` in the pinned captures is placed. Other end tags close at the
-    matching element, regardless of scope, and inline end tags misnested
-    across an open paragraph, which HTML resolves with its adoption agency
-    rules, are not modelled.
+    Paragraphs, headings, buttons, cells, rows, table sections, captions
+    and colgroups end where the WHATWG parsing rules end them, even when the
+    source omits the end tag, so a paragraph never holds the headings and
+    tables that follow it. ``table`` closes an open paragraph as in
+    standards mode; every pinned HTML capture declares a doctype. Any h1-h6
+    end tag ends the open heading in scope, whichever its level, a button
+    start tag ends an open button in scope, and a list item start tag (li,
+    or dd and dt) ends the open one unless a special element other than
+    address, div or p is open inside it. A caption, colgroup or
+    table section start tag ends the open cell, row, section, caption or
+    colgroup of its table, and so does a ``col`` start tag outside a
+    colgroup, since HTML gives it a colgroup of its own. A row or cell start
+    tag ends an open caption or colgroup. A row that starts directly in a
+    table starts the tbody HTML implies for it, and a cell that starts
+    outside a row starts the implied row. A table start tag in a table,
+    outside a cell or caption, ends that table first.
+
+    End tags close only what HTML lets them close: a table part's end tag
+    closes it within its own table, ``</table>`` the innermost table,
+    ``</p>`` a paragraph in button scope (or, with none, leaves an empty
+    one, as HTML does), ``</li>`` a list item in list item scope, and
+    another special element's end tag (WHATWG's "special" category) that
+    element in scope; other end tags are ignored. ``</br>`` is a ``br``,
+    and ``</body>`` and ``</html>`` close nothing. Any other
+    end tag, such as ``</span>`` or ``</b>``, closes the innermost element
+    it names unless a special element is open inside that one, in which
+    case it is ignored.
+
+    Not modelled: HTML's adoption agency rules, which also move a
+    formatting element such as ``b`` across the block that ends it (the
+    block's text is the same here); content that HTML moves out of a table
+    to just before it (foster parenting), which stays in the table here;
+    and a self-closing slash on a non-void element, which HTML ignores and
+    which closes the element here.
     """
 
     _VOID = frozenset(
@@ -209,6 +230,21 @@ class _HTMLTree(HTMLParser):
     _TABLE_SECTIONS = frozenset("table thead tbody tfoot".split())
     # Start tags that clear the stack back to a table context.
     _TABLE_CONTEXT = frozenset("caption colgroup thead tbody tfoot".split())
+    # End tags that close only within their own table.
+    _TABLE_PARTS = frozenset(
+        "caption colgroup tbody td tfoot th thead tr".split()
+    )
+    # WHATWG's "special" HTML elements.
+    _SPECIAL = frozenset(
+        """address applet area article aside base basefont bgsound blockquote
+        body br button caption center col colgroup dd details dir div dl dt
+        embed fieldset figcaption figure footer form frame frameset h1 h2 h3
+        h4 h5 h6 head header hgroup hr html iframe img input keygen li link
+        listing main marquee menu meta nav noembed noframes noscript object
+        ol p param plaintext pre script search section select source style
+        summary table tbody td template textarea tfoot th thead title tr
+        track ul wbr xmp""".split()
+    )
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -226,10 +262,10 @@ class _HTMLTree(HTMLParser):
     def _close_open(self, closes: set[str], bounds: frozenset[str]) -> None:
         """Pop the innermost open ``closes`` element below ``bounds``."""
         for i in range(len(self.stack) - 1, 0, -1):
-            if self.stack[i].tag in bounds:
-                return
             if self.stack[i].tag in closes:
                 del self.stack[i:]
+                return
+            if self.stack[i].tag in bounds:
                 return
 
     def handle_starttag(self, tag, attrs):
@@ -237,20 +273,52 @@ class _HTMLTree(HTMLParser):
             self._close_paragraph()
         if tag in self._HEADINGS and self.stack[-1].tag in self._HEADINGS:
             self.stack.pop()
-        if tag in self._TABLE_CONTEXT:
+        if tag == "button":
+            self._close_open({"button"}, self._SCOPE)
+        if tag in {"li", "dd", "dt"}:
+            # A list item ends the open one, unless a special element other
+            # than address, div or p is open inside it.
+            closes = {"li"} if tag == "li" else {"dd", "dt"}
+            for i in range(len(self.stack) - 1, 0, -1):
+                if self.stack[i].tag in closes:
+                    del self.stack[i:]
+                    break
+                if self.stack[i].tag in self._SPECIAL - {
+                    "address",
+                    "div",
+                    "p",
+                }:
+                    break
+        if tag == "table":
+            for node in reversed(self.stack):
+                if node.tag in {"td", "th", "caption"}:
+                    break
+                if node.tag in self._TABLE_SECTIONS | {"tr", "colgroup"}:
+                    # A table directly in a table ends it, as in HTML.
+                    self._close_open({"table"}, frozenset())
+                    break
+        if tag in self._TABLE_CONTEXT or (
+            tag == "col" and self.stack[-1].tag != "colgroup"
+        ):
             # Anything open in the innermost table ends with it.
             for i in range(len(self.stack) - 1, 0, -1):
                 if self.stack[i].tag == "table":
                     del self.stack[i + 1 :]
                     break
         if tag in {"tr", "td", "th"}:
-            self._close_open({"caption"}, frozenset({"table"}))
+            self._close_open({"caption", "colgroup"}, frozenset({"table"}))
         if tag in {"td", "th"}:
             # A new cell closes the open one, with anything left open in it.
             self._close_open({"td", "th"}, self._TABLE_SECTIONS | {"tr"})
         if tag == "tr":
             self._close_open({"td", "th", "tr"}, self._TABLE_SECTIONS)
             self._close_open({"tr"}, self._TABLE_SECTIONS)
+        if tag in {"tr", "td", "th"} and self.stack[-1].tag == "table":
+            # HTML puts a row that starts directly in a table in a tbody.
+            self.stack.append(ET.SubElement(self.stack[-1], "tbody"))
+        if tag in {"td", "th"} and self.stack[-1].tag in self._TABLE_SECTIONS:
+            # HTML implies the row of a cell that starts outside one.
+            self.stack.append(ET.SubElement(self.stack[-1], "tr"))
         el = ET.SubElement(self.stack[-1], tag, {k: v or "" for k, v in attrs})
         if tag not in self._VOID:
             self.stack.append(el)
@@ -264,11 +332,31 @@ class _HTMLTree(HTMLParser):
         if tag in self._HEADINGS:
             # Any h1-h6 end tag ends the open heading in scope.
             self._close_open(self._HEADINGS, self._SCOPE)
+        elif tag == "br":
+            self.handle_starttag("br", [])
+        elif tag in {"body", "html"}:
             return
-        for i in range(len(self.stack) - 1, 0, -1):
-            if self.stack[i].tag == tag:
-                del self.stack[i:]
-                return
+        elif tag == "table":
+            self._close_open({"table"}, frozenset())
+        elif tag in self._TABLE_PARTS:
+            self._close_open({tag}, frozenset({"table"}))
+        elif tag == "p":
+            depth = len(self.stack)
+            self._close_open({"p"}, self._BUTTON_SCOPE)
+            if len(self.stack) == depth:
+                # With no paragraph to close, HTML inserts an empty one.
+                ET.SubElement(self.stack[-1], "p")
+        elif tag == "li":
+            self._close_open({"li"}, self._SCOPE | {"ol", "ul"})
+        elif tag in self._SPECIAL:
+            self._close_open({tag}, self._SCOPE)
+        else:
+            for i in range(len(self.stack) - 1, 0, -1):
+                if self.stack[i].tag == tag:
+                    del self.stack[i:]
+                    return
+                if self.stack[i].tag in self._SPECIAL:
+                    return
 
     def handle_data(self, data):
         parent = self.stack[-1]
@@ -303,9 +391,10 @@ def _cell_token(element: ET.Element) -> CellToken:
 
     A ``br`` or nested block joins its lines with a space, so two amounts
     stacked that way in one cell would read as one space-grouped number.
-    No pinned cell, or paragraph of a cell, has a number on each side of a
-    ``br``; POMS charts stack amounts in paragraphs, which the POMS reader
-    splits into subrows.
+    No pinned cell joins two amounts by a ``br`` within one paragraph: no
+    ``br`` there, or run of them, sits between a line ending in a digit and
+    one starting with a digit or "$". POMS charts stack amounts in
+    paragraphs, which the POMS reader splits into subrows.
     """
     flags = []
     parts = []

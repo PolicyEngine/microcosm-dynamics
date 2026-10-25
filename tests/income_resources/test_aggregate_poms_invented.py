@@ -1,6 +1,8 @@
 """Invented HTML only; no public or person data supply these fixtures."""
 
 import string
+import subprocess
+import sys
 from dataclasses import replace
 from decimal import Decimal
 from hashlib import sha256
@@ -1176,3 +1178,415 @@ def test_invented_tree_ends_paragraphs_and_headings_as_html_does(tokens):
             )
 
     check(document, False)
+
+
+@pytest.mark.parametrize("close", ["", "</h3>"])
+@pytest.mark.parametrize("block", ["section", "blockquote", "li"])
+@pytest.mark.parametrize(
+    ("line", "message"),
+    [
+        ("Utah Effective January 1, 2031", "section heading"),
+        ("Couple for Utah", "names another State"),
+    ],
+    ids=["date_line", "claimant_line"],
+)
+def test_invented_line_nested_in_a_heading_passes_the_state_guards(
+    close, block, line, message
+):
+    """Regression: a date or claimant line HTML kept inside a heading left
+    open skipped both State guards; it now refuses, as after a closed one."""
+    nested = (
+        f"<ul><li>{line}</ul>"
+        if block == "li"
+        else f"<{block}>{line}</{block}>"
+    )
+    payload = invented_nevada_after_california(f"<h3>Nevada{close}{nested}")
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(payload)
+
+
+def test_invented_claimant_guard_reads_every_claimant_line():
+    """Regression: only a heading's first claimant line was guarded, and its
+    whole text, which also names its section's State, covered the rest."""
+    payload = invented_nevada_after_california(
+        "<h3>Nevada</h3><h4>Individual for Nevada<br>Couple for Utah</h4>"
+    )
+    with pytest.raises(TableStructureError, match="names another State"):
+        describe_poms_tables(payload)
+
+
+INVENTED_BLOCK_KINDS = ("p", "div", "section", "blockquote", "li", "article")
+
+
+def invented_block(kind: str, body: str, block: str, open_: bool) -> str:
+    """Render a piece with its line in ``block``, or a heading left open."""
+    if kind == "h3":
+        return f"<h3>{body}" + ("" if open_ else "</h3>")
+    if kind == "p":
+        if block == "li":
+            return f"<ul><li>{body}</ul>"
+        return f"<{block}>{body}</{block}>"
+    return body
+
+
+@settings(deadline=None, max_examples=100)
+@given(invented_paragraph_sections(), st.data())
+def test_invented_selectors_do_not_depend_on_heading_ends_or_block_kinds(
+    sections, data
+):
+    """A heading left open holds the blocks HTML nests in it, and a State
+    heading, date or claimant line may sit in any of these blocks; the
+    selectors are those of closed headings and paragraphs."""
+    pieces, states = sections
+    blocks = [data.draw(st.sampled_from(INVENTED_BLOCK_KINDS)) for _ in pieces]
+    left_open = [data.draw(st.booleans()) for _ in pieces]
+    explicit = poms_outcome(invented_rendering(pieces, [True] * len(pieces)))
+    varied = invented_payload(
+        *(
+            invented_block(kind, body, block, open_)
+            for (kind, body), block, open_ in zip(
+                pieces, blocks, left_open, strict=True
+            )
+        )
+    )
+    assert poms_outcome(varied) == explicit
+    if not isinstance(explicit, str):
+        assert [context["state"] for context in explicit] == states
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "<h3>Nevada<br>Invented note</h3>",
+        "<h3>Invented note<br>Nevada</h3>",
+        "<h3>Nevada<br></br>Invented note</h3>",
+        "<h3>Nevada</p>Invented note</h3>",
+        "<h3>Nevada&#8203;</h3>",
+        "<h3>&#65279;Description of supplements for Nevada</h3>",
+        "<div>Nevada<br>Invented note</div>",
+        "<p>Description of supplements for Nevada<br>Invented note</p>",
+        "<ul><li>Description of supplements for Nevada</ul>",
+    ],
+)
+def test_invented_line_break_or_zero_width_character_keeps_a_state_heading(
+    heading,
+):
+    """Regression: a br or zero-width character kept California's selector."""
+    spec, _ = invented_spec_for(invented_nevada_after_california(heading), 1)
+    assert spec.selector["state"] == "Nevada"
+    assert spec.selector["definitions_table_indexes"] == []
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "<h3>Nevada <small>(Invented)</small></h3>",
+        "<h3>New York (NJ)</h3>",
+        "<h3>Washington (DC)</h3>",
+        "<h3>Invented note on Nevada</h3>",
+        "<h3>Invented note on Nevada<br>Invented note</h3>",
+    ],
+)
+def test_invented_heading_naming_a_state_it_does_not_head_is_refused(
+    heading,
+):
+    """Regression: these headings kept California's definitions silently."""
+    with pytest.raises(TableStructureError, match="does not head"):
+        describe_poms_tables(invented_nevada_after_california(heading))
+
+
+def test_invented_heading_naming_its_own_state_is_admitted():
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]).replace(
+            "<p>Monthly", "<h4>Invented note on California</h4><p>Monthly"
+        )
+    )
+    (context,) = describe_poms_tables(payload)
+    assert context["state"] == "California"
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        # Only a heading's first line can name a State it does not head.
+        "<h4>Invented note<br>Invented note on Nevada</h4>",
+        # A paragraph that names another State is prose, not a heading.
+        "<p>Invented note on Nevada</p>",
+    ],
+)
+def test_invented_later_heading_line_or_paragraph_naming_a_state_is_admitted(
+    block,
+):
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]).replace(
+            "<p>Monthly", block + "<p>Monthly"
+        )
+    )
+    (context,) = describe_poms_tables(payload)
+    assert context["state"] == "California"
+
+
+def test_invented_line_after_a_br_dating_another_state_is_refused():
+    """A br-separated line that dates another State refuses, as a block
+    whose whole text does."""
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]).replace(
+            "<p>Monthly",
+            "<p>Invented note<br>Nevada Effective 1/1/30</p><p>Monthly",
+        )
+    )
+    with pytest.raises(TableStructureError, match="section heading"):
+        describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "Washington, D.C.",
+        "Description of supplements for Washington, D.C.",
+        "Washington DC",
+        "Washington, DC (DC)",
+    ],
+)
+def test_invented_washington_dc_heading_names_the_district(heading):
+    """Regression: a "Washington, D.C." heading kept the prior State."""
+    spec, _ = invented_spec_for(
+        invented_nevada_after_california(f"<h3>{heading}</h3>"), 1
+    )
+    assert spec.selector["state"] == "District of Columbia"
+    assert spec.selector["definitions_table_indexes"] == []
+
+
+def test_invented_deeply_nested_chart_cell_reads_without_recursion():
+    """Regression: copying a chart whose cell nests 50,000 spans crashed the
+    interpreter (exit 139), so the read runs in its own process."""
+    program = (
+        "from populace_dynamics.income_resources.aggregate_poms import "
+        "_payment_rows\n"
+        "from populace_dynamics.income_resources.aggregate_tables import "
+        "parse_html\n"
+        "depth = 50_000\n"
+        "page = ('<table><tr><td>A</td><td>' + '<span>' * depth + '100' "
+        "+ '</span>' * depth + '</td></tr></table>')\n"
+        "rows = _payment_rows(parse_html(page).find('.//table'))\n"
+        "print(len(rows), [token.text for token in rows[0]])\n"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", program],
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == "1 ['A', '100']"
+
+
+def test_invented_table_nested_in_a_chart_cell_adds_no_rows():
+    """A table inside a chart cell is that cell's text, as the copy before
+    the skeleton read it; its rows are not the chart's."""
+    page = (
+        "<table><tr><td>A</td><td><p>100</p><table>"
+        "<tr><td>w1</td><td>w2</td></tr><tr><td>w3</td></tr></table>"
+        "</td></tr><tr><td>B</td><td>200</td></tr></table>"
+    )
+    rows = _payment_rows(parse_html(page).find(".//table"))
+    assert [[token.text for token in row] for row in rows] == [
+        ["A", "100 w1 w2 w3"],
+        ["B", "200"],
+    ]
+
+
+def invented_tables(html: str):
+    """Each table's caption text and its rows' cell texts, in order."""
+    root = parse_html(html)
+    pending, out = [root], []
+    while pending:
+        node = pending.pop()
+        pending.extend(list(node)[::-1])
+        if node.tag == "table":
+            caption = node.find("caption")
+            out.append(
+                (
+                    normalized_text(caption) if caption is not None else None,
+                    [
+                        [
+                            normalized_text(c)
+                            for c in row
+                            if c.tag in {"td", "th"}
+                        ]
+                        for row in node.iter("tr")
+                    ],
+                )
+            )
+    return out
+
+
+# Each page's expected tables are what html5lib 1.1 builds for it.
+@pytest.mark.parametrize(
+    ("html", "expected"),
+    [
+        pytest.param(
+            "<table><tr><td>w1<table><tr><td>w2<tbody><tr><td>w3</table>w4"
+            "</td><td>w5</table>",
+            [
+                (None, [["w1 w2 w3 w4", "w5"], ["w2"], ["w3"]]),
+                (None, [["w2"], ["w3"]]),
+            ],
+            id="section_start_in_a_nested_table_cell",
+        ),
+        pytest.param(
+            "<table><caption><table><tr><td>w1</table>w2</caption>"
+            "<tr><td>w3</table>",
+            [("w1 w2", [["w1"], ["w3"]]), (None, [["w1"]])],
+            id="caption_holding_a_table",
+        ),
+        pytest.param(
+            "<table><caption>w0<table><tr><td>w1</table>w2<tr><td>w3</table>",
+            [("w0 w1 w2", [["w1"], ["w3"]]), (None, [["w1"]])],
+            id="row_start_ends_a_caption_after_its_nested_table",
+        ),
+        pytest.param(
+            "<table><tr><td>w1<colgroup><col></colgroup><td>w2</table>",
+            [(None, [["w1"], ["w2"]])],
+            id="colgroup_start_in_a_cell",
+        ),
+        pytest.param(
+            "<table><tr><td>w9<td>w10<col><td>w11</table>",
+            [(None, [["w9", "w10"], ["w11"]])],
+            id="col_start_in_a_cell",
+        ),
+        pytest.param(
+            "<table><colgroup><col><td>w1</table>",
+            [(None, [["w1"]])],
+            id="cell_start_ends_an_open_colgroup",
+        ),
+        pytest.param(
+            "<table><tr><td>w1<tbody><td>w2</table>",
+            [(None, [["w1"], ["w2"]])],
+            id="cell_after_a_section_start_implies_a_row",
+        ),
+        pytest.param(
+            "<table><td>w1<td>w2</table>",
+            [(None, [["w1", "w2"]])],
+            id="cell_directly_in_a_table_implies_a_row",
+        ),
+        pytest.param(
+            "<table><tr><td>w1</td></tr><table><tr><td>w2</table>",
+            [(None, [["w1"]]), (None, [["w2"]])],
+            id="table_start_in_a_table_ends_it",
+        ),
+        pytest.param(
+            "<table><td></tbody>w0<tr><td>w1</table>",
+            [(None, [[""], ["w1"]])],
+            id="section_end_tag_closes_the_implied_tbody",
+        ),
+        pytest.param(
+            "<div><table><tr><td>w1</div>w2<td>w3</table>",
+            [(None, [["w1w2", "w3"]])],
+            id="block_end_tag_stops_at_the_cell",
+        ),
+        pytest.param(
+            "<table><tr><td><table><tr><td>w1</tr></td>w2</table>w3<td>w4"
+            "</table>",
+            [(None, [["w1 w2 w3", "w4"], ["w1"]]), (None, [["w1"]])],
+            id="row_end_tag_stops_at_its_table",
+        ),
+    ],
+)
+def test_invented_tree_builds_tables_as_html_does(html, expected):
+    """Regression: each page built different tables before these rules."""
+    assert invented_tables(html) == expected
+
+
+def invented_blocks(
+    html: str, tags=("p", "h3", "button", "li", "div", "object")
+):
+    root = parse_html(html)
+    pending, out = [root], []
+    while pending:
+        node = pending.pop()
+        pending.extend(list(node)[::-1])
+        if node.tag in tags and normalized_text(node):
+            out.append((node.tag, normalized_text(node)))
+    return out
+
+
+# Each page's expected blocks are what html5lib 1.1 builds for it.
+@pytest.mark.parametrize(
+    ("html", "expected"),
+    [
+        pytest.param(
+            "<h3><button>w1</h3>w2</button><p>w3</p>",
+            [("h3", "w1"), ("button", "w1"), ("p", "w3")],
+            id="heading_end_tag_ends_a_button_inside_it",
+        ),
+        pytest.param(
+            "<p><button>w1<button>w2</button>w3</p>",
+            [("p", "w1 w2 w3"), ("button", "w1"), ("button", "w2")],
+            id="button_start_ends_an_open_button",
+        ),
+        pytest.param(
+            "<h3>w0</p>w1</h3>",
+            [("h3", "w0 w1")],
+            id="paragraph_end_tag_without_a_paragraph",
+        ),
+        pytest.param(
+            "<ul><li>w0<li>w1<div>w2<li>w3</ul>",
+            [("li", "w0"), ("li", "w1 w2"), ("div", "w2"), ("li", "w3")],
+            id="list_item_start_ends_the_open_item",
+        ),
+        pytest.param(
+            "<div>w0</body>w1</div>",
+            [("div", "w0w1")],
+            id="body_end_tag_closes_nothing",
+        ),
+        pytest.param(
+            "<p>w0<span>w1</div>w2</span>w3</p>",
+            [("p", "w0 w1w2 w3")],
+            id="block_end_tag_without_its_block_is_ignored",
+        ),
+        pytest.param(
+            "<div><span>w0<p>w1</span>w2</p>w3</div>",
+            [("div", "w0 w1w2 w3"), ("p", "w1w2")],
+            id="inline_end_tag_stops_at_an_open_block",
+        ),
+        pytest.param(
+            "<ul><li>w0<ul><li>w1</ul>w2</ul>",
+            [("li", "w0 w1 w2"), ("li", "w1")],
+            id="nested_list_item_start_keeps_the_outer_item",
+        ),
+        pytest.param(
+            "<body><div>w0</body>w1</div>",
+            [("div", "w0w1")],
+            id="body_end_tag_after_a_body_start_closes_nothing",
+        ),
+        pytest.param(
+            "<p>w0<button>w1</p>w2</button>w3",
+            [("p", "w0 w1 w2 w3"), ("button", "w1 w2")],
+            id="paragraph_end_tag_inside_a_button",
+        ),
+        pytest.param(
+            "<ul><li>w0<ol><span>w1</li>w2</ol></ul>",
+            [("li", "w0 w1w2")],
+            id="list_item_end_tag_stops_at_a_nested_list",
+        ),
+        pytest.param(
+            "<div>w0<p>w1</div>w2",
+            [("div", "w0 w1"), ("p", "w1")],
+            id="block_end_tag_closes_its_open_paragraph",
+        ),
+        pytest.param(
+            "<div><object>w0</object>w1</div>",
+            [("div", "w0 w1"), ("object", "w0")],
+            id="scope_element_end_tag_closes_itself",
+        ),
+    ],
+)
+def test_invented_tree_builds_blocks_as_html_does(html, expected):
+    assert invented_blocks(html) == expected
+
+
+def test_invented_end_br_is_a_line_break():
+    """HTML reads ``</br>`` as ``<br>``."""
+    root = parse_html("<p>w0</br>w1</p>")
+    assert [child.tag for child in root.find(".//p")] == ["br"]
