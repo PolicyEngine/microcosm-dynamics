@@ -1219,10 +1219,23 @@ def _landed_parents(repository: Path, commit: str, base: str) -> list[str]:
     ]
 
 
+def _rule_keys(rules: list) -> list[tuple[str, int]]:
+    """A key for each of ``rules``: its JSON, keys sorted, and how many
+    equal rules come before it. So a rule listed twice has two keys, and
+    a union keeps both copies."""
+    seen: dict[str, int] = {}
+    keys = []
+    for rule in rules:
+        text = json.dumps(rule, sort_keys=True)
+        keys.append((text, seen.get(text, 0)))
+        seen[text] = seen.get(text, 0) + 1
+    return keys
+
+
 def _union_ready(document: Any) -> bool:
     """Whether ``document`` has the lists and mappings
-    :func:`_landed_union` combines."""
-    return (
+    :func:`_landed_union` combines, with each entry id listed once."""
+    if not (
         isinstance(document, Mapping)
         and isinstance(document.get("rules", []), list)
         and isinstance(document.get("sources", {}), Mapping)
@@ -1231,7 +1244,10 @@ def _union_ready(document: Any) -> bool:
             isinstance(entry, Mapping) and isinstance(entry.get("id"), str)
             for entry in document["entries"]
         )
-    )
+    ):
+        return False
+    ids = [entry["id"] for entry in document["entries"]]
+    return len(set(ids)) == len(ids)
 
 
 def _in_order(order: list, *groups: list) -> list:
@@ -1249,21 +1265,39 @@ def _landed_union(
 
     It holds every rule, source and entry of ``previous``, the pull
     request's last valid registry, and of ``incoming``, the landed
-    parent's, each entry once with each list at the longer of its two
-    versions. Entries and rules that ``canonical``, the base's registry,
+    parent's: each entry once with each list at the longer of its two
+    versions, and each rule as often as either lists it, so dropping one
+    copy of a repeated rule is a removal. Entries and rules that
+    ``canonical``, the base's registry,
     lists come first, in its order (the landed order; a landed side
     branch's own registry need not follow it), then ``previous``'s others,
-    then ``incoming``'s. Also returns the conflicts that no merge could
-    resolve: a field that differs, or a list where neither version
-    extends the other.
+    then ``incoming``'s. With no ``canonical``, that is the pull request's
+    own order. Also returns the conflicts that no merge could resolve: a
+    field that differs, or a list where neither version extends the
+    other.
 
     When either registry is missing, the other is returned. When either
-    lacks those lists and mappings, ``incoming`` is returned, as before
-    this union, for the append-only rule to report."""
+    repeats an entry id (as :func:`validate` also refuses), or lacks
+    those lists and mappings, no merge can be shown to keep all it holds:
+    ``incoming`` is returned, and that registry is reported as a
+    conflict."""
     if previous is None or incoming is None:
         return (incoming if previous is None else previous), []
-    if not (_union_ready(previous) and _union_ready(incoming)):
-        return incoming, []
+    unready = [
+        line
+        for line, document in (
+            ("the pull request's", previous),
+            ("the landed", incoming),
+        )
+        if not _union_ready(document)
+    ]
+    if unready:
+        return incoming, [
+            f"registry: {line} registry cannot be combined at this merge: "
+            "it repeats an entry id, or its entries, rules or sources are "
+            "malformed"
+            for line in unready
+        ]
     conflicts: list[str] = []
     union = dict(incoming)
     for key in ("schema", "status_values", "completion_record"):
@@ -1280,21 +1314,21 @@ def _landed_union(
     if previous.get("complete") is True:
         union["complete"] = True
     order = canonical if _union_ready(canonical) else {}
-
-    def text(rule: Any) -> str:
-        return json.dumps(rule, sort_keys=True)
-
     rules = {
-        text(rule): rule
+        key: rule
         for document in (incoming, previous)
-        for rule in document.get("rules", [])
+        for key, rule in zip(
+            _rule_keys(document.get("rules", [])),
+            document.get("rules", []),
+            strict=True,
+        )
     }
     union["rules"] = [
         rules[key]
         for key in _in_order(
-            [text(rule) for rule in order.get("rules", [])],
-            [text(rule) for rule in previous.get("rules", [])],
-            [text(rule) for rule in incoming.get("rules", [])],
+            _rule_keys(order.get("rules", [])),
+            _rule_keys(previous.get("rules", [])),
+            _rule_keys(incoming.get("rules", [])),
         )
     ]
     mine = {entry["id"]: entry for entry in previous["entries"]}
@@ -1448,9 +1482,14 @@ def history_problems(
     history (an ancestor of ``base`` that its first parent lacks) is
     compared with the union of its own predecessor and that parent's
     registry (:func:`_landed_union`), so it keeps every entry either line
-    holds; a merge bringing in more than one line of landed history is
-    reported. Without ``pull_request``, as on a push, merges are not
-    treated apart, and nothing before ``base`` is trusted.
+    holds. It may list them in the base's order or in the pull request's
+    own: a stacked pull request that merged the request it builds on in
+    its own order, before that request landed, stays valid once it lands,
+    and the endpoint test still requires the base's order at the head. A
+    merge whose two lines cannot be combined, or that brings in more than
+    one line of landed history, is reported. Without ``pull_request``, as
+    on a push, merges are not treated apart, and nothing before ``base``
+    is trusted.
 
     With ``full``, each snapshot is validated against its own commit's
     tree. A snapshot that fails is reported and is not used as the next
@@ -1504,10 +1543,11 @@ def history_problems(
                 "history"
             )
             continue
+        own_order = None
         if landed:
-            previous, conflicts = _landed_union(
-                previous, landed_registry(landed[0]), canonical
-            )
+            incoming = landed_registry(landed[0])
+            own_order, _ = _landed_union(previous, incoming, None)
+            previous, conflicts = _landed_union(previous, incoming, canonical)
             previous_label = f"{previous_label}+{landed[0][:12]}"
             if conflicts:
                 problems.extend(f"{label}: {p}" for p in conflicts)
@@ -1539,6 +1579,10 @@ def history_problems(
                 continue
         before = previous if previous is not None else empty_like(current)
         changes = append_only_problems(before, current)
+        if own_order is not None and not append_only_problems(
+            own_order, current
+        ):
+            changes = []
         if changes:
             problems.extend(f"{previous_label}..{label}: {p}" for p in changes)
             continue

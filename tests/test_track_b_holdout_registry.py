@@ -19,7 +19,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from hypothesis import event, given, settings, target
+from hypothesis import event, example, given, settings, target
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import holdout_registry as registry
@@ -1748,6 +1748,271 @@ def test_a_landed_merge_cannot_drop_the_pull_requests_own_entry(
     assert reported(problems) == {merge[:12]}
 
 
+@pytest.mark.parametrize("repeated", ["id", "rule"])
+def test_a_landed_merge_after_a_repeated_id_or_rule_is_reported(
+    tmp_path, no_ci_env, repeated
+):
+    """An own commit lists H006 a second time with other units, or a rule
+    a second time. A master merge that keeps only the second H006 is
+    reported, though no later commit changes the registry: keyed by id,
+    the union cannot tell which H006 the pull request meant to keep.
+    One that keeps one copy of the rule is reported too: the union keeps
+    each copy, so dropping one is a removal."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own = grown(first, 5)
+    commit_registry(repository, own, "own H006")
+    again = copy.deepcopy(own)
+    if repeated == "id":
+        second = make_entry(5, ["s_c:2155"])
+        again["entries"].append(second)
+    else:
+        again["rules"].append(again["rules"][0])
+    commit_registry(repository, again, f"own {repeated} again")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    resolution = copy.deepcopy(landed)
+    if repeated == "id":
+        resolution["entries"].append(second)
+    else:
+        resolution["entries"].append(own["entries"][-1])
+    merge = merge_with(repository, "master", resolution)
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+    expected = (
+        "cannot be combined"
+        if repeated == "id"
+        else "rules may only be appended"
+    )
+    assert any(expected in p for p in problems)
+
+
+@pytest.mark.parametrize("layout", ["inner", "trailing"])
+@pytest.mark.parametrize("merge", ["keeps", "drops_a_copy"])
+def test_a_landed_merge_keeps_each_copy_of_a_repeated_rule(
+    tmp_path, no_ci_env, layout, merge
+):
+    """Validation lets a rule repeat, so the union counts its copies. A
+    master merge that keeps a registry listing rule one twice, as
+    [one, one, incomplete] or [one, incomplete, one], passes. One that
+    drops a copy is reported, though the next commit restores it."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    if layout == "inner":
+        first["rules"].insert(1, first["rules"][0])
+    else:
+        first["rules"].append(first["rules"][0])
+    assert validate(first) == []
+    commit_registry(repository, first, "a registry with a repeated rule")
+    branch(repository, "pr")
+    own_work(repository, "own work")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    resolution = copy.deepcopy(landed)
+    if merge == "drops_a_copy":
+        del resolution["rules"][1 if layout == "inner" else -1]
+    merged = merge_with(repository, "master", resolution)
+    commit_registry(repository, landed, "restore")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == (set() if merge == "keeps" else {merged[:12]})
+
+
+def test_a_landed_merge_after_an_own_registry_with_malformed_sources(
+    tmp_path, no_ci_env
+):
+    """A pull request branched before the registry existed creates one
+    whose sources are a list, admitted against an empty registry. A
+    master merge resolved to master's registry drops its H006, and a
+    later commit adds H006 again with other units. The merge is
+    reported: the union cannot read what the pull request held."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    branch(repository, "pr")
+    own = grown(None, 5)
+    own["sources"] = []
+    commit_registry(repository, own, "own registry, sources as a list")
+    switch(repository, "master")
+    base = commit_registry(repository, first, "the registry lands")
+    switch(repository, "pr")
+    merge = merge_with(repository, "master", first)
+    readded = grown(first, 5)
+    readded["entries"][-1]["unit_keys"] = ["s_c:2155"]
+    commit_registry(repository, readded, "own H006 again, other units")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+    assert any("the pull request's registry cannot" in p for p in problems)
+
+
+def test_a_merge_of_a_landed_tip_with_malformed_sources_is_reported(
+    tmp_path, no_ci_env
+):
+    """Another pull request's tip lists its sources as a list; master
+    landed it with them fixed. A pull request that merges that tip and
+    drops its own H006, then adds H006 again with other units, is
+    reported at the merge."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "other")
+    broken = copy.deepcopy(first)
+    broken["sources"] = []
+    commit_registry(repository, broken, "the other tip: sources as a list")
+    switch(repository, "master")
+    branch(repository, "pr")
+    commit_registry(repository, grown(first, 5), "own H006")
+    switch(repository, "master")
+    base = merge_with(repository, "other", first)
+    switch(repository, "pr")
+    merge = merge_with(repository, "other", first)
+    readded = grown(first, 5)
+    readded["entries"][-1]["unit_keys"] = ["s_c:2155"]
+    commit_registry(repository, readded, "own H006 again, other units")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+    assert any("the landed registry cannot" in p for p in problems)
+
+
+@pytest.mark.parametrize("order", ["own", "landed"])
+def test_a_stacked_pull_request_stays_valid_once_its_base_lands(
+    tmp_path, no_ci_env, order
+):
+    """B, built on A, adds H006 and merges A's branch (which adds H003)
+    before A lands. While A is unlanded that merge must extend B's own
+    registry, so only B's order, [H001, H006, H003], passes. Once A
+    lands, the merge brings in landed history and passes in either order;
+    B's later master merge, in master's order, passes too."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "a")
+    commit_registry(repository, grown(first, 2), "A adds H003")
+    switch(repository, "master")
+    branch(repository, "b")
+    commit_registry(repository, grown(first, 5), "B adds H006")
+    stacked = merge_with(
+        repository,
+        "a",
+        grown(first, 5, 2) if order == "own" else grown(first, 2, 5),
+    )
+    switch(repository, "master")
+    before = head_of(repository)
+    before_landing = pr_problems(repository, before, stacked)
+    assert reported(before_landing) == (
+        set() if order == "own" else {stacked[:12]}
+    )
+    base = merge_with(repository, "a", grown(first, 2))
+    switch(repository, "b")
+    merge_with(repository, "master", grown(first, 2, 5))
+    assert pr_problems(repository, base, head_of(repository)) == []
+
+
+@pytest.mark.parametrize("field", ["entries", "rules"])
+def test_a_landed_merge_in_the_pull_requests_own_order_waits_for_the_end(
+    tmp_path, no_ci_env, field
+):
+    """A master merge that keeps the pull request's entries, or rules,
+    ahead of master's new ones passes the history check, which accepts
+    the pull request's own order at a landed merge. The endpoint test,
+    the head against the base, still reports it."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own, landed = grown(first, 5), grown(first, 1)
+    if field == "rules":
+        own, landed = copy.deepcopy(first), copy.deepcopy(first)
+        own["rules"].append("own rule")
+        landed["rules"].append("master rule")
+    commit_registry(repository, own, "own addition")
+    switch(repository, "master")
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    own_first = grown(first, 5, 1)
+    if field == "rules":
+        own_first = copy.deepcopy(own)
+        own_first["rules"].append("master rule")
+    merge_with(repository, "master", own_first)
+    assert pr_problems(repository, base, head_of(repository)) == []
+    head = registry.registry_at(repository, head_of(repository))
+    assert registry.append_only_problems(landed, head) != []
+
+
+def test_a_landed_merge_cannot_reorder_the_pull_requests_own_entries(
+    tmp_path, no_ci_env
+):
+    """The union orders the pull request's own entries as it held them,
+    after the base's. A master merge that swaps H006 and H007 is
+    reported, though the head still extends the base, so the endpoint
+    test alone would pass it."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    commit_registry(repository, grown(first, 5, 6), "own H006 and H007")
+    switch(repository, "master")
+    landed = grown(first, 2)
+    base = commit_registry(repository, landed, "master adds H003")
+    switch(repository, "pr")
+    swapped = grown(first, 2, 6, 5)
+    merge = merge_with(repository, "master", swapped)
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+    assert registry.append_only_problems(landed, swapped) == []
+
+
+def test_an_entry_a_landed_merge_adds_is_held_from_then_on(
+    tmp_path, no_ci_env
+):
+    """A master merge whose resolution adds the pull request's own
+    registration becomes the next commit's predecessor, so a commit that
+    then drops that registration is reported."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    own_work(repository, "own")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    merge_with(repository, "master", grown(first, 1, 5))
+    drop = commit_registry(repository, landed, "drops H006")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {drop[:12]}
+
+
+def test_a_conflicting_landed_merge_leaves_the_union_as_predecessor(
+    tmp_path, no_ci_env
+):
+    """A master merge whose two lines each extended H001's evidence is
+    reported, and, like any snapshot that fails, is not the next commit's
+    predecessor: the union is. So H006, which only that merge added, may
+    be dropped next without a second report."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    mine = copy.deepcopy(first)
+    mine["entries"][0]["evidence"].append("own evidence")
+    commit_registry(repository, mine, "own evidence")
+    switch(repository, "master")
+    landed = copy.deepcopy(first)
+    landed["entries"][0]["evidence"].append("landed evidence")
+    base = commit_registry(repository, landed, "master evidence")
+    switch(repository, "pr")
+    merge = merge_with(repository, "master", grown(landed, 5))
+    commit_registry(repository, landed, "drops H006")
+    problems = pr_problems(repository, base, head_of(repository))
+    assert reported(problems) == {merge[:12]}
+    assert len(problems) == 1
+
+
 def test_an_octopus_of_a_landed_and_a_contained_parent_is_one_line(
     tmp_path, no_ci_env
 ):
@@ -1885,8 +2150,103 @@ def test_a_landed_union_orders_by_the_base_and_keeps_both_lines():
     assert registry._landed_union(None, theirs, canonical) == (theirs, [])
     assert registry._landed_union(mine, None, canonical) == (mine, [])
     malformed = {"entries": [{}]}
-    assert registry._landed_union(malformed, theirs, None) == (theirs, [])
-    assert registry._landed_union(mine, malformed, None) == (malformed, [])
+    union, conflicts = registry._landed_union(malformed, theirs, None)
+    assert union is theirs and len(conflicts) == 1
+    assert "the pull request's registry" in conflicts[0]
+    union, conflicts = registry._landed_union(mine, malformed, None)
+    assert union is malformed and len(conflicts) == 1
+    assert "the landed registry" in conflicts[0]
+    _, conflicts = registry._landed_union(malformed, malformed, None)
+    assert len(conflicts) == 2
+
+
+def test_a_landed_union_lists_rules_the_base_lacks_own_first():
+    """Rules the base does not list follow its own, the pull request's
+    first, then the landed line's. With no base, the order is the pull
+    request's own: its rules, then the landed line's others."""
+    first = registered(["candidate"])
+    mine, theirs = copy.deepcopy(first), copy.deepcopy(first)
+    mine["rules"].append("own rule")
+    theirs["rules"].append("a landed rule the base lacks")
+    expected = [*first["rules"], "own rule", "a landed rule the base lacks"]
+    union, conflicts = registry._landed_union(mine, theirs, first)
+    assert conflicts == [] and union["rules"] == expected
+    canonical = copy.deepcopy(theirs)
+    union, _ = registry._landed_union(mine, theirs, canonical)
+    assert union["rules"] == [*theirs["rules"], "own rule"]
+    union, _ = registry._landed_union(mine, theirs, None)
+    assert union["rules"] == expected
+
+
+def test_a_landed_union_keeps_each_copy_of_a_repeated_rule():
+    """Rules are counted, not collapsed: the union lists each rule as
+    often as either line does, the base's copies in its order first."""
+    first = registered(["candidate"])
+    mine, theirs = copy.deepcopy(first), copy.deepcopy(first)
+    mine["rules"] += ["repeated", "repeated"]
+    theirs["rules"] += ["repeated", "landed"]
+    union, conflicts = registry._landed_union(mine, theirs, theirs)
+    assert conflicts == []
+    assert union["rules"] == [
+        *first["rules"],
+        "repeated",
+        "landed",
+        "repeated",
+    ]
+    union, _ = registry._landed_union(mine, theirs, None)
+    assert union["rules"] == [
+        *first["rules"],
+        "repeated",
+        "repeated",
+        "landed",
+    ]
+    union, _ = registry._landed_union(theirs, mine, theirs)
+    assert union["rules"] == [
+        *first["rules"],
+        "repeated",
+        "landed",
+        "repeated",
+    ]
+    assert registry._union_ready(mine)
+
+
+@pytest.mark.parametrize("line", ["own", "landed"])
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "repeated_id",
+        "rules_not_a_list",
+        "sources_not_a_mapping",
+        "entry_id",
+    ],
+)
+def test_a_landed_union_reports_a_line_it_cannot_combine(line, defect):
+    """A line that lists an entry id twice, or whose entries, rules or
+    sources are malformed, cannot be shown to keep what it holds: keyed
+    by id, the union would keep one of two entries, and the append-only
+    rule reads sources that are not a mapping as none. So the union
+    reports that line rather than fall back on the other."""
+    first = registered(["candidate"])
+    mine, theirs = grown(first, 5), grown(first, 1)
+    broken = mine if line == "own" else theirs
+    if defect == "repeated_id":
+        again = copy.deepcopy(broken["entries"][-1])
+        again["unit_keys"] = ["s_c:2155"]
+        broken["entries"].append(again)
+    elif defect == "rules_not_a_list":
+        broken["rules"] = "one rule, as text"
+    elif defect == "sources_not_a_mapping":
+        broken["sources"] = []
+    else:
+        broken["entries"][-1]["id"] = 6
+    assert not registry._union_ready(broken)
+    union, conflicts = registry._landed_union(mine, theirs, first)
+    assert union is theirs and len(conflicts) == 1
+    named = "the pull request's" if line == "own" else "the landed"
+    assert conflicts[0].startswith(f"registry: {named} registry cannot")
+    for document in (mine, theirs, first):
+        if document is not broken:
+            assert registry._union_ready(document)
 
 
 def test_a_landed_union_stays_complete_when_the_pull_request_is():
@@ -1898,21 +2258,44 @@ def test_a_landed_union_stays_complete_when_the_pull_request_is():
     assert conflicts == [] and union["complete"] is True
 
 
-@pytest.mark.parametrize("field", ["schema", "source", "unit_keys", "history"])
+@pytest.mark.parametrize(
+    "field",
+    [
+        "schema",
+        "status_values",
+        "completion_record",
+        "sources",
+        *(key for key in EXPECTED_IMMUTABLE if key != "id"),
+        *EXPECTED_EXTENDING,
+    ],
+)
 def test_a_landed_union_reports_what_no_merge_can_keep(field):
+    """A top-level field or source that differs between the lines, an
+    entry field either line may not change, or an entry list each line
+    extended differently: no merge keeps both, so each is one conflict.
+    The fields come from this module's lists, not the module's."""
     first = registered(["candidate"])
     mine, theirs = copy.deepcopy(first), copy.deepcopy(first)
     if field == "schema":
         theirs["schema"] = "another schema"
-    elif field == "source":
+    elif field == "status_values":
+        theirs["status_values"] = {"candidate": "another reading"}
+    elif field == "completion_record":
+        theirs["completion_record"] = "docs/design/another_record.json"
+    elif field == "sources":
         theirs["sources"]["s_a"] = {"family": "f9", "title": "changed"}
-    elif field == "unit_keys":
-        theirs["entries"][0]["unit_keys"] = ["s_a:2199"]
+    elif field in EXPECTED_IMMUTABLE:
+        theirs["entries"][0][field] = f"another {field}"
     else:
-        mine["entries"][0]["history"].append({"status": "frozen"})
-        theirs["entries"][0]["history"].append({"status": "withdrawn"})
+        mine["entries"][0][field] = [*mine["entries"][0][field], "own item"]
+        theirs["entries"][0][field] = [
+            *theirs["entries"][0][field],
+            "landed item",
+        ]
     _, conflicts = registry._landed_union(mine, theirs, first)
     assert len(conflicts) == 1
+    if field in (*EXPECTED_IMMUTABLE, *EXPECTED_EXTENDING):
+        assert conflicts[0].startswith(f"H001: {field} ")
 
 
 @pytest.mark.parametrize(
@@ -1977,6 +2360,18 @@ PR_STEPS = st.lists(
 
 @settings(max_examples=30, deadline=None)
 @given(registered_first=st.booleans(), steps=PR_STEPS)
+@example(
+    registered_first=True,
+    steps=["own", "fork_side", "merge", "land_side", "merge_side_raw"],
+)
+@example(
+    registered_first=True,
+    steps=["own", "fork_side", "merge", "land_side", "merge_side", "own"],
+)
+@example(
+    registered_first=False,
+    steps=["fork_side", "merge", "land_side", "merge_side_raw", "restore"],
+)
 def test_only_commits_that_remove_or_rewrite_entries_are_reported(
     tmp_path_factory, registered_first, steps
 ):
@@ -1987,7 +2382,11 @@ def test_only_commits_that_remove_or_rewrite_entries_are_reported(
     commits that are reported are exactly those whose registry removes,
     reorders or rewrites an entry of its predecessor: the last valid own
     registry, or, at a landed merge, every entry the pull request held
-    and the branch brings in, in master's order, then its own.
+    and the branch brings in, in master's order, then its own. (A landed
+    merge may also list the pull request's own entries first; no
+    generated merge does, so the oracle need not.) The examples pin a
+    merge of a stale landed branch, resolved to its own registry and
+    correctly, which the generator reaches rarely.
 
     Each merge step first makes what it merges: master grows when the
     pull request is not behind it, and a branch is forked or landed when
