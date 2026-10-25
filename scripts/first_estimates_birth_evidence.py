@@ -313,6 +313,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Track B G (the gross-benefit layer) is an opt-in statutory reference;
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/track_b/gross_benefits.py"),
+    Path("src/populace_dynamics/track_b/_provenance.py"),
     # R2 statutory payment mechanics also stay outside birth evidence.
     Path("src/populace_dynamics/track_b/ret_grace.py"),
     Path("src/populace_dynamics/track_b/ret_ledger.py"),
@@ -323,6 +324,12 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # by B2's floor builder, comparator and scorer; nothing in the
     # historical projection imports it.
     Path("src/populace_dynamics/track_b/b2.py"),
+    # The held-out data registry's checks read only the registry, git and
+    # committed run artifacts; nothing in the historical projection
+    # imports them.
+    Path("src/populace_dynamics/track_b/holdout_registry.py"),
+    # S1 development and future registration; no historical projection imports.
+    Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
     # P2 is used only by development and any future registration;
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),

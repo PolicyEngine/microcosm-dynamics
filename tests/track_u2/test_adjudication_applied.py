@@ -997,6 +997,9 @@ def test_specification_revision_keeps_cited_lines(documents):
     )
     record = pins["u2_specification"]
     assert record["path"] == SPEC and SPEC not in pins["sha256"]
+    from populace_dynamics.uniform_cut_track_u2 import rows
+
+    assert record["version"] == rows.SPECIFICATION_VERSION
     raw = (ROOT / SPEC).read_bytes()
     assert hashlib.sha256(raw).hexdigest() == record["sha256"]
     assert record["draft_3_sha256"] == (
@@ -1004,7 +1007,7 @@ def test_specification_revision_keeps_cited_lines(documents):
     )
     lines = raw.split(b"\n")
     draft_3 = draft_3_bytes(record).split(b"\n")
-    assert lines[2].startswith(b"- **Version:** `u2-draft-4`")
+    assert lines[2].startswith(b"- **Version:** `u2-ratified-1`")
     assert draft_3[2].startswith(b"- **Version:** `u2-draft-3`")
     cited = {
         citation["line"]
@@ -1020,19 +1023,38 @@ def test_specification_revision_keeps_cited_lines(documents):
         assert lines[line - 1].strip(), line
         digest = hashlib.sha256(lines[line - 1]).hexdigest()
         assert digest == record["cited_lines_sha256"][str(line)], line
-    # §16a is inserted where draft 3 had §17, so every earlier line keeps its
-    # draft-3 number and text except the version, status and §15 version.
+    # Every line before §15 keeps its draft-3 number and text except the
+    # version and status lines.
+    section_15 = lines.index(b"## 15. Machine-readable parameter block")
+    assert draft_3[section_15] == lines[section_15]
+    assert {
+        number
+        for number in range(1, section_15 + 1)
+        if lines[number - 1] != draft_3[number - 1]
+    } == {3, 4}
+    # §20 step 5 materialized §15's block.  Through line 1185, the last line
+    # a registry cites, every line keeps its draft-3 number, and only the
+    # lines the materialization wrote differ: the two lines of prose, the
+    # version and status, the role rules' name, the employer-DC reader and
+    # amendment 5's fragment between the cited lines 1173 and 1185.
+    assert max(cited) == 1185
+    assert {
+        number
+        for number in range(section_15 + 1, max(cited) + 1)
+        if lines[number - 1] != draft_3[number - 1]
+    } == {1039, 1041, 1047, 1048, 1145, 1168, *range(1175, 1185)}
+    # §16, unchanged since draft 3, follows the longer block, and §16a stands
+    # where draft 3's §17 would stand after it.
+    heading_16 = b"## 16. Decisions and explicit departures from U1"
+    section_16 = lines.index(heading_16)
     section_16a = lines.index(
         b"## 16a. Proposed amendments for `u2-draft-4` (pending Max's ruling)"
     )
-    assert draft_3[section_16a].startswith(b"## 17. ")
-    changed = {
-        number
-        for number in range(1, section_16a + 1)
-        if lines[number - 1] != draft_3[number - 1]
-    }
-    assert changed == {3, 4, 1047}
-    assert cited < set(range(1, section_16a + 1))
+    draft_16 = draft_3.index(heading_16)
+    draft_17 = draft_16 + (section_16a - section_16)
+    assert draft_3[draft_17].startswith(b"## 17. ")
+    assert lines[section_16:section_16a] == draft_3[draft_16:draft_17]
+    assert cited <= set(range(1, section_16 + 1))
 
 
 def test_section_16a_quotes_draft_3_verbatim():
@@ -1312,6 +1334,12 @@ D1090_ROWS = {
     "U7's 2015 spouse slot is the documented female spouse or partner "
     "slot, and B1's exclusion applies to U7 as to every other row |",
 }
+#: Section 20's status line, which section 20 step 5 rewrote from
+#: "**Pending.**" (review of 690a1276, finding 10).
+STATUS_20 = (
+    "**Steps 1\N{EN DASH}5 done; step 6 is this revision's merge; steps "
+    "7\N{EN DASH}12 pending.**"
+)
 #: The d1090 record, complete, by where it stands: every line of section
 #: 16c, the header lines, section 17 items 1, 2 and 8 and section 20's
 #: status and step 1.  Each must be a whole line there, exactly once, and
@@ -1319,38 +1347,47 @@ D1090_ROWS = {
 #: db735e5).
 D1090_CLAUSES = {
     "header_version": [
-        "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
-        "2026-09-29 after the independent review; Max's rulings recorded "
-        "2026-09-30, 2026-10-10 and 2026-10-12): proposed amendments "
+        "- **Version:** `u2-ratified-1` (\N{SECTION SIGN}20 step 5, "
+        "2026-10-21): \N{SECTION SIGN}15 holds the final parameter block and "
+        "U2's rulings record, and the merge of this revision ratifies the "
+        "specification under d514 (\N{SECTION SIGN}20 step 6). Previous "
+        "version: `u2-draft-4` (milestone 1b, 2026-09-28; revised 2026-09-29 "
+        "after the independent review; Max's rulings recorded 2026-09-30, "
+        "2026-10-10, 2026-10-12 and 2026-10-19): proposed amendments "
         "1\N{EN DASH}6 in \N{SECTION SIGN}16a, ruled by Max on 2026-09-30 "
         "(d637) as recorded in \N{SECTION SIGN}16b, with blockers B1 and B2 "
         "ruled on 2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c, "
-        "and amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 "
-        "(d745) as recorded in \N{SECTION SIGN}16b. Previous version: "
-        "`u2-draft-3` (round 2).",
+        "amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 (d745) "
+        "as recorded in \N{SECTION SIGN}16b, and the birth law's support "
+        "ruled on 2026-10-19 (d1724) as recorded in \N{SECTION SIGN}16d. "
+        "Before it, `u2-draft-3` (round 2).",
     ],
     "header_status": [
-        "- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max "
-        "approved the \N{SECTION SIGN}16 defaults and ratification of that "
-        "draft (d514, in chat). Per \N{SECTION SIGN}20, the version becomes "
-        "`u2-ratified-1` by the merge that completes \N{SECTION SIGN}20 "
-        "steps 2\N{EN DASH}5 and materializes the final parameter block; "
-        "that merge needs no further ruling unless it changes this "
-        "document's substance. `u2-draft-4` adds \N{SECTION SIGN}16a, whose "
-        "proposed amendments change substance, so each needed Max's ruling "
-        "first. He ruled on 2026-09-30 (d637; \N{SECTION SIGN}16b): B3 is "
-        "resolved by option 1, amendments 2\N{EN DASH}5 are ratified as "
-        "written, and blockers B1 and B2 were held until PSID answered. "
-        "PSID answered on 2026-10-07, and on 2026-10-10 he ruled on B1 and "
-        "B2 (d1090; \N{SECTION SIGN}16c): B1 takes option 2 and B2 option "
-        "1, each an exclusion under a named disposition, ratified as "
-        "amendments to draft-3 line 160 (B1) and to draft-3 lines 152, 154 "
-        "and 158 for 2019\N{EN DASH}2023 (B2). No blocker hold remains. "
-        "Amendment 1's parts 1a\N{EN DASH}1c, which the d637 ruling's list "
-        "does not name, were read as ratified pending Max's confirmation, "
-        "and on 2026-10-12 he confirmed that d637 ratified them as written "
-        "(d745; \N{SECTION SIGN}16b). Not registered or authorized for "
-        "execution.",
+        "- **Status:** ratified and frozen by the merge of this revision "
+        "(\N{SECTION SIGN}20 step 6). Decisions were ruled for `u2-draft-3`: "
+        "on 2026-09-28 Max approved the \N{SECTION SIGN}16 defaults and "
+        "ratification of that draft (d514, in chat). Per \N{SECTION SIGN}20, "
+        "the version becomes `u2-ratified-1` by the merge that completes "
+        "\N{SECTION SIGN}20 steps 2\N{EN DASH}5 and materializes the final "
+        "parameter block; that merge needs no further ruling unless it "
+        "changes this document's substance, and \N{SECTION SIGN}20 step 5 "
+        "records why this revision changes none. `u2-draft-4` adds "
+        "\N{SECTION SIGN}16a, whose proposed amendments change substance, so "
+        "each needed Max's ruling first. He ruled on 2026-09-30 (d637; "
+        "\N{SECTION SIGN}16b): B3 is resolved by option 1, amendments "
+        "2\N{EN DASH}5 are ratified as written, and blockers B1 and B2 were "
+        "held until PSID answered. PSID answered on 2026-10-07, and on "
+        "2026-10-10 he ruled on B1 and B2 (d1090; \N{SECTION SIGN}16c): B1 "
+        "takes option 2 and B2 option 1, each an exclusion under a named "
+        "disposition, ratified as amendments to draft-3 line 160 (B1) and to "
+        "draft-3 lines 152, 154 and 158 for 2019\N{EN DASH}2023 (B2). No "
+        "blocker hold remains. Amendment 1's parts 1a\N{EN DASH}1c, which the "
+        "d637 ruling's list does not name, were read as ratified pending "
+        "Max's confirmation, and on 2026-10-12 he confirmed that d637 "
+        "ratified them as written (d745; \N{SECTION SIGN}16b). On 2026-10-19 "
+        "he ruled on the birth law's support (d1724; \N{SECTION SIGN}16d), "
+        "and the \N{SECTION SIGN}20 step-4 pass completed under that ruling "
+        "on 2026-10-21. Not registered or authorized for execution.",
     ],
     "record": [
         "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)",
@@ -1514,14 +1551,20 @@ D1090_CLAUSES = {
         "record remains, and the loader's source preflight passes; the "
         "structural pass still needs Max's authorization (item 8; "
         "\N{SECTION SIGN}20 step 4).",
-        "8. Complete the pre-registration structural, reconciliation and "
-        "F17 component pass, including only the counts that the ratified B1 "
-        "and B2 options name (under the 2026-10-10 ruling, the counts "
-        "specified by \N{SECTION SIGN}16a options 1d-2 and 1e-1, each "
-        "disclosed and deciding nothing; \N{SECTION SIGN}16c).",
+        "8. Complete the pre-registration structural, reconciliation and F17 "
+        "component pass, including only the counts that the ratified B1 and "
+        "B2 options name (under the 2026-10-10 ruling, the counts specified "
+        "by \N{SECTION SIGN}16a options 1d-2 and 1e-1, each disclosed and "
+        "deciding nothing; \N{SECTION SIGN}16c). **Done (2026-10-21; "
+        "\N{SECTION SIGN}20 step 4):** the second pass, under d1724, "
+        "completed with no refusal, failure or mapping failure, and the "
+        "structural counts of rows U0 and U1 carry the per-exclusion person "
+        "counts (`n_family_unit_exclusion_persons` and "
+        "`n_family_unit_exclusion_persons_distinct`); this record states none "
+        "of them.",
     ],
     "execution": [
-        "**Pending.**",
+        STATUS_20,
         "1. Resolve the proposed decisions and source-verification "
         "blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every "
         "\N{SECTION SIGN}16 default).** Source-verification blockers remain "
@@ -1562,7 +1605,16 @@ D1090_FOLLOWERS = {
             "`::test_rows_equal_the_section_15_block`). The equality checks "
             "of the specification, the manifests and the final parameter "
             "block wait for \N{SECTION SIGN}20 step 5, which materializes the "
-            "block and empties \N{SECTION SIGN}15's `blocked_by`."
+            "block and empties \N{SECTION SIGN}15's `blocked_by`. **Done "
+            "(2026-10-21; \N{SECTION SIGN}20 step 5):** \N{SECTION SIGN}15 "
+            "holds the final block, `u2-ratified-1`, with the amendment 5 "
+            "fragment, an empty `blocked_by` and U2's rulings record, and "
+            "`rows.check_block_against_code` holds the whole block equal to "
+            "the code, every key and value; the manifests it is checked "
+            "against are the committed registries, all RESOLVED "
+            "(\N{SECTION SIGN}20 step 2), which give each wave's weight, "
+            "family-unit and WEALTH1 variables and every registry entry the "
+            "rulings record names (`test_u2_specification_block.py`)."
         ),
     },
     "execution": {
@@ -1604,7 +1656,8 @@ def _heading_line(lines, number):
 
 def d1090_locations(spec):
     """The text of each place the d1090 record stands in ``spec``, cut at
-    the section heading lines."""
+    the section heading lines.  Section 16c's record ends where section
+    16d (d1724, a later ruling) begins."""
     lines = spec.split("\n")
 
     def section(first, last=None):
@@ -1615,7 +1668,7 @@ def d1090_locations(spec):
     return {
         "header_version": lines[2],
         "header_status": lines[3],
-        "record": section("16c", "17"),
+        "record": section("16c", "16d"),
         "outstanding": section("17", "18"),
         "execution": section("20"),
     }
@@ -1623,8 +1676,9 @@ def d1090_locations(spec):
 
 #: The sections the record's places are cut at, and section 20.  Each must
 #: open with exactly one ATX heading, in any Markdown spacing, outside code
-#: (reviews of 0c4eab5 and 91695a5).
-D1090_SECTIONS = ("16a", "16b", "16c", "17", "18", "20")
+#: (reviews of 0c4eab5 and 91695a5).  Section 16d (d1724) ends 16c's
+#: record, so it is held to the same rule.
+D1090_SECTIONS = ("16a", "16b", "16c", "16d", "17", "18", "20")
 #: Pinned lines that stand more than once in the whole specification,
 #: whitespace ignored, with their counts; every other pinned line stands
 #: once.  "What the ruling does not change." also heads part of §16b.
@@ -1891,7 +1945,7 @@ D1090_MUTATIONS = [
     ),
     (
         "execution",
-        "**Pending.**",
+        STATUS_20,
         "**Registered and authorized for execution.**",
     ),
     ("record", "is not known", "is known to be none"),
@@ -2012,8 +2066,8 @@ D1090_MUTATIONS = [
     # Insertions after pinned lines (review of e7a558f, info finding 2).
     (
         "execution",
-        "**Pending.**",
-        "**Pending.**\n\n**Current status: registered and authorized.**",
+        STATUS_20,
+        STATUS_20 + "\n\n**Current status: registered and authorized.**",
     ),
     (
         "outstanding",
@@ -2107,6 +2161,362 @@ def test_the_d1090_checks_catch_each_mutation(place, old, new):
     assert mutated != spec
     with pytest.raises(AssertionError):
         check_d1090_record(mutated)
+
+
+#: Max's ruling d1724 (2026-10-19): every non-blank line of section 16d,
+#: the section 3 note the ruling names, in order.
+D1724_RECORD = [
+    "## 16d. Max's ruling on the birth law's support (2026-10-19, " "d1724)",
+    "> **RULED on 2026-10-19.** Max ruled on 2026-10-19 (decision "
+    "d1724), after the first \N{SECTION SIGN}20 step-4 structural pass "
+    "stopped before writing any output, and on 2026-10-20 approved the "
+    "widening this section records. This section is the "
+    "\N{SECTION SIGN}3 note the ruling names. \N{SECTION SIGN}3 keeps "
+    "its draft-3 text and line numbers, because the registries cite "
+    "them (\N{SECTION SIGN}16c), so the note stands here and amends "
+    "\N{SECTION SIGN}3 as \N{SECTION SIGN}\N{SECTION SIGN}16b and 16c "
+    "do; where it and \N{SECTION SIGN}3 differ, it governs. "
+    "\N{SECTION SIGN}\N{SECTION SIGN}16a\N{EN DASH}16c are unchanged.",
+    "The decision put to Max, as recorded in the chief-of-staff "
+    "decision log:",
+    '> "dynamics U2 \N{SECTION SIGN}20 step 4, second run: after the '
+    "d1649 run stopped on a career-bound assertion with no output, fix "
+    "U2's birth universe so it counts out people whose seed coordinate "
+    "implies a birth year outside career's [1889, 2016] (as Track M "
+    "does; career.py untouched), then rerun step 4 once under d1649's "
+    'scope"',
+    "The ruling, as recorded there:",
+    '> "Yes: fix, then rerun once. A reviewed PR counts out the '
+    "out-of-bounds people in U2's cohort code and discloses the counts, "
+    "with a \N{SECTION SIGN}3 note; career.py is untouched. Once it "
+    "merges and master's Tests pass at the run head, step 4 (structure, "
+    "then component diagnostics) runs once more under d1649's scope, "
+    "with --authorized-by this decision. Max, dynamics coordinator "
+    'session 2026-10-19 (guided AskUserQuestion)."',
+    "**What stopped the first pass.** The pass Max authorized on "
+    "2026-10-16 (d1649) ran once, on 2026-10-19 at `640adccf`, and "
+    "exited without writing any output; the component diagnostics were "
+    "not run (evidence: `EV/track-u2-step4-pass-20261019/MANIFEST.md`, "
+    "SHA-256 `1e91407b\N{HORIZONTAL ELLIPSIS}a366fa`). It stopped in "
+    "the birth law, `estimates.career.derive_birth_years`, called from "
+    "`cohort.derive_u2_births`. For a person the law dates by the seed "
+    "coordinate (age code 2\N{EN DASH}125), the law takes the birth "
+    "year as the seed year minus the age and asserts that it lies "
+    "between `career.DERIVED_BIRTH_MIN` and `career.DERIVED_BIRTH_MAX`, "
+    "1889 and 2016. \N{SECTION SIGN}3's universe takes every "
+    "positive-weight, in-family person of any support wave, at any age "
+    "(draft-3 lines 114 and 126), so a child aged 2 or 3 in the 2021 "
+    "wave or 2\N{EN DASH}5 in the 2023 wave, or a person aged 124 or "
+    "125 in the 2013 wave, reaches that assertion. The law also "
+    "refuses, after its loop, every seed age code but 1\N{EN DASH}125 "
+    "and 999. The individual file documents age as 0 (Inap.), 1 "
+    "(newborn), 2\N{EN DASH}125 or 999 (DK, NA or refused), and the "
+    "loader refuses any other code, so a code 0 on an in-family, "
+    "positive-weight presence would reach that refusal; the assertion, "
+    "raised inside the loop, would have masked it. The masked error "
+    "record does not show which end was crossed, so the rule covers "
+    "both ends and the refusal. This record states no count or value "
+    "from the pass.",
+    "**The note to \N{SECTION SIGN}3 (amends draft-3 line 114).** "
+    "Before the law runs, the rule below applies to each person of the "
+    "universe whose birth year the law would take from the seed "
+    "coordinate: neither the marriage history nor the observed earnings "
+    "give one, as the law itself shows when run on the same frames "
+    "without seed coordinates (it leaves the person unresolved).",
+    "1. If the seed's age code is one the law refuses (0, or any code "
+    "but 1\N{EN DASH}125 and 999), the seed becomes the person's "
+    "earliest positive-weight, in-family presence with an age of "
+    "2\N{EN DASH}125 whose implied year lies in 1889\N{EN DASH}2016 "
+    "(the person is re-seeded). A person with no such presence is "
+    "counted out: under `seed_age_0` when the first code is 0, and "
+    "under `no_valid_seed_age` otherwise.",
+    "2. If the seed's age is 2\N{EN DASH}125 and the year it implies is "
+    "before 1889 or after 2016, the person is counted out on that side.",
+    "A counted-out person leaves the universe and the frames the law "
+    "reads. Every other person keeps the law's precedence and the "
+    "record the law gives, whatever the seed implies or whatever code "
+    "it carries: a marriage-history or earnings year still wins. Seed "
+    "codes 1 and 999 stay unresolved. Apart from re-seeding, the seed "
+    "is still the earliest positive-weight presence; a later presence "
+    "never replaces a seed whose code the law takes. Code 0 is "
+    "documented as Inap., not as an age, so a member of the cohort "
+    "could carry it on one presence; it is therefore handled as any "
+    "refused code, not counted out at once. Where code 0 marks an "
+    "infant, the person's later ages imply a year after 2010, so "
+    "re-seeding never dates one into 1946\N{EN DASH}55. A counted-out "
+    "person had a positive-weight presence, so is not outside the "
+    "universe, and the annuitant extension (line 188) does not seed it "
+    "either; where such a person is an annuitant, its age takes the "
+    "inherited fallback (the wave age, or missing), counted. The "
+    "extension seeds only presences whose code the law takes and whose "
+    "implied year it supports, as before, so it cannot reach the "
+    "assertion or the refusal.",
+    "**How the ruling's words are read.** The decision speaks of "
+    '"people whose seed coordinate implies a birth year outside" the '
+    "support. This record reads that as the people whose birth year the "
+    "seed coordinate gives. The seed gives no birth year to a person "
+    "with a marriage-history or earnings year. Counting such a person "
+    "out would let the seed override the precedence \N{SECTION SIGN}3 "
+    'keeps (line 114: "with its existing history inputs and '
+    'precedence") and could remove a member of the cohort. The two '
+    "readings differ only for a person with both an out-of-support seed "
+    "and a history or earnings year. The decision names out-of-bounds "
+    "seeds only. The refusal the first pass masked would stop the one "
+    "further pass the ruling authorizes, so the rule also covers seeds "
+    "whose code the law refuses, toward the ruling's stated purpose: "
+    "that step 4 runs once more and discloses the counts. Max approved "
+    "that widening on 2026-10-20, as noted on d1724 in the decision "
+    "log, including that code 0 (Inap.) is re-seeded from the earliest "
+    "presence the law can date, like any refused code. The widening as "
+    "described to Max also named code 999 (DK/NA) as refused. The law "
+    "does not refuse 999; it leaves it unresolved, as it does a missing "
+    "age, so this rule keeps 999 on that path, narrower than described, "
+    "as the correction noted on d1724 the same day records. Re-seeding "
+    "follows from code 0's documented meaning (above); it can keep a "
+    "member of the cohort that counting out would lose, and its count "
+    "is disclosed. (An earlier request from the coordinating session "
+    "had counted code 0 out at once.)",
+    "**Why no member of the cohort is lost.** A person counted out on a "
+    "side has no birth-year source but a seed whose year lies outside "
+    "1889\N{EN DASH}2016. A person counted out under a refused code has "
+    "no presence the law can date inside 1889\N{EN DASH}2016. That "
+    "range contains 1946\N{EN DASH}55, so no counted-out person can "
+    "belong to the cohort in any row, and a member of the cohort with "
+    "one refused code is re-seeded and keeps its observations.",
+    "**Precedent.** Track M counts out, before the same law, the "
+    "in-family, positive-weight persons aged 0\N{EN DASH}5 in its one "
+    "seed wave, 2023, whose seed (income year 2022 minus age) implies a "
+    "year after 2016 "
+    "(`src/populace_dynamics/min_benefit_track_m/structure.py`, the "
+    "funnel count `age_0_5_counted_out_before_birth_law`, and "
+    "`min_benefit_track_m/cohort.py`). U2 seeds from six waves, so its "
+    "rule tests the implied year on both sides, not an age, and can "
+    "re-seed a person past a refused code from a later presence; it "
+    "keeps code 1 on the law's unresolved path; and it applies only to "
+    "persons the seed would date, so the law's precedence is kept.",
+    "**Disclosure.** Each reason's count is disclosed in every row's "
+    "structural counts, as `n_seed_birth_year_counted_out` with the "
+    "keys `before_1889`, `after_2016`, `seed_age_0` and "
+    "`no_valid_seed_age`, and the re-seeded persons' count as "
+    "`n_seed_birth_year_reseeded`. Each decides nothing. The rule is "
+    "fixed before any count, and none was computed for this record.",
+    "**What the ruling leaves unchanged.**",
+    "- `src/populace_dynamics/estimates/career.py` is unchanged.",
+    "- No row, plan cell, observation weight, disposition rule, design "
+    "frame, role rule or income concept changes. U2 stays unregistered "
+    "and unauthorized (\N{SECTION SIGN}20).",
+    "- The ruling authorizes one more step-4 pass, structure and then "
+    "component diagnostics, under d1649's scope with `--authorized-by "
+    "d1724`, once this change merges and master's Tests pass at the run "
+    "head (\N{SECTION SIGN}20 step 4).",
+    "- No count, statistic or outcome was computed to record this "
+    "ruling, no PSID record was read, and no file on the restricted "
+    "list was opened for reading. Reading and exposure are recorded in "
+    "`docs/design/u2_m2_exposure.md` (d1724 section).",
+]
+
+
+#: Where section 17's review paragraph and section 20 step 4 point to the
+#: d1724 record: each sentence stands in its place exactly once.
+D1724_POINTERS = {
+    "outstanding": "After the first structural pass stopped, Max ruled on "
+    "the birth law's support on 2026-10-19, and \N{SECTION SIGN}16d records "
+    "that ruling.",
+    "execution": "**First pass (d1649): stopped.** It ran once, on "
+    "2026-10-19 at `640adccf`, and stopped in the birth law without writing "
+    "any output; the component diagnostics were not run "
+    "(\N{SECTION SIGN}16d). **Max's ruling of 2026-10-19 (d1724; "
+    "\N{SECTION SIGN}16d)** authorizes one more pass, structure and then "
+    "component diagnostics, under d1649's scope with "
+    "`--authorized-by d1724`, once the \N{SECTION SIGN}16d change merges "
+    "and master's Tests pass at the run head.",
+}
+
+
+def check_d1724_record(spec):
+    """Section 16d records d1724: it stands once, between sections 16c and
+    17, outside code, and holds exactly :data:`D1724_RECORD`, in order;
+    sections 17 and 20 point to it; and the d1090 checks (which refuse
+    hiding by comment, raw HTML or fence anywhere) still hold."""
+    check_d1090_record(spec)
+    lines = spec.split("\n")
+    start = _heading_line(lines, "16d")
+    end = _heading_line(lines, "17")
+    assert _heading_line(lines, "16c") < start < end
+    assert not any(_fenced(lines)[start:end])
+    assert [x for x in lines[start:end] if x.strip()] == D1724_RECORD
+    places = d1090_locations(spec)
+    for place, sentence in D1724_POINTERS.items():
+        assert places[place].count(sentence) == 1, place
+
+
+def test_section_16d_records_the_d1724_ruling():
+    """§16d is the §3 note d1724 names: every line pinned, and §17 and §20
+    step 4 point to it.  The rule it states is the one the cohort code
+    applies (tests/track_u2/test_u2_birth_bounds.py)."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    check_d1724_record(spec)
+    section = spec[spec.index("## 16d. ") : spec.index("## 17. ")]
+    for clause in (
+        "before 1889 or after 2016",
+        "`n_seed_birth_year_counted_out`",
+        "`before_1889`, `after_2016`, `seed_age_0` and `no_valid_seed_age`",
+        "`n_seed_birth_year_reseeded`",
+        "Each decides nothing.",
+        "(amends draft-3 line 114)",
+    ):
+        assert section.count(clause) == 1, clause
+
+
+#: Mutations of the d1724 record, each of which must fail
+#: ``check_d1724_record``: a changed rule, side, code range, precedence,
+#: disclosure, scope or authorization, a moved heading, an added line, and
+#: hiding by comment.
+D1724_MUTATIONS = [
+    (
+        "16d",
+        "before 1889 or after 2016, the person",
+        "before 1889, the person",
+    ),
+    (
+        "16d",
+        "If the seed's age is 2\N{EN DASH}125",
+        "If the seed's age is 1\N{EN DASH}125",
+    ),
+    (
+        "16d",
+        "(0, or any code but 1\N{EN DASH}125 and 999)",
+        "(any code above 125)",
+    ),
+    (
+        "16d",
+        "under `seed_age_0` when the first code is 0",
+        "under `seed_age_0` when any code is 0",
+    ),
+    (
+        "16d",
+        "it is therefore handled as any refused code, not counted out at once",
+        "it is counted out at once",
+    ),
+    (
+        "16d",
+        "Max approved that widening on 2026-10-20",
+        "The coordinating session chose that widening on 2026-10-20",
+    ),
+    (
+        "16d",
+        "including that code 0 (Inap.) is re-seeded",
+        "except that code 0 (Inap.) is counted out",
+    ),
+    ("16d", "keeps 999 on that path", "re-seeds 999 too"),
+    (
+        "16d",
+        "it can keep a member of the cohort",
+        "it keeps members of the cohort",
+    ),
+    (
+        "16d",
+        "and on 2026-10-20 approved the widening this section records",
+        "and later asked about a widening",
+    ),
+    (
+        "16d",
+        " and the re-seeded persons' count as `n_seed_birth_year_reseeded`",
+        "",
+    ),
+    (
+        "16d",
+        "Each decides nothing.",
+        "Each decides whether the pass proceeds.",
+    ),
+    (
+        "16d",
+        "a marriage-history or earnings year still wins",
+        "the seed's year wins",
+    ),
+    (
+        "16d",
+        "Seed codes 1 and 999 stay unresolved",
+        "Seed codes 1 and 999 are counted out",
+    ),
+    ("16d", "does not seed it either", "seeds it instead"),
+    (
+        "16d",
+        "so no counted-out person can belong",
+        "so a counted-out person can",
+    ),
+    ("16d", "(amends draft-3 line 114)", "(amends draft-3 line 126)"),
+    (
+        "16d",
+        "estimates/career.py` is unchanged.",
+        "estimates/career.py` changes.",
+    ),
+    (
+        "16d",
+        "U2 stays unregistered and unauthorized (\N{SECTION SIGN}20).",
+        ".",
+    ),
+    (
+        "16d",
+        "authorizes one more step-4 pass",
+        "authorizes two more step-4 passes",
+    ),
+    (
+        "execution",
+        "authorizes one more pass, structure",
+        "authorizes passes, structure",
+    ),
+    (
+        "outstanding",
+        "and \N{SECTION SIGN}16d records that ruling.",
+        "and that is all.",
+    ),
+    ("16d", "## 16d. Max's ruling", "### 16d. Max's ruling"),
+    (
+        "16d",
+        "**What the ruling leaves unchanged.**",
+        "**What the ruling leaves unchanged.**\n\n- Exploratory counts may "
+        "be computed.",
+    ),
+    (
+        "16d",
+        "**Disclosure.** Each reason's count",
+        "<!--\n**Disclosure.** Each reason's count",
+    ),
+]
+
+
+def _d1724_places(spec):
+    lines = spec.split("\n")
+    start, end = _heading_line(lines, "16d"), _heading_line(lines, "17")
+    return {"16d": "\n".join(lines[start:end]), **d1090_locations(spec)}
+
+
+@pytest.mark.parametrize(
+    "place,old,new",
+    D1724_MUTATIONS,
+    ids=[m[1][:30] for m in D1724_MUTATIONS],
+)
+def test_the_d1724_checks_catch_each_mutation(place, old, new):
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    text = _d1724_places(spec)[place]
+    assert text.count(old) == 1, (place, old)
+    mutated = spec.replace(text, text.replace(old, new, 1), 1)
+    assert mutated != spec
+    with pytest.raises(AssertionError):
+        check_d1724_record(mutated)
+
+
+def test_section_16d_leaves_the_d1090_record_unchanged():
+    """§16c's record is cut at §16d and still holds exactly its declared
+    lines, so §16d adds no line to it."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    record = d1090_locations(spec)["record"]
+    assert [x for x in record.split("\n") if x.strip()] == (
+        D1090_CLAUSES["record"]
+    )
+    assert "## 16d. " not in record
+    assert record.rstrip().endswith(D1090_CLAUSES["record"][-1])
 
 
 def test_part_b_verdicts_agree():

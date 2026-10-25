@@ -84,10 +84,10 @@ def test_arf_is_idempotent_deterministic_and_preserves_original_claim(
     st.lists(st.integers(-20, 110), max_size=100),
     st.lists(st.sampled_from(list(a.ARFUnsupportedReason)), max_size=5),
 )
-def test_iterator_claim_evaluation_preserves_results_and_refusals(
+def test_collection_claim_evaluation_preserves_results_and_refusals(
     kind, amount, offsets, conditions
 ):
-    """Every supported or refused iterator claim has stable meaning."""
+    """Every supported or refused collection claim has stable meaning."""
     base_claim = claim_for(kind, amount)
     base = base_claim.first_reduction_month.year * 12
     supplied = [
@@ -100,13 +100,13 @@ def test_iterator_claim_evaluation_preserves_results_and_refusals(
     }[kind]
     claim = replace(
         base_claim,
-        full_work_deduction_months=iter(supplied),
-        partial_work_deduction_months=iter(supplied),
-        **{category: iter(supplied)},
-        nonentitlement_months=iter(
+        full_work_deduction_months=list(supplied),
+        partial_work_deduction_months=list(supplied),
+        **{category: list(supplied)},
+        nonentitlement_months=list(
             supplied if kind is not a.ARFBenefitKind.RIB else []
         ),
-        conditions=iter(conditions),
+        conditions=list(conditions),
     )
     canonical = replace(
         base_claim,
@@ -126,9 +126,14 @@ def test_iterator_claim_evaluation_preserves_results_and_refusals(
     assert first.supported == second.supported == expected.supported
     if first.supported:
         assert first.benefits == second.benefits == expected.benefits
-        snapshotted_result = replace(
-            first.benefits,
-            crediting_months=iter(first.benefits.crediting_months),
+        snapshotted_result = at_fra(
+            replace(
+                first.benefits.claim,
+                **{
+                    field: list(getattr(first.benefits.claim, field))
+                    for field in a._CREDIT_FIELDS
+                },
+            )
         )
         assert snapshotted_result == first.benefits
         assert (
@@ -470,7 +475,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
     if coverage == "explicit":
         claim = replace(
             claim,
-            conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
+            conditions=list([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
         )
     elif coverage == "historical":
         claim = replace(
@@ -495,7 +500,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
     for invoke in (
         compute,
         evaluate,
-        lambda: a.count_arf_outcomes(evaluate() for _ in range(2)),
+        lambda: a.count_arf_outcomes([evaluate() for _ in range(2)]),
     ):
         with pytest.raises(ValueError) as caught:
             invoke()
@@ -522,7 +527,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
 def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     field_spec, value, kind, coverage, amount, weight
 ):
-    """Input error and lazy failure are independent of money and row weight."""
+    """Input error and row-construction failure are independent of money and row weight."""
     field, index = field_spec
     params = nonfinite_statutory_params(field, index, value)
     claim, payment = statutory_validation_claim(kind, coverage, amount)
@@ -535,13 +540,12 @@ def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     def evaluate():
         return a.evaluate_arf("invalid", F(weight), compute)
 
-    outcomes = (evaluate() for _ in range(2))
     assert calls == []
     errors = []
     for invoke in (
         compute,
         evaluate,
-        lambda: a.count_arf_outcomes(outcomes),
+        lambda: a.count_arf_outcomes([evaluate() for _ in range(2)]),
     ):
         with pytest.raises(ValueError, match="finite") as caught:
             invoke()
@@ -550,3 +554,52 @@ def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     assert label in errors[0]
     assert errors[0] == errors[1] == errors[2]
     assert calls == ["compute"] * 3
+
+
+@settings(deadline=None)
+@example(F(650), [1], 2)
+@given(
+    amounts,
+    st.lists(st.integers(0, 59), unique=True, max_size=12),
+    st.integers(0, 59),
+)
+def test_reentitled_spouse_keeps_original_months_until_fra(
+    amount, terminated, offset
+):
+    """402(q)(1)(B): terminated months leave the factor only at FRA.
+
+    Source conflict us:oasdi-arf-spouse-reentitlement-credits. Before
+    FRA every reentitled history pays exactly the never-terminated claim
+    and G's 60-month spouse reduction (zero-tolerance differential); at
+    FRA each terminated month before FRA is one credit, so the benefit
+    cannot fall from any pre-FRA month to the FRA month.
+    """
+    base = 2022 * 12
+    history = {
+        g.YearMonth((base + i) // 12, (base + i) % 12 + 1) for i in terminated
+    }
+    claim = a.ARFClaim(
+        a.ARFBenefitKind.SPOUSE,
+        date(1960, 1, 2),
+        (2022, 1),
+        amount,
+        nonentitlement_months=history,
+    )
+    plain = replace(claim, nonentitlement_months=frozenset())
+    payment = g.YearMonth((base + offset) // 12, (base + offset) % 12 + 1)
+    before = a.apply_arf(claim, payment_month=payment, params=PARAMS)
+    expected = g.floor_dime(
+        amount - g.ceil_dime(amount * g.spouse_reduction_fraction(60, PARAMS))
+    )
+    assert before.adjusted_reduction_months == 60
+    assert before.crediting_months == frozenset()
+    assert before.benefit == expected
+    assert before == a.apply_arf(claim, payment_month=payment, params=PARAMS)
+    assert (
+        before.benefit
+        == a.apply_arf(plain, payment_month=payment, params=PARAMS).benefit
+    )
+    final = at_fra(claim)
+    assert final.crediting_months == frozenset(history)
+    assert final.adjusted_reduction_months == 60 - len(history)
+    assert final.benefit >= before.benefit

@@ -29,6 +29,13 @@ with the first eligible NSM after December 1977 (Act 203(f)(1)(E)); earlier
 months carry entitlement facts without consuming it. These comparisons
 preserve the separate disability-month NSM exclusion.
 Externally supplied month sets validate every raw value before deduplication.
+GraceYearDecision is a computed result sealed by the package-private
+provenance capability. Its nested carried state is copied and validated;
+RET money inputs accept only unaltered computed decisions. GraceYearState
+remains an explicit, constructible declaration of initial history.
+Monthly and termination histories admit tuple/list only and become tuples
+without dropping events. Benefit-type and month memberships become
+frozensets after every raw element has passed its schema.
 """
 
 from __future__ import annotations
@@ -37,6 +44,15 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 
+from populace_dynamics.track_b._provenance import (
+    _computed,
+    _construct_declared,
+    _declared_input,
+    _replace_declared,
+    _sealed_result,
+    _SealedResult,
+    _validated_entry,
+)
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 
 
@@ -92,12 +108,12 @@ class TerminationReason(Enum):
 
 def _types(values: frozenset[BenefitType]) -> frozenset[BenefitType]:
     try:
-        result = frozenset(values)
+        result = tuple(values)
     except TypeError as error:
         raise InvalidFamilyInput("Benefit types must be iterable") from error
     if any(not isinstance(value, BenefitType) for value in result):
         raise InvalidFamilyInput("Use explicit BenefitType values")
-    return result
+    return frozenset(result)
 
 
 def _year(value: int, label: str) -> None:
@@ -110,6 +126,7 @@ def _boolean(value: bool, label: str) -> None:
         raise InvalidFamilyInput(f"{label} must be a boolean")
 
 
+@_declared_input
 @dataclass(frozen=True)
 class GraceMonth:
     """One month's entitlement, elected payments, and work-condition flag.
@@ -138,6 +155,7 @@ class GraceMonth:
         object.__setattr__(self, "received_types", received)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class GraceYearState:
     """The caller's carried LMETY and complete transition facts.
@@ -247,6 +265,7 @@ class GraceYearState:
         object.__setattr__(self, "gap_since_section_202", section_gap)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class TerminationEvent:
     """A dated entitlement ending and its explicitly supplied cause.
@@ -284,8 +303,9 @@ class TerminationEvent:
             )
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class GraceYearDecision:
+class GraceYearDecision(_SealedResult):
     """Grace categories, actually protected NSMs, and the next carried state."""
 
     applies: bool
@@ -296,10 +316,14 @@ class GraceYearDecision:
 
     def __post_init__(self):
         _boolean(self.applies, "Grace applies flag")
-        if not isinstance(self.next_state, GraceYearState):
+        if type(self.next_state) is not GraceYearState:
             raise InvalidFamilyInput("A grace decision needs carried state")
+        state = _replace_declared(self.next_state)
+        if state.last_processed_year is None:
+            raise InvalidFamilyInput("A grace decision needs a processed year")
+        object.__setattr__(self, "next_state", state)
         try:
-            kinds = frozenset(self.kinds)
+            kinds = tuple(self.kinds)
             eligible = tuple(self.met_eligible_months)
             protected = tuple(self.protected_months)
         except TypeError as error:
@@ -313,6 +337,7 @@ class GraceYearDecision:
             for month in (*eligible, *protected)
         ):
             raise InvalidFamilyInput("Protected months must be 1 through 12")
+        kinds = frozenset(kinds)
         eligible = frozenset(eligible)
         protected = frozenset(protected)
         if not protected <= eligible:
@@ -320,6 +345,19 @@ class GraceYearDecision:
         if self.applies != bool(kinds) or (protected and not self.applies):
             raise InvalidFamilyInput(
                 "Grace decision categories must match its flag"
+            )
+        updates_lmety = bool(
+            kinds & {GraceKind.INITIAL, GraceKind.AFTER_BREAK}
+        )
+        if updates_lmety != (state.last_met_year == state.last_processed_year):
+            raise InvalidFamilyInput(
+                "Grace categories must reconcile the current LMETY"
+            )
+        if updates_lmety and (
+            not protected or state.last_processed_year < 1978
+        ):
+            raise InvalidFamilyInput(
+                "Initial or after-break grace needs a post-1977 NSM"
             )
         object.__setattr__(self, "kinds", kinds)
         object.__setattr__(self, "met_eligible_months", eligible)
@@ -340,6 +378,7 @@ def _legal_types(types: frozenset[BenefitType]) -> frozenset[BenefitType]:
     )
 
 
+@_validated_entry
 def grace_year(
     year: int,
     state: GraceYearState,
@@ -489,12 +528,14 @@ def grace_year(
         ):
             kinds.add(GraceKind.TERMINATION)
     applies = bool(kinds)
-    return GraceYearDecision(
+    return _computed(
+        GraceYearDecision,
         applies=applies,
         kinds=frozenset(kinds),
         met_eligible_months=met_eligible,
         protected_months=eligible_nsms if applies else frozenset(),
-        next_state=GraceYearState(
+        next_state=_construct_declared(
+            GraceYearState,
             last_met_year=last_met,
             previous_entitled_types=previous,
             had_entitlement=had_entitlement,

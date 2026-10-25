@@ -49,6 +49,18 @@ def test_u1_literals_equal_the_u1_modules():
     )
 
 
+def test_the_u1_input_frame_pin_is_u1s_artifacts():
+    """The d1597 entry's pin is the one U1's committed artifact records
+    (review of 9f79818a, finding 6); only that hash is compared."""
+    import json
+
+    artifact = json.loads(identity.U1_ARTIFACT_PATH.read_text())
+    assert (
+        artifact["cohort_provenance"]["input_frames_sha256"]
+        == rows._U1_INPUT_FRAMES_SHA256
+    )
+
+
 def test_u2_identity_is_separate():
     record = identity.identity()
     assert record["target_id"] == "U2"
@@ -104,18 +116,20 @@ def test_u2_refuses_u1_rulings_and_max_rulings():
         rows.check_u2_rulings_against_block({"decisions": decisions})
 
 
-def test_draft_block_rulings_are_refused_until_materialized():
-    with pytest.raises(ValueError, match="no ruling by Max"):
-        rows.check_u2_rulings_against_block(rows.specification_block())
-    ruled = {
-        "decisions": {
-            "ruled_by": "Max",
-            "ruled_on": "2026-09-28",
-            **rows.U2_RULINGS,
-        }
+def test_the_materialized_block_records_the_rulings():
+    """Section 20 step 5 wrote U2's rulings record into the block; the
+    draft block's placeholder is refused, and so is any altered entry."""
+    block = rows.specification_block()
+    assert block["decisions"] == {
+        "ruled_by": "Max",
+        "ruled_on": "2026-09-28",
+        **rows.U2_RULINGS,
     }
-    assert rows.check_u2_rulings_against_block(ruled)["rulings_equal"]
-    altered = {"decisions": {**ruled["decisions"], "downloads": {"ruling": 1}}}
+    assert rows.check_u2_rulings_against_block(block)["rulings_equal"]
+    draft = {"decisions": {"u2_ratification": "pending_Max"}}
+    with pytest.raises(ValueError, match="no ruling by Max"):
+        rows.check_u2_rulings_against_block(draft)
+    altered = {"decisions": {**block["decisions"], "downloads": {"ruling": 1}}}
     with pytest.raises(ValueError, match="differ"):
         rows.check_u2_rulings_against_block(altered)
 
