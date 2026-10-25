@@ -3,18 +3,25 @@
 Invariants: every variable and parameter in the federal SSI trees appears;
 every dependency reaches another inventoried variable or an explicit input;
 formula boundaries are named, rather than allowing an implicit model default;
-each variable's value_type is one plain assignment of a primitive type or
-Enum, by a name its module never binds, or the inventory refuses; an enum
-input's members come only from a class whose membership a static read
-settles, and include its default, or the inventory refuses; source is
-decoded as Python decodes it; the output is deterministic for the same
-source and distribution metadata.
+each variable's value_type, entity and period are one plain assignment each,
+of a name its module never binds, the value_type naming a primitive type or
+Enum, or the inventory refuses; its default is absent, a literal of its
+primitive type, or a member of its enum class, by one plain assignment, or
+the inventory refuses; an enum variable's members come only from a class
+whose membership a static read settles, and include its default, or the
+inventory refuses; source is decoded as Python decodes it; the output is
+deterministic for the same source and distribution metadata.
 
-The static read does not follow reflection through objects that the model
-API exports, such as a module reached through one of them. Only the
-pinned-engine oracle tests cover that, and only for the pinned release:
-they check each inventoried variable's value_type, default, entity and
-period, and each enum input's members, against what the engine loads.
+The static read covers each variable module's own code, and every module
+under ``policyengine_us/variables`` that it imports, with their package
+``__init__`` files. That code may not override a Variable method, store an
+attribute, or name a reflective builtin, a frame attribute or a dunder name.
+The read does not follow code in other modules: the model API and the
+policyengine_core modules a variable module imports, and reflection through
+objects they export. Only the pinned-engine oracle tests cover that, and
+only for the pinned release: they check each inventoried variable's
+value_type, default, entity and period, and each enum variable's members,
+against what the engine loads.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
 with the clone's interpreter and point ``--package`` at installed source::
@@ -79,6 +86,10 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def typed(values: dict[str, Any]) -> dict[str, tuple[type, Any]]:
+    return {key: (type(value), value) for key, value in values.items()}
+
+
 def validate_core_defaults(package: Path) -> dict[str, str]:
     """Refuse drift in the source of implicit primitive defaults.
 
@@ -108,7 +119,8 @@ def validate_core_defaults(package: Path) -> dict[str, str]:
         for field, default in zip(value.keys, value.values, strict=True):
             if ast.literal_eval(field) == "default":
                 actual[name] = ast.literal_eval(default)
-    if actual != TYPE_DEFAULTS:
+    # By type as well as value: False == 0, but the engine keeps the type.
+    if typed(actual) != typed(TYPE_DEFAULTS):
         raise ValueError("Core primitive defaults differ from the extractor")
     return {
         "path": "policyengine_core/variables/config.py",
@@ -127,6 +139,10 @@ def expression(node: ast.AST | None) -> Any:
 
 
 MODEL_API = "policyengine_us.model_api"
+# The modules a variable module may import names from. The inventory reads
+# those under policyengine_us.variables by the same rules, and not the others.
+FOLLOWED_IMPORTS = "policyengine_us.variables."
+UNFOLLOWED_IMPORTS = "policyengine_core."
 # Forms that bind a name in some scope: definitions, except handlers, match
 # captures and, from Python 3.12, type parameters.
 DEFINITIONS = (
@@ -197,6 +213,25 @@ ENGINE_ATTRIBUTES = frozenset(
         "value_type",
     }
 )
+# The engine attributes the inventory reads from each variable's body.
+READ_ATTRIBUTES = (
+    "value_type",
+    "entity",
+    "definition_period",
+    "default_value",
+    "possible_values",
+    "adds",
+    "subtracts",
+)
+# The literal types each primitive's default may have. The engine converts
+# an int to a float; it also takes a bool as an int or a float, which this
+# read refuses.
+DEFAULT_TYPES = {
+    "float": (int, float),
+    "int": (int,),
+    "bool": (bool,),
+    "str": (str,),
+}
 
 
 def binding_sites(tree: ast.AST, name: str) -> list[ast.AST]:
@@ -285,6 +320,104 @@ def static_module(tree: ast.Module, cls: ast.ClassDef) -> bool:
                 ):
                     return False
     return not (binding_sites(tree, "Enum") or binding_sites(tree, "Variable"))
+
+
+def module_imports(tree: ast.Module) -> list[str] | None:
+    """The modules under policyengine_us.variables that a module imports.
+
+    None, so that the inventory refuses, unless the module's own code can
+    change its variables only in ways read here:
+
+    - every import is a top-level statement, either the model API's absolute
+      star import or one that imports names from a module under
+      ``FOLLOWED_IMPORTS`` or ``UNFOLLOWED_IMPORTS``;
+    - every class is a top-level statement that subclasses ``Variable`` or
+      ``Enum`` alone, with no decorators or keywords, and the module binds
+      no ``Variable``, whose spelling the reader takes to be the model API's;
+    - it stores or deletes no attribute;
+    - no identifier in it, or part of a dotted one, is a reflective builtin
+      or frame attribute or starts with two underscores, as ``__builtins__``
+      and ``__dict__`` do. Identifiers are as in ``static_module``, which
+      also refuses one underscore; helpers such as ``_apply_ssi_exclusions``
+      have one.
+    """
+    followed = []
+    for item in ast.walk(tree):
+        if isinstance(item, ast.Import):
+            return None
+        if isinstance(item, ast.ImportFrom):
+            star = [alias.name for alias in item.names] == ["*"]
+            module = item.module or ""
+            if not (
+                item.level == 0
+                and any(item is top for top in tree.body)
+                and (
+                    module == MODEL_API
+                    if star
+                    else module.startswith(
+                        (FOLLOWED_IMPORTS, UNFOLLOWED_IMPORTS)
+                    )
+                )
+            ):
+                return None
+            if not star and module.startswith(FOLLOWED_IMPORTS):
+                followed.append(module)
+        if isinstance(item, ast.ClassDef) and not (
+            any(item is top for top in tree.body)
+            and [expression(base) for base in item.bases]
+            in (["Variable"], ["Enum"])
+            and not item.keywords
+            and not item.decorator_list
+        ):
+            return None
+        if isinstance(item, ast.Attribute) and not isinstance(
+            item.ctx, ast.Load
+        ):
+            return None
+        if isinstance(item, ast.Constant):
+            continue
+        for _, value in ast.iter_fields(item):
+            for name in value if isinstance(value, list) else [value]:
+                if isinstance(name, str) and any(
+                    part in REFLECTIVE or part.startswith("__")
+                    for part in name.split(".")
+                ):
+                    return None
+    if binding_sites(tree, "Variable"):
+        return None
+    return followed
+
+
+def check_module(
+    package: Path, path: Path, tree: ast.Module, checked: set[Path]
+) -> None:
+    """Refuse a module that ``module_imports`` refuses, or one it imports.
+
+    A module imported from under ``FOLLOWED_IMPORTS`` is read by the same
+    rules, with the package ``__init__`` files its import runs.
+    """
+    pending = [(path, tree)]
+    while pending:
+        path, tree = pending.pop()
+        if path in checked:
+            continue
+        checked.add(path)
+        followed = module_imports(tree)
+        if followed is None:
+            relative = path.relative_to(package).as_posix()
+            raise ValueError(f"Unread module code in {relative}")
+        for module in followed:
+            parts = module.split(".")[1:]
+            target = package.joinpath(*parts[:-1], parts[-1] + ".py")
+            if not target.is_file():
+                raise ValueError(f"Unresolved import of {module}")
+            inits = [
+                package.joinpath(*parts[:index], "__init__.py")
+                for index in range(1, len(parts))
+            ]
+            for source in [target, *inits]:
+                if source.is_file():
+                    pending.append((source, ast.parse(source.read_bytes())))
 
 
 def class_members(cls: ast.ClassDef) -> list[str] | None:
@@ -433,6 +566,86 @@ def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
     return members
 
 
+def plain_variable(
+    tree: ast.Module, variable: ast.ClassDef
+) -> dict[str, ast.expr]:
+    """The values a variable binds to the attributes in ``READ_ATTRIBUTES``.
+
+    The engine copies the class's own namespace, without dunder names, and
+    reads each attribute from that copy through the variable's ``set``
+    method. So the variable must be its name's one binding in the module,
+    subclass ``Variable`` alone with no decorators, keywords or type
+    parameters, and meet ``plain_variable_body``, which keeps ``set`` the
+    engine's; and it must bind each such attribute it binds by one plain
+    assignment. Otherwise this refuses.
+    """
+    if not (
+        binding_sites(tree, variable.name) == [variable]
+        and [expression(base) for base in variable.bases] == ["Variable"]
+        and not variable.keywords
+        and not variable.decorator_list
+        and not getattr(variable, "type_params", None)
+        and plain_variable_body(variable)
+    ):
+        raise ValueError(f"Unread variable {variable.name}")
+    attrs = {}
+    for attr in READ_ATTRIBUTES:
+        if binding_sites(variable, attr):
+            value = plain_attribute(variable, attr)
+            if value is None:
+                raise ValueError(f"Unresolved {attr} for {variable.name}")
+            attrs[attr] = value
+    return attrs
+
+
+def variable_attributes(
+    tree: ast.Module, variable: ast.ClassDef
+) -> dict[str, Any]:
+    """The value_type, entity, period and default a variable's record names.
+
+    The record keeps the spelling of each name, so each must be one the
+    module never binds; the model API binds the primitive types, Enum, the
+    entities and the periods under these spellings. A primitive default is
+    a literal of a type in ``DEFAULT_TYPES``, and an enum variable's default
+    a member of the class whose members ``enum_members`` reads. Otherwise,
+    or when ``plain_variable`` refuses, this refuses.
+    """
+    attrs = plain_variable(tree, variable)
+    spelled = {}
+    for attr in ("value_type", "entity", "definition_period"):
+        value = attrs.get(attr)
+        if not (
+            isinstance(value, ast.Name) and not binding_sites(tree, value.id)
+        ):
+            raise ValueError(f"Unresolved {attr} for {variable.name}")
+        spelled[attr] = value.id
+    dtype = spelled["value_type"]
+    default = attrs.get("default_value")
+    record = {
+        "entity": spelled["entity"],
+        "period": spelled["definition_period"],
+        "value_type": dtype,
+        "default_origin": "core type" if default is None else "explicit",
+    }
+    if dtype == "Enum":
+        members = enum_members(tree, variable)
+        if members is None:
+            raise ValueError(f"Unresolved enum members for {variable.name}")
+        # enum_members admits only a default that names one of the members.
+        return record | {"default": default.attr, "enum_members": members}
+    if dtype not in TYPE_DEFAULTS:
+        raise ValueError(f"Unresolved value_type for {variable.name}")
+    if default is None:
+        return record | {"default": TYPE_DEFAULTS[dtype]}
+    try:
+        value = ast.literal_eval(default)
+    except (ValueError, TypeError):
+        value = None
+    if type(value) not in DEFAULT_TYPES[dtype]:
+        raise ValueError(f"Unresolved default for {variable.name}")
+    return record | {"default": value}
+
+
 def distribution_version(package: Path) -> str:
     """Read installed metadata, without importing policyengine_us."""
     matches = sorted(package.parent.glob("policyengine_us-*.dist-info"))
@@ -500,12 +713,14 @@ def parse_variables(
                 helpers[node.name] = node
     pending = list(roots)
     visited = set()
+    checked = set()
     while pending:
         path = pending.pop()
         if path in visited:
             continue
         visited.add(path)
         tree = ast.parse(path.read_bytes())
+        check_module(package, path, tree, checked)
         classes = [
             node
             for node in tree.body
@@ -515,46 +730,12 @@ def parse_variables(
         # Several classes per file are supported, as in the invented fixtures.
         names = set(paths) | set(records) | {node.name for node in classes}
         for node in classes:
-            attrs = {
-                target.id: item.value
-                for item in node.body
-                if isinstance(item, ast.Assign)
-                for target in item.targets
-                if isinstance(target, ast.Name)
-            }
-            # The engine reads value_type from the class namespace, so an
-            # annotated, aliased, repeated or attribute-stored binding could
-            # make an Enum input whose members are never read. So could a
-            # module that rebinds the name the binding spells, as
-            # ``float = Enum`` does.
-            value_type = plain_attribute(node, "value_type")
-            if (
-                not (
-                    isinstance(value_type, ast.Name)
-                    and value_type.id in (*TYPE_DEFAULTS, "Enum")
-                )
-                or any(
-                    isinstance(site, ast.Attribute)
-                    for site in binding_sites(tree, "value_type")
-                )
-                or binding_sites(tree, value_type.id)
-            ):
-                raise ValueError(f"Unresolved value_type for {node.name}")
-            # The record names the entity and period by their spelling too.
-            for attribute in ("entity", "definition_period"):
-                value = attrs.get(attribute)
-                if isinstance(value, ast.Name) and binding_sites(
-                    tree, value.id
-                ):
-                    raise ValueError(f"Unresolved {attribute} for {node.name}")
-            dtype = value_type.id
-            default = expression(attrs.get("default_value"))
-            if "default_value" not in attrs:
-                if dtype not in TYPE_DEFAULTS:
-                    raise ValueError(f"Unresolved default for {node.name}")
-                default = TYPE_DEFAULTS[dtype]
-            if dtype == "Enum" and isinstance(default, str):
-                default = default.rsplit(".", 1)[-1]
+            # An annotated, aliased, repeated or stored binding, an override
+            # of set, or a module that rebinds a spelled name, as
+            # ``float = Enum`` does, could give the engine an attribute
+            # other than the one recorded.
+            attrs = plain_variable(tree, node)
+            fields = variable_attributes(tree, node)
             bodies = [node]
             visited_helpers = set()
             for body in bodies:
@@ -628,13 +809,7 @@ def parse_variables(
                 "path": path.relative_to(package).as_posix(),
                 "line": node.lineno,
                 "sha256": sha256(path),
-                "entity": expression(attrs.get("entity")),
-                "period": expression(attrs.get("definition_period")),
-                "value_type": dtype,
-                "default": default,
-                "default_origin": (
-                    "explicit" if "default_value" in attrs else "core type"
-                ),
+                **fields,
                 "formula_names": [
                     item.name
                     for item in node.body
@@ -652,8 +827,6 @@ def parse_variables(
                 ),
                 "helper_functions": sorted(visited_helpers),
             }
-            if dtype == "Enum":
-                records[node.name]["enum_members"] = enum_members(tree, node)
             if node.name not in boundaries:
                 pending.extend(
                     paths[name]
@@ -711,8 +884,6 @@ def inventory_release(
             readers[dependency].add(name)
     for name, record in inputs.items():
         record["read_by"] = sorted(readers[name])
-        if record["value_type"] == "Enum" and not record.get("enum_members"):
-            raise ValueError(f"Unresolved enum members for input {name}")
     parameters = []
     prefixes = {
         p

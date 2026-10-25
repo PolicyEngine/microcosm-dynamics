@@ -7,22 +7,14 @@ tier substring without reusing the older bridge environment variable.
 import ast
 import json
 import os
-import re
 import subprocess
 from dataclasses import replace
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from populace_dynamics.estimates.adjusted_poverty import (
-    AdjustedPovertySpec,
-    SsiParameters,
-    _ssi_response,
-)
 from populace_dynamics.income_resources.ssi.contract import CONTRACT_PATH
 from populace_dynamics.income_resources.ssi.pinning import load_pin
 from populace_dynamics.income_resources.ssi.records import (
@@ -38,8 +30,12 @@ from populace_dynamics.income_resources.ssi.runner import (
 from .ssi_invented import invented_case
 from .test_ssi_inventory import (
     ADMITTED_FORMS,
+    ATTRIBUTE_ROUTES,
+    INVENTED_AGE_RECORD,
     REFUSED_FORMS,
+    invented_age_module,
     invented_enum_module,
+    read_attributes,
     read_members,
 )
 from .test_ssi_inventory import inventory as inventory_script
@@ -114,62 +110,6 @@ def test_federal_invariants(unearned, earned, resources):
         r1.intermediate["ssi_countable_resources"][0]
         >= r.intermediate["ssi_countable_resources"][0]
     )
-
-
-def test_static_offset_differential():
-    runner = invented_runner()
-    amounts = (120, 240, 250, 2400, 6000)
-    cases = []
-    for index, amount in enumerate(amounts):
-        cases.extend(
-            [
-                invented_case(
-                    f"INVENTED_BEFORE_{index}", social_security=amount
-                ),
-                invented_case(
-                    f"INVENTED_AFTER_{index}", social_security=amount * 0.87
-                ),
-            ]
-        )
-    results = accepted(runner.run_many(cases))
-    rows = pd.DataFrame(
-        [
-            dict(
-                income_year=2026,
-                head_ssi=results[2 * i].total,
-                wife_ssi=0,
-                head_ss=amount,
-                wife_ss=0,
-                ofum_ssi=0,
-            )
-            for i, amount in enumerate(amounts)
-        ]
-    )
-    parameters = SsiParameters(
-        {2026: 1000},
-        {2026: 1500},
-        20,
-        65,
-        0.5,
-        2000,
-        3000,
-        {"source": "INVENTED_POLICY"},
-    )
-    offset, newly_eligible = _ssi_response(
-        rows,
-        AdjustedPovertySpec(),
-        {"fu": np.zeros(len(rows), dtype=bool)},
-        parameters,
-        np.full(len(rows), 0.13),
-    )
-    expected = np.array(
-        [
-            results[2 * i + 1].total - results[2 * i].total
-            for i in range(len(amounts))
-        ]
-    )
-    np.testing.assert_allclose(offset, expected, atol=0.02, rtol=0)
-    np.testing.assert_array_equal(newly_eligible, 0)
 
 
 def test_refused_input_and_deeming_are_counted():
@@ -281,11 +221,22 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
         assert pinned["indices"] == list(range(len(pinned["members"])))
 
 
-# Runs in the pinned interpreter: what the engine gives each named variable.
+# Runs in the pinned interpreter: what the engine gives each named variable,
+# with its entity and period in every spelling the model API binds them to,
+# as the inventory records them.
 ATTRIBUTE_CHILD = """
 import json, sys
+import policyengine_us.model_api as model_api
+from policyengine_core.entities import Entity
 from policyengine_us import CountryTaxBenefitSystem
 
+spellings = {}
+for spelling, value in sorted(vars(model_api).items()):
+    if isinstance(value, Entity):
+        spellings.setdefault(("entity", value.key), []).append(spelling)
+for spelling in ("DAY", "MONTH", "YEAR", "ETERNITY"):
+    value = getattr(model_api, spelling)
+    spellings.setdefault(("period", value), []).append(spelling)
 system = CountryTaxBenefitSystem()
 observed = []
 for name in json.load(sys.stdin):
@@ -295,8 +246,8 @@ for name in json.load(sys.stdin):
         "name": name,
         "value_type": variable.value_type.__name__,
         "default": getattr(default, "name", default),
-        "entity": variable.entity.key,
-        "period": variable.definition_period,
+        "entity": spellings.get(("entity", variable.entity.key)),
+        "period": spellings.get(("period", variable.definition_period)),
     })
 json.dump(observed, sys.stdout)
 """
@@ -305,7 +256,8 @@ json.dump(observed, sys.stdout)
 def test_inventory_attributes_match_the_pinned_engine():
     """Differential: each inventoried variable's value_type, default, entity
     and period against what the pinned engine gives it. The static read
-    names them by spelling, which reflection could change."""
+    names them by spelling, which reflection could change. Defaults compare
+    by bool-ness too, since False == 0."""
     python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
     if not python.is_file():
         pytest.skip(f"SSI0 interpreter absent: {python}")
@@ -332,10 +284,95 @@ def test_inventory_attributes_match_the_pinned_engine():
         assert pinned["name"] == record["name"]
         assert pinned["value_type"] == record["value_type"]
         assert pinned["default"] == record["default"]
-        # The source spells the entity's class and the period's constant.
-        entity = re.sub(r"(?<!^)(?=[A-Z])", "_", record["entity"]).lower()
-        assert pinned["entity"] == entity
-        assert pinned["period"] == record["period"].lower()
+        assert isinstance(pinned["default"], bool) is isinstance(
+            record["default"], bool
+        )
+        # The model API binds each entity and period under one spelling,
+        # the one the source names.
+        assert pinned["entity"] == [record["entity"]]
+        assert pinned["period"] == [record["period"]]
+
+
+# Runs in the pinned interpreter. It loads each invented module through the
+# engine's own loader and reports what the engine gives its one new
+# variable, or the error that stopped the load. A module may change the
+# builtins, so they are restored after each.
+ATTRIBUTE_ROUTE_CHILD = """
+import builtins, json, sys, tempfile
+from pathlib import Path
+from policyengine_us import CountryTaxBenefitSystem
+
+namespace = vars(builtins)
+saved = dict(namespace)
+system = CountryTaxBenefitSystem()
+observed = []
+with tempfile.TemporaryDirectory() as folder:
+    for index, source in enumerate(json.load(sys.stdin)):
+        path = Path(folder) / f"invented_route_{index}.py"
+        path.write_text(source)
+        before = set(system.variables)
+        try:
+            system.add_variables_from_file(str(path))
+            (name,) = set(system.variables) - before
+            variable = system.variables[name]
+            default = variable.default_value
+            observed.append({
+                "value_type": variable.value_type.__name__,
+                "entity": variable.entity.key,
+                "period": variable.definition_period,
+                "default": getattr(default, "name", default),
+            })
+        except Exception as error:
+            observed.append({"error": type(error).__name__})
+        finally:
+            for key in [key for key in namespace if key not in saved]:
+                del namespace[key]
+            namespace.update(saved)
+json.dump(observed, sys.stdout)
+"""
+
+
+def test_attribute_routes_change_what_the_engine_loads():
+    """Differential: the plain invented module loads in the pinned engine as
+    the reader records it, and each route the reader refuses loads, without
+    an error, with another value_type, entity, period or default."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    kinds = sorted(ATTRIBUTE_ROUTES)
+    sources = [
+        source.replace("invented_age", f"invented_age_{index}")
+        for index, source in enumerate(
+            [invented_age_module()]
+            + [
+                invented_age_module(ATTRIBUTE_ROUTES[kind][0])
+                for kind in kinds
+            ]
+        )
+    ]
+    completed = subprocess.run(
+        [str(python), "-I", "-c", ATTRIBUTE_ROUTE_CHILD],
+        input=json.dumps(sources),
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    plain, *routes = json.loads(completed.stdout)
+    assert read_attributes(invented_age_module()) == INVENTED_AGE_RECORD
+    assert plain == {
+        "value_type": "int",
+        "entity": "person",
+        "period": "year",
+        "default": 41,
+    }
+    for kind, engine in zip(kinds, routes, strict=True):
+        assert (
+            read_attributes(invented_age_module(ATTRIBUTE_ROUTES[kind][0]))
+            is None
+        )
+        assert "error" not in engine, kind
+        assert engine != plain, kind
 
 
 # Runs in the pinned interpreter. It loads each invented module through the

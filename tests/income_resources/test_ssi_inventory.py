@@ -13,13 +13,14 @@ import importlib.util
 import symtable
 import sys
 import types
+import typing
 import warnings
 from collections import defaultdict
 from pathlib import Path
 
 import pytest
 import yaml
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 SCRIPT = (
@@ -354,8 +355,14 @@ def test_enum_input_with_unreadable_members_refuses_inventory(
         source = enum_class(name, members, base="InventedBase")
     # The default names a member of the intended class, so the defect alone
     # refuses; an empty class has no member to name, so either check does.
+    # The module rules refuse a class with another base first.
     write_enum_input(package, source, name, members[0])
-    with pytest.raises(ValueError, match="Unresolved enum members"):
+    message = {
+        "absent": "Unresolved enum members for invented_status",
+        "empty": "Unresolved enum members for invented_status",
+        "not_an_enum": "Unread module code in variables/input/invented_status",
+    }[defect]
+    with pytest.raises(ValueError, match=message):
         inventory.inventory_release(package)
 
 
@@ -1125,14 +1132,21 @@ def test_enum_member_named_mro_is_unread():
 
 
 @pytest.mark.parametrize(
-    "kind",
-    ("body_rebind", "body_import", "annotated_twice", "walrus", "try_import"),
+    ("kind", "message"),
+    (
+        ("body_rebind", "Unread variable invented_status"),
+        ("body_import", "Unread module code"),
+        ("annotated_twice", "Unread variable invented_status"),
+        ("walrus", "Unresolved enum members for invented_status"),
+        ("try_import", "Unread module code"),
+    ),
 )
 def test_enum_input_bound_outside_a_plain_read_refuses_inventory(
-    tmp_path, kind
+    tmp_path, kind, message
 ):
     # The five forms that put one member list in the input record while the
-    # variable held another, end to end through the inventory.
+    # variable held another, end to end through the inventory. Each refuses
+    # by the first rule it breaks.
     place, text, _ = REFUSED_FORMS[kind]
     form = text.format(name="InventedStatus", member="INVENTED_FIRST")
     source = invented_enum_module(
@@ -1149,7 +1163,7 @@ def test_enum_input_bound_outside_a_plain_read_refuses_inventory(
     ]
     package = invented_package(tmp_path / "form")
     write_enum_module(package, source)
-    with pytest.raises(ValueError, match="Unresolved enum members"):
+    with pytest.raises(ValueError, match=message):
         inventory.inventory_release(package)
 
 
@@ -1189,29 +1203,38 @@ def python_variable(source):
 
 
 # value_type bindings that leave Enum in the class namespace, where the
-# engine reads it, though no single plain assignment says so.
+# engine reads it, though no single plain assignment says so, with the
+# refusal each meets first.
 VALUE_TYPE_FORMS = {
-    "annotated": ("value_type: type = Enum", []),
+    "annotated": ("value_type: type = Enum", [], "Unread variable"),
     "alias": (
         "value_type = InventedEnumType",
         [("head", "InventedEnumType = Enum")],
+        "Unresolved value_type",
     ),
     "rebound": (
         "value_type = float",
         [("body_tail", "value_type: type = Enum")],
+        "Unread variable",
     ),
     "attribute_store": (
         "value_type = float",
         [("tail", "invented_status.value_type = Enum")],
+        "Unread module code",
     ),
     # A name the module never binds, neither a primitive type nor Enum.
-    "model_api_alias": ("value_type = InventedModelApiEnum", []),
+    "model_api_alias": (
+        "value_type = InventedModelApiEnum",
+        [],
+        "Unresolved value_type",
+    ),
 } | {
     # A primitive type is read by its spelling, so the module may not
     # rebind it.
     f"{primitive}_rebound": (
         f"value_type = {primitive}",
         [("head", f"{primitive} = Enum")],
+        "Unresolved value_type",
     )
     for primitive in inventory.TYPE_DEFAULTS
 }
@@ -1221,7 +1244,7 @@ VALUE_TYPE_FORMS = {
 def test_value_type_outside_one_plain_assignment_refuses_inventory(
     tmp_path, kind
 ):
-    line, forms = VALUE_TYPE_FORMS[kind]
+    line, forms, message = VALUE_TYPE_FORMS[kind]
     source = invented_enum_module(
         enum_class("InventedStatus", ["INVENTED_FIRST", "INVENTED_SECOND"]),
         "InventedStatus",
@@ -1231,7 +1254,7 @@ def test_value_type_outside_one_plain_assignment_refuses_inventory(
     assert vars(python_variable(source))["value_type"] is enum.Enum
     package = invented_package(tmp_path)
     write_enum_module(package, source)
-    with pytest.raises(ValueError, match="Unresolved value_type"):
+    with pytest.raises(ValueError, match=f"{message} .*invented_status"):
         inventory.inventory_release(package)
 
 
@@ -1255,19 +1278,747 @@ def test_source_is_decoded_as_python_decodes_it(tmp_path):
     assert input_record(package)["enum_members"] == members
 
 
+def spelling_binding(form, name):
+    """A module-level binding of ``name`` that the module rules admit.
+
+    Names come from a policyengine_core module, and a class subclasses
+    Enum; a plain import is refused before any spelling is read.
+    """
+    text = form.format(n=name).replace(
+        "from m import", "from policyengine_core.invented import"
+    )
+    if text.startswith("class "):
+        text = text.replace(":", "(Enum):", 1)
+    message = "Unread module code" if text.startswith("import ") else None
+    return text, message
+
+
+@pytest.mark.parametrize("form", BINDING_FORMS)
 @pytest.mark.parametrize(
-    ("attribute", "binding"),
-    [("entity", "Person = TaxUnit"), ("definition_period", "YEAR = MONTH")],
+    ("attribute", "name"),
+    [
+        ("value_type", "float"),
+        ("entity", "Person"),
+        ("definition_period", "YEAR"),
+    ],
 )
-def test_entity_or_period_bound_in_its_module_refuses_inventory(
-    tmp_path, attribute, binding
+def test_spelled_name_bound_in_its_module_refuses_inventory(
+    tmp_path, attribute, name, form
 ):
-    """The record names both by their spelling, as with value_type."""
+    """The record names each by its spelling, so every binding form of the
+    spelled name refuses, in the variable's own module."""
+    binding, message = spelling_binding(form, name)
+    package = invented_package(tmp_path)
+    path = package / "variables/input/employment_income.py"
+    assert f"{attribute} = {name}\n" in path.read_text()
+    path.write_text(f"{binding}\n\n\n" + path.read_text())
+    expected = message or f"Unresolved {attribute} for employment_income"
+    with pytest.raises(ValueError, match=expected):
+        inventory.inventory_release(package)
+
+
+INVENTED_AGE_MODULE = """from policyengine_us.model_api import *
+
+
+class invented_age(Variable):
+    value_type = int
+    entity = Person
+    definition_period = YEAR
+    default_value = 41
+    label = "Invented age"
+"""
+INVENTED_SET_OVERRIDE = (
+    "def set(self, attributes, name, **options):\n"
+    '    attributes.pop("set", None)\n'
+    '    if name == "value_type":\n'
+    "        attributes.pop(name)\n"
+    "        return {value_type}\n"
+    "    return super().set(attributes, name, **options)"
+)
+# Routes by which a variable's value_type, entity, period or default can
+# differ from the plain assignment's spelling: (forms, the refusal each
+# meets first, and whether Python's class namespace shows the change). A
+# form is a (place, text) pair, inserted at the module's head or tail or at
+# the variable body's tail, or an (old, new) replacement. Each changes what
+# the pinned engine loads; see test_ssi_engine.
+ATTRIBUTE_ROUTES = {
+    # The engine reads every attribute through the variable's own set.
+    "set_override": (
+        [("body_tail", INVENTED_SET_OVERRIDE.format(value_type="float"))],
+        "Unread variable invented_age",
+        False,
+    ),
+    "set_override_enum": (
+        [
+            (
+                "head",
+                "class InventedStatus(Enum):\n"
+                '    INVENTED_FIRST = "first"\n'
+                '    INVENTED_SECOND = "second"',
+            ),
+            (
+                "body_tail",
+                "def set(self, attributes, name, **options):\n"
+                '    attributes.pop("set", None)\n'
+                '    if name == "value_type":\n'
+                "        attributes.pop(name)\n"
+                "        return Enum\n"
+                '    if name == "possible_values":\n'
+                "        return InventedStatus\n"
+                '    if name == "default_value":\n'
+                "        attributes.pop(name)\n"
+                "        return InventedStatus.INVENTED_FIRST\n"
+                "    return super().set(attributes, name, **options)",
+            ),
+        ],
+        "Unread variable invented_age",
+        False,
+    ),
+    "setattr": (
+        [("tail", 'setattr(invented_age, "value_type", float)')],
+        "Unread module code",
+        True,
+    ),
+    "globals_type": (
+        [("head", 'globals()["int"] = float')],
+        "Unread module code",
+        True,
+    ),
+    # Restored at the tail, so the change reaches only this module's class
+    # body and not the engine's own code.
+    "builtins_type": (
+        [
+            ("head", 'invented_int = int\n__builtins__["int"] = float'),
+            ("tail", '__builtins__["int"] = invented_int'),
+        ],
+        "Unread module code",
+        True,
+    ),
+    "match_type": (
+        [("head", "match float:\n    case int:\n        pass")],
+        "Unresolved value_type for invented_age",
+        True,
+    ),
+    "annotated_entity": (
+        [("body_tail", "entity: object = TaxUnit")],
+        "Unread variable invented_age",
+        True,
+    ),
+    "annotated_period": (
+        [("body_tail", "definition_period: str = MONTH")],
+        "Unread variable invented_age",
+        True,
+    ),
+    "annotated_default": (
+        [("body_tail", "default_value: int = 7")],
+        "Unread variable invented_age",
+        True,
+    ),
+    "augmented_default": (
+        [("body_tail", "default_value += 1")],
+        "Unread variable invented_age",
+        True,
+    ),
+    "second_default": (
+        [("body_tail", "default_value = 7")],
+        "Unresolved default_value for invented_age",
+        True,
+    ),
+    "tuple_attributes": (
+        [("body_tail", "entity, definition_period = TaxUnit, MONTH")],
+        "Unread variable invented_age",
+        True,
+    ),
+    "entity_store": (
+        [("tail", "invented_age.entity = TaxUnit")],
+        "Unread module code",
+        True,
+    ),
+    "default_store": (
+        [("tail", "invented_age.default_value = 7")],
+        "Unread module code",
+        True,
+    ),
+    "entity_item": (
+        [("entity = Person", "entity = entities[3]")],
+        "Unresolved entity for invented_age",
+        True,
+    ),
+    "globals_entity": (
+        [("head", 'globals()["Person"] = TaxUnit')],
+        "Unread module code",
+        True,
+    ),
+    "match_entity": (
+        [("head", "match TaxUnit:\n    case Person:\n        pass")],
+        "Unresolved entity for invented_age",
+        True,
+    ),
+    "match_period": (
+        [("head", "match MONTH:\n    case YEAR:\n        pass")],
+        "Unresolved definition_period for invented_age",
+        True,
+    ),
+    # The engine takes a bool as an int.
+    "bool_default": (
+        [("default_value = 41", "default_value = True")],
+        "Unresolved default for invented_age",
+        True,
+    ),
+}
+
+
+def invented_age_module(forms=()):
+    """The invented age module with ``forms`` placed as ATTRIBUTE_ROUTES
+    places them."""
+    source = INVENTED_AGE_MODULE
+    placed = defaultdict(list)
+    for place, text in forms:
+        if place in ("head", "tail", "body_tail"):
+            placed[place].append(text)
+        else:
+            assert source.count(place) == 1
+            source = source.replace(place, text)
+    head, _, rest = source.partition("\n\n\nclass ")
+    body = "".join(
+        "    " + text.replace("\n", "\n    ") + "\n"
+        for text in placed["body_tail"]
+    )
+    parts = [head, *placed["head"], "class " + rest + body, *placed["tail"]]
+    return "\n\n\n".join(part.rstrip("\n") for part in parts) + "\n"
+
+
+class InventedEntity:
+    """A stand-in for one of the model API's entities."""
+
+    def __init__(self, name):
+        self.name = name
+
+
+INVENTED_ENTITIES = [
+    InventedEntity(name)
+    for name in (
+        "Household",
+        "SPMUnit",
+        "Family",
+        "TaxUnit",
+        "MaritalUnit",
+        "Person",
+    )
+]
+INVENTED_MODEL_API = {
+    "Enum": enum.Enum,
+    "Variable": type("Variable", (), {}),
+    "entities": INVENTED_ENTITIES,
+    **{entity.name: entity for entity in INVENTED_ENTITIES},
+    **{name: name.lower() for name in ("DAY", "MONTH", "YEAR", "ETERNITY")},
+}
+
+
+def python_attributes(source):
+    """What Python binds the invented variable's class namespace to, in the
+    record's spellings, or None if the module fails.
+
+    Builtins are a copy, so a module that changes them changes only its own.
+    """
+    module = types.ModuleType(inventory.MODEL_API)
+    vars(module).update(INVENTED_MODEL_API)
+
+    tools = types.ModuleType("policyengine_core.invented")
+    tools.invented_tool = lambda *args: 0
+
+    def stand_in_import(name, *args, **kwargs):
+        stand_ins = {
+            inventory.MODEL_API: module,
+            "policyengine_core.invented": tools,
+        }
+        if name in stand_ins:
+            return stand_ins[name]
+        raise ImportError(name)
+
+    namespace = {
+        "__builtins__": vars(builtins) | {"__import__": stand_in_import}
+    }
+    spelled = {
+        id(value): name
+        for name, value in INVENTED_MODEL_API.items()
+        if name != "entities"
+    } | {id(kind): kind.__name__ for kind in (bool, int, float, str)}
+    try:
+        exec(source, namespace)  # noqa: S102 - invented source only
+        attributes = vars(namespace["invented_age"])
+        return {
+            "value_type": spelled[id(attributes["value_type"])],
+            "entity": spelled[id(attributes["entity"])],
+            "period": spelled[id(attributes["definition_period"])],
+            "default": attributes.get("default_value"),
+        }
+    except Exception:
+        return None
+
+
+def read_attributes(source):
+    """The reader's attributes for the invented age variable, or None if it
+    refuses the module or the variable. Imports are not followed here."""
+    tree = ast.parse(source)
+    if inventory.module_imports(tree) is None:
+        return None
+    variable = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef) and node.name == "invented_age"
+    )
+    try:
+        record = inventory.variable_attributes(tree, variable)
+    except ValueError:
+        return None
+    return {key: record[key] for key in ("value_type", "entity", "period")} | {
+        "default": record["default"]
+    }
+
+
+INVENTED_AGE_RECORD = {
+    "value_type": "int",
+    "entity": "Person",
+    "period": "YEAR",
+    "default": 41,
+}
+
+
+def test_invented_age_module_is_read_as_python_binds_it():
+    assert read_attributes(INVENTED_AGE_MODULE) == INVENTED_AGE_RECORD
+    assert python_attributes(INVENTED_AGE_MODULE) == INVENTED_AGE_RECORD
+
+
+@pytest.mark.parametrize("kind", sorted(ATTRIBUTE_ROUTES))
+def test_attribute_routes_refuse_inventory(tmp_path, kind):
+    """Each route refuses end to end, by the rule named; an observable one
+    also changes what Python binds."""
+    forms, message, observable = ATTRIBUTE_ROUTES[kind]
+    source = invented_age_module(forms)
+    assert read_attributes(source) is None
+    if observable:
+        assert python_attributes(source) not in (None, INVENTED_AGE_RECORD)
+    package = invented_package(tmp_path / "control")
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module()
+    )
+    record = next(
+        v
+        for v in inventory.inventory_release(package)["inputs"]
+        if v["name"] == "invented_age"
+    )
+    assert {key: record[key] for key in ("value_type", "entity", "period")} | {
+        "default": record["default"]
+    } == INVENTED_AGE_RECORD
+    package = invented_package(tmp_path / "route")
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(ValueError, match=message):
+        inventory.inventory_release(package)
+
+
+INVENTED_SECOND_CLASS = (
+    "class invented_age(Variable):\n"
+    "    value_type = float\n"
+    "    entity = Person\n"
+    "    definition_period = YEAR"
+)
+
+
+@pytest.mark.parametrize(
+    "form",
+    (
+        "invented_age = None",
+        "def invented_age():\n    return 0",
+        INVENTED_SECOND_CLASS,
+    ),
+    ids=["name", "function", "second_class"],
+)
+def test_variable_name_bound_again_refuses_inventory(tmp_path, form):
+    """After a second binding of the variable's name, the module's name no
+    longer gives the class the reader reads, so the inventory refuses. (The
+    pinned engine raises ValueError on loading the second class.)"""
+    source = invented_age_module([("tail", form)])
+    assert read_attributes(source) is None
+    assert python_attributes(source) != INVENTED_AGE_RECORD
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(ValueError, match="Unread variable invented_age"):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 syntax")
+def test_variable_with_type_parameters_refuses_inventory(tmp_path):
+    """Python adds Generic to the bases of a class with type parameters, so
+    the variable's bases are not the one written."""
+    header = "class invented_age[InventedType](Variable):"
+    source = invented_age_module([("class invented_age(Variable):", header)])
+    assert read_attributes(source) is None
+    namespace = {"Variable": type("Variable", (), {})}
+    exec(header + "\n    pass", namespace)  # noqa: S102 - invented source only
+    assert typing.Generic in namespace["invented_age"].__bases__
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(ValueError, match="Unread variable invented_age"):
+        inventory.inventory_release(package)
+
+
+# Forms the reader admits in a primitive variable's module, as (place, text).
+ADMITTED_AGE_FORMS = {
+    "second_label": ("body_tail", 'label = "Invented note"'),
+    "formula": (
+        "body_tail",
+        "def formula(person, period, parameters):\n"
+        '    return person("invented_other", period)',
+    ),
+    "dated_formula": (
+        "body_tail",
+        "def formula_2020(person, period, parameters):\n    return 0",
+    ),
+    "names_as_text": (
+        "body_tail",
+        'documentation = "globals setattr __builtins__ int = float"',
+    ),
+    "helper": ("tail", "def invented_helper():\n    return int, Person, YEAR"),
+    "private_helper": ("tail", "def _invented_helper():\n    return float"),
+    "core_import": (
+        "head",
+        "from policyengine_core.invented import invented_tool",
+    ),
+    "item_store": ("tail", 'INVENTED_TABLE = {}\nINVENTED_TABLE["int"] = 1'),
+    "reading": ("tail", "INVENTED_READ = (entities[3], TaxUnit, MONTH)"),
+    "enum_class": (
+        "head",
+        'class InventedStatus(Enum):\n    INVENTED_FIRST = "first"',
+    ),
+    "negative_default": ("default_value = 41", "default_value = -41"),
+}
+
+
+@settings(deadline=None, max_examples=300)
+@given(
+    admitted=st.lists(
+        st.sampled_from(sorted(ADMITTED_AGE_FORMS)), unique=True
+    ),
+    route=st.none() | st.sampled_from(sorted(ATTRIBUTE_ROUTES)),
+    position=st.integers(0, 12),
+)
+def test_static_attributes_agree_with_python(admitted, route, position):
+    """Differential: whatever the reader admits, Python binds the same
+    value_type, entity, period and default; any route refuses."""
+    # Both replace the same default.
+    assume(not (route == "bool_default" and "negative_default" in admitted))
+    forms = [ADMITTED_AGE_FORMS[kind] for kind in admitted]
+    if route:
+        forms[position % (len(forms) + 1) : 0] = ATTRIBUTE_ROUTES[route][0]
+    source = invented_age_module(forms)
+    read = read_attributes(source)
+    if read is not None:
+        assert read == python_attributes(source)
+    if route:
+        assert read is None
+    else:
+        assert read is not None
+
+
+@pytest.mark.parametrize(
+    ("value_type", "default", "expected"),
+    [
+        ("int", "-41", -41),
+        ("int", "(41)", 41),
+        ("int", "True", None),
+        ("int", "41.0", None),
+        ("int", 'int("41")', None),
+        ("int", "invented_default", None),
+        ("float", "41", 41),
+        ("float", "41.5", 41.5),
+        ("float", "-0.5", -0.5),
+        ("float", "False", None),
+        ("float", '"41"', None),
+        ("bool", "True", True),
+        ("bool", "1", None),
+        ("bool", "not False", None),
+        ("str", '"invented"', "invented"),
+        ("str", "0", None),
+        ("str", 'b"invented"', None),
+        ("str", "invented_default", None),
+    ],
+)
+def test_primitive_default_is_a_literal_of_its_type(
+    value_type, default, expected
+):
+    """The engine converts an int default of a float and refuses most other
+    mismatches; the reader admits only a literal of the variable's type."""
+    source = invented_age_module(
+        [
+            ("value_type = int", f"value_type = {value_type}"),
+            ("default_value = 41", f"default_value = {default}"),
+        ]
+    )
+    read = read_attributes(source)
+    if expected is None:
+        assert read is None
+    else:
+        assert read["default"] == expected
+        assert type(read["default"]) is type(expected)
+
+
+@pytest.mark.parametrize(
+    "attribute", ["value_type", "entity", "definition_period"]
+)
+def test_required_attribute_absent_refuses_inventory(tmp_path, attribute):
+    # The engine refuses a variable without one; the record must name it.
     package = invented_package(tmp_path)
     path = package / "variables/input/invented_age.py"
-    path.write_text(f"{binding}\n\n\n" + path.read_text())
-    with pytest.raises(ValueError, match=f"Unresolved {attribute}"):
+    text = path.read_text()
+    line = next(
+        line for line in text.splitlines() if f" {attribute} = " in line
+    )
+    path.write_text(text.replace(line + "\n", ""))
+    with pytest.raises(
+        ValueError, match=f"Unresolved {attribute} for invented_age"
+    ):
         inventory.inventory_release(package)
+
+
+# Module code the reader refuses, wherever the module sits in the closure:
+# (place, text) as in ATTRIBUTE_ROUTES.
+REFUSED_MODULE_FORMS = {
+    "plain_import": ("head", "import invented_module"),
+    "other_star_import": ("head", "from invented_module import *"),
+    "core_star_import": ("head", "from policyengine_core.invented import *"),
+    "relative_import": ("head", "from .invented_module import invented_tool"),
+    # Relative imports whose module is spelled like an admitted one.
+    "relative_variables_import": (
+        "head",
+        "from .policyengine_us.variables.input.invented_age import "
+        "invented_age",
+    ),
+    "relative_model_api": ("head", "from .policyengine_us.model_api import *"),
+    "other_package_import": (
+        "head",
+        "from policyengine_us.invented import invented_tool",
+    ),
+    "nested_import": (
+        "body_tail",
+        "def formula(person, period, parameters):\n"
+        "    from policyengine_core.invented import invented_tool\n"
+        "    return invented_tool(person)",
+    ),
+    "guarded_import": (
+        "head",
+        "if True:\n    from policyengine_core.invented import invented_tool",
+    ),
+    "dunder_name": ("tail", "INVENTED_NAME = __name__"),
+    "dunder_attribute": ("tail", "INVENTED_NAMES = Variable.__dict__"),
+    "dotted_dunder": (
+        "head",
+        "from policyengine_core.__invented__ import invented_tool",
+    ),
+    "reflective_name": ("tail", "INVENTED_READER = vars"),
+    "frame_attribute": (
+        "tail",
+        "def invented_frame(frame):\n    return frame.f_globals",
+    ),
+    # Names held in a list of strings rather than in a node of their own.
+    "match_keyword_dunder": (
+        "tail",
+        "match invented_age:\n"
+        "    case object(__invented__=invented_value):\n"
+        "        pass",
+    ),
+    "global_dunder": (
+        "tail",
+        "def invented_scope():\n    global __invented__",
+    ),
+    "attribute_delete": ("tail", "del invented_age.label"),
+    "plain_class": ("tail", "class InventedHelper:\n    pass"),
+    "other_base": ("tail", "class InventedHelper(Variable, Enum):\n    pass"),
+    "decorated_enum": (
+        "tail",
+        '@invented_decorator\nclass InventedStatus(Enum):\n    INVENTED = "x"',
+    ),
+    "keyword_class": (
+        "tail",
+        "class InventedStatus(Enum, metaclass=type):\n    INVENTED = 'x'",
+    ),
+    "nested_class": (
+        "tail",
+        "if True:\n    class invented_spare(Variable):\n"
+        "        value_type = float",
+    ),
+    "variable_bound": ("tail", "Variable = None"),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(REFUSED_MODULE_FORMS))
+def test_module_code_outside_the_rules_refuses_inventory(tmp_path, kind):
+    source = invented_age_module([REFUSED_MODULE_FORMS[kind]])
+    assert read_attributes(source) is None
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(
+        ValueError,
+        match="Unread module code in variables/input/invented_age.py",
+    ):
+        inventory.inventory_release(package)
+
+
+INVENTED_TOOLS_IMPORT = (
+    "from policyengine_us.variables.invented.invented_tools import "
+    "invented_tool"
+)
+
+
+def package_importing_tools(tmp_path, tools, init=None):
+    """An invented package whose age module imports a tools module that is
+    neither an SSI root nor a variable, with an optional package init."""
+    package = invented_package(tmp_path)
+    folder = package / "variables/invented"
+    folder.mkdir()
+    (folder / "invented_tools.py").write_text(tools)
+    if init is not None:
+        (folder / "__init__.py").write_text(init)
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module([("head", INVENTED_TOOLS_IMPORT)])
+    )
+    return package
+
+
+INVENTED_TOOLS = "def invented_tool():\n    return 1\n"
+
+
+@pytest.mark.parametrize("position", ["tools", "init"])
+@pytest.mark.parametrize("kind", sorted(REFUSED_MODULE_FORMS))
+def test_module_code_outside_the_rules_refuses_inventory_when_imported(
+    tmp_path, kind, position
+):
+    """Each refused form, in a module the age module imports or in the
+    package init that import runs, where only ``module_imports`` reads it."""
+    place, text = REFUSED_MODULE_FORMS[kind]
+    if place == "head":
+        code = f"{text}\n\n\n{INVENTED_TOOLS}"
+    else:
+        code = f"{INVENTED_TOOLS}\n\n{text}\n"
+    if position == "tools":
+        package = package_importing_tools(tmp_path, code)
+        relative = "invented_tools.py"
+    else:
+        package = package_importing_tools(tmp_path, INVENTED_TOOLS, code)
+        relative = "__init__.py"
+    with pytest.raises(
+        ValueError,
+        match=f"Unread module code in variables/invented/{relative}",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_literals_are_not_read_as_names(tmp_path):
+    """A string literal may spell a reflective or dunder name: it is data,
+    in the variable module, a module it imports or a package init."""
+    notes = 'INVENTED_NOTES = ("vars", "__invented__", "invented.f_globals")'
+    source = invented_age_module([("tail", notes)])
+    assert read_attributes(source) == INVENTED_AGE_RECORD
+    package = invented_package(tmp_path / "variable")
+    (package / "variables/input/invented_age.py").write_text(source)
+    assert inventory.inventory_release(package)
+    code = f"{INVENTED_TOOLS}\n\n{notes}\n"
+    package = package_importing_tools(tmp_path / "tools", code)
+    assert inventory.inventory_release(package)
+    package = package_importing_tools(tmp_path / "init", INVENTED_TOOLS, code)
+    assert inventory.inventory_release(package)
+
+
+def test_imported_variables_module_is_read_by_the_same_rules(tmp_path):
+    tools = "def invented_tool():\n    return 1\n"
+    package = package_importing_tools(tmp_path / "plain", tools)
+    assert inventory.inventory_release(package)
+    package = package_importing_tools(tmp_path / "tools_init", tools, "")
+    assert inventory.inventory_release(package)
+    # The imported module, or a package init its import runs, may change
+    # the importer's variables, so each is read too.
+    for folder, code, init in (
+        ("store", tools + "invented_tool.cache = None\n", None),
+        ("reflective", tools + 'globals()["int"] = float\n', None),
+        ("init", tools, '__builtins__["int"] = float\n'),
+    ):
+        package = package_importing_tools(tmp_path / folder, code, init)
+        relative = "invented_tools.py" if init is None else "__init__.py"
+        with pytest.raises(
+            ValueError,
+            match=f"Unread module code in variables/invented/{relative}",
+        ):
+            inventory.inventory_release(package)
+    # The import runs every package init on its path, not only the nearest.
+    package = package_importing_tools(tmp_path / "outer_init", tools, "")
+    (package / "variables/__init__.py").write_text("import invented_module\n")
+    with pytest.raises(
+        ValueError, match="Unread module code in variables/__init__.py"
+    ):
+        inventory.inventory_release(package)
+
+
+def test_import_cycles_are_read_once(tmp_path):
+    tools = (
+        "from policyengine_us.variables.input.invented_age import "
+        "invented_age\n"
+    )
+    package = package_importing_tools(tmp_path, tools)
+    assert inventory.inventory_release(package)
+
+
+def test_imports_are_followed_through_imported_modules(tmp_path):
+    tools = (
+        "from policyengine_us.variables.invented.invented_more import "
+        "invented_more\n"
+    )
+    package = package_importing_tools(tmp_path, tools)
+    more = package / "variables/invented/invented_more.py"
+    more.write_text("def invented_more():\n    return 1\n")
+    assert inventory.inventory_release(package)
+    more.write_text("import invented_module\n")
+    with pytest.raises(ValueError, match="invented/invented_more.py"):
+        inventory.inventory_release(package)
+
+
+def test_unresolved_variables_import_refuses_inventory(tmp_path):
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module([("head", INVENTED_TOOLS_IMPORT)])
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unresolved import of policyengine_us.variables.invented",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_enum_variable_with_a_formula_needs_readable_members(tmp_path):
+    """Members are read for every enum variable, not only inputs."""
+    for possible, refused in (
+        ("InventedStatus", False),
+        ("InventedImportedStatus", True),
+    ):
+        package = package_with_enum_input(tmp_path / possible, possible)
+        path = package / "variables/input/invented_status.py"
+        path.write_text(
+            path.read_text()
+            + "\n    def formula(person, period, parameters):\n"
+            + '        return person("invented_age", period)\n'
+        )
+        if refused:
+            with pytest.raises(
+                ValueError,
+                match="Unresolved enum members for invented_status",
+            ):
+                inventory.inventory_release(package)
+            continue
+        result = inventory.inventory_release(package)
+        assert "invented_status" not in {v["name"] for v in result["inputs"]}
+        status = next(
+            v for v in result["variables"] if v["name"] == "invented_status"
+        )
+        assert status["enum_members"] == ["INVENTED_FIRST", "INVENTED_SECOND"]
 
 
 def test_helper_roots_are_decoded_as_python_decodes_them(tmp_path):
@@ -1319,16 +2070,60 @@ def test_core_defaults_are_decoded_as_python_decodes_them(tmp_path):
     )
 
 
-def test_core_defaults_bound_twice_refuse_inventory(tmp_path):
-    """Python keeps the last of two tables; the reader reads neither."""
+INVENTED_CHANGED_TABLE = INVENTED_CORE_DEFAULTS.removeprefix(
+    "VALUE_TYPES = "
+).replace('float: {"default": 0}', 'float: {"default": 1}')
+
+
+@pytest.mark.parametrize(
+    ("second", "python_float_default"),
+    [
+        (f"VALUE_TYPES = {INVENTED_CHANGED_TABLE}", 1),
+        (f"VALUE_TYPES: dict = {INVENTED_CHANGED_TABLE}", 1),
+        ("VALUE_TYPES |= {}", 0),
+        (
+            f"match {INVENTED_CHANGED_TABLE.strip()}:\n"
+            "    case VALUE_TYPES:\n"
+            "        pass\n",
+            1,
+        ),
+        ("from invented_core import invented_table as VALUE_TYPES\n", None),
+        ("def invented_reset(VALUE_TYPES):\n    pass\n", 0),
+    ],
+)
+def test_core_defaults_bound_twice_refuse_inventory(
+    tmp_path, second, python_float_default
+):
+    """Python keeps the last of two bindings; the reader reads neither,
+    whatever the second binding's form."""
+    if python_float_default is not None:
+        namespace = {"bool": bool, "int": int, "float": float, "str": str}
+        exec(INVENTED_CORE_DEFAULTS + second, namespace)  # noqa: S102
+        table = namespace["VALUE_TYPES"]
+        assert table[float]["default"] == python_float_default
     package = tmp_path / "policyengine_us"
     config = tmp_path / "policyengine_core/variables/config.py"
     config.parent.mkdir(parents=True)
-    config.write_text(
-        INVENTED_CORE_DEFAULTS
-        + INVENTED_CORE_DEFAULTS.replace(
-            'float: {"default": 0}', 'float: {"default": 1}'
-        )
-    )
+    config.write_text(INVENTED_CORE_DEFAULTS + second)
     with pytest.raises(ValueError, match="not one plain table"):
+        inventory.validate_core_defaults(package)
+
+
+@pytest.mark.parametrize(
+    ("old", "new"),
+    [
+        ('bool: {"default": False}', 'bool: {"default": 0}'),
+        ('int: {"default": 0}', 'int: {"default": False}'),
+        ('float: {"default": 0}', 'float: {"default": 0.0}'),
+        ('str: {"default": ""}', 'str: {"default": b""}'),
+    ],
+)
+def test_core_defaults_compare_by_type(tmp_path, old, new):
+    """False == 0 in Python, but the engine keeps the default's type, and
+    the record keeps the extractor's."""
+    package = tmp_path / "policyengine_us"
+    config = tmp_path / "policyengine_core/variables/config.py"
+    config.parent.mkdir(parents=True)
+    config.write_text(INVENTED_CORE_DEFAULTS.replace(old, new))
+    with pytest.raises(ValueError, match="Core primitive defaults differ"):
         inventory.validate_core_defaults(package)
