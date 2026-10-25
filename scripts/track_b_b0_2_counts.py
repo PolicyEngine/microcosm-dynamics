@@ -15,10 +15,13 @@ import json
 import math
 import os
 import subprocess
+import sys
 import time
+import traceback
 import warnings
 from collections import Counter
 from collections.abc import Mapping
+from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -62,7 +65,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "41eadabb798108a5c836b1a477b0aad713d88959c2288f8e23c4670dc8ad0e9d"
+    "036b207065be7c91312aebf035024a7b6c512e3942b7cc92d00f19fc0ef0c9fe"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -495,10 +498,13 @@ def build_model(registry: SetRegistry) -> dict:
 
     The targets are this release's: each class of units that belong to
     exactly the same rows of this release (a union of atoms), and every
-    difference between a row and a proper subset of it of the same type,
-    unless an earlier release published both exactly, which already
-    fixes that difference. Each is audited once whatever its true size.
-    No unit identifier or membership leaves memory."""
+    difference between a row and a proper subset of it of the same type.
+    The one exception is a difference that is not between two of this
+    release's rows, when an earlier release published both rows exactly
+    and so already fixed it. Each target is audited once whatever its true
+    size. Which targets are this release's own (a class, or a difference
+    of two of its rows), and their order, depend on this release's sets
+    alone. No unit identifier or membership leaves memory."""
     grouped: dict[tuple[str, frozenset], list[CellPath]] = {}
     for path, key in registry.sets.items():
         grouped.setdefault(key, []).append(path)
@@ -554,33 +560,47 @@ def build_model(registry: SetRegistry) -> dict:
             "earlier": False,
         }
     shared = (matrix @ matrix.T).toarray()
+    pairs = []
     for subset in range(len(keys)):
         if shared[subset, subset] == 0:
             continue
-        inner = set(row_atoms[subset].tolist())
         for superset in np.flatnonzero(
             shared[subset] == shared[subset, subset]
         ):
             if superset == subset or keys[superset][0] != keys[subset][0]:
                 continue
-            if earlier[subset] and earlier[superset]:
+            if (
+                earlier[subset]
+                and earlier[superset]
+                and not (current[subset] and current[superset])
+            ):
+                # The earlier release published both exactly, which already
+                # fixes the difference, and it is not one of this release's
+                # own: two of this release's sets always make a target.
                 continue
-            # A distinct row holding every atom of ``subset`` is a proper
-            # superset, so the difference is nonempty.
-            columns = tuple(
-                int(c) for c in row_atoms[superset] if int(c) not in inner
-            )
-            targets.setdefault(
-                columns,
-                {
-                    "kind": "difference",
-                    "unit_type": keys[subset][0],
-                    "superset": list(grouped[keys[superset]][0]),
-                    "subset": list(grouped[keys[subset]][0]),
-                    # It involves a set only the earlier release counts.
-                    "earlier": not (current[superset] and current[subset]),
-                },
-            )
+            pairs.append((subset, int(superset)))
+    # Differences of this release's own sets come first, so that one which
+    # holds the same units as a difference involving an earlier set is
+    # this release's, and their order does not depend on the earlier sets.
+    pairs.sort(key=lambda pair: not (current[pair[0]] and current[pair[1]]))
+    for subset, superset in pairs:
+        inner = set(row_atoms[subset].tolist())
+        # A distinct row holding every atom of ``subset`` is a proper
+        # superset, so the difference is nonempty.
+        columns = tuple(
+            int(c) for c in row_atoms[superset] if int(c) not in inner
+        )
+        targets.setdefault(
+            columns,
+            {
+                "kind": "difference",
+                "unit_type": keys[subset][0],
+                "superset": list(grouped[keys[superset]][0]),
+                "subset": list(grouped[keys[subset]][0]),
+                # It involves a set only the earlier release counts.
+                "earlier": not (current[superset] and current[subset]),
+            },
+        )
     target_list = [
         {
             "columns": columns,
@@ -740,6 +760,7 @@ class AuditSystem:
                 bounds=self.bounds,
                 constraints=[self.constraint, *extra],
                 options={
+                    "disp": False,
                     "time_limit": seconds,
                     "mip_rel_gap": gap,
                     "threads": 1,
@@ -1073,16 +1094,35 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
             )
 
 
+#: What the local copy records of each of this release's targets: what it
+#: is, its true size, and the audit's decision about it.
+TARGET_FIELDS = (
+    "unit_type",
+    "kind",
+    "superset",
+    "subset",
+    "true_size",
+    "result",
+    "round",
+)
+
+
 def local_audit(audit: dict) -> dict:
-    """The audit as the local copy records it.
+    """The audit as the local copy records it: this release's own counts and
+    the audit's decisions, and nothing else.
 
     B0.1's sets enter the audit in memory only (protocol, "What this audit
     may and may not compute"), so nothing about them beyond B0.1's own
-    counts is written. Targets that involve a set only B0.1 counts are
-    left out, with their places in the rounds. The atoms, which B0.1's
-    sets refine, are left out too: each target's atom columns, and the
-    atom sizes, which become the sizes of this release's classes (its
-    atom targets)."""
+    counts is written. The record holds the base and the status; each
+    round's targets found narrow and whether it seeded the pool again;
+    and, for each target of this release (a class of its units, or a
+    difference of two of its sets), what it is, its true size, its
+    classification and the round that settled it. Its classes' sizes are
+    given by unit type. Targets that involve a set only B0.1 counts are
+    left out, with their places in the rounds. So are the atoms, which
+    B0.1's sets refine, and everything computed from them that is not a
+    decision: each target's atom columns, proof, programs and range, the
+    pool's size, the relation count and the timing."""
     shown = [
         index
         for index, target in enumerate(audit["targets"])
@@ -1091,9 +1131,9 @@ def local_audit(audit: dict) -> dict:
     renumber = {old: new for new, old in enumerate(shown)}
     targets = [
         {
-            key: value
-            for key, value in audit["targets"][index].items()
-            if key not in ("columns", "earlier")
+            key: audit["targets"][index][key]
+            for key in TARGET_FIELDS
+            if key in audit["targets"][index]
         }
         for index in shown
     ]
@@ -1104,17 +1144,15 @@ def local_audit(audit: dict) -> dict:
                 target["true_size"]
             )
     return {
-        **{
-            key: value
-            for key, value in audit.items()
-            if key not in ("targets", "disclosed", "rounds", "atom_sizes")
-        },
+        "base": audit["base"],
+        "status": audit["status"],
         "rounds": [
             {
-                **round_,
+                "round": round_["round"],
                 "disclosed": [
                     renumber[i] for i in round_["disclosed"] if i in renumber
                 ],
+                "reseeded": round_["reseeded"],
             }
             for round_ in audit["rounds"]
         ],
@@ -1544,10 +1582,13 @@ def check_b0_1_record(record: Mapping, rerun: Mapping, sets: Mapping) -> None:
     inputs give, and every number it publishes is modeled.
 
     B0.1's own ``structural_counts``, rerun on this script's inputs, must
-    equal its committed counts exactly. Every committed count must be one
-    of ``sets``, a sum of published counts (``b0_1_sums``, checked), an
-    effective size, or a wave label. Each copied ledger count must equal
-    the B0.1 count it repeats."""
+    equal its committed counts exactly, and each rebuilt set's size must be
+    the signed sum of published counts its entry names. Every committed
+    count must be one of ``sets``, a sum of published counts
+    (``b0_1_sums``, checked), an effective size, or a wave label. Each
+    copied ledger count must equal the B0.1 count it repeats. This is the
+    rerun gate: it runs before any set enters the audit, and a failure
+    names a path, never a value."""
     counts = record["counts"]
     if rerun != counts:
         raise AssertionError(
@@ -1559,6 +1600,13 @@ def check_b0_1_record(record: Mapping, rerun: Mapping, sets: Mapping) -> None:
         for year in (BOUNDARY_YEAR, *HORIZON_YEARS)
     }
     leaves = dict(_b0_1_leaves(counts))
+    for path, (_, units, terms) in sets.items():
+        if any(part not in leaves for _, part in terms):
+            raise AssertionError(f"B0.1 publishes no count for {path}")
+        if len(units) != sum(sign * leaves[part] for sign, part in terms):
+            raise AssertionError(
+                f"a rebuilt B0.1 set is not its count: {path}"
+            )
     for path, value in leaves.items():
         if path in sets or path in labels or path[-1] in B0_1_EFFECTIVE:
             continue
@@ -1776,6 +1824,94 @@ def write_new(path: Path, data: bytes) -> None:
         os.close(directory)
 
 
+def release_outputs(
+    person_wave: pd.DataFrame,
+    validity_by_wave: Mapping[int, pd.DataFrame],
+    anchor: pd.DataFrame,
+    design: pd.DataFrame,
+    committed: Mapping,
+    provenance: Mapping,
+) -> tuple[bytes, bytes]:
+    """The local copy's bytes and the published file's.
+
+    B0.1's record must pass the rerun gate (``check_b0_1_record``) before
+    any of its sets enters the audit. ``provenance`` describes the run and
+    its inputs and holds no count; each file adds to it only this
+    release's counts (exact in the local copy, coarsened in the published
+    file when released), the audit's decisions (``local_audit``) and the
+    disclosure block."""
+    counts = structural_counts(person_wave, validity_by_wave, anchor, design)
+    domain_size = counts["rosters"]["R_B2"]["overall"]["persons"]
+    if domain_size != committed["counts"]["domain_persons"]:
+        raise AssertionError(
+            "R_B2 size differs from B0.1 counts.domain_persons"
+        )
+    earlier = b0_1_sets(person_wave, validity_by_wave)
+    check_b0_1_record(
+        committed,
+        b0_1_structural_counts(person_wave, validity_by_wave),
+        earlier,
+    )
+    registry = disclosure_registry(
+        person_wave, validity_by_wave, anchor, design
+    )
+    register_b0_1(registry, earlier, committed["counts"])
+    coarsened, disclosure, audit = release_counts(counts, registry)
+    payload = {**provenance, "counts": counts, "disclosure_audit": audit}
+    public_payload = {**provenance, "disclosure": disclosure}
+    if coarsened:
+        public_payload["counts"] = coarsened
+    return tuple(
+        (json.dumps(record, indent=2, sort_keys=True) + "\n").encode()
+        for record in (payload, public_payload)
+    )
+
+
+def _failure_text(error: BaseException) -> str:
+    """A failure's text with no value in it.
+
+    It names the error's type and the last line of this script that led to
+    it. The message is kept only when this script's own ``raise`` statement
+    made it: those name paths, never values (a test checks every one). Any
+    other message may quote a size, a value or an identifier, so it is
+    dropped."""
+    frames = traceback.extract_tb(error.__traceback__)
+    here = Path(__file__).resolve()
+    own = [frame for frame in frames if Path(frame.filename).resolve() == here]
+    where = f"{own[-1].name}, line {own[-1].lineno}" if own else "unknown"
+    text = f"B0.2 stopped in {where}: {type(error).__name__}"
+    raised_here = (
+        frames
+        and own
+        and frames[-1] is own[-1]
+        and (frames[-1].line or "").lstrip().startswith("raise ")
+    )
+    return f"{text}: {error}" if raised_here else text
+
+
+@contextmanager
+def count_free_failures():
+    """Run the steps that read data so that no failure or warning they
+    raise can print a value: a failure stops the run with
+    ``_failure_text``, and a warning is reported by its category and place
+    alone."""
+    failure = None
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        try:
+            yield
+        except Exception as error:
+            failure = _failure_text(error)
+    for warning in caught:
+        print(
+            f"B0.2 warning: {warning.category.__name__} at "
+            f"{Path(warning.filename).name}, line {warning.lineno}",
+            file=sys.stderr,
+        )
+    if failure is not None:
+        raise SystemExit(failure) from None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -1817,58 +1953,33 @@ def main(argv: list[str] | None = None) -> int:
     repository_head = _git("rev-parse", "HEAD")
     script_sha256 = _sha256_file(Path(__file__))
     _start_attempt(local, repository_head, script_sha256)
-    data_dir = psid._resolve_data_dir(None).resolve()
-    with psid2010.record_files_read(data_dir) as opened:
-        person_wave, validity, anchor, design, allowlist = read_inputs(
-            data_dir
+    with count_free_failures():
+        data_dir = psid._resolve_data_dir(None).resolve()
+        with psid2010.record_files_read(data_dir) as opened:
+            person_wave, validity, anchor, design, allowlist = read_inputs(
+                data_dir
+            )
+        committed = json.loads(B0_1_COUNTS.read_text(encoding="utf-8"))
+        provenance = {
+            "schema": SCHEMA,
+            "repository_head": repository_head,
+            "worktree_clean": True,
+            "script_sha256": script_sha256,
+            "psid_files_opened_sha256": dict(sorted(opened.items())),
+            "b0_1_counts_sha256": _sha256_file(B0_1_COUNTS),
+            "requested_label_allowlist": allowlist,
+            "geometry": {
+                "collection_waves": list(WAVES),
+                "reference_years": [wave - 1 for wave in WAVES],
+                "age_convention": "collection_wave",
+                "lag_years": list(LAGS),
+            },
+        }
+        local_bytes, public_bytes = release_outputs(
+            person_wave, validity, anchor, design, committed, provenance
         )
-    counts = structural_counts(person_wave, validity, anchor, design)
-    committed = json.loads(B0_1_COUNTS.read_text(encoding="utf-8"))
-    domain_size = counts["rosters"]["R_B2"]["overall"]["persons"]
-    if domain_size != committed["counts"]["domain_persons"]:
-        raise AssertionError(
-            "R_B2 size differs from B0.1 counts.domain_persons"
-        )
-    earlier = b0_1_sets(person_wave, validity)
-    check_b0_1_record(
-        committed, b0_1_structural_counts(person_wave, validity), earlier
-    )
-    payload = {
-        "schema": SCHEMA,
-        "repository_head": repository_head,
-        "worktree_clean": True,
-        "script_sha256": script_sha256,
-        "psid_files_opened_sha256": dict(sorted(opened.items())),
-        "b0_1_counts_sha256": _sha256_file(B0_1_COUNTS),
-        "requested_label_allowlist": allowlist,
-        "geometry": {
-            "collection_waves": list(WAVES),
-            "reference_years": [wave - 1 for wave in WAVES],
-            "age_convention": "collection_wave",
-            "lag_years": list(LAGS),
-        },
-        "counts": counts,
-    }
-    registry = disclosure_registry(person_wave, validity, anchor, design)
-    register_b0_1(registry, earlier, committed["counts"])
-    coarsened, disclosure, local_audit = release_counts(counts, registry)
-    payload["disclosure_audit"] = local_audit
-    provenance = {
-        key: value
-        for key, value in payload.items()
-        if key not in ("counts", "disclosure_audit")
-    }
-    public_payload = {**provenance, "disclosure": disclosure}
-    if coarsened:
-        public_payload["counts"] = coarsened
-    local_bytes = (
-        json.dumps(payload, indent=2, sort_keys=True) + "\n"
-    ).encode()
-    public_bytes = (
-        json.dumps(public_payload, indent=2, sort_keys=True) + "\n"
-    ).encode()
-    write_new(local, local_bytes)
-    write_new(out, public_bytes)
+        write_new(local, local_bytes)
+        write_new(out, public_bytes)
     print(out)
     return 0
 

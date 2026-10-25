@@ -488,8 +488,8 @@
   "mutation": "differences of two B0.1 sets audited as targets",
   "replacements": [
    {
-    "old": "            if earlier[subset] and earlier[superset]:\n                continue\n",
-    "new": "",
+    "old": "                and not (current[subset] and current[superset])\n            ):\n",
+    "new": "                and False\n            ):\n",
     "occurrence": 1
    }
   ]
@@ -565,10 +565,10 @@
   ]
  },
  {
-  "mutation": "B0.1's record not checked in main()",
+  "mutation": "B0.1's record not checked before the audit",
   "replacements": [
    {
-    "old": "    check_b0_1_record(\n        committed, b0_1_structural_counts(person_wave, validity), earlier\n    )\n",
+    "old": "    check_b0_1_record(\n        committed,\n        b0_1_structural_counts(person_wave, validity_by_wave),\n        earlier,\n    )\n",
     "new": "",
     "occurrence": 1
    }
@@ -638,8 +638,8 @@
   "mutation": "targets involving B0.1's sets marked as this release's",
   "replacements": [
    {
-    "old": "                    \"earlier\": not (current[superset] and current[subset]),\n",
-    "new": "                    \"earlier\": False,\n",
+    "old": "                \"earlier\": not (current[superset] and current[subset]),\n",
+    "new": "                \"earlier\": False,\n",
     "occurrence": 1
    }
   ]
@@ -648,8 +648,8 @@
   "mutation": "the local copy writes atom columns",
   "replacements": [
    {
-    "old": "            if key not in (\"columns\", \"earlier\")\n",
-    "new": "            if key not in (\"earlier\",)\n",
+    "old": "            for key in TARGET_FIELDS\n",
+    "new": "            for key in (*TARGET_FIELDS, \"columns\")\n",
     "occurrence": 1
    }
   ]
@@ -670,6 +670,86 @@
    {
     "old": "            home[person] for person in persons if pd.notna(home[person])\n",
     "new": "            person for person in persons if pd.notna(home[person])\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy writes the atom sizes",
+  "replacements": [
+   {
+    "old": "        \"class_sizes\": class_sizes,\n    }\n",
+    "new": "        \"class_sizes\": class_sizes,\n        \"atom_sizes\": audit[\"atom_sizes\"],\n    }\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the audit prints the atom sizes",
+  "replacements": [
+   {
+    "old": "    truth = model[\"sizes\"]\n",
+    "new": "    truth = model[\"sizes\"]\n    print(truth.tolist(), file=sys.stderr)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a failure keeps a library's message",
+  "replacements": [
+   {
+    "old": "    return f\"{text}: {error}\" if raised_here else text\n",
+    "new": "    return f\"{text}: {error}\"\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a warning prints its message",
+  "replacements": [
+   {
+    "old": "            f\"B0.2 warning: {warning.category.__name__} at \"\n",
+    "new": "            f\"B0.2 warning: {warning.message} at \"\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the solver prints its log",
+  "replacements": [
+   {
+    "old": "                    \"disp\": False,\n",
+    "new": "                    \"disp\": True,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the rerun gate skips the rebuilt sets' sizes",
+  "replacements": [
+   {
+    "old": "        if len(units) != sum(sign * leaves[part] for sign, part in terms):\n",
+    "new": "        if False:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "differences found in row order, not this release's first",
+  "replacements": [
+   {
+    "old": "    pairs.sort(key=lambda pair: not (current[pair[0]] and current[pair[1]]))\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "two of this release's sets that B0.1 also published make no target",
+  "replacements": [
+   {
+    "old": "                and earlier[superset]\n                and not (current[subset] and current[superset])\n            ):\n",
+    "new": "                and earlier[superset]\n            ):\n",
     "occurrence": 1
    }
   ]

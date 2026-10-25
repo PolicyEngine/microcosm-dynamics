@@ -25,7 +25,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "41eadabb798108a5c836b1a477b0aad713d88959c2288f8e23c4670dc8ad0e9d"
+    "036b207065be7c91312aebf035024a7b6c512e3942b7cc92d00f19fc0ef0c9fe"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1486,6 +1486,8 @@ def test_programs_use_one_thread_sixty_seconds_and_exact_optima(monkeypatch):
     assert audit["status"] == "released" and calls
     assert all(call["threads"] == 1 for call in calls)
     assert all(call["time_limit"] == 60 for call in calls)
+    # HiGHS prints nothing: a solver log could carry atom sizes.
+    assert all(call["disp"] is False for call in calls)
     directions = calls[: 1 + script.POOL_DIRECTIONS]
     assert all(call["mip_rel_gap"] == 1.0 for call in directions)
     assert all(call["mip_rel_gap"] == 0.0 for call in calls[len(directions) :])
@@ -1501,7 +1503,8 @@ def test_unanswered_programs_withhold(monkeypatch):
     counts, registry = _table_registry({"persons": {1}})
     published, disclosure, private = script.release_counts(counts, registry)
     assert published == {} and disclosure["status"] == "withheld"
-    assert private["audit"]["pool"] == 0
+    assert script.audit_counts(counts, registry, 10)["pool"] == 0
+    assert "pool" not in private["audit"]
 
 
 def test_an_undetermined_sensitive_target_withholds(monkeypatch):
@@ -1930,9 +1933,7 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
     assert "disclosure_audit" not in record
     local_record = json.loads((tmp_path / "local.json").read_text())
     assert local_record["counts"] == raw_counts
-    # Everything in the local audit but its timing is reproducible.
-    for audit in (local_record["disclosure_audit"], local_audit):
-        audit["audit"].pop("seconds")
+    # The local audit holds no timing, so all of it is reproducible.
     assert local_record["disclosure_audit"] == local_audit
     assert local_record["repository_head"] == record["repository_head"]
     assert record["geometry"]["collection_waves"] == list(WAVES)
@@ -1980,7 +1981,6 @@ def test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts():
             for r in local["rounds"]
             for i in r["disclosed"]
         )
-        local.pop("seconds")
         text = json.dumps(local, sort_keys=True)
         assert "b0_1" not in text and "died" not in text
         records.append(text)
@@ -2034,7 +2034,7 @@ def test_main_rejects_b01_size_mismatch(tmp_path, invented_main):
     _, baseline, _ = invented_main
     baseline.write_text(json.dumps({"counts": {"domain_persons": 99}}))
     out = tmp_path / "counts.json"
-    with pytest.raises(AssertionError, match="R_B2 size differs"):
+    with pytest.raises(SystemExit, match="AssertionError: R_B2 size differs"):
         script.main(
             ["--out", str(out), "--local-copy", str(tmp_path / "local.json")]
         )
@@ -2056,7 +2056,7 @@ def test_main_never_overwrites_an_output_that_appears_during_read(
         return supplied
 
     monkeypatch.setattr(script, "read_inputs", racing_read)
-    with pytest.raises(FileExistsError):
+    with pytest.raises(SystemExit, match="write_new, line .*FileExistsError$"):
         script.main(
             ["--out", str(out), "--local-copy", str(tmp_path / "local.json")]
         )
@@ -2076,7 +2076,7 @@ def test_main_never_overwrites_a_local_copy_that_appears_during_read(
         return supplied
 
     monkeypatch.setattr(script, "read_inputs", racing_read)
-    with pytest.raises(FileExistsError):
+    with pytest.raises(SystemExit, match="write_new, line .*FileExistsError$"):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert local.read_text() == "preserve local race bytes"
     assert not out.exists() and not _partials(tmp_path)
@@ -2141,7 +2141,8 @@ def test_main_public_write_failure_keeps_complete_local_copy_and_attempt(
         original(path, data)
 
     monkeypatch.setattr(script, "write_new", public_fails)
-    with pytest.raises(OSError, match="No space left"):
+    # The message came from outside this script, so only its type is told.
+    with pytest.raises(SystemExit, match="main, line .*: OSError$"):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert not out.exists() and not _partials(tmp_path)
     assert json.loads(local.read_text())["counts"]
@@ -2263,7 +2264,7 @@ def test_attempt_record_survives_failed_start_and_refuses_retry(
         raise RuntimeError("invented pre-read failure")
 
     monkeypatch.setattr(script.psid, "_resolve_data_dir", failed_resolve)
-    with pytest.raises(RuntimeError, match="invented pre-read failure"):
+    with pytest.raises(SystemExit, match="main, line .*: RuntimeError$"):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert len(attempted) == 1
     assert not calls and not out.exists() and not local.exists()
@@ -2720,8 +2721,9 @@ def _oracle_prior_candidates(rows, kinds, sizes):
 
 
 def _oracle_prior_targets(rows, kinds, atoms):
-    """This release's classes, and differences unless both sets are the
-    earlier release's."""
+    """This release's classes, every difference of two of this release's
+    sets, and every other difference unless the earlier release published
+    both sets."""
     own = {}
     for a in range(atoms):
         signature = tuple(
@@ -2732,13 +2734,20 @@ def _oracle_prior_targets(rows, kinds, atoms):
         if signature:
             own.setdefault(signature, []).append(a)
     found = {tuple(sorted(group)) for group in own.values()}
-    sets = [
-        (frozenset(row), kind != "current")
-        for row, kind in zip(rows, kinds, strict=True)
-    ]
-    for big, big_early in sets:
-        for small, small_early in sets:
-            if small and small < big and not (big_early and small_early):
+    # A set is this release's, or the earlier release's, when any row with
+    # exactly its atoms is.
+    flags = {}
+    for row, kind in zip(rows, kinds, strict=True):
+        own, early = flags.get(frozenset(row), (False, False))
+        flags[frozenset(row)] = (
+            own or kind != "prior",
+            early or kind != "current",
+        )
+    for big, (big_own, big_early) in flags.items():
+        for small, (small_own, small_early) in flags.items():
+            if not small or not small < big:
+                continue
+            if (big_own and small_own) or not (big_early and small_early):
                 found.add(tuple(sorted(big - small)))
     return sorted(found)
 
@@ -2919,9 +2928,523 @@ def test_main_stops_when_b0_1_counts_differ_from_the_inputs(
     baseline.write_text(json.dumps(record))
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"
-    with pytest.raises(AssertionError, match="rerun on these inputs"):
+    with pytest.raises(SystemExit, match="AssertionError: .*rerun on these"):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert not out.exists() and not local.exists()
+
+
+# --------------------------------------------------------------------------
+# B0.1's sets in memory only (the coordinator's ruling of 2026-10-24): the
+# rerun gate, the write boundary and the relabeling invariant
+# --------------------------------------------------------------------------
+def test_the_rerun_gate_stops_on_a_rebuilt_set_that_is_not_its_count():
+    """Condition 1: each rebuilt set must have the size B0.1 published for
+    it, as the signed sum of the counts its entry names, and the stop
+    names the path, never a size."""
+    people, validity, counts, sets = _b01_example()
+    record = _b01_record(people, validity)
+    path = ("domain_persons",)
+    unit_type, units, terms = sets[path]
+    assert units
+    short = {**sets, path: (unit_type, frozenset(sorted(units)[1:]), terms)}
+    with pytest.raises(
+        AssertionError, match=r"not its count: \('domain_persons',\)$"
+    ):
+        script.check_b0_1_record(record, counts, short)
+    # A change pair's rows set is its rows count less its persons count.
+    pair = ("change_pairs", "pooled_one_step", "rows")
+    unit_type, units, terms = sets[pair]
+    assert len(terms) == 2
+    grown = {**sets, pair: (unit_type, units | {-1}, terms)}
+    with pytest.raises(AssertionError, match="not its count"):
+        script.check_b0_1_record(record, counts, grown)
+
+
+def test_main_stops_at_the_rerun_gate_before_any_count_is_written(
+    tmp_path, monkeypatch
+):
+    """A rebuilt set that is not its count stops main() before the audit,
+    naming the path. Neither file is written; the attempt record, written
+    before any input is read, holds no count."""
+    _main_environment(tmp_path, monkeypatch, _b2_heads(12, 6))
+    rebuilt = script.b0_1_sets
+
+    def short(person_wave, validity):
+        sets = rebuilt(person_wave, validity)
+        unit_type, units, terms = sets[("domain_persons",)]
+        assert units
+        sets[("domain_persons",)] = (
+            unit_type,
+            frozenset(sorted(units)[1:]),
+            terms,
+        )
+        return sets
+
+    monkeypatch.setattr(script, "b0_1_sets", short)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    with pytest.raises(
+        SystemExit,
+        match=(
+            r"^B0\.2 stopped in check_b0_1_record, line \d+: AssertionError:"
+            r" a rebuilt B0\.1 set is not its count: \('domain_persons',\)$"
+        ),
+    ):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert not out.exists() and not local.exists()
+    attempt = json.loads(script._attempt_path(local).read_text())
+    assert set(attempt) == {"repository_head", "script_sha256", "started_at"}
+
+
+def test_the_local_copy_holds_this_releases_counts_and_decisions_only():
+    """Condition 2: the local audit is the decision record. Each target of
+    this release is what it is, its true size and its decision; nothing
+    computed from the atoms that is not a decision is written."""
+    (_, _, private), _, _ = _nested_prior_release(range(12))
+    audit = private["audit"]
+    assert set(audit) == {
+        "base",
+        "status",
+        "rounds",
+        "disclosed",
+        "targets",
+        "class_sizes",
+    }
+    assert audit["rounds"] and all(
+        set(round_) == {"round", "disclosed", "reseeded"}
+        for round_ in audit["rounds"]
+    )
+    assert audit["targets"]
+    for target in audit["targets"]:
+        assert set(target) <= set(script.TARGET_FIELDS)
+        assert {"unit_type", "kind", "true_size", "result"} <= set(target)
+
+
+def _own_targets(registry):
+    return [
+        {key: value for key, value in target.items() if key != "columns"}
+        for target in script.build_model(registry)["targets"]
+        if not target["earlier"]
+    ]
+
+
+def test_this_releases_targets_do_not_depend_on_earlier_sets():
+    """Which targets are this release's own, how they are named and their
+    order are the same whatever the earlier sets are. An earlier
+    difference, p minus q, holds the same units as this release's wide
+    minus narrow and is reached first; and when the earlier release also
+    published wide and narrow, their difference is still a target."""
+
+    def registry(priors):
+        built = script.SetRegistry()
+        for name, units in (
+            ("q", {5}),
+            ("wide", {1, 2, 3, 4}),
+            ("narrow", {1, 2}),
+            ("mid", {3}),
+        ):
+            built.add((name,), "persons", units)
+        for name, units in priors.items():
+            built.add_prior((name,), "persons", units, len(units))
+        return built
+
+    alone = _own_targets(registry({}))
+    assert {
+        "kind": "difference",
+        "unit_type": "persons",
+        "superset": ["wide"],
+        "subset": ["narrow"],
+        "earlier": False,
+        "true_size": 2,
+    } in alone
+    for priors in (
+        {"p": {3, 4, 5}},
+        {"wide_0": {1, 2, 3, 4}, "narrow_0": {1, 2}},
+        {"p": {3, 4, 5}, "wide_0": {1, 2, 3, 4}, "narrow_0": {1, 2}},
+    ):
+        assert _own_targets(registry(priors)) == alone, priors
+
+
+class _FixedClock:
+    """The attempt record's clock, fixed so that two runs compare."""
+
+    @staticmethod
+    def now(tz=None):
+        from datetime import datetime
+
+        return datetime(2026, 10, 24, tzinfo=tz)
+
+
+def _disposition_panel(ages, states):
+    """B2 heads at 2011 with the given ages, each with a household, stratum
+    and cluster of their own; at 2013 each is present (sequence 1), dead
+    (85), moved out (75) or has no row, as ``states`` says."""
+    codes = {"present": 1, "died": 85, "moved": 75}
+    rows = []
+    for person, (age, state) in enumerate(zip(ages, states, strict=True), 1):
+        rows.append(_row(person, age=age))
+        if state in codes:
+            rows.append(_row(person, 2013, age + 2, sequence=codes[state]))
+    return _own_strata(_inputs(rows))
+
+
+def _atoms(inputs):
+    """The atom sizes and types that B0.1's sets refine, in memory."""
+    people, labor, anchor, design = inputs
+    validity = _validity(labor)
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    script.register_b0_1(
+        registry,
+        script.b0_1_sets(people, validity),
+        b01.structural_counts(people, validity),
+    )
+    model = script.build_model(registry)
+    return model["sizes"].tolist(), model["unit_types"]
+
+
+def _written(directory, monkeypatch, inputs, capture):
+    """Every byte main() writes or prints for ``inputs``: both files, the
+    attempt record and its output, with the run's directory taken out. The
+    run's directory is also its working directory, so a log or cache
+    written there would be caught. The B0.1 record it reads is returned
+    too."""
+    _main_environment(directory, monkeypatch, inputs)
+    monkeypatch.setattr(script, "datetime", _FixedClock)
+    monkeypatch.chdir(directory)
+    capture()
+    out = directory / "counts.json"
+    local = directory / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    printed = tuple(
+        text.replace(str(directory), "<run>") for text in capture()
+    )
+    written = {
+        path.name: path.read_bytes()
+        for path in sorted(directory.iterdir())
+        if path.name not in ("b01.json", "protocol.md")
+    }
+    assert set(written) == {
+        "counts.json",
+        "local.json",
+        script._attempt_path(local).name,
+    }
+    return written, printed, (directory / "b01.json").read_bytes()
+
+
+def _decisions(written):
+    """The audit's decision record, as the local copy writes it."""
+    audit = json.loads(written["local.json"])["disclosure_audit"]["audit"]
+    return (
+        audit["status"],
+        audit["rounds"],
+        [
+            (
+                t["kind"],
+                t.get("superset"),
+                t.get("subset"),
+                t["result"],
+                t.get("round"),
+            )
+            for t in audit["targets"]
+        ],
+    )
+
+
+def _swap(states, died, moved):
+    swapped = list(states)
+    swapped[died], swapped[moved] = "moved", "died"
+    return swapped
+
+
+def test_relabeling_a_death_and_a_move_changes_no_written_byte(
+    tmp_path, monkeypatch, capfd
+):
+    """Condition 4. Swap a head who died by 2013 with one who moved out,
+    between two of this release's classes: B0.1's published counts, this
+    release's class sizes and the audit's decisions stay the same, while
+    the atoms that B0.1's sets refine change. Every byte main() writes or
+    prints, to either file, the attempt record, standard output or
+    standard error, is then the same."""
+    ages = [62] * 6 + [60] * 6
+    before = ["died", "moved"] + ["present"] * 4 + ["moved"] + ["present"] * 5
+    after = _swap(before, 0, 6)
+    assert after[:2] == ["moved", "moved"] and after[6] == "died"
+
+    def capture():
+        captured = capfd.readouterr()
+        return captured.out, captured.err
+
+    runs = []
+    for name, states in (("before", before), ("after", after)):
+        directory = tmp_path / name
+        directory.mkdir()
+        runs.append(
+            _written(
+                directory,
+                monkeypatch,
+                _disposition_panel(ages, states),
+                capture,
+            )
+        )
+    (first, printed_first, b01_first), (second, printed_second, b01_second) = (
+        runs
+    )
+    # The premise: B0.1's record and the audit's decisions are unchanged,
+    # and the atoms are not.
+    assert b01_first == b01_second
+    assert _decisions(first) == _decisions(second)
+    assert _atoms(_disposition_panel(ages, before)) != _atoms(
+        _disposition_panel(ages, after)
+    )
+    assert first == second
+    assert printed_first == printed_second
+
+
+def _draining(out, err):
+    """What was printed to ``out`` and ``err`` since the last call."""
+
+    def capture():
+        printed = (out.getvalue(), err.getvalue())
+        for stream in (out, err):
+            stream.seek(0)
+            stream.truncate()
+        return printed
+
+    return capture
+
+
+@st.composite
+def _relabelings(draw):
+    """Six to ten heads aged 60 or 62, each present, dead, moved out or
+    absent at 2013, and one death and one move to swap."""
+    persons = draw(st.integers(6, 10))
+    ages = draw(
+        st.lists(st.sampled_from([60, 62]), min_size=persons, max_size=persons)
+    )
+    states = draw(
+        st.lists(
+            st.sampled_from(["present", "died", "moved", "absent"]),
+            min_size=persons,
+            max_size=persons,
+        )
+    )
+    died, moved = draw(
+        st.lists(
+            st.integers(0, persons - 1), min_size=2, max_size=2, unique=True
+        )
+    )
+    states[died], states[moved] = "died", "moved"
+    return ages, states, died, moved
+
+
+@settings(max_examples=12, deadline=None)
+@given(_relabelings())
+def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
+    """Condition 4 over invented panels: whenever swapping a death and a
+    move leaves the audit's decisions unchanged, every byte main() writes
+    or prints is unchanged. (B0.1's counts and this release's class sizes
+    cannot change under the swap; the test checks both.)"""
+    import io
+    import tempfile
+    from contextlib import redirect_stderr, redirect_stdout
+
+    ages, states, died, moved = relabeling
+    runs = []
+    with (
+        tempfile.TemporaryDirectory() as root,
+        pytest.MonkeyPatch.context() as patch,
+    ):
+        for name, panel_states in (
+            ("before", states),
+            ("after", _swap(states, died, moved)),
+        ):
+            directory = Path(root) / name
+            directory.mkdir()
+            out, err = io.StringIO(), io.StringIO()
+            with redirect_stdout(out), redirect_stderr(err):
+                runs.append(
+                    _written(
+                        directory,
+                        patch,
+                        _disposition_panel(ages, panel_states),
+                        _draining(out, err),
+                    )
+                )
+    (first, printed_first, b01_first), (second, printed_second, b01_second) = (
+        runs
+    )
+    assert b01_first == b01_second
+    if _decisions(first) != _decisions(second):
+        event("the swap changed a decision")
+        return
+    audit = json.loads(first["local.json"])["disclosure_audit"]["audit"]
+    event(f"decisions kept, {audit['status']}")
+    assert first == second
+    assert printed_first == printed_second
+
+
+def test_a_failure_from_outside_this_script_prints_no_value(
+    tmp_path, monkeypatch
+):
+    """Condition 2 on failures: a library's message can quote a size, so
+    main() stops with the error's type and this script's line only, and
+    writes neither file."""
+    _main_environment(tmp_path, monkeypatch, _b2_heads(12, 6))
+
+    def failing(*_):
+        raise ValueError(
+            "Length of values (7) does not match length of index (11)"
+        )
+
+    monkeypatch.setattr(script, "disclosure_registry", failing)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    with pytest.raises(
+        SystemExit,
+        match=r"^B0\.2 stopped in release_outputs, line \d+: ValueError$",
+    ):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert not out.exists() and not local.exists()
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (
+            -7,
+            r"^B0\.2 stopped in coarsen, line \d+: ValueError: counts and"
+            r" effective sizes must be finite and nonnegative$",
+        ),
+        ("7", r"^B0\.2 stopped in coarsen, line \d+: TypeError$"),
+    ],
+)
+def test_only_this_scripts_own_raise_keeps_its_message(value, expected):
+    """A message this script's ``raise`` wrote names no value and is kept,
+    though the statement spans lines; one a builtin wrote while running
+    this script's code is dropped."""
+    with pytest.raises(SystemExit, match=expected):
+        with script.count_free_failures():
+            script.coarsen(value, 10)
+
+
+def test_warnings_are_reported_by_category_and_place_only(capsys):
+    with script.count_free_failures():
+        import warnings
+
+        warnings.warn("an atom of size 7", RuntimeWarning, stacklevel=1)
+    err = capsys.readouterr().err
+    assert err.startswith("B0.2 warning: RuntimeWarning at ")
+    assert "test_track_b_b0_2_counts.py, line " in err
+    assert "size 7" not in err
+
+
+#: The only names a ``raise`` in the count script may put into its message:
+#: paths, relation kinds, setting names and file names.
+SAFE_MESSAGE_NAMES = {
+    "path",
+    "kind",
+    "left",
+    "name",
+    "attempt",
+    "destination",
+    "sorted(missing)",
+}
+
+
+def test_every_output_the_script_can_make_names_no_value():
+    """Condition 2, statically. Each ``raise`` message is a literal, or
+    interpolates only names that hold paths and settings; the script
+    prints only the output's path and a warning's category and place; and
+    only ``write_new`` and the attempt record write files."""
+    import ast
+
+    tree = ast.parse(Path(script.__file__).read_text())
+    parents = {
+        child: node
+        for node in ast.walk(tree)
+        for child in ast.iter_child_nodes(node)
+    }
+
+    def function(node):
+        while node in parents:
+            node = parents[node]
+            if isinstance(node, ast.FunctionDef):
+                return node.name
+        return None
+
+    raises = 0
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Raise) and node.exc is not None:
+            raises += 1
+            exc = node.exc
+            if function(node) is None:
+                assert ast.unparse(exc) == "SystemExit(main())"
+                continue
+            assert isinstance(exc, ast.Call), ast.unparse(node)
+            assert len(exc.args) <= 1, ast.unparse(node)
+            for arg in exc.args:
+                if isinstance(arg, ast.Constant):
+                    assert isinstance(arg.value, str)
+                elif isinstance(arg, ast.JoinedStr):
+                    for part in arg.values:
+                        if isinstance(part, ast.FormattedValue):
+                            assert (
+                                ast.unparse(part.value) in SAFE_MESSAGE_NAMES
+                            ), ast.unparse(node)
+                else:
+                    assert (
+                        function(node) == "count_free_failures"
+                        and ast.unparse(arg) == "failure"
+                    ), ast.unparse(node)
+    assert raises > 30
+    calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call)]
+    printed = sorted(
+        (function(node), ast.unparse(node))
+        for node in calls
+        if isinstance(node.func, ast.Name) and node.func.id == "print"
+    )
+    assert [where for where, _ in printed] == ["count_free_failures", "main"]
+    assert printed[1][1] == "print(out)"
+    assert "{warning.category.__name__}" in printed[0][1]
+    assert "warning.message" not in printed[0][1]
+    writes = {
+        "open",
+        "write",
+        "write_text",
+        "write_bytes",
+        "dump",
+        "link",
+        "rename",
+        "replace",
+        "symlink_to",
+        "touch",
+        "mkdir",
+        "savez",
+        "to_csv",
+        "to_json",
+        "to_parquet",
+    }
+    writers = {
+        function(node)
+        for node in calls
+        if isinstance(node.func, ast.Attribute) and node.func.attr in writes
+    }
+    assert writers == {"write_new", "_start_attempt", "_sha256_file"}
+    (read,) = [
+        node
+        for node in calls
+        if function(node) == "_sha256_file"
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "open"
+    ]
+    assert ast.unparse(read) == "path.open('rb')"
+    imported = {
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, (ast.Import, ast.ImportFrom))
+        for alias in node.names
+    }
+    assert "logging" not in imported and "pickle" not in imported
 
 
 # --------------------------------------------------------------------------
@@ -3026,7 +3549,7 @@ def test_an_empty_reseeding_withholds_with_complete_files(
     record = json.loads(out.read_text())
     assert record["disclosure"]["status"] == "withheld"
     audit = json.loads(local.read_text())["disclosure_audit"]["audit"]
-    assert audit["pool"] == 0
+    assert "pool" not in audit
     assert audit["rounds"][-1] == {
         "round": 2,
         "disclosed": [],

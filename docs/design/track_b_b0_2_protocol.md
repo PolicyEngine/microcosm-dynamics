@@ -76,6 +76,27 @@ revised before any freeze:
   target narrow, the seed programs run again under the disclosures, and
   the release is withheld if they find nothing.
 
+After round 3, the coordinator ruled that B0.1's sets may constrain the
+audit on conditions, which the block now states (Disclosure rule,
+"B0.1's sets: the conditions on their use"): a rerun gate, a write
+boundary over every output path, a decision record, a stated limit, an
+invariant test and no precedent. Meeting them changed the script before
+any freeze:
+- **The local copy** now holds only this release's counts and the
+  audit's decisions. It had also held each target's proof, programs and
+  range, the pool's size, the relation count and the times, which depend
+  on atoms that B0.1's sets refine.
+- **Failures and warnings** print no value: a library's message, which
+  can quote a size, is dropped, and the solver prints nothing.
+- **The rerun gate** checks each rebuilt set against its count before the
+  audit, where it had been checked only after registration.
+- **Targets.** Two of this release's sets always make a target, and
+  their differences come first. Before, a difference of two of this
+  release's sets that both coincided with B0.1 sets was skipped, and a
+  difference involving a B0.1 set that held the same units could be
+  reached first, so which targets were this release's own depended on
+  B0.1's sets.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -113,8 +134,10 @@ ruling on it.
 - count dispositions that separate death from attrition, or any
   transition. The one exception is B0.1's published sets, its disposition
   sets among them. They are rebuilt in memory, by B0.1's own rules, only
-  to constrain the audit (Disclosure rule). Nothing derived from them
-  beyond B0.1's own counts is written to either file;
+  to constrain the audit, under the conditions the Disclosure rule sets
+  out ("B0.1's sets: the conditions on their use"). Nothing derived from
+  them beyond B0.1's own counts and the audit's decisions is written or
+  printed anywhere;
 - compute any planning value, power probability, model fit, projection,
   floor, gap or candidate outcome.
 
@@ -152,10 +175,12 @@ joint state, recipient or payment value is computed.
 
 6. **B0.1's committed counts,** `docs/design/track_b_b0_1_counts.json`.
    They are public and exact, so they constrain the audit (Disclosure
-   rule). The script reruns B0.1's `structural_counts`
-   (`scripts/track_b_b0_1_counts.py`) on its own inputs and stops unless
-   the result equals the committed counts exactly. Each ledger count B0.1
-   copied must equal the B0.1 count it repeats.
+   rule). Before any of B0.1's sets enters the audit, the script reruns
+   B0.1's `structural_counts` (`scripts/track_b_b0_1_counts.py`) on its
+   own inputs and stops unless the result equals the committed counts
+   exactly and each rebuilt set's size is the count B0.1 published for
+   it. Each ledger count B0.1 copied must equal the B0.1 count it
+   repeats.
 
 No other file or variable is opened. The script records the label of
 every variable it requests, and a test pins that list as an allowlist.
@@ -302,11 +327,16 @@ rules.
     - each class of units that belong to exactly the same sets of this
       release (a union of atoms);
     - every difference between a published set and a published proper
-      subset of it of the same unit type, unless B0.1 published both,
-      which fixes the difference already.
+      subset of it of the same unit type. Two of this release's sets
+      always make a target. Any other difference is skipped when B0.1
+      published both sets, which fixes it already.
 
     Examples of differences are a roster's persons in no band, and
-    `R_FULL` persons in B2 households who are not in `R_B2`. A target is
+    `R_FULL` persons in B2 households who are not in `R_B2`. A target that
+    holds the same units as one before it is that target. The differences
+    of this release's own sets come before the others, so which targets
+    are this release's own (a class, or a difference of two of its sets),
+    and their order, depend on this release's sets alone. A target is
     sensitive when its true size is from 1 to 9.
   - Sets and atoms stay in memory. Neither is committed, and the local
     copy holds only what its item below names.
@@ -432,6 +462,57 @@ rules.
     limits are the one input to a program's answer that the publication
     does not fix; the guarantee above treats a timed-out program as
     giving the same answer on every rerun.
+- **B0.1's sets: the conditions on their use.** The coordinator ruled on
+  2026-10-24 that B0.1's sets, its disposition sets among them, may
+  constrain the audit on these conditions:
+  1. **The rerun gate.** The in-memory rebuild must reproduce B0.1's
+     record exactly before the audit uses any of its sets (Inputs, item
+     6). A mismatch stops the run before the audit, and nothing is
+     written but the attempt record, which holds no count.
+  2. **The write boundary.** Every byte the run writes or prints, on
+     every path, a failure's included, is one of:
+     - provenance that holds no count: the schema, the repository head,
+       the clean-worktree flag, file hashes, the requested labels and the
+       geometry; the attempt's start time; and the output's path;
+     - this release's own counts, exact in the local copy and coarsened
+       in the committed file;
+     - B0.1's published counts;
+     - the audit's decisions: the status, released or withheld, and the
+       decision record below.
+
+     This covers both files, the attempt record, standard output and
+     standard error, exception text, logs and caches. No atom size, no
+     count of a set only B0.1 counts beyond B0.1's own, no value by
+     disposition and no frequency of death or attrition is written or
+     printed on any path. So:
+     - a failure prints its type and the script's line that led to it,
+       and its message only when the script's own `raise` wrote it. Those
+       messages name paths and settings, never values;
+     - a warning prints its category and place, never its message;
+     - the solver prints nothing;
+     - nothing but the two outputs and the attempt record writes a file.
+  3. **The decision record.** The local copy's audit record holds the
+     base and the status; for each round, which of this release's targets
+     it disclosed, numbered among this release's targets, and whether it
+     seeded the pool again; for each target of this release (a class of
+     its units, or a difference of two of its sets), its kind, unit type
+     and sets, its true size, its classification and the round that
+     settled it; and the sizes of this release's classes, by unit type.
+     The number of rounds is part of it, so the record can show that a
+     round disclosed only targets that involve a set only B0.1 counts,
+     though not which targets or their sizes.
+  4. **The stated limit.** The decisions depend on atom sizes, which
+     B0.1's sets refine. So which targets are narrow, which round settles
+     each, and whether the release is withheld can depend on
+     dispositions. That is the only channel from dispositions to the
+     outputs.
+  5. **The invariant.** On invented panels, relabeling deaths and
+     move-outs so that B0.1's counts, this release's class sizes and
+     every decision are unchanged must leave every byte the run writes
+     or prints unchanged (Tests).
+  6. **Not a precedent.** This covers B0.1's sets only. Any other earlier
+     publication must be listed in this block and meet the same
+     conditions before it constrains the audit.
 - **The disclosure block.** It records B, the coarsening rule, the
   protection rule and the status, `released` or `withheld`. Nothing else
   about the audit is committed, since every other figure (targets,
@@ -442,18 +523,14 @@ rules.
   local copy. A later attempt is a new protocol version, ruled on before
   it runs, and must treat this version's withheld status as public.
 - **Local copy.** A second file, outside the repository, in B0.2's
-  evidence folder, holds:
-  - the unsuppressed counts;
-  - the sizes of this release's classes;
-  - the audit's targets that involve only this release's sets, with their
-    classifications;
-  - the rounds and the times.
+  evidence folder, holds the provenance record, the unsuppressed counts
+  and the decision record (above).
 
   Targets that involve a set only B0.1 counts are audited but not
-  written, nor are their places in the rounds or any target's atoms:
-  B0.1's sets refine the atoms, and their nesting and sizes would add to
-  what B0.1 published. The number of rounds is written. That file is
-  never committed.
+  written, nor are their places in the rounds. Nor are the atoms, which
+  B0.1's sets refine, or anything computed from them that is not a
+  decision: a target's atoms, proof, programs or range, the pool's size,
+  the relations or the times. That file is never committed.
 - **Tests.** Unit tests check coarsening and the audit on invented
   tables. They include each attack reviews of this protocol executed:
   - integer bounds pinning hidden bands;
@@ -493,7 +570,27 @@ rules.
     - a local copy that is the same for every split of a B0.2 class by a
       B0.1 set of the same count;
   - **an emptied pool:** disclosures that empty it reseed it, and an empty
-    reseeding withholds while `main()` still writes both files.
+    reseeding withholds while `main()` still writes both files;
+  - **the conditions on B0.1's sets:**
+    - the rerun gate: a rebuilt set that is not its count stops the record
+      check, and stops `main()` before the audit with neither file
+      written, naming its path;
+    - this release's targets: which are its own, and their order, are the
+      same with and without earlier sets that coincide with them or hold
+      the same units as their differences;
+    - the write boundary: the local copy holds only the decision record,
+      the provenance and this release's counts; a library's failure
+      prints its type and the script's line only; only the script's own
+      `raise` keeps its message; a warning prints its category and place
+      only; and a static check of the script finds that every `raise`
+      message interpolates only paths and settings, that it prints only
+      the output's path and a warning's place, and that only the outputs
+      and the attempt record write files;
+    - the invariant: swapping a death and a move-out on invented panels,
+      once where the atoms change and the decisions do not and again in
+      property-based examples, leaves every byte `main()` writes or prints
+      unchanged, with the run's directory as its working directory. A
+      mutant that writes or prints an atom size must fail these tests.
 
 The threshold of 10, the protection width of 4 and the base of 10 are
 version 1's. If Max or the coordinator sets others before the freeze,
@@ -522,7 +619,7 @@ new version.
     the block's SHA-256 equals the pin in its tests.
   - Before it opens any PSID file, it creates an attempt record,
     exclusively, beside the local copy. The record holds the repository
-    head, the script's SHA-256 and the start time.
+    head, the script's SHA-256 and the start time, and no count.
   - It refuses to start if an attempt record for this protocol version
     already exists, so a failed run cannot be retried silently.
   - If it fails, the failure is published, and the protocol is revised in
