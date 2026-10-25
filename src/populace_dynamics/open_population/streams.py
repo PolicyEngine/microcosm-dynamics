@@ -95,10 +95,15 @@ class DirectRNGStreams:
 
         The registry builds ``SeedSequence([draw_seed, GATE_M6_TAG])`` on
         every period lookup (``engine/rng.py:66``), so a malformed seed is
-        refused there, before the spawn. One root is kept per instance and
-        rebuilt only when the seed changes, as a NumPy draw mutated in place
-        can make it; a refused seed is never kept.
+        refused there, before the spawn. Only an exact ``int`` seed, as
+        production draws give (``open_population/harness.py:86–87``), is
+        kept, with the seed it was built from, and it is rebuilt when the
+        seed changes. Any other seed is rebuilt on every call, so an equal
+        seed of another type gets the registry's own outcome. A refused seed
+        is never kept.
         """
+        if type(seed) is not int:
+            return np.random.SeedSequence([seed, GATE_M6_TAG])
         cached = self.__dict__.get("_root")
         if cached is None or cached[0] != seed:
             # The dataclass is frozen; like ``functools.cached_property``,

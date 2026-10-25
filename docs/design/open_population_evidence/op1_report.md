@@ -141,11 +141,11 @@ OP10a. The small-run figures above are planning estimates, not a
 demonstrated scaling law.
 
 The fast-path invariant is: **at every valid stream address, the direct
-stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:117–133`
+stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:122–138`
 constructs the same entropy and spawn keys as `engine/rng.py:61–100` and
 `:102–156`; its tagged period-zero cases preserve the separate root and
-spawned-child convention. Tests compare entropy, spawn key, pool size,
-eight state words and four draws across the specified exhaustive grid and
+spawned-child convention. Tests compare entropy and spawn key (values and
+element types), pool size, eight state words and four draws across the specified exhaustive grid and
 24 generated examples. The exact emigration test independently uses the
 sealed registry, rather than the fast class.
 
@@ -158,11 +158,12 @@ building the children:
 1. the module (`engine/rng.py:73`), then the period interval (`:62–65`);
 2. the root seed (`:66`). The draw seed is recomputed on every call, as the
    registry's is, so NumPy's overflow handling under `np.errstate` applies
-   each time. The root built from it is kept per instance and rebuilt only
-   when the seed changes, as a 0-d array draw mutated in place can make it
-   (`open_population/streams.py:93–108`). A refused seed is never kept, so
-   a non-integer draw fails at this step on every call, ahead of a
-   malformed horizon or period. Each returned sequence gets its own copy of
+   each time. Only an exact `int` seed's root is kept, and it is rebuilt
+   when the seed changes (`open_population/streams.py:93–113`). Any other
+   seed's root is rebuilt on every call, as the registry's is, so a draw
+   changed in place to an equal value of another type gets the registry's
+   outcome. A refused seed is never kept, so a non-integer draw fails at
+   this step on every call, ahead of a malformed horizon or period. Each returned sequence gets its own copy of
    the root's entropy list, as the registry's fresh root gives it;
 3. `spawn(n_periods + 1)` (`:67`). `_spawned_length` refuses a negative
    count with spawn's `ValueError`, then takes `len(range(count))`, which
@@ -191,7 +192,7 @@ User-defined argument types are outside the claim. NumPy's `spawn` adds the
 count to an integer and converts the sum through `__int__`, and the direct
 class calls a period's or child's `__index__` twice. So a count type without
 `__int__` or `__radd__`, or a stateful `__index__`, can be served by one
-class and refused by the other. The engine passes none of them: periods and
+class and refused by the other, or served a different stream by each. The engine passes none of them: periods and
 ordinals come from `enumerate` (`engine/loop.py:263–270`), and production
 draws must be exact `int`s (`open_population/harness.py:86–87`).
 
@@ -209,15 +210,25 @@ combination, for all six methods, of:
 `test_non_integer_draw_refusals_match_registry` adds four non-integer draws
 and an `np.int64` one against malformed horizons and periods, and
 `test_generated_malformed_addresses_match_registry` adds 80 Hypothesis
-examples over all of these. Three more tests pin the root's state:
-`test_returned_sequences_do_not_share_the_cached_root`,
-`test_root_follows_the_draw_seed_as_the_registry_does` (a mutated 0-d draw,
-and an overflowing `np.uint64` draw under `np.errstate(over="raise")`) and
-`test_negative_position_wraps_as_the_list_lookup_does`. Every comparison
-checks spawn-key element types as well as values.
+examples over all of these. Five tests pin the root's state:
+- `test_returned_sequences_do_not_share_the_cached_root` and
+  `test_returned_generators_do_not_share_the_cached_root`: every method,
+  including the tagged child emigration draws from and the period-zero
+  tagged cases, hands out its own entropy list;
+- `test_root_follows_the_draw_seed_as_the_registry_does`: 0-d draws of
+  NumPy and object type mutated in place, and an overflowing `np.uint64`
+  draw under `np.errstate(over="raise")`;
+- `test_root_ignores_an_equal_seed_of_another_type`: a draw changed in place
+  to an equal float, `Fraction`, `Decimal`, complex, NumPy integer,
+  `np.True_` or `np.ma.masked`;
+- `test_refused_seed_is_refused_on_every_call`.
 
-Reviews r3 and r4 probed further. Their probes, rerun on the current code,
-give:
+`test_negative_position_wraps_as_the_list_lookup_does` wraps positions
+inside and below the spawned range. Every comparison checks the element
+types of the entropy and the spawn key as well as their values.
+
+Reviews r3, r4 and r5 probed further. Their probes, rerun on the current
+code, give:
 - no difference in 2,352 addresses (negative floats, ±inf, NaN,
   `np.uint64`, 2^64, strings, `Fraction`, complex and more);
 - no difference in 17,544 comparisons over integers of every NumPy width at
@@ -225,16 +236,31 @@ give:
   2^200;
 - no difference in 2,640 comparisons over other built-in, NumPy and pandas
   types;
+- no difference in 1,440 comparisons of draws changed between calls on one
+  instance, including equal values of other types, NaN, and `np.errstate`
+  toggled between calls;
+- no difference for a 0-d draw whose dtype is reassigned, or one changed to
+  `pd.NA` or `np.ma.masked`, and none in 968 comparisons of negative
+  indices of every NumPy width;
 - agreement with the registry on aliasing, a mutated draw and the
-  `np.errstate` overflow;
-- 29,880 valid-address identities and 4,556 period-zero tagged-child
-  identities.
+  `np.errstate` overflow. Returned entropy lists are distinct, and after
+  320 calls with every returned list edited the cached root is unchanged;
+- 29,880 valid-address identities, 12,320 three-way identities with
+  `dee1e1b7` (including `bit_generator.state`) and 4,556 period-zero
+  tagged-child identities.
 
 The 78 differences left are all user-defined types of the kinds named
-above. On this host the direct path costs 6.6 µs per draw at period 5 and
-horizon 75, against 6.2 µs at `3d69b1fc` and 212 µs on the registry (process
-CPU time, seven interleaved repetitions of 2,000 draws; one run, not in
-`op1_run_size.json`).
+above. Equality, hashing, `repr`, `dataclasses.replace` and pickling at
+protocols 0 to 5 behave as before; a used instance's pickle carries its
+cached root and unpickles to the same streams.
+
+On this host the direct path costs 8.3 µs per draw at period 5 and horizon
+75, against 8.0 µs at `3d69b1fc`, 8.3 µs at `6361b4c0` and 265 µs on the
+registry (process CPU time, seven interleaved repetitions of 2,000 draws;
+one run at a one-minute load of 176, not in `op1_run_size.json`). At a load
+of 10 to 20 the review r4 fix measured 6.6, 6.2 and 212 µs. The ratios
+agree: the direct path costs 1.04 to 1.07 times `3d69b1fc`'s, and the
+registry about 32 times the direct path.
 
 ## 3. Tests, collection, style and scope
 
@@ -253,10 +279,10 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **302 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 14 s by pytest's report (one-minute load 11). At
+The required command gives **322 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in 11 s by pytest's report (one-minute load 36). At
 `0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added
-37, review r3's fix 30 and review r4's fix 3. It covers the self-contained
+37, review r3's fix 30, review r4's fix 3 and review r5's fix 20. It covers the self-contained
 horizon test, the reversed-roster example, the gate metadata refusals and
 every reducer identity, reachability and initializer check.
 
@@ -265,10 +291,11 @@ every reducer identity, reachability and initializer check.
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **199 tests**, all classified as `unit` (seven modules,
-including the original six). That is 139 more than the 60 reviewed at r1,
-70 more than the 129 reviewed at r2, 33 more than the 166 reviewed at r3 and
-3 more than the 196 reviewed at r4.
+Collection gives **219 tests**, all classified as `unit` (seven modules,
+including the original six). That is 159 more than the 60 reviewed at r1,
+90 more than the 129 reviewed at r2, 53 more than the 166 reviewed at r3,
+23 more than the 196 reviewed at r4 and 20 more than the 199 reviewed at
+r5.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -384,7 +411,7 @@ Review r3 (Opus 5.5 delta check at `daa1f58d`, which merged master `4e20c6e4`) a
 
 ### Review r4
 
-Review r4 (Opus 5.5 delta check at `dee1e1b7`) approved, with three minor findings and a nit. It also confirmed that the merge tree still equals `git merge-tree 1647a4ba 4e20c6e4`, and that the counts changed only by the grid's 30 new unit tests.
+Review r4 (Opus 5.5 delta check at `dee1e1b7`) approved, with three minor findings and a nit. It also confirmed that the merge tree still equals `git merge-tree 1647a4ba 4e20c6e4`, and that the counts changed only by 30 new unit tests: 24 in the refusal grid and 6 in the draw test.
 
 | Finding | Fix and test that pins it |
 |---|---|
@@ -409,6 +436,37 @@ Review r4 (Opus 5.5 delta check at `dee1e1b7`) approved, with three minor findin
 | r3's A12: spawn count `n_periods` | Killed (54) |
 | Period-zero child lookup skipped | Killed (10) |
 | Root rebuilt on every call, no cache | Survives as intended: it changes cost only |
+
+### Review r5
+
+Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findings and a nit. It also confirmed the coordinator's four checks:
+- the sealed and shared paths are unchanged from `4e20c6e4`;
+- 12,320 three-way identities hold across the registry, `dee1e1b7` and `6361b4c0`;
+- the merge tree still equals `git merge-tree 1647a4ba 4e20c6e4`;
+- the counts changed only by the three new tests.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: the cache compared seeds by value. A draw changed in place to an equal value of another type (`3.0`, `Decimal(3)`, `np.int64(3)`, `np.ma.masked`, or a 0-d array whose dtype is reassigned) was served from the cached `int` root, where the registry refuses it or types its entropy differently: 240 of 1,440 comparisons | Only an exact `int` seed's root is kept, and any other seed's root is built on every call. Both identity helpers compare entropy element types. Pinned by `test_root_ignores_an_equal_seed_of_another_type`, which `6361b4c0`'s code fails in all 10 of its cases. |
+| 2: the entropy-copy test covered `seed_sequence` only, so r5's mutants C12 and C13 survived | `test_returned_generators_do_not_share_the_cached_root` pins every method, including the period-zero tagged cases. |
+| 3: "a refused seed is never kept" and wraps below `-length` were unpinned (C2, C18 and C19 survived), and the wrap test's tagged-child case never reached the wrap | `test_refused_seed_is_refused_on_every_call` pins the first. The wrap test now tries −1, −8, −9 and −20, and its tagged-child case is labelled as the child check's refusal. Under the `int`-only cache a refused seed cannot reach the cache, so C2 is now equivalent; C2 without the `int` check is killed. |
+| Nit: two wordings | The user-defined paragraph adds "or served a different stream by each", and the r4 paragraph splits its 30 tests into 24 and 6. |
+
+| Mutation of the r5 fix (stream and exit tests, 153) | Result |
+|---|---|
+| `streams.py` at `6361b4c0`; at `dee1e1b7` | Killed (10; 18) |
+| `int` check dropped; `int` check returns the cached root | Killed (10; 9) |
+| `int` check dropped and the refused seed cached | Killed (13, 3 of them by the refused-seed test) |
+| Root never rebuilt; cache keyed on the draw object; seed not recomputed; old root returned | Killed (1; 1; 10; 1) |
+| Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
+| Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
+| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (13; 13 or 14, as Hypothesis draws; 7; 1) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15; 7; 10; 54; 10) |
+| No cache, or seeds compared with `is not` | Survive as intended: they change cost only |
+| `not cached[0] == seed`; entropy rebuilt from the seed; default pool size (always 4); wrap by modulo | Survive: equivalent |
+| A refused seed cached | Survives: equivalent, since a refused seed is never an `int` |
+| `isinstance(seed, int)` for the exact check | Survives: equivalent, since `5200 + True` is an `int` and no built-in or NumPy seed is an `int` subclass |
+| A typed cache key without the `int` check | Survives: r5's alternative fix |
 
 ## 5. Remaining work and restricted-files statement
 

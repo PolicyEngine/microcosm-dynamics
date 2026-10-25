@@ -2,6 +2,7 @@
 
 import warnings
 from decimal import Decimal
+from fractions import Fraction
 from itertools import product
 
 import numpy as np
@@ -18,9 +19,16 @@ from populace_dynamics.open_population.exits import EMIGRATION_STREAM_TAG
 from populace_dynamics.open_population.streams import DirectRNGStreams
 
 
+def _entropy_types(entropy):
+    """List the element types of a seed sequence's entropy (design §2.1)."""
+    values = entropy if isinstance(entropy, (list, tuple)) else (entropy,)
+    return tuple(type(value) for value in values)
+
+
 def _assert_sequences_equal(expected, actual):
     """Compare seed identity as well as generated state (design §2.1)."""
     assert actual.entropy == expected.entropy
+    assert _entropy_types(actual.entropy) == _entropy_types(expected.entropy)
     assert actual.spawn_key == expected.spawn_key
     assert [type(key) for key in actual.spawn_key] == [
         type(key) for key in expected.spawn_key
@@ -175,6 +183,7 @@ def _sequence_identity(sequence):
     """Summarize a seed sequence by identity and state (design §2.1)."""
     return (
         tuple(np.atleast_1d(sequence.entropy).tolist()),
+        _entropy_types(sequence.entropy),
         tuple((type(key), int(key)) for key in sequence.spawn_key),
         sequence.pool_size,
         tuple(sequence.generate_state(4).tolist()),
@@ -365,27 +374,67 @@ def test_returned_sequences_do_not_share_the_cached_root():
     ]
 
 
+@pytest.mark.parametrize(
+    ("method", "period", "tail"),
+    (
+        ("generator", 1, ()),
+        ("child_generator", 1, (3,)),
+        ("person_generator", 1, (3,)),
+        ("tagged_generator", 1, (4,)),
+        ("tagged_child_generator", 1, (4, 2)),
+        ("tagged_generator", 0, (GATE_M6_TAG,)),
+        ("tagged_child_generator", 0, (GATE_M6_TAG, 2)),
+    ),
+)
+def test_returned_generators_do_not_share_the_cached_root(
+    method, period, tail
+):
+    """Editing a returned generator's seed leaves later streams alone (§2.1).
+
+    Every method, including the tagged child that emigration draws from and
+    the period-zero tagged cases whose tag equals the root's, must hand out
+    its own entropy list.
+    """
+    registry = ProjectionRNGRegistry(0, 7)
+    direct = DirectRNGStreams(0, 7)
+    args = (period, MODULE_ORDER[0], *tail)
+    for streams in (registry, direct):
+        streams.seed_sequence(1, MODULE_ORDER[0])
+        generator = getattr(streams, method)(*args)
+        generator.bit_generator.seed_seq.entropy.append(99)
+    assert _sequence_identity(
+        direct.seed_sequence(2, MODULE_ORDER[0])
+    ) == _sequence_identity(registry.seed_sequence(2, MODULE_ORDER[0]))
+    assert _generator_identity(
+        getattr(direct, method)(*args)
+    ) == _generator_identity(getattr(registry, method)(*args))
+
+
 def test_root_follows_the_draw_seed_as_the_registry_does():
     """A cached root never outlives the draw seed it was built from (§2.1).
 
     The registry recomputes ``5200 + draw_index`` and its root on every call
     (``engine/rng.py:66``). A 0-d array draw mutated in place must change
-    later streams, and an overflowing NumPy draw seed must still raise under
-    ``np.errstate(over="raise")`` after a first call that ignored it.
+    later streams, whether its seed is a NumPy integer or, from an object
+    array, an exact ``int`` whose root is kept. An overflowing NumPy draw
+    seed must still raise under ``np.errstate(over="raise")`` after a first
+    call that ignored it.
     """
-    draw = np.array(0)
-    registry = ProjectionRNGRegistry(draw, 7)
-    direct = DirectRNGStreams(draw, 7)
-    direct.seed_sequence(1, MODULE_ORDER[0])
-    draw[...] = 4
-    assert _sequence_identity(
-        direct.seed_sequence(1, MODULE_ORDER[0])
-    ) == _sequence_identity(
-        ProjectionRNGRegistry(4, 7).seed_sequence(1, MODULE_ORDER[0])
-    )
-    assert _sequence_identity(
-        direct.seed_sequence(1, MODULE_ORDER[0])
-    ) == _sequence_identity(registry.seed_sequence(1, MODULE_ORDER[0]))
+    for dtype in (None, object):
+        draw = np.array(0, dtype=dtype)
+        registry = ProjectionRNGRegistry(draw, 7)
+        direct = DirectRNGStreams(draw, 7)
+        for value in (0, 4, 4, 0):
+            draw[...] = value
+            fresh = ProjectionRNGRegistry(np.array(value, dtype=dtype), 7)
+            actual = _sequence_identity(
+                direct.seed_sequence(1, MODULE_ORDER[0])
+            )
+            for streams in (registry, fresh):
+                expected = _sequence_identity(
+                    streams.seed_sequence(1, MODULE_ORDER[0])
+                )
+                assert actual == expected, (dtype, value)
 
     for streams in (
         ProjectionRNGRegistry(np.uint64(2**64 - 1), 7),
@@ -396,6 +445,58 @@ def test_root_follows_the_draw_seed_as_the_registry_does():
             streams.seed_sequence(1, MODULE_ORDER[0])
         with np.errstate(over="raise"), pytest.raises(FloatingPointError):
             streams.seed_sequence(1, MODULE_ORDER[0])
+
+
+@pytest.mark.parametrize(
+    ("first", "then"),
+    (
+        (3, 3.0),
+        (3, np.float64(3.0)),
+        (3, Fraction(3)),
+        (3, Decimal(3)),
+        (3, complex(3)),
+        (3, np.int64(3)),
+        (3, np.uint64(3)),
+        (np.int64(3), 3),
+        (1, np.True_),
+        (3, np.ma.masked),
+    ),
+)
+def test_root_ignores_an_equal_seed_of_another_type(first, then):
+    """An equal draw seed of another type gets the registry's outcome (§2.1).
+
+    Only an exact ``int`` seed's root is kept. A draw changed in place to an
+    equal value of another type must be refused where the registry refuses
+    it, and must keep the entropy element types the registry gives it.
+    """
+    draw = np.array(first, dtype=object)
+    registry = ProjectionRNGRegistry(draw, 7)
+    direct = DirectRNGStreams(draw, 7)
+    direct.seed_sequence(1, MODULE_ORDER[0])
+    # ``draw[()]`` stores the object itself; ``draw[...]`` would turn
+    # ``np.ma.masked`` into 0.0.
+    draw[()] = then
+    assert draw[()] is then
+    for method, tail_length in _TAIL_LENGTHS.items():
+        args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+        compare = _compare_for(method)
+        assert _outcome(direct, method, args, compare) == _outcome(
+            registry, method, args, compare
+        ), method
+
+
+@pytest.mark.parametrize("draw_index", (0.0, Decimal(1), np.float64(2.0)))
+def test_refused_seed_is_refused_on_every_call(draw_index):
+    """A refused draw seed is never kept, so later calls refuse too (§2.1)."""
+    registry = ProjectionRNGRegistry(draw_index, 7)
+    direct = DirectRNGStreams(draw_index, 7)
+    for _ in range(2):
+        for method, tail_length in _TAIL_LENGTHS.items():
+            args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+            compare = _compare_for(method)
+            assert _outcome(direct, method, args, compare) == _outcome(
+                registry, method, args, compare
+            ), method
 
 
 class _WrappingIndex(int):
@@ -409,11 +510,19 @@ class _WrappingIndex(int):
 
 
 def test_negative_position_wraps_as_the_list_lookup_does():
-    """A negative position is wrapped like the registry's lookup (§2.1)."""
-    for method, tail in (("seed_sequence", ()), ("child_generator", (2,))):
+    """A negative position is wrapped like the registry's lookup (§2.1).
+
+    At horizon 7 the registry spawns eight period children, so -1 and -8
+    wrap to periods 7 and 0, and -9 and -20 stay out of range.
+    """
+    for position, (method, tail) in product(
+        (-1, -8, -9, -20), (("seed_sequence", ()), ("child_generator", (2,)))
+    ):
         _assert_outcomes_match(
-            0, 7, method, (_WrappingIndex(-1), MODULE_ORDER[0], *tail)
+            0, 7, method, (_WrappingIndex(position), MODULE_ORDER[0], *tail)
         )
+    # A negative child never reaches the lookup: the child check refuses it
+    # first, in both classes.
     _assert_outcomes_match(
         0,
         7,
