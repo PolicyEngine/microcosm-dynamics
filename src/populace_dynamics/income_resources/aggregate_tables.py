@@ -213,8 +213,12 @@ class _HTMLTree(HTMLParser):
     formatting element such as ``b`` across the block that ends it (the
     block's text is the same here); content that HTML moves out of a table
     to just before it (foster parenting), which stays in the table here;
-    and a self-closing slash on a non-void element, which HTML ignores and
-    which closes the element here.
+    a form start tag inside an open form, which HTML ignores and which here
+    starts a form that ends the open paragraph (in
+    ``<form><p>w0<form>w1</form><p>w2``, HTML's first paragraph reads
+    "w0w1" and this tree's "w0"; no pinned capture opens a form inside
+    another); and a self-closing slash on a non-void element, which HTML
+    ignores and which closes the element here.
     """
 
     _VOID = frozenset(

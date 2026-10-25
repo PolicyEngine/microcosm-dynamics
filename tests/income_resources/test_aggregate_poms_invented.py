@@ -667,8 +667,10 @@ def test_invented_selectors_do_not_depend_on_omitted_paragraph_ends(
     st.sampled_from(["p", "h3"]),
 )
 def test_invented_block_without_nested_blocks_reads_its_full_text(inline, tag):
+    """Inline elements join without a separator, as HTML renders them, and
+    whitespace collapses."""
     block = next(parse_html(f"<{tag}>{inline}</{tag}>").iter(tag))
-    assert _own_text(block) == normalized_text(block)
+    assert _own_text(block) == " ".join("".join(block.itertext()).split())
 
 
 def invented_nevada_after_california(nevada_heading: str) -> bytes:
@@ -1357,6 +1359,228 @@ def test_invented_washington_dc_heading_names_the_district(heading):
     assert spec.selector["definitions_table_indexes"] == []
 
 
+def invented_nevada_with(fragment: str, before: str = "") -> bytes:
+    """A Nevada section whose chart follows ``fragment``, after its own
+    definitions, date and claimant heading, with ``before`` ahead of it."""
+    return invented_payload(
+        before
+        + "<h3>Nevada</h3>"
+        + invented_definitions([("A", "Invented Nevada definition")])
+        + "<p>Monthly payment levels effective January 1, 2030</p>"
+        "<h4>Individual</h4>" + fragment + f"<table>{INVENTED_HEADER}</table>"
+    )
+
+
+def invented_selector(payload: bytes):
+    (context,) = describe_poms_tables(payload)
+    return (
+        context["state"],
+        context["claimant_type"],
+        context["effective_from"],
+        context["definitions_table_indexes"],
+    )
+
+
+def test_invented_nevada_control_reads_its_own_section():
+    assert invented_selector(invented_nevada_with("")) == (
+        "Nevada",
+        "individual",
+        "2030-01-01",
+        [0],
+    )
+
+
+# Long enough that the whole text is no effective-date or claimant line.
+INVENTED_FILLER = "<br>" + "Invented filler " * 30 + "<br>"
+
+
+@pytest.mark.parametrize(
+    ("fragment", "message"),
+    [
+        (
+            "<h4>Nevada Effective January 1, 2031<br>"
+            "Utah Effective January 1, 2032</h4>",
+            "section heading",
+        ),
+        (
+            "<h4>Nevada Effective January 1, 2031<br>Couple for Utah</h4>",
+            "section heading",
+        ),
+        (
+            "<h4>Nevada Effective January 1, 2031"
+            + INVENTED_FILLER
+            + "Utah Effective January 1, 2032</h4>",
+            "section heading",
+        ),
+        (
+            "<h4>Nevada Effective January 1, 2031"
+            + INVENTED_FILLER
+            + "Couple for Utah</h4>",
+            "names another State",
+        ),
+    ],
+    ids=["date_line", "claimant_line", "long_date_line", "long_claimant_line"],
+)
+def test_invented_lines_after_a_whole_text_state_date_are_guarded(
+    fragment, message
+):
+    """Regression: a block whose whole text is a State date line skipped
+    its lines, so a later line could date or name another State. A short
+    whole text also refuses as an effective-date sentence naming another
+    State; a long one is no such sentence, and its lines refuse."""
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+def test_invented_whole_text_state_date_lines_do_not_head_a_section():
+    """A whole-text date line's own lines still date the section and name
+    its claimant, but do not head it."""
+    payload = invented_nevada_with(
+        "<h4>Nevada Effective January 1, 2031<br>Couple</h4>"
+    )
+    assert invented_selector(payload) == (
+        "Nevada",
+        "couple",
+        "2031-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    ("line", "refused"),
+    [
+        ("Couple for Utah (see Nevada)", True),
+        ("Couple for Nevada and Utah", True),
+        ("Couple for Nevada", False),
+    ],
+)
+def test_invented_claimant_line_may_name_only_its_own_state(line, refused):
+    """Regression: a claimant line that named another State beside its own
+    passed the guard."""
+    payload = invented_nevada_with(f"<p>{line}</p>")
+    if refused:
+        with pytest.raises(TableStructureError, match="names another State"):
+            describe_poms_tables(payload)
+    else:
+        assert invented_selector(payload)[:2] == ("Nevada", "couple")
+
+
+@pytest.mark.parametrize(
+    ("later", "refused"),
+    [("Couple for Utah", True), ("Couple for Nevada", False)],
+)
+def test_invented_claimant_lines_after_the_first_are_guarded(later, refused):
+    """Every claimant line of a block is guarded, not only the first. With
+    the whole text too long to read as a claimant line, a later line naming
+    another State still refuses; the first claimant line names the
+    claimant."""
+    payload = invented_nevada_with(
+        f"<p>Individual<br>{later}{INVENTED_FILLER}</p>"
+    )
+    if refused:
+        with pytest.raises(TableStructureError, match="names another State"):
+            describe_poms_tables(payload)
+    else:
+        assert invented_selector(payload)[:2] == ("Nevada", "individual")
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "Utah payment levels effective January 1, 2031",
+        "Payment levels effective January 1, 2031 for Utah",
+        "Effective January 1, 2031 for Washington DC",
+        "Washington, D.C. Effective January 1, 2031",
+        "Utah (UT) Effective January 1, 2031",
+    ],
+)
+def test_invented_effective_line_naming_another_state_is_refused(line):
+    """Regression: an effective-date sentence that dated another State in a
+    form other than "State Effective" carried that date into this section."""
+    with pytest.raises(TableStructureError, match="section heading"):
+        describe_poms_tables(invented_nevada_with(f"<p>{line}</p>"))
+
+
+def test_invented_effective_line_before_any_state_heading_is_not_refused():
+    """Before the first State heading no section is open, and the heading
+    that opens one sets its own date."""
+    payload = invented_nevada_with(
+        "", before="<p>Payment levels effective January 1, 2031 for Utah</p>"
+    )
+    assert invented_selector(payload) == (
+        "Nevada",
+        "individual",
+        "2030-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "Nevada payment levels effective January 1, 2031",
+        "Nevada (NV) Effective January 1, 2031",
+    ],
+)
+def test_invented_effective_line_naming_its_own_state_is_read(line):
+    payload = invented_nevada_with(f"<p>{line}</p>")
+    assert invented_selector(payload) == (
+        "Nevada",
+        "individual",
+        "2031-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    ("fragment", "expected"),
+    [
+        (
+            "<h3>U<span>tah</span></h3><h4>Individual</h4>",
+            ("Utah", "individual", None, []),
+        ),
+        (
+            "<h4>Cou<span>ple</span></h4>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+    ],
+    ids=["state_heading", "claimant_heading"],
+)
+def test_invented_inline_markup_inside_a_word_keeps_the_word(
+    fragment, expected
+):
+    """Regression: a space at each inline element's edge split "Utah" and
+    "Couple", keeping Nevada's definitions and claimant."""
+    assert invented_selector(invented_nevada_with(fragment)) == expected
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        "<h3>Invented note<br>New York (NJ)</h3>",
+        "<h4>Invented note<br>Description of supplements for Utah (NV)</h4>",
+        "<p>New York (NJ)</p>",
+    ],
+)
+def test_invented_state_heading_line_with_another_code_is_refused(block):
+    """Regression: a later line shaped as a State heading, with a postal
+    code that is not that State's, kept Nevada's selector."""
+    with pytest.raises(TableStructureError, match="does not head"):
+        describe_poms_tables(invented_nevada_with(block))
+
+
+def test_invented_later_state_heading_line_with_its_own_code_heads():
+    payload = invented_nevada_with(
+        "<h3>Invented note<br>New Jersey (NJ)</h3><h4>Individual</h4>"
+    )
+    assert invented_selector(payload) == (
+        "New Jersey",
+        "individual",
+        None,
+        [],
+    )
+
+
 def test_invented_deeply_nested_chart_cell_reads_without_recursion():
     """Regression: copying a chart whose cell nests 50,000 spans crashed the
     interpreter (exit 139), so the read runs in its own process."""
@@ -1499,7 +1723,7 @@ def test_invented_tree_builds_tables_as_html_does(html, expected):
 
 
 def invented_blocks(
-    html: str, tags=("p", "h3", "button", "li", "div", "object")
+    html: str, tags=("p", "h3", "button", "li", "dt", "dd", "div", "object")
 ):
     root = parse_html(html)
     pending, out = [root], []
@@ -1579,6 +1803,31 @@ def invented_blocks(
             "<div><object>w0</object>w1</div>",
             [("div", "w0 w1"), ("object", "w0")],
             id="scope_element_end_tag_closes_itself",
+        ),
+        pytest.param(
+            "<ul><li>w0<address>w1<li>w2</ul>",
+            [("li", "w0 w1"), ("li", "w2")],
+            id="list_item_start_ends_the_item_around_an_address",
+        ),
+        pytest.param(
+            "<dl><dt>w0<dd>w1</dl>",
+            [("dt", "w0"), ("dd", "w1")],
+            id="dd_start_ends_an_open_dt",
+        ),
+        pytest.param(
+            "<dl><dd>w0<dt>w1</dl>",
+            [("dd", "w0"), ("dt", "w1")],
+            id="dt_start_ends_an_open_dd",
+        ),
+        pytest.param(
+            "<html><div>w0</html>w1</div>",
+            [("div", "w0w1")],
+            id="html_end_tag_after_an_html_start_closes_nothing",
+        ),
+        pytest.param(
+            "<div>w0</html>w1</div>",
+            [("div", "w0w1")],
+            id="html_end_tag_closes_nothing",
         ),
     ],
 )
