@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "038ee180be5b9f8b86e132dde71cceba234c2aa465a4866f22e907c86b430e42"
+    "a92539b27121f8d6c903f763537405a1fb992491cff45bdb0626a23de8169871"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1845,10 +1845,13 @@ SLEEP_ASSERTIONS = ("PreventUserIdleSystemSleep", "PreventSystemSleep")
 #: from 3.12: ``getpriority`` reads 1 for it under the Darwin background
 #: policy (``taskpolicy -b``) and 0 otherwise.
 PRIO_DARWIN_PROCESS = 4
-#: QoS classes below the default (<sys/qos.h>): utility, background and
-#: maintenance. A process clamped to one (``taskpolicy -c``) reads it as
-#: its thread's class, with niceness and Darwin priority both still 0.
-LOW_QOS_CLASSES = (0x11, 0x09, 0x05)
+#: The run's QoS class must be unspecified, or the default or above
+#: (<sys/qos.h>: user-initiated is 0x19 and user-interactive 0x21). Below
+#: the default are utility (0x11), background (0x09) and maintenance
+#: (0x05); a process clamped to one (``taskpolicy -c``) reads it as its
+#: thread's class, with niceness and Darwin priority both still 0.
+QOS_CLASS_UNSPECIFIED = 0x00
+QOS_CLASS_DEFAULT = 0x15
 #: The run's conditions, by the fixed name a refusal or a stop reports,
 #: in the order they are checked (Output and stop rules, "One run").
 RUN_CONDITIONS = (
@@ -1859,9 +1862,10 @@ RUN_CONDITIONS = (
     "qos",
     "load",
 )
-#: Before a program, a failed condition is rechecked every minute, and the
-#: run stops when 1,440 rechecks in a row, 24 hours, have found one
-#: failing.
+#: Before a program, a failed condition is rechecked every
+#: ``RECHECK_SECONDS``, and the run stops when ``RECHECKS`` rechecks in a
+#: row, 24 hours, have found one failing (Output and stop rules, "One
+#: run").
 RECHECK_SECONDS = 60
 RECHECKS = 1440
 #: kCFStringEncodingUTF8 and kIOPMAssertionLevelOn.
@@ -2039,7 +2043,7 @@ class RunConditions:
             ),
             "nice": niceness == 0,
             "background": background == 0,
-            "qos": qos not in LOW_QOS_CLASSES,
+            "qos": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,
             "load": load < cpus,
         }
         return next((name for name in RUN_CONDITIONS if not holds[name]), None)
@@ -2054,8 +2058,9 @@ class RunConditions:
         while name is not None:
             if rechecks == RECHECKS:
                 raise SystemExit(
-                    f"run condition {name} still failed after 24 hours of"
-                    " rechecks between programs"
+                    f"run condition {name} still failed after {RECHECKS}"
+                    f" rechecks, {RECHECK_SECONDS} seconds apart, between"
+                    " programs"
                 )
             time.sleep(RECHECK_SECONDS)
             rechecks += 1

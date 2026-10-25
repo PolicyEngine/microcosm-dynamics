@@ -176,7 +176,8 @@ go in before the freeze:
   - AC power, the Darwin background policy and the QoS class are checked
     with niceness and the load. A measurement after the round added the
     QoS class: under `taskpolicy -c background` a CPU loop ran about a
-    twelfth as fast, with niceness and Darwin priority both 0;
+    twelfth as fast, with niceness and Darwin priority both 0. The class
+    must be unspecified, or the default or above;
   - every condition is checked again before every program, and a failure
     is waited out between programs for up to 24 hours before the run
     stops.
@@ -764,10 +765,16 @@ rules.
         the end, through every program;
       - through `main()`, every program follows a check that passed;
       - whenever failures clear within the bound, the audit is unchanged,
-        each failed check costs one recheck a minute later, and a lapsed
-        assertion is taken again;
+        each failed check costs one recheck `RECHECK_SECONDS` later, and
+        a lapsed assertion is taken again;
       - a condition failing through 1,440 rechecks stops the run in the
         release with its name, before any program;
+      - with the bound shortened to three rechecks a hundredth of a
+        second apart, and real waits, a condition failing through all
+        three stops the run, and one that clears at the third lets it
+        finish;
+      - every QoS class below the default fails `qos`, an unknown one
+        included, and unspecified, default and above pass;
       - on the host that runs it, the real reads see the Darwin
         background policy and a QoS clamp;
     - the decision record: each class's sets are this release's sets that
@@ -853,8 +860,10 @@ new version.
     - `nice`: the process runs at nice 0;
     - `background`: the Darwin background policy is off, so
       `getpriority(PRIO_DARWIN_PROCESS, 0)` reads 0;
-    - `qos`: the main thread's QoS class is not utility, background or
-      maintenance, as a `taskpolicy -c` clamp would make it;
+    - `qos`: the main thread's QoS class is unspecified, or the default
+      or above (the script's `QOS_CLASS_UNSPECIFIED` and
+      `QOS_CLASS_DEFAULT`). A `taskpolicy -c` clamp to utility,
+      background or maintenance, all below the default, fails it;
     - `load`: the five-minute load average is below the host's CPU count
       (18 on the host that runs it).
   - Before the attempt record, the run refuses to start unless all six
@@ -864,12 +873,12 @@ new version.
     again.
     - When one fails, no program starts. A lapsed sleep assertion is
       taken again; every other failure is left to clear. The six are
-      rechecked every 60 seconds, and the next program runs once all
-      hold.
-    - After 1,440 rechecks in a row, 24 hours, have found one failing,
-      the run stops with the name of the one the last recheck found. That
-      stop, like any other once the attempt record exists, spends the
-      version.
+      rechecked every 60 seconds (the script's `RECHECK_SECONDS`), and
+      the next program runs once all hold.
+    - After 1,440 rechecks in a row (`RECHECKS`), 24 hours, have found
+      one failing, the run stops. Its message names the one the last
+      recheck found, and the bound. That stop, like any other once the
+      attempt record exists, spends the version.
     - A wait changes nothing a program is given, so it cannot change an
       answer. The bound counts waiting, not programs.
   - The operator also keeps the host's lid open and schedules no restart

@@ -928,7 +928,7 @@
   "mutation": "the QoS check is dropped",
   "replacements": [
    {
-    "old": "            \"qos\": qos not in LOW_QOS_CLASSES,\n",
+    "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
     "new": "            \"qos\": True,\n",
     "occurrence": 1
    }
@@ -948,8 +948,28 @@
   "mutation": "the QoS check passes a background clamp",
   "replacements": [
    {
-    "old": "LOW_QOS_CLASSES = (0x11, 0x09, 0x05)\n",
-    "new": "LOW_QOS_CLASSES = (0x11, 0x05)\n",
+    "old": "QOS_CLASS_DEFAULT = 0x15\n",
+    "new": "QOS_CLASS_DEFAULT = 0x09\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the QoS check passes an unknown class below the default",
+  "replacements": [
+   {
+    "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
+    "new": "            \"qos\": qos not in (0x11, 0x09, 0x05),\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the QoS check fails an unspecified class",
+  "replacements": [
+   {
+    "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
+    "new": "            \"qos\": qos >= QOS_CLASS_DEFAULT,\n",
     "occurrence": 1
    }
   ]
@@ -990,6 +1010,16 @@
    {
     "old": "            if rechecks == RECHECKS:\n",
     "new": "            if rechecks == 0:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the wait stops one recheck early",
+  "replacements": [
+   {
+    "old": "            if rechecks == RECHECKS:\n",
+    "new": "            if rechecks == RECHECKS - 1:\n",
     "occurrence": 1
    }
   ]

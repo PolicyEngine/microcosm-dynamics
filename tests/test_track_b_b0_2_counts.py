@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from collections import Counter
 from contextlib import contextmanager, nullcontext
 from itertools import combinations
@@ -29,7 +30,7 @@ from scripts import track_b_b0_1_counts as b01  # noqa: E402
 #: The script's own host calls, kept before any test replaces them.
 REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "038ee180be5b9f8b86e132dde71cceba234c2aa465a4866f22e907c86b430e42"
+    "a92539b27121f8d6c903f763537405a1fb992491cff45bdb0626a23de8169871"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -2443,6 +2444,8 @@ def _main_args(tmp_path):
         (_FakeHost(state=(0, 0, 0x11, 1.0, 18)), "qos"),
         (_FakeHost(state=(0, 0, 0x09, 1.0, 18)), "qos"),
         (_FakeHost(state=(0, 0, 0x05, 1.0, 18)), "qos"),
+        (_FakeHost(state=(0, 0, 0x14, 1.0, 18)), "qos"),
+        (_FakeHost(state=(0, 0, 0x01, 1.0, 18)), "qos"),
         (_FakeHost(state=(0, 0, 0x21, 18.0, 18)), "load"),
         (_FakeHost(state=(0, 0, 0x21, 40.5, 18)), "load"),
     ],
@@ -2470,7 +2473,8 @@ def test_runtime_refuses_to_start_unless_every_run_condition_holds(
 @pytest.mark.parametrize("qos", [0x00, 0x15, 0x19, 0x21])
 def test_unclamped_qos_classes_meet_the_run_conditions(qos, monkeypatch):
     """Unspecified, default, user-initiated and user-interactive QoS all
-    run at full speed; only the classes below the default fail."""
+    run at full speed; every class below the default fails, an unknown one
+    included (the refusal cases above)."""
     monkeypatch.setattr(script, "_host_state", _FakeHost.read_state)
     host = _FakeHost(state=(0, 0, qos, 1.0, 18))
     assert script.RunConditions(host).failing() is None
@@ -2730,8 +2734,8 @@ def test_a_condition_failing_for_24_hours_stops_the_run_with_its_name(
     line = _raise_line(script.RunConditions.before_program, "raise SystemExit")
     assert str(caught.value) == (
         f"B0.2 stopped in before_program, line {line}: SystemExit: run"
-        f" condition {name} still failed after 24 hours of rechecks"
-        " between programs"
+        f" condition {name} still failed after 1440 rechecks, 60 seconds"
+        " apart, between programs"
     )
     assert caught.value.__cause__ is None
     assert sleeps == [script.RECHECK_SECONDS] * script.RECHECKS
@@ -2740,6 +2744,51 @@ def test_a_condition_failing_for_24_hours_stops_the_run_with_its_name(
     assert script._attempt_path(tmp_path / "local.json").exists()
     assert not (tmp_path / "local.json").exists()
     assert not (tmp_path / "counts.json").exists()
+
+
+@pytest.mark.parametrize("clears", [False, True], ids=["fails", "clears"])
+def test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits(
+    clears, tmp_path, monkeypatch, invented_main
+):
+    """The bounded wait as the run would meet it, shortened so it takes a
+    fraction of a second: three rechecks a hundredth of a second apart,
+    with real waits. A condition failing at the first check and through
+    all three rechecks stops the run before any program, with a message
+    naming it and the bound. One that clears at the third recheck lets the
+    run go on and write both files."""
+    monkeypatch.setattr(script, "RECHECKS", 3)
+    monkeypatch.setattr(script, "RECHECK_SECONDS", 0.01)
+    failures = ["qos"] * (3 if clears else 4)
+    host = _FakeHost(plan=[None] + failures)
+    programs = []
+    real_milp = script.milp
+    monkeypatch.setattr(script, "_Host", lambda: host)
+    monkeypatch.setattr(
+        script,
+        "milp",
+        lambda *a, **k: programs.append(host.checks[:]) or real_milp(*a, **k),
+    )
+    started = time.monotonic()
+    if clears:
+        assert script.main(_main_args(tmp_path)) == 0
+        assert (tmp_path / "local.json").exists()
+        assert (tmp_path / "counts.json").exists()
+        assert programs[0][: len(failures) + 2] == [None] + failures + [None]
+    else:
+        with pytest.raises(SystemExit) as caught:
+            script.main(_main_args(tmp_path))
+        line = _raise_line(
+            script.RunConditions.before_program, "raise SystemExit"
+        )
+        assert str(caught.value) == (
+            f"B0.2 stopped in before_program, line {line}: SystemExit: run"
+            " condition qos still failed after 3 rechecks, 0.01 seconds"
+            " apart, between programs"
+        )
+        assert not programs
+        assert host.checks == [None] + failures
+        assert not (tmp_path / "local.json").exists()
+    assert time.monotonic() - started >= 3 * 0.01
 
 
 def _present_index(frame):
@@ -4535,6 +4584,8 @@ SAFE_MESSAGE_NAMES = {
     "attempt",
     "destination",
     "sorted(missing)",
+    "RECHECKS",
+    "RECHECK_SECONDS",
 }
 
 
