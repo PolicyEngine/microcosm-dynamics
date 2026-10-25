@@ -302,8 +302,8 @@
     },
     {
       "mutation": "entries without ids reach diagnostics",
-      "old": "isinstance(entry, Mapping) and isinstance(entry.get(\"id\"), str)",
-      "new": "isinstance(entry, Mapping)",
+      "old": "isinstance(entry, Mapping) and isinstance(entry.get(\"id\"), str)\n            for entry in entries\n",
+      "new": "isinstance(entry, Mapping)\n            for entry in entries\n",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
@@ -783,8 +783,8 @@
     },
     {
       "mutation": "history checks only the endpoint",
-      "old": "previous_commit, previous = commit, current",
-      "new": "previous_commit = commit",
+      "old": "previous_label, previous = label, current",
+      "new": "previous_label = label",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
