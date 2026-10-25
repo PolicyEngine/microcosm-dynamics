@@ -21,7 +21,9 @@ code-definition tables (``definitions_table_indexes`` in selectors). A State's
 definitions may span more than one physical table; the reader merges them and
 refuses a code whose tables define it differently. Definitions come only from
 the chart's own State section, and a State named only in a date line, with no
-section heading, refuses. Every definition table of a section precedes its
+section heading, refuses. A paragraph or heading is read from its own text,
+up to the first block nested in it, so a State heading in a paragraph left
+unclosed still names its State. Every definition table of a section precedes its
 first chart; a definition table after a chart refuses, because the source does
 not say which earlier chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
@@ -83,6 +85,38 @@ _DATE = re.compile(
     re.IGNORECASE,
 )
 _BLOCKS = frozenset({"p", "h1", "h2", "h3", "h4", "h5", "h6"})
+# Start tags that close an open paragraph under the HTML parsing rules
+# (table outside quirks mode). The shared tree never closes a paragraph
+# implicitly, so an unclosed <p> holds whatever follows it.
+_PARAGRAPH_CLOSERS = frozenset(
+    """address article aside blockquote center dd details dir div dl dt
+    fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup
+    hr li listing main menu nav ol p plaintext pre section summary table ul
+    xmp""".split()
+)
+
+
+def _own_text(element: ET.Element) -> str:
+    """Normalize a block's own inline text, up to its first nested block.
+
+    This is ``normalized_text`` when no block nests inside the element. An
+    unclosed paragraph's text is what a browser shows as that paragraph,
+    not the headings and tables the shared tree nests under it.
+    """
+    pieces: list[str] = []
+
+    def collect(node: ET.Element) -> bool:
+        if node.text:
+            pieces.append(node.text)
+        for child in node:
+            if child.tag in _PARAGRAPH_CLOSERS or not collect(child):
+                return False
+            if child.tail:
+                pieces.append(child.tail)
+        return True
+
+    collect(element)
+    return " ".join(" ".join(pieces).split())
 
 
 def _blank(text: str) -> str:
@@ -203,7 +237,10 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 charted = True
             return
         if element.tag in _BLOCKS:
-            text = normalized_text(element)
+            # Only the block's own text: a heading in an unclosed paragraph
+            # still names its State, and the blocks nested under it are
+            # read in turn below.
+            text = _own_text(element)
             for name in _STATES:
                 if re.fullmatch(
                     r"(?:[A-Z]\.\s*)?"

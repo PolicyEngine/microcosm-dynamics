@@ -10,6 +10,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.aggregate_poms import (
+    _own_text,
     _payment_rows,
     describe_poms_tables,
     parse_poms,
@@ -21,6 +22,7 @@ from populace_dynamics.income_resources.aggregate_tables import (
     TableSpec,
     TableStructureError,
     expand_html_table,
+    normalized_text,
     parse_html,
 )
 
@@ -535,6 +537,109 @@ def test_invented_state_named_only_in_a_date_line_is_refused():
     )
     with pytest.raises(TableStructureError, match="section heading"):
         describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize("close", ["", "</p>"])
+def test_invented_state_heading_in_an_unclosed_paragraph_names_its_state(
+    close,
+):
+    """Regression: an unclosed "<p>Nevada" kept California's definitions."""
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        f"<p>Nevada{close}<h4>Individual</h4>"
+        f"<table>{INVENTED_HEADER}</table>",
+    )
+    spec, payload = invented_spec_for(payload, 1)
+    assert spec.selector["state"] == "Nevada"
+    assert spec.selector["definitions_table_indexes"] == []
+    with pytest.raises(TableStructureError, match="not identified"):
+        poms_living_arrangements(spec, payload)
+
+
+INVENTED_STATES = ("California", "Nevada", "Utah")
+
+
+@st.composite
+def invented_paragraph_sections(draw):
+    """Invented State sections as ("p", text) paragraphs and other markup."""
+    pieces, states = [], []
+    for state in draw(
+        st.lists(st.sampled_from(INVENTED_STATES), min_size=1, max_size=3)
+    ):
+        heading = f"Description of supplements for {state}"
+        pieces.append(
+            ("p", heading)
+            if draw(st.booleans())
+            else ("html", f"<h3>{heading}</h3>")
+        )
+        for code in draw(
+            st.lists(st.sampled_from("ABC"), max_size=2, unique=True)
+        ):
+            pieces.append(
+                (
+                    "html",
+                    invented_definitions([(code, f"Invented {state} {code}")]),
+                )
+            )
+        for _ in range(draw(st.integers(1, 2))):
+            pieces.append(
+                ("p", "Monthly payment levels effective January 1, 2030")
+            )
+            pieces.append(("p", f"Individual payment levels for {state}"))
+            pieces.append(("html", f"<table>{INVENTED_HEADER}</table>"))
+            states.append(state)
+    return pieces, states
+
+
+def invented_rendering(pieces, closed) -> bytes:
+    return invented_payload(
+        *(
+            f"<p>{body}" + ("</p>" if close else "") if kind == "p" else body
+            for (kind, body), close in zip(pieces, closed, strict=True)
+        )
+    )
+
+
+def poms_outcome(payload: bytes):
+    try:
+        return describe_poms_tables(payload)
+    except TableStructureError as error:
+        return str(error)
+
+
+@settings(deadline=None, max_examples=100)
+@given(invented_paragraph_sections(), st.data())
+def test_invented_selectors_do_not_depend_on_omitted_paragraph_ends(
+    sections, data
+):
+    """HTML lets a paragraph end without </p>; the selectors are the same."""
+    pieces, states = sections
+    closed = data.draw(
+        st.lists(st.booleans(), min_size=len(pieces), max_size=len(pieces))
+    )
+    explicit = poms_outcome(invented_rendering(pieces, [True] * len(pieces)))
+    assert poms_outcome(invented_rendering(pieces, closed)) == explicit
+    if not isinstance(explicit, str):
+        assert [context["state"] for context in explicit] == states
+
+
+@settings(deadline=None, max_examples=100)
+@given(
+    st.recursive(
+        st.text("Invented ab\n\t", max_size=6),
+        lambda inner: st.tuples(
+            st.sampled_from(["span", "b", "a", "em", "sup"]),
+            st.lists(inner, max_size=3),
+        ).map(
+            lambda node: f"<{node[0]}>" + "".join(node[1]) + f"</{node[0]}>"
+        ),
+        max_leaves=8,
+    ),
+    st.sampled_from(["p", "h3"]),
+)
+def test_invented_block_without_nested_blocks_reads_its_full_text(inline, tag):
+    block = next(parse_html(f"<{tag}>{inline}</{tag}>").iter(tag))
+    assert _own_text(block) == normalized_text(block)
 
 
 def test_invented_definition_table_after_a_chart_is_refused():
