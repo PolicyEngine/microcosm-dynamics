@@ -73,6 +73,7 @@ import math
 import platform
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -125,6 +126,17 @@ def _refusal(call: Any) -> dict[str, Any]:
             "message": str(error)[:600],
         }
     return {"refused": False}
+
+
+def _refusal_without_evidence() -> dict[str, Any]:
+    """The registered preflight's read of the evidence record, forced
+    absent through an explicit missing path in a fresh temporary
+    directory: the committed record stays in place."""
+    with tempfile.TemporaryDirectory() as directory:
+        missing = Path(directory) / "absent.json"
+        if missing.exists():
+            raise RuntimeError(f"{missing} exists in a fresh directory")
+        return _refusal(lambda: loader.read_preregistration_evidence(missing))
 
 
 def _invented_individual_raw(
@@ -208,9 +220,7 @@ def _round_1_refusals(
         "undocumented_relationship_rule": _refusal(
             lambda: registry_roles.rule(2015, 99)
         ),
-        "registered_preflight_without_evidence": _refusal(
-            loader.read_preregistration_evidence
-        ),
+        "registered_preflight_without_evidence": _refusal_without_evidence(),
         "evidence_from_invented_inputs": _refusal(
             lambda: loader.preregistration_evidence(inputs)
         ),
