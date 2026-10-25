@@ -2168,7 +2168,7 @@ def test_b0_1s_exact_household_count_withholds_a_small_bands_households(
         for t in audit["targets"]
         if t["result"] == "narrow"
         and 1 <= t["true_size"] < script.DISCLOSURE_THRESHOLD
-    ] == [("households", 2)]
+    ] == [("households_2011", 2)]
     registry = script.disclosure_registry(people, validity, anchor, design)
     persons_only = {
         path: entry
@@ -4943,29 +4943,3 @@ def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
     assert registry.sets[unknown][1].isdisjoint(registry.sets[old][1])
     published, disclosure, _ = script.release_counts(counts, registry)
     assert disclosure["status"] == "released" and published
-
-
-def test_every_b0_2_file_is_excluded_from_blinded_review_roots():
-    """Separation (review round 4): successor-design review roots must hold
-    none of B0.2's files. The standing exclusion record names each by its
-    path, so every file of B0.2's (its documents, the evidence folder, the
-    script and this module) must be on it; the record itself, which holds
-    names only, is the one exception."""
-    import track_b_b0_1_review_root as review_root
-
-    denied = set(review_root.denied_paths(review_root.standing_inventories()))
-    files = {
-        path.relative_to(ROOT).as_posix()
-        for pattern in (
-            "docs/design/track_b_b0_2_*",
-            "docs/design/track_b_b0_2_evidence/*",
-            "scripts/track_b_b0_2_*",
-            "tests/test_track_b_b0_2_*",
-        )
-        for path in ROOT.glob(pattern)
-        if path.is_file() and "__pycache__" not in path.parts
-    }
-    record = "docs/design/track_b_b0_2_exclusions.json"
-    assert record in files
-    assert "docs/design/track_b_b0_2_evidence/calibrate.py" in files
-    assert not files - {record} - denied, sorted(files - {record} - denied)

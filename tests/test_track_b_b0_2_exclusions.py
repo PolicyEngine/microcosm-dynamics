@@ -9,7 +9,9 @@ every build, whatever inventories the build names.
 
 The record lists two files before they exist: the counts the frozen
 protocol writes, and B0.2's exposure inventory. Every other B0.2 file in
-the repository must be listed, so a new one cannot reach master unlisted.
+the repository must be listed, so a new one cannot reach master unlisted:
+a file named as B0.2's, or any file in a folder so named, such as the
+evidence folder (review round 4 found its files left in review roots).
 """
 
 from __future__ import annotations
@@ -37,6 +39,18 @@ NOT_YET_COMMITTED = {
 B0_2_FILES = NOT_YET_COMMITTED | {
     "docs/design/track_b_b0_2_counts_mutations.json",
     "docs/design/track_b_b0_2_counts_report.txt",
+    "docs/design/track_b_b0_2_evidence/calibrate.py",
+    "docs/design/track_b_b0_2_evidence/calibration.txt",
+    "docs/design/track_b_b0_2_evidence/exhaust_closure.py",
+    "docs/design/track_b_b0_2_evidence/exhaust_closure.txt",
+    "docs/design/track_b_b0_2_evidence/invented_panel.py",
+    "docs/design/track_b_b0_2_evidence/mutation_specs.json",
+    "docs/design/track_b_b0_2_evidence/mutations.py",
+    "docs/design/track_b_b0_2_evidence/oracle.py",
+    "docs/design/track_b_b0_2_evidence/ranges.py",
+    "docs/design/track_b_b0_2_evidence/ranges.txt",
+    "docs/design/track_b_b0_2_evidence/search.py",
+    "docs/design/track_b_b0_2_evidence/search.txt",
     "docs/design/track_b_b0_2_landscape.md",
     "docs/design/track_b_b0_2_plan.md",
     "docs/design/track_b_b0_2_protocol.md",
@@ -48,9 +62,12 @@ NOT_EXCLUDED = {RECORD_PATH, "tests/test_track_b_b0_2_exclusions.py"}
 
 
 def b0_2_named(path: str) -> bool:
-    """Whether a repository path is named as one of B0.2's files."""
-    name = path.rsplit("/", 1)[-1]
-    return name.startswith(("track_b_b0_2_", "test_track_b_b0_2_"))
+    """Whether a repository path is named as one of B0.2's files: its own
+    name, or the name of any folder it is in."""
+    *folders, name = path.split("/")
+    return name.startswith(("track_b_b0_2_", "test_track_b_b0_2_")) or any(
+        folder.startswith("track_b_b0_2_") for folder in folders
+    )
 
 
 def record():
@@ -86,6 +103,8 @@ def test_the_name_rule_catches_b0_2s_files_only():
     assert b0_2_named("docs/design/track_b_b0_2_counts.json")
     assert b0_2_named("tests/test_track_b_b0_2_new.py")
     assert b0_2_named("track_b_b0_2_top.md")
+    assert b0_2_named("docs/design/track_b_b0_2_evidence/calibrate.py")
+    assert b0_2_named("docs/design/track_b_b0_2_evidence/deeper/new.txt")
     assert not b0_2_named("docs/design/track_b_b0_1_counts.json")
     assert not b0_2_named("docs/design/track_b_b0_2x/plain.md")
     assert not b0_2_named("scripts/old_track_b_b0_2_counts.py")
