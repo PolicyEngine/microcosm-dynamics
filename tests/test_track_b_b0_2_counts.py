@@ -25,7 +25,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "036b207065be7c91312aebf035024a7b6c512e3942b7cc92d00f19fc0ef0c9fe"
+    "994a73261646996820c98938924d02ef08ca4b8eb79de1d9e8999442add30eda"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1472,7 +1472,7 @@ def test_witnesses_are_checked_exactly_and_never_taken_from_the_solver(
     assert system._witness(good, [0], 6, None) is None  # outside window
 
 
-def test_programs_use_one_thread_sixty_seconds_and_exact_optima(monkeypatch):
+def test_programs_use_one_thread_the_time_limit_and_exact_optima(monkeypatch):
     calls = []
     original = script.milp
 
@@ -1485,7 +1485,8 @@ def test_programs_use_one_thread_sixty_seconds_and_exact_optima(monkeypatch):
     audit = script.audit_counts(counts, registry, 10)
     assert audit["status"] == "released" and calls
     assert all(call["threads"] == 1 for call in calls)
-    assert all(call["time_limit"] == 60 for call in calls)
+    assert script.PROGRAM_SECONDS == 300
+    assert all(call["time_limit"] == 300 for call in calls)
     # HiGHS prints nothing: a solver log could carry atom sizes.
     assert all(call["disp"] is False for call in calls)
     directions = calls[: 1 + script.POOL_DIRECTIONS]

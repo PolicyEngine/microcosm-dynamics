@@ -75,6 +75,15 @@ revised before any freeze:
   leaving nothing to classify against. An empty pool now makes its
   target narrow, the seed programs run again under the disclosures, and
   the release is withheld if they find nothing.
+- **The program limit** is now 300 seconds, up from 60. Round 3's rerun
+  of the 800-household calibration withheld on a loaded host when six of
+  the nine seed programs found no point within 60 seconds. A limit sets
+  no window and sees no size, so it changes only how often a slow
+  machine withholds a release.
+- **Nonblocking:** `write_new`'s docstring now says that a failure after
+  the link leaves the complete file; and tests now kill the two focused
+  mutants round 3 found alive (a shifted seed, an omitted directory
+  flush).
 
 After round 3, the coordinator ruled that B0.1's sets may constrain the
 audit on conditions, which the block now states (Disclosure rule,
@@ -387,7 +396,7 @@ rules.
     satisfying every constraint exactly, give it sizes at least 4 apart,
     so that no range of fewer than five sizes holds every size it can
     take. The script finds such vectors with integer programs
-    (`scipy.optimize.milp`, one HiGHS thread, 60 seconds per program)
+    (`scipy.optimize.milp`, one HiGHS thread, 300 seconds per program)
     and checks each in exact integer arithmetic before using it.
   - A target is **irrelevant** when it is proven unable to take a size
     from 1 to 9.

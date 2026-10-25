@@ -753,5 +753,15 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "the program limit back at 60 seconds",
+  "replacements": [
+   {
+    "old": "PROGRAM_SECONDS = 300.0\n",
+    "new": "PROGRAM_SECONDS = 60.0\n",
+    "occurrence": 1
+   }
+  ]
  }
 ]

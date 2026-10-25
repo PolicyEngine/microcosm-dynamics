@@ -65,13 +65,13 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "036b207065be7c91312aebf035024a7b6c512e3942b7cc92d00f19fc0ef0c9fe"
+    "994a73261646996820c98938924d02ef08ca4b8eb79de1d9e8999442add30eda"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
 DISCLOSURE_BASE = 10
 PROTECTION_WIDTH = 4
-PROGRAM_SECONDS = 60.0
+PROGRAM_SECONDS = 300.0
 POOL_SEED = 20261024
 POOL_DIRECTIONS = 8
 POOL_LIMIT = 1024
@@ -86,7 +86,7 @@ PROTECTION_RULE = (
     "points, under the published values, the guaranteed cross-type "
     "relations and every target the release discloses to lie outside 1-9; "
     "every program is set from the publication alone, and a target not "
-    "shown wide within 60 seconds per program is narrow"
+    "shown wide within 300 seconds per program is narrow"
 )
 CellPath = tuple[str, ...]
 WAVES = tuple(range(1999, 2024, 2))
