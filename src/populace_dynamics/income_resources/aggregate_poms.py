@@ -21,9 +21,11 @@ code-definition tables (``definitions_table_indexes`` in selectors). A State's
 definitions may span more than one physical table; the reader merges them and
 refuses a code whose tables define it differently. Definitions come only from
 the chart's own State section, and a State named only in a date line, with no
-section heading, refuses. A paragraph or heading is read from its own text,
-up to the first block nested in it, so a State heading in a paragraph left
-unclosed still names its State. Every definition table of a section precedes its
+section heading, refuses. Paragraphs and headings end where HTML ends them,
+end tag or not, and a paragraph, div or heading is read from its own text, so
+a State heading in a block left open still names its State. A claimant line
+that names a State other than its section's refuses, since the section's own
+heading was not read. Every definition table of a section precedes its
 first chart; a definition table after a chart refuses, because the source does
 not say which earlier chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
@@ -43,6 +45,7 @@ from typing import Any
 from xml.etree import ElementTree as ET
 
 from .aggregate_tables import (
+    PARAGRAPH_CLOSERS,
     AggregateCell,
     CellToken,
     TableSpec,
@@ -84,32 +87,33 @@ _DATE = re.compile(
     + r")\s+\d{1,2},?\s+\d{4}\b|\b\d{1,2}\s*/\s*\d{1,2}\s*/\s*\d{2,4}\b",
     re.IGNORECASE,
 )
-_BLOCKS = frozenset({"p", "h1", "h2", "h3", "h4", "h5", "h6"})
-# Start tags that close an open paragraph under the HTML parsing rules
-# (table outside quirks mode). The shared tree never closes a paragraph
-# implicitly, so an unclosed <p> holds whatever follows it.
-_PARAGRAPH_CLOSERS = frozenset(
-    """address article aside blockquote center dd details dir div dl dt
-    fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup
-    hr li listing main menu nav ol p plaintext pre section summary table ul
-    xmp""".split()
-)
+_HEADINGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
+# A div can carry a State heading as a paragraph does.
+_BLOCKS = _HEADINGS | {"p", "div"}
+# What ends a block's own text. A paragraph or div ends at the next block.
+# HTML keeps a div, section or paragraph inside a heading, so a heading's
+# text runs on through them; a table, which HTML also nests in a heading
+# left open, is never heading text.
+_TEXT_STOPS = {"p": PARAGRAPH_CLOSERS, "div": PARAGRAPH_CLOSERS} | {
+    heading: _HEADINGS | {"table"} for heading in _HEADINGS
+}
 
 
 def _own_text(element: ET.Element) -> str:
-    """Normalize a block's own inline text, up to its first nested block.
+    """Normalize a block's own text, up to the first block that ends it.
 
-    This is ``normalized_text`` when no block nests inside the element. An
-    unclosed paragraph's text is what a browser shows as that paragraph,
-    not the headings and tables the shared tree nests under it.
+    This is ``normalized_text`` when no such block nests inside the
+    element. A heading left open is read without the next heading or the
+    table the tree nests under it.
     """
+    stops = _TEXT_STOPS[element.tag]
     pieces: list[str] = []
 
     def collect(node: ET.Element) -> bool:
         if node.text:
             pieces.append(node.text)
         for child in node:
-            if child.tag in _PARAGRAPH_CLOSERS or not collect(child):
+            if child.tag in stops or not collect(child):
                 return False
             if child.tail:
                 pieces.append(child.tail)
@@ -168,13 +172,14 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
     table_indexes = {id(table): i for i, table in enumerate(tables)}
     contexts: list[dict[str, Any]] = []
 
-    def walk(element: ET.Element) -> None:
+    def visit(element: ET.Element) -> bool:
+        """Read one element; return whether to read its children."""
         nonlocal state, claimant, effective_text, dates, definitions, charted
         if element.tag == "table":
             index = table_indexes[id(element)]
             grid = expand_html_table(element)
             if not grid:
-                return
+                return False
             first = tuple(_blank(c.text) for c in grid[0])
             if any(
                 tuple(_blank(c.text) for c in row) == ("Code", "Definition")
@@ -235,11 +240,10 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                     }
                 )
                 charted = True
-            return
+            return False
         if element.tag in _BLOCKS:
-            # Only the block's own text: a heading in an unclosed paragraph
-            # still names its State, and the blocks nested under it are
-            # read in turn below.
+            # Only the block's own text: a table or heading nested under a
+            # heading left open is read in turn, not as part of it.
             text = _own_text(element)
             for name in _STATES:
                 if re.fullmatch(
@@ -301,15 +305,32 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                     re.IGNORECASE,
                 )
                 if match:
+                    named = [
+                        name
+                        for name in _STATES
+                        if re.search(rf"\b{re.escape(name)}\b", text, re.I)
+                    ]
+                    if named and state not in named:
+                        # The section heading that should have named this
+                        # State was not read, so refuse rather than chart it
+                        # under the State before it.
+                        raise TableStructureError(
+                            "POMS claimant line names another State"
+                        )
                     claimant = (
                         "couple"
                         if match[1].lower() == "couple"
                         else "individual"
                     )
-        for child in element:
-            walk(child)
+        return True
 
-    walk(document)
+    # Document order without recursion, so deep nesting cannot exhaust the
+    # interpreter stack.
+    pending = [document]
+    while pending:
+        element = pending.pop()
+        if visit(element):
+            pending.extend(list(element)[::-1])
     return tuple(contexts)
 
 

@@ -10,6 +10,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.aggregate_poms import (
+    _blank,
     _own_text,
     _payment_rows,
     describe_poms_tables,
@@ -18,6 +19,7 @@ from populace_dynamics.income_resources.aggregate_poms import (
     poms_living_arrangements,
 )
 from populace_dynamics.income_resources.aggregate_tables import (
+    PARAGRAPH_CLOSERS,
     CaptureMismatchError,
     TableSpec,
     TableStructureError,
@@ -178,13 +180,17 @@ def test_invented_span_expansion_matches_shared_implementation(first, second):
 
 
 @settings(deadline=None, max_examples=30)
-@given(st.lists(st.integers(0, 999999), min_size=2, max_size=4))
-def test_invented_stacked_layout_preserves_each_amount(amounts):
+@given(
+    st.lists(st.integers(0, 999999), min_size=2, max_size=4),
+    st.sampled_from(["</p>", ""]),
+)
+def test_invented_stacked_layout_preserves_each_amount(amounts, end):
+    """Each stacked amount survives, with or without its </p>."""
     paragraphs = "".join(
-        f"<p>{amount:,}<sup>x</sup></p>" for amount in amounts
+        f"<p>{amount:,}<sup>x</sup>{end}" for amount in amounts
     )
     labels = "".join(
-        f"<p>Category {index}</p>" for index in range(len(amounts))
+        f"<p>Category {index}{end}" for index in range(len(amounts))
     )
     spec, payload = invented_spec(
         "<tr><td>A</td><td>A</td>"
@@ -567,11 +573,7 @@ def invented_paragraph_sections(draw):
         st.lists(st.sampled_from(INVENTED_STATES), min_size=1, max_size=3)
     ):
         heading = f"Description of supplements for {state}"
-        pieces.append(
-            ("p", heading)
-            if draw(st.booleans())
-            else ("html", f"<h3>{heading}</h3>")
-        )
+        pieces.append(("p" if draw(st.booleans()) else "h3", heading))
         for code in draw(
             st.lists(st.sampled_from("ABC"), max_size=2, unique=True)
         ):
@@ -591,11 +593,29 @@ def invented_paragraph_sections(draw):
     return pieces, states
 
 
-def invented_rendering(pieces, closed) -> bytes:
+def invented_piece(kind: str, body: str, close: bool, wrap: str) -> str:
+    if kind == "p":
+        return f"<p>{body}" + ("</p>" if close else "")
+    if kind == "h3":
+        # ``wrap`` puts the heading's text, or only its State, in a block.
+        if wrap.startswith("state:"):
+            head, state = body.rsplit(" for ", 1)
+            tag = wrap.removeprefix("state:")
+            body = f"{head} for <{tag}>{state}</{tag}>"
+        elif wrap:
+            body = f"<{wrap}>{body}</{wrap}>"
+        return f"<h3>{body}</h3>"
+    return body
+
+
+def invented_rendering(pieces, closed, wraps=None) -> bytes:
+    wraps = wraps or [""] * len(pieces)
     return invented_payload(
         *(
-            f"<p>{body}" + ("</p>" if close else "") if kind == "p" else body
-            for (kind, body), close in zip(pieces, closed, strict=True)
+            invented_piece(kind, body, close, wrap)
+            for (kind, body), close, wrap in zip(
+                pieces, closed, wraps, strict=True
+            )
         )
     )
 
@@ -640,6 +660,209 @@ def test_invented_selectors_do_not_depend_on_omitted_paragraph_ends(
 def test_invented_block_without_nested_blocks_reads_its_full_text(inline, tag):
     block = next(parse_html(f"<{tag}>{inline}</{tag}>").iter(tag))
     assert _own_text(block) == normalized_text(block)
+
+
+def invented_nevada_after_california(nevada_heading: str) -> bytes:
+    return invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        nevada_heading
+        + f"<h4>Individual</h4><table>{INVENTED_HEADER}</table>",
+    )
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "<h3><div>Nevada</div></h3>",
+        "<h3><div>Description of supplements for Nevada</div></h3>",
+        "<h3>Description of supplements for <div>Nevada</div></h3>",
+        "<h3><span><div>Nevada</div></span></h3>",
+        "<h3><section>Nevada</section></h3>",
+        "<h3><p>Nevada</p></h3>",
+        "<div>Description of supplements for Nevada</div>",
+        "<p><div>Nevada</div></p>",
+    ],
+)
+def test_invented_state_heading_inside_or_as_a_block_names_its_state(
+    heading,
+):
+    """Regression: a block inside a heading cut its text, keeping California."""
+    spec, payload = invented_spec_for(
+        invented_nevada_after_california(heading), 1
+    )
+    assert spec.selector["state"] == "Nevada"
+    assert spec.selector["definitions_table_indexes"] == []
+    with pytest.raises(TableStructureError, match="not identified"):
+        poms_living_arrangements(spec, payload)
+
+
+# The start tags whose WHATWG "in body" rules close an open paragraph, copied
+# from the specification rather than from the reader.
+SPEC_PARAGRAPH_CLOSERS = (
+    "address article aside blockquote center details dialog dir div dl "
+    "fieldset figcaption figure footer header hgroup main menu nav ol p "
+    "search section summary ul h1 h2 h3 h4 h5 h6 pre listing form li dd "
+    "dt plaintext table hr xmp"
+).split()
+
+
+def test_invented_every_paragraph_closer_ends_a_state_heading():
+    """Each start tag that ends an open paragraph in HTML ends it here."""
+    assert set(SPEC_PARAGRAPH_CLOSERS) == PARAGRAPH_CLOSERS
+    for closer in SPEC_PARAGRAPH_CLOSERS:
+        # Text inside the closer would join the heading if it did not end it.
+        block = (
+            "<hr>Invented note"
+            if closer == "hr"
+            else f"<{closer}>Invented note</{closer}>"
+        )
+        for close in ("", "</p>"):
+            spec, _ = invented_spec_for(
+                invented_nevada_after_california(f"<p>Nevada{close}{block}"),
+                1,
+            )
+            assert spec.selector["state"] == "Nevada", closer
+            assert spec.selector["definitions_table_indexes"] == [], closer
+
+
+def test_invented_effective_date_inside_a_heading_block_is_read():
+    payload = invented_payload(
+        "<h3>Description of supplements for California</h3>"
+        + invented_definitions([("A", "Invented first")])
+        + "<h5>Monthly payment levels effective "
+        "<div>January 1, 2031</div></h5>"
+        + f"<h4>Individual</h4><table>{INVENTED_HEADER}</table>"
+    )
+    spec, _ = invented_spec_for(payload)
+    assert spec.selector["effective_from"] == "2031-01-01"
+
+
+def test_invented_state_date_line_inside_a_heading_is_still_refused():
+    payload = invented_nevada_after_california(
+        "<h3>Nevada<div>Effective 1/1/30</div></h3>"
+    )
+    with pytest.raises(TableStructureError, match="section heading"):
+        describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize("close", ["", "</h3>"])
+def test_invented_heading_left_open_before_its_table_names_its_state(close):
+    """Regression: an open heading once read its tables as heading text."""
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        f"<h3>Description of supplements for Nevada{close}"
+        + invented_definitions([("B", "Invented second")])
+        + INVENTED_CHART.format(state="Nevada"),
+    )
+    spec, payload = invented_spec_for(payload, 1)
+    assert spec.selector["state"] == "Nevada"
+    assert poms_living_arrangements(spec, payload) == {"B": "Invented second"}
+
+
+@settings(deadline=None, max_examples=100)
+@given(invented_paragraph_sections(), st.data())
+def test_invented_selectors_do_not_depend_on_blocks_inside_headings(
+    sections, data
+):
+    """HTML keeps blocks inside a heading; its text, and selectors, stay."""
+    pieces, _ = sections
+    wraps = [
+        (
+            data.draw(
+                st.sampled_from(
+                    ["", "div", "section", "p", "blockquote"]
+                    + ["state:div", "state:section", "state:span"]
+                )
+            )
+            if kind == "h3"
+            else ""
+        )
+        for kind, _ in pieces
+    ]
+    closed = [True] * len(pieces)
+    assert poms_outcome(
+        invented_rendering(pieces, closed, wraps)
+    ) == poms_outcome(invented_rendering(pieces, closed))
+
+
+@pytest.mark.parametrize("before", ["", "California"])
+def test_invented_claimant_line_naming_another_state_is_refused(before):
+    """A State whose heading went unread refuses at its claimant line."""
+    section = (
+        invented_section("California", [[("A", "Invented first")]])
+        if before
+        else ""
+    )
+    payload = invented_payload(
+        section,
+        "<p>Invented heading the reader does not know</p>"
+        + INVENTED_CHART.format(state="Nevada"),
+    )
+    with pytest.raises(TableStructureError, match="names another State"):
+        describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize(
+    ("filler", "after"),
+    [("<p>Invented filler" * 2400, ""), ("<div>" * 3000, "</div>" * 3000)],
+    ids=["unclosed_paragraphs", "nested_divs"],
+)
+def test_invented_deep_pages_read_without_recursion(filler, after):
+    """Regression: thousands of unclosed paragraphs exhausted the stack."""
+    payload = invented_payload(
+        invented_section("California", [[("A", "Invented first")]]),
+        filler,
+        invented_section("Nevada", [[("B", "Invented second")]]),
+        after,
+    )
+    states = [c["state"] for c in describe_poms_tables(payload)]
+    assert states == ["California", "Nevada"]
+
+
+@settings(deadline=None, max_examples=100)
+@given(
+    st.lists(
+        st.lists(
+            st.tuples(
+                st.text("Invented 0123456789 ", min_size=1, max_size=8),
+                st.booleans(),
+                st.booleans(),
+            ),
+            min_size=1,
+            max_size=4,
+        ),
+        min_size=1,
+        max_size=4,
+    )
+)
+def test_invented_optional_cell_and_paragraph_ends_keep_the_grid(rows):
+    """HTML lets td, tr and p end without end tags; the grid is the same."""
+
+    def render(explicit: bool) -> str:
+        return (
+            "<table>"
+            + "".join(
+                "<tr>"
+                + "".join(
+                    "<td>"
+                    + (f"<p>{text}" if in_paragraph else text)
+                    + ("</p>" if in_paragraph and explicit else "")
+                    + ("</td>" if explicit or end else "")
+                    for text, in_paragraph, end in row
+                )
+                + ("</tr>" if explicit else "")
+                for row in rows
+            )
+            + "</table>"
+        )
+
+    def grid(html: str):
+        table = parse_html(html).find("table")
+        return [
+            [_blank(c.text) for c in row] for row in expand_html_table(table)
+        ]
+
+    assert grid(render(False)) == grid(render(True))
 
 
 def test_invented_definition_table_after_a_chart_is_refused():
@@ -704,3 +927,39 @@ def test_invented_interleaved_definitions_are_read_in_full_or_refused(
                 poms_living_arrangements(spec, payload)
             continue
         assert poms_living_arrangements(spec, payload) == mapping
+
+
+INVENTED_TAGS = ("p", "div", "h3", "h4", "span", "b", "table", "td", "ul")
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    st.lists(
+        st.tuples(st.sampled_from(INVENTED_TAGS), st.sampled_from(["", "/"])),
+        max_size=30,
+    )
+)
+def test_invented_tree_ends_paragraphs_and_headings_as_html_does(tokens):
+    """No paragraph holds a block that HTML says ends it, end tag or not.
+
+    A paragraph closer nests under a paragraph only across a cell, table or
+    other button-scope boundary, and a heading never holds a heading as its
+    direct child.
+    """
+    document = parse_html(
+        "".join(f"<{end}{tag}>Invented" for tag, end in tokens)
+    )
+    boundaries = {"td", "th", "table", "caption", "button"}
+
+    def check(node, open_paragraph: bool) -> None:
+        for child in node:
+            assert not (open_paragraph and child.tag in PARAGRAPH_CLOSERS)
+            if node.tag in {"h3", "h4"}:
+                assert child.tag not in {"h3", "h4"}
+            check(
+                child,
+                (open_paragraph or child.tag == "p")
+                and child.tag not in boundaries,
+            )
+
+    check(document, False)

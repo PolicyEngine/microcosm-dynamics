@@ -168,24 +168,71 @@ def parse_number(raw: str) -> ParsedNumber:
     return ParsedNumber(value, tuple(reversed(flags)))
 
 
+# Start tags that close an open paragraph in the WHATWG HTML parsing rules
+# ("in body" insertion mode), with table as in standards mode.
+PARAGRAPH_CLOSERS = frozenset(
+    """address article aside blockquote center dd details dialog dir div dl
+    dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header
+    hgroup hr li listing main menu nav ol p plaintext pre search section
+    summary table ul xmp""".split()
+)
+
+
 class _HTMLTree(HTMLParser):
-    """Build a tolerant stdlib tree; publishers' void tags never nest."""
+    """Build a tolerant stdlib tree; publishers' void tags never nest.
+
+    Paragraphs, headings, cells and rows end where the WHATWG parsing rules
+    end them, even when the source omits the end tag, so a paragraph never
+    holds the headings and tables that follow it. ``table`` closes an open
+    paragraph as in standards mode; every pinned HTML capture declares a
+    doctype. Inline end tags misnested across an open paragraph, which HTML
+    resolves with its adoption agency rules, are not modelled: here they
+    close at the matching element.
+    """
 
     _VOID = frozenset(
         "area base br col embed hr img input link meta param source track wbr".split()
     )
+    _HEADINGS = frozenset("h1 h2 h3 h4 h5 h6".split())
+    # A paragraph is in button scope unless one of these encloses it.
+    _BUTTON_SCOPE = frozenset(
+        "applet button caption html marquee object select table td template th".split()
+    )
+    _TABLE_SECTIONS = frozenset("table thead tbody tfoot".split())
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.root = ET.Element("document")
         self.stack = [self.root]
 
+    def _close_paragraph(self) -> None:
+        for i in range(len(self.stack) - 1, 0, -1):
+            if self.stack[i].tag == "p":
+                del self.stack[i:]
+                return
+            if self.stack[i].tag in self._BUTTON_SCOPE:
+                return
+
+    def _close_open(self, closes: set[str], bounds: frozenset[str]) -> None:
+        """Pop the innermost open ``closes`` element below ``bounds``."""
+        for i in range(len(self.stack) - 1, 0, -1):
+            if self.stack[i].tag in bounds:
+                return
+            if self.stack[i].tag in closes:
+                del self.stack[i:]
+                return
+
     def handle_starttag(self, tag, attrs):
-        if tag in {"td", "th"} and self.stack[-1].tag in {"td", "th"}:
+        if tag in PARAGRAPH_CLOSERS:
+            self._close_paragraph()
+        if tag in self._HEADINGS and self.stack[-1].tag in self._HEADINGS:
             self.stack.pop()
+        if tag in {"td", "th"}:
+            # A new cell closes the open one, with anything left open in it.
+            self._close_open({"td", "th"}, self._TABLE_SECTIONS | {"tr"})
         if tag == "tr":
-            while self.stack[-1].tag in {"td", "th", "tr"}:
-                self.stack.pop()
+            self._close_open({"td", "th", "tr"}, self._TABLE_SECTIONS)
+            self._close_open({"tr"}, self._TABLE_SECTIONS)
         el = ET.SubElement(self.stack[-1], tag, {k: v or "" for k, v in attrs})
         if tag not in self._VOID:
             self.stack.append(el)
