@@ -190,6 +190,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/b2.py"),
         Path("src/populace_dynamics/track_b/holdout_registry.py"),
         Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
+        Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -254,6 +255,15 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/group_breakdowns/fra68.py"),
         Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
         Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+        Path("src/populace_dynamics/mortality_ses/__init__.py"),
+        Path("src/populace_dynamics/mortality_ses/specification.py"),
+        Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+        Path("src/populace_dynamics/mortality_ses/model.py"),
+        Path("src/populace_dynamics/mortality_ses/step.py"),
+        # The PSID income and wealth readers (D1a) are opt-in source readers;
+        # nothing in the historical projection imports them.
+        Path("src/populace_dynamics/data/psid_income_wealth.py"),
+        Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
         # CE1 coverage rules are opt-in; the historical projection imports none.
         Path("src/populace_dynamics/income_resources/__init__.py"),
         Path("src/populace_dynamics/income_resources/coverage_rules.py"),
@@ -399,6 +409,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.b2",
         "populace_dynamics.track_b.holdout_registry",
         "populace_dynamics.engine.forward_earnings_s1_v1",
+        "populace_dynamics.engine.forward_earnings_p2_v1",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"
@@ -532,6 +543,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in EPUF modules became reachable from the birth-evidence "
         f"reducer: {sorted(epuf_modules & reachable)}"
     )
+    income_wealth_modules = {
+        "populace_dynamics.data.psid_income_wealth",
+        "populace_dynamics.data.psid_income_wealth_registry",
+    }
+    assert income_wealth_modules.issubset(module_paths)
+    assert income_wealth_modules.isdisjoint(reachable), (
+        "the opt-in PSID income and wealth readers became reachable from "
+        "the birth-evidence reducer: "
+        f"{sorted(income_wealth_modules & reachable)}"
+    )
     coverage_rule_modules = {
         "populace_dynamics.income_resources",
         "populace_dynamics.income_resources.coverage_rules",
@@ -612,6 +633,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
+    mortality_ses_modules = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.mortality_ses"
+        or name.startswith("populace_dynamics.mortality_ses.")
+    }
+    assert len(mortality_ses_modules) == 5
+    assert mortality_ses_modules.isdisjoint(
+        reachable
+    ), "SM1 became reachable from the historical birth-evidence reducer"
     scenario_module = "populace_dynamics.scenario_benefits"
     assert scenario_module in module_paths
     assert scenario_module not in reachable, (
