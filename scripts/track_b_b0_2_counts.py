@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "a92539b27121f8d6c903f763537405a1fb992491cff45bdb0626a23de8169871"
+    "71e350ef5beca201be584195b233aa9e4975cc5977bece2597eb6e913822c36f"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1746,9 +1746,10 @@ def _require_unit_identifiers(
     numbers, and each present person a design stratum and cluster. A row
     without one would be counted as a person but in no household or
     design cluster, so an effective size could exceed the count it
-    bounds and stop the audit. The readers give integer columns, so this
-    never fires on them; it stops the run while reading, before any set
-    is built, rather than in the release."""
+    bounds and stop the audit. ``panels.ind_person_period`` passes each
+    wave's interview number through as read, and a blank field reads as
+    missing, so the check can fire on the real files; it stops the run
+    while reading, before any set is built, rather than in the release."""
     rows = {"person-wave": _present(person_wave), "anchor": _present(anchor)}
     for name, present in rows.items():
         if present[["person_id", "interview"]].isna().any(axis=None):
@@ -1868,8 +1869,12 @@ RUN_CONDITIONS = (
 #: run").
 RECHECK_SECONDS = 60
 RECHECKS = 1440
-#: kCFStringEncodingUTF8 and kIOPMAssertionLevelOn.
+#: kCFStringEncodingUTF8, kCFNumberSInt32Type, and kIOPMAssertionLevelOn,
+#: the level an assertion's "AssertLevel" property reads while it is in
+#: force (kIOPMAssertionLevelKey; an assertion can exist at level 0,
+#: kIOPMAssertionLevelOff).
 _UTF8 = 0x08000100
+_SINT32 = 3
 _ASSERTION_ON = 255
 
 
@@ -1898,6 +1903,18 @@ class _Host:
                     ctypes.c_bool,
                 ),
                 (self.cf, "CFRelease", [pointer], None),
+                (
+                    self.cf,
+                    "CFDictionaryGetValue",
+                    [pointer, pointer],
+                    pointer,
+                ),
+                (
+                    self.cf,
+                    "CFNumberGetValue",
+                    [pointer, ctypes.c_long, pointer],
+                    ctypes.c_bool,
+                ),
                 (self.iokit, "IOPSCopyPowerSourcesInfo", [], pointer),
                 (
                     self.iokit,
@@ -1976,14 +1993,29 @@ class _Host:
                     self.cf.CFRelease(string)
 
     def held(self, assertion: int) -> bool:
-        """Whether this process still holds the assertion."""
+        """Whether this process still holds the assertion, at the on
+        level."""
         if not assertion:
             return False
         properties = self.iokit.IOPMAssertionCopyProperties(assertion)
         if not properties:
             return False
-        self.cf.CFRelease(properties)
-        return True
+        key = self.cf.CFStringCreateWithCString(None, b"AssertLevel", _UTF8)
+        try:
+            # The properties own the level.
+            value = key and self.cf.CFDictionaryGetValue(properties, key)
+            level = ctypes.c_int32(0)
+            return bool(
+                value
+                and self.cf.CFNumberGetValue(
+                    value, _SINT32, ctypes.byref(level)
+                )
+                and level.value == _ASSERTION_ON
+            )
+        finally:
+            if key:
+                self.cf.CFRelease(key)
+            self.cf.CFRelease(properties)
 
     def release(self, assertion: int) -> None:
         if assertion:
@@ -2020,7 +2052,8 @@ class RunConditions:
     ``main()`` checks them before the attempt record, where a failure
     refuses the run, and the audit before every program, where a failure
     is waited out between programs. The sleep assertions are taken at
-    construction, and a lapsed one is taken again before each check.
+    construction, and one that has lapsed, or is no longer at the on
+    level, is given back and taken again before each check.
     Waiting delays a program and changes nothing it is given, so it
     cannot change an answer."""
 
@@ -2033,6 +2066,8 @@ class RunConditions:
         None when all hold."""
         for kind, assertion in self.assertions.items():
             if not self.host.held(assertion):
+                # One that exists at the off level is given back first.
+                self.host.release(assertion)
                 self.assertions[kind] = self.host.hold(kind)
         niceness, background, qos, load, cpus = _host_state(self.host)
         holds = {

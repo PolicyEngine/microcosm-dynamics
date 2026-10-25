@@ -193,6 +193,25 @@ go in before the freeze:
   - the operations rule says that running without a wall limit rests on
     the calibrations, not on the bound.
 
+Review round 5 (Sol, at `c6aec979`) stopped before its report, but its
+draft found two gaps in round 4's items, both fixed since:
+- **The sleep assertions (S2):** the check counted an assertion that
+  still existed as held, though IOKit lets its owner set it to the off
+  level, where it no longer prevents sleep. It now reads each one's
+  level, and one at the off level is given back and taken again.
+- **The test confinement (T1):** it let a write into an existing
+  bytecode cache folder pass, and did not see a database, the system
+  log, a change to a file's metadata, or a socket until it connected or
+  sent to an address. It now refuses each, and
+  bytecode writing is off while it holds. A write that native code makes
+  through its own descriptor raises no audit event, so the static check
+  also refuses the modules that could make one.
+
+Two sentences in the block were corrected: the identifier check can fire
+on the real files, since the person-wave reader passes the interview
+number through as read; and round 4's two status tables are described
+separately.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -300,7 +319,10 @@ interview number, and each present person a design stratum and cluster.
 Without one, a person would be counted but sit in no household or design
 cluster, so an effective size could exceed the count it bounds. A
 missing identifier stops the run while reading, before any set is built.
-The readers give integer columns, so this check never fires on them.
+Whether it fires on the real files is not known before the run:
+`panels.ind_person_period` builds the person number as an integer, but
+passes each wave's interview number through as `pandas.read_fwf` reads
+it, and a blank field reads as missing.
 
 ### Definitions
 
@@ -569,9 +591,13 @@ rules.
   - The committed status is evidence too, and the guarantee does not
     cover a withheld one. Read with B0.1's exact counts, "withheld" rules
     out every table whose rerun releases.
-    - Review round 4 executed this on a 97-head table. The natural tables
-      withheld at only four splits of the 62-64 band, but other household,
-      cluster and stratum configurations withheld at every other split.
+    - Review round 4 executed this on two 97-head tables. On the first,
+      B0.1's record was the same at every split of the 62-64 band from 0
+      to 97 heads, and the natural table withheld at only four of them.
+    - On the second, B0.1's record was the same for 0 to 7 heads in the
+      band. The natural table withheld only at 0 to 2, but a search over
+      other household, cluster and stratum configurations found a table
+      that withheld at each of 3 to 7.
     - So a reader who can rule out no configuration, as this block's
       reader cannot, learns no band from the status. A reader who
       believes some configurations likelier than others could narrow one.
@@ -766,7 +792,10 @@ rules.
       - through `main()`, every program follows a check that passed;
       - whenever failures clear within the bound, the audit is unchanged,
         each failed check costs one recheck `RECHECK_SECONDS` later, and
-        a lapsed assertion is taken again;
+        a lapsed assertion, or one at the off level, is given back and
+        taken again;
+      - on the host that runs it, an assertion set to the off level reads
+        as not held;
       - a condition failing through 1,440 rechecks stops the run in the
         release with its name, before any program;
       - with the bound shortened to three rechecks a hundredth of a
@@ -854,7 +883,8 @@ new version.
     - `ac_power`: the host draws from AC power, by IOKit's providing
       power source;
     - `sleep_assertions`: the script's own process holds two IOKit sleep
-      assertions, against idle sleep and against system sleep. They are
+      assertions, against idle sleep and against system sleep, each at
+      the on level (its `AssertLevel` property reads 255). They are
       taken before the attempt record and held to the end, and the system
       drops them when the process ends;
     - `nice`: the process runs at nice 0;
@@ -871,8 +901,9 @@ new version.
     Fleet ops is asked for a quiet window, which must last the whole run.
   - Before every program, never during one, the script checks all six
     again.
-    - When one fails, no program starts. A lapsed sleep assertion is
-      taken again; every other failure is left to clear. The six are
+    - When one fails, no program starts. A sleep assertion that has
+      lapsed, or is no longer at the on level, is given back and taken
+      again; every other failure is left to clear. The six are
       rechecked every 60 seconds (the script's `RECHECK_SECONDS`), and
       the next program runs once all hold.
     - After 1,440 rechecks in a row (`RECHECKS`), 24 hours, have found

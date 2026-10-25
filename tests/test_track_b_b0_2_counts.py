@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import socket
+import sqlite3
 import subprocess
 import sys
 import time
@@ -30,7 +32,7 @@ from scripts import track_b_b0_1_counts as b01  # noqa: E402
 #: The script's own host calls, kept before any test replaces them.
 REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "a92539b27121f8d6c903f763537405a1fb992491cff45bdb0626a23de8169871"
+    "71e350ef5beca201be584195b233aa9e4975cc5977bece2597eb6e913822c36f"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1877,7 +1879,7 @@ def released_main(tmp_path, monkeypatch):
 class _FakeHost:
     """Stands in for the macOS calls behind the run's conditions: a host on
     AC power, at nice 0 with no background policy or QoS clamp, nearly
-    idle, whose sleep assertions are held until released.
+    idle, whose sleep assertions are held until released or set off.
 
     ``plan`` scripts the conditions check by check: each call of
     ``RunConditions.failing`` reads the next entry, a condition's name to
@@ -1889,6 +1891,7 @@ class _FakeHost:
         self.refuse = refuse
         self.plan = list(plan)
         self.live = set()
+        self.off = set()
         self.holds = []
         self.checks = []
         self.next_id = 1
@@ -1923,7 +1926,7 @@ class _FakeHost:
         return assertion
 
     def held(self, assertion):
-        return assertion in self.live
+        return assertion in self.live - self.off
 
     def release(self, assertion):
         self.live.discard(assertion)
@@ -2470,6 +2473,26 @@ def test_runtime_refuses_to_start_unless_every_run_condition_holds(
     assert not host.live
 
 
+def test_an_assertion_at_the_off_level_is_given_back_and_taken_again(
+    monkeypatch,
+):
+    """An assertion can exist at the off level, where it no longer
+    prevents sleep (review round 5). The check counts it as not held,
+    gives it back and takes a new one, and the other is kept."""
+    monkeypatch.setattr(script, "_host_state", _FakeHost.read_state)
+    host = _FakeHost()
+    conditions = script.RunConditions(host)
+    first = dict(conditions.assertions)
+    host.off.add(first["PreventSystemSleep"])
+    assert conditions.failing() is None
+    assert first["PreventSystemSleep"] not in host.live
+    assert conditions.assertions["PreventSystemSleep"] in host.live
+    assert conditions.assertions["PreventUserIdleSystemSleep"] == (
+        first["PreventUserIdleSystemSleep"]
+    )
+    assert host.holds == [*script.SLEEP_ASSERTIONS, "PreventSystemSleep"]
+
+
 @pytest.mark.parametrize("qos", [0x00, 0x15, 0x19, 0x21])
 def test_unclamped_qos_classes_meet_the_run_conditions(qos, monkeypatch):
     """Unspecified, default, user-initiated and user-interactive QoS all
@@ -2580,6 +2603,35 @@ def test_the_host_calls_read_this_mac():
     niceness, background, qos, load, cpus = script._host_state(host)
     assert background in (0, 1) and cpus >= 1 and load >= 0
     assert qos in (0x00, 0x05, 0x09, 0x11, 0x15, 0x19, 0x21)
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="IOKit is macOS's")
+def test_an_assertion_set_to_the_off_level_reads_as_not_held():
+    """Review round 5 set one of this process's assertions to the off
+    level, which IOKit lets its owner do: it still exists, but no longer
+    prevents sleep, so ``held`` reads it as not held."""
+    import ctypes
+
+    host = REAL_HOST()
+    set_property = host.iokit.IOPMAssertionSetProperty
+    set_property.argtypes = [ctypes.c_uint32, ctypes.c_void_p, ctypes.c_void_p]
+    set_property.restype = ctypes.c_int
+    create_number = host.cf.CFNumberCreate
+    create_number.argtypes = [ctypes.c_void_p, ctypes.c_long, ctypes.c_void_p]
+    create_number.restype = ctypes.c_void_p
+    key = host.cf.CFStringCreateWithCString(None, b"AssertLevel", script._UTF8)
+    off = ctypes.c_int32(0)
+    number = create_number(None, script._SINT32, ctypes.byref(off))
+    assertion = host.hold("PreventUserIdleSystemSleep")
+    try:
+        assert key and number and assertion
+        assert host.held(assertion)
+        assert set_property(assertion, key, number) == 0
+        assert not host.held(assertion)
+    finally:
+        host.release(assertion)
+        host.cf.CFRelease(number)
+        host.cf.CFRelease(key)
 
 
 @pytest.mark.skipif(
@@ -3988,19 +4040,29 @@ def _atoms(inputs):
     return model["sizes"].tolist(), model["unit_types"]
 
 
-#: Audit events that create or change a file, with the position of the
-#: path each names. "open" counts only when its mode or flags write.
+#: Audit events that create, change or remove a file or its metadata,
+#: with the positions of the paths each names. "open" counts only when
+#: its mode or flags write.
 FILE_EVENTS = {
-    "open": 0,
-    "os.rename": 1,
-    "os.link": 1,
-    "os.symlink": 1,
-    "os.mkdir": 0,
-    "os.truncate": 0,
+    "open": (0,),
+    "os.rename": (0, 1),
+    "os.link": (1,),
+    "os.symlink": (1,),
+    "os.mkdir": (0,),
+    "os.truncate": (0,),
+    "os.remove": (0,),
+    "os.rmdir": (0,),
+    "os.chmod": (0,),
+    "os.chown": (0,),
+    "os.chflags": (0,),
+    "os.utime": (0,),
+    "os.setxattr": (0,),
+    "os.removexattr": (0,),
 }
-#: Audit events that start a process or open a connection, either of which
-#: could carry a value past every file check. main() starts none; its
-#: sleep assertions are stand-ins in these tests.
+#: Audit events that start a process, or open a socket, a connection, a
+#: database or the system log, any of which could carry a value past
+#: every file check. main() makes none; its sleep assertions are
+#: stand-ins in these tests.
 PROCESS_EVENTS = {
     "subprocess.Popen",
     "os.system",
@@ -4009,8 +4071,14 @@ PROCESS_EVENTS = {
     "os.exec",
     "os.fork",
     "os.forkpty",
+    "socket.__new__",
+    "socket.bind",
     "socket.connect",
+    "socket.sendmsg",
     "socket.sendto",
+    "sqlite3.connect",
+    "syslog.openlog",
+    "syslog.syslog",
 }
 WRITE_FLAGS = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_APPEND | os.O_TRUNC
 #: The one confinement in force, if any, and what it refused.
@@ -4035,34 +4103,43 @@ def _refuse_writes_outside(event, arguments):
             or (isinstance(flags, int) and flags & WRITE_FLAGS)
         ):
             return
-    path = arguments[FILE_EVENTS[event]]
-    if path is None or isinstance(path, int):
-        # An open descriptor, already checked when it was opened.
-        return
-    path = os.path.abspath(os.fsdecode(path))
-    parent, name = os.path.split(path)
-    if path == os.devnull or os.path.basename(parent) == "__pycache__":
-        # The guard's null device; a bytecode cache from a lazy import.
-        return
-    if os.path.realpath(parent) == directory and (
-        name in _confinement["names"]
-        or any(
-            name.startswith(f".{final}.") and name.endswith(".partial")
-            for final in _confinement["names"]
-        )
-    ):
-        # One of the outputs, or ``write_new``'s temporary file for one.
-        return
-    _confinement["refused"].append((event, path))
-    raise PermissionError(f"{event} outside the run's outputs: {path}")
+    for position in FILE_EVENTS[event]:
+        path = arguments[position]
+        if path is None or isinstance(path, int):
+            # An open descriptor, already checked when it was opened.
+            continue
+        path = os.path.abspath(os.fsdecode(path))
+        parent, name = os.path.split(path)
+        if path == os.devnull:
+            # The guard's null device.
+            continue
+        if os.path.realpath(parent) == directory and (
+            name in _confinement["names"]
+            or any(
+                name.startswith(f".{final}.") and name.endswith(".partial")
+                for final in _confinement["names"]
+            )
+        ):
+            # One of the outputs, or ``write_new``'s temporary file for one.
+            continue
+        _confinement["refused"].append((event, path))
+        raise PermissionError(f"{event} outside the run's outputs: {path}")
 
 
 @contextmanager
 def _writes_confined_to(directory, names):
     """While it holds, refuse and record every file write that is not one
-    of ``names`` in ``directory`` (or its temporary file), and every new
-    process or connection. An audit hook cannot be removed, so one hook,
-    installed once, checks whether a confinement holds."""
+    of ``names`` in ``directory`` (or its temporary file), a bytecode
+    cache's included, and every new process, socket, connection, database
+    or system log message. Bytecode writing is off meanwhile, so a lazy
+    import writes no cache. An audit hook cannot be removed, so one hook,
+    installed once, checks whether a confinement holds.
+
+    The hook sees what Python's audit events report: a write that native
+    code makes through a descriptor it opened itself, or a send on a
+    socket opened before the confinement, raises none. For those the
+    static check stands: the script imports no socket, database or log
+    module, and its C calls are pinned."""
     if not _confinement_hook:
         sys.addaudithook(_refuse_writes_outside)
         _confinement_hook.append(_refuse_writes_outside)
@@ -4072,23 +4149,34 @@ def _writes_confined_to(directory, names):
         names=frozenset(names),
         refused=refused,
     )
+    bytecode = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
     try:
         yield refused
     finally:
         _confinement["directory"] = None
+        sys.dont_write_bytecode = bytecode
 
 
 def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
     """The confinement the relabeling tests run main() under: an output and
-    its temporary file may be written, and reads, the null device and
-    bytecode caches pass; a file elsewhere, np.save into the temporary
-    folder, a second file beside the outputs and a new process are each
-    refused and recorded."""
+    its temporary file may be written, and reads and the null device pass;
+    a file elsewhere, np.save into the temporary folder, a second file
+    beside the outputs, a new process, a file in an existing bytecode
+    cache folder, a database, a socket, a renamed or stamped file
+    elsewhere and a removed one are each refused and recorded (review
+    rounds 4 and 5). Bytecode writing is off while it holds."""
     inside = tmp_path / "run"
     inside.mkdir()
     (inside / "input.txt").write_text("read me")
     elsewhere = tmp_path / "elsewhere.npy"
+    cache = tmp_path / "__pycache__"
+    cache.mkdir()
+    stamped = tmp_path / "stamped.txt"
+    stamped.write_text("")
+    bytecode = sys.dont_write_bytecode
     with _writes_confined_to(inside, {"counts.json"}) as refused:
+        assert sys.dont_write_bytecode
         script.write_new(inside / "counts.json", b"{}")
         assert (inside / "input.txt").read_text() == "read me"
         with open(os.devnull, "w") as null:
@@ -4097,15 +4185,30 @@ def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
             lambda: np.save(elsewhere, np.arange(3)),
             lambda: (inside / "extra.json").write_text("{}"),
             lambda: subprocess.run(["true"], check=False),
+            lambda: (cache / "atoms.pyc").write_bytes(b"3"),
+            lambda: sqlite3.connect(tmp_path / "atoms.db"),
+            lambda: socket.socket(),
+            lambda: os.rename(stamped, inside / "moved.txt"),
+            lambda: os.utime(stamped, (3, 3)),
+            lambda: os.remove(stamped),
         ):
             with pytest.raises(PermissionError):
                 attempt()
+    assert sys.dont_write_bytecode == bytecode
     assert [event for event, _ in refused] == [
         "open",
         "open",
         "subprocess.Popen",
+        "open",
+        "sqlite3.connect",
+        "socket.__new__",
+        "os.rename",
+        "os.utime",
+        "os.remove",
     ]
     assert not elsewhere.exists() and not (inside / "extra.json").exists()
+    assert not list(cache.iterdir()) and not (tmp_path / "atoms.db").exists()
+    assert stamped.exists() and stamped.stat().st_mtime != 3
     # Outside the confinement nothing is refused.
     np.save(elsewhere, np.arange(3))
     assert elsewhere.exists()
@@ -4727,6 +4830,8 @@ def test_every_output_the_script_can_make_names_no_value():
         ("__init__", "ctypes.POINTER(uint32)"),
         ("_flush_streams", "ctypes.CDLL(None)"),
         ("_flush_streams", "ctypes.CDLL(None).fflush(None)"),
+        ("held", "ctypes.byref(level)"),
+        ("held", "ctypes.c_int32(0)"),
         ("hold", "ctypes.byref(assertion)"),
         ("hold", "ctypes.c_uint32(0)"),
         ("power_source", "ctypes.create_string_buffer(64)"),
@@ -4736,8 +4841,8 @@ def test_every_output_the_script_can_make_names_no_value():
         ("qos_class", "ctypes.c_uint(0)"),
     ]
     # The run's conditions call these C functions and no others: they read
-    # the power source and the QoS class, and take, test and give back
-    # this process's sleep assertions.
+    # the power source and the QoS class, and take, test (its level
+    # included) and give back this process's sleep assertions.
     assert sorted(
         {
             node.func.attr
@@ -4747,6 +4852,8 @@ def test_every_output_the_script_can_make_names_no_value():
             in ("self.iokit", "self.cf", "self.libc")
         }
     ) == [
+        "CFDictionaryGetValue",
+        "CFNumberGetValue",
         "CFRelease",
         "CFStringCreateWithCString",
         "CFStringGetCString",
@@ -4801,6 +4908,35 @@ def test_every_output_the_script_can_make_names_no_value():
         for alias in node.names
     }
     assert "logging" not in imported and "pickle" not in imported
+    # Nor a module that sends or stores a value outside a file the
+    # confinement sees (review round 5).
+    modules = {
+        name.split(".")[0]
+        for node in ast.walk(tree)
+        if isinstance(node, (ast.Import, ast.ImportFrom))
+        for name in (
+            [alias.name for alias in node.names]
+            if isinstance(node, ast.Import)
+            else [node.module or ""]
+        )
+    }
+    assert not modules & {
+        "asyncio",
+        "dbm",
+        "ftplib",
+        "http",
+        "logging",
+        "mmap",
+        "multiprocessing",
+        "pickle",
+        "shelve",
+        "smtplib",
+        "socket",
+        "sqlite3",
+        "ssl",
+        "syslog",
+        "urllib",
+    }
 
 
 # --------------------------------------------------------------------------

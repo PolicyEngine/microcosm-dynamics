@@ -1123,5 +1123,25 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "an assertion at the off level counts as held",
+  "replacements": [
+   {
+    "old": "                and level.value == _ASSERTION_ON\n",
+    "new": "                or True\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an assertion at the off level is not given back before it is taken again",
+  "replacements": [
+   {
+    "old": "                # One that exists at the off level is given back first.\n                self.host.release(assertion)\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
  }
 ]
