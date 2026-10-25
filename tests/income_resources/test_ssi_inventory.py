@@ -241,3 +241,76 @@ def test_enum_input_without_readable_members_refuses_inventory(tmp_path):
     package = package_with_enum_input(tmp_path, "InventedImportedStatus")
     with pytest.raises(ValueError, match="Unresolved enum members"):
         inventory.inventory_release(package)
+
+
+ENUM_NAMES = st.from_regex(r"Invented[A-Z][a-z]{1,10}", fullmatch=True)
+MEMBER_NAMES = st.lists(
+    st.from_regex(r"INVENTED_[A-Z]{1,8}", fullmatch=True),
+    min_size=1,
+    max_size=6,
+    unique=True,
+)
+
+
+def write_enum_input(package, class_source, possible_values):
+    """Write an invented enum input and make the invented SSI read it."""
+    (package / "variables/input/invented_status.py").write_text(
+        class_source + f"""
+
+class invented_status(Variable):
+    value_type = Enum
+    entity = Person
+    possible_values = {possible_values}
+    default_value = {possible_values}.INVENTED_DEFAULT
+    definition_period = YEAR
+"""
+    )
+    path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+    path.write_text(
+        path.read_text().replace(
+            'person("invented_age", period)',
+            'person("invented_age", period) + '
+            'person("invented_status", period)',
+        )
+    )
+
+
+def enum_class(name, members, base="Enum"):
+    body = "".join(
+        f'    {member} = "{member.lower()}"\n' for member in members
+    )
+    return f"class {name}({base}):\n" + (body or "    pass\n")
+
+
+@settings(deadline=None, max_examples=25)
+@given(name=ENUM_NAMES, members=MEMBER_NAMES)
+def test_enum_members_round_trip_from_source(tmp_path_factory, name, members):
+    package = invented_package(tmp_path_factory.mktemp("invented_enum"))
+    write_enum_input(package, enum_class(name, members), name)
+    result = inventory.inventory_release(package)
+    status = next(
+        v for v in result["inputs"] if v["name"] == "invented_status"
+    )
+    assert status["enum_members"] == members
+
+
+@settings(deadline=None, max_examples=25)
+@given(
+    name=ENUM_NAMES,
+    members=MEMBER_NAMES,
+    defect=st.sampled_from(("absent", "empty", "not_an_enum")),
+)
+def test_enum_input_with_unreadable_members_refuses_inventory(
+    tmp_path_factory, name, members, defect
+):
+    package = invented_package(tmp_path_factory.mktemp("invented_enum"))
+    if defect == "absent":
+        # possible_values names a class this module does not define.
+        source = enum_class(name + "Other", members)
+    elif defect == "empty":
+        source = enum_class(name, [])
+    else:
+        source = enum_class(name, members, base="InventedBase")
+    write_enum_input(package, source, name)
+    with pytest.raises(ValueError, match="Unresolved enum members"):
+        inventory.inventory_release(package)
