@@ -134,6 +134,9 @@ PRODUCTION_SOURCE_PATHS = (
 )
 POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/artifacts.py"),
+    # The opt-in F1 tax calculation is outside the historical projection.
+    Path("src/populace_dynamics/section86.py"),
+    Path("src/populace_dynamics/tax_on_benefits.py"),
     Path("src/populace_dynamics/data/asec_firm_size.py"),
     Path("src/populace_dynamics/data/sipp_jobs.py"),
     Path("src/populace_dynamics/firms/banding.py"),
