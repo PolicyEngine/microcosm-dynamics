@@ -3,7 +3,9 @@
 Invariants: every variable and parameter in the federal SSI trees appears;
 every dependency reaches another inventoried variable or an explicit input;
 formula boundaries are named, rather than allowing an implicit model default;
-the output is deterministic for the same source and distribution metadata.
+an enum input's members come only from a class whose membership a static
+read settles, and include its default, or the inventory refuses; the output
+is deterministic for the same source and distribution metadata.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
 with the clone's interpreter and point ``--package`` at installed source::
@@ -107,26 +109,108 @@ def expression(node: ast.AST | None) -> Any:
         return ast.unparse(node)
 
 
+def module_bindings(tree: ast.Module, name: str) -> list[ast.stmt]:
+    """Top-level statements that bind ``name`` in a module."""
+    bound = []
+    for node in tree.body:
+        if isinstance(
+            node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+        ):
+            names = [node.name]
+        elif isinstance(node, ast.Assign):
+            names = [
+                item.id
+                for target in node.targets
+                for item in ast.walk(target)
+                if isinstance(item, ast.Name)
+            ]
+        elif isinstance(node, (ast.AnnAssign, ast.AugAssign)):
+            names = [
+                item.id
+                for item in ast.walk(node.target)
+                if isinstance(item, ast.Name)
+            ]
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            names = [
+                alias.asname or alias.name.split(".")[0]
+                for alias in node.names
+            ]
+        else:
+            # Conditional, looped or guarded bindings cannot be read
+            # statically, so any mention of the name counts against it.
+            names = [
+                item.id
+                for item in ast.walk(node)
+                if isinstance(item, ast.Name)
+            ]
+        if name in names:
+            bound.append(node)
+    return bound
+
+
 def enum_members(tree: ast.Module, name: Any) -> list[str] | None:
     """Member names of an Enum class defined in the variable's own module.
 
-    Returns None when ``possible_values`` names no such class, so that an
-    input whose members cannot be read is refused rather than left open.
+    Returns None, so that an input whose members cannot be read is refused
+    rather than left open, unless ``possible_values`` names a class that:
+
+    - is the module's only binding of that name, subclasses ``Enum`` alone
+      and has no decorators or class keywords;
+    - holds only a leading docstring, ``pass``, methods and assignments of
+      a string or integer literal, or of an earlier member, to public names;
+    - names each member once, and no member shares a method's name.
+
+    Annotated, tuple, private and ``_sunder_`` targets, nested classes and
+    other values can change membership in ways a static read cannot settle.
     """
-    for node in tree.body:
+    if not isinstance(name, str):
+        return None
+    bindings = module_bindings(tree, name)
+    if len(bindings) != 1:
+        return None
+    node = bindings[0]
+    if (
+        not isinstance(node, ast.ClassDef)
+        or [expression(base) for base in node.bases] != ["Enum"]
+        or node.keywords
+        or node.decorator_list
+    ):
+        return None
+    members = []
+    methods = set()
+    for index, item in enumerate(node.body):
         if (
-            isinstance(node, ast.ClassDef)
-            and node.name == name
-            and any(expression(base) == "Enum" for base in node.bases)
+            index == 0
+            and isinstance(item, ast.Expr)
+            and isinstance(item.value, ast.Constant)
+            and isinstance(item.value.value, str)
         ):
-            return [
-                target.id
-                for item in node.body
-                if isinstance(item, ast.Assign)
-                for target in item.targets
-                if isinstance(target, ast.Name)
-            ]
-    return None
+            continue
+        if isinstance(item, ast.Pass):
+            continue
+        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            methods.add(item.name)
+            continue
+        literal = (
+            isinstance(item, ast.Assign)
+            and isinstance(item.value, ast.Constant)
+            and type(item.value.value) in (str, int)
+        )
+        alias = (
+            isinstance(item, ast.Assign)
+            and isinstance(item.value, ast.Name)
+            and item.value.id in members
+        )
+        if not (literal or alias) or not all(
+            isinstance(target, ast.Name) and not target.id.startswith("_")
+            for target in item.targets
+        ):
+            return None
+        members.extend(target.id for target in item.targets)
+    # Enum itself refuses a member named ``mro``.
+    if len(set(members)) != len(members) or set(members) & (methods | {"mro"}):
+        return None
+    return members or None
 
 
 def distribution_version(package: Path) -> str:
@@ -324,9 +408,17 @@ def parse_variables(
                 "helper_functions": sorted(visited_helpers),
             }
             if dtype == "Enum":
-                records[node.name]["enum_members"] = enum_members(
-                    tree, expression(attrs.get("possible_values"))
-                )
+                possible = expression(attrs.get("possible_values"))
+                members = enum_members(tree, possible)
+                # A default outside its own class's members would enter
+                # unchecked, so the members stay unresolved.
+                if members is not None and (
+                    expression(attrs.get("default_value"))
+                    != f"{possible}.{default}"
+                    or default not in members
+                ):
+                    members = None
+                records[node.name]["enum_members"] = members
             if node.name not in boundaries:
                 pending.extend(
                     paths[name]

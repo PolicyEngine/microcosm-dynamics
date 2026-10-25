@@ -90,7 +90,13 @@ their annual values. Actual monthly receipt and payment timing wait for SSI9.
   Enum inputs must name a member of the pinned enum. The inventory reads the
   member names from the enum's source, the contract row carries them, and a
   row without them admits no value. So an invalid name refuses its own case
-  as `INPUT_CONTRACT_GAP` before any calculation.
+  as `INPUT_CONTRACT_GAP` before any calculation. The inventory refuses an
+  enum input unless a static read settles its members: the module binds the
+  class once, the class subclasses `Enum` alone, and its body holds only a
+  docstring, `pass`, methods and string, integer or alias assignments to
+  public names, each named once. The default must be one of those members.
+  An oracle test runs each pinned enum class under the pinned release's own
+  `Enum` and checks that its members match the inventory's.
 - Uncontracted inputs refuse instead of being passed through or silently
   dropped.
 - Sources name D1, D2 or WP1 and a citation. Refusals name a condition and the
