@@ -10,6 +10,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.engine.rng import (
+    GATE_M6_TAG,
     MODULE_ORDER,
     ProjectionRNGRegistry,
 )
@@ -21,6 +22,9 @@ def _assert_sequences_equal(expected, actual):
     """Compare seed identity as well as generated state (design §2.1)."""
     assert actual.entropy == expected.entropy
     assert actual.spawn_key == expected.spawn_key
+    assert [type(key) for key in actual.spawn_key] == [
+        type(key) for key in expected.spawn_key
+    ]
     assert actual.pool_size == expected.pool_size
     assert np.array_equal(actual.generate_state(8), expected.generate_state(8))
 
@@ -171,7 +175,7 @@ def _sequence_identity(sequence):
     """Summarize a seed sequence by identity and state (design §2.1)."""
     return (
         tuple(np.atleast_1d(sequence.entropy).tolist()),
-        tuple(int(key) for key in sequence.spawn_key),
+        tuple((type(key), int(key)) for key in sequence.spawn_key),
         sequence.pool_size,
         tuple(sequence.generate_state(4).tolist()),
     )
@@ -338,3 +342,81 @@ def test_generated_malformed_addresses_match_registry(
     """Hypothesis extends the refusal grids' address space (design §2.1)."""
     args = (period, module, *tail[: _TAIL_LENGTHS[method]])
     _assert_outcomes_match(draw_index, n_periods, method, args)
+
+
+def test_returned_sequences_do_not_share_the_cached_root():
+    """Editing one returned sequence leaves later streams alone (§2.1).
+
+    The registry builds a fresh root, and so a fresh entropy list, on every
+    call (``engine/rng.py:66``). The direct class caches its root, so each
+    returned sequence must still get its own list.
+    """
+    registry = ProjectionRNGRegistry(0, 7)
+    direct = DirectRNGStreams(0, 7)
+    for streams in (registry, direct):
+        first = streams.seed_sequence(1, MODULE_ORDER[0])
+        first.entropy.append(99)
+    assert _sequence_identity(
+        direct.seed_sequence(2, MODULE_ORDER[0])
+    ) == _sequence_identity(registry.seed_sequence(2, MODULE_ORDER[0]))
+    assert direct.seed_sequence(1, MODULE_ORDER[0]).entropy == [
+        direct.draw_seed,
+        GATE_M6_TAG,
+    ]
+
+
+def test_root_follows_the_draw_seed_as_the_registry_does():
+    """A cached root never outlives the draw seed it was built from (§2.1).
+
+    The registry recomputes ``5200 + draw_index`` and its root on every call
+    (``engine/rng.py:66``). A 0-d array draw mutated in place must change
+    later streams, and an overflowing NumPy draw seed must still raise under
+    ``np.errstate(over="raise")`` after a first call that ignored it.
+    """
+    draw = np.array(0)
+    registry = ProjectionRNGRegistry(draw, 7)
+    direct = DirectRNGStreams(draw, 7)
+    direct.seed_sequence(1, MODULE_ORDER[0])
+    draw[...] = 4
+    assert _sequence_identity(
+        direct.seed_sequence(1, MODULE_ORDER[0])
+    ) == _sequence_identity(
+        ProjectionRNGRegistry(4, 7).seed_sequence(1, MODULE_ORDER[0])
+    )
+    assert _sequence_identity(
+        direct.seed_sequence(1, MODULE_ORDER[0])
+    ) == _sequence_identity(registry.seed_sequence(1, MODULE_ORDER[0]))
+
+    for streams in (
+        ProjectionRNGRegistry(np.uint64(2**64 - 1), 7),
+        DirectRNGStreams(np.uint64(2**64 - 1), 7),
+    ):
+        with warnings.catch_warnings(), np.errstate(over="ignore"):
+            warnings.simplefilter("ignore")
+            streams.seed_sequence(1, MODULE_ORDER[0])
+        with np.errstate(over="raise"), pytest.raises(FloatingPointError):
+            streams.seed_sequence(1, MODULE_ORDER[0])
+
+
+class _WrappingIndex(int):
+    """An invented index that passes range checks but converts below zero."""
+
+    def __ge__(self, other):
+        return True
+
+    def __le__(self, other):
+        return True
+
+
+def test_negative_position_wraps_as_the_list_lookup_does():
+    """A negative position is wrapped like the registry's lookup (§2.1)."""
+    for method, tail in (("seed_sequence", ()), ("child_generator", (2,))):
+        _assert_outcomes_match(
+            0, 7, method, (_WrappingIndex(-1), MODULE_ORDER[0], *tail)
+        )
+    _assert_outcomes_match(
+        0,
+        7,
+        "tagged_child_generator",
+        (0, MODULE_ORDER[0], 5, _WrappingIndex(-3)),
+    )

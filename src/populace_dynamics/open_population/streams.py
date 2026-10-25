@@ -11,7 +11,6 @@ from __future__ import annotations
 import operator
 import sys
 from dataclasses import dataclass
-from functools import cached_property
 
 import numpy as np
 
@@ -32,9 +31,9 @@ def _spawned_length(count: object) -> int:
     The registry spawns ``n_periods + 1`` period children and
     ``child_index + 1`` tagged children (``engine/rng.py:67``, ``:144``).
     ``spawn`` refuses a negative count, then iterates a range whose bound
-    must convert to a C ``ssize_t``. For every count that ``x + 1`` can
-    produce, the same two steps here raise the same exception and message,
-    without building the children.
+    must convert to a C ``ssize_t``. For every built-in or NumPy count that
+    ``x + 1`` can produce, the same two steps here raise the same exception
+    and message, without building the children.
     """
     if count < 0:
         raise ValueError("n_children must be non-negative")
@@ -64,8 +63,11 @@ def _spawned_position(length: int, index: object) -> int:
             raise TypeError(f"unexpected list index {index!r}")
     else:
         position = index
-    # The period and child checks refuse negative indices before this.
-    if not position < length:
+    # A user-defined index can pass the period or child check and still
+    # convert to a negative position; the list lookup wraps it.
+    if position < 0:
+        position += length
+    if not 0 <= position < length:
         raise IndexError("list index out of range")
     return position
 
@@ -88,16 +90,22 @@ class DirectRNGStreams:
         """Use the inherited ensemble root seed (design §2.1)."""
         return DRAW_SEED_BASE + self.draw_index
 
-    @cached_property
-    def _root(self) -> np.random.SeedSequence:
-        """Build the registry's root once per instance (design §2.1).
+    def _root_for(self, seed: object) -> np.random.SeedSequence:
+        """Return the registry's root for this draw seed (design §2.1).
 
-        The registry builds this root on every period lookup
-        (``engine/rng.py:66``). Its entropy depends only on the draw, so one
-        copy serves every address. A refused draw seed is not cached, so it
-        is refused at the same step on every call.
+        The registry builds ``SeedSequence([draw_seed, GATE_M6_TAG])`` on
+        every period lookup (``engine/rng.py:66``), so a malformed seed is
+        refused there, before the spawn. One root is kept per instance and
+        rebuilt only when the seed changes, as a NumPy draw mutated in place
+        can make it; a refused seed is never kept.
         """
-        return np.random.SeedSequence([self.draw_seed, GATE_M6_TAG])
+        cached = self.__dict__.get("_root")
+        if cached is None or cached[0] != seed:
+            # The dataclass is frozen; like ``functools.cached_property``,
+            # keep the derived root in the instance dictionary.
+            cached = (seed, np.random.SeedSequence([seed, GATE_M6_TAG]))
+            self.__dict__["_root"] = cached
+        return cached[1]
 
     def _validate_period(self, period: int) -> None:
         """Keep the registry's supported period interval (design §2.1)."""
@@ -113,11 +121,13 @@ class DirectRNGStreams:
         resolved = ProjectionModule(module)
         self._validate_period(period)
         # The registry's order: its root, its spawn, then its list lookup.
-        root = self._root
+        # The draw seed is recomputed on every call, as the registry's is.
+        root = self._root_for(self.draw_seed)
         length = _spawned_length(self.n_periods + 1)
         position = _spawned_position(length, period)
+        # A fresh entropy list per call, as the registry's fresh root gives.
         return np.random.SeedSequence(
-            root.entropy,
+            list(root.entropy),
             spawn_key=(position, _MODULE_INDEX[resolved], *tail),
             pool_size=root.pool_size,
         )
