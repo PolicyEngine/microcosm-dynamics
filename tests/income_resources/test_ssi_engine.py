@@ -7,6 +7,7 @@ tier substring without reusing the older bridge environment variable.
 import ast
 import json
 import os
+import re
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -280,6 +281,63 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
         assert pinned["indices"] == list(range(len(pinned["members"])))
 
 
+# Runs in the pinned interpreter: what the engine gives each named variable.
+ATTRIBUTE_CHILD = """
+import json, sys
+from policyengine_us import CountryTaxBenefitSystem
+
+system = CountryTaxBenefitSystem()
+observed = []
+for name in json.load(sys.stdin):
+    variable = system.variables[name]
+    default = variable.default_value
+    observed.append({
+        "name": name,
+        "value_type": variable.value_type.__name__,
+        "default": getattr(default, "name", default),
+        "entity": variable.entity.key,
+        "period": variable.definition_period,
+    })
+json.dump(observed, sys.stdout)
+"""
+
+
+def test_inventory_attributes_match_the_pinned_engine():
+    """Differential: each inventoried variable's value_type, default, entity
+    and period against what the pinned engine gives it. The static read
+    names them by spelling, which reflection could change."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    inventory = json.loads(
+        CONTRACT_PATH.with_name("inventory.json").read_text()
+    )
+    records = [r for key in ("inputs", "variables") for r in inventory[key]]
+    completed = subprocess.run(
+        [str(python), "-I", "-c", ATTRIBUTE_CHILD],
+        input=json.dumps([r["name"] for r in records]),
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    observed = json.loads(completed.stdout)
+    assert {r["value_type"] for r in records} == {
+        "bool",
+        "float",
+        "int",
+        "Enum",
+    }
+    for record, pinned in zip(records, observed, strict=True):
+        assert pinned["name"] == record["name"]
+        assert pinned["value_type"] == record["value_type"]
+        assert pinned["default"] == record["default"]
+        # The source spells the entity's class and the period's constant.
+        entity = re.sub(r"(?<!^)(?=[A-Z])", "_", record["entity"]).lower()
+        assert pinned["entity"] == entity
+        assert pinned["period"] == record["period"].lower()
+
+
 # Runs in the pinned interpreter. It loads each invented module through the
 # engine's own loader, one new variable each, and reports what the engine
 # reads, or the error that stopped the load.
@@ -343,9 +401,14 @@ def test_invented_modules_load_in_the_engine_as_the_reader_reads_them():
         pytest.skip(f"SSI0 interpreter absent: {python}")
     admitted = [[], *([kind] for kind in sorted(ADMITTED_FORMS))]
     admitted.append(sorted(ADMITTED_FORMS))
-    # The engine calls a variable's own set to read its attributes, and a
-    # store through a member renumbers it: both load without an error.
-    silent = [["variable_method"], ["member_store"]]
+    # The engine calls a variable's own set to read its attributes, even one
+    # bound beside an engine attribute, and a store through a member
+    # renumbers it: all load without an error.
+    silent = [
+        ["variable_method"],
+        ["chained_method", "set_function"],
+        ["member_store"],
+    ]
     sources = [
         invented_engine_module(kinds).replace(
             "invented_status", f"invented_status_{index}"

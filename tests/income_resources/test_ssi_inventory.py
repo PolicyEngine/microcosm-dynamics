@@ -491,6 +491,21 @@ ADMITTED_FORMS = {
     ),
     # A literal is not an identifier, whatever it spells.
     "underscore_text": ("body_tail", 'label = "_invented exec"', False),
+    # A function shaped like Variable.set is harmless until a variable
+    # binds it; see "chained_method".
+    "set_function": (
+        "between",
+        "def invented_set(self, attributes, name, **options):\n"
+        '    attributes.pop("set", None)\n'
+        '    if name == "possible_values":\n'
+        "        attributes.pop(name)\n"
+        "        return InventedOtherEnum\n"
+        '    if name == "default_value":\n'
+        "        attributes.pop(name)\n"
+        "        return InventedOtherEnum.INVENTED_OTHER\n"
+        "    return Variable.set(self, attributes, name, **options)",
+        False,
+    ),
 }
 REFUSED_FORMS = {
     "rebind": ("between", "{name} = InventedOtherEnum", True),
@@ -680,6 +695,14 @@ REFUSED_FORMS = {
     ),
     "assigned_method": ("body_tail", "set = InventedOtherBase", False),
     "unknown_attribute": ("body_tail", 'invented_note = "note"', False),
+    # A chained assignment binds every target, so an engine attribute can
+    # carry another name with it, such as set.
+    "chained_attribute": (
+        "body_tail",
+        'label = invented_note = "note"',
+        False,
+    ),
+    "chained_method": ("body_tail", "reference = set = invented_set", False),
     # A decorator runs code as the class body runs, and a string after the
     # docstring is no attribute; the reader refuses even harmless ones.
     "decorated_formula": (
@@ -692,6 +715,18 @@ REFUSED_FORMS = {
     "base_store": ("tail", "Variable.set = None", False),
     # A store through a member changes its encoding index, not membership.
     "member_store": ("tail", "{name}.{member}.index = 0", False),
+    "member_attribute_delete": ("tail", "del {name}.{member}.index", False),
+    # The identifier scan reads keyword and parameter names too.
+    "keyword_underscore": (
+        "tail",
+        "INVENTED_SPARE = dict(_invented=1)",
+        False,
+    ),
+    "parameter_underscore": (
+        "tail",
+        "def invented_helper(_invented):\n    pass",
+        False,
+    ),
     "member_alias_store": (
         "tail",
         "INVENTED_SPARE = {name}.{member}\nINVENTED_SPARE.index = 0",
@@ -1145,6 +1180,8 @@ def python_variable(source):
         "Variable": type("Variable", (), {}),
         "Person": None,
         "YEAR": None,
+        # A name a star import of the model API could bind to Enum.
+        "InventedModelApiEnum": enum.Enum,
     }
     code = compile(source, "<invented>", "exec")
     exec(code, namespace)  # noqa: S102 - invented source only
@@ -1167,6 +1204,16 @@ VALUE_TYPE_FORMS = {
         "value_type = float",
         [("tail", "invented_status.value_type = Enum")],
     ),
+    # A name the module never binds, neither a primitive type nor Enum.
+    "model_api_alias": ("value_type = InventedModelApiEnum", []),
+} | {
+    # A primitive type is read by its spelling, so the module may not
+    # rebind it.
+    f"{primitive}_rebound": (
+        f"value_type = {primitive}",
+        [("head", f"{primitive} = Enum")],
+    )
+    for primitive in inventory.TYPE_DEFAULTS
 }
 
 
@@ -1206,3 +1253,82 @@ def test_source_is_decoded_as_python_decodes_it(tmp_path):
     package = invented_package(tmp_path)
     write_enum_module(package, source)
     assert input_record(package)["enum_members"] == members
+
+
+@pytest.mark.parametrize(
+    ("attribute", "binding"),
+    [("entity", "Person = TaxUnit"), ("definition_period", "YEAR = MONTH")],
+)
+def test_entity_or_period_bound_in_its_module_refuses_inventory(
+    tmp_path, attribute, binding
+):
+    """The record names both by their spelling, as with value_type."""
+    package = invented_package(tmp_path)
+    path = package / "variables/input/invented_age.py"
+    path.write_text(f"{binding}\n\n\n" + path.read_text())
+    with pytest.raises(ValueError, match=f"Unresolved {attribute}"):
+        inventory.inventory_release(package)
+
+
+def test_helper_roots_are_decoded_as_python_decodes_them(tmp_path):
+    # Under this cookie "+AAo-" is a newline, so Python defines a helper
+    # where a UTF-8 read sees a comment.
+    package = invented_package(tmp_path)
+    helpers = package / "variables/gov/ssa/ssi/invented_helpers.py"
+    helpers.write_bytes(
+        b"# coding: utf-7\n"
+        b"# +AAo-def invented_helper(person, period):"
+        b'+AAo-    return person("bank_account_assets", period)\n'
+    )
+    namespace = {}
+    exec(compile(helpers.read_bytes(), helpers, "exec"), namespace)
+    assert "invented_helper" in namespace
+    assert not ast.parse(helpers.read_text(encoding="utf-8")).body
+    path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+    path.write_text(
+        path.read_text().replace(
+            'person("invented_age", period)',
+            'person("invented_age", period) + invented_helper(person, period)',
+        )
+    )
+    result = inventory.inventory_release(package)
+    record = next(
+        v for v in result["variables"] if v["name"] == "invented_intermediate"
+    )
+    assert record["helper_functions"] == ["invented_helper"]
+    assert "bank_account_assets" in record["dependencies"]
+
+
+INVENTED_CORE_DEFAULTS = (
+    'VALUE_TYPES = {bool: {"default": False}, int: {"default": 0}, '
+    'float: {"default": 0}, str: {"default": ""}}\n'
+)
+
+
+def test_core_defaults_are_decoded_as_python_decodes_them(tmp_path):
+    # Under this cookie the table is code; a UTF-8 read sees a comment.
+    package = tmp_path / "policyengine_us"
+    config = tmp_path / "policyengine_core/variables/config.py"
+    config.parent.mkdir(parents=True)
+    config.write_bytes(
+        b"# coding: utf-7\n# +AAo-" + INVENTED_CORE_DEFAULTS.encode("ascii")
+    )
+    assert not ast.parse(config.read_text(encoding="utf-8")).body
+    assert inventory.validate_core_defaults(package)["sha256"] == (
+        inventory.sha256(config)
+    )
+
+
+def test_core_defaults_bound_twice_refuse_inventory(tmp_path):
+    """Python keeps the last of two tables; the reader reads neither."""
+    package = tmp_path / "policyengine_us"
+    config = tmp_path / "policyengine_core/variables/config.py"
+    config.parent.mkdir(parents=True)
+    config.write_text(
+        INVENTED_CORE_DEFAULTS
+        + INVENTED_CORE_DEFAULTS.replace(
+            'float: {"default": 0}', 'float: {"default": 1}'
+        )
+    )
+    with pytest.raises(ValueError, match="not one plain table"):
+        inventory.validate_core_defaults(package)

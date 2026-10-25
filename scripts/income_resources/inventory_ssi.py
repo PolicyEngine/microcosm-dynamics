@@ -4,10 +4,17 @@ Invariants: every variable and parameter in the federal SSI trees appears;
 every dependency reaches another inventoried variable or an explicit input;
 formula boundaries are named, rather than allowing an implicit model default;
 each variable's value_type is one plain assignment of a primitive type or
-Enum, or the inventory refuses; an enum input's members come only from a
-class whose membership a static read settles, and include its default, or
-the inventory refuses; source is decoded as Python decodes it; the output
-is deterministic for the same source and distribution metadata.
+Enum, by a name its module never binds, or the inventory refuses; an enum
+input's members come only from a class whose membership a static read
+settles, and include its default, or the inventory refuses; source is
+decoded as Python decodes it; the output is deterministic for the same
+source and distribution metadata.
+
+The static read does not follow reflection through objects that the model
+API exports, such as a module reached through one of them. Only the
+pinned-engine oracle tests cover that, and only for the pinned release:
+they check each inventoried variable's value_type, default, entity and
+period, and each enum input's members, against what the engine loads.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
 with the clone's interpreter and point ``--package`` at installed source::
@@ -73,9 +80,17 @@ def sha256(path: Path) -> str:
 
 
 def validate_core_defaults(package: Path) -> dict[str, str]:
-    """Refuse drift in the source of implicit primitive defaults."""
+    """Refuse drift in the source of implicit primitive defaults.
+
+    The table must be the module's only binding of ``VALUE_TYPES``: with
+    two, Python keeps the last. Item stores and calls that change the table
+    as the module runs are not read; for the pinned release, the oracle
+    compares every inventoried default with the engine's.
+    """
     path = package.parent / "policyengine_core/variables/config.py"
     tree = ast.parse(path.read_bytes())
+    if len(binding_sites(tree, "VALUE_TYPES")) != 1:
+        raise ValueError("Core primitive defaults are not one plain table")
     table = next(
         item.value
         for item in tree.body
@@ -509,16 +524,29 @@ def parse_variables(
             }
             # The engine reads value_type from the class namespace, so an
             # annotated, aliased, repeated or attribute-stored binding could
-            # make an Enum input whose members are never read.
+            # make an Enum input whose members are never read. So could a
+            # module that rebinds the name the binding spells, as
+            # ``float = Enum`` does.
             value_type = plain_attribute(node, "value_type")
-            if not (
-                isinstance(value_type, ast.Name)
-                and value_type.id in (*TYPE_DEFAULTS, "Enum")
-            ) or any(
-                isinstance(site, ast.Attribute)
-                for site in binding_sites(tree, "value_type")
+            if (
+                not (
+                    isinstance(value_type, ast.Name)
+                    and value_type.id in (*TYPE_DEFAULTS, "Enum")
+                )
+                or any(
+                    isinstance(site, ast.Attribute)
+                    for site in binding_sites(tree, "value_type")
+                )
+                or binding_sites(tree, value_type.id)
             ):
                 raise ValueError(f"Unresolved value_type for {node.name}")
+            # The record names the entity and period by their spelling too.
+            for attribute in ("entity", "definition_period"):
+                value = attrs.get(attribute)
+                if isinstance(value, ast.Name) and binding_sites(
+                    tree, value.id
+                ):
+                    raise ValueError(f"Unresolved {attribute} for {node.name}")
             dtype = value_type.id
             default = expression(attrs.get("default_value"))
             if "default_value" not in attrs:
