@@ -122,6 +122,7 @@ def _invented_evidence(directory, *, lower, width, gap=0):
                     "evidence": [
                         f"2022_variables.json#{name}",
                         f"2022_dictionary_variables.json#{name}",
+                        "2022_dictionary.pdf#page=1",
                     ],
                 }
             ],
@@ -236,7 +237,15 @@ def test_invented_source_conflicts_refuse_without_settled_rulings(
     width=st.integers(min_value=0, max_value=1000),
     gap=st.integers(min_value=1, max_value=1000),
     damage=st.sampled_from(
-        ("interval", "missing_code", "source", "location", "coverage")
+        (
+            "interval",
+            "missing_code",
+            "source",
+            "location",
+            "pdf_citation",
+            "other_release_pdf",
+            "coverage",
+        )
     ),
 )
 def test_invented_domain_ruling_cannot_cover_changed_evidence(
@@ -255,6 +264,10 @@ def test_invented_domain_ruling_cannot_cover_changed_evidence(
         member["evidence"] = member["evidence"][:1]
     elif damage == "location":
         member["dictionary_pdf_pages"] = [2]
+    elif damage == "pdf_citation":
+        member["evidence"][2] = "2022_dictionary.pdf#page=2"
+    elif damage == "other_release_pdf":
+        member["evidence"][2] = "2021_dictionary.pdf#page=1"
     else:
         member["variable"] = "INVENTED_DIFFERENT_VARIABLE"
     _write_json(tmp_path, "source_rulings.json", rulings)

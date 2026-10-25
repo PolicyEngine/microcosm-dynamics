@@ -30,9 +30,12 @@ without running the capture script or requesting any page.
 `capture_user_notes.py` refuses these Census URLs before requesting them.
 The titles below come from their existing inventory metadata; no text
 extract or case-specific correction is retained. The same script refuses
-any new whole page with an identifier column or an identifier name
-followed by digits. Excluded notes remain attached to relevant registry
-entries by URL and title only.
+to store any new page that holds a case record in any of the forms
+`record_bearing_note` lists: an identifier column, an identifier beside a
+value in a table row or a sentence, a row of three numbers, a run of nine
+or more digits, or a preformatted block with an identifier and a digit.
+Excluded notes remain attached to relevant registry entries by URL and
+title only.
 
 - [2019 SIPP: One Case with Negative Hourly Earning Values](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-one-case-neg-hrly-earn-val.html).
 - [2021 SIPP: Child Care Assistance Errors](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/child-care-assist-errors.html).

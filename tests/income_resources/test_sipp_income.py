@@ -1000,6 +1000,31 @@ def test_quotes_in_an_unselected_field_never_join_physical_records(tmp_path):
     assert out["month"].tolist() == [1, 2]
 
 
+def test_lone_carriage_return_never_splits_a_physical_record(tmp_path):
+    """The minimized round-3 review regression: two invented core rows
+    joined by a carriage return in an unselected field form one LF line,
+    which pandas alone would read as two person-months."""
+    year = 2022
+    header, lines = _invented_lines(year)
+    unused = header.count("|") + 2
+    header += "".join(f"|INVENTED_UNUSED{index}" for index in range(unused))
+    physical = lines[0] + "|0\r" + lines[1] + "|0"
+    assert physical.count("|") == header.count("|")
+    path = tmp_path / "INVENTED_lone_carriage_return.csv"
+    path.write_bytes((header + "\n" + physical + "\n").encode())
+    with pytest.raises(ValueError, match="line 2 holds a carriage return"):
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+
+
+def test_crlf_line_endings_keep_every_record(tmp_path):
+    year = 2022
+    header, lines = _invented_lines(year, rows=3)
+    path = tmp_path / "INVENTED_crlf.csv"
+    path.write_bytes(("\r\n".join([header, *lines]) + "\r\n").encode())
+    out = sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+    assert out["month"].tolist() == [1, 2, 3]
+
+
 def test_repeated_header_name_refuses(tmp_path):
     year = 2022
     header, lines = _invented_lines(year, rows=1)
@@ -1139,7 +1164,9 @@ def test_property_corrected_vintage_gate_matches_download_date(
 @given(
     st.sampled_from(SIPP_INCOME_YEARS),
     st.lists(
-        st.text(alphabet='"abc012 ', max_size=8).map(lambda text: '"' + text),
+        st.text(alphabet='"abc012 \r', max_size=8).map(
+            lambda text: '"' + text
+        ),
         min_size=2,
         max_size=12,
     ),
@@ -1148,7 +1175,9 @@ def test_property_corrected_vintage_gate_matches_download_date(
 def test_property_quotes_preserve_physical_records_or_refuse(
     tmp_path, placement, year, tokens, selected_concept
 ):
-    """Quotes in selected and unselected fields never swallow a row."""
+    """Quotes and carriage returns in selected and unselected fields never
+    swallow or split a row: the reader keeps one row per LF-delimited data
+    line, or refuses."""
     table = income_variables(year)
     header, lines = _invented_lines(year, rows=len(tokens))
     records = [line.split("|") for line in lines]
@@ -1159,19 +1188,26 @@ def test_property_quotes_preserve_physical_records_or_refuse(
     for fields, token in zip(records, tokens, strict=True):
         fields.append(token if placement in ("unselected", "both") else "0")
     path = tmp_path / "INVENTED_generated_quotes.csv"
-    path.write_text(
+    body = (
         "\n".join(
             [header + "|INVENTED_UNUSED", *("|".join(row) for row in records)]
         )
         + "\n"
     )
-    if placement in ("selected", "both"):
+    path.write_bytes(body.encode())
+    # A carriage return just before the LF is a CRLF ending; any other
+    # carriage return is inside a physical record.
+    physical = [line.removesuffix("\r") for line in body.split("\n")[:-1]]
+    if any("\r" in line for line in physical):
+        with pytest.raises(ValueError, match="carriage return"):
+            sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+    elif placement in ("selected", "both"):
         # Every core field has a numeric or fixed-width digit domain.
         with pytest.raises(ValueError, match=table[selected_concept].name):
             sipp_income.read_sipp_income_months(year, path=path, concepts=[])
     else:
         out = sipp_income.read_sipp_income_months(year, path=path, concepts=[])
-        assert len(out) == len(records)
+        assert len(out) == len(physical) - 1 == len(records)
         assert out["month"].tolist() == list(range(1, len(records) + 1))
 
 

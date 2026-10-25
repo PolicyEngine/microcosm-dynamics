@@ -22,7 +22,8 @@ Invariants:
   where that release lists them for that variable.
 * One input person-month produces one output row, in input order.
   Duplicate panel/person/reference-month keys refuse; no join expands or
-  shrinks the roster.
+  shrinks the roster. A file the line check and pandas would split into
+  different records, through a quote or a lone carriage return, refuses.
 * ``SSUID`` and other opaque identifiers stay strings. ``person_id`` is
   ``panel:SSUID:PNUM``, never wave or release, so a person links across
   months, waves and releases within a panel; ``household_id`` is
@@ -209,19 +210,32 @@ def _path(
     return result
 
 
+def _physical_record(line: bytes, year: int, line_number: int) -> bytes:
+    """A line without its LF or CRLF ending; refuse any other CR in it."""
+    record = line.removesuffix(b"\n").removesuffix(b"\r")
+    if b"\r" in record:
+        raise ValueError(
+            f"SIPP {year}: line {line_number} holds a carriage return "
+            "inside a record."
+        )
+    return record
+
+
 def _check_layout(path: Path, year: int) -> None:
     """Refuse duplicate header names and rows whose field count differs.
 
     With ``usecols`` pandas stops checking field counts: a short row's
     missing fields become blanks (read as not-in-universe) and a row with
     an extra field shifts values into neighbouring columns. Counting the
-    separators on every physical line first closes both gaps; ``_read``
-    disables CSV quoting to keep the same record and field boundaries.
+    separators on every physical line first closes both gaps. The two
+    reads see the same records: ``_read`` disables CSV quoting, and a
+    carriage return anywhere but before a line's LF refuses the file,
+    since pandas would end a record there too.
     """
     opener = gzip.open if path.name.lower().endswith(".gz") else open
     try:
         with opener(path, "rb") as handle:
-            header = handle.readline().rstrip(b"\r\n")
+            header = _physical_record(handle.readline(), year, 1)
             names = header.split(b"|")
             if len(set(names)) != len(names):
                 raise ValueError(
@@ -229,7 +243,7 @@ def _check_layout(path: Path, year: int) -> None:
                 )
             separators = header.count(b"|")
             for line_number, line in enumerate(handle, start=2):
-                found = line.rstrip(b"\r\n").count(b"|")
+                found = _physical_record(line, year, line_number).count(b"|")
                 if found != separators:
                     raise ValueError(
                         f"SIPP {year}: line {line_number} has {found + 1} "

@@ -825,6 +825,157 @@ def test_invented_identifier_definitions_are_metadata(
     assert not _module("capture_user_notes.py").record_bearing_note(body)
 
 
+INVENTED_ID = "000011112222333"
+# Invented pages, from the round-3 review's probe, in each form a case record
+# can take on a page. None is Census text.
+INVENTED_RECORD_PAGES = {
+    "wide_header_row": (
+        "<table><tr><th>SSUID</th><th>PNUM</th><th>MONTHCODE</th></tr>"
+        f"<tr><td>{INVENTED_ID}</td><td>101</td><td>1</td></tr></table>"
+    ),
+    "prose_adjacent": f"<p>SSUID: {INVENTED_ID}</p>",
+    "long_td_definition_style": (
+        "<table><tr><th>Variable</th><th>Description</th><th>Value</th></tr>"
+        "<tr><td>SSUID</td><td>Invented sample unit</td>"
+        f"<td>{INVENTED_ID}</td></tr>"
+        "<tr><td>PNUM</td><td>Invented person</td><td>101</td></tr>"
+        "<tr><td>INVENTED_EARN</td><td>Invented earnings</td>"
+        "<td>-4321</td></tr></table>"
+    ),
+    "long_th_row_header_definition_style": (
+        "<table><tr><th>Variable</th><th>Description</th>"
+        "<th>Value for this case</th></tr>"
+        "<tr><th>SSUID</th><td>Invented sample unit</td>"
+        f"<td>{INVENTED_ID}</td></tr>"
+        "<tr><th>PNUM</th><td>Invented person</td><td>101</td></tr></table>"
+    ),
+    "long_name_label_value": (
+        "<table><tr><th>Name</th><th>Label</th><th>Original</th>"
+        "<th>Corrected</th></tr><tr><th>SSUID</th><td>Invented unit</td>"
+        f"<td>{INVENTED_ID}</td><td>{INVENTED_ID}</td></tr></table>"
+    ),
+    "scope_row_with_description": (
+        "<table><tr><td>Item</td><td>Invented</td></tr>"
+        '<tr><th scope="row">SSUID</th><td>(invented unit)</td>'
+        f"<td>{INVENTED_ID}</td></tr></table>"
+    ),
+    "header_with_parenthetical": (
+        "<table><tr><th>SSUID (invented unit)</th><th>PNUM (person)</th>"
+        f"<th>Month</th></tr><tr><td>{INVENTED_ID}</td><td>101</td>"
+        "<td>1</td></tr></table>"
+    ),
+    "header_after_title_row_with_dashed_values": (
+        "<table><tr><td colspan=3>Invented table</td></tr>"
+        "<tr><td>SSUID</td><td>PNUM</td><td>MONTHCODE</td></tr>"
+        "<tr><td>0000-1111-2222</td><td>101</td><td>1</td></tr></table>"
+    ),
+    "pre_block": f"<pre>SSUID           PNUM MONTHCODE\n{INVENTED_ID} 101  1\n</pre>",
+    "csv_text": f"<p>SSUID,PNUM,MONTHCODE<br>{INVENTED_ID},101,1</p>",
+    "prose_words_between": (
+        f"<p>The SSUID for this case is {INVENTED_ID} and its PNUM is 101.</p>"
+    ),
+    "prose_of": f"<p>The case with SSUID of {INVENTED_ID} is invented.</p>",
+    "prose_em_dash": f"<p>SSUID &mdash; {INVENTED_ID}</p>",
+    "prose_plural": f"<p>SSUIDs {INVENTED_ID} and {INVENTED_ID[::-1]}</p>",
+    "person_months_without_identifier": (
+        "<table><tr><th>Month</th><th>Earnings</th><th>Hours</th></tr>"
+        "<tr><td>1</td><td>-250</td><td>40</td></tr></table>"
+    ),
+    "comment": f"<p>Invented note.</p><!-- SSUID {INVENTED_ID} -->",
+}
+# Invented definition-only pages, which name an identifier with no value.
+INVENTED_DEFINITION_PAGES = {
+    "definition_table_heading_cell": (
+        "<table><tr><th>Variable</th><th>Description</th>"
+        "<th>Universe</th></tr><tr><th>SSUID</th>"
+        "<td>Invented linkage variable</td><td>All invented persons</td>"
+        "</tr></table>"
+    ),
+    "definition_prose": (
+        "<p>SSUID is an invented survey linkage variable.</p>"
+    ),
+    "universe_footer": (
+        "<p>Universe: INVENTED_VAR = PNUM. "
+        "Page Last Revised - July 1, 2025</p>"
+    ),
+    "tracking_number_in_comment": (
+        "<p>Invented note.</p><!-- 123456789012 -->"
+        "<noscript><img src=x?id=123456789012></noscript>"
+    ),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(INVENTED_RECORD_PAGES))
+def test_invented_record_pages_trigger_capture_guard(kind):
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert record_bearing_note(INVENTED_RECORD_PAGES[kind])
+
+
+@pytest.mark.parametrize("kind", sorted(INVENTED_DEFINITION_PAGES))
+def test_invented_definition_pages_are_metadata(kind):
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert not record_bearing_note(INVENTED_DEFINITION_PAGES[kind])
+
+
+@given(
+    identifier=st.sampled_from(("SSUID", "PNUM", "SSUIDs", "pnum")),
+    invented_words=st.text(alphabet="abcdefgh ,;:'-", max_size=38),
+    invented_digits=st.text(alphabet="0123456789", min_size=3, max_size=20),
+    comment=st.booleans(),
+)
+def test_identifier_and_value_within_a_sentence_trigger_capture_guard(
+    identifier, invented_words, invented_digits, comment
+):
+    sentence = f"{identifier} {invented_words} {invented_digits}"
+    body = f"<!-- {sentence} -->" if comment else f"<p>{sentence}</p>"
+    assert _module("capture_user_notes.py").record_bearing_note(body)
+
+
+@given(
+    invented_words=st.text(alphabet="abcdefgh .,", max_size=40),
+    invented_digits=st.text(alphabet="0123456789", min_size=9, max_size=20),
+    hidden=st.sampled_from(("", "comment", "noscript")),
+)
+def test_long_digit_runs_trigger_capture_guard_where_rendered(
+    invented_words, invented_digits, hidden
+):
+    # A run of nine or more digits refuses the page where a reader sees it;
+    # in a comment or noscript block, with no identifier, it is tracking.
+    body = {
+        "": f"<p>{invented_words} {invented_digits}</p>",
+        "comment": f"<p>{invented_words}</p><!-- {invented_digits} -->",
+        "noscript": (
+            f"<p>{invented_words}</p><noscript>{invented_digits}</noscript>"
+        ),
+    }[hidden]
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert record_bearing_note(body) == (hidden == "")
+
+
+NUMERIC_TEXT = st.builds(
+    "{}{}{}".format,
+    st.sampled_from(("", "-", "+", "$")),
+    st.integers(0, 99_999_999).map("{:,}".format),
+    st.sampled_from(("", ".5", "%")),
+)
+
+
+@given(
+    numbers=st.lists(NUMERIC_TEXT, min_size=1, max_size=6),
+    invented_words=st.lists(
+        st.text(alphabet="abcdefgh", min_size=1, max_size=8), max_size=3
+    ),
+)
+def test_rows_of_three_numbers_trigger_capture_guard(numbers, invented_words):
+    cells = "".join(f"<td>{text}</td>" for text in [*invented_words, *numbers])
+    body = (
+        "<table><tr><th>Invented</th><th>Heading</th></tr>"
+        f"<tr>{cells}</tr></table>"
+    )
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert record_bearing_note(body) == (len(numbers) >= 3)
+
+
 @given(invented_text=st.text(alphabet="abcdefgh", max_size=30))
 def test_invented_exclusion_inventory_never_retains_body_or_pin(
     invented_text,

@@ -7,11 +7,12 @@ Known record-bearing URLs are never requested. Their existing inventory
 metadata supplies the release, title and variable names, without a body
 or body pin. New record-bearing pages receive the same exclusion status.
 
-Invariants: known excluded URLs cannot be fetched; tables with identifier
-columns or identifier/value text cannot be stored; exclusion inventory
-entries retain only URL, title, release, variable names and their reason.
-Stored pages retain their uncompressed byte size and SHA-256. No survey
-data file is requested.
+Invariants: known excluded URLs cannot be fetched; a page cannot be stored
+if it shows any of the forms ``record_bearing_note`` refuses (identifier
+columns, identifiers beside values, long digit runs, rows of numbers and
+preformatted identifier text); exclusion inventory entries retain only
+URL, title, release, variable names and their reason. Stored pages retain
+their uncompressed byte size and SHA-256. No survey data file is requested.
 """
 
 from __future__ import annotations
@@ -50,10 +51,23 @@ EXCLUSION_REASON = (
 )
 
 
+# An identifier name, also when it opens a longer heading or is plural.
+IDENTIFIER = r"\b(?:SSUID|PNUM)s?\b"
+# A cell that holds one number: a sign or dollar, grouped digits, decimals.
+NUMERIC_CELL = r"[-+$]?\d[\d,]*(?:\.\d+)?%?"
+
+
 def note_text(body: str) -> str:
     """The visible text of a Census page, tags and scripts removed."""
     body = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", body)
     return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", body)).split())
+
+
+def _rendered_text(body: str) -> str:
+    """Text a reader sees: also without noscript blocks and comments, whose
+    tracking and layout numbers are not page content."""
+    body = re.sub(r"(?is)<noscript\b.*?</noscript\s*>", " ", body)
+    return note_text(re.sub(r"(?s)<!--.*?-->", " ", body))
 
 
 def _identifier_column(table: str) -> bool:
@@ -82,9 +96,22 @@ def _identifier_column(table: str) -> bool:
         and headings & {"description", "label", "universe"}
     )
     for row_index, row in enumerate(rows):
+        texts = [text for text, _, _ in row]
+        # Three numbers in one row read as a record, whatever the headings.
+        if sum(bool(re.fullmatch(NUMERIC_CELL, text)) for text in texts) >= 3:
+            return True
         for column_index, (text, tag, attributes) in enumerate(row):
-            if not re.fullmatch(r"SSUID|PNUM", text, re.I):
+            if not re.match(IDENTIFIER, text, re.I):
                 continue
+            # An identifier beside a value of three or more digits, even in
+            # a definition table.
+            if any(
+                re.search(r"\d{3,}", other)
+                for index, other in enumerate(texts)
+                if index != column_index
+                and not re.match(IDENTIFIER, other, re.I)
+            ):
+                return True
             row_header = bool(
                 re.search(
                     r"\bscope\s*=\s*(?:\"row\"|'row'|row)(?:\s|$)",
@@ -92,8 +119,10 @@ def _identifier_column(table: str) -> bool:
                     re.I,
                 )
             )
-            if row_index == 0 or (
-                tag == "th" and not row_header and not definition_table
+            heading = re.fullmatch(r"SSUID|PNUM", text, re.I)
+            if heading and (
+                row_index == 0
+                or (tag == "th" and not row_header and not definition_table)
             ):
                 return True
             if any(
@@ -108,17 +137,35 @@ def _identifier_column(table: str) -> bool:
 def record_bearing_note(body: str) -> bool:
     """Recognize survey identifiers without returning matched content.
 
-    Refuse identifier column headers and identifier cells with numeric
-    cells below them. Variable-definition rows may name an identifier.
-    Also refuse prose placing an identifier name before digits, including
-    punctuation and HTML entities between the name and its value.
+    A page is refused when it holds any of:
+
+    - a table column headed by an identifier name, or a cell that begins
+      with one and has numeric cells below it;
+    - a table row with an identifier name and, in another cell, a run of
+      three or more digits, even in a variable-definition table;
+    - a table row of three or more numeric cells;
+    - an identifier name followed by digits, with only punctuation or
+      HTML entities between, or by a run of three or more digits within 40
+      characters of the same sentence, in the text or in an HTML comment,
+      which is stored though not shown;
+    - a run of nine or more digits in the text a reader sees;
+    - a preformatted block that names an identifier and holds a digit.
+
+    Variable-definition rows may name an identifier without a value.
     """
-    identifier = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
+    adjacent = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
     for table in re.findall(r"(?is)<table\b[^>]*>.*?(?:</table\s*>|$)", body):
         if _identifier_column(table):
             return True
+    for block in re.findall(r"(?is)<pre\b[^>]*>(.*?)(?:</pre\s*>|$)", body):
+        text = note_text(block)
+        if re.search(IDENTIFIER, text, re.I) and re.search(r"\d", text):
+            return True
+    text = note_text(re.sub(r"<!--|-->", " ", body))
     return bool(
-        re.search(identifier + r"[\s:=#'\"(\[\-]*\d", note_text(body), re.I)
+        re.search(adjacent + r"[\s:=#'\"(\[\-]*\d", text, re.I)
+        or re.search(IDENTIFIER + r"[^.<>]{0,40}?\d{3,}", text, re.I)
+        or re.search(r"\d{9,}", _rendered_text(body))
     )
 
 
