@@ -18,6 +18,66 @@
         },
         {
             "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/calibrate.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/calibration.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/exhaust_closure.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/exhaust_closure.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/invented_panel.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/mutation_specs.json",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/mutations.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/oracle.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/ranges.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/ranges.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/search.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/search.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
             "path": "docs/design/track_b_b0_2_exposure_inventory.json",
             "scope": "whole_file"
         },

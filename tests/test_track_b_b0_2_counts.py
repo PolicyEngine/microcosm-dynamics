@@ -2113,6 +2113,72 @@ def test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds(tmp_path, monkeypatch):
     assert script.release_counts(counts, registry)[1]["status"] == "released"
 
 
+def _household_prior_panel():
+    """Review round 4's table: 122 heads and spouses at 2011, 120 aged 50
+    in 96 households (24 with a spouse), and two heads aged 63 in
+    households of their own."""
+    rows = []
+    person = 0
+    for household in range(1, 97):
+        person += 1
+        rows.append(_row(person, age=50, interview=household))
+        if household <= 24:
+            person += 1
+            rows.append(
+                _row(person, age=50, relationship=20, interview=household)
+            )
+    for household in (201, 202):
+        person += 1
+        rows.append(_row(person, age=63, interview=household))
+    return _own_strata(_inputs(rows))
+
+
+def test_b0_1s_exact_household_count_withholds_a_small_bands_households(
+    tmp_path, monkeypatch
+):
+    """Review round 4's executed attack on B0.1's household sets. B0.1
+    publishes the anchor's 122 persons and 98 households exactly; this
+    release publishes the 45-61 band as 120 persons (115-124) in 96
+    households (95-104) and the 62-64 band "<10". The small band's persons
+    can then be 1 to 7, which is wide, but its households only 1 to 3 once
+    B0.1's household count is in the audit. Through main() the release is
+    withheld on that class; without B0.1's household sets, the same table
+    releases."""
+    inputs = _household_prior_panel()
+    people, labor, anchor, design = inputs
+    validity = _validity(labor)
+    earlier = b01.structural_counts(people, validity)
+    assert earlier["full_anchor_persons"] == 122
+    assert earlier["full_anchor_households"] == 98
+    counts = script.structural_counts(people, validity, anchor, design)
+    bands = counts["rosters"]["R_FULL"]["by_age_band"]
+    assert (bands["45_61"]["persons"], bands["45_61"]["households"]) == (
+        120,
+        96,
+    )
+    assert (bands["62_64"]["persons"], bands["62_64"]["households"]) == (2, 2)
+    _main_environment(tmp_path, monkeypatch, inputs)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    assert json.loads(out.read_text())["disclosure"]["status"] == "withheld"
+    audit = json.loads(local.read_text())["disclosure_audit"]["audit"]
+    assert [
+        (t["unit_type"], t["true_size"])
+        for t in audit["targets"]
+        if t["result"] == "narrow"
+        and 1 <= t["true_size"] < script.DISCLOSURE_THRESHOLD
+    ] == [("households", 2)]
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    persons_only = {
+        path: entry
+        for path, entry in script.b0_1_sets(people, validity).items()
+        if entry[0] == "persons"
+    }
+    script.register_b0_1(registry, persons_only, earlier)
+    assert script.release_counts(counts, registry)[1]["status"] == "released"
+
+
 def test_main_allows_relative_local_copy_resolving_outside_repository(
     tmp_path, invented_main
 ):
@@ -3280,6 +3346,76 @@ def test_the_local_copy_holds_this_releases_counts_and_decisions_only():
     assert '"round' not in text and '"reseeded"' not in text
 
 
+def _settled_audit():
+    """An audit whose rounds the local copy must not reflect: the nested
+    release, with two or more targets of this release, one or more of them
+    settled in round 1."""
+    _, registry, counts = _nested_prior_release(range(12))
+    audit = script.audit_counts(counts, registry, 10)
+    own = [t for t in audit["targets"] if not t["earlier"]]
+    assert len(own) >= 2 and any(t["round"] == 1 for t in own)
+    return audit
+
+
+@settings(max_examples=40, deadline=None)
+@given(st.data())
+def test_the_local_copy_is_the_same_whatever_the_rounds(data):
+    """Condition 3 as a property (review round 4): whatever round settled
+    each target, and whatever rounds ran, the local copy's record is the
+    same byte for byte. Round information can then reach it through no
+    field, not as a mark on a result and not through the targets' order."""
+    from copy import deepcopy
+
+    audit = _settled_audit()
+    expected = json.dumps(script.local_audit(audit), sort_keys=True)
+    changed = deepcopy(audit)
+    settled = [t for t in changed["targets"] if "round" in t]
+    for target, settling in zip(
+        settled,
+        data.draw(
+            st.lists(
+                st.integers(1, 9), min_size=len(settled), max_size=len(settled)
+            )
+        ),
+        strict=True,
+    ):
+        target["round"] = settling
+    changed["rounds"] = data.draw(
+        st.lists(
+            st.fixed_dictionaries(
+                {
+                    "round": st.integers(1, 9),
+                    "disclosed": st.lists(
+                        st.integers(0, len(changed["targets"]) - 1)
+                    ),
+                    "reseeded": st.booleans(),
+                }
+            ),
+            min_size=1,
+            max_size=4,
+        )
+    )
+    assert json.dumps(script.local_audit(changed), sort_keys=True) == expected
+
+
+@pytest.mark.parametrize("order", ["late", "rising", "falling"])
+def test_the_local_copy_ignores_rounds_that_order_or_mark_targets(order):
+    """The property's two executed attacks, fixed: every target of this
+    release settled after round 1, which a mark on late results would
+    show, or settled in rising or falling rounds along their order, which
+    an order by round would show. None changes a byte of the local copy."""
+    audit = _settled_audit()
+    expected = json.dumps(script.local_audit(audit), sort_keys=True)
+    own = [t for t in audit["targets"] if not t["earlier"]]
+    for index, target in enumerate(own):
+        target["round"] = {
+            "late": 2,
+            "rising": index + 1,
+            "falling": len(own) - index,
+        }[order]
+    assert json.dumps(script.local_audit(audit), sort_keys=True) == expected
+
+
 def _own_targets(registry):
     return [
         {key: value for key, value in target.items() if key != "columns"}
@@ -3362,19 +3498,152 @@ def _atoms(inputs):
     return model["sizes"].tolist(), model["unit_types"]
 
 
+#: Audit events that create or change a file, with the position of the
+#: path each names. "open" counts only when its mode or flags write.
+FILE_EVENTS = {
+    "open": 0,
+    "os.rename": 1,
+    "os.link": 1,
+    "os.symlink": 1,
+    "os.mkdir": 0,
+    "os.truncate": 0,
+}
+#: Audit events that start a process or open a connection, either of which
+#: could carry a value past every file check. main()'s own process, the
+#: caffeinate keeper, is a stand-in in these tests.
+PROCESS_EVENTS = {
+    "subprocess.Popen",
+    "os.system",
+    "os.posix_spawn",
+    "os.spawn",
+    "os.exec",
+    "os.fork",
+    "os.forkpty",
+    "socket.connect",
+    "socket.sendto",
+}
+WRITE_FLAGS = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_APPEND | os.O_TRUNC
+#: The one confinement in force, if any, and what it refused.
+_confinement = {"directory": None, "names": frozenset(), "refused": []}
+_confinement_hook = []
+
+
+def _refuse_writes_outside(event, arguments):
+    """The audit hook behind ``_writes_confined_to``."""
+    directory = _confinement["directory"]
+    if directory is None:
+        return
+    if event in PROCESS_EVENTS:
+        _confinement["refused"].append((event, None))
+        raise PermissionError(f"{event} while main() runs")
+    if event not in FILE_EVENTS:
+        return
+    if event == "open":
+        _, mode, flags = arguments
+        if not (
+            (isinstance(mode, str) and set(mode) & set("wxa+"))
+            or (isinstance(flags, int) and flags & WRITE_FLAGS)
+        ):
+            return
+    path = arguments[FILE_EVENTS[event]]
+    if path is None or isinstance(path, int):
+        # An open descriptor, already checked when it was opened.
+        return
+    path = os.path.abspath(os.fsdecode(path))
+    parent, name = os.path.split(path)
+    if path == os.devnull or os.path.basename(parent) == "__pycache__":
+        # The guard's null device; a bytecode cache from a lazy import.
+        return
+    if os.path.realpath(parent) == directory and (
+        name in _confinement["names"]
+        or any(
+            name.startswith(f".{final}.") and name.endswith(".partial")
+            for final in _confinement["names"]
+        )
+    ):
+        # One of the outputs, or ``write_new``'s temporary file for one.
+        return
+    _confinement["refused"].append((event, path))
+    raise PermissionError(f"{event} outside the run's outputs: {path}")
+
+
+@contextmanager
+def _writes_confined_to(directory, names):
+    """While it holds, refuse and record every file write that is not one
+    of ``names`` in ``directory`` (or its temporary file), and every new
+    process or connection. An audit hook cannot be removed, so one hook,
+    installed once, checks whether a confinement holds."""
+    if not _confinement_hook:
+        sys.addaudithook(_refuse_writes_outside)
+        _confinement_hook.append(_refuse_writes_outside)
+    refused = []
+    _confinement.update(
+        directory=os.path.realpath(directory),
+        names=frozenset(names),
+        refused=refused,
+    )
+    try:
+        yield refused
+    finally:
+        _confinement["directory"] = None
+
+
+def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
+    """The confinement the relabeling tests run main() under: an output and
+    its temporary file may be written, and reads, the null device and
+    bytecode caches pass; a file elsewhere, np.save into the temporary
+    folder, a second file beside the outputs and a new process are each
+    refused and recorded."""
+    inside = tmp_path / "run"
+    inside.mkdir()
+    (inside / "input.txt").write_text("read me")
+    elsewhere = tmp_path / "elsewhere.npy"
+    with _writes_confined_to(inside, {"counts.json"}) as refused:
+        script.write_new(inside / "counts.json", b"{}")
+        assert (inside / "input.txt").read_text() == "read me"
+        with open(os.devnull, "w") as null:
+            null.write("passes")
+        for attempt in (
+            lambda: np.save(elsewhere, np.arange(3)),
+            lambda: (inside / "extra.json").write_text("{}"),
+            lambda: subprocess.run(["true"], check=False),
+        ):
+            with pytest.raises(PermissionError):
+                attempt()
+    assert [event for event, _ in refused] == [
+        "open",
+        "open",
+        "subprocess.Popen",
+    ]
+    assert not elsewhere.exists() and not (inside / "extra.json").exists()
+    # Outside the confinement nothing is refused.
+    np.save(elsewhere, np.arange(3))
+    assert elsewhere.exists()
+
+
 def _written(directory, monkeypatch, inputs, capture):
     """Every byte main() writes or prints for ``inputs``: both files, the
     attempt record and its output, with the run's directory taken out. The
     run's directory is also its working directory, so a log or cache
-    written there would be caught. The B0.1 record it reads is returned
-    too."""
+    written there would be caught; and main() runs confined, so a write
+    anywhere else, or a new process, fails the run. The B0.1 record it
+    reads is returned too."""
     _main_environment(directory, monkeypatch, inputs)
     monkeypatch.setattr(script, "datetime", _FixedClock)
     monkeypatch.chdir(directory)
     capture()
     out = directory / "counts.json"
     local = directory / "local.json"
-    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    outputs = {out.name, local.name, script._attempt_path(local).name}
+    with _writes_confined_to(directory, outputs) as refused:
+        try:
+            status = script.main(
+                ["--out", str(out), "--local-copy", str(local)]
+            )
+        except SystemExit as stop:
+            status = stop
+    assert refused == []
+    assert status == 0
     printed = tuple(
         text.replace(str(directory), "<run>") for text in capture()
     )
@@ -3489,7 +3758,8 @@ def _draining(out, err):
 @st.composite
 def _relabelings(draw):
     """Heads aged 60 or 62, each present, dead, moved out or absent at
-    2013, and one death and one move to swap. Six to ten heads mostly
+    2013, and one death and one move to swap, of different ages, so that
+    the swap changes the atoms B0.1's sets refine. Six to ten heads mostly
     withhold; fifty to seventy with five or more deaths and five or more
     moves mostly release, so both statuses are tried."""
     if draw(st.booleans()):
@@ -3527,6 +3797,9 @@ def _relabelings(draw):
         )
     )
     states[died], states[moved] = "died", "moved"
+    # Review round 4: a swap between heads of one age leaves every atom as
+    # it was, which made two thirds of the draws trivially pass.
+    ages[moved] = 62 if ages[died] == 60 else 60
     return ages, states, died, moved
 
 
@@ -3536,7 +3809,9 @@ def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
     """Condition 4 over invented panels: whenever swapping a death and a
     move leaves the audit's decisions unchanged, every byte main() writes
     or prints is unchanged. (B0.1's counts and this release's class sizes
-    cannot change under the swap; the test checks both.)"""
+    cannot change under the swap; the test checks both.) The premise is
+    checked too: a draw whose swap leaves the atoms as they were tests
+    nothing, and is counted apart."""
     import io
     import tempfile
     from contextlib import redirect_stderr, redirect_stdout
@@ -3569,11 +3844,16 @@ def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
         runs
     )
     assert b01_first == b01_second
+    if _atoms(_disposition_panel(ages, states)) == _atoms(
+        _disposition_panel(ages, _swap(states, died, moved))
+    ):
+        event("the swap left the atoms unchanged")
+        return
     if _decisions(first) != _decisions(second):
         event("the swap changed a decision")
         return
     audit = json.loads(first["local.json"])["disclosure_audit"]["audit"]
-    event(f"decisions kept, {audit['status']}")
+    event(f"atoms changed, decisions kept, {audit['status']}")
     assert first == second
     assert printed_first == printed_second
 
@@ -3886,12 +4166,40 @@ def test_every_output_the_script_can_make_names_no_value():
         "to_csv",
         "to_json",
         "to_parquet",
+        # Review round 4: NumPy's, pandas', pickle's and shutil's writers.
+        "save",
+        "savez_compressed",
+        "savetxt",
+        "tofile",
+        "to_pickle",
+        "to_hdf",
+        "to_excel",
+        "to_feather",
+        "to_stata",
+        "to_sql",
+        "to_orc",
+        "to_xml",
+        "writelines",
+        "copyfile",
+        "copy2",
+        "copytree",
+        "copyfileobj",
+        "makedirs",
+        "truncate",
     }
     writers = {
         function(node)
         for node in calls
         if isinstance(node.func, ast.Attribute) and node.func.attr in writes
     }
+    # A writer imported by name, as ``from numpy import save`` would make
+    # it, is a writer too; the builtin open() is checked below.
+    assert not [
+        ast.unparse(node)
+        for node in calls
+        if isinstance(node.func, ast.Name)
+        and node.func.id in writes - {"open"}
+    ]
     assert writers == {
         "write_new",
         "_start_attempt",
@@ -4635,3 +4943,29 @@ def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
     assert registry.sets[unknown][1].isdisjoint(registry.sets[old][1])
     published, disclosure, _ = script.release_counts(counts, registry)
     assert disclosure["status"] == "released" and published
+
+
+def test_every_b0_2_file_is_excluded_from_blinded_review_roots():
+    """Separation (review round 4): successor-design review roots must hold
+    none of B0.2's files. The standing exclusion record names each by its
+    path, so every file of B0.2's (its documents, the evidence folder, the
+    script and this module) must be on it; the record itself, which holds
+    names only, is the one exception."""
+    import track_b_b0_1_review_root as review_root
+
+    denied = set(review_root.denied_paths(review_root.standing_inventories()))
+    files = {
+        path.relative_to(ROOT).as_posix()
+        for pattern in (
+            "docs/design/track_b_b0_2_*",
+            "docs/design/track_b_b0_2_evidence/*",
+            "scripts/track_b_b0_2_*",
+            "tests/test_track_b_b0_2_*",
+        )
+        for path in ROOT.glob(pattern)
+        if path.is_file() and "__pycache__" not in path.parts
+    }
+    record = "docs/design/track_b_b0_2_exclusions.json"
+    assert record in files
+    assert "docs/design/track_b_b0_2_evidence/calibrate.py" in files
+    assert not files - {record} - denied, sorted(files - {record} - denied)
