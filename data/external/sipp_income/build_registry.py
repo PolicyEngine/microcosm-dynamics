@@ -244,15 +244,17 @@ def domain_ruling(
     assert member["dictionary_pdf_pages"] == (entry or {}).get(
         "dictionary_pdf_pages", []
     ), f"stale dictionary location {year}/{name}"
-    # Each PDF citation names this release's dictionary at a page its entry
-    # holds, and each of those pages is cited.
-    pdf_pages = sorted(
-        citation.removeprefix(f"{year}_dictionary.pdf#page=")
+    # Every PDF citation, with a page or without, names this release's
+    # dictionary at a page its entry holds, and each of those pages is cited
+    # once.
+    pdf_citations = sorted(
+        citation
         for citation in member["evidence"]
-        if "#page=" in citation
+        if ".pdf" in citation.casefold()
     )
-    assert pdf_pages == sorted(
-        str(page) for page in member["dictionary_pdf_pages"]
+    assert pdf_citations == sorted(
+        f"{year}_dictionary.pdf#page={page}"
+        for page in member["dictionary_pdf_pages"]
     ), f"stale PDF citation {year}/{name}"
     assert rule["missing_code_policy"] == "preserve_api_missing_codes"
     assert rule["resolution"] in {

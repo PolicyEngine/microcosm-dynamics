@@ -354,7 +354,7 @@ _GENERATED = r"""
   "rw2024_schema.json": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
   "rw2025_dictionary.txt": "818e434ae1ac25b0be5b370826950ca46d2f538e38c49860a28e6cc25d2a8d60",
   "rw2025_schema.json": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
-  "source_rulings.json": "7fad21ba9d57fbe5c55efe0c026d206775b51e514b99649cca179f806ec4df7c",
+  "source_rulings.json": "b6e681bfac4ee891b89dedbc6a99933afdfdf1736fdd35c058af751235022088",
   "user_notes/2018/2018-chg-asset-quest.html.gz": "923d565a01a9885ac1262fdae088e7e5c0e8f04d87fc7cd30bdabeb3c67c55aa",
   "user_notes/2018/2018-err-debt-alloc-flag-var-nam.html.gz": "5623cf1c6c923960c9770934aba21d9d1fa39f234c68ac44a33a9f79ba8521a8",
   "user_notes/2018/2018-error-emhiother.html.gz": "4a91eb75b0877850ac24fb531dae020dc3fe0c76181b2a3e6cd219ba07ce59f6",

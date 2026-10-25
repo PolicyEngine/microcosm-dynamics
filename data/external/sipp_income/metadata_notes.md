@@ -31,9 +31,22 @@ without running the capture script or requesting any page.
 The titles below come from their existing inventory metadata; no text
 extract or case-specific correction is retained. The same script refuses
 to store any new page that holds a case record in any of the forms
-`record_bearing_note` lists: an identifier column, an identifier beside a
-value in a table row or a sentence, a row of three numbers, a run of nine
-or more digits, or a preformatted block with an identifier and a digit.
+`record_bearing_note` lists:
+
+- an identifier column, or a cell that begins with an identifier name and
+  has a cell of digits alone below it;
+- an identifier name followed by a digit with only spaces or simple marks
+  between, or by a run of three or more digits that is not a year within
+  40 characters of the same sentence;
+- a table row with an identifier name and such a run in another cell;
+- a table row, or a preformatted line, of three or more numbers;
+- a run of nine or more digits in the text a reader sees, or of 14 or
+  more, an SSUID's length, anywhere in the page;
+- a preformatted block with an identifier and a digit.
+
+The identifier rules read the visible text, HTML comments and the page
+source with its tags, attributes and scripts. The nine-digit rule skips
+comments and noscript blocks, whose tracking numbers are not page content.
 Excluded notes remain attached to relevant registry entries by URL and
 title only.
 

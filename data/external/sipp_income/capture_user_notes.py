@@ -9,10 +9,11 @@ or body pin. New record-bearing pages receive the same exclusion status.
 
 Invariants: known excluded URLs cannot be fetched; a page cannot be stored
 if it shows any of the forms ``record_bearing_note`` refuses (identifier
-columns, identifiers beside values, long digit runs, rows of numbers and
-preformatted identifier text); exclusion inventory entries retain only
-URL, title, release, variable names and their reason. Stored pages retain
-their uncompressed byte size and SHA-256. No survey data file is requested.
+columns, identifiers beside values, long digit runs, rows or preformatted
+lines of numbers and preformatted identifier text); exclusion inventory
+entries retain only URL, title, release, variable names and their reason.
+Stored pages retain their uncompressed byte size and SHA-256. No survey
+data file is requested.
 """
 
 from __future__ import annotations
@@ -53,8 +54,14 @@ EXCLUSION_REASON = (
 
 # An identifier name, also when it opens a longer heading or is plural.
 IDENTIFIER = r"\b(?:SSUID|PNUM)s?\b"
-# A cell that holds one number: a sign or dollar, grouped digits, decimals.
-NUMERIC_CELL = r"[-+$]?\d[\d,]*(?:\.\d+)?%?"
+# A cell that holds one number: signed, in dollars or in parentheses,
+# grouped, with decimals or a percent sign.
+NUMERIC_CELL = r"[-+−]?\$?[-−]?\(?\$?\d[\d,]*(?:\.\d+)?\)?%?"
+# A run of three or more digits that is not a year from 1900 to 2099, which
+# notes print beside identifier names as panel and release years.
+VALUE_RUN = r"(?<!\d)(?!(?:19|20)\d\d(?!\d))\d{3,}"
+# SSUID's length in every release's dictionary, 2018-2025.
+SSUID_DIGITS = 14
 
 
 def note_text(body: str) -> str:
@@ -106,7 +113,7 @@ def _identifier_column(table: str) -> bool:
             # An identifier beside a value of three or more digits, even in
             # a definition table.
             if any(
-                re.search(r"\d{3,}", other)
+                re.search(VALUE_RUN, other)
                 for index, other in enumerate(texts)
                 if index != column_index
                 and not re.match(IDENTIFIER, other, re.I)
@@ -139,19 +146,30 @@ def record_bearing_note(body: str) -> bool:
 
     A page is refused when it holds any of:
 
-    - a table column headed by an identifier name, or a cell that begins
-      with one and has numeric cells below it;
-    - a table row with an identifier name and, in another cell, a run of
-      three or more digits, even in a variable-definition table;
+    - a cell that is exactly an identifier name, in a table's first row
+      or in a header cell that is not a row header outside a
+      variable-definition table, or a cell that begins with an identifier
+      name and has a cell of digits alone below it;
+    - a table row with a cell that begins with an identifier name and, in
+      another cell, a run of three or more digits that is not a year, even
+      in a variable-definition table;
     - a table row of three or more numeric cells;
-    - an identifier name followed by digits, with only punctuation or
-      HTML entities between, or by a run of three or more digits within 40
-      characters of the same sentence, in the text or in an HTML comment,
-      which is stored though not shown;
-    - a run of nine or more digits in the text a reader sees;
-    - a preformatted block that names an identifier and holds a digit.
+    - an identifier name followed by a digit, with only spaces and the
+      marks ``: = # ' " ( [ -`` between, or by a run of three or more
+      digits that is not a year, with at most 40 characters and no period
+      between. These two rules read the text, HTML comments, which are
+      stored though not shown, and the page source with its tags,
+      attributes and scripts, all with entities decoded;
+    - a run of nine or more digits in the text a reader sees, without
+      comments, noscript blocks, scripts, styles and tags, since tracking
+      numbers sit there and are not page content;
+    - a run of 14 or more digits, SSUID's length, anywhere in the page;
+    - a preformatted block that names an identifier and holds a digit, or
+      that has a line of three or more numbers.
 
-    Variable-definition rows may name an identifier without a value.
+    A table row's cells are read whole, so numbers stacked with ``<br>`` in
+    one cell are not separate numeric cells. Variable-definition rows may
+    name an identifier without a value.
     """
     adjacent = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
     for table in re.findall(r"(?is)<table\b[^>]*>.*?(?:</table\s*>|$)", body):
@@ -161,11 +179,25 @@ def record_bearing_note(body: str) -> bool:
         text = note_text(block)
         if re.search(IDENTIFIER, text, re.I) and re.search(r"\d", text):
             return True
-    text = note_text(re.sub(r"<!--|-->", " ", body))
+        lines = html.unescape(re.sub(r"<[^>]+>", " ", block)).splitlines()
+        if any(
+            sum(
+                bool(re.fullmatch(NUMERIC_CELL, word)) for word in line.split()
+            )
+            >= 3
+            for line in lines
+        ):
+            return True
+    source = html.unescape(body)
+    texts = (note_text(re.sub(r"<!--|-->", " ", body)), source)
     return bool(
-        re.search(adjacent + r"[\s:=#'\"(\[\-]*\d", text, re.I)
-        or re.search(IDENTIFIER + r"[^.<>]{0,40}?\d{3,}", text, re.I)
+        any(
+            re.search(adjacent + r"[\s:=#'\"(\[\-]*\d", text, re.I)
+            or re.search(IDENTIFIER + r"[^.<>]{0,40}?" + VALUE_RUN, text, re.I)
+            for text in texts
+        )
         or re.search(r"\d{9,}", _rendered_text(body))
+        or re.search(rf"\d{{{SSUID_DIGITS},}}", source)
     )
 
 

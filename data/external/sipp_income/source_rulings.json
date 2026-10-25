@@ -735,7 +735,7 @@
           ]
         }
       ],
-      "reason": "The release dictionary prints the range -$999,999,999:$999,999,1000. Its upper bound is malformed, with a last digit group of four, and its lower bound differs from the API's -9,999,999,999, so the derived entry is unverified and supplies no second domain. Retain the release API interval and its missing code; do not repair or borrow a dictionary interval."
+      "reason": "The release dictionary prints the range -$999,999,999:$999,999,1000. Its upper bound is malformed, with a last digit group of four, so the derived entry is unverified and supplies no second domain. Its lower bound also differs from the API's -9,999,999,999. Retain the release API interval and its missing code; do not repair or borrow a dictionary interval."
     },
     "monthly-address-dictionary-domain": {
       "name": "Monthly address domain comes from the release dictionary",

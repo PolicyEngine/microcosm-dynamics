@@ -231,22 +231,27 @@ def test_invented_source_conflicts_refuse_without_settled_rulings(
                 generator.build_tables()
 
 
+# Every damage runs, each against its own generated rulings.
+@pytest.mark.parametrize(
+    "damage",
+    (
+        "interval",
+        "missing_code",
+        "source",
+        "location",
+        "pdf_citation",
+        "other_release_pdf",
+        "pageless_pdf",
+        "pageless_other_release_pdf",
+        "release_notes_pdf",
+        "coverage",
+    ),
+)
 @INVENTED_SETTINGS
 @given(
     lower=st.integers(min_value=0, max_value=10**6),
     width=st.integers(min_value=0, max_value=1000),
     gap=st.integers(min_value=1, max_value=1000),
-    damage=st.sampled_from(
-        (
-            "interval",
-            "missing_code",
-            "source",
-            "location",
-            "pdf_citation",
-            "other_release_pdf",
-            "coverage",
-        )
-    ),
 )
 def test_invented_domain_ruling_cannot_cover_changed_evidence(
     tmp_path, monkeypatch, lower, width, gap, damage
@@ -268,12 +273,26 @@ def test_invented_domain_ruling_cannot_cover_changed_evidence(
         member["evidence"][2] = "2022_dictionary.pdf#page=2"
     elif damage == "other_release_pdf":
         member["evidence"][2] = "2021_dictionary.pdf#page=1"
+    elif damage == "pageless_pdf":
+        member["evidence"].append("2022_dictionary.pdf")
+    elif damage == "pageless_other_release_pdf":
+        member["evidence"].append("2021_dictionary.pdf")
+    elif damage == "release_notes_pdf":
+        member["evidence"].append("2022_release_notes.PDF#page=1")
     else:
         member["variable"] = "INVENTED_DIFFERENT_VARIABLE"
     _write_json(tmp_path, "source_rulings.json", rulings)
+    # Each damage stops generation at its own check.
+    message = {
+        "interval": "stale domain ruling",
+        "missing_code": "stale API missing codes",
+        "source": "uncited domain ruling",
+        "location": "stale dictionary location",
+        "coverage": "unruled domain conflict",
+    }.get(damage, "stale PDF citation")
     with monkeypatch.context() as patch:
         generator = _use_invented_generator(patch, tmp_path)
-        with pytest.raises(AssertionError):
+        with pytest.raises(AssertionError, match=message):
             generator.build_tables()
 
 

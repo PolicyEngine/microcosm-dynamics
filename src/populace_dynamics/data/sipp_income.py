@@ -22,8 +22,10 @@ Invariants:
   where that release lists them for that variable.
 * One input person-month produces one output row, in input order.
   Duplicate panel/person/reference-month keys refuse; no join expands or
-  shrinks the roster. A file the line check and pandas would split into
-  different records, through a quote or a lone carriage return, refuses.
+  shrinks the roster. Quotes are literal characters, so the line check
+  and pandas split a file into the same records; a carriage return
+  anywhere but before a line's LF, which they could split differently,
+  refuses the file.
 * ``SSUID`` and other opaque identifiers stay strings. ``person_id`` is
   ``panel:SSUID:PNUM``, never wave or release, so a person links across
   months, waves and releases within a panel; ``household_id`` is

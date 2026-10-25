@@ -882,6 +882,19 @@ INVENTED_RECORD_PAGES = {
         "<tr><td>1</td><td>-250</td><td>40</td></tr></table>"
     ),
     "comment": f"<p>Invented note.</p><!-- SSUID {INVENTED_ID} -->",
+    # Round 4: the page source, signed and bracketed amounts, and numbers in
+    # a preformatted block.
+    "attribute_identifier": f'<p title="SSUID {INVENTED_ID}">Invented.</p>',
+    "script_identifier": (
+        f'<script>var invented = "SSUID={INVENTED_ID}";</script>'
+    ),
+    "bare_identifier_value_in_attribute": f'<img alt="{INVENTED_ID}">',
+    "bare_identifier_value_in_comment": f"<!-- {INVENTED_ID} -->",
+    "signed_and_bracketed_amounts": (
+        "<table><tr><td>-$250</td><td>($40)</td><td>\u2212$12</td></tr>"
+        "</table>"
+    ),
+    "pre_numbers": "<pre>101 -250 40\n</pre>",
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -898,9 +911,68 @@ INVENTED_DEFINITION_PAGES = {
         "<p>Universe: INVENTED_VAR = PNUM. "
         "Page Last Revised - July 1, 2025</p>"
     ),
+    # Tracking numbers shorter than SSUID: as text in a comment (after a
+    # ">", so only the comment rule removes it), in a noscript block, and in
+    # an attribute.
     "tracking_number_in_comment": (
-        "<p>Invented note.</p><!-- 123456789012 -->"
-        "<noscript><img src=x?id=123456789012></noscript>"
+        "<p>Invented note.</p><!-- invented > 123456789012 -->"
+    ),
+    "tracking_number_in_noscript": (
+        "<p>Invented note.</p><noscript>123456789012</noscript>"
+    ),
+    "tracking_number_in_attribute": (
+        "<p>Invented note.</p><noscript><img src=x?id=123456789012>"
+        "</noscript>"
+    ),
+    # Years beside identifier names are panel and release years.
+    "universe_footer_without_period": (
+        "<p>Universe: INVENTED_VAR = PNUM "
+        "Page Last Revised - July 1, 2025</p>"
+    ),
+    "panel_year": "<p>PNUM in the 2022 panel is invented.</p>",
+    "index_link_with_year": (
+        '<li><a href="/invented/2022-usernotes/invented.html" '
+        'title="Invented PNUM note, 2022">Invented PNUM note (2022)</a></li>'
+    ),
+    "definition_row_with_year": (
+        "<table><tr><th>Variable</th><th>Description</th></tr>"
+        "<tr><td>SSUID</td><td>Invented since 2018</td></tr></table>"
+    ),
+}
+
+# Each refused page and a twin that differs only in the structure one rule
+# reads, so the rule alone refuses it (round 4's minimal pages).
+INVENTED_RULE_TWINS = {
+    "same_row_value": (
+        "<table><tr><th>Variable</th><th>Description</th></tr>"
+        "<tr><td>SSUID</td><td>Invented. 123</td></tr></table>",
+        "<table><tr><th>Variable</th><th>Description</th></tr>"
+        "<tr><td>SSUID</td><td>Invented.</td></tr>"
+        "<tr><td>INVENTED</td><td>Invented. 123</td></tr></table>",
+    ),
+    "identifier_heading": (
+        "<table><tr><th>SSUID</th></tr></table>",
+        "<table><tr><th>Variable</th></tr><tr><td>SSUID</td></tr></table>",
+    ),
+    "pre_identifier": ("<pre>SSUID. x\n7</pre>", "<p>SSUID. x\n7</p>"),
+    "pre_numbers": ("<pre>101 -250 40</pre>", "<p>101 -250 40</p>"),
+    "row_of_numbers": (
+        "<table><tr><td>-$250</td><td>($40)</td><td>40%</td></tr></table>",
+        "<table><tr><td>-$250</td><td>($40)</td></tr></table>",
+    ),
+    # Values too short for the digit-run rules, so only the identifier
+    # rules' reading of the source or of comment text can refuse them.
+    "attribute_source": (
+        '<p title="SSUID 123">Invented.</p>',
+        '<p title="SSUID">Invented.</p>',
+    ),
+    "script_source": (
+        '<script>var invented = "PNUM=101";</script>',
+        '<script>var invented = "PNUM";</script>',
+    ),
+    "comment_text": (
+        "<!-- SSUID <b>invented</b> 123 -->",
+        "<!-- SSUID <b>invented</b> -->",
     ),
 }
 
@@ -917,10 +989,29 @@ def test_invented_definition_pages_are_metadata(kind):
     assert not record_bearing_note(INVENTED_DEFINITION_PAGES[kind])
 
 
+@pytest.mark.parametrize("rule", sorted(INVENTED_RULE_TWINS))
+def test_each_guard_rule_alone_refuses_its_page(rule):
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    refused, twin = INVENTED_RULE_TWINS[rule]
+    assert record_bearing_note(refused)
+    assert not record_bearing_note(twin)
+
+
+@pytest.mark.parametrize(("width", "refused"), [(40, True), (41, False)])
+def test_identifier_value_window_is_forty_characters(width, refused):
+    # Letters between, so only the 40-character rule can apply.
+    between = " " + "a" * (width - 2) + " "
+    body = f"<p>SSUID{between}123</p>"
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert record_bearing_note(body) == refused
+
+
 @given(
     identifier=st.sampled_from(("SSUID", "PNUM", "SSUIDs", "pnum")),
     invented_words=st.text(alphabet="abcdefgh ,;:'-", max_size=38),
-    invented_digits=st.text(alphabet="0123456789", min_size=3, max_size=20),
+    invented_digits=st.text(
+        alphabet="0123456789", min_size=3, max_size=20
+    ).filter(lambda digits: not re.fullmatch(r"(?:19|20)\d\d", digits)),
     comment=st.booleans(),
 )
 def test_identifier_and_value_within_a_sentence_trigger_capture_guard(
@@ -940,7 +1031,8 @@ def test_long_digit_runs_trigger_capture_guard_where_rendered(
     invented_words, invented_digits, hidden
 ):
     # A run of nine or more digits refuses the page where a reader sees it;
-    # in a comment or noscript block, with no identifier, it is tracking.
+    # in a comment or noscript block, with no identifier, it is tracking,
+    # unless it is as long as an SSUID.
     body = {
         "": f"<p>{invented_words} {invented_digits}</p>",
         "comment": f"<p>{invented_words}</p><!-- {invented_digits} -->",
@@ -949,14 +1041,41 @@ def test_long_digit_runs_trigger_capture_guard_where_rendered(
         ),
     }[hidden]
     record_bearing_note = _module("capture_user_notes.py").record_bearing_note
-    assert record_bearing_note(body) == (hidden == "")
+    assert record_bearing_note(body) == (
+        hidden == "" or len(invented_digits) >= 14
+    )
 
 
-NUMERIC_TEXT = st.builds(
-    "{}{}{}".format,
-    st.sampled_from(("", "-", "+", "$")),
-    st.integers(0, 99_999_999).map("{:,}".format),
-    st.sampled_from(("", ".5", "%")),
+@given(
+    identifier=st.sampled_from(("SSUID", "PNUM", "SSUIDs", "pnum")),
+    invented_words=st.text(alphabet="abcdefgh", min_size=1, max_size=30),
+    year=st.integers(1900, 2099),
+    place=st.sampled_from(("text", "comment", "attribute")),
+)
+def test_years_beside_identifier_names_are_metadata(
+    identifier, invented_words, year, place
+):
+    sentence = f"{identifier} {invented_words} {year}"
+    body = {
+        "text": f"<p>{sentence}</p>",
+        "comment": f"<!-- {sentence} -->",
+        "attribute": f'<a title="{sentence}">Invented</a>',
+    }[place]
+    assert not _module("capture_user_notes.py").record_bearing_note(body)
+
+
+NUMERIC_TEXT = st.one_of(
+    st.builds(
+        "{}{}{}".format,
+        st.sampled_from(("", "-", "+", "$", "-$", "$-", "\u2212", "\u2212$")),
+        st.integers(0, 99_999_999).map("{:,}".format),
+        st.sampled_from(("", ".5", "%")),
+    ),
+    st.builds(
+        "({}{})".format,
+        st.sampled_from(("", "$")),
+        st.integers(0, 99_999_999).map("{:,}".format),
+    ),
 )
 
 
