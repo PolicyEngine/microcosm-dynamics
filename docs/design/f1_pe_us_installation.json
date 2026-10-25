@@ -1,0 +1,31 @@
+{
+  "installation": {
+    "python": "/Users/maxghenis/.venvs/policyengine-us-2.61.0/bin/python",
+    "python_version": "3.13.9",
+    "package_dir": "/Users/maxghenis/.venvs/policyengine-us-2.61.0/lib/python3.13/site-packages/policyengine_us",
+    "version": "2.61.0",
+    "core_version": "3.33.12",
+    "location": "/Users/maxghenis/.venvs/policyengine-us-2.61.0/lib/python3.13/site-packages",
+    "record_path": "/Users/maxghenis/.venvs/policyengine-us-2.61.0/lib/python3.13/site-packages/policyengine_us-2.61.0.dist-info/RECORD",
+    "record_sha256": "574e62a1759174c169fbd011817d24b3852d646a53bd2393f3ad2fa4af2ff5d9",
+    "direct_url": null,
+    "installer": "uv"
+  },
+  "published_source": {
+    "kind": "index",
+    "version": "2.61.0",
+    "core_version": "3.33.12",
+    "record_sha256": "574e62a1759174c169fbd011817d24b3852d646a53bd2393f3ad2fa4af2ff5d9",
+    "published": true,
+    "reasons": []
+  },
+  "record_check": {
+    "prefix": "policyengine_us/",
+    "files_checked": 19543,
+    "mismatched": [],
+    "missing": [],
+    "extra": [],
+    "package_record_digest": "faab31131caf676439a57eb774248db1750a63c866e1f645aac2fd0b68bf7120",
+    "package_record_lines": 19543
+  }
+}
