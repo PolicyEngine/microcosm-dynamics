@@ -78,12 +78,14 @@ The registered side ran in a temporary `git worktree` of
 `dd222b9af926c773a0f92732e2d08be507793378`, placed inside the clone and
 removed afterwards, with the clone's venv and `PYTHONPATH` set to that
 worktree's `src`. Every imported `populace_dynamics` module (117 files)
-resolved inside the worktree. The build side ran at commit `a3806e56`
-with `PYTHONPATH` set to the clone's `src`, importing the same 117 files,
-whose SHA-256 is unchanged between the two commits. Both runs wrote
-output byte-identical to the golden file. The provenance file records
-the commands, both commits, the script and output hashes, the imported
-files and the stage-2 builder's earlier export record. That builder's
+resolved inside the worktree. The build side ran at commit `a3806e56`,
+and again at `7cd45ee7`, with `PYTHONPATH` set to the clone's `src`,
+importing the same 117 files, whose SHA-256 is unchanged between the
+commits. Every run wrote output byte-identical to the golden file. The
+provenance file records the commands, the registered commit and the
+build commit `7cd45ee7`, the script and output hashes, the imported
+files, the `a3806e56` runs and the stage-2 builder's earlier export
+record. That builder's
 sandbox could not create the worktree, so it had run the registered side
 on a `git archive` export of the same 117 files, with the same result.
 The golden was never regenerated from the current source.
