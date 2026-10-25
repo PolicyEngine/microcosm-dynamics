@@ -15,7 +15,8 @@ arrivals before delegating the call
 (`src/populace_dynamics/open_population/harness.py:226–235`).
 
 Base: `7e635bba`, branch `openpop-op1-harness-20261024`. `daa1f58d` merged
-master `4e20c6e4` into the branch.
+master `4e20c6e4` into the branch, and `fa862935` merged master `d8302233`
+for the coordinator's tier slot.
 
 The build's sandbox could not write `.git`, so the main session committed
 its tree in logical steps on this branch: `7d321aef` (the fast path, its
@@ -295,22 +296,25 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **334 passed and 1 strict xfail, with 2 existing
-fixture warnings**. Its time varies with host load: runs by the author and
-reviews r8 and r9 took 8 to 15 s by pytest's report. At `0d0c073c` it gave
-232 passed in about 8 s; review r2's refusal tests added 37, review r3's fix
-30, review r4's fix 3, review r5's fix 20, review r6's fix 10, review r7's fix
-1 and review r9's fix 1. It covers the self-contained horizon test, the
-reversed-roster example, the gate metadata refusals and every reducer
-identity, reachability and initializer check.
+The required command gives **341 passed and 1 strict xfail, with 2 existing
+fixture warnings**: OP1's 334, and the 7 OP0.1 record tests that master
+keeps in `tests/open_population/test_op0_1_records.py`, which the tier-slot
+merge `fa862935` brought in. Its time varies with host load: runs by the
+author and reviews r8 and r9 took 8 to 15 s by pytest's report. At
+`0d0c073c` OP1's part gave 232 passed in about 8 s; review r2's refusal tests
+added 37, review r3's fix 30, review r4's fix 3, review r5's fix 20, review
+r6's fix 10, review r7's fix 1 and review r9's fix 1. It covers the
+self-contained horizon test, the reversed-roster example, the gate metadata
+refusals and every reducer identity, reachability and initializer check.
 
 ```sh
 .venv/bin/python -m pytest -q tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
-.venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
+.venv/bin/python -m pytest --collect-only -q tests/open_population --ignore=tests/open_population/test_op0_1_records.py | tail -1
 ```
 
-Collection gives **231 tests**, all classified as `unit` (seven modules,
-including the original six). That is 171 more than the 60 reviewed at r1,
+OP1's collection gives **231 tests**, all classified as `unit` (seven
+modules, including the original six); without the `--ignore`, the folder
+gives 238. That is 171 more than the 60 reviewed at r1,
 102 more than the 129 reviewed at r2, 65 more than the 166 reviewed at r3,
 35 more than the 196 reviewed at r4, 32 more than the 199 reviewed at r5,
 12 more than the 219 reviewed at r6, 2 more than the 229 reviewed at r7 and
@@ -323,25 +327,41 @@ is clean.
 .venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
 .venv/bin/ruff check src/populace_dynamics/open_population tests/open_population scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py docs/design/open_population_evidence/op1_run_size.py
 git diff --check
-git diff --stat 4e20c6e4
-git diff --exit-code 4e20c6e4 -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs tests/tier_counts.json tests/README-tiers.md
+git diff --stat d8302233
+git diff --quiet d8302233 -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs
+git diff d8302233 -- tests/tier_counts.json tests/README-tiers.md
 ```
 
-The scope comparison over the sealed and shared paths, against master
-`4e20c6e4`, is empty. Before review r9's fix these commands named
-`7e635bba`, the base before that merge. Against it they show only master's
-own changes to those paths, identical to `git diff 7e635bba 4e20c6e4`. The
+Against master `d8302233`, merged at `fa862935`, the sealed paths are
+unchanged: `git diff --quiet` exits 0 and prints nothing, even if a sealed
+file differed. The shared tier files change only by the recount below.
+Before review r9's fix these commands named `7e635bba`, the base before the
+first master merge, against which they show master's own changes; the r9
+fix named master `4e20c6e4`, and the tier-slot merge names `d8302233`. The
 three new files, `open_population/streams.py`,
 `tests/open_population/__init__.py` and
 `tests/open_population/test_streams.py`, lie within the allowed scope.
 The test modules, including the new stream module, classify as `unit` under
-the repository's `_classify_test_module`. The shared tier inventories are
-unchanged; their update waits for the coordinator's slot.
+the repository's `_classify_test_module`.
 
-No sealed engine, baseline, Track A, Track B, gate contract, committed run
-or shared tier file changed. The only changes outside OP1 sources, tests
-and `docs/design/open_population_evidence/op1_*` add `streams.py` to
-`POST_REVIEW_SOURCE_EXCLUSIONS` and its exact pin.
+The tier-slot commit recounts the shared tier inventories without
+collecting the whole repository. Against `d8302233`, the only test files
+that differ are OP1's seven new modules with their `__init__.py`, and
+`tests/estimates/test_birth_evidence_artifact.py`, whose only change adds
+OP1's nine module paths to a tuple. Collected tier by tier, OP1's modules
+give 231 `unit` tests and none in any other tier. The changed module gives
+13 `artifact` tests at master's version and at the merge, and master's
+`tests/open_population/test_op0_1_records.py` collects 7 with and without
+OP1's `__init__.py`. So `tests/tier_counts.json` and `tests/README-tiers.md`
+move `unit` from 18,549 to 18,780 and the total from 25,119 to 25,350. CI's
+tier-policy test, which collects the whole suite, checks them.
+
+No sealed engine, baseline, Track A, Track B, gate contract or committed
+run changed, and the shared tier files change only by that recount. The
+only other changes outside OP1 sources, tests and
+`docs/design/open_population_evidence/op1_*` add OP1's nine modules,
+`streams.py` among them, to `POST_REVIEW_SOURCE_EXCLUSIONS` and its exact
+pin.
 
 Closed-run equality means equality with the sealed loop run on the
 canonical initialized slice, with the same scheduled frames and draw.
@@ -565,7 +585,7 @@ Review r9 (Opus 5.5 delta check at `5f276453`; its review names its model) appro
 | Nit: "raises that size from 2^64 to 2^1100" claimed more than the draw pins | The r8 row says what the draw pins and what it leaves. |
 | Nit: the timing range was the author's unrecorded observation, and one of r9's runs fell outside it | The required-command paragraph gives the range over the author's and reviews' runs and says it varies with host load. §3's opening paragraph, which said "under 10 s", gives the same range. |
 
-Rerunning §3's commands for this fix, the author found that its scope commands still named `7e635bba`, the base before the master merge `daa1f58d`. Against it the sealed and shared paths show master's own changes to `track_b/holdout_registry.py` and the two tier files. §1 now names the merge, and §3's commands name master `4e20c6e4`, which reviews r3 to r9 used for the coordinator's sealed-path check. Against it they are empty.
+Rerunning §3's commands for this fix, the author found that its scope commands still named `7e635bba`, the base before the master merge `daa1f58d`. Against it the sealed and shared paths show master's own changes to `track_b/holdout_registry.py` and the two tier files. The fix named the merge in §1 and pointed §3's commands at master `4e20c6e4`, which reviews r3 to r9 used for the coordinator's sealed-path check; against it they were empty. The tier-slot merge below moves them to master `d8302233`.
 
 | Mutation (r6's, r7's, r8's and r9's harnesses; stream and exit tests, 165) | Result |
 |---|---|
@@ -580,6 +600,12 @@ Rerunning §3's commands for this fix, the author found that its scope commands 
 | r7's 32 mutants and the two revisions | Every verdict above holds. Twelve killed mutants gain the property test: R1, R2, R3, R4, R7, R8, S4, S5, S6, S7, S8 and E3. R5 and r7's 13 equivalents survive. `6361b4c0` still fails 15 tests and passes the property test; `dee1e1b7` fails 29, the property test among them |
 | r6's 50 mutants | The same 39 are killed and the same 11 survive. Eight gain the property test: C2, C3, C4, C5, C6, M9, M12 and N3. The Hypothesis-dependent counts stay within their ranges, except that the period-zero lookup skipped (A5) failed `test_generated_malformed_addresses_match_registry` for the first time, 11 against 10. The r5 and r6 tables now give "10 or 11" |
 | The property test alone, with a fresh Hypothesis database, seeds 1 to 10 | Passes at the head in 10 of 10 runs, in 0.5 to 0.8 s. Kills K9, K11, K12, K13, K18, G1, S17, S18 and S22 in 10 of 10, K14 and K16 in 7 of 10, and K10 in none |
+
+### Tier-slot merge
+
+`fa862935` merges master `d8302233` into the branch on top of review r9's fix `78c6c2d1`, without conflicts. Its tree equals `git merge-tree --write-tree 78c6c2d1 d8302233`. Git auto-merged `scripts/first_estimates_birth_evidence.py` and `tests/estimates/test_birth_evidence_artifact.py`; against master, each adds only OP1's nine module paths, to `POST_REVIEW_SOURCE_EXCLUSIONS` and to its pin. The merge brings in master's 7 OP0.1 record tests under `tests/open_population/`, so the OP1 command gives 341 passed and the seven-path regression command 556 passed, 2 skipped and 1 strict xfail.
+
+The next commit recounts the tier inventories (§3). It also points §3's scope commands at `d8302233`, and makes the sealed-path check `git diff --quiet`, the form the coordinator's check uses, so it prints nothing even if a sealed file changed. `streams.py` and every other OP1 source are unchanged from `78c6c2d1`.
 
 ## 5. Remaining work and restricted-files statement
 
