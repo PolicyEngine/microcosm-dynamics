@@ -449,6 +449,26 @@ def test_root_follows_the_draw_seed_as_the_registry_does():
             streams.seed_sequence(1, MODULE_ORDER[0])
 
 
+def test_cached_root_follows_exact_int_seeds_compared_exactly():
+    """An exact ``int`` seed keeps its own root, however large (§2.1).
+
+    Seeds past ``int64`` and past float precision are valid, and a seed
+    equal to the cached seed's negative is refused, so the cache must build
+    and compare the seeds themselves, exactly.
+    """
+    draw = np.array(0, dtype=object)
+    registry = ProjectionRNGRegistry(draw, 7)
+    direct = DirectRNGStreams(draw, 7)
+    for value in (0, 2**53, 2**53 + 1, 2**64, 2**64 + 1, 0, -10400):
+        draw[()] = value
+        for method, tail_length in _TAIL_LENGTHS.items():
+            args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+            compare = _compare_for(method)
+            assert _outcome(direct, method, args, compare) == _outcome(
+                registry, method, args, compare
+            ), (value, method)
+
+
 @pytest.mark.parametrize(
     ("first", "then"),
     (

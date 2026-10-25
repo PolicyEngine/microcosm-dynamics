@@ -212,7 +212,7 @@ combination, for all six methods, of:
 `test_non_integer_draw_refusals_match_registry` adds four non-integer draws
 and an `np.int64` one against malformed horizons and periods, and
 `test_generated_malformed_addresses_match_registry` adds 80 Hypothesis
-examples over all of these. Seven tests pin the root's state:
+examples over all of these. Eight tests pin the root's state:
 - `test_returned_sequences_do_not_share_the_cached_root` and
   `test_returned_generators_do_not_share_the_cached_root`: every method,
   including the tagged child emigration draws from and the period-zero
@@ -221,6 +221,9 @@ examples over all of these. Seven tests pin the root's state:
   NumPy and object type mutated in place, including to a seed whose hash
   equals the cached one's, and an overflowing `np.uint64` draw under
   `np.errstate(over="raise")`;
+- `test_cached_root_follows_exact_int_seeds_compared_exactly`: exact `int`
+  draws past `int64` and past float precision, and a draw whose seed is
+  the cached seed's negative, through every method;
 - `test_root_ignores_an_equal_seed_of_another_type` and
   `test_root_ignores_an_equal_seed_set_on_the_frozen_field`: a draw changed
   in place to an equal float, `Fraction`, `Decimal`, complex, NumPy
@@ -288,24 +291,24 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **332 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 11 s by pytest's report (one-minute load 17). At
+The required command gives **333 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in 8 s by pytest's report (one-minute load 34). At
 `0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added 37,
-review r3's fix 30, review r4's fix 3, review r5's fix 20 and review r6's fix
-10. It covers the self-contained horizon test, the reversed-roster example, the
-gate metadata refusals and every reducer identity, reachability and initializer
-check.
+review r3's fix 30, review r4's fix 3, review r5's fix 20, review r6's fix 10
+and review r7's fix 1. It covers the self-contained horizon test, the
+reversed-roster example, the gate metadata refusals and every reducer
+identity, reachability and initializer check.
 
 ```sh
 .venv/bin/python -m pytest -q tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **229 tests**, all classified as `unit` (seven modules,
-including the original six). That is 169 more than the 60 reviewed at r1,
-100 more than the 129 reviewed at r2, 63 more than the 166 reviewed at r3,
-33 more than the 196 reviewed at r4, 30 more than the 199 reviewed at r5
-and 10 more than the 219 reviewed at r6.
+Collection gives **230 tests**, all classified as `unit` (seven modules,
+including the original six). That is 170 more than the 60 reviewed at r1,
+101 more than the 129 reviewed at r2, 64 more than the 166 reviewed at r3,
+34 more than the 196 reviewed at r4, 31 more than the 199 reviewed at r5,
+11 more than the 219 reviewed at r6 and 1 more than the 229 reviewed at r7.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -470,7 +473,7 @@ Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findin
 | Root never rebuilt; cache keyed on the draw object; seed not recomputed; old root returned | Killed (1; 1; 10; 1) |
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
-| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14, as Hypothesis draws; 7; 1) |
+| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14, as Hypothesis draws; 6 or 7; 1) |
 | Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
 | No cache, or seeds compared with `is not` | Survive as intended: they change cost only |
 | `not cached[0] == seed`; entropy rebuilt from the seed; default pool size (always 4); wrap by modulo | Survive: equivalent |
@@ -486,7 +489,7 @@ Review r6 (Opus 5.5 delta check at `3fda5862`) approved, with two minor findings
 |---|---|
 | 1: this report called mutant C2, a refused seed kept in the cache, equivalent "since a refused seed is never an `int`". That was wrong. A draw changed after construction can make the seed a negative `int`, which NumPy refuses and which reaches the cache. C2 then raises `AttributeError` on later calls where the registry raises `ValueError`, and no test caught it | `test_refused_int_seed_is_refused_on_every_call` changes a draw to −5201 or −2^70, as a 0-d array's element or through `object.__setattr__`, and compares two rounds of calls to every method. It kills C2 and r6's M9. The r5 rows above are corrected. |
 | 2: the equal-seed fix was pinned only for a 0-d array changed in place, not for a field replaced through `object.__setattr__`. r6's mutant M13 (`type(seed) is not type(self.draw_index)`) passed every test | `test_root_ignores_an_equal_seed_set_on_the_frozen_field` (6 cases). `6361b4c0`'s code fails 5 of them; the sixth, `True` after 1, gives an equal exact `int` seed. It kills M13. |
-| Nit: four prose lines not re-wrapped, and two kill counts that depend on Hypothesis given as single numbers | Those paragraphs and four older over-long ones are re-wrapped, and the r5 table gives "15 or 16" and "12 or 13". |
+| Nit: four prose lines not re-wrapped, and two kill counts that depend on Hypothesis given as single numbers | Those paragraphs and three older over-long ones are re-wrapped, and the r5 table gives "15 or 16" and "12 or 13". |
 
 r6 also showed that a cache keyed by the seed's hash (its M16) passed every test, because seeds 2^61 − 1 apart share a hash. `test_root_follows_the_draw_seed_as_the_registry_does` now moves a draw by 2^61 − 1, which kills it. `streams.py` is unchanged from `3fda5862`, so every stream, probe and cost figure above still holds.
 
@@ -495,15 +498,35 @@ r6 also showed that a cache keyed by the seed's hash (its M16) passed every test
 | `streams.py` at `6361b4c0`; at `dee1e1b7` | Killed (15; 27) |
 | r6's four non-equivalent survivors: a refused seed cached (C2); only a negative `int` cached as refused (M9); the check against the draw's type (M13); a cache keyed by hash (M16) | Killed (4; 4; 5; 1) |
 | `int` check dropped; check returns the cached root; check dropped and the refused seed cached | Killed (15; 13; 22) |
-| NumPy integers also cached; non-`int` seeds also stored; `int(seed)` in the bypass; check only before the first cache; only floats bypass; check after the cache hit; only `bool` bypasses; entropy coerced to `int`; an `int` seed's root typed `np.int64` | Killed (6; 2; 24; 13; 11; 12; 15; 11; 48) |
+| NumPy integers also cached; non-`int` seeds also stored; `int(seed)` in the bypass; check only before the first cache; only floats bypass; check after the cache hit; only `bool` bypasses; entropy coerced to `int`; an `int` seed's root typed `np.int64` | Killed (6; 2; 24; 13; 11; 12; 15; 11 or 12; 48) |
 | Root never rebuilt; keyed on the draw object; seed not recomputed; old root returned | Killed (5; 3; 18; 1) |
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
-| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14; 7; 1) |
+| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14; 6 or 7; 1) |
 | Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
 | No cache; seeds compared with `is not`; a non-`int` seed clears the cache | Survive as intended: they change cost only |
 | `not ==`; key compared by subtraction; default pool size; wrap by modulo; a negative `int` also bypasses; `isinstance` for the exact check; a typed key without the `int` check | Survive: equivalent, as r6 found with its probes |
 | Entropy rebuilt from the seed | Survives: equivalent for streams and refusals, as r6 found; it emits a second overflow warning under `np.errstate(over="warn")` |
+
+### Review r7
+
+Review r7 (Opus 5.5 delta check at `3cd74630`) approved, with one minor finding and two nits, and found the code correct. It confirmed the coordinator's four checks and 22,176 four-way identities across the registry, `dee1e1b7`, `6361b4c0` and `3cd74630`. It reproduced every count in the r6 table except two that depend on Hypothesis, and tried 32 new mutants: 15 were killed, 13 survived as equivalents, and 4 survived without being equivalent.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: no test used a valid exact-`int` draw past `int64`, or two exact-`int` seeds equal as floats, though those are the seeds the cache keeps. The production harness accepts any non-negative exact `int` draw, 2^63 included. The code was correct on all of these inputs, but four contrived mutants passed every test: the cached root built from `int(np.int64(seed))` for non-negative seeds (S8), and the cached seed compared as a float (R4), by absolute value (R2) or as a string (R5) | `test_cached_root_follows_exact_int_seeds_compared_exactly`, r7's verified candidate, changes an object draw to 0, 2^53, 2^53 + 1, 2^64, 2^64 + 1, 0 and −10400 and compares every method with the registry. It kills S8, R4 and R2. R5 differs from the registry only for a seed past CPython's 4,300-digit limit on converting an `int` to a string, which is a process-wide setting, so it stays unpinned. |
+| Nit: two kill counts that depend on Hypothesis given as single numbers | The r6 table gives "11 or 12" for entropy coerced to `int`, and both tables give "6 or 7" for the root after the lookup. |
+| Nit: the r6 nit row said four older over-long lines were re-wrapped | It now says three. The fourth, a one-line bullet in the review r5 section, follows that section's one line per paragraph. |
+
+| Mutation (r7's harnesses; stream and exit tests, 164) | Result |
+|---|---|
+| `streams.py` at `6361b4c0`; at `dee1e1b7` | Killed (15; 28). The new test passes at `6361b4c0` and fails at `dee1e1b7` |
+| r7's three non-equivalent survivors that the test targets: root from `int64` words for non-negative seeds (S8); key as a float (R4); key by absolute value (R2) | Killed (1; 1; 1) |
+| Key as a string (R5) | Survives: it differs from the registry only past the 4,300-digit limit |
+| r7's 15 killed mutants | Still killed. Seven gain the new test as a kill: `<` for `!=` (R1, 6), the key reduced mod 2^32 (R7, 3) or cast to `np.int64` (R8, 3), `setdefault` for the store (S4, 2), only small negative seeds cached as refused (S6, 3), the root from `int64` words for every seed (S7, 3), and the entropy as an array (E3, 57). The other eight keep r7's counts |
+| r7's 13 equivalent survivors: the key by xor; the root stored only once, stored on the class, or popped on read; the exact check made on the draw's type, by `isinstance` without `bool`, only below 2^63, or by the type's name; the entropy sliced, deep-copied or rebuilt from the seed; the period-zero tagged entropy copied; the period-zero tagged call also building the root | Survive: equivalent for streams and refusals, as r7 found with its probes |
+| r6's 50 mutants (r6's harness): 39 killed and 11 equivalent survivors | The same 39 are killed and the same 11 survive. Eight gain the new test as a kill: C2 and M9 (5 each), the root never rebuilt (C3, 6), the cache keyed on the draw object (C4, 4), the seed not recomputed (C5, 19), the old root returned (C6, 2), the check dropped with the refused seed cached (N3, 23) and an `int` seed's root typed `np.int64` (M12, 49). The Hypothesis-dependent counts stay within the ranges above |
+| The new test run alone | Fails at `dee1e1b7` and under 18 of the 82 mutants, and passes at `6361b4c0` |
 
 ## 5. Remaining work and restricted-files statement
 
