@@ -11,9 +11,12 @@ from hypothesis import strategies as st
 from populace_dynamics.income_resources.aggregate_tables import (
     AggregateCell,
     CaptureMismatchError,
+    CellToken,
     TableSpec,
     TableStructureError,
+    _cell_token,
     expand_html_table,
+    normalized_text,
     parse_html,
     parse_number,
     parse_ssa_4b,
@@ -91,6 +94,65 @@ def test_invented_merged_headers_and_numeric_superscript():
     assert grid[2][1].flags == ("7",)
     assert parse_number(grid[2][1].text).value == Decimal(1234)
     assert parse_number(grid[2][2].text).value is None
+
+
+@pytest.mark.parametrize(
+    "cell",
+    [
+        "<span>" * 1500 + "12<sup>a</sup>" + "</span>" * 1500,
+        "<span>" * 1500 + "12<sup>a</sup>",
+    ],
+    ids=["closed_spans", "open_spans"],
+)
+def test_invented_deep_cell_reads_without_recursion(cell):
+    """Regression: a cell's text and flags were collected recursively."""
+    html = f"<table><tr><th>Label</th></tr><tr><td>{cell}</td></tr></table>"
+    grid = expand_html_table(parse_html(html).find("table"))
+    assert (grid[1][0].text, grid[1][0].flags) == ("12", ("a",))
+
+
+def reference_cell_token(element):
+    """The recursive cell reader the iterative one replaced: the oracle."""
+    flags = []
+
+    def visit(el):
+        parts = [el.text or ""]
+        for child in el:
+            if child.tag == "sup" or (
+                child.tag == "a" and "fn" in child.get("href", "").lower()
+            ):
+                flag = normalized_text(child)
+                if flag:
+                    flags.append(flag)
+            else:
+                parts.append(visit(child))
+            parts.append(child.tail or "")
+        return " ".join(parts)
+
+    text = " ".join(visit(element).split())
+    return CellToken(text, tuple(flags), element.tag == "th")
+
+
+INVENTED_INLINE = st.recursive(
+    st.sampled_from(["", "w1", " w2 ", "\nw3\t", "4,5", "(D)"]),
+    lambda inner: st.builds(
+        lambda tag, parts: f"<{tag}>{''.join(parts)}</{tag.split()[0]}>",
+        st.sampled_from(
+            ["span", "b", "em", "p", "sup", 'a href="#FN1"', 'a href="#x"']
+        ),
+        st.lists(inner, max_size=3),
+    ),
+    max_leaves=12,
+)
+
+
+@settings(deadline=None, max_examples=300)
+@given(st.lists(INVENTED_INLINE, max_size=4), st.sampled_from(["td", "th"]))
+def test_invented_cell_token_matches_the_recursive_reader(parts, tag):
+    """Text, flags and header identity agree with the recursive oracle."""
+    html = f"<table><tr><{tag}>{''.join(parts)}</{tag}></tr></table>"
+    cell = parse_html(html).find(f".//{tag}")
+    assert _cell_token(cell) == reference_cell_token(cell)
 
 
 @settings(deadline=None)

@@ -23,9 +23,13 @@ refuses a code whose tables define it differently. Definitions come only from
 the chart's own State section, and a State named only in a date line, with no
 section heading, refuses. Paragraphs and headings end where HTML ends them,
 end tag or not, and a paragraph, div or heading is read from its own text, so
-a State heading in a block left open still names its State. A claimant line
-that names a State other than its section's refuses, since the section's own
-heading was not read. Every definition table of a section precedes its
+a State heading in a block left open still names its State. A heading is
+read whole and also line by line, a line being its text between the blocks
+HTML keeps inside it, so a block after a heading's words does not hide its
+State, claimant or date; a heading whose lines name two States refuses. A
+claimant line that names a State other than its section's refuses, since the
+section's own heading was not read; before any State heading, the chart
+refuses instead. Every definition table of a section precedes its
 first chart; a definition table after a chart refuses, because the source does
 not say which earlier chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
@@ -99,6 +103,37 @@ _TEXT_STOPS = {"p": PARAGRAPH_CLOSERS, "div": PARAGRAPH_CLOSERS} | {
 }
 
 
+def _lines(element: ET.Element) -> list[str]:
+    """A block's own text, split where a block nested in it starts or ends.
+
+    The text stops at the first block that ends the element
+    (``_TEXT_STOPS``). Before that only a heading can hold a nested block,
+    so a paragraph or div has at most one line. The walk does not recurse,
+    so deep nesting cannot exhaust the interpreter stack.
+    """
+    stops = _TEXT_STOPS[element.tag]
+    lines: list[list[str]] = [[element.text or ""]]
+    walk = [(element, iter(element))]
+    while walk:
+        node, children = walk[-1]
+        child = next(children, None)
+        if child is None:
+            walk.pop()
+            if walk:
+                if node.tag in PARAGRAPH_CLOSERS:
+                    lines.append([])
+                lines[-1].append(node.tail or "")
+            continue
+        if child.tag in stops:
+            break
+        if child.tag in PARAGRAPH_CLOSERS:
+            lines.append([])
+        lines[-1].append(child.text or "")
+        walk.append((child, iter(child)))
+    texts = (" ".join(" ".join(line).split()) for line in lines)
+    return [text for text in texts if text]
+
+
 def _own_text(element: ET.Element) -> str:
     """Normalize a block's own text, up to the first block that ends it.
 
@@ -106,21 +141,70 @@ def _own_text(element: ET.Element) -> str:
     element. A heading left open is read without the next heading or the
     table the tree nests under it.
     """
-    stops = _TEXT_STOPS[element.tag]
-    pieces: list[str] = []
+    return " ".join(_lines(element))
 
-    def collect(node: ET.Element) -> bool:
-        if node.text:
-            pieces.append(node.text)
-        for child in node:
-            if child.tag in stops or not collect(child):
-                return False
-            if child.tail:
-                pieces.append(child.tail)
-        return True
 
-    collect(element)
-    return " ".join(" ".join(pieces).split())
+def _state_heading(name: str, text: str) -> bool:
+    return bool(
+        re.fullmatch(
+            r"(?:[A-Z]\.\s*)?"
+            r"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|\s*-\s*)"
+            r"|Procedure\s*-\s*)?" + re.escape(name)
+            # The 2009 and 2010 sections append a postal code, as in
+            # "New Jersey (NJ)".
+            + r"(?:\s*\([A-Z]{2}\))?",
+            text,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _state_date_line(text: str) -> str | None:
+    """The State a line such as "Nevada Effective 1/1/30" opens with."""
+    for name in _STATES:
+        if re.match(re.escape(name) + r"\s+Effective\b", text, re.I):
+            return name
+    return None
+
+
+def _effective_line(text: str) -> bool:
+    return (
+        "effective" in text.lower()
+        and "Effective Dates:" not in text
+        and len(text) < 400
+        and bool(
+            re.search(r"payments? levels?", text, re.I)
+            or text.lower().startswith("effective ")
+            or _state_date_line(text)
+        )
+    )
+
+
+def _claimant_line(text: str) -> re.Match[str] | None:
+    if len(text) >= 250:
+        return None
+    return re.search(
+        r"(?:^|\s)(Individual|Recipient|Couple)"
+        r"(?:\s+payments?)?(?:\s+levels)?"
+        r"(?:\s+(?:for|or)\s+.+)?$",
+        text,
+        re.IGNORECASE,
+    )
+
+
+def _named_states(text: str) -> list[str]:
+    # "Washington, D.C." names the District, not the State of Washington.
+    text = re.sub(
+        r"\bWashington,?\s+D\.?\s?C\b\.?",
+        "District of Columbia",
+        text,
+        flags=re.I,
+    )
+    return [
+        name
+        for name in _STATES
+        if re.search(rf"\b{re.escape(name)}\b", text, re.I)
+    ]
 
 
 def _blank(text: str) -> str:
@@ -245,72 +329,49 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
             # Only the block's own text: a table or heading nested under a
             # heading left open is read in turn, not as part of it.
             text = _own_text(element)
-            for name in _STATES:
-                if re.fullmatch(
-                    r"(?:[A-Z]\.\s*)?"
-                    r"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|\s*-\s*)"
-                    r"|Procedure\s*-\s*)?" + re.escape(name)
-                    # The 2009 and 2010 sections append a postal code, as in
-                    # "New Jersey (NJ)".
-                    + r"(?:\s*\([A-Z]{2}\))?",
-                    text,
-                    re.IGNORECASE,
-                ):
-                    if state != name:
-                        state = name
-                        claimant = None
-                        effective_text = ""
-                        dates = ()
-                        definitions = []
-                        charted = False
-                    break
-            for name in _STATES:
-                if re.match(re.escape(name) + r"\s+Effective\b", text, re.I):
-                    if state != name:
-                        # Definitions are collected per section heading; a
-                        # State named only in a date line has none of its
-                        # own, so the reader refuses rather than reuse
-                        # another State's.
-                        raise TableStructureError(
-                            "POMS State changes without a section heading"
+            # HTML keeps a paragraph or div inside a heading, after its
+            # words or around them, so a heading is also read line by line.
+            # Its whole text comes first, and a whole-text State date line
+            # stays a date line.
+            candidates = [text]
+            if element.tag in _HEADINGS and not _state_date_line(text):
+                candidates += _lines(element)
+            headed = [
+                name
+                for name in _STATES
+                if any(_state_heading(name, line) for line in candidates)
+            ]
+            if len(headed) > 1:
+                raise TableStructureError("POMS heading names two States")
+            if headed and state != headed[0]:
+                state = headed[0]
+                claimant = None
+                effective_text = ""
+                dates = ()
+                definitions = []
+                charted = False
+            dated = _state_date_line(text)
+            if dated and state != dated:
+                # Definitions are collected per section heading; a State
+                # named only in a date line has none of its own, so the
+                # reader refuses rather than reuse another State's.
+                raise TableStructureError(
+                    "POMS State changes without a section heading"
+                )
+            for line in candidates:
+                if _effective_line(line):
+                    effective_text = line
+                    dates = tuple(
+                        dict.fromkeys(
+                            _date_string(m[0]) for m in _DATE.finditer(line)
                         )
+                    )
                     break
-            if (
-                "effective" in text.lower()
-                and "Effective Dates:" not in text
-                and len(text) < 400
-                and (
-                    re.search(r"payments? levels?", text, re.I)
-                    or text.lower().startswith("effective ")
-                    or any(
-                        re.match(
-                            re.escape(name) + r"\s+effective\b", text, re.I
-                        )
-                        for name in _STATES
-                    )
-                )
-            ):
-                effective_text = text
-                dates = tuple(
-                    dict.fromkeys(
-                        _date_string(m[0]) for m in _DATE.finditer(text)
-                    )
-                )
-            if len(text) < 250:
-                match = re.search(
-                    r"(?:^|\s)(Individual|Recipient|Couple)"
-                    r"(?:\s+payments?)?(?:\s+levels)?"
-                    r"(?:\s+(?:for|or)\s+.+)?$",
-                    text,
-                    re.IGNORECASE,
-                )
+            for line in candidates:
+                match = _claimant_line(line)
                 if match:
-                    named = [
-                        name
-                        for name in _STATES
-                        if re.search(rf"\b{re.escape(name)}\b", text, re.I)
-                    ]
-                    if named and state not in named:
+                    named = _named_states(line)
+                    if state is not None and named and state not in named:
                         # The section heading that should have named this
                         # State was not read, so refuse rather than chart it
                         # under the State before it.
@@ -322,6 +383,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                         if match[1].lower() == "couple"
                         else "individual"
                     )
+                    break
         return True
 
     # Document order without recursion, so deep nesting cannot exhaust the

@@ -602,6 +602,13 @@ def invented_piece(kind: str, body: str, close: bool, wrap: str) -> str:
             head, state = body.rsplit(" for ", 1)
             tag = wrap.removeprefix("state:")
             body = f"{head} for <{tag}>{state}</{tag}>"
+        elif wrap.startswith("follow:"):
+            # A block that HTML keeps inside the heading, after its words.
+            tag = wrap.removeprefix("follow:")
+            return f"<h3>{body}<{tag}>Invented note</{tag}></h3>"
+        elif wrap == "end:h4":
+            # Any heading end tag ends the open heading.
+            return f"<h3>{body}</h4>"
         elif wrap:
             body = f"<{wrap}>{body}</{wrap}>"
         return f"<h3>{body}</h3>"
@@ -772,6 +779,8 @@ def test_invented_selectors_do_not_depend_on_blocks_inside_headings(
                 st.sampled_from(
                     ["", "div", "section", "p", "blockquote"]
                     + ["state:div", "state:section", "state:span"]
+                    + ["follow:div", "follow:p", "follow:section"]
+                    + ["end:h4"]
                 )
             )
             if kind == "h3"
@@ -785,8 +794,17 @@ def test_invented_selectors_do_not_depend_on_blocks_inside_headings(
     ) == poms_outcome(invented_rendering(pieces, closed))
 
 
-@pytest.mark.parametrize("before", ["", "California"])
-def test_invented_claimant_line_naming_another_state_is_refused(before):
+@pytest.mark.parametrize(
+    ("before", "message"),
+    [
+        # Before any State heading, the chart itself refuses.
+        ("", "lacks state or claimant context"),
+        ("California", "names another State"),
+    ],
+)
+def test_invented_claimant_line_naming_another_state_is_refused(
+    before, message
+):
     """A State whose heading went unread refuses at its claimant line."""
     section = (
         invented_section("California", [[("A", "Invented first")]])
@@ -798,7 +816,7 @@ def test_invented_claimant_line_naming_another_state_is_refused(before):
         "<p>Invented heading the reader does not know</p>"
         + INVENTED_CHART.format(state="Nevada"),
     )
-    with pytest.raises(TableStructureError, match="names another State"):
+    with pytest.raises(TableStructureError, match=message):
         describe_poms_tables(payload)
 
 
@@ -863,6 +881,201 @@ def test_invented_optional_cell_and_paragraph_ends_keep_the_grid(rows):
         ]
 
     assert grid(render(False)) == grid(render(True))
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "<h3>Nevada<p>Invented note</p>",
+        "<h3>Nevada<p>Monthly payment levels effective January 1, 2030</p>",
+        "<h3>Nevada<div>Invented subtitle</div></h3>",
+        "<h3>Nevada<p>Invented subtitle</p></h3>",
+        "<h3>Nevada</h4><p>Invented note</p>",
+        "<h3>Description of supplements for Nevada<section>Invented"
+        "</section></h3>",
+        # The State follows the nested block, in the heading's own text.
+        "<h3><div>Invented subtitle</div>Nevada</h3>",
+        "<h3><p>Invented subtitle</p>Description of supplements for Nevada",
+        # A div's own text ends at a block nested in it.
+        "<div>Description of supplements for Nevada<div>Invented</div></div>",
+    ],
+)
+def test_invented_block_after_a_state_heading_does_not_hide_it(heading):
+    """Regression: a block after a heading's words kept California."""
+    spec, payload = invented_spec_for(
+        invented_nevada_after_california(heading), 1
+    )
+    assert spec.selector["state"] == "Nevada"
+    assert spec.selector["definitions_table_indexes"] == []
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "<h4>Individual<p>Invented note</p>",
+        "<h4>Individual<div>Invented note</div></h4>",
+        "<h4>Individual</h5>",
+    ],
+)
+def test_invented_block_after_a_claimant_heading_does_not_hide_it(line):
+    """Regression: a block after "Individual" kept the couple claimant."""
+    chart = f"<table>{INVENTED_HEADER}</table>"
+    payload = invented_payload(
+        "<h3>Description of supplements for California</h3>"
+        + invented_definitions([("A", "Invented first")])
+        + "<h4>Couple</h4>"
+        + chart
+        + line
+        + chart
+    )
+    assert [c["claimant_type"] for c in describe_poms_tables(payload)] == [
+        "couple",
+        "individual",
+    ]
+
+
+def test_invented_effective_line_after_heading_words_is_read():
+    payload = invented_payload(
+        "<h3>Description of supplements for California</h3>"
+        + invented_definitions([("A", "Invented first")])
+        # The date line is the heading's own text after a nested block.
+        + "<h5><div>Invented note</div>Effective January 1, 2031</h5>"
+        + f"<h4>Individual</h4><table>{INVENTED_HEADER}</table>"
+    )
+    spec, _ = invented_spec_for(payload)
+    assert spec.selector["effective_from"] == "2031-01-01"
+
+
+def test_invented_table_inside_an_open_heading_is_not_heading_text():
+    """HTML nests a table in a heading left open; it is read as a table."""
+    spec, _ = invented_spec_for(
+        invented_nevada_after_california(
+            "<h3>Description of supplements for Nevada"
+            "<table><tr><td>Utah</td></tr></table>"
+        ),
+        1,
+    )
+    assert spec.selector["state"] == "Nevada"
+
+
+def test_invented_heading_whose_lines_name_two_states_is_refused():
+    payload = invented_nevada_after_california(
+        "<h3>Nevada<div>Utah</div></h3>"
+    )
+    with pytest.raises(TableStructureError, match="names two States"):
+        describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize(
+    "page",
+    [
+        "<h3>"
+        + "<div>" * 1500
+        + "Description of supplements for Nevada"
+        + "</div>" * 1500
+        + "</h3>",
+        "<p>" + "<span>" * 1500 + "Nevada" + "</span>" * 1500 + "</p>",
+        "<h3>" + "<span>" * 1500 + "Nevada",
+    ],
+    ids=["divs_in_heading", "spans_in_paragraph", "open_spans_in_heading"],
+)
+def test_invented_deeply_nested_heading_text_reads_without_recursion(page):
+    """Regression: a heading's own text was collected recursively."""
+    spec, _ = invented_spec_for(invented_nevada_after_california(page), 1)
+    assert spec.selector["state"] == "Nevada"
+
+
+def test_invented_claimant_line_before_any_state_heading_is_not_refused():
+    """With no State yet, a chart would refuse, and a heading resets it."""
+    payload = invented_payload(
+        "<p>Individual payment levels for Nevada</p>",
+        invented_section("California", [[("A", "Invented first")]]),
+    )
+    assert [c["state"] for c in describe_poms_tables(payload)] == [
+        "California"
+    ]
+
+
+def test_invented_washington_dc_names_the_district():
+    payload = invented_payload(
+        invented_section(
+            "District of Columbia", [[("A", "Invented first")]]
+        ).replace(
+            "a. Individual payment levels for District of Columbia",
+            "Individual or couple for Washington, D.C.",
+        )
+    )
+    (context,) = describe_poms_tables(payload)
+    assert context["state"] == "District of Columbia"
+    assert context["claimant_type"] == "individual"
+
+
+def invented_grid(html: str) -> list[list[str]]:
+    table = parse_html(html).find(".//table")
+    return [[_blank(c.text) for c in row] for row in expand_html_table(table)]
+
+
+@pytest.mark.parametrize("section", ["thead", "tbody", "tfoot"])
+def test_invented_table_section_start_ends_the_open_cell(section):
+    """Regression: a section start tag left the open header cell open."""
+    html = (
+        "<table><thead><tr><th>Row<th>Col A<th>Col B"
+        f"<{section}><tr><td>Label<td>1<td>2</table>"
+    )
+    assert invented_grid(html) == [
+        ["Row", "Col A", "Col B"],
+        ["Label", "1", "2"],
+    ]
+
+
+@pytest.mark.parametrize("tag", ["caption", "colgroup"])
+def test_invented_caption_or_colgroup_start_ends_the_open_row(tag):
+    html = f"<table><tr><td>a<td>b<{tag}><tr><td>c<td>d</table>"
+    assert invented_grid(html) == [["a", "b"], ["c", "d"]]
+
+
+@pytest.mark.parametrize("start", ["<tr>", "<td>", "<th>"])
+def test_invented_row_or_cell_start_ends_an_open_caption(start):
+    table = parse_html(
+        f"<table><caption>Invented caption{start}a</table>"
+    ).find(".//table")
+    caption = table.find("caption")
+    assert normalized_text(caption) == "Invented caption"
+    assert caption.find(".//tr") is None
+    assert caption.find(".//td") is None and caption.find(".//th") is None
+
+
+def test_invented_row_start_ends_the_open_row():
+    """HTML never nests a row in a row."""
+    table = parse_html("<table><tr><td>a<tr><td>b</table>").find(".//table")
+    rows = list(table.iter("tr"))
+    assert len(rows) == 2
+    assert all(row.find(".//tr") is None for row in rows)
+
+
+@pytest.mark.parametrize("end", ["</h3>", "</h4>", "</h1>"])
+def test_invented_any_heading_end_tag_ends_the_open_heading(end):
+    root = parse_html(f"<h3>Invented heading{end}<p>Invented note</p>")
+    assert root.find(".//h3//p") is None
+    assert normalized_text(root.find(".//h3")) == "Invented heading"
+
+
+def test_invented_heading_end_tag_stops_at_its_scope():
+    """A heading end tag inside a cell does not end a heading outside it."""
+    root = parse_html(
+        "<h3>Invented<table><tr><td>a</h4>b</td></tr></table>c</h3>"
+    )
+    # The ignored end tag leaves "a" and "b" as one run of cell text.
+    assert normalized_text(root.find(".//td")) == "ab"
+    assert root.find(".//h3//table") is not None
+
+
+def test_invented_heading_start_ends_only_a_heading_that_is_current():
+    """HTML pops an open heading only when it is the current node."""
+    root = parse_html("<h3><span>Invented<h4>Other</h4></span></h3>")
+    assert root.find(".//h3//h4") is not None
+    root = parse_html("<h3>Invented<h4>Other</h4>")
+    assert root.find(".//h3//h4") is None
 
 
 def test_invented_definition_table_after_a_chart_is_refused():

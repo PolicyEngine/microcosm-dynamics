@@ -181,24 +181,34 @@ PARAGRAPH_CLOSERS = frozenset(
 class _HTMLTree(HTMLParser):
     """Build a tolerant stdlib tree; publishers' void tags never nest.
 
-    Paragraphs, headings, cells and rows end where the WHATWG parsing rules
-    end them, even when the source omits the end tag, so a paragraph never
-    holds the headings and tables that follow it. ``table`` closes an open
-    paragraph as in standards mode; every pinned HTML capture declares a
-    doctype. Inline end tags misnested across an open paragraph, which HTML
-    resolves with its adoption agency rules, are not modelled: here they
-    close at the matching element.
+    Paragraphs, headings, cells, rows, table sections and captions end
+    where the WHATWG parsing rules end them, even when the source omits the
+    end tag, so a paragraph never holds the headings and tables that follow
+    it. ``table`` closes an open paragraph as in standards mode; every
+    pinned HTML capture declares a doctype. Any h1-h6 end tag ends the open
+    heading in scope, whichever its level. A caption, colgroup or table
+    section start tag ends the open cell, row, section or caption of its
+    table, and a row or cell start tag ends an open caption. ``col`` is not
+    modelled that way, since HTML places it in an open colgroup, as every
+    ``col`` in the pinned captures is placed. Other end tags close at the
+    matching element, regardless of scope, and inline end tags misnested
+    across an open paragraph, which HTML resolves with its adoption agency
+    rules, are not modelled.
     """
 
     _VOID = frozenset(
         "area base br col embed hr img input link meta param source track wbr".split()
     )
     _HEADINGS = frozenset("h1 h2 h3 h4 h5 h6".split())
-    # A paragraph is in button scope unless one of these encloses it.
-    _BUTTON_SCOPE = frozenset(
-        "applet button caption html marquee object select table td template th".split()
+    # An element is in scope unless one of these encloses it, and in button
+    # scope unless a button does too.
+    _SCOPE = frozenset(
+        "applet caption html marquee object select table td template th".split()
     )
+    _BUTTON_SCOPE = _SCOPE | {"button"}
     _TABLE_SECTIONS = frozenset("table thead tbody tfoot".split())
+    # Start tags that clear the stack back to a table context.
+    _TABLE_CONTEXT = frozenset("caption colgroup thead tbody tfoot".split())
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -227,6 +237,14 @@ class _HTMLTree(HTMLParser):
             self._close_paragraph()
         if tag in self._HEADINGS and self.stack[-1].tag in self._HEADINGS:
             self.stack.pop()
+        if tag in self._TABLE_CONTEXT:
+            # Anything open in the innermost table ends with it.
+            for i in range(len(self.stack) - 1, 0, -1):
+                if self.stack[i].tag == "table":
+                    del self.stack[i + 1 :]
+                    break
+        if tag in {"tr", "td", "th"}:
+            self._close_open({"caption"}, frozenset({"table"}))
         if tag in {"td", "th"}:
             # A new cell closes the open one, with anything left open in it.
             self._close_open({"td", "th"}, self._TABLE_SECTIONS | {"tr"})
@@ -243,6 +261,10 @@ class _HTMLTree(HTMLParser):
             self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
+        if tag in self._HEADINGS:
+            # Any h1-h6 end tag ends the open heading in scope.
+            self._close_open(self._HEADINGS, self._SCOPE)
+            return
         for i in range(len(self.stack) - 1, 0, -1):
             if self.stack[i].tag == tag:
                 del self.stack[i:]
@@ -273,23 +295,38 @@ def normalized_text(element: ET.Element) -> str:
 
 
 def _cell_token(element: ET.Element) -> CellToken:
+    """Read a cell's text and footnote flags in document order.
+
+    The walk keeps its own stack, so a deeply nested cell cannot exhaust
+    Python's. A pending item is an element to read, a one-element tuple
+    holding a footnote marker, or a tail string.
+
+    A ``br`` or nested block joins its lines with a space, so two amounts
+    stacked that way in one cell would read as one space-grouped number.
+    No pinned cell, or paragraph of a cell, has a number on each side of a
+    ``br``; POMS charts stack amounts in paragraphs, which the POMS reader
+    splits into subrows.
+    """
     flags = []
-
-    def visit(el):
-        parts = [el.text or ""]
-        for child in el:
-            if child.tag == "sup" or (
-                child.tag == "a" and "fn" in child.get("href", "").lower()
-            ):
-                flag = normalized_text(child)
-                if flag:
-                    flags.append(flag)
-            else:
-                parts.append(visit(child))
-            parts.append(child.tail or "")
-        return " ".join(parts)
-
-    text = " ".join(visit(element).split())
+    parts = []
+    pending: list[ET.Element | tuple[ET.Element] | str] = [element]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, str):
+            parts.append(item)
+        elif isinstance(item, tuple):
+            flag = normalized_text(item[0])
+            if flag:
+                flags.append(flag)
+        else:
+            parts.append(item.text or "")
+            for child in list(item)[::-1]:
+                pending.append(child.tail or "")
+                footnote = child.tag == "sup" or (
+                    child.tag == "a" and "fn" in child.get("href", "").lower()
+                )
+                pending.append((child,) if footnote else child)
+    text = " ".join(" ".join(parts).split())
     return CellToken(text, tuple(flags), element.tag == "th")
 
 
