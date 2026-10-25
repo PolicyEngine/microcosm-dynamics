@@ -416,6 +416,15 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # The income-and-resources retirement-plan rules (WP2) are opt-in
+    # statutory references; nothing in the historical projection imports
+    # them.
+    Path("src/populace_dynamics/income_resources/__init__.py"),
+    Path("src/populace_dynamics/income_resources/contribution_limits.py"),
+    Path("src/populace_dynamics/income_resources/early_distribution.py"),
+    Path("src/populace_dynamics/income_resources/pension_cola.py"),
+    Path("src/populace_dynamics/income_resources/retirement_resources.py"),
+    Path("src/populace_dynamics/income_resources/retirement_rules.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

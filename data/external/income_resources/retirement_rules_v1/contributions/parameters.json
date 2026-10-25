@@ -1,0 +1,408 @@
+{
+  "version": "retirement_rules_v1",
+  "published_limits": {
+    "1989": {
+      "elective_deferral": 7627,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1991": {
+      "elective_deferral": 8475,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1992": {
+      "elective_deferral": 8728,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1993": {
+      "elective_deferral": 8994,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1994": {
+      "elective_deferral": 9240,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1995": {
+      "elective_deferral": 9240,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1996": {
+      "elective_deferral": 9500,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1997": {
+      "elective_deferral": 9500,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1998": {
+      "elective_deferral": 10000,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0
+    },
+    "1999": {
+      "elective_deferral": 10000,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0,
+      "ira": 2000
+    },
+    "2000": {
+      "elective_deferral": 10500,
+      "annual_additions": 30000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0,
+      "ira": 2000
+    },
+    "2001": {
+      "elective_deferral": 10500,
+      "annual_additions": 35000,
+      "employer_catch_up": 0,
+      "ira_catch_up": 0,
+      "ira": 2000
+    },
+    "2002": {
+      "elective_deferral": 11000,
+      "employer_catch_up": 1000,
+      "annual_additions": 40000,
+      "ira": 3000,
+      "ira_catch_up": 500
+    },
+    "2003": {
+      "elective_deferral": 12000,
+      "employer_catch_up": 2000,
+      "annual_additions": 40000,
+      "ira": 3000,
+      "ira_catch_up": 500
+    },
+    "2004": {
+      "elective_deferral": 13000,
+      "employer_catch_up": 3000,
+      "annual_additions": 41000,
+      "ira": 3000,
+      "ira_catch_up": 500
+    },
+    "2005": {
+      "elective_deferral": 14000,
+      "employer_catch_up": 4000,
+      "annual_additions": 42000,
+      "ira": 4000,
+      "ira_catch_up": 500
+    },
+    "2006": {
+      "elective_deferral": 15000,
+      "employer_catch_up": 5000,
+      "annual_additions": 44000,
+      "ira": 4000,
+      "ira_catch_up": 1000
+    },
+    "2007": {
+      "elective_deferral": 15500,
+      "employer_catch_up": 5000,
+      "annual_additions": 45000,
+      "ira": 4000,
+      "ira_catch_up": 1000
+    },
+    "2008": {
+      "elective_deferral": 15500,
+      "employer_catch_up": 5000,
+      "annual_additions": 46000,
+      "ira": 5000,
+      "ira_catch_up": 1000
+    },
+    "2009": {
+      "elective_deferral": 16500,
+      "employer_catch_up": 5500,
+      "annual_additions": 49000,
+      "ira": 5000,
+      "ira_catch_up": 1000
+    },
+    "2010": {
+      "elective_deferral": 16500,
+      "employer_catch_up": 5500,
+      "annual_additions": 49000,
+      "ira": 5000,
+      "ira_catch_up": 1000
+    },
+    "2011": {
+      "elective_deferral": 16500,
+      "employer_catch_up": 5500,
+      "annual_additions": 49000,
+      "ira": 5000,
+      "ira_catch_up": 1000
+    },
+    "2012": {
+      "elective_deferral": 17000,
+      "employer_catch_up": 5500,
+      "annual_additions": 50000,
+      "ira": 5000,
+      "ira_catch_up": 1000
+    },
+    "2013": {
+      "elective_deferral": 17500,
+      "employer_catch_up": 5500,
+      "annual_additions": 51000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2014": {
+      "elective_deferral": 17500,
+      "employer_catch_up": 5500,
+      "annual_additions": 52000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2015": {
+      "elective_deferral": 18000,
+      "employer_catch_up": 6000,
+      "annual_additions": 53000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2016": {
+      "elective_deferral": 18000,
+      "employer_catch_up": 6000,
+      "annual_additions": 53000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2017": {
+      "elective_deferral": 18000,
+      "employer_catch_up": 6000,
+      "annual_additions": 54000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2018": {
+      "elective_deferral": 18500,
+      "employer_catch_up": 6000,
+      "annual_additions": 55000,
+      "ira": 5500,
+      "ira_catch_up": 1000
+    },
+    "2019": {
+      "elective_deferral": 19000,
+      "employer_catch_up": 6000,
+      "annual_additions": 56000,
+      "ira": 6000,
+      "ira_catch_up": 1000
+    },
+    "2020": {
+      "elective_deferral": 19500,
+      "employer_catch_up": 6500,
+      "annual_additions": 57000,
+      "ira": 6000,
+      "ira_catch_up": 1000
+    },
+    "2021": {
+      "elective_deferral": 19500,
+      "employer_catch_up": 6500,
+      "annual_additions": 58000,
+      "ira": 6000,
+      "ira_catch_up": 1000
+    },
+    "2022": {
+      "elective_deferral": 20500,
+      "employer_catch_up": 6500,
+      "annual_additions": 61000,
+      "ira": 6000,
+      "ira_catch_up": 1000
+    },
+    "2023": {
+      "elective_deferral": 22500,
+      "employer_catch_up": 7500,
+      "annual_additions": 66000,
+      "ira": 6500,
+      "ira_catch_up": 1000
+    },
+    "2024": {
+      "elective_deferral": 23000,
+      "employer_catch_up": 7500,
+      "annual_additions": 69000,
+      "ira": 7000,
+      "ira_catch_up": 1000
+    },
+    "2025": {
+      "elective_deferral": 23500,
+      "employer_catch_up": 7500,
+      "annual_additions": 70000,
+      "ira": 7000,
+      "ira_catch_up": 1000,
+      "employer_catch_up_60_63": 11250
+    },
+    "2026": {
+      "elective_deferral": 24500,
+      "employer_catch_up": 8000,
+      "annual_additions": 72000,
+      "ira": 7500,
+      "ira_catch_up": 1100,
+      "employer_catch_up_60_63": 11250
+    }
+  },
+  "published_sources": {
+    "2026": "notice_2025_67.pdf pp.1,2,4",
+    "2002-2026": "Annual IRS announcements listed in annual_announcements; the IRS historical tables pp. 1-6 independently state all five ordinary dollar ceilings for 2002-2025.",
+    "1989,1991-2001": "IRS prior COLA tables, pp. 7-9 (elective deferral and annual additions); IRS IRA history Table 4 (IRA limits in 1999-2001 only); pre-2002 catch-ups were absent and introduced in 2002 by Pub. L. 107-16 section 631 and section 601."
+  },
+  "projection_bases": {
+    "elective_deferral": {
+      "amount": 15000,
+      "base_year": 2005,
+      "index": "q3_cpi_u",
+      "rounding_unit": 500,
+      "authority": "26 USC402(g)(4)"
+    },
+    "employer_catch_up": {
+      "amount": 5000,
+      "base_year": 2005,
+      "index": "q3_cpi_u",
+      "rounding_unit": 500,
+      "authority": "26 USC414(v)(2)(C)(i)"
+    },
+    "annual_additions": {
+      "amount": 40000,
+      "base_year": 2001,
+      "index": "q3_cpi_u",
+      "rounding_unit": 1000,
+      "authority": "26 USC415(d)"
+    },
+    "ira": {
+      "amount": 5000,
+      "base_year": 2007,
+      "index": "section_1f",
+      "rounding_unit": 500,
+      "authority": "26 U.S.C. 219(b)(5)(C)(i)-(ii), 1(f)(3)-(6); direct base-year ratio, without section 415(d) high-water protection"
+    },
+    "ira_catch_up": {
+      "amount": 1000,
+      "base_year": 2022,
+      "index": "section_1f",
+      "rounding_unit": 100,
+      "authority": "26 U.S.C. 219(b)(5)(C)(iii), 1(f)(3)-(6); direct base-year ratio"
+    },
+    "employer_catch_up_60_63": {
+      "amount": 11250,
+      "base_year": 2024,
+      "index": "q3_cpi_u",
+      "rounding_unit": 500,
+      "authority": "26 U.S.C. 414(v)(2)(C)(i),(E)(i); round the increase in $500 units from the $11,250 base"
+    }
+  },
+  "annual_announcements": {
+    "2002": {
+      "authority": "IRS Notice 2001-84",
+      "file": "irb_2001_53.pdf"
+    },
+    "2003": {
+      "authority": "IRS Notice 2002-71",
+      "file": "irb_2002_45.pdf"
+    },
+    "2004": {
+      "authority": "IRS Notice 2003-73",
+      "file": "irb_2003_45.pdf"
+    },
+    "2005": {
+      "authority": "IRS Notice 2004-72",
+      "file": "irb_2004_46.pdf"
+    },
+    "2006": {
+      "authority": "IRS Notice 2005-75",
+      "file": "irb_2005_45.pdf"
+    },
+    "2007": {
+      "authority": "IRS Notice 2006-98",
+      "file": "irb_2006_46.pdf"
+    },
+    "2008": {
+      "authority": "IRS Notice 2007-87",
+      "file": "irb_2007_45.pdf"
+    },
+    "2009": {
+      "authority": "IRS Notice 2008-102",
+      "file": "notice_2008_102.pdf"
+    },
+    "2010": {
+      "authority": "IRS Notice 2009-94",
+      "file": "notice_2009_94.pdf"
+    },
+    "2011": {
+      "authority": "IRS Notice 2010-78",
+      "file": "irb_2010_49.pdf"
+    },
+    "2012": {
+      "authority": "IRS Notice 2011-90",
+      "file": "irb_2011_47.pdf"
+    },
+    "2013": {
+      "authority": "IRS Notice 2012-67",
+      "file": "irb_2012_50.pdf"
+    },
+    "2014": {
+      "authority": "IRS Notice 2013-73",
+      "file": "irb_2013_49.pdf"
+    },
+    "2015": {
+      "authority": "IRS Notice 2014-70",
+      "file": "irb_2014_48.pdf"
+    },
+    "2016": {
+      "authority": "IRS Notice 2015-75",
+      "file": "notice_2015_75.pdf"
+    },
+    "2017": {
+      "authority": "IRS Notice 2016-62",
+      "file": "notice_2016_62.pdf"
+    },
+    "2018": {
+      "authority": "IRS Notice 2017-64",
+      "file": "notice_2017_64.pdf"
+    },
+    "2019": {
+      "authority": "IRS Notice 2018-83",
+      "file": "notice_2018_83.pdf"
+    },
+    "2020": {
+      "authority": "IRS Notice 2019-59",
+      "file": "notice_2019_59.pdf"
+    },
+    "2021": {
+      "authority": "IRS Notice 2020-79",
+      "file": "notice_2020_79.pdf"
+    },
+    "2022": {
+      "authority": "IRS Notice 2021-61",
+      "file": "notice_2021_61.pdf"
+    },
+    "2023": {
+      "authority": "IRS Notice 2022-55",
+      "file": "notice_2022_55.pdf"
+    },
+    "2024": {
+      "authority": "IRS Notice 2023-75",
+      "file": "notice_2023_75.pdf"
+    },
+    "2025": {
+      "authority": "IRS Notice 2024-80",
+      "file": "notice_2024_80.pdf"
+    },
+    "2026": {
+      "authority": "IRS Notice 2025-67",
+      "file": "notice_2025_67.pdf"
+    }
+  }
+}
