@@ -190,6 +190,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/b2.py"),
         Path("src/populace_dynamics/track_b/holdout_registry.py"),
         Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
+        Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -254,6 +255,10 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/group_breakdowns/fra68.py"),
         Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
         Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+        # The PSID income and wealth readers (D1a) are opt-in source readers;
+        # nothing in the historical projection imports them.
+        Path("src/populace_dynamics/data/psid_income_wealth.py"),
+        Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
         Path("src/populace_dynamics/data/sipp_income.py"),
         Path("src/populace_dynamics/data/sipp_income_registry.py"),
     )
@@ -398,6 +403,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.b2",
         "populace_dynamics.track_b.holdout_registry",
         "populace_dynamics.engine.forward_earnings_s1_v1",
+        "populace_dynamics.engine.forward_earnings_p2_v1",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"
@@ -530,6 +536,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert epuf_modules.isdisjoint(reachable), (
         "the opt-in EPUF modules became reachable from the birth-evidence "
         f"reducer: {sorted(epuf_modules & reachable)}"
+    )
+    income_wealth_modules = {
+        "populace_dynamics.data.psid_income_wealth",
+        "populace_dynamics.data.psid_income_wealth_registry",
+    }
+    assert income_wealth_modules.issubset(module_paths)
+    assert income_wealth_modules.isdisjoint(reachable), (
+        "the opt-in PSID income and wealth readers became reachable from "
+        "the birth-evidence reducer: "
+        f"{sorted(income_wealth_modules & reachable)}"
     )
     sipp_income_modules = {
         "populace_dynamics.data.sipp_income",
