@@ -775,9 +775,12 @@ def exact_adapter_cell(base, fixed, prescribed, weights):
     baseline deaths, ``D`` its fixed rows' deaths and ``E`` its free rows'
     baseline deaths; with no fixed row or no free deaths the factor is one.
     Also returns whether the adapter's float64 factor is unreliable: when
-    ``P - D`` or ``E`` is within a thousandth of ``max(P, D)``, the
-    subtraction can cancel, absorb ``E`` or overflow the division.  Exact
-    sums keep an ``E`` that would underflow in float64.
+    ``P - D`` or ``E`` is within a hundredth of ``max(P, D)``, the
+    subtraction can cancel, absorb ``E`` or overflow the division; when
+    ``max(P, D)`` is below ``2**-1000``, float64 rounds its products
+    absolutely, not relatively.  Elsewhere a first-order error bound keeps
+    the adapter within ``RTOL`` and ``ATOL`` (the design note's intended
+    differences).  Exact sums keep an ``E`` that would underflow in float64.
     """
     weight = [Fraction(w) for w in weights]
     population = sum(
@@ -791,9 +794,13 @@ def exact_adapter_cell(base, fixed, prescribed, weights):
     )
     factor, unreliable = Fraction(1), False
     if fixed.any():
-        scale = max(population, fixed_deaths) / 1000
+        largest = max(population, fixed_deaths)
         gap = abs(population - fixed_deaths)
-        unreliable = 0 < free_deaths <= scale or 0 < gap <= scale
+        unreliable = (
+            0 < free_deaths <= largest / 100
+            or 0 < gap <= largest / 100
+            or 0 < largest < Fraction(2) ** -1000
+        )
         if free_deaths > 0:
             factor = max(population - fixed_deaths, 0) / free_deaths
     q = [
@@ -803,8 +810,41 @@ def exact_adapter_cell(base, fixed, prescribed, weights):
     return np.asarray(q, dtype=float), unreliable
 
 
+TINY = 5e-324  # The smallest subnormal float64.
+
+
 @PROPERTY
 @given(invented_adapter_cells())
+@example(  # Subnormal sums round absolutely: the factor errs by percents.
+    (
+        np.array([12 * TINY, 0.5, 41 * TINY]),
+        np.array([True, False, False]),
+        np.array([0.0, 0.5, 41 * TINY]),
+        np.array([1.0, 0.0, 0.3]),
+        np.zeros(3, dtype=int),
+        np.full(3, 50),
+    )
+)
+@example(  # The same with single subnormal rows.
+    (
+        np.array([TINY, 0.5, TINY]),
+        np.array([True, False, False]),
+        np.array([0.0, 0.5, TINY]),
+        np.array([0.3, 0.0, 1.7]),
+        np.zeros(3, dtype=int),
+        np.full(3, 50),
+    )
+)
+@example(  # Equal subnormal P and D, which leave no gap to flag.
+    (
+        np.array([0.0, 0.0, 0.5, 2 * TINY]),
+        np.array([True, True, False, False]),
+        np.array([TINY, TINY, 0.5, 2 * TINY]),
+        np.array([0.3, 0.3, 0.0, 0.3]),
+        np.zeros(4, dtype=int),
+        np.full(4, 50),
+    )
+)
 @example(  # The adapter's factor overflows on a subnormal free row.
     (
         np.array([2.225073858507e-311, 0.5]),
@@ -859,7 +899,8 @@ def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
     q, log = normalize_probabilities(
         base, np.ones(len(base)), fixed, prescribed, cells, weights
     )
-    with np.errstate(over="ignore"):  # The adapter's intended overflow.
+    # The adapter's intended overflow, and the 0 * inf it can then form.
+    with np.errstate(over="ignore", invalid="ignore"):
         old, _ = _net_of_di_origin(
             prescribed, base, fixed, sex, age, weights, SINGLE_YEAR_AGE_BANDS
         )
@@ -882,7 +923,8 @@ def test_unit_risk_matches_adapter_on_every_unclipped_cell(inputs):
         )
         if unreliable:
             # Intended: the adapter's float64 factor cancels, absorbs the
-            # free deaths or overflows here; SM1 meets the exact formula.
+            # free deaths, overflows or rounds subnormal sums here; SM1
+            # meets the exact formula.
             continue
         np.testing.assert_allclose(q[mask], old[mask], rtol=RTOL, atol=ATOL)
 
