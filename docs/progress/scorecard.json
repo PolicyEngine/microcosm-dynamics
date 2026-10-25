@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind the development-scorecard sections of docs/progress.md. Update and run scripts/build_progress_page.py; never edit the generated page by hand.",
-  "as_of": "2026-10-20",
+  "as_of": "2026-10-24",
   "headline": "Nine pre-registered gates in gates.yaml; all eight locked gates have a scored run; 52 one-shot candidate runs on the public record. Track B's registered tests, posted on issue #42: B1 v2 passed on 11 October 2026 as a reconstructed reproduction (weaker than bit-for-bit), and B2, which carries the forward earnings law from 2010 to 2014, failed on 18 October 2026.",
   "gates": [
     {
@@ -47,7 +47,7 @@
     {
       "id": "gate_w1",
       "name": "Representative-frame transport",
-      "tests": "The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cross-sectional cells plus SSA administrative margins.",
+      "tests": "The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cells (43 cross-sectional joint cells plus one compression-swap check); SSA administrative margins are report-only.",
       "locked": "2026-07-12",
       "candidates": 4,
       "first_pass": "Candidate 4 (2026-07-13): 43/43 cells in-band on 5/5 seeds — after 3 failing candidates."
@@ -55,7 +55,7 @@
     {
       "id": "gate_m6",
       "name": "Temporal-holdout projection drift",
-      "tests": "The projection engine fits on data through 2014 only, then projects and is scored on the held-out 2015–2022 window — a genuine out-of-time test.",
+      "tests": "The engine fits its parameters on data through 2014 and gates 2015–2019 flows and 2016 and 2018 earnings; 2020–2022 is a diagnostic. The holdout also informed the choice of the gated surface and the forward earnings law's structure, and the gate certifies nothing about mortality drift.",
       "locked": "2026-07-13",
       "candidates": 3,
       "first_pass": "Candidate 3 (2026-07-24): 4/5 seeds across the 11 gated cells."
@@ -94,9 +94,9 @@
       },
       {
         "name": "DYNASIM output comparisons",
-        "status": "not yet",
-        "detail": "No quantitative DYNASIM-output rows exist yet; today's DYNASIM comparison is the capability table below. Quantitative rows begin at the projection and benefit stages.",
-        "href": null
+        "status": "four blind comparisons",
+        "detail": "Four blind tests compare a reform's effect in the model with DYNASIM3's published figures (exercises 1–4; their model artifacts are under runs/). Each gap measures a disagreement between two models; none involves DYNASIM4, and none establishes that the model matches either version.",
+        "href": "https://microcosm.institute/dynamics/paper"
       }
     ]
   },
@@ -126,7 +126,7 @@
       {
         "component": "Forward projection",
         "dynasim": "Annual updating and alignment",
-        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and a successor law is being designed; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
+        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and its successor, S1, is built and tested on invented data but not registered; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
       },
       {
         "component": "Social Security rule engine",
@@ -146,7 +146,7 @@
       {
         "component": "Wealth, assets, and LTSS",
         "dynasim": "Major documented strength",
-        "ours": "No wealth projection (a later extension track); exercise 2 annuitizes PSID wealth statically"
+        "ours": "No wealth projection yet; the approved income-and-resources design (Tier 1) plans one, scored on later PSID waves the model did not see; exercise 2 annuitizes PSID wealth statically"
       }
     ]
   }
