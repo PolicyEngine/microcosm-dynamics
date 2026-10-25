@@ -20,8 +20,8 @@ The build's sandbox could not write `.git`, so the main session committed
 its tree in logical steps on this branch: `7d321aef` (the fast path, its
 tests and the reducer exclusions), `a8c627a8` (the review fixes) and
 `0d0c073c` (a production test at the registered 2100 horizon). The
-measurement and this report follow in the next commit. No history was
-rewritten.
+measurement and this report followed in `3d69b1fc`. Review r2's three minor
+findings are fixed in the next commit (§4). No history was rewritten.
 
 `run_production(initial, modules,
 ProductionRequest("tr2026_intermediate"), ...)` projects to 2100.
@@ -41,9 +41,11 @@ projected years, 2026–2100. The script and the detailed results are
 size and emigration stream runs in its own worker process, one at a time.
 Each measurement records the host load, wall time, peak RSS, retained
 snapshot bytes and the leading cProfile costs. The main session ran it on
-the committed code (`0d0c073c`), outside the build's sandbox, at one-minute
-load averages of 82–129. The build's own sandboxed run was about 40 times
-slower than this host, so its numbers are not used.
+the committed code (`0d0c073c`), outside the build's sandbox. The JSON's
+load triples, taken at each worker and projection boundary, give one-minute
+load averages of 120.2–136.4 and five-minute averages of 86.6–96.5. The
+build's own sandboxed run is not used: the sandbox ran the build's tests far
+slower than this host (§3), and its timings distorted ratios as well.
 
 Mortality uses `apply_mortality`, which draws person streams
 (`engine/steps.py:125–131`); fertility uses `AsfrFertilityStep` with invented
@@ -138,7 +140,7 @@ OP10a. The small-run figures above are planning estimates, not a
 demonstrated scaling law.
 
 The fast-path invariant is: **at every valid stream address, the direct
-stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:49–59`
+stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:75–87`
 constructs the same entropy and spawn keys as `engine/rng.py:61–100` and
 `:102–156`; its tagged period-zero cases preserve the separate root and
 spawned-child convention. Tests compare entropy, spawn key, pool size,
@@ -146,21 +148,45 @@ eight state words and four draws across the specified exhaustive grid and
 24 generated examples. The exact emigration test independently uses the
 sealed registry, rather than the fast class.
 
+A second invariant covers refusals: **at every address, valid or not, the
+direct class returns the registry's stream or raises the registry's
+exception, with the same type and message**. Validation therefore runs in
+the registry's order: the module (`engine/rng.py:73`), then the period
+interval, then the integer checks that the registry's `spawn(n_periods + 1)`
+and list lookup make (`engine/rng.py:62–67`), and for a tagged child at
+period zero, the root and then its `spawn(child_index + 1)`
+(`engine/rng.py:142–144`).
+`streams.py` mirrors those two integer checks with `operator.index`.
+`test_combined_and_malformed_refusals_match_registry` tries every
+combination of 11 periods (including −1, past the horizon, 0.0, 1.5, 7.0,
+`np.int64`, `True` and `None`), three modules (one unknown) and five tail
+values (including −1, 1.5 and `np.int64`) for all six methods, at six
+horizons (including 7.0, 7.5 and `np.float64`).
+`test_generated_malformed_addresses_match_registry` extends it with 60
+Hypothesis examples. Six refusal mutants, including review r2's N10
+(module and period checks reversed), each fail these tests.
+
 ## 3. Tests, collection, style and scope
 
 All tests and mutation checks ran in one process at a time, with modest
 Hypothesis budgets and no xdist. The build ran its checks inside its
-sandbox, about 40 times slower than this host, so the main session reran
-them on the committed code.
+sandbox, so the main session reran them on the committed code. The timings
+in this section are pytest's own reported wall times, not measurements in
+`op1_run_size.json`. The build's sandboxed run of the required command
+reported 231 passed in 660.26 s, with the 2100 test dropped; on this host
+the command takes under 10 s.
 
-The build dropped its production run to 2100 because the sandbox took 62 s.
-On this host it takes 0.6 s, so
+The build dropped its production run to 2100 because its sandboxed pytest
+run reported 62 s for it. On this host, `pytest --durations` reports
+0.59 s, so
 `test_registered_scenario_projects_to_its_horizon_on_inventions` keeps it
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **232 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in about 8 s at `0d0c073c`. It covers the self-contained
+The required command gives **269 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in 9.5 s by pytest's report (one-minute load 85). At
+`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests add
+37. It covers the self-contained
 horizon test, the reversed-roster example, the gate metadata refusals and
 every reducer identity, reachability and initializer check.
 
@@ -169,8 +195,9 @@ every reducer identity, reachability and initializer check.
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **129 tests**, all classified as `unit` (seven modules,
-including the original six). That is 69 more than the 60 reviewed at r1.
+Collection gives **166 tests**, all classified as `unit` (seven modules,
+including the original six). That is 106 more than the 60 reviewed at r1,
+and 37 more than the 129 reviewed at r2.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -240,6 +267,25 @@ modules. The live source stayed byte-identical, and test bindings were restored.
 M20's redundant harness allocator check was deliberately removed; the seam's
 check remains pinned by `test_validator_receives_the_exact_returned_metadata`
 (the test that killed M21 in review r1). No new M21 mutation run is claimed.
+
+### Review r2
+
+Review r2 (delta review at `3d69b1fc`) approved with three minor findings.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: the report's load range and unsupported timing figures | §2 now gives the JSON's load ranges. §3 labels each timing as a pytest wall time, outside the JSON, and gives the host figures from a rerun. |
+| 2: refusal precedence lacked a test; mutant N10 survived | `test_combined_and_malformed_refusals_match_registry` and `test_generated_malformed_addresses_match_registry` compare type and message at combined invalid addresses (§2). N10 now fails them. |
+| 3: a non-integer horizon was accepted where the registry refuses it | `_require_spawn_count` and `_require_list_index` in `open_population/streams.py` mirror the registry's spawn and list-lookup refusals, in its order. The period-zero tagged child builds its root before checking its spawn count. Float and `np.float64` horizons, float periods and float children are in the refusal grid. |
+
+| Mutation of the r2 fix | Result |
+|---|---|
+| Pre-fix `streams.py` (`3d69b1fc`) | Killed by the refusal grid |
+| N10: module and period checks reversed | Killed |
+| Spawn-count check removed | Killed |
+| List-index check removed | Killed |
+| Spawn-count and list-index checks swapped | Killed |
+| Period-zero child spawn-count check removed | Killed |
 
 ## 5. Remaining work and restricted-files statement
 

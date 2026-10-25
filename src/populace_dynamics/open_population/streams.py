@@ -8,6 +8,7 @@ The sealed loop continues to use its own registry.
 
 from __future__ import annotations
 
+import operator
 from dataclasses import dataclass
 
 import numpy as np
@@ -21,6 +22,29 @@ from populace_dynamics.engine.rng import (
 from populace_dynamics.engine.rng import (
     MODULE_ORDER as MODULE_ORDER,
 )
+
+
+def _require_spawn_count(count: object) -> None:
+    """Refuse a non-integer count as ``SeedSequence.spawn`` does (§2.1).
+
+    The registry spawns ``n_periods + 1`` period children and
+    ``child_index + 1`` tagged children (``engine/rng.py:67``, ``:144``).
+    """
+    operator.index(count)
+
+
+def _require_list_index(period: object) -> None:
+    """Refuse a non-integer period as the registry's lookup does (§2.1).
+
+    The registry indexes its list of period children (``engine/rng.py:67``).
+    """
+    try:
+        operator.index(period)
+    except TypeError:
+        raise TypeError(
+            "list indices must be integers or slices, not "
+            f"{type(period).__name__}"
+        ) from None
 
 
 @dataclass(frozen=True)
@@ -54,6 +78,9 @@ class DirectRNGStreams:
         """Extend the inherited module spawn key directly (design §2.1)."""
         resolved = ProjectionModule(module)
         self._validate_period(period)
+        # The registry's spawn and list lookup refuse non-integers here.
+        _require_spawn_count(self.n_periods + 1)
+        _require_list_index(period)
         return np.random.SeedSequence(
             [self.draw_seed, GATE_M6_TAG],
             spawn_key=(period, _MODULE_INDEX[resolved], *tail),
@@ -123,8 +150,13 @@ class DirectRNGStreams:
                 "component_tag and child_index must be non-negative"
             )
         if period == 0:
+            # Validate as the registry does: the root, then its spawn count.
+            tagged = np.random.SeedSequence([self.draw_seed, component_tag])
+            _require_spawn_count(child_index + 1)
             sequence = np.random.SeedSequence(
-                [self.draw_seed, component_tag], spawn_key=(child_index,)
+                tagged.entropy,
+                spawn_key=(child_index,),
+                pool_size=tagged.pool_size,
             )
         else:
             sequence = self._sequence(
