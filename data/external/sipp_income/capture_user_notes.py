@@ -108,11 +108,17 @@ def _identifier_column(table: str) -> bool:
         if sum(bool(re.fullmatch(NUMERIC_CELL, text)) for text in texts) >= 3:
             return True
         for column_index, (text, tag, attributes) in enumerate(row):
-            if not re.match(IDENTIFIER, text, re.I):
+            begins = re.match(IDENTIFIER, text, re.I)
+            # A heading may name an identifier after other words, as in
+            # "Person number (PNUM)".
+            names = (row_index == 0 or tag == "th") and re.search(
+                IDENTIFIER, text, re.I
+            )
+            if not begins and not names:
                 continue
             # An identifier beside a value of three or more digits, even in
             # a definition table.
-            if any(
+            if begins and any(
                 re.search(VALUE_RUN, other)
                 for index, other in enumerate(texts)
                 if index != column_index
@@ -141,6 +147,21 @@ def _identifier_column(table: str) -> bool:
     return False
 
 
+def _without_link_targets(body: str) -> str:
+    """The page source with each tag's href and src values removed, since
+    link slugs such as ``ssuid-2024`` name identifiers without values."""
+    return re.sub(
+        r"<[^>]*>",
+        lambda tag: re.sub(
+            r"(?i)(?<![\w-])(?:href|src)\s*=\s*"
+            r"(?:\"[^\"]*\"|'[^']*'|[^\s>]*)",
+            " ",
+            tag.group(),
+        ),
+        body,
+    )
+
+
 def record_bearing_note(body: str) -> bool:
     """Recognize survey identifiers without returning matched content.
 
@@ -148,8 +169,9 @@ def record_bearing_note(body: str) -> bool:
 
     - a cell that is exactly an identifier name, in a table's first row
       or in a header cell that is not a row header outside a
-      variable-definition table, or a cell that begins with an identifier
-      name and has a cell of digits alone below it;
+      variable-definition table, or a cell that has a cell of digits alone
+      below it and begins with an identifier name or, in a table's first
+      row or a header cell, names one anywhere;
     - a table row with a cell that begins with an identifier name and, in
       another cell, a run of three or more digits that is not a year, even
       in a variable-definition table;
@@ -159,7 +181,11 @@ def record_bearing_note(body: str) -> bool:
       digits that is not a year, with at most 40 characters and no period
       between. These two rules read the text, HTML comments, which are
       stored though not shown, and the page source with its tags,
-      attributes and scripts, all with entities decoded;
+      attributes and scripts, all with entities decoded. In the text and
+      comments a tag counts as a space. In the source the 40 characters
+      hold no tag, quote or equals sign either, so they stay inside one
+      attribute value or string, and href and src values are removed
+      first;
     - a run of nine or more digits in the text a reader sees, without
       comments, noscript blocks, scripts, styles and tags, since tracking
       numbers sit there and are not page content;
@@ -188,16 +214,23 @@ def record_bearing_note(body: str) -> bool:
             for line in lines
         ):
             return True
-    source = html.unescape(body)
-    texts = (note_text(re.sub(r"<!--|-->", " ", body)), source)
+    # Each reading with the characters the 40-character window may span.
+    # The text has no tags left, so an angle bracket there is a decoded
+    # entity, which ends no sentence.
+    readings = (
+        (note_text(re.sub(r"<!--|-->", " ", body)), r"[^.]"),
+        (html.unescape(_without_link_targets(body)), r"[^.<>\"'=]"),
+    )
     return bool(
         any(
             re.search(adjacent + r"[\s:=#'\"(\[\-]*\d", text, re.I)
-            or re.search(IDENTIFIER + r"[^.<>]{0,40}?" + VALUE_RUN, text, re.I)
-            for text in texts
+            or re.search(
+                IDENTIFIER + window + r"{0,40}?" + VALUE_RUN, text, re.I
+            )
+            for text, window in readings
         )
         or re.search(r"\d{9,}", _rendered_text(body))
-        or re.search(rf"\d{{{SSUID_DIGITS},}}", source)
+        or re.search(rf"\d{{{SSUID_DIGITS},}}", html.unescape(body))
     )
 
 

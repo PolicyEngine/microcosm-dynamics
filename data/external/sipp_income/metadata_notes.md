@@ -33,20 +33,28 @@ extract or case-specific correction is retained. The same script refuses
 to store any new page that holds a case record in any of the forms
 `record_bearing_note` lists:
 
-- an identifier column, or a cell that begins with an identifier name and
-  has a cell of digits alone below it;
+- an identifier column, or a cell that has a cell of digits alone below
+  it and begins with an identifier name or, in a first-row or header cell,
+  names one anywhere;
 - an identifier name followed by a digit with only spaces or simple marks
-  between, or by a run of three or more digits that is not a year within
-  40 characters of the same sentence;
-- a table row with an identifier name and such a run in another cell;
+  between, or by a run of three or more digits that is not a year, with at
+  most 40 characters and no period between;
+- a table row with a cell that begins with an identifier name and, in
+  another cell, a run of three or more digits that is not a year;
 - a table row, or a preformatted line, of three or more numbers;
 - a run of nine or more digits in the text a reader sees, or of 14 or
   more, an SSUID's length, anywhere in the page;
 - a preformatted block with an identifier and a digit.
 
-The identifier rules read the visible text, HTML comments and the page
-source with its tags, attributes and scripts. The nine-digit rule skips
-comments and noscript blocks, whose tracking numbers are not page content.
+The two rules that follow an identifier name read the visible text, HTML
+comments and the page source with its tags, attributes and scripts. In the
+text and comments a tag counts as a space. In the source, the 40 characters
+also hold no tag, quote or equals sign, so they stay inside one attribute
+value or string, and both rules skip href and src
+values, whose slugs name identifiers without values. The table and
+preformatted rules read each table's or block's text, without its tags and
+attributes. The nine-digit rule skips comments and noscript blocks, whose
+tracking numbers are not page content.
 Excluded notes remain attached to relevant registry entries by URL and
 title only.
 

@@ -895,6 +895,19 @@ INVENTED_RECORD_PAGES = {
         "</table>"
     ),
     "pre_numbers": "<pre>101 -250 40\n</pre>",
+    # Round 5: an identifier inside a heading, a five-digit value and a year
+    # run straight after an identifier.
+    "identifier_inside_heading": (
+        "<table><tr><th>Person number (PNUM)</th>"
+        "<th>Invented monthly earnings amount in dollars</th></tr>"
+        "<tr><td>101</td><td>-25</td></tr></table>"
+    ),
+    "five_digits_after_identifier": "<p>SSUID invented 20221</p>",
+    "year_straight_after_identifier": "<p>SSUID 2022</p>",
+    # Only href and src values are removed from the source, and only inside
+    # tags.
+    "identifier_in_data_src": '<p data-src="ssuid-7">Invented</p>',
+    "script_assigning_src": '<script>var src = "PNUM=101";</script>',
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -938,6 +951,34 @@ INVENTED_DEFINITION_PAGES = {
         "<table><tr><th>Variable</th><th>Description</th></tr>"
         "<tr><td>SSUID</td><td>Invented since 2018</td></tr></table>"
     ),
+    # Round 5: identifier names in attributes, scripts and link targets,
+    # beside numbers that sit in other attribute values or strings.
+    "image_alt_beside_dimensions": (
+        '<img src="/invented/diagram.png" alt="SSUID structure" '
+        'width="640" height="360">'
+    ),
+    "index_link_slug": (
+        '<li><a href="/invented/2024-usernotes/ssuid-2024-invented.html">'
+        "Invented SSUID note</a></li>"
+    ),
+    "attribute_beside_position": (
+        '<a href="/invented/note.html" title="Invented PNUM note" '
+        'data-position="105">Invented</a>'
+    ),
+    "script_strings": (
+        '<script>var invented = {"title": "Invented PNUM note", '
+        '"id": "4567"};</script>'
+    ),
+    "anchor_title_and_href": '<a title="PNUM" href="/invented/101">x</a>',
+    "tracking_number_in_link_target": (
+        '<p>Invented note.</p><img src="/invented.png?id=123456789012">'
+    ),
+    "row_header_outside_definition_table": (
+        "<table><tr><th>Item</th><th>Note</th></tr>"
+        '<tr><th scope="row">SSUID</th><td>Invented unit identifier</td>'
+        "</tr></table>"
+    ),
+    "pre_two_numbers_per_line": "<pre>101 -250\n40</pre>",
 }
 
 # Each refused page and a twin that differs only in the structure one rule
@@ -973,6 +1014,51 @@ INVENTED_RULE_TWINS = {
     "comment_text": (
         "<!-- SSUID <b>invented</b> 123 -->",
         "<!-- SSUID <b>invented</b> -->",
+    ),
+    # Round 5: a twin for every other rule, and for each limit on what the
+    # identifier rules read in the source.
+    "digit_below": (
+        "<table><tr><td>Invented</td><td>Table</td></tr>"
+        "<tr><td>PNUM</td><td>Invented</td></tr>"
+        "<tr><td>7</td><td>x</td></tr></table>",
+        "<table><tr><td>Invented</td><td>Table</td></tr>"
+        "<tr><td>PNUM</td><td>Invented</td></tr>"
+        "<tr><td>x</td><td>7</td></tr></table>",
+    ),
+    "adjacent_digit": ("<p>PNUM: 7</p>", "<p>PNUM: x 7</p>"),
+    "nine_digits_rendered": (
+        "<p>Invented 123456789</p>",
+        "<p>Invented 12345678</p>",
+    ),
+    "ssuid_length_run": (
+        '<link rel="stylesheet" href="/invented.css?v=20241015123456">',
+        '<link rel="stylesheet" href="/invented.css?v=2024101512345">',
+    ),
+    "source_window": (
+        '<img alt="Invented case PNUM is 101">',
+        '<img alt="Invented case PNUM is">',
+    ),
+    "source_adjacency": (
+        '<p data-pnum="7">Invented</p>',
+        '<p data-pnum="x">Invented</p>',
+    ),
+    "source_window_stops_at_tags": (
+        "<script>SSUID x 101</script>",
+        "<script>SSUID x</script><b>101</b>",
+    ),
+    "source_window_stays_in_one_value": (
+        '<img alt="PNUM x 105">',
+        '<img alt="PNUM x" data-position="105">',
+    ),
+    "link_targets_removed": (
+        '<a title="ssuid-2024-x">Invented</a>',
+        '<a href="/ssuid-2024-x.html">Invented</a>',
+    ),
+    # Round 6: in the text an angle bracket is a decoded entity, not a tag,
+    # so the window crosses it; the source reading stops there.
+    "text_window_crosses_decoded_brackets": (
+        "<p>SSUID &lt;x&gt; 101</p>",
+        "<p>SSUID &lt;x&gt; 10</p>",
     ),
 }
 
@@ -1091,6 +1177,21 @@ def test_rows_of_three_numbers_trigger_capture_guard(numbers, invented_words):
         "<table><tr><th>Invented</th><th>Heading</th></tr>"
         f"<tr>{cells}</tr></table>"
     )
+    record_bearing_note = _module("capture_user_notes.py").record_bearing_note
+    assert record_bearing_note(body) == (len(numbers) >= 3)
+
+
+@given(
+    numbers=st.lists(NUMERIC_TEXT, min_size=1, max_size=6),
+    invented_words=st.lists(
+        st.text(alphabet="abcdefgh", min_size=1, max_size=8), max_size=3
+    ),
+)
+def test_preformatted_lines_of_three_numbers_trigger_capture_guard(
+    numbers, invented_words
+):
+    line = " ".join([*invented_words, *numbers])
+    body = f"<pre>Invented heading\n{line}\n</pre>"
     record_bearing_note = _module("capture_user_notes.py").record_bearing_note
     assert record_bearing_note(body) == (len(numbers) >= 3)
 

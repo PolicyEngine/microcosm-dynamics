@@ -24,8 +24,8 @@ Invariants:
   Duplicate panel/person/reference-month keys refuse; no join expands or
   shrinks the roster. Quotes are literal characters, so the line check
   and pandas split a file into the same records; a carriage return
-  anywhere but before a line's LF, which they could split differently,
-  refuses the file.
+  anywhere but at a line's end (before its LF, or last in a final line
+  without one), which they could split differently, refuses the file.
 * ``SSUID`` and other opaque identifiers stay strings. ``person_id`` is
   ``panel:SSUID:PNUM``, never wave or release, so a person links across
   months, waves and releases within a panel; ``household_id`` is
@@ -231,8 +231,9 @@ def _check_layout(path: Path, year: int) -> None:
     an extra field shifts values into neighbouring columns. Counting the
     separators on every physical line first closes both gaps. The two
     reads see the same records: ``_read`` disables CSV quoting, and a
-    carriage return anywhere but before a line's LF refuses the file,
-    since pandas would end a record there too.
+    carriage return anywhere but at a line's end (before its LF, or last
+    in a final line without one) refuses the file, since pandas would end
+    a record there too.
     """
     opener = gzip.open if path.name.lower().endswith(".gz") else open
     try:
