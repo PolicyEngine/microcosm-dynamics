@@ -705,11 +705,11 @@
   ]
  },
  {
-  "mutation": "a warning prints its message",
+  "mutation": "warnings shown inside the guard",
   "replacements": [
    {
-    "old": "            f\"B0.2 warning: {warning.category.__name__} at \"\n",
-    "new": "            f\"B0.2 warning: {warning.message} at \"\n",
+    "old": "        warnings.simplefilter(\"ignore\")\n        try:\n            yield\n",
+    "new": "        warnings.simplefilter(\"default\")\n        try:\n            yield\n",
     "occurrence": 1
    }
   ]
@@ -760,6 +760,16 @@
    {
     "old": "PROGRAM_SECONDS = 300.0\n",
     "new": "PROGRAM_SECONDS = 60.0\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the guard catches only Exception",
+  "replacements": [
+   {
+    "old": "        except BaseException as error:\n            failure = _failure_text(error)\n",
+    "new": "        except Exception as error:\n            failure = _failure_text(error)\n",
     "occurrence": 1
    }
   ]

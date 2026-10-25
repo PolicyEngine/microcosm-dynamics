@@ -15,7 +15,6 @@ import json
 import math
 import os
 import subprocess
-import sys
 import time
 import traceback
 import warnings
@@ -65,7 +64,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "994a73261646996820c98938924d02ef08ca4b8eb79de1d9e8999442add30eda"
+    "f5396be957892518a9d03de18ae6921830bbbfedb870528960d212f9fb74b32b"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1891,23 +1890,18 @@ def _failure_text(error: BaseException) -> str:
 
 @contextmanager
 def count_free_failures():
-    """Run the steps that read data so that no failure or warning they
-    raise can print a value: a failure stops the run with
-    ``_failure_text``, and a warning is reported by its category and place
-    alone."""
+    """Run the steps that read data so that nothing they raise can print a
+    value. A failure stops the run with ``_failure_text``; that includes an
+    interruption or a library's own exit, whose default report would print
+    the chain of errors before it. A warning is dropped unseen: whether one
+    fires, and where, can depend on the data."""
     failure = None
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         try:
             yield
-        except Exception as error:
+        except BaseException as error:
             failure = _failure_text(error)
-    for warning in caught:
-        print(
-            f"B0.2 warning: {warning.category.__name__} at "
-            f"{Path(warning.filename).name}, line {warning.lineno}",
-            file=sys.stderr,
-        )
     if failure is not None:
         raise SystemExit(failure) from None
 

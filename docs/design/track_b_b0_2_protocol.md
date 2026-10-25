@@ -95,8 +95,10 @@ any freeze:
   audit's decisions. It had also held each target's proof, programs and
   range, the pool's size, the relation count and the times, which depend
   on atoms that B0.1's sets refine.
-- **Failures and warnings** print no value: a library's message, which
-  can quote a size, is dropped, and the solver prints nothing.
+- **Failures and warnings** print no value. A library's message, which
+  can quote a size, is dropped. A warning prints nothing, since whether
+  one fires, and where, can depend on the data. The solver prints
+  nothing.
 - **The rerun gate** checks each rebuilt set against its count before the
   audit, where it had been checked only after registration.
 - **Targets.** Two of this release's sets always make a target, and
@@ -487,17 +489,22 @@ rules.
        in the committed file;
      - B0.1's published counts;
      - the audit's decisions: the status, released or withheld, and the
-       decision record below.
+       decision record below;
+     - if the run stops, its report: the error's type, the script's line
+       that led to it, and the script's own message, which names only
+       paths and settings.
 
      This covers both files, the attempt record, standard output and
      standard error, exception text, logs and caches. No atom size, no
      count of a set only B0.1 counts beyond B0.1's own, no value by
      disposition and no frequency of death or attrition is written or
      printed on any path. So:
-     - a failure prints its type and the script's line that led to it,
-       and its message only when the script's own `raise` wrote it. Those
-       messages name paths and settings, never values;
-     - a warning prints its category and place, never its message;
+     - a failure, an interruption or a library's own exit included,
+       prints its type and the script's line that led to it, and its
+       message only when the script's own `raise` wrote it; no error
+       before it is chained to the report;
+     - a warning prints nothing, since whether one fires, and where, can
+       depend on the data;
      - the solver prints nothing;
      - nothing but the two outputs and the attempt record writes a file.
   3. **The decision record.** The local copy's audit record holds the
@@ -513,8 +520,9 @@ rules.
   4. **The stated limit.** The decisions depend on atom sizes, which
      B0.1's sets refine. So which targets are narrow, which round settles
      each, and whether the release is withheld can depend on
-     dispositions. That is the only channel from dispositions to the
-     outputs.
+     dispositions. So can whether the run stops, and where, though its
+     report holds no value. Those are the only channels from dispositions
+     to the outputs.
   5. **The invariant.** On invented panels, relabeling deaths and
      move-outs so that B0.1's counts, this release's class sizes and
      every decision are unchanged must leave every byte the run writes
@@ -590,11 +598,11 @@ rules.
     - the write boundary: the local copy holds only the decision record,
       the provenance and this release's counts; a library's failure
       prints its type and the script's line only; only the script's own
-      `raise` keeps its message; a warning prints its category and place
-      only; and a static check of the script finds that every `raise`
-      message interpolates only paths and settings, that it prints only
-      the output's path and a warning's place, and that only the outputs
-      and the attempt record write files;
+      `raise` keeps its message; an interruption, or a library's own exit,
+      prints no chain; a warning prints nothing; and a static
+      check of the script finds that every `raise` message interpolates
+      only paths and settings, that it prints only the output's path, and
+      that only the outputs and the attempt record write files;
     - the invariant: swapping a death and a move-out on invented panels,
       once where the atoms change and the decisions do not and again in
       property-based examples, leaves every byte `main()` writes or prints

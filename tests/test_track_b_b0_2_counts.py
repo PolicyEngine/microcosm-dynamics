@@ -25,7 +25,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "994a73261646996820c98938924d02ef08ca4b8eb79de1d9e8999442add30eda"
+    "f5396be957892518a9d03de18ae6921830bbbfedb870528960d212f9fb74b32b"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -3328,15 +3328,47 @@ def test_only_this_scripts_own_raise_keeps_its_message(value, expected):
             script.coarsen(value, 10)
 
 
-def test_warnings_are_reported_by_category_and_place_only(capsys):
-    with script.count_free_failures():
-        import warnings
+@pytest.mark.parametrize(
+    "interruption", [KeyboardInterrupt, lambda: SystemExit("size 7")]
+)
+def test_an_interruption_or_a_librarys_exit_prints_no_chain(interruption):
+    """An interruption, or a library's own exit, is a failure like any
+    other: its report names its type alone, and the error it interrupted,
+    whose message may quote a size, is not chained to it."""
 
-        warnings.warn("an atom of size 7", RuntimeWarning, stacklevel=1)
-    err = capsys.readouterr().err
-    assert err.startswith("B0.2 warning: RuntimeWarning at ")
-    assert "test_track_b_b0_2_counts.py, line " in err
-    assert "size 7" not in err
+    def failing():
+        try:
+            raise ValueError("an atom of size 7")
+        except ValueError:
+            # Chained to the ValueError, as a library's would be.
+            raise interruption()  # noqa: B904
+
+    with pytest.raises(
+        SystemExit,
+        match=r"^B0\.2 stopped in .+: (KeyboardInterrupt|SystemExit)$",
+    ) as caught:
+        with script.count_free_failures():
+            failing()
+    assert caught.value.__cause__ is None
+    assert caught.value.__suppress_context__
+
+
+def test_warnings_inside_the_guard_are_dropped_unseen(capsys):
+    """A warning prints nothing, not even its place: whether one fires,
+    and where, can depend on the data. Warnings outside the guard are
+    untouched."""
+    import warnings
+
+    with warnings.catch_warnings(record=True) as seen:
+        warnings.simplefilter("always")
+        with script.count_free_failures():
+            warnings.warn("an atom of size 7", RuntimeWarning, stacklevel=1)
+        assert seen == []
+        warnings.warn("outside the guard", RuntimeWarning, stacklevel=1)
+        assert [str(warning.message) for warning in seen] == [
+            "outside the guard"
+        ]
+    assert capsys.readouterr() == ("", "")
 
 
 #: The only names a ``raise`` in the count script may put into its message:
@@ -3355,8 +3387,8 @@ SAFE_MESSAGE_NAMES = {
 def test_every_output_the_script_can_make_names_no_value():
     """Condition 2, statically. Each ``raise`` message is a literal, or
     interpolates only names that hold paths and settings; the script
-    prints only the output's path and a warning's category and place; and
-    only ``write_new`` and the attempt record write files."""
+    prints only the output's path; and only ``write_new`` and the attempt
+    record write files."""
     import ast
 
     tree = ast.parse(Path(script.__file__).read_text())
@@ -3404,10 +3436,7 @@ def test_every_output_the_script_can_make_names_no_value():
         for node in calls
         if isinstance(node.func, ast.Name) and node.func.id == "print"
     )
-    assert [where for where, _ in printed] == ["count_free_failures", "main"]
-    assert printed[1][1] == "print(out)"
-    assert "{warning.category.__name__}" in printed[0][1]
-    assert "warning.message" not in printed[0][1]
+    assert printed == [("main", "print(out)")]
     writes = {
         "open",
         "write",
