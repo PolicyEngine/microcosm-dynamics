@@ -452,14 +452,15 @@ def test_root_follows_the_draw_seed_as_the_registry_does():
 def test_cached_root_follows_exact_int_seeds_compared_exactly():
     """An exact ``int`` seed keeps its own root, however large (§2.1).
 
-    Seeds past ``int64`` and past float precision are valid, and a seed
-    equal to the cached seed's negative is refused, so the cache must build
-    and compare the seeds themselves, exactly.
+    Seeds past ``int64``, past float precision and past float range are
+    valid, and a seed equal to the cached seed's negative is refused, so the
+    cache must build and compare the seeds themselves, exactly. Seeds
+    ``2**1100 + 5200`` and ``5200`` agree in their low 1,100 bits.
     """
     draw = np.array(0, dtype=object)
     registry = ProjectionRNGRegistry(draw, 7)
     direct = DirectRNGStreams(draw, 7)
-    for value in (0, 2**53, 2**53 + 1, 2**64, 2**64 + 1, 0, -10400):
+    for value in (0, 2**53, 2**53 + 1, 2**64, 2**64 + 1, 2**1100, 0, -10400):
         draw[()] = value
         for method, tail_length in _TAIL_LENGTHS.items():
             args = (1, MODULE_ORDER[0], *(3,) * tail_length)

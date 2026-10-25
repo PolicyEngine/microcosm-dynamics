@@ -222,8 +222,9 @@ examples over all of these. Eight tests pin the root's state:
   equals the cached one's, and an overflowing `np.uint64` draw under
   `np.errstate(over="raise")`;
 - `test_cached_root_follows_exact_int_seeds_compared_exactly`: exact `int`
-  draws past `int64` and past float precision, and a draw whose seed is
-  the cached seed's negative, through every method;
+  draws past `int64`, past float precision and past float range, a seed
+  that matches an earlier one in its low 1,100 bits, and a draw whose seed
+  is the cached seed's negative, through every method;
 - `test_root_ignores_an_equal_seed_of_another_type` and
   `test_root_ignores_an_equal_seed_set_on_the_frozen_field`: a draw changed
   in place to an equal float, `Fraction`, `Decimal`, complex, NumPy
@@ -292,11 +293,11 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
 The required command gives **333 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 8 s by pytest's report (one-minute load 34). At
-`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added 37,
-review r3's fix 30, review r4's fix 3, review r5's fix 20, review r6's fix 10
-and review r7's fix 1. It covers the self-contained horizon test, the
-reversed-roster example, the gate metadata refusals and every reducer
+fixture warnings**, in 8 to 14 s by pytest's report (one-minute load 34 to
+91). At `0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests
+added 37, review r3's fix 30, review r4's fix 3, review r5's fix 20, review
+r6's fix 10 and review r7's fix 1. It covers the self-contained horizon test,
+the reversed-roster example, the gate metadata refusals and every reducer
 identity, reachability and initializer check.
 
 ```sh
@@ -527,6 +528,21 @@ Review r7 (Opus 5.5 delta check at `3cd74630`) approved, with one minor finding 
 | r7's 13 equivalent survivors: the key by xor; the root stored only once, stored on the class, or popped on read; the exact check made on the draw's type, by `isinstance` without `bool`, only below 2^63, or by the type's name; the entropy sliced, deep-copied or rebuilt from the seed; the period-zero tagged entropy copied; the period-zero tagged call also building the root | Survive: equivalent for streams and refusals, as r7 found with its probes |
 | r6's 50 mutants (r6's harness): 39 killed and 11 equivalent survivors | The same 39 are killed and the same 11 survive. Eight gain the new test as a kill: C2 and M9 (5 each), the root never rebuilt (C3, 6), the cache keyed on the draw object (C4, 4), the seed not recomputed (C5, 19), the old root returned (C6, 2), the check dropped with the refused seed cached (N3, 23) and an `int` seed's root typed `np.int64` (M12, 49). The Hypothesis-dependent counts stay within the ranges above |
 | The new test run alone | Fails at `dee1e1b7` and under 18 of the 82 mutants, and passes at `6361b4c0` |
+
+### Review r8
+
+Review r8 (Opus 5.5 delta check at `42be3231`) approved, with one minor finding, and found the code correct. It confirmed the coordinator's four checks and 22,176 four-way identities across the registry, `dee1e1b7`, `6361b4c0` and `42be3231`. It closed r7's finding and both nits, and reproduced every count and kill count in the review r7 section and the two Hypothesis ranges. It tried 18 new mutants: 11 were killed, 2 survived as equivalents, and 5 survived without being equivalent.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: the new test never moved between two seeds that agree in their low bits, and never went past 2^64 + 5201. The code was correct on all of these inputs, but five contrived mutants passed every test: the cached seed compared by its sign and low 64 bits (K6) or modulo 2^72 (K1), stored as a float (S9) or, when large, reduced modulo 2^64 (S14), and the root built from the seed modulo 2^128 (S13) | r8's verified fix adds a draw of 2^1100 before the second 0. Seeds 2^1100 + 5200 and 5200 agree in their low 1,100 bits, and 2^1100 is past float range. It kills all five and loses no kill. No finite set of draws pins a cache that changes only above some size; this raises that size from 2^64 to 2^1100. |
+
+| Mutation (r6's, r7's and r8's harnesses; stream and exit tests, 164) | Result |
+|---|---|
+| r8's five non-equivalent survivors: K6; K1; S9; S14; S13 | Killed (1 each) |
+| r8's 11 killed mutants: the key without its low bit (K2), by bit length (K3), not compared past 2^63 (K4), by `math.isclose` (K5), only by bit length past 2^64 (K7) or by its low 32 bits and bits from 64 up (K8); a memo keyed by hash (S11); the root from the seed modulo 2^64 (S12); the previous seed stored with the new root (S15); the cached root reused when the seed moves by 1 past 2^53 (S16); large seeds reusing a large cached root (X9) | Killed (1; 2; 1; 1; 1; 1; 1; 1; 2; 1; 1) |
+| r8's equivalent survivors: an unbounded memo per seed (S10); seeds past 2^64 bypass the cache (X8) | Survive: they change memory or cost only, as r8 found with its probes |
+| r7's 32 mutants and r6's 50 | Every verdict above holds. The key masked to 64 bits (R3) gains the new test as a kill (3). R5, r7's 13 equivalents and r6's 11 still survive, the `6361b4c0` and `dee1e1b7` files still fail 15 and 28 tests, and the Hypothesis-dependent counts stay within their ranges |
 
 ## 5. Remaining work and restricted-files statement
 
