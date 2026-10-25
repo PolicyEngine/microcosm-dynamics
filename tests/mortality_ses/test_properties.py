@@ -777,10 +777,11 @@ def exact_adapter_cell(base, fixed, prescribed, weights):
     Also returns whether the adapter's float64 factor is unreliable: when
     ``P - D`` or ``E`` is within a hundredth of ``max(P, D)``, the
     subtraction can cancel, absorb ``E`` or overflow the division; when
-    ``max(P, D)`` is below ``2**-1000``, float64 rounds its products
-    absolutely, not relatively.  Elsewhere a first-order error bound keeps
-    the adapter within ``RTOL`` and ``ATOL`` (the design note's intended
-    differences).  Exact sums keep an ``E`` that would underflow in float64.
+    ``max(P, D)`` is below ``2**-1000``, float64 can round its products
+    absolutely, not relatively (below ``2**-1022`` a product is subnormal).
+    Elsewhere a first-order error bound keeps the adapter within ``RTOL``
+    and ``ATOL`` (the design note's intended differences).  Exact sums keep
+    an ``E`` that would underflow in float64.
     """
     weight = [Fraction(w) for w in weights]
     population = sum(

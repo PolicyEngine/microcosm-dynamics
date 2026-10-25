@@ -245,19 +245,21 @@ those rows. A third: the adapter forms its factor `max(P - D, 0) / E` in
 float64 with no guard on the subtraction or the division. Where `P - D` or
 the free deaths `E` lies within a hundredth of `max(P, D)`, its factor
 can lose precision, absorb the free deaths or overflow. Where `max(P, D)`
-is below 2^-1000, float64 rounds the cell's products absolutely rather
-than relatively, and the factor can be off by percents. Elsewhere, for
-the at most ten rows the test draws per cell, first-order bounds on the
-three sums give the adapter's factor a relative error of at most about
-(19/0.01 + 12)u, roughly 2.1e-13 (u = 2^-53). With SM1's own float-path
-bound of about 1.3e-12, the two results then differ by at most about
-1.55e-12 of the probability, inside the test's
-tolerance of 1e-12 plus 1e-12 of the probability for every probability
-up to one. The differential test therefore holds every unclipped cell,
-apart from the weightless infeasible ones above, to the adapter's formula
-evaluated exactly, at the oracle's tolerance, and compares the adapter's
-float64 result only outside the unreliable cells. No shared-module change
-is required.
+is below 2^-1000, float64 can round the cell's products absolutely rather
+than relatively (a product below 2^-1022 is subnormal), and the factor
+can be off by percents. Elsewhere, for the at most ten rows the test
+draws per cell, first-order bounds on the three sums give the adapter's
+factor a relative error of at most about (19/0.01 + 12)u, roughly 2.1e-13
+(u = 2^-53). With SM1's own float-path bound of about 1.3e-12, the two
+results then differ by at most about 1.55e-12 of the probability, inside
+the test's tolerance of 1e-12 plus 1e-12 of the probability for every
+probability up to one. Where `P = D` exactly, the exact factor is zero and
+the adapter's is at most about 19u/0.01, roughly 2.1e-13, under the 1e-12
+absolute tolerance. The differential test therefore holds every unclipped
+cell, apart from the weightless infeasible ones above, to the adapter's
+formula evaluated exactly, at the oracle's tolerance, and compares the
+adapter's float64 result only outside the unreliable cells. No
+shared-module change is required.
 
 At the scale of a projection frame (1,000,000 invented rows in 242
 cells), `evaluate` takes about 1.4 seconds on the build host, and the
