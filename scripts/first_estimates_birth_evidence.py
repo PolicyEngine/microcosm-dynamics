@@ -416,6 +416,16 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # SM1 is opt-in and absent from the historical projection call graph.
+    Path("src/populace_dynamics/mortality_ses/__init__.py"),
+    Path("src/populace_dynamics/mortality_ses/specification.py"),
+    Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+    Path("src/populace_dynamics/mortality_ses/model.py"),
+    Path("src/populace_dynamics/mortality_ses/step.py"),
+    # The PSID income and wealth readers (D1a) are opt-in source readers;
+    # nothing in the historical projection imports them.
+    Path("src/populace_dynamics/data/psid_income_wealth.py"),
+    Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
