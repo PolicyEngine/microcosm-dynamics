@@ -8,7 +8,8 @@ so the reader can be checked against it (a differential test).
 
 from __future__ import annotations
 
-from datetime import date
+import csv
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -279,6 +280,7 @@ def test_column_selection_uses_pipe_usecols_and_string_dtype(
     assert len(body_calls) == 1
     call = body_calls[0]
     assert call["sep"] == "|"
+    assert call["quoting"] == csv.QUOTE_NONE
     wanted = {income_variables(year)[key].name for key in selected}
     usecols = call["usecols"]
     if callable(usecols):
@@ -982,6 +984,22 @@ def test_short_trailing_fields_never_become_structural_blanks(tmp_path):
         )
 
 
+def test_quotes_in_an_unselected_field_never_join_physical_records(tmp_path):
+    """The minimized review regression, using two invented monthly rows."""
+    year = 2022
+    header, lines = _invented_lines(year)
+    path = tmp_path / "INVENTED_multiline_quote.csv"
+    path.write_text(
+        "\n".join(
+            [header + "|INVENTED_UNUSED", *(line + '|"' for line in lines)]
+        )
+        + "\n"
+    )
+    out = sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+    assert len(out) == len(lines)
+    assert out["month"].tolist() == [1, 2]
+
+
 def test_repeated_header_name_refuses(tmp_path):
     year = 2022
     header, lines = _invented_lines(year, rows=1)
@@ -1065,8 +1083,6 @@ def test_blank_stays_missing_where_the_universe_is_a_subset(tmp_path):
 
 
 def test_download_date_accepts_a_datetime(tmp_path):
-    from datetime import datetime
-
     out = _read_one(
         tmp_path,
         2019,
@@ -1078,6 +1094,180 @@ def test_download_date_accepts_a_datetime(tmp_path):
 
 
 # Property tests (Hypothesis) on invented data.
+
+
+@INVENTED_PROPERTY_SETTINGS
+@given(
+    st.sampled_from((2018, 2019, 2020, 2021)),
+    st.one_of(st.integers(-3000, 3000), st.sampled_from((-1, 0, 1))),
+    st.sampled_from(("date", "datetime", "string", "absent")),
+)
+def test_property_corrected_vintage_gate_matches_download_date(
+    tmp_path, year, offset, representation
+):
+    """The correction date is inclusive; stale or absent vintages refuse."""
+    fixed = date(2025, 7, 24)
+    when = fixed + timedelta(days=offset)
+    downloaded_on = {
+        "date": when,
+        "datetime": datetime.combine(when, datetime.min.time()),
+        "string": when.isoformat(),
+        "absent": None,
+    }[representation]
+    if downloaded_on is None or when < fixed:
+        # An unopened path also proves that the vintage gate runs first.
+        with pytest.raises(ValueError, match="corrected|predate"):
+            sipp_income.read_sipp_income_months(
+                year,
+                path=tmp_path / "INVENTED_absent_vintage.csv",
+                concepts=["social_security_amount"],
+                downloaded_on=downloaded_on,
+            )
+    else:
+        out = _read_one(
+            tmp_path,
+            year,
+            "social_security_amount",
+            100,
+            downloaded_on=downloaded_on,
+        )
+        assert out["social_security_amount"].tolist() == [100]
+
+
+@pytest.mark.parametrize("placement", ("selected", "unselected", "both"))
+@INVENTED_PROPERTY_SETTINGS
+@given(
+    st.sampled_from(SIPP_INCOME_YEARS),
+    st.lists(
+        st.text(alphabet='"abc012 ', max_size=8).map(lambda text: '"' + text),
+        min_size=2,
+        max_size=12,
+    ),
+    st.sampled_from(CORE_CONCEPTS),
+)
+def test_property_quotes_preserve_physical_records_or_refuse(
+    tmp_path, placement, year, tokens, selected_concept
+):
+    """Quotes in selected and unselected fields never swallow a row."""
+    table = income_variables(year)
+    header, lines = _invented_lines(year, rows=len(tokens))
+    records = [line.split("|") for line in lines]
+    if placement in ("selected", "both"):
+        position = CORE_CONCEPTS.index(selected_concept)
+        for fields, token in zip(records, tokens, strict=True):
+            fields[position] = token
+    for fields, token in zip(records, tokens, strict=True):
+        fields.append(token if placement in ("unselected", "both") else "0")
+    path = tmp_path / "INVENTED_generated_quotes.csv"
+    path.write_text(
+        "\n".join(
+            [header + "|INVENTED_UNUSED", *("|".join(row) for row in records)]
+        )
+        + "\n"
+    )
+    if placement in ("selected", "both"):
+        # Every core field has a numeric or fixed-width digit domain.
+        with pytest.raises(ValueError, match=table[selected_concept].name):
+            sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+    else:
+        out = sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+        assert len(out) == len(records)
+        assert out["month"].tolist() == list(range(1, len(records) + 1))
+
+
+@pytest.mark.parametrize("problem", ("short", "long", "blank", "header"))
+@INVENTED_PROPERTY_SETTINGS
+@given(
+    st.sampled_from(SIPP_INCOME_YEARS),
+    st.integers(1, 12),
+    st.data(),
+)
+def test_property_malformed_physical_layout_refuses(
+    tmp_path, problem, year, count, data
+):
+    """Any altered field count or repeated header refuses before parsing."""
+    header, lines = _invented_lines(year, rows=count)
+    row_index = data.draw(st.integers(0, count - 1))
+    fields = lines[row_index].split("|")
+    if problem == "header":
+        header += "|" + data.draw(st.sampled_from(header.split("|")))
+        lines = [line + "|INVENTED_EXTRA" for line in lines]
+        message = "repeats a column name"
+    else:
+        if problem == "short":
+            del fields[data.draw(st.integers(0, len(fields) - 1))]
+        elif problem == "long":
+            fields.insert(
+                data.draw(st.integers(0, len(fields))), "INVENTED_EXTRA"
+            )
+        else:
+            fields = [""]
+        lines[row_index] = "|".join(fields)
+        message = "fields"
+    path = tmp_path / "INVENTED_generated_bad_layout.csv"
+    path.write_text("\n".join([header, *lines]) + "\n")
+    with pytest.raises(ValueError, match=message):
+        sipp_income.read_sipp_income_months(year, path=path, concepts=[])
+
+
+@pytest.mark.parametrize(
+    "problem", ("duplicate", "incomplete", "missing", "ambiguous", "base")
+)
+@INVENTED_PROPERTY_SETTINGS
+@given(
+    st.lists(
+        st.tuples(st.integers(101, 120), st.integers(1, 12)),
+        unique=True,
+        min_size=2,
+        max_size=8,
+    ),
+    st.integers(1, 100000),
+    st.data(),
+)
+def test_property_invalid_replicate_keys_or_base_weight_refuse(
+    tmp_path, problem, keys, quarters, data
+):
+    """Sidecars must link completely, uniquely and with the same weight."""
+    year = 2022
+    rows = [
+        _invented_row(
+            year, person_number=person, month=month, weight=quarters / 4
+        )
+        for person, month in keys
+    ]
+    chosen = data.draw(st.integers(0, len(rows) - 1))
+    replica_rows = list(rows)
+    overrides = {}
+    message = "replicate"
+    if problem == "duplicate":
+        replica_rows.append(rows[chosen])
+    elif problem == "incomplete":
+        del replica_rows[chosen]
+    elif problem == "missing":
+        concept = data.draw(
+            st.sampled_from(("sample_unit_id", "person_number", "month"))
+        )
+        replica_rows[chosen] = rows[chosen] | {concept: ""}
+        message = ".*"
+    elif problem == "ambiguous":
+        panel = next(
+            panel
+            for panel in range(2018, year + 1)
+            if panel != rows[chosen]["panel"]
+            and _admits(income_variables(year)["panel"], panel)
+        )
+        rows.append(rows[chosen] | {"panel": panel})
+        message = "ambiguous replicate linkage keys"
+    else:
+        overrides["replicate_weight_0"] = quarters / 4 + 0.25
+    path = _write_invented_file(tmp_path, year, rows, concepts=CORE_CONCEPTS)
+    replicate_path = _write_invented_replicates(
+        tmp_path, year, replica_rows, overrides=overrides
+    )
+    with pytest.raises(ValueError, match=message):
+        sipp_income.read_sipp_income_months(
+            year, path=path, concepts=[], replicate_path=replicate_path
+        )
 
 
 @INVENTED_PROPERTY_SETTINGS

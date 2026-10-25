@@ -40,7 +40,8 @@ Invariants:
   across panels refuse rather than mislink.
 * Every row has the header's field count and no header name repeats, so a
   short or long row can neither become structural blanks nor shift
-  values between columns.
+  values between columns. Quotes are literal characters: they never join
+  physical records, including in unselected fields.
 
 ``concepts`` selects canonical column names from :func:`income_variables`;
 the design and linkage core is always read. By default all concepts
@@ -61,6 +62,7 @@ overridden by ``POPULACE_DYNAMICS_SIPP_DIR`` or an explicit path/directory.
 
 from __future__ import annotations
 
+import csv
 import gzip
 import os
 import re
@@ -213,7 +215,8 @@ def _check_layout(path: Path, year: int) -> None:
     With ``usecols`` pandas stops checking field counts: a short row's
     missing fields become blanks (read as not-in-universe) and a row with
     an extra field shifts values into neighbouring columns. Counting the
-    separators on every line first closes both gaps.
+    separators on every physical line first closes both gaps; ``_read``
+    disables CSV quoting to keep the same record and field boundaries.
     """
     opener = gzip.open if path.name.lower().endswith(".gz") else open
     try:
@@ -249,6 +252,7 @@ def _read(
             sep="|",
             usecols=wanted,
             dtype="string",
+            quoting=csv.QUOTE_NONE,
             keep_default_na=False,
             skip_blank_lines=False,
         )

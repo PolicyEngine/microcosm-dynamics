@@ -1,10 +1,13 @@
 # SIPP income and resources: metadata evidence
 
 This folder holds the Census documentation that verifies
-`src/populace_dynamics/data/sipp_income_registry.py`. It holds no survey
-record: no `pu`/`rw` data archive and no `*_validate` workbook (those
-workbooks carry statistics computed from the records) was requested,
-downloaded or opened.
+`src/populace_dynamics/data/sipp_income_registry.py`. Review found survey
+case records in eight published user-note captures; those whole-page
+bodies have been removed. Their inventory entries retain only URL, title,
+release, named variables and an exclusion reason. The capture guard checks
+the remaining stored notes for identifier columns and identifier/value
+text before the branch treats them as metadata. No `pu`/`rw` data archive or
+`*_validate` workbook was requested, downloaded or opened.
 
 ## Captures
 
@@ -14,10 +17,33 @@ with its UTC retrieval time, byte size and SHA-256. Every request used plain
 `SOURCE_BLOCKED`). `capture_supplementary.py` added the release notes,
 Census's release-to-release crosswalks (2018 to 2019 through 2021 to 2022),
 the 2018 metadata file and the 2018 Programs and Poverty/Income topic
-dictionaries. `capture_user_notes.py` screened all 355 user-note pages for
-2018-2025: it stores, gzipped, the 8 index pages and the 101 notes that name
-an admitted variable, and logs every page fetched in
-`user_notes_manifest.json` (hashes are of the uncompressed bytes).
+dictionaries. The original capture screened 355 user-note pages for
+2018-2025. The retained captures comprise 8 index pages and 93 notes that
+name an admitted variable. `user_notes_manifest.json` inventories all 355
+pages; eight entries are marked `excluded_record_bearing`, with no stored
+body, retrieval time, size or hash. Stored-page hashes cover uncompressed
+bytes. This revision rebuilt the inventory and pins from committed files
+without running the capture script or requesting any page.
+
+## Record-bearing user notes
+
+`capture_user_notes.py` refuses these Census URLs before requesting them.
+The titles below come from their existing inventory metadata; no text
+extract or case-specific correction is retained. The same script refuses
+any new whole page with an identifier column or an identifier name
+followed by digits. Excluded notes remain attached to relevant registry
+entries by URL and title only.
+
+- [2019 SIPP: One Case with Negative Hourly Earning Values](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-one-case-neg-hrly-earn-val.html).
+- [2021 SIPP: Child Care Assistance Errors](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/child-care-assist-errors.html).
+- [2022 SIPP: Child Care Assistance Error for a Small Number of Cases](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-child-care-assist-err-sm-numb-case.html).
+- [2023 SIPP: Incorrect Child Care Assistance Case](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-incorrect-child-care-assistance-case.html).
+- [SIPP 2023: Minor Discrepancies in School Meals Data](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-minor-discrepancies-school-meals.html).
+- [2023 SIPP: Inconsistent Case for Social Security on Behalf of a Child](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-inconsistent-case-soc-behalf-child.html).
+- [2024 SIPP: Inconsistency in One Case in Other Support Paid](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-inconsistency-other-support-paid.html).
+- [2025 SIPP: Incorrect Top-Coding of Medicare Deductions](https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-inc-top-cod-mcr-ded.html).
+
+## Other captures
 
 - The Census variable API exists for releases 2022-2025. Its 2018-2021
   endpoints return HTTP 404; those response bodies are kept.
@@ -63,9 +89,12 @@ files alone.
   some variables (`WPFINWGT`, `ERESIDENCEID` and `EHRESIDENCID` in
   2022-2025, and `SPANEL`, `SWAVE`, `MONTHCODE` and `PNUM` in 2022).
 - **Rulings.** `source_rulings.json` holds every hand ruling with the
-  evidence it cites. The generator stops on a schema-dictionary label
-  conflict that has no ruling; an open ruling refuses the concept in that
-  release.
+  evidence it cites. Its 13 named domain rulings list all 64 affected
+  release-variable pairs and cite both sources' locations. They retain
+  the existing intersections and the API missing-code exception. The
+  generator requires a matching ruling for every domain disagreement and
+  stops when one is missing; an open ruling refuses the concept. The same
+  refusal rule applies to schema-dictionary label conflicts.
 - **Crosswalk.** `release_changes.json` lists every change in an admitted
   concept's name, dictionary label, universe, codes, domain, missing codes,
   storage type or admission across releases.

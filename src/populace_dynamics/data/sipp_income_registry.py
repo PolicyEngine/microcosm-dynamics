@@ -258,9 +258,13 @@ def code_label(year: int, concept: str, code: int | str) -> str:
 def user_notes(year: int, concept: str) -> tuple[tuple[str, str], ...]:
     """Census user notes for this release that name the concept's variable.
 
-    Each entry is ``(title, url)``; the note's bytes are committed under
-    ``data/external/sipp_income/user_notes``. Naming is not the same as
-    affecting: read the note. No note is attached to the structural keys
+    Each entry is ``(title, url)``. The inventory marks record-bearing notes
+    as excluded: these attachments retain only the URL and title, with no
+    stored body or derived text. Each internal note-table entry states its
+    capture status alongside the optional body path. Other captures live under
+    ``data/external/sipp_income/user_notes``. Naming a variable does not
+    establish that the note changes its definition. No note is attached to
+    the structural keys
     ``SSUID``, ``PNUM``, ``MONTHCODE``, ``SPANEL`` and ``SWAVE``, which
     notes name only to identify cases.
     """
@@ -350,7 +354,7 @@ _GENERATED = r"""
   "rw2024_schema.json": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
   "rw2025_dictionary.txt": "818e434ae1ac25b0be5b370826950ca46d2f538e38c49860a28e6cc25d2a8d60",
   "rw2025_schema.json": "9a7c9ddfa1344f96a65425590a4efc34919a131a34b669f0fa89a075dd85c6e9",
-  "source_rulings.json": "4e9c120d905ed96d1bdd0d3b6ad1ca39ac86dbbe4f64ada3fd06e659cc5adb78",
+  "source_rulings.json": "0ce3c5cd8acead08dac65b7a3324f5f98a85648c1b1e0fe020ffcbe1ea28242d",
   "user_notes/2018/2018-chg-asset-quest.html.gz": "923d565a01a9885ac1262fdae088e7e5c0e8f04d87fc7cd30bdabeb3c67c55aa",
   "user_notes/2018/2018-err-debt-alloc-flag-var-nam.html.gz": "5623cf1c6c923960c9770934aba21d9d1fa39f234c68ac44a33a9f79ba8521a8",
   "user_notes/2018/2018-error-emhiother.html.gz": "4a91eb75b0877850ac24fb531dae020dc3fe0c76181b2a3e6cd219ba07ce59f6",
@@ -380,7 +384,6 @@ _GENERATED = r"""
   "user_notes/2019/2019-incorr-stat-flags-hhl-rel-var.html.gz": "c4cf44bdfc678ba42ad2ecd7d340f1b132c1211988ebc473c66c319b04714f29",
   "user_notes/2019/2019-medicaid-variable-error.html.gz": "f2afcf5e2576e77a376a9bf86a39b61a7dc2c6f1622dae295f065409fafc85fe",
   "user_notes/2019/2019-monthly-hi-variables-error.html.gz": "947b184392c6abffdee03cc5db4b5e068af7cfb2a56c73f964ad6c411b76faf8",
-  "user_notes/2019/2019-one-case-neg-hrly-earn-val.html.gz": "2bf65009f749f1a9020ac61640263698d2ceeb331fdb04b9e80f551e2a4ca6d6",
   "user_notes/2019/2019-othr-assist-univ-logical-imput-rates.html.gz": "a4b0e5473173de378d98d130e4815a14298a8d0ad38f56772c6a4778431bfccc",
   "user_notes/2019/2019-othr-supprt-paid-univ.html.gz": "bf1981dac79a607156806f568708a92115c1c7e6b037dca5fd72e3cc14af4208",
   "user_notes/2019/2019-social-security-parent-child-linkage-variable.html.gz": "bb5f97c7fc149f267aea4695cc76302376b1851e8fad343d95f68c3dbf7e400d",
@@ -410,13 +413,11 @@ _GENERATED = r"""
   "user_notes/2021/2021-sipp-increase-in-reported-pension-ownership.html.gz": "fce685204bfa79489e2d6dd0bf5518f10f693a7621bfe022638efa5a3ed73e36",
   "user_notes/2021/2021-social-security-parent-child-linkage-variable.html.gz": "eaa875b87e048dd144b51223e5da9fed36cf68e8221f991b9e710d0625cfd959",
   "user_notes/2021/2021-universing-error-rged.html.gz": "5a2be0f0961543d0e4b31a430763f60b9338ca3c490c2cbd26985c87e2fa26d3",
-  "user_notes/2021/child-care-assist-errors.html.gz": "56a96c9a25bcd4c8edb711ccd5747d0016e1fffc6b83aab5a64c7b15f6cf6d95",
   "user_notes/2021/estim-disabilty-preval.html.gz": "2c297936eda1d4289c8b2ad6865ee6a41d34dda58f5e4bc27113c13d4a7f6aa7",
   "user_notes/2021/inconsist-mnthly-relat-amg-ppl.html.gz": "5dbe299c7c0e5a0655858f085ad5a932173eb588eabbd30ecc2d4d8a79b27478",
   "user_notes/2021/new-disabilty-content.html.gz": "22ead1e3a7507b0ab00dd801cdf3d86dc135fb93f36ef230744bca178e3e4ba3",
   "user_notes/2021/othr-assist-univ-logical-imput-rates.html.gz": "67a3bdaa2370004e9667cda66fa6588f6856a6c6dc4b86597f7190478c7ecc72",
   "user_notes/2021/univers-updates-state-metro-status.html.gz": "b03a7bb39139b3b95cb66d9488a9e4ef1212a7d14480c2da2775b29b8dd41c45",
-  "user_notes/2022/2022-child-care-assist-err-sm-numb-case.html.gz": "68a03918c8a21ea250574adb8d813d00215c9ce500f053a14fff938e18c7327a",
   "user_notes/2022/2022-correc-econ-impct-paymnt-inconsis.html.gz": "9337341feab46d5110ee1b55df00ea80ecbb83cdd5c6533cc75c4c90c69cf0d3",
   "user_notes/2022/2022-err-debt-alloc-flag-var-nam.html.gz": "187a8da794ca0e6ec01251e8b9225ef15689f699cd24f1d24257e2e827a83ed4",
   "user_notes/2022/2022-estim-disabil-prevlnce.html.gz": "52f45a866a0bb5bef86d93f1e483f38462777999a9c8adb67a69152e8175e32b",
@@ -435,24 +436,19 @@ _GENERATED = r"""
   "user_notes/2023/2023-change-disability-condition-question.html.gz": "9eae63e9e6321b801c4d1c43aa87bb4ba896844b8d7f607b56abe3dd7c131664",
   "user_notes/2023/2023-estim-disabil-prevlnce.html.gz": "aaba4d6f855f2810b34944e676fcb3d3b4c25f9277d747dcc622d1c7ac5f39b5",
   "user_notes/2023/2023-inconsist-mnthly-relat-amg-ppl.html.gz": "f825b13008981b92ca87568ac7ae7b211586234ab2c3ca5f0de76500cb0ce4cc",
-  "user_notes/2023/2023-inconsistent-case-soc-behalf-child.html.gz": "940bd93f80cb6788db08dae917545ad5d5093398d182914c59cc93a0170b4af8",
-  "user_notes/2023/2023-incorrect-child-care-assistance-case.html.gz": "dc6c1d6725f7909da220977c90026a723721ee636fc06efc631aa73a5ab2dea7",
   "user_notes/2023/2023-issue-with-age-at-birth.html.gz": "6c3f71bb31883632d54067fd8fc96ed7eaf2fa6f30995980c1a55937ec28431b",
-  "user_notes/2023/2023-minor-discrepancies-school-meals.html.gz": "11502dac6aece02dedc9e44984e2bc3770d2a935b75522f1d5276311baf52c84",
   "user_notes/2023/2023-monthly-hi-variables-error.html.gz": "f23054455786a4d322f3f3da5ddce7a399a7be13bf68554fdf10953e5ea0eef9",
   "user_notes/2023/2023-social-security-parent-child-linkage-variable.html.gz": "3d5dee9e23424d25d4e84f6f5c89d934299504a5d3b1fae1f233618386f856c1",
   "user_notes/2023/2023-universing-error-rged.html.gz": "ade066bb440c9ff5c1c7adb5f110a47c3fd6583f3a7797edfb17e1b17d2c17e6",
   "user_notes/2024/2024-estimates-disability-prevalence.html.gz": "18a1e09f67f73b393211ad601d646b7bc7b3a5bc0fd983d71cfa44e02c930926",
   "user_notes/2024/2024-inconsistencies-monthly-relationships.html.gz": "5db5e935eaeb0f6e2414b52e97ef17e8cee69ab8c32411f8fafeff9e5634a64b",
-  "user_notes/2024/2024-inconsistency-other-support-paid.html.gz": "8cdf9ae13cf75ecd7768219080951debea20cc8e7dcd0f8ba2cf1c1f055d2ec1",
   "user_notes/2024/2024-issue-with-age-birth.html.gz": "2c873567e095775c8fb364f4f191f538e2d375d506d36ca8045da473ca0c2eba",
   "user_notes/2024/2024-universing-error-rged.html.gz": "f490a0bff721c5d7c7456e6f1d7004136dd2663e776fa3094b6b397cfc48d285",
   "user_notes/2025/2025-estimates-disability-prevalence.html.gz": "67b7d57512134a03552c46f184b9cff3442498ae1e4d9eacff4c6833d6fd6f01",
-  "user_notes/2025/2025-inc-top-cod-mcr-ded.html.gz": "7dc408179f8efd799d31a6229c3ff9c61952158f1748089be6aa3f0e4a652098",
   "user_notes/2025/2025-inconsistencies-School-Meal-Receipt.html.gz": "f9a3a0d14a58994f9308a004e674d01234c772b465de3875e4a5fdaaa3b47340",
   "user_notes/2025/2025-inconsistencies-monthly-relationships.html.gz": "ba29886068b77c219e073c804c2c465883411b0a2850f4e2b85b7918340eb447",
   "user_notes/2025/2025-issue-age-birth.html.gz": "d2c2d16dc0859a6a995628b00a39cc0bd7070ca44b1dceec43b397e602fbdd90",
-  "user_notes_manifest.json": "cd23684357ab619683f687899fbf32039ce5b7f6ac555fb314471bdc29f580fb"
+  "user_notes_manifest.json": "32c72552d561c8eafcb5dbeb486086a545b05ea19d68d59ecf010ee69caadf5f"
  },
  "_CONCEPTS": {
   "age": [
@@ -171192,507 +171188,608 @@ _GENERATED = r"""
   [
    "2018 SIPP: Changes to Asset Questions",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-chg-asset-quest.html",
-   "user_notes/2018/2018-chg-asset-quest.html.gz"
+   "user_notes/2018/2018-chg-asset-quest.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Errors in Debt Allocation Flag Variable Names",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-err-debt-alloc-flag-var-nam.html",
-   "user_notes/2018/2018-err-debt-alloc-flag-var-nam.html.gz"
+   "user_notes/2018/2018-err-debt-alloc-flag-var-nam.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Jointly Held Assets and Unsecured Debts Universes",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-jointly-held-assets-and-unsecured-debts-universes.html",
-   "user_notes/2018/2018-jointly-held-assets-and-unsecured-debts-universes.html.gz"
+   "user_notes/2018/2018-jointly-held-assets-and-unsecured-debts-universes.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Metadata for Rental Properties and Other Real Estate",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018sipp-metadata-for-rental-properties-other-real-estate.html",
-   "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz"
+   "user_notes/2018/2018sipp-metadata-for-rental-properties-other-real-estate.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Model-based Imputation of Asset Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-mod-bas-impute-ass-var.html",
-   "user_notes/2018/2018-mod-bas-impute-ass-var.html.gz"
+   "user_notes/2018/2018-mod-bas-impute-ass-var.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-universing-error-rged.html",
-   "user_notes/2018/2018-universing-error-rged.html.gz"
+   "user_notes/2018/2018-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Inconsistent Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-inconsistent-relationships.html",
-   "user_notes/2018/2018-inconsistent-relationships.html.gz"
+   "user_notes/2018/2018-inconsistent-relationships.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Incorrect Status Flags for Household Relationship Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-incorr-stat-flag-hh-rel-var.html",
-   "user_notes/2018/2018-incorr-stat-flag-hh-rel-var.html.gz"
+   "user_notes/2018/2018-incorr-stat-flag-hh-rel-var.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Disability Recode Variable RDIS_ALT",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/disability-recode.html",
-   "user_notes/2018/disability-recode.html.gz"
+   "user_notes/2018/disability-recode.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Medicaid End-Month Variable Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-medicaid-variable-error.html",
-   "user_notes/2018/2018-medicaid-variable-error.html.gz"
+   "user_notes/2018/2018-medicaid-variable-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-monthly-hi-variables-error.html",
-   "user_notes/2018/2018-monthly-hi-variables-error.html.gz"
+   "user_notes/2018/2018-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Universe Error in Variable EMHIOTHER",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-error-emhiother.html",
-   "user_notes/2018/2018-error-emhiother.html.gz"
+   "user_notes/2018/2018-error-emhiother.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Universe for Medical Utilization Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-univs-med-utilz-var.html",
-   "user_notes/2018/2018-univs-med-utilz-var.html.gz"
+   "user_notes/2018/2018-univs-med-utilz-var.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Problems with Registered Domestic Partnership Data",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-prob-reg-dom-prs-data.html",
-   "user_notes/2018/2018-prob-reg-dom-prs-data.html.gz"
+   "user_notes/2018/2018-prob-reg-dom-prs-data.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Incorrect Metadata for Reason SSI Receipt Began",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-reason-ssi-recpt-answ-catg.html",
-   "user_notes/2018/2018-reason-ssi-recpt-answ-catg.html.gz"
+   "user_notes/2018/2018-reason-ssi-recpt-answ-catg.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Other Assistance Universe and Logical-Imputation Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-othr-assist-univ-logical-imput-rates.html",
-   "user_notes/2018/2018-othr-assist-univ-logical-imput-rates.html.gz"
+   "user_notes/2018/2018-othr-assist-univ-logical-imput-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: \u201cOther Support Paid\u201d Universe",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-othr-supprt-paid-univ.html",
-   "user_notes/2018/2018-othr-supprt-paid-univ.html.gz"
+   "user_notes/2018/2018-othr-supprt-paid-univ.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Improvements to Residence Data Processing as of the 2018 SIPP",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-imp-res-dat-proc.html",
-   "user_notes/2018/2018-imp-res-dat-proc.html.gz"
+   "user_notes/2018/2018-imp-res-dat-proc.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Identifying Residential Moves",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-ident-res-mov.html",
-   "user_notes/2018/2018-ident-res-mov.html.gz"
+   "user_notes/2018/2018-ident-res-mov.html.gz",
+   "stored_metadata"
   ],
   [
    "2018 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2018-usernotes/2018-social-security-parent-child-linkage-variable.html",
-   "user_notes/2018/2018-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2018/2018-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Errors in Debt Allocation Flag Variable Names",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-err-debt-alloc-flag-var-nam.html",
-   "user_notes/2019/2019-err-debt-alloc-flag-var-nam.html.gz"
+   "user_notes/2019/2019-err-debt-alloc-flag-var-nam.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: TDRAW_AMT and Retirement Income",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-tdraw_amt-and-retirement-income.html",
-   "user_notes/2019/2019-tdraw_amt-and-retirement-income.html.gz"
+   "user_notes/2019/2019-tdraw_amt-and-retirement-income.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Changes to the Bottomcoding of Negative Asset Income",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-chng-bott-codng-neg.html",
-   "user_notes/2019/2019-chng-bott-codng-neg.html.gz"
+   "user_notes/2019/2019-chng-bott-codng-neg.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-universing-error-rged.html",
-   "user_notes/2019/2019-universing-error-rged.html.gz"
+   "user_notes/2019/2019-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Incorrect Status Flags for Household Relationship Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-incorr-stat-flags-hhl-rel-var.html",
-   "user_notes/2019/2019-incorr-stat-flags-hhl-rel-var.html.gz"
+   "user_notes/2019/2019-incorr-stat-flags-hhl-rel-var.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Some Inconsistent Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-incons-rel-amg-peop.html",
-   "user_notes/2019/2019-incons-rel-amg-peop.html.gz"
+   "user_notes/2019/2019-incons-rel-amg-peop.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Disability Recode Variable RDIS_ALT",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-disab-recod-var-rdis-alt.html",
-   "user_notes/2019/2019-disab-recod-var-rdis-alt.html.gz"
+   "user_notes/2019/2019-disab-recod-var-rdis-alt.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Disclosure Methods to Better Align Poverty Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-disclos-methds-bettr-align-pov-rates.html",
-   "user_notes/2019/2019-disclos-methds-bettr-align-pov-rates.html.gz"
+   "user_notes/2019/2019-disclos-methds-bettr-align-pov-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: One Case with Negative Hourly Earning Values",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-one-case-neg-hrly-earn-val.html",
-   "user_notes/2019/2019-one-case-neg-hrly-earn-val.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2019 SIPP: Medicaid End-Month Variable Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-medicaid-variable-error.html",
-   "user_notes/2019/2019-medicaid-variable-error.html.gz"
+   "user_notes/2019/2019-medicaid-variable-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-monthly-hi-variables-error.html",
-   "user_notes/2019/2019-monthly-hi-variables-error.html.gz"
+   "user_notes/2019/2019-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Some Marital History and Cohabiting Partner Inconsistencies",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-some-marital-hist-cohab-partnr-inconsis.html",
-   "user_notes/2019/2019-some-marital-hist-cohab-partnr-inconsis.html.gz"
+   "user_notes/2019/2019-some-marital-hist-cohab-partnr-inconsis.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Inconsistent SSI Receipt for Partial Year Respondents",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-inconsis-ssi-recpt-for-part-yr-resp.html",
-   "user_notes/2019/2019-inconsis-ssi-recpt-for-part-yr-resp.html.gz"
+   "user_notes/2019/2019-inconsis-ssi-recpt-for-part-yr-resp.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Other Assistance Universe and Logical-Imputation Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-othr-assist-univ-logical-imput-rates.html",
-   "user_notes/2019/2019-othr-assist-univ-logical-imput-rates.html.gz"
+   "user_notes/2019/2019-othr-assist-univ-logical-imput-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Update to End-of-Spell Coding",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-update-end-spell-cdng.html",
-   "user_notes/2019/2019-update-end-spell-cdng.html.gz"
+   "user_notes/2019/2019-update-end-spell-cdng.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: \u201cOther Support Paid\u201d Universe",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-othr-supprt-paid-univ.html",
-   "user_notes/2019/2019-othr-supprt-paid-univ.html.gz"
+   "user_notes/2019/2019-othr-supprt-paid-univ.html.gz",
+   "stored_metadata"
   ],
   [
    "2019 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-social-security-parent-child-linkage-variable.html",
-   "user_notes/2019/2019-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2019/2019-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Errors in Debt Allocation Flag Variable Names",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-err-debt-alloc-flag-var-nam.html",
-   "user_notes/2020/2020-err-debt-alloc-flag-var-nam.html.gz"
+   "user_notes/2020/2020-err-debt-alloc-flag-var-nam.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: TDRAW_AMT and Retirement Income",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-tdraw_amt-and-retirement-income.html",
-   "user_notes/2020/2020-tdraw_amt-and-retirement-income.html.gz"
+   "user_notes/2020/2020-tdraw_amt-and-retirement-income.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Universe for Jointly Held Assets and Debts",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-univ-joint-held-assets-debts.html",
-   "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz"
+   "user_notes/2020/2020-univ-joint-held-assets-debts.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-universing-error-rged.html",
-   "user_notes/2020/2020-universing-error-rged.html.gz"
+   "user_notes/2020/2020-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Inconsistent Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/inconsist-relshps-amg-people.html",
-   "user_notes/2020/inconsist-relshps-amg-people.html.gz"
+   "user_notes/2020/inconsist-relshps-amg-people.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Illogical Relationship to Householder Values",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/illog-relatshp-hhld-val.html",
-   "user_notes/2020/illog-relatshp-hhld-val.html.gz"
+   "user_notes/2020/illog-relatshp-hhld-val.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Disability Recode Variable RDIS_ALT",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/disablty-recod-var-rdis-alt.html",
-   "user_notes/2020/disablty-recod-var-rdis-alt.html.gz"
+   "user_notes/2020/disablty-recod-var-rdis-alt.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Medicaid End-Month Variable Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-medicaid-variable-error.html",
-   "user_notes/2020/2020-medicaid-variable-error.html.gz"
+   "user_notes/2020/2020-medicaid-variable-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-monthly-hi-variables-error.html",
-   "user_notes/2020/2020-monthly-hi-variables-error.html.gz"
+   "user_notes/2020/2020-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Some Marital History and Cohabiting Partner Inconsistencies",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/marital-histry-cohab-partnr-inconsist.html",
-   "user_notes/2020/marital-histry-cohab-partnr-inconsist.html.gz"
+   "user_notes/2020/marital-histry-cohab-partnr-inconsist.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Inconsistent SSI Receipt for Partial Year Respondents",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/inconsist-ssi-recpt-part-yr-respndts.html",
-   "user_notes/2020/inconsist-ssi-recpt-part-yr-respndts.html.gz"
+   "user_notes/2020/inconsist-ssi-recpt-part-yr-respndts.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Other Assistance Universe and Logical-Imputation Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-othr-assist-univ-logical-imput-rates.html",
-   "user_notes/2020/2020-othr-assist-univ-logical-imput-rates.html.gz"
+   "user_notes/2020/2020-othr-assist-univ-logical-imput-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: \u201cOther Support Paid\u201d Universe",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-othr-supprt-paid-univ.html",
-   "user_notes/2020/2020-othr-supprt-paid-univ.html.gz"
+   "user_notes/2020/2020-othr-supprt-paid-univ.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Incorrect Duration of Residence Values",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-incorr-dur-res-val.html",
-   "user_notes/2020/2020-incorr-dur-res-val.html.gz"
+   "user_notes/2020/2020-incorr-dur-res-val.html.gz",
+   "stored_metadata"
   ],
   [
    "2020 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2020-usernotes/2020-social-security-parent-child-linkage-variable.html",
-   "user_notes/2020/2020-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2020/2020-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Errors in Debt Allocation Flag Variable Names",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-err-debt-alloc-flag-var-nam.html",
-   "user_notes/2021/2021-err-debt-alloc-flag-var-nam.html.gz"
+   "user_notes/2021/2021-err-debt-alloc-flag-var-nam.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-universing-error-rged.html",
-   "user_notes/2021/2021-universing-error-rged.html.gz"
+   "user_notes/2021/2021-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Child Care Assistance Errors",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/child-care-assist-errors.html",
-   "user_notes/2021/child-care-assist-errors.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2021 SIPP: Some Inconsistent Monthly Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/inconsist-mnthly-relat-amg-ppl.html",
-   "user_notes/2021/inconsist-mnthly-relat-amg-ppl.html.gz"
+   "user_notes/2021/inconsist-mnthly-relat-amg-ppl.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Estimates of Disability Prevalence",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/estim-disabilty-preval.html",
-   "user_notes/2021/estim-disabilty-preval.html.gz"
+   "user_notes/2021/estim-disabilty-preval.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: New Disability Content",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/new-disabilty-content.html",
-   "user_notes/2021/new-disabilty-content.html.gz"
+   "user_notes/2021/new-disabilty-content.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Medicaid End-Month Variable Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-medicaid-variable-error.html",
-   "user_notes/2021/2021-medicaid-variable-error.html.gz"
+   "user_notes/2021/2021-medicaid-variable-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-monthly-hi-variables-error.html",
-   "user_notes/2021/2021-monthly-hi-variables-error.html.gz"
+   "user_notes/2021/2021-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Other Assistance Universe and Logical-Imputation Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/othr-assist-univ-logical-imput-rates.html",
-   "user_notes/2021/othr-assist-univ-logical-imput-rates.html.gz"
+   "user_notes/2021/othr-assist-univ-logical-imput-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: \u201cOther Support Paid\u201d Universe",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-othr-supprt-paid-univ.html",
-   "user_notes/2021/2021-othr-supprt-paid-univ.html.gz"
+   "user_notes/2021/2021-othr-supprt-paid-univ.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Universe Updates to State and Metropolitan Status",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/univers-updates-state-metro-status.html",
-   "user_notes/2021/univers-updates-state-metro-status.html.gz"
+   "user_notes/2021/univers-updates-state-metro-status.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Increase in Reported Pension Ownership",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-sipp-increase-in-reported-pension-ownership.html",
-   "user_notes/2021/2021-sipp-increase-in-reported-pension-ownership.html.gz"
+   "user_notes/2021/2021-sipp-increase-in-reported-pension-ownership.html.gz",
+   "stored_metadata"
   ],
   [
    "2021 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/2021-social-security-parent-child-linkage-variable.html",
-   "user_notes/2021/2021-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2021/2021-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Errors in Debt Allocation Flag Variable Names",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-err-debt-alloc-flag-var-nam.html",
-   "user_notes/2022/2022-err-debt-alloc-flag-var-nam.html.gz"
+   "user_notes/2022/2022-err-debt-alloc-flag-var-nam.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-universing-error-rged.html",
-   "user_notes/2022/2022-universing-error-rged.html.gz"
+   "user_notes/2022/2022-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Child Care Assistance Error for a Small Number of Cases",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-child-care-assist-err-sm-numb-case.html",
-   "user_notes/2022/2022-child-care-assist-err-sm-numb-case.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2022 SIPP: Estimates of Disability Prevalence",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-estim-disabil-prevlnce.html",
-   "user_notes/2022/2022-estim-disabil-prevlnce.html.gz"
+   "user_notes/2022/2022-estim-disabil-prevlnce.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Problem with Age at Birth",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-prob-with-age-at-birth.html",
-   "user_notes/2022/2022-prob-with-age-at-birth.html.gz"
+   "user_notes/2022/2022-prob-with-age-at-birth.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Medicaid End-Month Variable Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-medicaid-variable-error.html",
-   "user_notes/2022/2022-medicaid-variable-error.html.gz"
+   "user_notes/2022/2022-medicaid-variable-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-monthly-hi-variables-error.html",
-   "user_notes/2022/2022-monthly-hi-variables-error.html.gz"
+   "user_notes/2022/2022-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Correction for Economic Impact Payment Inconsistencies",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-correc-econ-impct-paymnt-inconsis.html",
-   "user_notes/2022/2022-correc-econ-impct-paymnt-inconsis.html.gz"
+   "user_notes/2022/2022-correc-econ-impct-paymnt-inconsis.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Other Assistance Universe and Logical-Imputation Rates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-othr-assist-univ-logical-imput-rates.html",
-   "user_notes/2022/2022-othr-assist-univ-logical-imput-rates.html.gz"
+   "user_notes/2022/2022-othr-assist-univ-logical-imput-rates.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: School Meals Universe for Children Under 5",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-sch-meals-univ-chldr-undr5.html",
-   "user_notes/2022/2022-sch-meals-univ-chldr-undr5.html.gz"
+   "user_notes/2022/2022-sch-meals-univ-chldr-undr5.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Social Security Processing Error and its Impact on Poverty Estimates",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-soc-sec-proces-err-impct-pov-est.html",
-   "user_notes/2022/2022-soc-sec-proces-err-impct-pov-est.html.gz"
+   "user_notes/2022/2022-soc-sec-proces-err-impct-pov-est.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Unusually High Values for Self-Contribution Recodes",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-unusl-high-val-self-contrib-recods.html",
-   "user_notes/2022/2022-unusl-high-val-self-contrib-recods.html.gz"
+   "user_notes/2022/2022-unusl-high-val-self-contrib-recods.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Universe Change for Retirement Account Income Withdrawals",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-univ-chng-retir-acct-inc-wdraw.html",
-   "user_notes/2022/2022-univ-chng-retir-acct-inc-wdraw.html.gz"
+   "user_notes/2022/2022-univ-chng-retir-acct-inc-wdraw.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Status Flag Change for Contributions to Retirement Accounts",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-stat-flag-chng-contrib-retire-accts.html",
-   "user_notes/2022/2022-stat-flag-chng-contrib-retire-accts.html.gz"
+   "user_notes/2022/2022-stat-flag-chng-contrib-retire-accts.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-social-security-parent-child-linkage-variable.html",
-   "user_notes/2022/2022-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2022/2022-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2022 SIPP: Prior Processing Error Affecting Social Security \u2018Self\u2019 Amounts",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-prior-process-err-affct-soc-sec-self-amts.html",
-   "user_notes/2022/2022-prior-process-err-affct-soc-sec-self-amts.html.gz"
+   "user_notes/2022/2022-prior-process-err-affct-soc-sec-self-amts.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-universing-error-rged.html",
-   "user_notes/2023/2023-universing-error-rged.html.gz"
+   "user_notes/2023/2023-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Incorrect Child Care Assistance Case",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-incorrect-child-care-assistance-case.html",
-   "user_notes/2023/2023-incorrect-child-care-assistance-case.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2023 SIPP: Inconsistent Monthly Relationships Among a Few People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-inconsist-mnthly-relat-amg-ppl.html",
-   "user_notes/2023/2023-inconsist-mnthly-relat-amg-ppl.html.gz"
+   "user_notes/2023/2023-inconsist-mnthly-relat-amg-ppl.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Estimates of Disability Prevalence",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-estim-disabil-prevlnce.html",
-   "user_notes/2023/2023-estim-disabil-prevlnce.html.gz"
+   "user_notes/2023/2023-estim-disabil-prevlnce.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Change to Disability Condition Question Text",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-change-disability-condition-question.html",
-   "user_notes/2023/2023-change-disability-condition-question.html.gz"
+   "user_notes/2023/2023-change-disability-condition-question.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Issue with Age at Birth",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-issue-with-age-at-birth.html",
-   "user_notes/2023/2023-issue-with-age-at-birth.html.gz"
+   "user_notes/2023/2023-issue-with-age-at-birth.html.gz",
+   "stored_metadata"
   ],
   [
    "2023 SIPP: Monthly Health Insurance Variables Error",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-monthly-hi-variables-error.html",
-   "user_notes/2023/2023-monthly-hi-variables-error.html.gz"
+   "user_notes/2023/2023-monthly-hi-variables-error.html.gz",
+   "stored_metadata"
   ],
   [
    "SIPP 2023: Minor Discrepancies in School Meals Data",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-minor-discrepancies-school-meals.html",
-   "user_notes/2023/2023-minor-discrepancies-school-meals.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2023 SIPP: Inconsistent Case for Social Security on Behalf of a Child",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-inconsistent-case-soc-behalf-child.html",
-   "user_notes/2023/2023-inconsistent-case-soc-behalf-child.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2023 SIPP: Social Security Parent-Child Linkage Variables",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-social-security-parent-child-linkage-variable.html",
-   "user_notes/2023/2023-social-security-parent-child-linkage-variable.html.gz"
+   "user_notes/2023/2023-social-security-parent-child-linkage-variable.html.gz",
+   "stored_metadata"
   ],
   [
    "2024 SIPP: Universing Error for RGED",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-universing-error-rged.html",
-   "user_notes/2024/2024-universing-error-rged.html.gz"
+   "user_notes/2024/2024-universing-error-rged.html.gz",
+   "stored_metadata"
   ],
   [
    "2024 SIPP: Inconsistent Monthly Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-inconsistencies-monthly-relationships.html",
-   "user_notes/2024/2024-inconsistencies-monthly-relationships.html.gz"
+   "user_notes/2024/2024-inconsistencies-monthly-relationships.html.gz",
+   "stored_metadata"
   ],
   [
    "2024 SIPP: Estimates of Disability Prevalence",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-estimates-disability-prevalence.html",
-   "user_notes/2024/2024-estimates-disability-prevalence.html.gz"
+   "user_notes/2024/2024-estimates-disability-prevalence.html.gz",
+   "stored_metadata"
   ],
   [
    "2024 SIPP: Issue with Age at Birth",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-issue-with-age-birth.html",
-   "user_notes/2024/2024-issue-with-age-birth.html.gz"
+   "user_notes/2024/2024-issue-with-age-birth.html.gz",
+   "stored_metadata"
   ],
   [
    "2024 SIPP: Inconsistency in One Case in Other Support Paid",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-inconsistency-other-support-paid.html",
-   "user_notes/2024/2024-inconsistency-other-support-paid.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2025 SIPP: Some Inconsistent Monthly Relationships Among People",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-inconsistencies-monthly-relationships.html",
-   "user_notes/2025/2025-inconsistencies-monthly-relationships.html.gz"
+   "user_notes/2025/2025-inconsistencies-monthly-relationships.html.gz",
+   "stored_metadata"
   ],
   [
    "2025 SIPP: Estimates of Disability Prevalence",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-estimates-disability-prevalence.html",
-   "user_notes/2025/2025-estimates-disability-prevalence.html.gz"
+   "user_notes/2025/2025-estimates-disability-prevalence.html.gz",
+   "stored_metadata"
   ],
   [
    "2025 SIPP: Issue with Age at Birth",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-issue-age-birth.html",
-   "user_notes/2025/2025-issue-age-birth.html.gz"
+   "user_notes/2025/2025-issue-age-birth.html.gz",
+   "stored_metadata"
   ],
   [
    "2025 SIPP: Incorrect Top-Coding of Medicare Deductions",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-inc-top-cod-mcr-ded.html",
-   "user_notes/2025/2025-inc-top-cod-mcr-ded.html.gz"
+   "",
+   "excluded_record_bearing"
   ],
   [
    "2025 SIPP: Inconsistencies in School Meal Receipt",
    "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-inconsistencies-School-Meal-Receipt.html",
-   "user_notes/2025/2025-inconsistencies-School-Meal-Receipt.html.gz"
+   "user_notes/2025/2025-inconsistencies-School-Meal-Receipt.html.gz",
+   "stored_metadata"
   ]
  ],
  "_RELEASES": {

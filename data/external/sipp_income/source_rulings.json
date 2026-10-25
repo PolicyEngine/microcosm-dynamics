@@ -1,5 +1,5 @@
 {
-  "description": "Hand-maintained rulings on conflicts between Census sources for one release. build_registry.py stops while a label conflict (2018-2021 storage schema against dictionary; 2022-2025 API against dictionary) or a suppression conflict it detects has no entry here, and while a ruling names a conflict it does not observe. An entry whose resolution is null is open: the concept is refused in that release and the alternatives stay named. Universe anomalies clear a misprinted universe. Every resolution cites committed evidence in this folder or the release's own metadata.",
+  "description": "Hand-maintained rulings on conflicts between Census sources for one release. build_registry.py stops while a detected label, domain or suppression conflict has no matching ruling, or while a ruling names a conflict it does not observe. An entry whose resolution is null is open: the concept is refused in that release and the alternatives stay named. Domain rulings list every covered release and variable, pin both source intervals and their conservative admitted domain, and preserve only the API missing-code exception already documented by the registry. Universe anomalies clear a misprinted universe. Every resolution cites committed evidence in this folder or the release's own metadata.",
   "label_conflicts": {
     "2018/EJSOWNRE": {
       "resolution": "user_note",
@@ -182,5 +182,1315 @@
       "evidence": [],
       "reason": "The 2024 and 2025 dictionaries give every retirement-income amount TRET1AMT-TRET8AMT the universe of source 8 (ERETTYP8YN), while each amount's label names its own source and the 2023 dictionary gives TRETnAMT the universe ERETTYPnYN = 1. The registry carries no universe for TRET1AMT-TRET7AMT in these releases."
     }
-  ]
+  ],
+  "domain_conflicts": {
+    "educational-savings-beneficiary-gaps": {
+      "name": "Educational savings beneficiaries retain dictionary person-number gaps",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "70",
+          "999"
+        ]
+      ],
+      "dictionary": [
+        [
+          "70",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ],
+        [
+          "999",
+          "999"
+        ]
+      ],
+      "admitted": [
+        [
+          "70",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ],
+        [
+          "999",
+          "999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "EESAV1BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            343
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV1BENEF",
+            "2022_dictionary_variables.json#EESAV1BENEF",
+            "2022_dictionary.pdf#page=343"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "EESAV2BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            345
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV2BENEF",
+            "2022_dictionary_variables.json#EESAV2BENEF",
+            "2022_dictionary.pdf#page=345"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "EESAV3BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            347
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV3BENEF",
+            "2022_dictionary_variables.json#EESAV3BENEF",
+            "2022_dictionary.pdf#page=347"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV1BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            347
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV1BENEF",
+            "2023_dictionary_variables.json#EESAV1BENEF",
+            "2023_dictionary.pdf#page=347"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV2BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            348
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV2BENEF",
+            "2023_dictionary_variables.json#EESAV2BENEF",
+            "2023_dictionary.pdf#page=348"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV3BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            349
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV3BENEF",
+            "2023_dictionary_variables.json#EESAV3BENEF",
+            "2023_dictionary.pdf#page=349"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV1BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            347
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV1BENEF",
+            "2024_dictionary_variables.json#EESAV1BENEF",
+            "2024_dictionary.pdf#page=347"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV2BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            348
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV2BENEF",
+            "2024_dictionary_variables.json#EESAV2BENEF",
+            "2024_dictionary.pdf#page=348"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV3BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            349
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV3BENEF",
+            "2024_dictionary_variables.json#EESAV3BENEF",
+            "2024_dictionary.pdf#page=349"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV1BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            346
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV1BENEF",
+            "2025_dictionary_variables.json#EESAV1BENEF",
+            "2025_dictionary.pdf#page=346"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV2BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            347
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV2BENEF",
+            "2025_dictionary_variables.json#EESAV2BENEF",
+            "2025_dictionary.pdf#page=347"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV3BENEF",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            348
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV3BENEF",
+            "2025_dictionary_variables.json#EESAV3BENEF",
+            "2025_dictionary.pdf#page=348"
+          ]
+        }
+      ],
+      "reason": "The API publishes one continuous beneficiary interval. The same release dictionary separately admits the outside-household code, the household person-number interval and the undetermined code. Admit their intersection and preserve the API missing code as itself."
+    },
+    "educational-savings-owner-gaps": {
+      "name": "Educational savings owners retain dictionary person-number gaps",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "70",
+          "499"
+        ]
+      ],
+      "dictionary": [
+        [
+          "70",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "admitted": [
+        [
+          "70",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "EESAV1OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            344
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV1OWNER",
+            "2022_dictionary_variables.json#EESAV1OWNER",
+            "2022_dictionary.pdf#page=344"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "EESAV2OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            346
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV2OWNER",
+            "2022_dictionary_variables.json#EESAV2OWNER",
+            "2022_dictionary.pdf#page=346"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "EESAV3OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            348
+          ],
+          "evidence": [
+            "2022_variables.json#EESAV3OWNER",
+            "2022_dictionary_variables.json#EESAV3OWNER",
+            "2022_dictionary.pdf#page=348"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV1OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            344
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV1OWNER",
+            "2023_dictionary_variables.json#EESAV1OWNER",
+            "2023_dictionary.pdf#page=344"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV2OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            345
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV2OWNER",
+            "2023_dictionary_variables.json#EESAV2OWNER",
+            "2023_dictionary.pdf#page=345"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "EESAV3OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            346
+          ],
+          "evidence": [
+            "2023_variables.json#EESAV3OWNER",
+            "2023_dictionary_variables.json#EESAV3OWNER",
+            "2023_dictionary.pdf#page=346"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV1OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            344
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV1OWNER",
+            "2024_dictionary_variables.json#EESAV1OWNER",
+            "2024_dictionary.pdf#page=344"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV2OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            345
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV2OWNER",
+            "2024_dictionary_variables.json#EESAV2OWNER",
+            "2024_dictionary.pdf#page=345"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "EESAV3OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            346
+          ],
+          "evidence": [
+            "2024_variables.json#EESAV3OWNER",
+            "2024_dictionary_variables.json#EESAV3OWNER",
+            "2024_dictionary.pdf#page=346"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV1OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            343
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV1OWNER",
+            "2025_dictionary_variables.json#EESAV1OWNER",
+            "2025_dictionary.pdf#page=343"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV2OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            344
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV2OWNER",
+            "2025_dictionary_variables.json#EESAV2OWNER",
+            "2025_dictionary.pdf#page=344"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "EESAV3OWNER",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            345
+          ],
+          "evidence": [
+            "2025_variables.json#EESAV3OWNER",
+            "2025_dictionary_variables.json#EESAV3OWNER",
+            "2025_dictionary.pdf#page=345"
+          ]
+        }
+      ],
+      "reason": "The API publishes one continuous owner interval. The same release dictionary separately admits the outside-household code and household person-number interval. Admit their intersection and preserve the API missing code as itself."
+    },
+    "half-sample-dictionary-domain": {
+      "name": "Half-sample domain comes from the release dictionary",
+      "resolution": "dictionary_domain_api_undocumented",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [],
+      "dictionary": [
+        [
+          "1",
+          "2"
+        ]
+      ],
+      "admitted": [
+        [
+          "1",
+          "2"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "GHLFSAM",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1289
+          ],
+          "evidence": [
+            "2022_variables.json#GHLFSAM",
+            "2022_dictionary_variables.json#GHLFSAM",
+            "2022_dictionary.pdf#page=1289"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "GHLFSAM",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1291
+          ],
+          "evidence": [
+            "2023_variables.json#GHLFSAM",
+            "2023_dictionary_variables.json#GHLFSAM",
+            "2023_dictionary.pdf#page=1291"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "GHLFSAM",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1246
+          ],
+          "evidence": [
+            "2024_variables.json#GHLFSAM",
+            "2024_dictionary_variables.json#GHLFSAM",
+            "2024_dictionary.pdf#page=1246"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "GHLFSAM",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1243
+          ],
+          "evidence": [
+            "2025_variables.json#GHLFSAM",
+            "2025_dictionary_variables.json#GHLFSAM",
+            "2025_dictionary.pdf#page=1243"
+          ]
+        }
+      ],
+      "reason": "The API provides its missing code but no nonmissing domain. The same release dictionary verifies the half-sample categories. Admit that verified domain and preserve the API missing code as itself."
+    },
+    "household-business-equity-unverified-dictionary": {
+      "name": "Household business equity retains the API domain",
+      "resolution": "api_domain_dictionary_unverified",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "-9999999999",
+          "9999999999"
+        ]
+      ],
+      "dictionary": null,
+      "admitted": [
+        [
+          "-9999999999",
+          "9999999999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "THEQ_BUS",
+          "api_missing_codes": [
+            "-10000000998"
+          ],
+          "dictionary_pdf_pages": [
+            207
+          ],
+          "evidence": [
+            "2022_variables.json#THEQ_BUS",
+            "2022_dictionary_variables.json#THEQ_BUS",
+            "2022_dictionary.pdf#page=207"
+          ]
+        }
+      ],
+      "reason": "The release dictionary has an inverted printed currency range, so its derived entry is unverified and supplies no second domain. Retain the release API interval and its missing code; do not repair or borrow a dictionary interval."
+    },
+    "monthly-address-dictionary-domain": {
+      "name": "Monthly address domain comes from the release dictionary",
+      "resolution": "dictionary_domain_api_undocumented",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [],
+      "dictionary": [
+        [
+          "11",
+          "49"
+        ]
+      ],
+      "admitted": [
+        [
+          "11",
+          "49"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "SHHADID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1294
+          ],
+          "evidence": [
+            "2022_variables.json#SHHADID",
+            "2022_dictionary_variables.json#SHHADID",
+            "2022_dictionary.pdf#page=1294"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "SHHADID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1287
+          ],
+          "evidence": [
+            "2023_variables.json#SHHADID",
+            "2023_dictionary_variables.json#SHHADID",
+            "2023_dictionary.pdf#page=1287"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "SHHADID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1242
+          ],
+          "evidence": [
+            "2024_variables.json#SHHADID",
+            "2024_dictionary_variables.json#SHHADID",
+            "2024_dictionary.pdf#page=1242"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "SHHADID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1239
+          ],
+          "evidence": [
+            "2025_variables.json#SHHADID",
+            "2025_dictionary_variables.json#SHHADID",
+            "2025_dictionary.pdf#page=1239"
+          ]
+        }
+      ],
+      "reason": "The API provides its missing code but no nonmissing domain. The same release dictionary verifies the address-code interval. Admit that verified domain and preserve the API missing code as itself."
+    },
+    "utility-payer-person-number-gap": {
+      "name": "Utility payers retain dictionary person-number gaps",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "60",
+          "499"
+        ]
+      ],
+      "dictionary": [
+        [
+          "60",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "admitted": [
+        [
+          "60",
+          "70"
+        ],
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "ERMU_PAYER1",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            381
+          ],
+          "evidence": [
+            "2022_variables.json#ERMU_PAYER1",
+            "2022_dictionary_variables.json#ERMU_PAYER1",
+            "2022_dictionary.pdf#page=381"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "ERMU_PAYER2",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            382
+          ],
+          "evidence": [
+            "2022_variables.json#ERMU_PAYER2",
+            "2022_dictionary_variables.json#ERMU_PAYER2",
+            "2022_dictionary.pdf#page=382"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "ERMU_PAYER3",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            383
+          ],
+          "evidence": [
+            "2022_variables.json#ERMU_PAYER3",
+            "2022_dictionary_variables.json#ERMU_PAYER3",
+            "2022_dictionary.pdf#page=383"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "ERMU_PAYER1",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            382
+          ],
+          "evidence": [
+            "2023_variables.json#ERMU_PAYER1",
+            "2023_dictionary_variables.json#ERMU_PAYER1",
+            "2023_dictionary.pdf#page=382"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "ERMU_PAYER2",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            383
+          ],
+          "evidence": [
+            "2023_variables.json#ERMU_PAYER2",
+            "2023_dictionary_variables.json#ERMU_PAYER2",
+            "2023_dictionary.pdf#page=383"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "ERMU_PAYER3",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            384
+          ],
+          "evidence": [
+            "2023_variables.json#ERMU_PAYER3",
+            "2023_dictionary_variables.json#ERMU_PAYER3",
+            "2023_dictionary.pdf#page=384"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "ERMU_PAYER1",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            370
+          ],
+          "evidence": [
+            "2024_variables.json#ERMU_PAYER1",
+            "2024_dictionary_variables.json#ERMU_PAYER1",
+            "2024_dictionary.pdf#page=370"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "ERMU_PAYER2",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            371
+          ],
+          "evidence": [
+            "2024_variables.json#ERMU_PAYER2",
+            "2024_dictionary_variables.json#ERMU_PAYER2",
+            "2024_dictionary.pdf#page=371"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "ERMU_PAYER3",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            372
+          ],
+          "evidence": [
+            "2024_variables.json#ERMU_PAYER3",
+            "2024_dictionary_variables.json#ERMU_PAYER3",
+            "2024_dictionary.pdf#page=372"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "ERMU_PAYER1",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            369
+          ],
+          "evidence": [
+            "2025_variables.json#ERMU_PAYER1",
+            "2025_dictionary_variables.json#ERMU_PAYER1",
+            "2025_dictionary.pdf#page=369"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "ERMU_PAYER2",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            370
+          ],
+          "evidence": [
+            "2025_variables.json#ERMU_PAYER2",
+            "2025_dictionary_variables.json#ERMU_PAYER2",
+            "2025_dictionary.pdf#page=370"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "ERMU_PAYER3",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            371
+          ],
+          "evidence": [
+            "2025_variables.json#ERMU_PAYER3",
+            "2025_dictionary_variables.json#ERMU_PAYER3",
+            "2025_dictionary.pdf#page=371"
+          ]
+        }
+      ],
+      "reason": "The API publishes one continuous payer interval. The same release dictionary separates assistance-payer categories from household person numbers. Admit their intersection and preserve the API missing code as itself."
+    },
+    "person-number-dictionary-domain": {
+      "name": "Person-number domain comes from the release dictionary",
+      "resolution": "dictionary_domain_api_undocumented",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [],
+      "dictionary": [
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "admitted": [
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "PNUM",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1292
+          ],
+          "evidence": [
+            "2022_variables.json#PNUM",
+            "2022_dictionary_variables.json#PNUM",
+            "2022_dictionary.pdf#page=1292"
+          ]
+        }
+      ],
+      "reason": "The API provides its missing code but no nonmissing domain. The same release dictionary verifies the person-number interval. Admit that verified domain and preserve the API missing code as itself."
+    },
+    "sample-unit-dictionary-domain": {
+      "name": "Sample-unit domain comes from the release dictionary",
+      "resolution": "dictionary_domain_api_undocumented",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [],
+      "dictionary": [
+        [
+          "0",
+          "99999999999999"
+        ]
+      ],
+      "admitted": [
+        [
+          "0",
+          "99999999999999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "SSUID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1296
+          ],
+          "evidence": [
+            "2022_variables.json#SSUID",
+            "2022_dictionary_variables.json#SSUID",
+            "2022_dictionary.pdf#page=1296"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "SSUID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1296
+          ],
+          "evidence": [
+            "2023_variables.json#SSUID",
+            "2023_dictionary_variables.json#SSUID",
+            "2023_dictionary.pdf#page=1296"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "SSUID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1251
+          ],
+          "evidence": [
+            "2024_variables.json#SSUID",
+            "2024_dictionary_variables.json#SSUID",
+            "2024_dictionary.pdf#page=1251"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "SSUID",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1248
+          ],
+          "evidence": [
+            "2025_variables.json#SSUID",
+            "2025_dictionary_variables.json#SSUID",
+            "2025_dictionary.pdf#page=1248"
+          ]
+        }
+      ],
+      "reason": "The API provides its missing code but no nonmissing domain. The same release dictionary verifies the identifier interval. Admit that verified domain and preserve the API missing code as itself. The reader separately enforces the documented string width."
+    },
+    "ssi-payee-undetermined-gap": {
+      "name": "SSI payees retain the dictionary gap before undetermined",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "60",
+          "999"
+        ]
+      ],
+      "dictionary": [
+        [
+          "60",
+          "499"
+        ],
+        [
+          "999",
+          "999"
+        ]
+      ],
+      "admitted": [
+        [
+          "60",
+          "499"
+        ],
+        [
+          "999",
+          "999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "ESSI_OWN",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            3190
+          ],
+          "evidence": [
+            "2022_variables.json#ESSI_OWN",
+            "2022_dictionary_variables.json#ESSI_OWN",
+            "2022_dictionary.pdf#page=3190"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "ESSI_OWN",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            3149
+          ],
+          "evidence": [
+            "2023_variables.json#ESSI_OWN",
+            "2023_dictionary_variables.json#ESSI_OWN",
+            "2023_dictionary.pdf#page=3149"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "ESSI_OWN",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            3100
+          ],
+          "evidence": [
+            "2024_variables.json#ESSI_OWN",
+            "2024_dictionary_variables.json#ESSI_OWN",
+            "2024_dictionary.pdf#page=3100"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "ESSI_OWN",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            3093
+          ],
+          "evidence": [
+            "2025_variables.json#ESSI_OWN",
+            "2025_dictionary_variables.json#ESSI_OWN",
+            "2025_dictionary.pdf#page=3093"
+          ]
+        }
+      ],
+      "reason": "The API publishes one continuous payee interval. The same release dictionary separates payer categories and household person numbers from the undetermined code. Admit their intersection and preserve the API missing code as itself."
+    },
+    "variance-stratum-dictionary-domain": {
+      "name": "Variance-stratum domain comes from the release dictionary",
+      "resolution": "dictionary_domain_api_undocumented",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [],
+      "dictionary": [
+        [
+          "1",
+          "240"
+        ]
+      ],
+      "admitted": [
+        [
+          "1",
+          "240"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "GVARSTR",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1290
+          ],
+          "evidence": [
+            "2022_variables.json#GVARSTR",
+            "2022_dictionary_variables.json#GVARSTR",
+            "2022_dictionary.pdf#page=1290"
+          ]
+        },
+        {
+          "release": 2023,
+          "variable": "GVARSTR",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1292
+          ],
+          "evidence": [
+            "2023_variables.json#GVARSTR",
+            "2023_dictionary_variables.json#GVARSTR",
+            "2023_dictionary.pdf#page=1292"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "GVARSTR",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1247
+          ],
+          "evidence": [
+            "2024_variables.json#GVARSTR",
+            "2024_dictionary_variables.json#GVARSTR",
+            "2024_dictionary.pdf#page=1247"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "GVARSTR",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            1244
+          ],
+          "evidence": [
+            "2025_variables.json#GVARSTR",
+            "2025_dictionary_variables.json#GVARSTR",
+            "2025_dictionary.pdf#page=1244"
+          ]
+        }
+      ],
+      "reason": "The API provides its missing code but no nonmissing domain. The same release dictionary verifies the stratum interval. Admit that verified domain and preserve the API missing code as itself."
+    },
+    "vehicle-owner-api-upper-bound": {
+      "name": "Vehicle owners retain the narrower API interval",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "101",
+          "407"
+        ]
+      ],
+      "dictionary": [
+        [
+          "101",
+          "499"
+        ]
+      ],
+      "admitted": [
+        [
+          "101",
+          "407"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "EVEH1OWNER1",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            705
+          ],
+          "evidence": [
+            "2022_variables.json#EVEH1OWNER1",
+            "2022_dictionary_variables.json#EVEH1OWNER1",
+            "2022_dictionary.pdf#page=705"
+          ]
+        },
+        {
+          "release": 2022,
+          "variable": "EVEH2OWNER3",
+          "api_missing_codes": [
+            "-999"
+          ],
+          "dictionary_pdf_pages": [
+            712
+          ],
+          "evidence": [
+            "2022_variables.json#EVEH2OWNER3",
+            "2022_dictionary_variables.json#EVEH2OWNER3",
+            "2022_dictionary.pdf#page=712"
+          ]
+        }
+      ],
+      "reason": "The API owner interval has a lower upper endpoint than the same release dictionary person-number interval. Admit their intersection, without guessing that either endpoint is a publication error, and preserve the API missing code as itself."
+    },
+    "final-person-weight-2022-dictionary-precision": {
+      "name": "Final person weight retains the dictionary decimal interval in 2022",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "0",
+          "999999999999"
+        ]
+      ],
+      "dictionary": [
+        [
+          "0",
+          "9999999.999999"
+        ]
+      ],
+      "admitted": [
+        [
+          "0",
+          "9999999.999999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2022,
+          "variable": "WPFINWGT",
+          "api_missing_codes": [
+            "-99900000000"
+          ],
+          "dictionary_pdf_pages": [
+            1299
+          ],
+          "evidence": [
+            "2022_variables.json#WPFINWGT",
+            "2022_dictionary_variables.json#WPFINWGT",
+            "2022_dictionary.pdf#page=1299"
+          ]
+        }
+      ],
+      "reason": "The API publishes a broader whole-number interval. The release dictionary and storage schema specify decimal weights with a lower maximum. Admit their intersection and preserve the API missing code as itself; weights retain float storage despite the API predicate type."
+    },
+    "final-person-weight-2023-2025-dictionary-precision": {
+      "name": "Final person weight retains dictionary decimal precision in 2023-2025",
+      "resolution": "intersection",
+      "missing_code_policy": "preserve_api_missing_codes",
+      "api": [
+        [
+          "0",
+          "10000000"
+        ]
+      ],
+      "dictionary": [
+        [
+          "0",
+          "9999999.999999"
+        ]
+      ],
+      "admitted": [
+        [
+          "0",
+          "9999999.999999"
+        ]
+      ],
+      "members": [
+        {
+          "release": 2023,
+          "variable": "WPFINWGT",
+          "api_missing_codes": [
+            "-999.00000000"
+          ],
+          "dictionary_pdf_pages": [
+            1284
+          ],
+          "evidence": [
+            "2023_variables.json#WPFINWGT",
+            "2023_dictionary_variables.json#WPFINWGT",
+            "2023_dictionary.pdf#page=1284"
+          ]
+        },
+        {
+          "release": 2024,
+          "variable": "WPFINWGT",
+          "api_missing_codes": [
+            "-999.00000000"
+          ],
+          "dictionary_pdf_pages": [
+            3261
+          ],
+          "evidence": [
+            "2024_variables.json#WPFINWGT",
+            "2024_dictionary_variables.json#WPFINWGT",
+            "2024_dictionary.pdf#page=3261"
+          ]
+        },
+        {
+          "release": 2025,
+          "variable": "WPFINWGT",
+          "api_missing_codes": [
+            "-999.00000000"
+          ],
+          "dictionary_pdf_pages": [
+            3256
+          ],
+          "evidence": [
+            "2025_variables.json#WPFINWGT",
+            "2025_dictionary_variables.json#WPFINWGT",
+            "2025_dictionary.pdf#page=3256"
+          ]
+        }
+      ],
+      "reason": "The API interval includes an upper endpoint above the release dictionary decimal maximum. Admit their intersection and preserve each release API missing code as itself; weights retain float storage despite the API predicate type."
+    }
+  }
 }

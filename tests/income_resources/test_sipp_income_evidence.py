@@ -2,8 +2,9 @@
 
 These tests read only captured Census documentation: the variable API,
 dictionaries, storage schemas, replicate dictionaries, release notes,
-crosswalks and user notes. No survey record exists in the repository.
-The INVENTED_* pages are made-up dictionary fragments. Each check derives
+crosswalks and user notes. A guard refuses stored notes with case records;
+known excluded notes retain inventory metadata only. The INVENTED_* pages
+and generated note snippets are made up. Each check derives
 its expectation from the evidence independently of the generator, except
 the regeneration test, which runs the generator without writing.
 """
@@ -676,10 +677,13 @@ def test_user_notes_manifest_pins_every_stored_note():
     manifest = _json("user_notes_manifest.json")
     stored = [row for row in manifest if row["stored_as"]]
     assert len(manifest) == 355
-    assert {row["http_status"] for row in manifest} == {200}
+    assert len(stored) == 101
     for row in manifest:
         assert urlparse(row["url"]).hostname == "www.census.gov"
         assert "/sipp/tech-documentation/user-notes" in row["url"]
+        if row.get("status") == "excluded_record_bearing":
+            continue
+        assert row["http_status"] == 200
         assert datetime.fromisoformat(row["retrieved_utc"]).utcoffset() == (
             timedelta(0)
         )
@@ -698,6 +702,160 @@ def test_user_notes_manifest_pins_every_stored_note():
     assert on_disk == {row["stored_as"] for row in stored}
 
 
+def test_every_stored_user_note_passes_record_bearing_guard():
+    checker = _module("capture_user_notes.py").record_bearing_note
+    for path in sorted((EVIDENCE / "user_notes").rglob("*.gz")):
+        body = gzip.decompress(path.read_bytes()).decode("utf-8", "replace")
+        if checker(body):
+            # Never return a matched identifier, value or captured text.
+            pytest.fail(str(path.relative_to(EVIDENCE)))
+
+
+def test_excluded_notes_retain_only_cited_inventory_metadata():
+    capture = _module("capture_user_notes.py")
+    excluded = [
+        row
+        for row in _json("user_notes_manifest.json")
+        if row.get("status") == "excluded_record_bearing"
+    ]
+    assert {row["url"] for row in excluded} == capture.EXCLUDED_NOTE_URLS
+    assert len(excluded) == 8
+    for row in excluded:
+        assert set(row) == {
+            "url",
+            "title",
+            "release",
+            "variables",
+            "kind",
+            "stored_as",
+            "status",
+            "exclusion_reason",
+        }
+        assert row["stored_as"] is None
+        assert row["title"] and row["variables"]
+        assert row["release"] in YEARS
+        assert row["kind"] == "note"
+        assert "URL and title only" in row["exclusion_reason"]
+        removed_path = (
+            f"user_notes/{row['release']}/{Path(row['url']).stem}.html.gz"
+        )
+        assert removed_path not in registry.EVIDENCE_SHA256
+    for _, url, body_path, status in registry._NOTE_TABLE:
+        if url in capture.EXCLUDED_NOTE_URLS:
+            assert body_path == ""
+            assert status == "excluded_record_bearing"
+
+
+@given(
+    st.sampled_from(
+        sorted(_module("capture_user_notes.py").EXCLUDED_NOTE_URLS)
+    )
+)
+def test_known_record_bearing_urls_refuse_before_request(url):
+    capture = _module("capture_user_notes.py")
+
+    def invented_request(*args, **kwargs):
+        pytest.fail("Capture exclusion attempted a request")
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(capture.requests, "get", invented_request)
+        with pytest.raises(
+            ValueError, match="Excluded record-bearing note URL"
+        ):
+            capture.fetch(url)
+
+
+@given(
+    identifier=st.sampled_from(("SSUID", "PNUM", "ssuid", "pnum")),
+    invented_digits=st.text(alphabet="0123456789", min_size=1, max_size=20),
+    separator=st.sampled_from(("", " ", ": ", "=", "&#58;&nbsp;", " ('")),
+    table=st.booleans(),
+    closed=st.booleans(),
+    heading_tag=st.sampled_from(("th", "td")),
+    preceding_row=st.booleans(),
+)
+def test_invented_identifier_records_always_trigger_capture_guard(
+    identifier,
+    invented_digits,
+    separator,
+    table,
+    closed,
+    heading_tag,
+    preceding_row,
+):
+    if table:
+        prefix = (
+            "<tr><td>Invented heading</td><td>Invented annotation</td></tr>"
+            if preceding_row
+            else ""
+        )
+        body = (
+            f"<table>{prefix}<tr><{heading_tag}>{identifier}</{heading_tag}>"
+            "<td>Invented annotation</td></tr>"
+            f"<tr><td>{invented_digits}</td><td>Invented annotation</td></tr>"
+        )
+        if closed:
+            body += "</table>"
+    else:
+        body = f"<p>{identifier}{separator}{invented_digits}</p>"
+    assert _module("capture_user_notes.py").record_bearing_note(body)
+
+
+@given(
+    identifier=st.sampled_from(("SSUID", "PNUM")),
+    table=st.booleans(),
+    row_tag=st.sampled_from(("th", "td")),
+    row_scope=st.sampled_from(("", ' scope="row"')),
+)
+def test_invented_identifier_definitions_are_metadata(
+    identifier, table, row_tag, row_scope
+):
+    if table:
+        body = (
+            "<table><tr><th>Variable</th><th>Description</th>"
+            "<th>Universe</th></tr>"
+            f"<tr><{row_tag}{row_scope}>{identifier}</{row_tag}>"
+            "<td>Invented person linkage variable</td>"
+            "<td>All invented persons</td></tr>"
+            "<tr><td>INVENTED_AMOUNT</td><td>Invented amount</td>"
+            f"<td>{identifier} identifies invented persons</td></tr></table>"
+        )
+    else:
+        body = f"<p>{identifier} is an invented survey linkage variable.</p>"
+    assert not _module("capture_user_notes.py").record_bearing_note(body)
+
+
+@given(invented_text=st.text(alphabet="abcdefgh", max_size=30))
+def test_invented_exclusion_inventory_never_retains_body_or_pin(
+    invented_text,
+):
+    entry = {
+        "url": "https://example.invalid/INVENTED_NOTE",
+        "title": "Invented note",
+        "release": 2025,
+        "variables": ["INVENTED_VARIABLE"],
+        "kind": "note",
+        "body": invented_text,
+        "extract": invented_text,
+        "sha256": invented_text,
+        "bytes": len(invented_text),
+        "retrieved_utc": invented_text,
+    }
+    excluded = _module("capture_user_notes.py").excluded_note_metadata(entry)
+    assert set(excluded) == {
+        "url",
+        "title",
+        "release",
+        "variables",
+        "kind",
+        "stored_as",
+        "status",
+        "exclusion_reason",
+    }
+    assert excluded["stored_as"] is None
+    assert excluded["status"] == "excluded_record_bearing"
+
+
 def test_user_notes_attach_by_release_and_variable():
     manifest = _json("user_notes_manifest.json")
     for year in YEARS:
@@ -706,7 +864,10 @@ def test_user_notes_attach_by_release_and_variable():
                 (row["title"], row["url"])
                 for row in manifest
                 if row["kind"] == "note"
-                and row["stored_as"]
+                and (
+                    row["stored_as"]
+                    or row.get("status") == "excluded_record_bearing"
+                )
                 and row["release"] == year
                 and spec.name in row["variables"]
                 and spec.name

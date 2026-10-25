@@ -19,9 +19,22 @@ codes); the release dictionary is a second domain that every value must
 also satisfy, except the API's own missing-value sentinels. 2018-2021 have
 no API: the release dictionary verifies label and domain, the Census
 storage schema the type. Universes come from each release's dictionary.
-A domain is never borrowed from another release, a label conflict without
-a ruling in ``source_rulings.json`` stops the build, and an open ruling
-refuses the concept.
+A domain is never borrowed from another release. A label or domain
+conflict without a matching cited ruling in ``source_rulings.json`` stops
+the build, and an open ruling refuses the concept. Domain rulings pin the
+observed source intervals, their conservative intersection (or the only
+verified domain), and the API missing-code exception; a changed source
+cannot silently reuse a ruling.
+
+Invariants:
+
+* Every admitted source conflict has a named, cited, matching ruling;
+  uncovered conflicts stop generation and open conflicts refuse admission.
+* A domain ruling retains the verified domains' intersection and only the
+  release API's documented missing codes as an exception.
+* Ownership and period pass from the selection to the registry unchanged.
+* Evidence pins hash the exact committed bytes; excluded note attachments
+  retain only their inventory title and URL, with no captured body.
 
 Run with the clone's Python from any working directory.
 """
@@ -157,12 +170,24 @@ def meta_ranges(meta):
 
 
 def user_note_index():
-    """{(release, variable): [note index]} and the note table."""
+    """Return per-variable note indices and titles, URLs and body paths.
+
+    A note excluded for carrying records has an empty body path, retaining
+    its inventory title and URL without including any note text.
+    """
     notes, table, index = {}, [], {}
     for entry in read_json("user_notes_manifest.json"):
-        if entry.get("kind") != "note" or not entry.get("stored_as"):
+        if entry.get("kind") != "note" or not (
+            entry.get("stored_as")
+            or entry.get("status") == "excluded_record_bearing"
+        ):
             continue
-        key = (entry["title"], entry["url"], entry["stored_as"])
+        key = (
+            entry["title"],
+            entry["url"],
+            entry.get("stored_as") or "",
+            entry.get("status", "stored_metadata"),
+        )
         if key not in index:
             index[key] = len(table)
             table.append(key)
@@ -173,6 +198,73 @@ def user_note_index():
                 index[key]
             )
     return notes, tuple(table)
+
+
+def domain_ruling(
+    rulings, year, name, primary, secondary, admitted, sentinels, entry
+):
+    """Match one disagreement to its named, exact-source domain ruling.
+
+    Missing, overlapping, uncited or stale coverage stops generation.
+    Open coverage is returned so the caller can refuse the concept.
+    """
+    key = (year, name)
+    matches = [
+        (identifier, rule, member)
+        for identifier, rule in rulings.items()
+        for member in rule["members"]
+        if (member["release"], member["variable"]) == key
+    ]
+    assert matches, f"unruled domain conflict {year}/{name}"
+    assert len(matches) == 1, f"ambiguous domain ruling {year}/{name}"
+    identifier, rule, member = matches[0]
+    assert rule.get("name") and rule.get(
+        "reason"
+    ), f"unnamed domain ruling {year}/{name}"
+    expected = {
+        "api": text_intervals(primary),
+        "dictionary": (
+            None if secondary is None else text_intervals(secondary)
+        ),
+        "admitted": text_intervals(admitted),
+    }
+    assert all(
+        rule[field] == value for field, value in expected.items()
+    ), f"stale domain ruling {year}/{name}"
+    assert member["api_missing_codes"] == [
+        code for code, _ in sentinels
+    ], f"stale API missing codes {year}/{name}"
+    citations = {
+        f"{year}_variables.json#{name}",
+        f"{year}_dictionary_variables.json#{name}",
+    }
+    assert citations <= set(
+        member["evidence"]
+    ), f"uncited domain ruling {year}/{name}"
+    assert member["dictionary_pdf_pages"] == (entry or {}).get(
+        "dictionary_pdf_pages", []
+    ), f"stale dictionary location {year}/{name}"
+    assert rule["missing_code_policy"] == "preserve_api_missing_codes"
+    assert rule["resolution"] in {
+        None,
+        "intersection",
+        "dictionary_domain_api_undocumented",
+        "api_domain_dictionary_unverified",
+    }, f"unknown domain resolution {year}/{name}"
+    expected_resolution = (
+        "api_domain_dictionary_unverified"
+        if secondary is None
+        else (
+            "dictionary_domain_api_undocumented"
+            if not primary
+            else "intersection"
+        )
+    )
+    assert rule["resolution"] in {
+        None,
+        expected_resolution,
+    }, f"inapplicable domain resolution {year}/{name}"
+    return identifier, rule, member
 
 
 def build_tables():
@@ -192,11 +284,12 @@ def build_tables():
         "source_rulings.json",
         "user_notes_manifest.json",
     }
-    sources.update(path for _, _, path in note_table)
+    sources.update(path for _, _, path, _ in note_table if path)
     observed = {
         "label_conflicts": set(),
         "suppression_conflicts": set(),
         "universe_anomalies": set(),
+        "domain_conflicts": set(),
     }
     effective = {}
 
@@ -420,6 +513,25 @@ def build_tables():
             if year in API_YEARS and (
                 check_spans is None or primary_spans != check_spans
             ):
+                identifier, rule, member = domain_ruling(
+                    rulings["domain_conflicts"],
+                    year,
+                    name,
+                    primary_spans,
+                    check_spans,
+                    admitted_spans,
+                    sentinels,
+                    entry,
+                )
+                observed["domain_conflicts"].add((year, name))
+                sources.update(
+                    citation.split("#")[0] for citation in member["evidence"]
+                )
+                if rule["resolution"] is None:
+                    refuse(
+                        concept, "open conflict: API and dictionary domains"
+                    )
+                    continue
                 domain_checks.append(
                     {
                         "release": year,
@@ -435,6 +547,10 @@ def build_tables():
                             entry is not None and entry["verified"]
                         ),
                         "admitted": text_intervals(admitted_spans),
+                        "ruling": (
+                            "source_rulings.json#domain_conflicts/"
+                            + identifier
+                        ),
                     }
                 )
             missing = (
@@ -516,6 +632,17 @@ def build_tables():
         for name in rule["variables"]
     }
     assert observed["universe_anomalies"] == expected_anomalies
+    expected_domains = [
+        (member["release"], member["variable"])
+        for rule in rulings["domain_conflicts"].values()
+        for member in rule["members"]
+    ]
+    assert len(expected_domains) == len(
+        set(expected_domains)
+    ), "overlapping domain ruling coverage"
+    assert observed["domain_conflicts"] == set(
+        expected_domains
+    ), "domain rulings never observed"
     notes = {
         year: {
             concept: tuple(

@@ -1199,18 +1199,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-one-case-neg-hrly-earn-val.html",
-    "retrieved_utc": "2026-10-24T13:44:17.648197+00:00",
-    "http_status": 200,
-    "bytes": 337472,
-    "sha256": "87ed3974d327f4299130b79aa6e0e47be5bc7c2cbdcec4620be04bb14e70c7ce",
-    "release": 2019,
-    "kind": "note",
     "title": "2019 SIPP: One Case with Negative Hourly Earning Values",
-    "stored_as": "user_notes/2019/2019-one-case-neg-hrly-earn-val.html.gz",
+    "release": 2019,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2019-usernotes/2019-tpearn-hist-compar.html",
@@ -2510,18 +2508,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/child-care-assist-errors.html",
-    "retrieved_utc": "2026-10-24T13:45:35.374353+00:00",
-    "http_status": 200,
-    "bytes": 330226,
-    "sha256": "1e04738e69730951ae7aa2c9dbc84da1e19986deb81db570468532e3a8d7ed96",
-    "release": 2021,
-    "kind": "note",
     "title": "2021 SIPP: Child Care Assistance Errors",
-    "stored_as": "user_notes/2021/child-care-assist-errors.html.gz",
+    "release": 2021,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2021-usernotes/child-care-assist-univ-alloc-rates.html",
@@ -3244,18 +3240,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-child-care-assist-err-sm-numb-case.html",
-    "retrieved_utc": "2026-10-24T13:45:55.138580+00:00",
-    "http_status": 200,
-    "bytes": 330785,
-    "sha256": "c25b3983b53f9de9812110b2d2ef195018b7da48a3fe4921d5ad4148a105e7af",
-    "release": 2022,
-    "kind": "note",
     "title": "2022 SIPP: Child Care Assistance Error for a Small Number of Cases",
-    "stored_as": "user_notes/2022/2022-child-care-assist-err-sm-numb-case.html.gz",
+    "release": 2022,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2022-usernotes/2022-impr-alloc-othr-commut-costs.html",
@@ -3899,19 +3893,17 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-incorrect-child-care-assistance-case.html",
-    "retrieved_utc": "2026-10-24T13:46:13.625470+00:00",
-    "http_status": 200,
-    "bytes": 330218,
-    "sha256": "536a8f53096e7f3697e493793c4bfe1c84004424239b746e972072c4e6534614",
-    "release": 2023,
-    "kind": "note",
     "title": "2023 SIPP: Incorrect Child Care Assistance Case",
-    "stored_as": "user_notes/2023/2023-incorrect-child-care-assistance-case.html.gz",
+    "release": 2023,
     "variables": [
       "MONTHCODE",
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-incorrect-child-care-assistance-receipt-universe.html",
@@ -4162,18 +4154,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-minor-discrepancies-school-meals.html",
-    "retrieved_utc": "2026-10-24T13:46:19.778679+00:00",
-    "http_status": 200,
-    "bytes": 330541,
-    "sha256": "8d71f3d2deee0f1ff3abe0d7a8ae790334b4cd0e30f8cf8dc354455b09ef9da6",
-    "release": 2023,
-    "kind": "note",
     "title": "SIPP 2023: Minor Discrepancies in School Meals Data",
-    "stored_as": "user_notes/2023/2023-minor-discrepancies-school-meals.html.gz",
+    "release": 2023,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-school-meals-universe-error.html",
@@ -4189,14 +4179,8 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-inconsistent-case-soc-behalf-child.html",
-    "retrieved_utc": "2026-10-24T13:46:20.085918+00:00",
-    "http_status": 200,
-    "bytes": 330767,
-    "sha256": "1c534d832c3d6ba2e0a1ddcb891e6d88ff80f4da721d9fdfc9601df4227d7e68",
-    "release": 2023,
-    "kind": "note",
     "title": "2023 SIPP: Inconsistent Case for Social Security on Behalf of a Child",
-    "stored_as": "user_notes/2023/2023-inconsistent-case-soc-behalf-child.html.gz",
+    "release": 2023,
     "variables": [
       "ESSCADLTPTR",
       "ESSCMNYN",
@@ -4204,7 +4188,11 @@
       "MONTHCODE",
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2023-usernotes/2023-social-security-parent-child-linkage-variable.html",
@@ -4567,18 +4555,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2024-usernotes/2024-inconsistency-other-support-paid.html",
-    "retrieved_utc": "2026-10-24T13:46:29.568377+00:00",
-    "http_status": 200,
-    "bytes": 330421,
-    "sha256": "e3b5b4d8bc0db91101d4afb740b1c63d5bde50ee6c2adc49f03d4d67f01ff8e9",
-    "release": 2024,
-    "kind": "note",
     "title": "2024 SIPP: Inconsistency in One Case in Other Support Paid",
-    "stored_as": "user_notes/2024/2024-inconsistency-other-support-paid.html.gz",
+    "release": 2024,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes.html",
@@ -4705,18 +4691,16 @@
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-inc-top-cod-mcr-ded.html",
-    "retrieved_utc": "2026-10-24T13:46:31.992741+00:00",
-    "http_status": 200,
-    "bytes": 338956,
-    "sha256": "38fb8d1196a2071601a7ab1aadaf320f3efeda222787cf6805964a1a0bfff6cf",
-    "release": 2025,
-    "kind": "note",
     "title": "2025 SIPP: Incorrect Top-Coding of Medicare Deductions",
-    "stored_as": "user_notes/2025/2025-inc-top-cod-mcr-ded.html.gz",
+    "release": 2025,
     "variables": [
       "PNUM",
       "SSUID"
-    ]
+    ],
+    "kind": "note",
+    "stored_as": null,
+    "status": "excluded_record_bearing",
+    "exclusion_reason": "Whole-page body excluded by capture_user_notes.py:EXCLUDED_NOTE_URLS; URL and title only; no stored body or derived text."
   },
   {
     "url": "https://www.census.gov/programs-surveys/sipp/tech-documentation/user-notes/2025-usernotes/2025-comp-sipp-parent-leav-data-prev-yrs.html",

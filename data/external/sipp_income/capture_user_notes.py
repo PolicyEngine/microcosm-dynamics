@@ -1,12 +1,17 @@
 """Screen Census's SIPP user notes for the variables this reader admits.
 
-Fetches each release's user-notes index (2018-2025) and every note it
-links, with plain requests and default headers. A note whose text names a
-variable in ``concept_selection.json``'s release crosswalk is stored
-gzipped as ``user_notes/<release>/<note>.html.gz``; every fetched page,
-stored or not, is logged in ``user_notes_manifest.json`` with its URL, UTC
-retrieval time, byte size, SHA-256 (of the uncompressed body) and the
-variables it names. Documentation only; no data file is requested.
+Fetches each release's user-notes index (2018-2025) and eligible linked
+notes, with plain requests and default headers. A note naming a selected
+variable is stored only after the record-bearing check clears its body.
+Known record-bearing URLs are never requested. Their existing inventory
+metadata supplies the release, title and variable names, without a body
+or body pin. New record-bearing pages receive the same exclusion status.
+
+Invariants: known excluded URLs cannot be fetched; tables with identifier
+columns or identifier/value text cannot be stored; exclusion inventory
+entries retain only URL, title, release, variable names and their reason.
+Stored pages retain their uncompressed byte size and SHA-256. No survey
+data file is requested.
 """
 
 from __future__ import annotations
@@ -25,6 +30,24 @@ BASE = Path(__file__).resolve().parent
 SITE = "https://www.census.gov"
 NOTES = f"{SITE}/programs-surveys/sipp/tech-documentation/user-notes"
 YEARS = range(2018, 2026)
+# Census source URLs; titles and the exclusion rationale are cited in
+# metadata_notes.md#record-bearing-user-notes. Never open these bodies.
+EXCLUDED_NOTE_URLS = frozenset(
+    {
+        f"{NOTES}/2019-usernotes/2019-one-case-neg-hrly-earn-val.html",
+        f"{NOTES}/2021-usernotes/child-care-assist-errors.html",
+        f"{NOTES}/2022-usernotes/2022-child-care-assist-err-sm-numb-case.html",
+        f"{NOTES}/2023-usernotes/2023-incorrect-child-care-assistance-case.html",
+        f"{NOTES}/2023-usernotes/2023-minor-discrepancies-school-meals.html",
+        f"{NOTES}/2023-usernotes/2023-inconsistent-case-soc-behalf-child.html",
+        f"{NOTES}/2024-usernotes/2024-inconsistency-other-support-paid.html",
+        f"{NOTES}/2025-usernotes/2025-inc-top-cod-mcr-ded.html",
+    }
+)
+EXCLUSION_REASON = (
+    "Whole-page capture excluded because it carries survey case records; "
+    "URL and title only (metadata_notes.md#record-bearing-user-notes)."
+)
 
 
 def note_text(body: str) -> str:
@@ -33,7 +56,87 @@ def note_text(body: str) -> str:
     return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", body)).split())
 
 
+def _identifier_column(table: str) -> bool:
+    """Distinguish record columns from variable-definition table rows."""
+    row_bodies = re.findall(
+        r"(?is)<tr\b[^>]*>(.*?)(?:</tr\s*>|(?=<tr\b)|$)", table
+    )
+    rows = [
+        [
+            (note_text(body), tag.casefold(), attributes)
+            for tag, attributes, body in re.findall(
+                r"(?is)<(th|td)\b([^>]*)>(.*?)"
+                r"(?:</t[hd]\s*>|(?=<t[hd]\b)|$)",
+                row,
+            )
+        ]
+        for row in row_bodies or [table]
+    ]
+    headings = (
+        {text.casefold().rstrip(":") for text, _, _ in rows[0]}
+        if rows
+        else set()
+    )
+    definition_table = bool(
+        headings & {"variable", "variables", "variable name", "name"}
+        and headings & {"description", "label", "universe"}
+    )
+    for row_index, row in enumerate(rows):
+        for column_index, (text, tag, attributes) in enumerate(row):
+            if not re.fullmatch(r"SSUID|PNUM", text, re.I):
+                continue
+            row_header = bool(
+                re.search(
+                    r"\bscope\s*=\s*(?:\"row\"|'row'|row)(?:\s|$)",
+                    attributes,
+                    re.I,
+                )
+            )
+            if row_index == 0 or (
+                tag == "th" and not row_header and not definition_table
+            ):
+                return True
+            if any(
+                column_index < len(later)
+                and re.fullmatch(r"\d+", later[column_index][0])
+                for later in rows[row_index + 1 :]
+            ):
+                return True
+    return False
+
+
+def record_bearing_note(body: str) -> bool:
+    """Recognize survey identifiers without returning matched content.
+
+    Refuse identifier column headers and identifier cells with numeric
+    cells below them. Variable-definition rows may name an identifier.
+    Also refuse prose placing an identifier name before digits, including
+    punctuation and HTML entities between the name and its value.
+    """
+    identifier = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
+    for table in re.findall(r"(?is)<table\b[^>]*>.*?(?:</table\s*>|$)", body):
+        if _identifier_column(table):
+            return True
+    return bool(
+        re.search(identifier + r"[\s:=#'\"(\[\-]*\d", note_text(body), re.I)
+    )
+
+
+def excluded_note_metadata(entry: dict) -> dict:
+    """Keep inventory metadata only; never retain a body pin or extract."""
+    return {
+        key: entry[key]
+        for key in ("url", "title", "release", "variables", "kind")
+    } | {
+        "stored_as": None,
+        "status": "excluded_record_bearing",
+        "exclusion_reason": EXCLUSION_REASON,
+    }
+
+
 def fetch(url: str) -> tuple[bytes, dict]:
+    if url in EXCLUDED_NOTE_URLS:
+        raise ValueError("Excluded record-bearing note URL")
     response = requests.get(url, timeout=120)
     return response.content, {
         "url": url,
@@ -56,17 +159,29 @@ def admitted_names() -> set[str]:
 
 def main() -> None:
     names = admitted_names()
+    previous = {
+        row["url"]: row
+        for row in json.loads((BASE / "user_notes_manifest.json").read_text())
+    }
     pattern = re.compile(
         r"\b("
         + "|".join(sorted(map(re.escape, names), key=len)[::-1])
         + r")\b"
     )
-    log = []
+    log = [
+        excluded_note_metadata(previous[url])
+        for url in sorted(EXCLUDED_NOTE_URLS)
+    ]
     for year in YEARS:
         index_url = f"{NOTES}/{year}-usernotes.html"
         body, entry = fetch(index_url)
+        if record_bearing_note(body.decode("utf-8", "replace")):
+            raise ValueError("Record-bearing note index refused")
         folder = BASE / "user_notes" / str(year)
         folder.mkdir(parents=True, exist_ok=True)
+        for url in EXCLUDED_NOTE_URLS:
+            if previous[url]["release"] == year:
+                (folder / f"{Path(url).stem}.html.gz").unlink(missing_ok=True)
         (folder / "index.html.gz").write_bytes(gzip.compress(body, mtime=0))
         log.append(
             entry
@@ -85,28 +200,34 @@ def main() -> None:
             )
         )
         for href in links:
-            note_body, note = fetch(SITE + href)
-            text = note_text(note_body.decode("utf-8", "replace"))
-            title = re.search(r"(?is)<title>(.*?)</title>", note_body.decode())
+            url = SITE + href
+            if url in EXCLUDED_NOTE_URLS:
+                continue
+            note_body, note = fetch(url)
+            page = note_body.decode("utf-8", "replace")
+            text = note_text(page)
+            title = re.search(r"(?is)<title>(.*?)</title>", page)
             hits = sorted(set(pattern.findall(text)))
             stored = None
-            if hits and note["http_status"] == 200:
+            excluded = record_bearing_note(page)
+            destination = folder / f"{Path(href).stem}.html.gz"
+            if excluded:
+                destination.unlink(missing_ok=True)
+            if hits and note["http_status"] == 200 and not excluded:
                 stored = f"user_notes/{year}/{Path(href).stem}.html.gz"
-                (BASE / stored).write_bytes(gzip.compress(note_body, mtime=0))
-            log.append(
-                note
-                | {
-                    "release": year,
-                    "kind": "note",
-                    "title": (
-                        " ".join(html.unescape(title.group(1)).split())
-                        if title
-                        else ""
-                    ),
-                    "stored_as": stored,
-                    "variables": hits,
-                }
-            )
+                destination.write_bytes(gzip.compress(note_body, mtime=0))
+            note |= {
+                "release": year,
+                "kind": "note",
+                "title": (
+                    " ".join(html.unescape(title.group(1)).split())
+                    if title
+                    else ""
+                ),
+                "stored_as": stored,
+                "variables": hits,
+            }
+            log.append(excluded_note_metadata(note) if excluded else note)
         print(year, len(links), "notes")
     (BASE / "user_notes_manifest.json").write_text(
         json.dumps(log, indent=2) + "\n"
