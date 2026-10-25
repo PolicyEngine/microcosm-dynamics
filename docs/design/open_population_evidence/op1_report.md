@@ -80,16 +80,16 @@ The two overlap and must not be added.
 | 400 | Registry | 47.95% | 50.30% | 42.15% |
 | 400 | Direct | 80.44% | 84.63% | 2.62% |
 
-With emigration on the direct path, building the registry's sequences for
-the sealed loop's own draws takes **45%, 64% and 80%** of profiled runtime
-at 25, 100 and 400 initial people, and the share grows with the roster.
-Here the loop draws 1.16–1.33 person-level registry streams per person-year
-(a mortality person stream for everyone, and a fertility tagged child for
-women of childbearing age), plus 600 module generators per run. Person-stream setup
-alone takes 32%, 53% and 72%. Adapters that do more non-random work would
-lower these shares, and adapters that draw more person streams would raise
-them. cProfile inflates call-heavy code, so the shares are indicative; the
-unprofiled timings below are the cleaner comparison.
+With emigration on the direct path, building the registry's sequences for the
+sealed loop's own draws takes **45%, 64% and 80%** of profiled runtime at 25,
+100 and 400 initial people, and the share grows with the roster. Here the loop
+draws 1.16–1.33 person-level registry streams per person-year (a mortality
+person stream for everyone, and a fertility tagged child for women of
+childbearing age), plus 600 module generators per run. Person-stream setup
+alone takes 32%, 53% and 72%. Adapters that do more non-random work would lower
+these shares, and adapters that draw more person streams would raise them.
+cProfile inflates call-heavy code, so the shares are indicative; the unprofiled
+timings below are the cleaner comparison.
 
 The unprofiled microbenchmark interleaves five repetitions of 400
 tagged-child draws (`op1_run_size.py:376`; the raw samples and loads are in
@@ -140,14 +140,14 @@ under `heavy`, in a quiet window, on invented data; otherwise it waits for
 OP10a. The small-run figures above are planning estimates, not a
 demonstrated scaling law.
 
-The fast-path invariant is: **at every valid stream address, the direct
-stream equals `ProjectionRNGRegistry`**. `open_population/streams.py:122–138`
+The fast-path invariant is: **at every valid stream address, the direct stream
+equals `ProjectionRNGRegistry`**. `open_population/streams.py:122–138`
 constructs the same entropy and spawn keys as `engine/rng.py:61–100` and
 `:102–156`; its tagged period-zero cases preserve the separate root and
 spawned-child convention. Tests compare entropy and spawn key (values and
-element types), pool size, eight state words and four draws across the specified exhaustive grid and
-24 generated examples. The exact emigration test independently uses the
-sealed registry, rather than the fast class.
+element types), pool size, eight state words and four draws across the
+specified exhaustive grid and 24 generated examples. The exact emigration test
+independently uses the sealed registry, rather than the fast class.
 
 A second invariant covers refusals: **for arguments of built-in and NumPy
 types, wherever the registry returns or raises, the direct class does the
@@ -157,14 +157,15 @@ building the children:
 
 1. the module (`engine/rng.py:73`), then the period interval (`:62–65`);
 2. the root seed (`:66`). The draw seed is recomputed on every call, as the
-   registry's is, so NumPy's overflow handling under `np.errstate` applies
-   each time. Only an exact `int` seed's root is kept, and it is rebuilt
-   when the seed changes (`open_population/streams.py:93–113`). Any other
-   seed's root is rebuilt on every call, as the registry's is, so a draw
-   changed in place to an equal value of another type gets the registry's
-   outcome. A refused seed is never kept, so a non-integer draw fails at
-   this step on every call, ahead of a malformed horizon or period. Each returned sequence gets its own copy of
-   the root's entropy list, as the registry's fresh root gives it;
+   registry's is, so NumPy's overflow handling under `np.errstate` applies each
+   time. Only an exact `int` seed's root is kept, and it is rebuilt when the
+   seed changes (`open_population/streams.py:93–113`). Any other seed's root is
+   rebuilt on every call, as the registry's is, so a draw changed in place to
+   an equal value of another type gets the registry's outcome. A refused seed
+   is never kept, so a non-integer draw, or a negative `int` seed from a draw
+   changed after construction, fails at this step on every call, ahead of a
+   malformed horizon or period. Each returned sequence gets its own copy of the
+   root's entropy list, as the registry's fresh root gives it;
 3. `spawn(n_periods + 1)` (`:67`). `_spawned_length` refuses a negative
    count with spawn's `ValueError`, then takes `len(range(count))`, which
    refuses a non-integer or a count past `ssize_t` with spawn's own message;
@@ -191,10 +192,11 @@ period-zero tagged child.
 User-defined argument types are outside the claim. NumPy's `spawn` adds the
 count to an integer and converts the sum through `__int__`, and the direct
 class calls a period's or child's `__index__` twice. So a count type without
-`__int__` or `__radd__`, or a stateful `__index__`, can be served by one
-class and refused by the other, or served a different stream by each. The engine passes none of them: periods and
-ordinals come from `enumerate` (`engine/loop.py:263–270`), and production
-draws must be exact `int`s (`open_population/harness.py:86–87`).
+`__int__` or `__radd__`, or a stateful `__index__`, can be served by one class
+and refused by the other, or served a different stream by each. The engine
+passes none of them: periods and ordinals come from `enumerate`
+(`engine/loop.py:263–270`), and production draws must be exact `int`s
+(`open_population/harness.py:86–87`).
 
 `test_combined_and_malformed_refusals_match_registry` tries every
 combination, for all six methods, of:
@@ -210,18 +212,25 @@ combination, for all six methods, of:
 `test_non_integer_draw_refusals_match_registry` adds four non-integer draws
 and an `np.int64` one against malformed horizons and periods, and
 `test_generated_malformed_addresses_match_registry` adds 80 Hypothesis
-examples over all of these. Five tests pin the root's state:
+examples over all of these. Seven tests pin the root's state:
 - `test_returned_sequences_do_not_share_the_cached_root` and
   `test_returned_generators_do_not_share_the_cached_root`: every method,
   including the tagged child emigration draws from and the period-zero
   tagged cases, hands out its own entropy list;
 - `test_root_follows_the_draw_seed_as_the_registry_does`: 0-d draws of
-  NumPy and object type mutated in place, and an overflowing `np.uint64`
-  draw under `np.errstate(over="raise")`;
-- `test_root_ignores_an_equal_seed_of_another_type`: a draw changed in place
-  to an equal float, `Fraction`, `Decimal`, complex, NumPy integer,
-  `np.True_` or `np.ma.masked`;
-- `test_refused_seed_is_refused_on_every_call`.
+  NumPy and object type mutated in place, including to a seed whose hash
+  equals the cached one's, and an overflowing `np.uint64` draw under
+  `np.errstate(over="raise")`;
+- `test_root_ignores_an_equal_seed_of_another_type` and
+  `test_root_ignores_an_equal_seed_set_on_the_frozen_field`: a draw changed
+  in place to an equal float, `Fraction`, `Decimal`, complex, NumPy
+  integer, `np.True_` or `np.ma.masked`, and a field replaced through
+  `object.__setattr__` with an equal float, `Decimal`, NumPy integer,
+  `int` or `True`;
+- `test_refused_seed_is_refused_on_every_call` and
+  `test_refused_int_seed_is_refused_on_every_call`: a non-integer draw,
+  whose seed never reaches the cache, and a negative `int` seed, the one
+  refused seed that does.
 
 `test_negative_position_wraps_as_the_list_lookup_does` wraps positions
 inside and below the spawned range. Every comparison checks the element
@@ -279,23 +288,24 @@ run reported 62 s for it. On this host, `pytest --durations` reports
 (`0d0c073c`): a three-person invented roster with emigration on projects to
 TR2026's `LAST_YEAR`, and a 2030 prefix equals the run's leading slices.
 
-The required command gives **322 passed and 1 strict xfail, with 2 existing
-fixture warnings**, in 11 s by pytest's report (one-minute load 36). At
-`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added
-37, review r3's fix 30, review r4's fix 3 and review r5's fix 20. It covers the self-contained
-horizon test, the reversed-roster example, the gate metadata refusals and
-every reducer identity, reachability and initializer check.
+The required command gives **332 passed and 1 strict xfail, with 2 existing
+fixture warnings**, in 11 s by pytest's report (one-minute load 17). At
+`0d0c073c` it gave 232 passed in about 8 s; review r2's refusal tests added 37,
+review r3's fix 30, review r4's fix 3, review r5's fix 20 and review r6's fix
+10. It covers the self-contained horizon test, the reversed-roster example, the
+gate metadata refusals and every reducer identity, reachability and initializer
+check.
 
 ```sh
 .venv/bin/python -m pytest -q tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
 .venv/bin/python -m pytest --collect-only -q tests/open_population | tail -1
 ```
 
-Collection gives **219 tests**, all classified as `unit` (seven modules,
-including the original six). That is 159 more than the 60 reviewed at r1,
-90 more than the 129 reviewed at r2, 53 more than the 166 reviewed at r3,
-23 more than the 196 reviewed at r4 and 20 more than the 199 reviewed at
-r5.
+Collection gives **229 tests**, all classified as `unit` (seven modules,
+including the original six). That is 169 more than the 60 reviewed at r1,
+100 more than the 129 reviewed at r2, 63 more than the 166 reviewed at r3,
+33 more than the 196 reviewed at r4, 30 more than the 199 reviewed at r5
+and 10 more than the 219 reviewed at r6.
 
 Black and Ruff pass over every touched Python file, and `git diff --check`
 is clean.
@@ -352,8 +362,8 @@ commit, so the main session committed its tree (§1).
 | 10 | Minor | Source imports shared entry-kind constants, removes the duplicate allocator check and adds the requested docstrings. The schedule seam's exact-object validation test stays. A test package marker prevents top-level collisions. §1 cites revision 14 and below states the entry-year convention. | `a8c627a8` |
 | 11 | Coordinator addition | `open_population/streams.py` directly constructs all required registry addresses, preserves period-zero tagged streams and matches refusals. `test_streams.py` covers the exhaustive grid, generated addresses and invalid addresses. Only emigration uses the fast class (`open_population/exits.py:145–161`). Both reducer exclusions include the new module. | `7d321aef`, `a8c627a8` |
 
-The stream rechecks ran the actual three new tests against copied exit
-modules. The live source stayed byte-identical, and test bindings were restored.
+The stream rechecks ran the actual three new tests against copied exit modules.
+The live source stayed byte-identical, and test bindings were restored.
 
 | Mutation | Recheck result |
 |---|---|
@@ -449,7 +459,7 @@ Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findin
 |---|---|
 | 1: the cache compared seeds by value. A draw changed in place to an equal value of another type (`3.0`, `Decimal(3)`, `np.int64(3)`, `np.ma.masked`, or a 0-d array whose dtype is reassigned) was served from the cached `int` root, where the registry refuses it or types its entropy differently: 240 of 1,440 comparisons | Only an exact `int` seed's root is kept, and any other seed's root is built on every call. Both identity helpers compare entropy element types. Pinned by `test_root_ignores_an_equal_seed_of_another_type`, which `6361b4c0`'s code fails in all 10 of its cases. |
 | 2: the entropy-copy test covered `seed_sequence` only, so r5's mutants C12 and C13 survived | `test_returned_generators_do_not_share_the_cached_root` pins every method, including the period-zero tagged cases. |
-| 3: "a refused seed is never kept" and wraps below `-length` were unpinned (C2, C18 and C19 survived), and the wrap test's tagged-child case never reached the wrap | `test_refused_seed_is_refused_on_every_call` pins the first. The wrap test now tries −1, −8, −9 and −20, and its tagged-child case is labelled as the child check's refusal. Under the `int`-only cache a refused seed cannot reach the cache, so C2 is now equivalent; C2 without the `int` check is killed. |
+| 3: "a refused seed is never kept" and wraps below `-length` were unpinned (C2, C18 and C19 survived), and the wrap test's tagged-child case never reached the wrap | `test_refused_seed_is_refused_on_every_call` pins a non-integer draw and kills C2 without the `int` check. The wrap test now tries −1, −8, −9 and −20, and its tagged-child case is labelled as the child check's refusal. This row first said C2 itself was now equivalent. Review r6 showed that was wrong: a negative `int` seed is refused and still reaches the cache (see review r6). |
 | Nit: two wordings | The user-defined paragraph adds "or served a different stream by each", and the r4 paragraph splits its 30 tests into 24 and 6. |
 
 | Mutation of the r5 fix (stream and exit tests, 153) | Result |
@@ -460,20 +470,47 @@ Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findin
 | Root never rebuilt; cache keyed on the draw object; seed not recomputed; old root returned | Killed (1; 1; 10; 1) |
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
-| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (13; 13 or 14, as Hypothesis draws; 7; 1) |
-| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15; 7; 10; 54; 10) |
+| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14, as Hypothesis draws; 7; 1) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
 | No cache, or seeds compared with `is not` | Survive as intended: they change cost only |
 | `not cached[0] == seed`; entropy rebuilt from the seed; default pool size (always 4); wrap by modulo | Survive: equivalent |
-| A refused seed cached | Survives: equivalent, since a refused seed is never an `int` |
+| A refused seed cached | Survived. This row first called it equivalent, which was wrong: a negative `int` seed reaches the cache (review r6). It is now killed |
 | `isinstance(seed, int)` for the exact check | Survives: equivalent, since `5200 + True` is an `int` and no built-in or NumPy seed is an `int` subclass |
 | A typed cache key without the `int` check | Survives: r5's alternative fix |
 
+### Review r6
+
+Review r6 (Opus 5.5 delta check at `3fda5862`) approved, with two minor findings and a nit, and found the code correct. It confirmed the coordinator's four checks and 22,176 four-way identities across the registry, `dee1e1b7`, `6361b4c0` and `3fda5862`. It found no difference in 472,392 comparisons of draws whose type changes in every order, against 35,910 at `6361b4c0`.
+
+| Finding | Fix and test that pins it |
+|---|---|
+| 1: this report called mutant C2, a refused seed kept in the cache, equivalent "since a refused seed is never an `int`". That was wrong. A draw changed after construction can make the seed a negative `int`, which NumPy refuses and which reaches the cache. C2 then raises `AttributeError` on later calls where the registry raises `ValueError`, and no test caught it | `test_refused_int_seed_is_refused_on_every_call` changes a draw to −5201 or −2^70, as a 0-d array's element or through `object.__setattr__`, and compares two rounds of calls to every method. It kills C2 and r6's M9. The r5 rows above are corrected. |
+| 2: the equal-seed fix was pinned only for a 0-d array changed in place, not for a field replaced through `object.__setattr__`. r6's mutant M13 (`type(seed) is not type(self.draw_index)`) passed every test | `test_root_ignores_an_equal_seed_set_on_the_frozen_field` (6 cases). `6361b4c0`'s code fails 5 of them; the sixth, `True` after 1, gives an equal exact `int` seed. It kills M13. |
+| Nit: four prose lines not re-wrapped, and two kill counts that depend on Hypothesis given as single numbers | Those paragraphs and four older over-long ones are re-wrapped, and the r5 table gives "15 or 16" and "12 or 13". |
+
+r6 also showed that a cache keyed by the seed's hash (its M16) passed every test, because seeds 2^61 − 1 apart share a hash. `test_root_follows_the_draw_seed_as_the_registry_does` now moves a draw by 2^61 − 1, which kills it. `streams.py` is unchanged from `3fda5862`, so every stream, probe and cost figure above still holds.
+
+| Mutation (r6's harness; stream and exit tests, 163) | Result |
+|---|---|
+| `streams.py` at `6361b4c0`; at `dee1e1b7` | Killed (15; 27) |
+| r6's four non-equivalent survivors: a refused seed cached (C2); only a negative `int` cached as refused (M9); the check against the draw's type (M13); a cache keyed by hash (M16) | Killed (4; 4; 5; 1) |
+| `int` check dropped; check returns the cached root; check dropped and the refused seed cached | Killed (15; 13; 22) |
+| NumPy integers also cached; non-`int` seeds also stored; `int(seed)` in the bypass; check only before the first cache; only floats bypass; check after the cache hit; only `bool` bypasses; entropy coerced to `int`; an `int` seed's root typed `np.int64` | Killed (6; 2; 24; 13; 11; 12; 15; 11; 48) |
+| Root never rebuilt; keyed on the draw object; seed not recomputed; old root returned | Killed (5; 3; 18; 1) |
+| Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
+| Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
+| r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14; 7; 1) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10) |
+| No cache; seeds compared with `is not`; a non-`int` seed clears the cache | Survive as intended: they change cost only |
+| `not ==`; key compared by subtraction; default pool size; wrap by modulo; a negative `int` also bypasses; `isinstance` for the exact check; a typed key without the `int` check | Survive: equivalent, as r6 found with its probes |
+| Entropy rebuilt from the seed | Survives: equivalent for streams and refusals, as r6 found; it emits a second overflow warning under `np.errstate(over="warn")` |
+
 ## 5. Remaining work and restricted-files statement
 
-Scheduled entrants can emigrate in their entry year by default: the seam appends them
-before the exit adapter (`engine/loop.py:271–297`). OP0.1 and OP3's timing
-bridge own that convention (design §5.4, OP4). A supplied hazard can return
-0 for rows where `entry_year == context.year` to disable entry-year
+Scheduled entrants can emigrate in their entry year by default: the seam
+appends them before the exit adapter (`engine/loop.py:271–297`). OP0.1 and
+OP3's timing bridge own that convention (design §5.4, OP4). A supplied hazard
+can return 0 for rows where `entry_year == context.year` to disable entry-year
 emigration; production schedules still need OP3's timing bridge.
 
 OP4 must supply exit-aware relational updates before a non-null hazard can

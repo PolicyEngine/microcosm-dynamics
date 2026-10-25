@@ -424,7 +424,9 @@ def test_root_follows_the_draw_seed_as_the_registry_does():
         draw = np.array(0, dtype=dtype)
         registry = ProjectionRNGRegistry(draw, 7)
         direct = DirectRNGStreams(draw, 7)
-        for value in (0, 4, 4, 0):
+        # Seeds 2**61 - 1 apart share a hash, so the cache must compare
+        # the seeds themselves.
+        for value in (0, 4, 4, 0, 2**61 - 1, 0):
             draw[...] = value
             fresh = ProjectionRNGRegistry(np.array(value, dtype=dtype), 7)
             actual = _sequence_identity(
@@ -485,11 +487,70 @@ def test_root_ignores_an_equal_seed_of_another_type(first, then):
         ), method
 
 
+@pytest.mark.parametrize(
+    ("first", "then"),
+    (
+        (3, 3.0),
+        (3, np.float64(3.0)),
+        (3, Decimal(3)),
+        (3, np.int64(3)),
+        (np.int64(3), 3),
+        (1, True),
+    ),
+)
+def test_root_ignores_an_equal_seed_set_on_the_frozen_field(first, then):
+    """An equal seed of another type set on the field gets the registry's.
+
+    ``object.__setattr__`` replaces the draw itself rather than a 0-d
+    array's element, so the draw's own type changes with the seed's (§2.1).
+    """
+    registry = ProjectionRNGRegistry(first, 7)
+    direct = DirectRNGStreams(first, 7)
+    direct.seed_sequence(1, MODULE_ORDER[0])
+    for streams in (registry, direct):
+        object.__setattr__(streams, "draw_index", then)
+    for method, tail_length in _TAIL_LENGTHS.items():
+        args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+        compare = _compare_for(method)
+        assert _outcome(direct, method, args, compare) == _outcome(
+            registry, method, args, compare
+        ), method
+
+
 @pytest.mark.parametrize("draw_index", (0.0, Decimal(1), np.float64(2.0)))
 def test_refused_seed_is_refused_on_every_call(draw_index):
     """A refused draw seed is never kept, so later calls refuse too (§2.1)."""
     registry = ProjectionRNGRegistry(draw_index, 7)
     direct = DirectRNGStreams(draw_index, 7)
+    for _ in range(2):
+        for method, tail_length in _TAIL_LENGTHS.items():
+            args = (1, MODULE_ORDER[0], *(3,) * tail_length)
+            compare = _compare_for(method)
+            assert _outcome(direct, method, args, compare) == _outcome(
+                registry, method, args, compare
+            ), method
+
+
+@pytest.mark.parametrize("route", ("element", "field"))
+@pytest.mark.parametrize("value", (-5201, -(2**70)))
+def test_refused_int_seed_is_refused_on_every_call(route, value):
+    """A refused ``int`` seed is never kept, so later calls refuse too (§2.1).
+
+    A negative ``int`` seed is the one refused seed that reaches the cache:
+    the constructors refuse a negative draw, but a draw changed after a
+    first call, as a 0-d object array's element or through
+    ``object.__setattr__`` on the frozen field, can give one. NumPy refuses
+    it (``expected non-negative integer``) on every call.
+    """
+    draw = np.array(0, dtype=object)
+    registry = ProjectionRNGRegistry(draw, 7)
+    direct = DirectRNGStreams(draw, 7)
+    direct.seed_sequence(1, MODULE_ORDER[0])
+    if route == "element":
+        draw[()] = value
+    else:
+        for streams in (registry, direct):
+            object.__setattr__(streams, "draw_index", value)
     for _ in range(2):
         for method, tail_length in _TAIL_LENGTHS.items():
             args = (1, MODULE_ORDER[0], *(3,) * tail_length)
