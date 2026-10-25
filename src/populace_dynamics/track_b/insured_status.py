@@ -2,10 +2,14 @@
 
 Verification class: statutory conformance. Admitted scope: declared invented
 histories and captured statutory examples only; no population, behavioral,
-or forecast claim. Act 213, 214, 216(i), 223(c); 20 CFR 404 subpart B;
+or forecast claim. Act 213, 214, 216(i), 223(c); 20 CFR 404 subpart B
+and 404.315/.320/.321;
 POMS RS 00301. Every year is declared, including zero and unknown years.
-The query month is a hypothetical entitlement/onset month, not a finding of
-medical disability or administrative entitlement. Annual QC assignment is
+Medical onset declares continuous disability through the query month; it
+never establishes an administrative period of disability. Disability tests
+scan onset and later quarters; period establishment and section 214(c)
+applicability carry explicit provenance. The query month is a hypothetical
+entitlement month, not medical or administrative adjudication. Annual QC assignment is
 favorable and retrospective; callers must supply only information available
 at their decision time. Each test returns its own assignment witness.
 
@@ -19,7 +23,7 @@ from __future__ import annotations
 
 import calendar
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, timedelta
 from enum import Enum
 from fractions import Fraction
@@ -90,6 +94,11 @@ class CoverageCondition(Enum):
 
 class InsuredUnsupportedReason(Enum):
     UNKNOWN_EARNINGS = "unknown_earnings_years_decide_status"
+    UNKNOWN_PERIODS = "unknown_prior_disability_periods_decide_status"
+    UNKNOWN_CURRENT_PERIOD = "unknown_current_disability_period_decides_status"
+    UNKNOWN_SSPA211 = "sspa211_applicability_unknown"
+    CURRENT_PERIOD_HISTORY = "current_disability_period_requires_history"
+    CURRENT_PERIOD_DLI = "ongoing_disability_period_dli_horizon_unsupported"
     TOTALIZATION = "totalization_credits_unsupported"
     DEEMED_FULLY_INSURED = "deemed_fully_insured_unsupported"
     TRANSITIONAL_INSURED = "transitional_insured_unsupported"
@@ -147,6 +156,30 @@ def _attain(birth, age):
     year = birth.year + age
     day = min(birth.day, calendar.monthrange(year, birth.month)[1])
     return date(year, birth.month, day) - timedelta(days=1)
+
+
+def _fact_provenance(provenance, convention_id, label):
+    convention = provenance is EarningsProvenance.CONVENTION_FILLED
+    if convention != (convention_id is not None):
+        raise InvalidFamilyInput(f"Only convention-filled {label} needs an id")
+    if convention and not convention_id.strip():
+        raise InvalidFamilyInput("Convention identifier must be nonempty")
+
+
+def _sspa211_applicability(person):
+    # RS00301.102 B.1/B.3: pre2004 assignments are exempt; an alien
+    # without a true-identity SSN is subject to the additional requirement.
+    legacy = None
+    if person.alien_worker:
+        if person.ssn_never_assigned:
+            legacy = True
+        elif person.ssn_assignment_date is not None:
+            legacy = person.ssn_assignment_date >= date(2004, 1, 1)
+    if person.sspa211_applies is not None:
+        if legacy is not None and legacy != person.sspa211_applies:
+            raise InvalidFamilyInput("Conflicting SSPA211 applicability facts")
+        return person.sspa211_applies
+    return legacy
 
 
 @_declared_input
@@ -228,8 +261,59 @@ class Person:
     ssn_never_assigned: bool = False
     rib_entitlement_month: date | None = None
     dib_entitlement_month: date | None = None
+    prior_disability_periods_provenance: EarningsProvenance = (
+        EarningsProvenance.UNKNOWN
+    )
+    prior_disability_periods_convention_id: str | None = None
+    current_disability_period_established: bool | None = None
+    current_disability_period_provenance: EarningsProvenance | None = None
+    current_disability_period_convention_id: str | None = None
+    sspa211_applies: bool | None = None
+    sspa211_provenance: EarningsProvenance = EarningsProvenance.UNKNOWN
+    sspa211_convention_id: str | None = None
 
     def __post_init__(self):
+        _fact_provenance(
+            self.prior_disability_periods_provenance,
+            self.prior_disability_periods_convention_id,
+            "prior disability periods",
+        )
+        if (
+            self.prior_disability_periods_provenance
+            is EarningsProvenance.UNKNOWN
+            and self.prior_disability_periods
+        ):
+            raise InvalidFamilyInput(
+                "Unknown prior periods cannot contain values"
+            )
+        for value, provenance, convention, label in (
+            (
+                self.current_disability_period_established,
+                self.current_disability_period_provenance,
+                self.current_disability_period_convention_id,
+                "current disability period",
+            ),
+            (
+                self.sspa211_applies,
+                self.sspa211_provenance,
+                self.sspa211_convention_id,
+                "SSPA211 applicability",
+            ),
+        ):
+            _fact_provenance(provenance, convention, label)
+            if (
+                provenance is None or provenance is EarningsProvenance.UNKNOWN
+            ) != (value is None):
+                raise InvalidFamilyInput(
+                    f"{label} value must match provenance"
+                )
+        if (
+            self.current_disability_period_established
+            and self.disability_onset is None
+        ):
+            raise InvalidFamilyInput(
+                "Current established period requires medical onset"
+            )
         if not 1870 <= self.birth_date.year <= 9900:
             raise InvalidFamilyInput("Birth year outside supported calendar")
         if self.birth_date < date(1913, 1, 2) and self.sex is None:
@@ -257,14 +341,6 @@ class Person:
                 raise InvalidFamilyInput(
                     "Prior special onset must precede age31"
                 )
-        if (
-            self.alien_worker
-            and self.ssn_assignment_date is None
-            and not self.ssn_never_assigned
-        ):
-            raise InvalidFamilyInput(
-                "Alien worker requires assignment date or explicit never-assigned fact"
-            )
         if self.ssn_never_assigned and self.ssn_assignment_date is not None:
             raise InvalidFamilyInput(
                 "Unassigned SSN cannot have assignment date"
@@ -303,6 +379,8 @@ class StatusDecision(_SealedResult):
     upper_fully_required: int
     fully_qc_count_lower: int
     fully_qc_count_upper: int
+    qualifying_quarter: date | None
+    upper_qualifying_quarter: date | None
 
 
 @_sealed_result
@@ -327,6 +405,9 @@ class InsuredStatus(_SealedResult):
     unknown_years: tuple[int, ...]
     convention_years: Mapping[int, str]
     decided_despite_unknowns: bool
+    current_disability_period_start: date | None
+    unknown_facts: tuple[str, ...]
+    convention_facts: Mapping[str, str]
 
 
 def _requirement(person, at, periods=(), *, onset=True, for_disability=False):
@@ -343,12 +424,6 @@ def _requirement(person, at, periods=(), *, onset=True, for_disability=False):
         )
     if person.death_date is not None:
         end = min(end, person.death_date.year)
-    if (
-        onset
-        and person.disability_onset is not None
-        and not person.statutory_blindness
-    ):
-        end = min(end, person.disability_onset.year)
     elapsed = sum(
         not any(a.year <= year <= b.year for a, b in periods)
         for year in range(start, end)
@@ -360,6 +435,13 @@ def _requirement(person, at, periods=(), *, onset=True, for_disability=False):
 def fully_insured_requirement(person: Person, month: date) -> int:
     """One QC per elapsed year, bounded by six and forty (214(a))."""
     _month(month, "month")
+    if (
+        person.disability_onset is not None
+        and person.current_disability_period_provenance is None
+    ):
+        raise InvalidFamilyInput(
+            "Declare current disability period establishment"
+        )
     if month < person.birth_date.replace(day=1):
         raise InvalidFamilyInput("Query precedes birth")
     if (
@@ -369,6 +451,22 @@ def fully_insured_requirement(person: Person, month: date) -> int:
         raise InvalidFamilyInput("Disability onset follows query month")
     if any(p.end >= month for p in person.prior_disability_periods):
         raise InvalidFamilyInput("Prior disability period follows query month")
+    if (
+        person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+    ):
+        _refuse(
+            InsuredUnsupportedReason.UNKNOWN_PERIODS,
+            "Requirement depends on established periods",
+        )
+    if (
+        person.disability_onset is not None
+        and person.current_disability_period_established is not False
+    ):
+        _refuse(
+            InsuredUnsupportedReason.CURRENT_PERIOD_HISTORY,
+            "Deriving the current period start requires coverage history",
+        )
     periods = tuple((p.start, p.end) for p in person.prior_disability_periods)
     return _requirement(person, month, periods)
 
@@ -385,6 +483,14 @@ def qc_amount_from_nawi(nawi: Fraction, prior_amount: int) -> int:
 
 def _validate_history(person, years, month, coverage_end_month, credits):
     _month(month, "month")
+    if (
+        person.disability_onset is not None
+        and person.current_disability_period_provenance is None
+    ):
+        raise InvalidFamilyInput(
+            "Declare current disability period establishment"
+        )
+    _sspa211_applicability(person)
     if month.year > 9990 or month < person.birth_date.replace(day=1):
         raise InvalidFamilyInput("Query outside person's calendar")
     if (
@@ -480,14 +586,6 @@ def _coverage_checks(person, years, month, credits):
         )
     for condition in sorted(person.conditions, key=lambda c: c.value):
         _refuse(InsuredUnsupportedReason[condition.name], condition.value)
-    if person.alien_worker and (
-        person.ssn_never_assigned
-        or person.ssn_assignment_date >= date(2004, 1, 1)
-    ):
-        _refuse(
-            InsuredUnsupportedReason.ALIEN_WORKER,
-            "SSPA211 additional alien-worker facts",
-        )
     if month < date(1968, 1, 1):
         _refuse(
             InsuredUnsupportedReason.HISTORICAL_ENTITLEMENT,
@@ -530,6 +628,11 @@ def _credits(year, row, upper):
             0,
         )
     if year >= 1978:
+        if year > 2027:
+            _refuse(
+                InsuredUnsupportedReason.QC_YEAR,
+                f"No captured QC increment for {year}",
+            )
         return (), _post1977_qc_count(
             year, row.wages or Fraction(0), row.self_employment or Fraction(0)
         )
@@ -626,7 +729,7 @@ def _witness(person, credits, at, exit_month, kind, *, onset=True):
     for use_periods in (
         (True, False) if person.prior_disability_periods else (True,)
     ):
-        prior_before = at if kind is InsuredTest.CURRENTLY else None
+        prior_before = None
         rows, periods = _world(
             person,
             credits,
@@ -805,6 +908,85 @@ def _last_insured(person, credits, month, exit_month):
     return last, censored
 
 
+def _events(person, month, kind):
+    if kind is InsuredTest.DISABILITY and person.disability_onset is not None:
+        # 404.131(a): onset quarter OR a later quarter while disabled.
+        return tuple(
+            _qdate(q)
+            for q in range(_qid(person.disability_onset), _qid(month) + 1)
+        )
+    if kind is InsuredTest.CURRENTLY:
+        return tuple(
+            event
+            for event in (
+                person.death_date,
+                person.rib_entitlement_month,
+                person.dib_entitlement_month,
+            )
+            if event is not None and event.replace(day=1) <= month
+        ) or (month,)
+    return (month,)
+
+
+def _decision_witness(person, credits, month, exit_month, kind):
+    best, qualifying = None, None
+    for event in _events(person, month, kind):
+        witness = _witness(person, credits, event, exit_month, kind)
+        if witness[0] and kind is InsuredTest.DISABILITY:
+            return witness, _qdate(_qid(event))
+        if best is None or (witness[0], witness[1]) > (best[0], best[1]):
+            best = witness
+            qualifying = _qdate(_qid(event)) if witness[0] else None
+    return best, qualifying
+
+
+def _with_current_period(person, credits, month, exit_month):
+    if not person.current_disability_period_established:
+        return person, None
+    witness, quarter = _decision_witness(
+        person, credits, month, exit_month, InsuredTest.DISABILITY
+    )
+    if not witness[0]:
+        raise InvalidFamilyInput(
+            "Established current period has no insured disabled quarter"
+        )
+    # 416(i)(2)(C), 404.321(a): onset day if insured then, otherwise
+    # first day of the first later insured quarter. Application/duration
+    # are administrative facts declared by the caller, never inferred.
+    start = (
+        person.disability_onset
+        if _qid(quarter) == _qid(person.disability_onset)
+        else quarter
+    )
+    end = date(
+        month.year,
+        month.month,
+        calendar.monthrange(month.year, month.month)[1],
+    )
+    if person.death_date is not None:
+        end = min(end, person.death_date)
+    period = DisabilityPeriod(start, end)
+    return (
+        replace(
+            person,
+            prior_disability_periods=person.prior_disability_periods
+            + (period,),
+            prior_disability_periods_provenance=EarningsProvenance.OBSERVED,
+            prior_disability_periods_convention_id=None,
+        ),
+        start,
+    )
+
+
+def _dli_cap(person, month, exit_month):
+    cap = min(_qid(month), _fra_quarter(person) - 1)
+    if exit_month is not None and exit_month <= month:
+        cap = _fra_quarter(person) - 1
+    if person.death_date is not None:
+        cap = min(cap, _qid(person.death_date))
+    return _qend(cap)
+
+
 @_validated_entry
 def insured_status(
     person: Person,
@@ -815,16 +997,18 @@ def insured_status(
     coverage_end_month: date | None = None,
     totalization_credits: tuple[str, ...] = (),
 ) -> InsuredStatus:
-    """Decide a declared person-month; uncertain status is a retained refusal.
+    """Decide declared insurance, retaining coverage refusals in denominators.
 
-    B6a calls with test=FULLY. OP8(d)/OP12 use the same declaration and
-    optional exit month. No entry date, imputation, or zero default exists.
-    DLI is through this query, explicitly censored, unless exit freezes work.
+    Medical onset means continuously disabled through this query and never
+    establishes a period. Declare establishment, prior-period provenance,
+    and section214(c) applicability; UNKNOWN never silently means none.
+    Each disability window ends at its tested quarter, from onset through
+    query, and the first insured quarter supplies the witness (404.131).
+    No entry date, imputation, or pre-entry zero convention exists.
     """
     _validate_history(
         person, years, month, coverage_end_month, totalization_credits
     )
-    _coverage_checks(person, years, month, totalization_credits)
     lower = {y: _credits(y, row, False) for y, row in sorted(years.items())}
     upper = {y: _credits(y, row, True) for y, row in sorted(years.items())}
     unknown = tuple(
@@ -832,6 +1016,105 @@ def insured_status(
         for y, row in sorted(years.items())
         if row.provenance is EarningsProvenance.UNKNOWN
     )
+    prior_unknown = (
+        person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+    )
+    current_unknown = (
+        person.disability_onset is not None
+        and person.current_disability_period_provenance
+        is EarningsProvenance.UNKNOWN
+    )
+    max_rows, _ = _world(
+        person,
+        upper,
+        _qid(month),
+        coverage_end_month,
+        False,
+        include_zero=True,
+    )
+    maximum_qcs = sum(len(_assign_qcs(*row)) for row in max_rows.values())
+    if person.current_disability_period_established and maximum_qcs < 6:
+        raise InvalidFamilyInput(
+            "Established current period requires at least six lifetime QCs"
+        )
+    _coverage_checks(person, years, month, totalization_credits)
+    applicability = _sspa211_applicability(person)
+    # Known applicable cases require unimplemented work-authorization/visa
+    # adjudication. Unknown applicability can decide a QC-only false result.
+    if applicability is True:
+        _refuse(
+            InsuredUnsupportedReason.ALIEN_WORKER,
+            "SSPA211 additional alien-worker facts",
+        )
+    # Favorable disregard is a treatment, not a claim that a known
+    # established period never existed (404.320(a),404.130(f)). Unknown
+    # prior periods cannot be mixed selectively with the current period.
+    uncertain_current_start = False
+    if prior_unknown:
+        lo_person = hi_person = person
+        lo_start = hi_start = None
+        if person.current_disability_period_established:
+            onset_witness = _witness(
+                person,
+                lower,
+                person.disability_onset,
+                coverage_end_month,
+                InsuredTest.DISABILITY,
+            )
+            if onset_witness[0]:
+                lo_start = hi_start = person.disability_onset
+            else:
+                uncertain_current_start = True
+    else:
+        if person.current_disability_period_established:
+            initial_lo, _ = _decision_witness(
+                person,
+                lower,
+                month,
+                coverage_end_month,
+                InsuredTest.DISABILITY,
+            )
+            if not initial_lo[0] and unknown:
+                initial_hi, _ = _decision_witness(
+                    person,
+                    upper,
+                    month,
+                    coverage_end_month,
+                    InsuredTest.DISABILITY,
+                )
+                if initial_hi[0]:
+                    _refuse(
+                        InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+                        "Unknown facts decide the established current insured start",
+                    )
+        lo_person, lo_start = _with_current_period(
+            person, lower, month, coverage_end_month
+        )
+        hi_person, hi_start = (
+            _with_current_period(person, upper, month, coverage_end_month)
+            if unknown
+            else (lo_person, lo_start)
+        )
+    if lo_start != hi_start:
+        _refuse(
+            InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+            "Unknown earnings decide established current period start",
+        )
+    # The current disability is known only through the query. A frozen-exit
+    # future DLI would require its unobserved recovery/end date.
+    if (
+        person.current_disability_period_established
+        and not prior_unknown
+        and coverage_end_month is not None
+        and coverage_end_month <= month
+        and _dli_cap(person, month, coverage_end_month) > _qend(_qid(month))
+        and test in (InsuredTest.ALL, InsuredTest.DISABILITY)
+    ):
+        _refuse(
+            InsuredUnsupportedReason.CURRENT_PERIOD_DLI,
+            "Current period end beyond query is unobserved",
+        )
     decisions = {}
     for kind in (
         InsuredTest.FULLY,
@@ -841,52 +1124,83 @@ def insured_status(
         decisions[kind] = None
         if test not in (InsuredTest.ALL, kind):
             continue
-        at = month
-        if (
-            kind is InsuredTest.DISABILITY
-            and person.disability_onset is not None
-            and not person.statutory_blindness
-        ):
-            at = person.disability_onset
-        events = [at]
-        if kind is InsuredTest.CURRENTLY:
-            events = [
-                event
-                for event in (
-                    person.death_date,
-                    person.rib_entitlement_month,
-                    person.dib_entitlement_month,
-                )
-                if event is not None and event.replace(day=1) <= month
-            ] or [month]
-        lo = max(
-            (
-                _witness(person, lower, event, coverage_end_month, kind)
-                for event in events
-            ),
-            key=lambda witness: (witness[0], witness[1]),
+        # Establishment follows the first insured quarter; using its own
+        # exclusion to prove that quarter would be circular. Subsequent
+        # hypothetical-onset DLI quarters can use the established period.
+        decision_lo_person = (
+            person if kind is InsuredTest.DISABILITY else lo_person
         )
-        hi = (
-            max(
-                (
-                    _witness(person, upper, event, coverage_end_month, kind)
-                    for event in events
-                ),
-                key=lambda witness: (witness[0], witness[1]),
+        decision_hi_person = (
+            person if kind is InsuredTest.DISABILITY else hi_person
+        )
+        lo, lo_quarter = _decision_witness(
+            decision_lo_person, lower, month, coverage_end_month, kind
+        )
+        hi, hi_quarter = (
+            _decision_witness(
+                decision_hi_person, upper, month, coverage_end_month, kind
             )
             if unknown
-            else lo
+            else (lo, lo_quarter)
         )
         if lo[0] != hi[0]:
             _refuse(
                 InsuredUnsupportedReason.UNKNOWN_EARNINGS,
                 f"{kind.value} differs across unknown years {unknown}",
             )
+        # Six lifetime QCs is a universal prerequisite. Otherwise an
+        # unknown period could supply exclusions or earlier special status.
+        if (
+            (
+                prior_unknown
+                or current_unknown
+                and kind is not InsuredTest.DISABILITY
+            )
+            and not lo[0]
+            and maximum_qcs >= 6
+        ):
+            _refuse(
+                (
+                    InsuredUnsupportedReason.UNKNOWN_PERIODS
+                    if prior_unknown
+                    else InsuredUnsupportedReason.UNKNOWN_CURRENT_PERIOD
+                ),
+                f"Unknown established periods may change {kind.value}",
+            )
+        if applicability is None and lo[0]:
+            _refuse(
+                InsuredUnsupportedReason.UNKNOWN_SSPA211,
+                f"SSPA211 applicability may change {kind.value}",
+            )
+        # A selected witness can switch as credits rise; its count is not
+        # monotone. With uncertain credits and treatment/witness choices,
+        # use the universal envelope: every assignment has 0..maximum_qcs.
+        broad = (
+            prior_unknown
+            or current_unknown
+            or bool(unknown)
+            and (
+                bool(person.prior_disability_periods)
+                or person.disability_onset is not None
+                or kind is InsuredTest.CURRENTLY
+                and len(_events(person, month, kind)) > 1
+            )
+        )
+        count_lo, count_hi = (
+            (0, maximum_qcs)
+            if broad
+            else (min(lo[1], hi[1]), max(lo[1], hi[1]))
+        )
+        full_lo, full_hi = (
+            (0, maximum_qcs)
+            if broad
+            else (min(lo[7], hi[7]), max(lo[7], hi[7]))
+        )
         decisions[kind] = _computed(
             StatusDecision,
             lo[0],
-            lo[1],
-            hi[1],
+            count_lo,
+            count_hi,
             lo[2],
             lo[3],
             lo[4],
@@ -897,27 +1211,74 @@ def insured_status(
             hi[5],
             lo[6],
             hi[6],
-            lo[7],
-            hi[7],
+            full_lo,
+            full_hi,
+            lo_quarter,
+            hi_quarter,
         )
     dli = None
     if test in (InsuredTest.ALL, InsuredTest.DISABILITY):
         lo_date, lo_censored = _last_insured(
-            person, lower, month, coverage_end_month
+            lo_person, lower, month, coverage_end_month
         )
         hi_date, hi_censored = (
-            _last_insured(person, upper, month, coverage_end_month)
+            _last_insured(hi_person, upper, month, coverage_end_month)
             if unknown
             else (lo_date, lo_censored)
         )
+        if (prior_unknown or current_unknown) and maximum_qcs >= 6:
+            hi_date = _dli_cap(person, month, coverage_end_month)
+            hi_censored = (
+                coverage_end_month is None or coverage_end_month > month
+            ) and _qid(hi_date) == _qid(month)
+        if applicability is None:
+            # A guaranteed historical fully insured witness also needs
+            # resolved section214(c) facts. Keep the QC-only upper date;
+            # false current status cannot prove a positive DLI lower date.
+            lo_date = None
         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)
     lo_rows, _ = _world(
-        person, lower, _qid(month), coverage_end_month, True, include_zero=True
+        lo_person,
+        lower,
+        _qid(month),
+        coverage_end_month,
+        True,
+        include_zero=True,
     )
     hi_rows, _ = _world(
-        person, upper, _qid(month), coverage_end_month, True, include_zero=True
+        hi_person,
+        upper,
+        _qid(month),
+        coverage_end_month,
+        True,
+        include_zero=True,
     )
     assigned = {y: _assign_qcs(*row) for y, row in lo_rows.items()}
+    unknown_facts = tuple(
+        name
+        for name, missing in (
+            ("prior_disability_periods", prior_unknown),
+            ("current_disability_period", current_unknown),
+            ("current_disability_period_start", uncertain_current_start),
+            ("sspa211_applicability", applicability is None),
+        )
+        if missing
+    )
+    conventions = {
+        name: identifier
+        for name, identifier in (
+            (
+                "prior_disability_periods",
+                person.prior_disability_periods_convention_id,
+            ),
+            (
+                "current_disability_period",
+                person.current_disability_period_convention_id,
+            ),
+            ("sspa211_applicability", person.sspa211_convention_id),
+        )
+        if identifier is not None
+    }
     return _computed(
         InsuredStatus,
         VERSION,
@@ -928,7 +1289,18 @@ def insured_status(
         dli,
         MappingProxyType(
             {
-                y: (len(assigned[y]), len(_assign_qcs(*hi_rows[y])))
+                y: (
+                    (
+                        0
+                        if prior_unknown or current_unknown
+                        else len(assigned[y])
+                    ),
+                    (
+                        len(_assign_qcs(*max_rows[y]))
+                        if prior_unknown or current_unknown
+                        else len(_assign_qcs(*hi_rows[y]))
+                    ),
+                )
                 for y in lo_rows
             }
         ),
@@ -941,7 +1313,10 @@ def insured_status(
                 if row.provenance is EarningsProvenance.CONVENTION_FILLED
             }
         ),
-        bool(unknown),
+        bool(unknown or unknown_facts),
+        lo_start,
+        unknown_facts,
+        MappingProxyType(conventions),
     )
 
 

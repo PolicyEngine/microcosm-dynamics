@@ -84,6 +84,34 @@ examples:
     required_qcs: 6
   coverage: computed
   test_node: tests/test_track_b_insured_status.py::test_sam_white_6_in_12_poms_140_example_2
+- id: poms_140_sam_later
+  source: poms_rs_00301_140
+  quotes:
+  - 8/20/61
+  - 4/12/84
+  - seven quarters
+  - 6 QC's
+  - 9/81 through 6/84
+  - However, they may have insured status at a later date.
+  expected:
+    birth: '1961-08-20'
+    onset: '1984-04-12'
+    required_qcs: 6
+    onset_insured: false
+    later_insured: true
+  invented_completion:
+    year_qcs:
+      1983: 3
+      1984: 3
+    first_insured_quarter: 1984-Q3
+  coverage: computed
+  note: The source supplies the six-QC rule and expressly permits later insured
+    status, but supplies neither an earnings history nor a later insured date.
+    The execution test declares an invented annual-QC completion, yielding five
+    assignable QCs in the onset quarter and six in the next quarter. The later
+    date is an invented demonstration of the published rule, not a published
+    numerical result.
+  test_node: tests/test_track_b_insured_status_fix_round_2.py::test_sam_white_can_become_insured_later_poms_140_example_2
 - id: poms_140_mary_met
   source: poms_rs_00301_140
   quotes:

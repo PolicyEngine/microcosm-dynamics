@@ -628,6 +628,36 @@
           "sha256": "65d94bae34becf54cf40e361cb6fb5668883f164efdff371122e8d2b9717efe3"
         }
       ]
+    },
+    {
+      "file": "ecfr_20cfr404_315.xml",
+      "bytes": 1833,
+      "sha256": "cd2ca75f18f5ddf3779fb01ee0d25998e1411fc03e2f95de8e4b2d7c6ebebf26",
+      "id": "ecfr_20cfr404_315",
+      "citation": "20 CFR 404.315 (eCFR, as of 2026-10-07)",
+      "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-10-07/title-20.xml?part=404&section=404.315",
+      "retrieved_at_utc": "2026-10-25T07:10:45Z",
+      "capture": "http_body"
+    },
+    {
+      "file": "ecfr_20cfr404_320.xml",
+      "bytes": 1897,
+      "sha256": "b0b0e6940b95801c73eaac1f61922b9fbd9f41dc20867bed84f6667d98f990c9",
+      "id": "ecfr_20cfr404_320",
+      "citation": "20 CFR 404.320 (eCFR, as of 2026-10-07)",
+      "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-10-07/title-20.xml?part=404&section=404.320",
+      "retrieved_at_utc": "2026-10-25T07:10:54Z",
+      "capture": "http_body"
+    },
+    {
+      "file": "ecfr_20cfr404_321.xml",
+      "bytes": 1737,
+      "sha256": "b10d89b4ebbc8b978959e11b098612a5d68bc29620b50ed8b5a06a76c44e5c24",
+      "id": "ecfr_20cfr404_321",
+      "citation": "20 CFR 404.321 (eCFR, as of 2026-10-07)",
+      "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-10-07/title-20.xml?part=404&section=404.321",
+      "retrieved_at_utc": "2026-10-25T07:10:54Z",
+      "capture": "http_body"
     }
   ]
 }

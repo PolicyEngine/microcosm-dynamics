@@ -370,7 +370,14 @@ def _declaration_cases():
         cases[type(value).__name__] = value
     cases.update(
         {
-            "Person": insured.Person(date(2000, 1, 2)),
+            "Person": insured.Person(
+                date(2000, 1, 2),
+                prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+                current_disability_period_established=False,
+                current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+                sspa211_applies=False,
+                sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+            ),
             "CoverageYear": insured.CoverageYear(
                 insured.EarningsProvenance.OBSERVED, qc_count=4
             ),
@@ -478,7 +485,14 @@ def _sealed_samples():
         2026, grace.GraceYearState(), [grace.GraceMonth()] * 12
     )
     samples["RecomputationDecision"] = c.recomputation_decision(1, 2)
-    person = insured.Person(date(2026, 1, 2))
+    person = insured.Person(
+        date(2026, 1, 2),
+        prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+    )
     years = {
         2026: insured.CoverageYear(
             insured.EarningsProvenance.OBSERVED, qc_count=0

@@ -20,7 +20,14 @@ from tests.test_track_b_insured_status import declared, history
 
 
 def test_future_exit_does_not_remove_dli_censoring():
-    person = i.Person(date(1980, 1, 2))
+    person = i.Person(
+        date(1980, 1, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 1, 1)
     years = history(person, month, {y: 4 for y in range(2015, 2025)})
     result = i.insured_status(person, years, month)
@@ -32,7 +39,15 @@ def test_future_exit_does_not_remove_dli_censoring():
 
 
 def test_currently_insured_uses_death_quarter_after_death():
-    person = i.Person(date(1980, 1, 2), death_date=date(2020, 12, 15))
+    person = i.Person(
+        date(1980, 1, 2),
+        death_date=date(2020, 12, 15),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     years = history(person, date(2020, 12, 1), {2019: 4, 2020: 4})
     at_death = i.insured_status(person, years, date(2020, 12, 1))
     later = i.insured_status(person, years, date(2026, 1, 1))
@@ -45,7 +60,15 @@ def test_currently_insured_uses_death_quarter_after_death():
     "field", ["rib_entitlement_month", "dib_entitlement_month"]
 )
 def test_currently_insured_preserves_actual_entitlement_event(field):
-    person = i.Person(date(1960, 1, 2), **{field: date(2020, 12, 1)})
+    person = i.Person(
+        date(1960, 1, 2),
+        **{field: date(2020, 12, 1)},
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 1, 1)
     years = history(person, month, {2019: 4, 2020: 4})
     actual = i.insured_status(person, years, month)
@@ -62,6 +85,11 @@ def test_currently_insured_accepts_any_statutory_event():
         dib_entitlement_month=date(2000, 12, 1),
         rib_entitlement_month=date(2022, 12, 1),
         death_date=date(2025, 12, 10),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(2026, 1, 1)
     years = history(person, month, {1999: 4, 2000: 4})
@@ -69,14 +97,19 @@ def test_currently_insured_accepts_any_statutory_event():
     assert result.currently.insured
     assert result.currently.window[-1] == 2000 * 4 + 3
 
-    # RS00301.110 excludes prior periods, not the period containing the
-    # historical entitlement event itself. Its later end is known here.
+    # 404.120(b) and RS00301.110 exclude every established period that
+    # intersects the window, including the entitlement event's own period.
     person = i.Person(
         date(1960, 2, 2),
         dib_entitlement_month=date(2000, 7, 1),
         prior_disability_periods=(
             i.DisabilityPeriod(date(2000, 1, 1), date(2005, 12, 31)),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(2010, 1, 1)
     years = history(
@@ -85,15 +118,23 @@ def test_currently_insured_accepts_any_statutory_event():
     result = i.insured_status(
         person, years, month, test=i.InsuredTest.CURRENTLY
     )
-    assert not result.currently.insured
-    assert result.currently.qc_count_lower == 4
+    assert result.currently.insured
+    assert result.currently.qc_count_lower == 6
 
 
 @pytest.mark.parametrize("condition", list(i.CoverageCondition))
 def test_each_declared_specialist_condition_has_named_retained_refusal(
     condition,
 ):
-    person = i.Person(date(1980, 2, 2), conditions=(condition,))
+    person = i.Person(
+        date(1980, 2, 2),
+        conditions=(condition,),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 1, 1)
     years = history(person, month)
     row = i.evaluate_insured_status(
@@ -120,6 +161,9 @@ def test_alien_sspa_requirement_has_explicit_trigger():
         date(1980, 2, 2),
         alien_worker=True,
         ssn_assignment_date=date(2003, 12, 31),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
     )
     late = replace(early, ssn_assignment_date=date(2004, 1, 1))
     years = history(early, month)
@@ -153,7 +197,14 @@ def test_alien_sspa_requirement_has_explicit_trigger():
     ],
 )
 def test_raw_earnings_refusals_are_own_layer(year, values, reason):
-    person = i.Person(date(1914, 2, 2))
+    person = i.Person(
+        date(1914, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2028, 1, 1)
     years = history(person, month)
     years[year] = i.CoverageYear(i.EarningsProvenance.OBSERVED, **values)
@@ -163,7 +214,14 @@ def test_raw_earnings_refusals_are_own_layer(year, values, reason):
 
 
 def test_input_calendar_errors_precede_totalization_refusal():
-    person = i.Person(date(1950, 8, 2))
+    person = i.Person(
+        date(1950, 8, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(1970, 12, 1)
     years = history(person, month)
     years[1950] = i.CoverageYear(
@@ -187,7 +245,14 @@ def test_input_calendar_errors_precede_totalization_refusal():
 @settings(max_examples=15, deadline=None)
 @given(st.integers(1, 4), st.integers(0, 4))
 def test_unknown_birth_and_exit_year_cap_is_sound(quarter, count):
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, quarter * 3, 1)
     years = history(person, month, {2024: 4, 2025: 4})
     years[2026] = i.CoverageYear(i.EarningsProvenance.UNKNOWN)
@@ -216,7 +281,14 @@ def test_unknown_birth_and_exit_year_cap_is_sound(quarter, count):
 
 
 def test_dli_unknown_year_is_a_range_not_an_undocumented_point():
-    person = i.Person(date(1980, 2, 2))
+    person = i.Person(
+        date(1980, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month, {y: 4 for y in range(2000, 2005)})
     years[2005] = i.CoverageYear(i.EarningsProvenance.UNKNOWN)
@@ -236,7 +308,15 @@ def test_dli_unknown_year_is_a_range_not_an_undocumented_point():
 
 
 def test_pre1911_male_dib_fully_requirement_uses_1975_cap_cfr_404_132():
-    person = i.Person(date(1900, 2, 2), sex=i.Sex.MALE)
+    person = i.Person(
+        date(1900, 2, 2),
+        sex=i.Sex.MALE,
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(1974, 12, 1)
     years = history(person, month, {year: 4 for year in range(1969, 1974)})
     result = i.insured_status(person, years, month)
@@ -247,7 +327,14 @@ def test_pre1911_male_dib_fully_requirement_uses_1975_cap_cfr_404_132():
 
 
 def test_requirement_helper_rejects_future_prior_period_and_onset():
-    person = i.Person(date(1980, 2, 2))
+    person = i.Person(
+        date(1980, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2020, 1, 1)
     for changed in (
         replace(person, disability_onset=date(2021, 1, 1)),
@@ -272,6 +359,11 @@ def test_unknown_bounds_with_prior_disability_period(counts):
                 date(2004, 4, 15), date(2006, 9, 15), special_insured=True
             ),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(2012, 12, 1)
     years = history(

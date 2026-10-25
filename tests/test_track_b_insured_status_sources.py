@@ -62,6 +62,14 @@ RULE_QUOTES = {
         "Section 211 of the SSPA applies to an alien worker whose Social "
         "Security Number (SSN) was first assigned on or after January 1, "
         "2004.",
+        "An alien worker whose SSN was assigned before January 1, 2004 is "
+        "exempt from the requirements of Section 211 of the Social Security "
+        "Protection Act, even if the SSN was not work authorized.",
+        "Section 211 of the SSPA applies if the alien worker's own SSN was "
+        "assigned on or after 1/1/2004 or if they have not yet been assigned "
+        "an SSN based on their true identity.",
+        "Alien worker does not have an SSN, but is currently authorized to "
+        "work in the U.S.; or",
     ],
     "poms_rs_00301_105": [
         "A NH needs at least 6 QCs and no more than 40 QCs to meet fully "
@@ -228,6 +236,39 @@ RULE_QUOTES = {
         "You reach a particular age on the day before your birthday.",
         "You are fully insured as of the first day of the calendar "
         "quarter in which you acquire the last needed QC",
+        "we do not count as an elapsed year any year which is wholly or "
+        "partly in a period of disability we established for you.",
+        "You have at least 20 QCs in the 40-quarter period (see paragraph "
+        "(f) of this section) ending with that quarter.",
+        "You have QCs in at least one-half of the quarters during the "
+        "period ending with that quarter and beginning with the quarter "
+        "after the quarter you became age 21;",
+        "However, we will count all the quarters in the prior period of "
+        "disability established for you if by doing so you would be "
+        "entitled to benefits or the amount of the benefit would be larger.",
+    ],
+    "ecfr_20cfr404_315": [
+        "The 5-month waiting period begins with a month in which you were "
+        "both insured for disability and disabled.",
+        "You apply;",
+    ],
+    "ecfr_20cfr404_320": [
+        "If benefits payable on your earnings record would be denied or "
+        "reduced because of a period of disability, the period of "
+        "disability will not be taken into consideration.",
+        "You file an application while disabled, or no later than 12 "
+        "months after the month in which your period of disability ended.",
+        "At least 5 consecutive months go by from the month in which "
+        "your period of disability begins and before the month in which "
+        "it would end.",
+    ],
+    "ecfr_20cfr404_321": [
+        "Your period of disability begins on the day your disability "
+        "begins if you are insured for disability on that day.",
+        "If you are not insured for disability on that day, your period "
+        "of disability will begin on the first day of the first calendar "
+        "quarter after your disability began in which you become insured "
+        "for disability.",
     ],
     "lii_usc_42_413": [
         "with such product, if not a multiple of $10, being rounded "
@@ -271,7 +312,7 @@ def test_manifest_pins_every_capture():
     document = manifest()
     assert document["schema_version"] == 1
     sources = document["sources"]
-    assert len(sources) == 45
+    assert len(sources) == 48
     assert len({source["id"] for source in sources}) == len(sources)
     for source in sources:
         data = (SOURCES / source["file"]).read_bytes()
@@ -393,7 +434,10 @@ def test_poms_102_never_assigned_ssn_is_a_named_refusal(example_id, quote):
     # zero history only supplies structurally valid input to the explicitly
     # unsupported SSPA adjudication; it is not a claim about their earnings.
     person = i.Person(
-        date(1960, 1, 2), alien_worker=True, ssn_never_assigned=True
+        date(1960, 1, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        alien_worker=True,
+        ssn_never_assigned=True,
     )
     month = date(2026, 1, 1)
     years = {
@@ -426,6 +470,7 @@ def test_never_assigned_ssn_cannot_also_have_an_assignment_date():
     with pytest.raises(InvalidFamilyInput):
         i.Person(
             date(1960, 1, 2),
+            prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
             alien_worker=True,
             ssn_never_assigned=True,
             ssn_assignment_date=date(2004, 1, 2),

@@ -4,7 +4,7 @@ Verification class: statutory conformance. These public statutory sources
 support invented cases and published examples only. They admit no
 population, behavioral or forecast claim.
 
-`manifest.json` pins all 45 captures with their URL, UTC retrieval
+`manifest.json` pins all 48 captures with their URL, UTC retrieval
 time, byte count, SHA-256 and capture format. POMS entries additionally
 retain the exact transmittal and page date. The staging log was removed
 only after all original byte counts and hashes were verified. The source
@@ -17,8 +17,8 @@ attachments.
 The capture formats follow the gross-benefit manifest, with one addition:
 
 - `http_body`: complete decoded HTTP response, unchanged. This includes
-  all 37 POMS sections, their table of contents and eCFR subpart B as of
-  2026-10-07.
+  all 37 POMS sections, their table of contents, eCFR subpart B and
+  sections 404.315, 404.320 and 404.321 as of 2026-10-07.
 - `browser_text`: staged OACT quarter-of-coverage page text; `served_bodies`
   records the original response identity. Its chart includes 2027.
 - `http_text_excerpt`: relevant paragraphs of staged LII bodies, after
@@ -46,6 +46,7 @@ The capture formats follow the gross-benefit manifest, with one addition:
 | RS 00301.470, .475, .480, .600 | Deemed veterans, earned-basis wages, pre-1956 alternative test and vow-of-poverty refusals |
 | RS 00301.800 and its exhibit | Exhibit shell, plus the exhibit's 38-row cohort table, checked row by row |
 | 20 CFR 404 subpart B | Statutory rules, worked examples and the 404.115 cohort chart |
+| 20 CFR 404.315, .320, .321 | Waiting-period insured prerequisite, administrative establishment, favorable disregard and first insured-quarter period start |
 | 42 USC 413, 414, 416, 423 | Act 213, 214, 216(i)/(l), 223(c)(1) |
 | SSA OACT QC page | Independent 1978-2027 chart and 2027 determination |
 
@@ -92,10 +93,29 @@ Examples 2, 5, 6 and 7 expressly say the worker never received an SSN.
 The public declaration represents this with `ssn_never_assigned=True` and
 returns the named alien-worker refusal, retained in the denominator. It
 does not mistake this valid unsupported fact for a missing required date.
+RS 00301.102 B.1 exempts workers whose first SSN was assigned before
+January 1, 2004, including nonwork SSNs. B.3 expressly applies section 211
+to workers not yet assigned an SSN based on their true identity. B.4.b
+allows certain work-authorized workers without an SSN to meet the
+additional requirement; it does not exempt every unassigned worker.
 
 RS 00301.120 distinguishes onset/freeze protection from the later DIB
 waiting period. A person-month insured-status query does not itself
 adjudicate an application, establish a freeze or determine cash entitlement.
+Sections 404.320(b) and 416(i)(2)(A)-(B) require administrative facts in
+addition to medical onset: an application and a sufficiently long period,
+with the statutory DIB-entitlement alternative. Section 404.321(a) starts
+an established period at medical onset only when insured then; otherwise
+it starts at the first later insured quarter. Section 404.315(a)(4)
+requires the waiting period to start in a month both disabled and insured.
+Its waiting-period start therefore cannot precede that first insured
+quarter and cannot produce an earlier elapsed-year endpoint.
+
+RS 00301.140 example 2 permits later insured status but supplies no later
+earnings history or qualifying date. The additional registry entry keeps
+Sam White's published birth and onset dates and labels its completion of
+three QCs in each of 1983 and 1984 as invented. That completion supplies
+five assignable QCs at the onset quarter, 1984Q2, and six at 1984Q3.
 
 The registry separates helper arithmetic from public support: the fiscal
 and short-tax-year allocation examples execute private allocation helpers,

@@ -471,7 +471,14 @@ def public_world():
         layer: (EVALUATE[layer]("valid", 1, COMPUTE[layer]),)
         for layer in LAYERS
     }
-    insured_person = insured.Person(date(2000, 1, 2))
+    insured_person = insured.Person(
+        date(2000, 1, 2),
+        prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+    )
     insured_years = {
         year: insured.CoverageYear(
             insured.EarningsProvenance.OBSERVED, qc_count=4

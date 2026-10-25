@@ -34,7 +34,14 @@ from tests.test_track_b_input_schema import (
 
 def _insured_status(*, refused=False):
     return insured.insured_status(
-        insured.Person(date(2026, 1, 2)),
+        insured.Person(
+            date(2026, 1, 2),
+            prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+            current_disability_period_established=False,
+            current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+            sspa211_applies=False,
+            sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+        ),
         {
             2026: insured.CoverageYear(
                 insured.EarningsProvenance.OBSERVED, qc_count=0

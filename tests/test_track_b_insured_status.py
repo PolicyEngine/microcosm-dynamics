@@ -69,7 +69,14 @@ def statuses(result):
 
 
 def test_version_and_explicit_zero_history():
-    person = i.Person(date(1990, 5, 2))
+    person = i.Person(
+        date(1990, 5, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(person, date(2026, 12, 1))
     assert result.version == "track-b-insured-v1"
     assert not any(statuses(result))
@@ -83,7 +90,15 @@ def test_version_and_explicit_zero_history():
 
 
 def test_fred_brown_35_quarters_require_17_poms_140_example_1():
-    person = i.Person(date(1958, 5, 13), disability_onset=date(1988, 1, 15))
+    person = i.Person(
+        date(1958, 5, 13),
+        disability_onset=date(1988, 1, 15),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(
         person,
         date(1988, 1, 1),
@@ -97,7 +112,15 @@ def test_fred_brown_35_quarters_require_17_poms_140_example_1():
 
 
 def test_sam_white_6_in_12_poms_140_example_2():
-    person = i.Person(date(1961, 8, 20), disability_onset=date(1984, 4, 12))
+    person = i.Person(
+        date(1961, 8, 20),
+        disability_onset=date(1984, 4, 12),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(person, date(1984, 4, 1), {1982: 4, 1983: 2})
     assert result.disability.required == 6
     assert result.disability.window == tuple(
@@ -116,7 +139,15 @@ def test_sam_white_6_in_12_poms_140_example_2():
     ids=["mary-example-3", "mary-example-4", "mary-example-5-moveable"],
 )
 def test_mary_smith_special_window_poms_140_examples_3_to_5(counts, expected):
-    person = i.Person(date(1964, 11, 15), disability_onset=date(1985, 8, 30))
+    person = i.Person(
+        date(1964, 11, 15),
+        disability_onset=date(1985, 8, 30),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(person, date(1985, 8, 1), counts)
     assert result.disability.required == 6
     assert result.disability.window == tuple(
@@ -126,7 +157,14 @@ def test_mary_smith_special_window_poms_140_examples_3_to_5(counts, expected):
 
 
 def test_dli_1990_june_poms_148_example():
-    person = i.Person(date(1954, 3, 9))
+    person = i.Person(
+        date(1954, 3, 9),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     counts = {
         1973: 2,
         1975: 4,
@@ -155,6 +193,11 @@ def test_calvin_hill_blind_clock_poms_150_example():
         date(1957, 7, 12),
         disability_onset=date(1957, 7, 12),
         statutory_blindness=True,
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     counts = {1977: 2, 1982: 1, 1983: 1, 1985: 1, 1986: 2}
     first = history(person, date(1986, 1, 1), counts)
@@ -196,7 +239,16 @@ def test_fully_requirement_differential_cfr_404_115_every_captured_row():
                 if not cell:
                     continue
                 assert i.fully_insured_requirement(
-                    i.Person(birth, sex=sex), date(2026, 12, 1)
+                    i.Person(
+                        birth,
+                        sex=sex,
+                        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+                        current_disability_period_established=False,
+                        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+                        sspa211_applies=False,
+                        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+                    ),
+                    date(2026, 12, 1),
                 ) == int(cell)
                 tested += 1
     assert tested >= 140
@@ -244,7 +296,15 @@ def test_fully_requirement_differential_poms_rs_00301_800_exhibit():
         for sex, birth in cohorts:
             age = 65 if sex is i.Sex.MALE and birth < date(1913, 1, 2) else 62
             month = date(birth.year + age + 1, 12, 1)
-            person = i.Person(birth, sex=sex)
+            person = i.Person(
+                birth,
+                sex=sex,
+                prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+                current_disability_period_established=False,
+                current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+                sspa211_applies=False,
+                sspa211_provenance=i.EarningsProvenance.OBSERVED,
+            )
             assert i.fully_insured_requirement(person, month) == required, (
                 men,
                 women,
@@ -262,6 +322,11 @@ def test_fully_requirement_differential_poms_rs_00301_800_exhibit():
                 date(1929, 7, 1),
                 sex=i.Sex.FEMALE,
                 death_date=date(year, 7, 1),
+                prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+                current_disability_period_established=False,
+                current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+                sspa211_applies=False,
+                sspa211_provenance=i.EarningsProvenance.OBSERVED,
             )
             assert (
                 i.fully_insured_requirement(person, date(year, 12, 1))
@@ -272,7 +337,14 @@ def test_fully_requirement_differential_poms_rs_00301_800_exhibit():
 
 
 def test_elapsed_years_from_birth_not_projection_entry():
-    person = i.Person(date(1980, 2, 2))
+    person = i.Person(
+        date(1980, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     assert i.fully_insured_requirement(person, date(2026, 1, 1)) == 24
     result = compute(person, date(2026, 1, 1), {2024: 4, 2025: 4, 2026: 1})
     assert not result.fully.insured
@@ -280,7 +352,14 @@ def test_elapsed_years_from_birth_not_projection_entry():
 
 
 def test_fully_requirement_excludes_partial_disability_years_cfr_example():
-    plain = i.Person(date(1935, 1, 2))
+    plain = i.Person(
+        date(1935, 1, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     frozen = replace(
         plain,
         prior_disability_periods=(
@@ -296,7 +375,14 @@ def test_fully_requirement_excludes_partial_disability_years_cfr_example():
 
 
 def test_unknown_is_never_zero_and_named_refusal_stays_in_denominator():
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month, {2025: 4})
     years[2024] = declared(provenance=i.EarningsProvenance.UNKNOWN)
@@ -320,7 +406,14 @@ def test_unknown_is_never_zero_and_named_refusal_stays_in_denominator():
 
 
 def test_decided_despite_unknown_reports_range_and_unknown_years():
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month, {2025: 4, 2026: 4})
     years[2024] = declared(provenance=i.EarningsProvenance.UNKNOWN)
@@ -334,7 +427,14 @@ def test_decided_despite_unknown_reports_range_and_unknown_years():
 
 
 def test_missing_year_and_provenance_are_input_errors():
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month)
     del years[2010]
@@ -364,7 +464,14 @@ def test_ambiguous_or_malformed_direct_coverage_is_input_error(change):
 
 
 def test_before_1978_direct_qcs_require_quarter_flags():
-    person = i.Person(date(1950, 2, 2))
+    person = i.Person(
+        date(1950, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(1977, 12, 1)
     years = history(person, month)
     years[1977] = i.CoverageYear(i.EarningsProvenance.OBSERVED, qc_count=2)
@@ -373,7 +480,14 @@ def test_before_1978_direct_qcs_require_quarter_flags():
 
 
 def test_totalization_is_named_refusal_and_empty_changes_nothing():
-    person = i.Person(date(1990, 2, 2))
+    person = i.Person(
+        date(1990, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month)
     assert i.insured_status(person, years, month) == i.insured_status(
@@ -392,7 +506,14 @@ def test_totalization_is_named_refusal_and_empty_changes_nothing():
 
 
 def test_exit_freezes_credits_but_recent_work_clocks_continue():
-    person = i.Person(date(1980, 2, 2))
+    person = i.Person(
+        date(1980, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     exit_month = date(2020, 12, 1)
     counts = {year: 4 for year in range(2011, 2021)}
     years = history(person, exit_month, counts)
@@ -415,7 +536,14 @@ def test_exit_freezes_credits_but_recent_work_clocks_continue():
 
 
 def test_results_outcomes_and_denominators_are_sealed():
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(person, date(2026, 12, 1))
     outcome = i.evaluate_insured_status("sealed", Fraction(1), lambda: result)
     denominator = count_family_outcomes((outcome,))
@@ -434,7 +562,14 @@ def test_results_outcomes_and_denominators_are_sealed():
 def test_property_status_and_dli_monotone_in_quarters(
     counts, index, birth_year
 ):
-    person = i.Person(date(birth_year, 2, 2))
+    person = i.Person(
+        date(birth_year, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     lower = dict(zip(range(2017, 2027), counts, strict=True))
     upper = dict(lower)
@@ -456,7 +591,14 @@ def test_property_status_and_dli_monotone_in_quarters(
     st.lists(st.integers(0, 4), min_size=10, max_size=10), st.integers(0, 9)
 )
 def test_property_unknown_bounds_cover_every_filling(counts, index):
-    person = i.Person(date(1990, 2, 2))
+    person = i.Person(
+        date(1990, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(
         person, month, dict(zip(range(2017, 2027), counts, strict=True))
@@ -511,7 +653,14 @@ def test_property_unknown_bounds_cover_every_filling(counts, index):
 @PROPERTY
 @given(st.lists(st.integers(0, 4), min_size=10, max_size=10))
 def test_property_convention_equal_amounts_and_order_independence(counts):
-    person = i.Person(date(1990, 2, 2))
+    person = i.Person(
+        date(1990, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(
         person, month, dict(zip(range(2017, 2027), counts, strict=True))
@@ -542,7 +691,14 @@ def test_property_convention_equal_amounts_and_order_independence(counts):
 @PROPERTY
 @given(st.integers(1930, 2000), st.integers(1, 4))
 def test_property_windows_and_blindness_rule(birth_year, quarter):
-    person = i.Person(date(birth_year, 2, 2))
+    person = i.Person(
+        date(birth_year, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, quarter * 3, 1)
     counts = {year: 4 for year in range(max(birth_year, 1990), 2026)}
     ordinary = compute(person, month, counts)
@@ -563,7 +719,14 @@ def test_property_windows_and_blindness_rule(birth_year, quarter):
 def test_property_input_errors_are_atomic_before_refusal(
     weight, missing_offset
 ):
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month)
     del years[2000 + missing_offset]
@@ -580,7 +743,14 @@ def test_property_input_errors_are_atomic_before_refusal(
 @PROPERTY
 @given(st.integers(0, 100), st.integers(0, 100))
 def test_property_refusal_denominator_conserves_rows_and_weights(left, right):
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     month = date(2026, 12, 1)
     years = history(person, month)
     supported = i.evaluate_insured_status(
@@ -618,7 +788,14 @@ def test_property_refusal_denominator_conserves_rows_and_weights(left, right):
 def test_property_disability_period_exclusion_never_adds_qcs(
     start_year, counts
 ):
-    person = i.Person(date(1980, 2, 2))
+    person = i.Person(
+        date(1980, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     frozen = replace(
         person,
         prior_disability_periods=(
@@ -643,7 +820,14 @@ def test_property_disability_period_exclusion_never_adds_qcs(
 
 
 def test_unknown_upper_bound_respects_exit_quarter():
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     exit_month = date(2026, 4, 1)
     years = history(person, exit_month, {2024: 4, 2025: 4})
     years[2026] = declared(provenance=i.EarningsProvenance.UNKNOWN)
@@ -659,7 +843,14 @@ def test_unknown_upper_bound_respects_exit_quarter():
 
 
 def test_special_insured_quarter_before_31_boundary():
-    person = i.Person(date(1995, 11, 15))
+    person = i.Person(
+        date(1995, 11, 15),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     counts = {2018: 4, 2019: 4, 2020: 4, 2021: 4, 2022: 3}
     before = compute(person, date(2026, 7, 1), counts)
     attainment_quarter = compute(person, date(2026, 10, 1), counts)
@@ -678,6 +869,11 @@ def test_joseph_subsequent_poms_140_example_6_endpoint_erratum():
                 date(1981, 2, 3), date(1982, 12, 31), special_insured=True
             ),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     result = compute(
         person,
@@ -726,6 +922,11 @@ def test_subsequent_under31_poms_140_examples_7_and_8(
         prior_disability_periods=(
             i.DisabilityPeriod(start, end, special_insured=True),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     result = compute(person, onset.replace(day=1), counts)
     assert result.disability.insured
@@ -743,6 +944,11 @@ def test_sam_subsequent_poms_140_example_9_favorable_disregard_erratum():
                 date(1985, 12, 16), date(1989, 12, 31), special_insured=True
             ),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     counts = {1983: 2, 1984: 4, 1988: 4, 1989: 4, 1992: 4, 1993: 4}
     result = compute(person, date(1993, 5, 1), counts)
@@ -774,6 +980,11 @@ def test_property_subsequent_special_and_dli_monotonic(year, count):
                 date(1975, 5, 16), date(1978, 12, 31), special_insured=True
             ),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(1983, 6, 1)
     lower = {
@@ -804,7 +1015,14 @@ def test_property_subsequent_special_and_dli_monotonic(year, count):
 
 @pytest.mark.parametrize("count,expected", [(5, False), (6, True)])
 def test_currently_six_qcs_boundary(count, expected):
-    person = i.Person(date(1990, 2, 2))
+    person = i.Person(
+        date(1990, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(
         person,
         date(2026, 12, 1),
@@ -817,7 +1035,14 @@ def test_currently_six_qcs_boundary(count, expected):
 
 @pytest.mark.parametrize("count,expected", [(19, False), (20, True)])
 def test_disability_twenty_qcs_boundary(count, expected):
-    person = i.Person(date(1990, 2, 2))
+    person = i.Person(
+        date(1990, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     counts = {2021: 4, 2022: 4, 2023: 4, 2024: 4, 2025: count - 16}
     result = compute(person, date(2026, 12, 1), counts)
     assert result.fully.insured
@@ -827,7 +1052,14 @@ def test_disability_twenty_qcs_boundary(count, expected):
 
 @pytest.mark.parametrize("count,expected", [(5, False), (6, True)])
 def test_fully_six_qcs_minimum(count, expected):
-    person = i.Person(date(2000, 2, 2))
+    person = i.Person(
+        date(2000, 2, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(
         person,
         date(2026, 12, 1),
@@ -841,7 +1073,15 @@ def test_fully_six_qcs_minimum(count, expected):
 def test_guinness_lis_poms_120_freeze_protects_onset_status():
     # The capture supplies insured status at onset, not a DOB/full record.
     # This invented completion realizes its declared 20-QC premise.
-    person = i.Person(date(1940, 2, 2), disability_onset=date(1977, 12, 15))
+    person = i.Person(
+        date(1940, 2, 2),
+        disability_onset=date(1977, 12, 15),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     counts = {year: 4 for year in range(1973, 1978)}
     onset = compute(person, date(1977, 12, 1), counts)
     waiting = compute(person, date(1987, 2, 1), counts)
@@ -939,6 +1179,11 @@ def test_subsequent_over31_poms_147_examples(
         prior_disability_periods=(
             i.DisabilityPeriod(start, end, special_insured=True),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     years = history(person, date(1983, 6, 1))
     for year, pattern in patterns.items():
@@ -973,6 +1218,11 @@ def test_sam_favorable_disregard_counterexample_one_qc_boundary():
                 date(1985, 12, 16), date(1989, 12, 31), special_insured=True
             ),
         ),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     counts = {1983: 1, 1984: 4, 1988: 4, 1989: 4, 1992: 4, 1993: 2}
     below = compute(person, date(1993, 5, 1), counts)
@@ -986,7 +1236,14 @@ def test_sam_favorable_disregard_counterexample_one_qc_boundary():
 def test_dli_fra_cap_poms_148_november_2019():
     # The source specifies FRA11/2019, not a birth date or earnings record.
     # This invented completion has at least40QCs before that FRA quarter.
-    person = i.Person(date(1953, 11, 2))
+    person = i.Person(
+        date(1953, 11, 2),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=i.EarningsProvenance.OBSERVED,
+    )
     result = compute(
         person, date(2019, 12, 1), {year: 4 for year in range(2009, 2020)}
     )
