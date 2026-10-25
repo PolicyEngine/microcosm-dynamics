@@ -175,14 +175,14 @@ exceeds m times that total, so its relative error is at most about
 12u/m, roughly 1.3e-12, and so are the factor's and every returned
 probability's. That is far below the 1e-9 margin for cap decisions, so
 every cap decision and clip count the float path makes is the exact one.
-A row within
-1e-9 of one is different: rounding can put it on the wrong side of one,
-and whether it caps decides the factor of every other row. Rows with tiny
-weight can then end up with very different probabilities while the
-weighted totals still conserve.
-Measured against the exact oracle in 10,000 invented cells built near
-these margins, the float path erred by at most 2.4e-13. The separate 1e-12 conservation
-check concerns weighted deaths only.
+A row within 1e-9 of one is different: rounding can put it on the wrong
+side of one, and whether it caps decides the factor of every other row.
+Rows with tiny weight can then end up with very different probabilities
+while the weighted totals still conserve.
+Measured against the exact oracle in a derandomized search of 10,000
+invented cells built near these margins, the float path erred by at most
+1.8e-13; unseeded searches of the same generator gave up to 2.4e-13. The
+separate 1e-12 conservation check concerns weighted deaths only.
 
 Probabilities returned are float64; the log accounts for those returned
 values.
@@ -191,6 +191,11 @@ The cell log contains year, sex, age, persons, fixed persons, total
 weight, fixed weight, baseline expected deaths, applied expected deaths,
 factor, clipped persons, signed clipping residual, infeasibility,
 normalization basis and persons target, plus the unclassified counts.
+`clipped_persons` counts free rows whose scaled probability
+`q_base * relative_risk * factor` exceeds one at the cell's final factor;
+a row exactly at one is not counted. In a cell whose target exceeds its
+free capacity, it counts every free row with positive baseline q, since
+all of them saturate.
 `clipping_residual = baseline - applied`. It is nonzero only on
 infeasible cells: iterative capping conserves every feasible cell, and the
 float path verifies that rather than assuming it.

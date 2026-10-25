@@ -360,6 +360,12 @@ def normalize_probabilities(
     With fixed rows at baseline, such a cell gets the probabilities it
     would get if every weight were one.
 
+    The log's ``clipped_persons`` counts free rows whose scaled probability
+    ``q_base * relative_risk * factor`` exceeds one at the cell's final
+    factor; a row exactly at one is not counted.  In a cell whose target
+    exceeds its free capacity, it counts every free row with positive
+    baseline probability, since all of them saturate.
+
     The signed residual is baseline minus applied deaths.  It is nonzero
     only on infeasible cells; iterative capping conserves feasible cells.
     The float path verifies that within the accounting tolerance, and
