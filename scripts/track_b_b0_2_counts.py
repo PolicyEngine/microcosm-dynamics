@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "71e350ef5beca201be584195b233aa9e4975cc5977bece2597eb6e913822c36f"
+    "66cadfa488103f24dbda7ff84ef0e1051ba3a3e0e95e23198b81fdadcfbb0b0e"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10

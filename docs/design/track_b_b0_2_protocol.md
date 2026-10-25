@@ -212,6 +212,14 @@ on the real files, since the person-wave reader passes the interview
 number through as read; and round 4's two status tables are described
 separately.
 
+Review round 5's second attempt (Sol, at `9b9d53f5`) found the second
+table's description still wrong: the result for 0 to 2 heads is the
+reader's rerun on one table's fixed atoms, not the natural tables', and
+the block now says so. It also found two mutations no test caught, both
+now caught: a properties dictionary the assertion check copies and does
+not give back, and a design stratum the identifier check does not
+require. The test confinement also refuses name lookups.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -595,9 +603,10 @@ rules.
       B0.1's record was the same at every split of the 62-64 band from 0
       to 97 heads, and the natural table withheld at only four of them.
     - On the second, B0.1's record was the same for 0 to 7 heads in the
-      band. The natural table withheld only at 0 to 2, but a search over
-      other household, cluster and stratum configurations found a table
-      that withheld at each of 3 to 7.
+      band. Holding the 3-head table's atoms fixed, and allowing them to
+      be empty, the reader's rerun withheld only at 0 to 2. But a search
+      over other household, cluster and stratum configurations found a
+      table that withheld at each of 3 to 7.
     - So a reader who can rule out no configuration, as this block's
       reader cannot, learns no band from the status. A reader who
       believes some configurations likelier than others could narrow one.

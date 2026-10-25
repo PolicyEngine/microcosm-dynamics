@@ -1143,5 +1143,25 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "the assertion check does not give back the properties it copies",
+  "replacements": [
+   {
+    "old": "            self.cf.CFRelease(properties)\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the identifier check does not require a design stratum",
+  "replacements": [
+   {
+    "old": "    complete = design.dropna(subset=[\"person_id\", \"stratum\", \"cluster\"])\n",
+    "new": "    complete = design.dropna(subset=[\"person_id\", \"cluster\"])\n",
+    "occurrence": 1
+   }
+  ]
  }
 ]

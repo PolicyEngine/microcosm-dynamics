@@ -32,7 +32,7 @@ from scripts import track_b_b0_1_counts as b01  # noqa: E402
 #: The script's own host calls, kept before any test replaces them.
 REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "71e350ef5beca201be584195b233aa9e4975cc5977bece2597eb6e913822c36f"
+    "66cadfa488103f24dbda7ff84ef0e1051ba3a3e0e95e23198b81fdadcfbb0b0e"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -2605,6 +2605,84 @@ def test_the_host_calls_read_this_mac():
     assert qos in (0x00, 0x05, 0x09, 0x11, 0x15, 0x19, 0x21)
 
 
+class _CoreFoundationLedger:
+    """Stands in for IOKit, CoreFoundation and the C library behind
+    ``_Host``, and keeps the ownership rule's ledger: a handle that a
+    Create or Copy call returns is owned until ``CFRelease`` gives it back,
+    and one that a Get call returns is borrowed and is never released."""
+
+    def __init__(self, *, source, properties, level):
+        self.source, self.properties, self.level = source, properties, level
+        self.owned, self.borrowed_released = set(), []
+        self.next_handle = 1
+
+    def _create(self):
+        handle, self.next_handle = self.next_handle, self.next_handle + 1
+        self.owned.add(handle)
+        return handle
+
+    def CFStringCreateWithCString(self, allocator, text, encoding):
+        return self._create()
+
+    def CFStringGetCString(self, string, buffer, size, encoding):
+        buffer.value = script.AC_POWER.encode()
+        return True
+
+    def CFRelease(self, handle):
+        if handle in self.owned:
+            self.owned.remove(handle)
+        else:
+            self.borrowed_released.append(handle)
+
+    def CFDictionaryGetValue(self, dictionary, key):
+        return -1
+
+    def CFNumberGetValue(self, number, kind, pointer):
+        pointer._obj.value = self.level
+        return True
+
+    def IOPSCopyPowerSourcesInfo(self):
+        return self._create() if self.source else None
+
+    def IOPSGetProvidingPowerSourceType(self, snapshot):
+        return -2
+
+    def IOPMAssertionCreateWithName(self, kind, level, name, pointer):
+        pointer._obj.value = 77
+        return 0
+
+    def IOPMAssertionCopyProperties(self, assertion):
+        return self._create() if self.properties else None
+
+    def IOPMAssertionRelease(self, assertion):
+        return 0
+
+
+@pytest.mark.parametrize("level", [script._ASSERTION_ON, 0])
+@pytest.mark.parametrize("properties", [True, False])
+@pytest.mark.parametrize("source", [True, False])
+def test_the_host_calls_give_back_every_object_they_own(
+    source, properties, level
+):
+    """CoreFoundation's ownership rule, on every path through the host
+    calls: the power-source snapshot, the strings and the copied
+    properties are each given back, and the borrowed power-source name and
+    level are not (review round 5 found the properties' release untested).
+    An assertion counts as held only when its properties are copied and
+    its level is on."""
+    ledger = _CoreFoundationLedger(
+        source=source, properties=properties, level=level
+    )
+    host = REAL_HOST.__new__(REAL_HOST)
+    host.iokit = host.cf = host.libc = ledger
+    assert host.power_source() == (script.AC_POWER if source else "")
+    assert host.hold("PreventSystemSleep") == 77
+    assert host.held(77) is (properties and level == script._ASSERTION_ON)
+    assert host.held(0) is False
+    assert ledger.owned == set()
+    assert ledger.borrowed_released == []
+
+
 @pytest.mark.skipif(sys.platform != "darwin", reason="IOKit is macOS's")
 def test_an_assertion_set_to_the_off_level_reads_as_not_held():
     """Review round 5 set one of this process's assertions to the off
@@ -2860,9 +2938,10 @@ def _missing_identifier(supplied, case):
         person = people.loc[_present_index(people), "person_id"]
         design.drop(design.index[design["person_id"] == person], inplace=True)
     else:
+        column = "stratum" if case == "design stratum" else "cluster"
         person = people.loc[_present_index(people), "person_id"]
-        design["cluster"] = design["cluster"].astype(float)
-        design.loc[design["person_id"] == person, "cluster"] = np.nan
+        design[column] = design[column].astype(float)
+        design.loc[design["person_id"] == person, column] = np.nan
 
 
 ROW_MESSAGE = "row has no person or interview number"
@@ -2876,7 +2955,8 @@ DESIGN_MESSAGE = "a present person has no design stratum or cluster"
         ("person id", f"a present person-wave {ROW_MESSAGE}", ROW_MESSAGE),
         ("anchor", f"a present anchor {ROW_MESSAGE}", ROW_MESSAGE),
         ("design row", DESIGN_MESSAGE, DESIGN_MESSAGE),
-        ("design value", DESIGN_MESSAGE, DESIGN_MESSAGE),
+        ("design cluster", DESIGN_MESSAGE, DESIGN_MESSAGE),
+        ("design stratum", DESIGN_MESSAGE, DESIGN_MESSAGE),
     ],
 )
 def test_a_present_unit_without_an_identifier_stops_the_run_while_reading(
@@ -4059,9 +4139,9 @@ FILE_EVENTS = {
     "os.setxattr": (0,),
     "os.removexattr": (0,),
 }
-#: Audit events that start a process, or open a socket, a connection, a
-#: database or the system log, any of which could carry a value past
-#: every file check. main() makes none; its sleep assertions are
+#: Audit events that start a process, open a socket, a connection, a
+#: database or the system log, or look up a name, any of which could carry
+#: a value past every file check. main() makes none; its sleep assertions are
 #: stand-ins in these tests.
 PROCESS_EVENTS = {
     "subprocess.Popen",
@@ -4076,6 +4156,10 @@ PROCESS_EVENTS = {
     "socket.connect",
     "socket.sendmsg",
     "socket.sendto",
+    "socket.getaddrinfo",
+    "socket.gethostbyname",
+    "socket.gethostbyaddr",
+    "socket.getnameinfo",
     "sqlite3.connect",
     "syslog.openlog",
     "syslog.syslog",
@@ -4130,8 +4214,8 @@ def _refuse_writes_outside(event, arguments):
 def _writes_confined_to(directory, names):
     """While it holds, refuse and record every file write that is not one
     of ``names`` in ``directory`` (or its temporary file), a bytecode
-    cache's included, and every new process, socket, connection, database
-    or system log message. Bytecode writing is off meanwhile, so a lazy
+    cache's included, and every new process, socket, connection, database,
+    name lookup or system log message. Bytecode writing is off meanwhile, so a lazy
     import writes no cache. An audit hook cannot be removed, so one hook,
     installed once, checks whether a confinement holds.
 
@@ -4163,9 +4247,9 @@ def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
     its temporary file may be written, and reads and the null device pass;
     a file elsewhere, np.save into the temporary folder, a second file
     beside the outputs, a new process, a file in an existing bytecode
-    cache folder, a database, a socket, a renamed or stamped file
-    elsewhere and a removed one are each refused and recorded (review
-    rounds 4 and 5). Bytecode writing is off while it holds."""
+    cache folder, a database, a socket, a name lookup, a renamed or
+    stamped file elsewhere and a removed one are each refused and recorded
+    (review rounds 4 and 5). Bytecode writing is off while it holds."""
     inside = tmp_path / "run"
     inside.mkdir()
     (inside / "input.txt").write_text("read me")
@@ -4188,6 +4272,7 @@ def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
             lambda: (cache / "atoms.pyc").write_bytes(b"3"),
             lambda: sqlite3.connect(tmp_path / "atoms.db"),
             lambda: socket.socket(),
+            lambda: socket.getaddrinfo("localhost", None),
             lambda: os.rename(stamped, inside / "moved.txt"),
             lambda: os.utime(stamped, (3, 3)),
             lambda: os.remove(stamped),
@@ -4202,6 +4287,7 @@ def test_the_write_confinement_refuses_writes_outside_the_outputs(tmp_path):
         "open",
         "sqlite3.connect",
         "socket.__new__",
+        "socket.getaddrinfo",
         "os.rename",
         "os.utime",
         "os.remove",
