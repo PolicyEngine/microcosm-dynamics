@@ -10,17 +10,19 @@ are used throughout; reference year is collection wave minus one.
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import json
 import math
 import os
 import subprocess
+import sys
 import time
 import traceback
 import warnings
 from collections import Counter
 from collections.abc import Mapping
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from copy import deepcopy
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -64,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "dcfac276c806d62e59c450383b7244a0f36395b15cb14e656f464d916573d2ff"
+    "ebdc3565831a696f4b708f53ea020e94a4deff44d5b966cc3ed501b502d1595e"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1845,42 +1847,102 @@ def release_outputs(
     )
 
 
-def _failure_text(error: BaseException) -> str:
+#: The run's phases. Reading and reducing the inputs builds no set, B0.1's
+#: disposition sets included, and no atom; writing starts once both files'
+#: bytes are fixed. A failure in either names its type and this script's
+#: line. The release (the rebuild of B0.1's sets, the rerun gate, the
+#: counts and the audit) is where dispositions and atom sizes enter, so a
+#: failure there names the phase alone.
+READING = "reading the inputs"
+RELEASE = "the release"
+WRITING = "writing the outputs"
+LOCATED_PHASES = (READING, WRITING)
+
+
+def _failure_text(error: BaseException, phase: str) -> str:
     """A failure's text with no value in it.
 
-    It names the error's type and the last line of this script that led to
-    it. The message is kept only when this script's own ``raise`` statement
-    made it: those name paths, never values (a test checks every one). Any
-    other message may quote a size, a value or an identifier, so it is
-    dropped."""
+    The message is kept only when this script's own ``raise`` statement
+    made it: those name paths, never values (a test checks every one), and
+    which check fired is a gate decision. Any other message may quote a
+    size, a value or an identifier, so it is dropped. Outside the release
+    the text then names the error's type and the last line of this script
+    that led to it; inside the release, or in a phase not listed, it names
+    the phase alone, since where a failure strikes there can depend on
+    dispositions."""
     frames = traceback.extract_tb(error.__traceback__)
     here = Path(__file__).resolve()
     own = [frame for frame in frames if Path(frame.filename).resolve() == here]
-    where = f"{own[-1].name}, line {own[-1].lineno}" if own else "unknown"
-    text = f"B0.2 stopped in {where}: {type(error).__name__}"
     raised_here = (
         frames
         and own
         and frames[-1] is own[-1]
         and (frames[-1].line or "").lstrip().startswith("raise ")
     )
-    return f"{text}: {error}" if raised_here else text
+    if raised_here:
+        where = f"{own[-1].name}, line {own[-1].lineno}"
+        return f"B0.2 stopped in {where}: {type(error).__name__}: {error}"
+    if phase not in LOCATED_PHASES:
+        return f"B0.2 stopped in {RELEASE}"
+    where = f"{own[-1].name}, line {own[-1].lineno}" if own else "unknown"
+    return f"B0.2 stopped in {where}: {type(error).__name__}"
+
+
+def _flush_streams() -> None:
+    """Flush Python's streams and the C library's, so that what they hold
+    goes to the descriptors they point at now."""
+    for stream in {
+        id(stream): stream
+        for stream in (sys.stdout, sys.stderr, sys.__stdout__, sys.__stderr__)
+        if stream is not None
+    }.values():
+        stream.flush()
+    ctypes.CDLL(None).fflush(None)
 
 
 @contextmanager
-def count_free_failures():
-    """Run the steps that read data so that nothing they raise can print a
-    value. A failure stops the run with ``_failure_text``; that includes an
-    interruption or a library's own exit, whose default report would print
-    the chain of errors before it. A warning is dropped unseen: whether one
-    fires, and where, can depend on the data."""
-    failure = None
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+def _silenced():
+    """Point file descriptors 1 and 2, and Python's own streams, at the
+    null device, so that nothing printed inside, by Python code or by a
+    compiled library, reaches the terminal or a log. Every stream is
+    flushed before the descriptors are restored, so nothing printed inside
+    comes out after."""
+    _flush_streams()
+    saved = (os.dup(1), os.dup(2))
+    null = os.open(os.devnull, os.O_WRONLY)
+    try:
+        os.dup2(null, 1)
+        os.dup2(null, 2)
+        with open(os.devnull, "w") as python_null:
+            with redirect_stdout(python_null), redirect_stderr(python_null):
+                yield
+    finally:
         try:
+            _flush_streams()
+        finally:
+            os.dup2(saved[0], 1)
+            os.dup2(saved[1], 2)
+            for descriptor in (null, *saved):
+                os.close(descriptor)
+
+
+@contextmanager
+def count_free_failures(phase: str):
+    """Run one phase of the steps that read data so that nothing they
+    print or raise can show a value. Nothing printed inside is seen
+    (``_silenced``), and a warning is dropped unseen: whether one fires,
+    and where, can depend on the data. A failure stops the run with
+    ``_failure_text``; that includes an interruption or a library's own
+    exit, whose default report would print the chain of errors before it,
+    and a failure to restore the descriptors. The report is printed after
+    they are restored."""
+    failure = None
+    try:
+        with _silenced(), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
             yield
-        except BaseException as error:
-            failure = _failure_text(error)
+    except BaseException as error:
+        failure = _failure_text(error, phase)
     if failure is not None:
         raise SystemExit(failure) from None
 
@@ -1926,7 +1988,7 @@ def main(argv: list[str] | None = None) -> int:
     repository_head = _git("rev-parse", "HEAD")
     script_sha256 = _sha256_file(Path(__file__))
     _start_attempt(local, repository_head, script_sha256)
-    with count_free_failures():
+    with count_free_failures(READING):
         data_dir = psid._resolve_data_dir(None).resolve()
         with psid2010.record_files_read(data_dir) as opened:
             person_wave, validity, anchor, design, allowlist = read_inputs(
@@ -1948,9 +2010,11 @@ def main(argv: list[str] | None = None) -> int:
                 "lag_years": list(LAGS),
             },
         }
+    with count_free_failures(RELEASE):
         local_bytes, public_bytes = release_outputs(
             person_wave, validity, anchor, design, committed, provenance
         )
+    with count_free_failures(WRITING):
         write_new(local, local_bytes)
         write_new(out, public_bytes)
     print(out)

@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import sys
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from itertools import combinations
 from pathlib import Path
 from types import SimpleNamespace
@@ -25,7 +25,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "dcfac276c806d62e59c450383b7244a0f36395b15cb14e656f464d916573d2ff"
+    "ebdc3565831a696f4b708f53ea020e94a4deff44d5b966cc3ed501b502d1595e"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -763,6 +763,21 @@ def _oracle_class(values):
     return "narrow"
 
 
+def _verdict_holds(verdict, oracle, values):
+    """Whether the script's final verdict on one target agrees with the
+    oracle's. Narrow, a disclosure, must match exactly. A target whose
+    final candidates ``values`` span 4 or more and stay out of 1 to 9 is
+    wide and irrelevant at once, and the script may prove either, so a
+    wide or irrelevant verdict must hold of those candidates."""
+    if "narrow" in (verdict, oracle):
+        return verdict == oracle
+    if verdict == "wide":
+        return values.max() - values.min() >= 4
+    return verdict == "irrelevant" and not np.any(
+        (values >= 1) & (values <= 9)
+    )
+
+
 def _oracle_release(rows, sizes, grid, targets):
     """The rule by enumeration: status, disclosed targets, the final
     candidate mask and each target's final classification."""
@@ -1290,7 +1305,8 @@ def test_a_withheld_release_publishes_status_and_no_counts(monkeypatch):
 @example(([(0, 1), (0,), (1,)], [10, 1]))
 def test_audit_agrees_with_an_exhaustive_reader(table):
     """The integer-program audit and the enumeration oracle reach the same
-    decision, disclosures and classifications. Then the oracle checks the
+    decision and disclosures, and every other verdict the audit gives holds
+    of the final candidates (``_verdict_holds``). Then the oracle checks the
     rule itself: a reader who reruns it on every vector with the same
     publication keeps exactly the final candidates, and every sensitive
     target keeps a range of width 4 or more among them."""
@@ -1317,7 +1333,11 @@ def test_audit_agrees_with_an_exhaustive_reader(table):
         for i in audit["disclosed"]
     } == set(disclosed)
     for target, result in classes.items():
-        assert script_targets[target]["result"] == result, target
+        assert _verdict_holds(
+            script_targets[target]["result"],
+            result,
+            grid[mask][:, list(target)].sum(axis=1),
+        ), target
     kept = np.array(
         [
             _oracle_release(rows, list(point), grid, targets)[0] == "released"
@@ -1477,7 +1497,8 @@ def test_programs_use_one_thread_the_time_limit_and_exact_optima(monkeypatch):
     original = script.milp
 
     def recording(objective, **kwargs):
-        calls.append(kwargs["options"])
+        # A copy: milp pops "disp" from the dict it is given.
+        calls.append(dict(kwargs["options"]))
         return original(objective, **kwargs)
 
     monkeypatch.setattr(script, "milp", recording)
@@ -1978,11 +1999,12 @@ def test_committed_provenance_is_the_requested_shape_and_input_hashes(
     assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
     record = json.loads(out.read_text())
     assert record["disclosure"]["status"] == "released"
-    assert set(record) - {"counts", "disclosure"} == COMMITTED_PROVENANCE
+    assert set(record) == COMMITTED_PROVENANCE | {"counts", "disclosure"}
     local_record = json.loads(local.read_text())
-    assert set(local_record) - {"counts", "disclosure_audit"} == (
-        COMMITTED_PROVENANCE
-    )
+    assert set(local_record) == COMMITTED_PROVENANCE | {
+        "counts",
+        "disclosure_audit",
+    }
     # The geometry is the requested shape, set by constants before any
     # count; the labels are the ones the run requested.
     assert record["geometry"] == {
@@ -2815,10 +2837,19 @@ def _oracle_prior_targets(rows, kinds, atoms):
 @given(_prior_atom_tables())
 @example(([(0, 1), (0,), (1,)], ["prior", "current", "current"], [12, 2]))
 @example(([(0, 1), (0,), (1,)], ["both", "current", "prior"], [9, 7]))
+# A difference whose range, 10 to 19, is both wide and irrelevant.
+@example(
+    (
+        [(0, 1, 2), (0,), (1, 2), (1,)],
+        ["current", "current", "current", "prior"],
+        [1, 10, 14],
+    )
+)
 def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
     """With an earlier release's exact counts among the constraints, the
-    audit and the enumeration oracle reach the same targets, decision,
-    disclosures and classifications. A reader who reruns the rule on
+    audit and the enumeration oracle reach the same targets, decision and
+    disclosures, and every other verdict the audit gives holds of the final
+    candidates. A reader who reruns the rule on
     every vector with both publications keeps exactly the final
     candidates, and every sensitive target spans 4 or more among them."""
     rows, kinds, sizes = table
@@ -2857,7 +2888,11 @@ def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
         for i in audit["disclosed"]
     } == set(disclosed)
     for target, result in classes.items():
-        assert script_targets[target]["result"] == result, target
+        assert _verdict_holds(
+            script_targets[target]["result"],
+            result,
+            grid[mask][:, list(target)].sum(axis=1),
+        ), target
     kept = np.array(
         [
             _oracle_release(rows, list(point), grid, targets)[0] == "released"
@@ -3216,19 +3251,38 @@ def _swap(states, died, moved):
     return swapped
 
 
+@pytest.mark.parametrize(
+    ("ages", "before", "died", "moved", "status"),
+    [
+        (
+            [62] * 6 + [60] * 6,
+            ["died", "moved"] + ["present"] * 4 + ["moved"] + ["present"] * 5,
+            0,
+            6,
+            "withheld",
+        ),
+        (
+            [62, 60] * 30,
+            ["died"] * 6 + ["moved"] * 6 + ["present"] * 48,
+            0,
+            7,
+            "released",
+        ),
+    ],
+)
 def test_relabeling_a_death_and_a_move_changes_no_written_byte(
-    tmp_path, monkeypatch, capfd
+    tmp_path, monkeypatch, capfd, ages, before, died, moved, status
 ):
     """Condition 4. Swap a head who died by 2013 with one who moved out,
     between two of this release's classes: B0.1's published counts, this
     release's class sizes and the audit's decisions stay the same, while
     the atoms that B0.1's sets refine change. Every byte main() writes or
     prints, to either file, the attempt record, standard output or
-    standard error, is then the same."""
-    ages = [62] * 6 + [60] * 6
-    before = ["died", "moved"] + ["present"] * 4 + ["moved"] + ["present"] * 5
-    after = _swap(before, 0, 6)
-    assert after[:2] == ["moved", "moved"] and after[6] == "died"
+    standard error, is then the same. One panel withholds and one
+    releases, so the committed file carries counts in the second."""
+    after = _swap(before, died, moved)
+    assert (before[died], before[moved]) == ("died", "moved")
+    assert ages[died] != ages[moved]
 
     def capture():
         captured = capfd.readouterr()
@@ -3256,6 +3310,7 @@ def test_relabeling_a_death_and_a_move_changes_no_written_byte(
     assert _atoms(_disposition_panel(ages, before)) != _atoms(
         _disposition_panel(ages, after)
     )
+    assert json.loads(first["counts.json"])["disclosure"]["status"] == status
     assert first == second
     assert printed_first == printed_second
 
@@ -3275,18 +3330,38 @@ def _draining(out, err):
 
 @st.composite
 def _relabelings(draw):
-    """Six to ten heads aged 60 or 62, each present, dead, moved out or
-    absent at 2013, and one death and one move to swap."""
-    persons = draw(st.integers(6, 10))
+    """Heads aged 60 or 62, each present, dead, moved out or absent at
+    2013, and one death and one move to swap. Six to ten heads mostly
+    withhold; fifty to seventy with five or more deaths and five or more
+    moves mostly release, so both statuses are tried."""
+    if draw(st.booleans()):
+        persons = draw(st.integers(6, 10))
+        states = draw(
+            st.lists(
+                st.sampled_from(["present", "died", "moved", "absent"]),
+                min_size=persons,
+                max_size=persons,
+            )
+        )
+    else:
+        persons = draw(st.integers(50, 70))
+        deaths, moves, absent = (
+            draw(st.integers(5, 12)),
+            draw(st.integers(5, 12)),
+            draw(st.integers(0, 4)),
+        )
+        states = list(
+            draw(
+                st.permutations(
+                    ["died"] * deaths
+                    + ["moved"] * moves
+                    + ["absent"] * absent
+                    + ["present"] * (persons - deaths - moves - absent)
+                )
+            )
+        )
     ages = draw(
         st.lists(st.sampled_from([60, 62]), min_size=persons, max_size=persons)
-    )
-    states = draw(
-        st.lists(
-            st.sampled_from(["present", "died", "moved", "absent"]),
-            min_size=persons,
-            max_size=persons,
-        )
     )
     died, moved = draw(
         st.lists(
@@ -3297,7 +3372,7 @@ def _relabelings(draw):
     return ages, states, died, moved
 
 
-@settings(max_examples=12, deadline=None)
+@settings(max_examples=16, deadline=None)
 @given(_relabelings())
 def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
     """Condition 4 over invented panels: whenever swapping a death and a
@@ -3318,7 +3393,9 @@ def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
             ("before", states),
             ("after", _swap(states, died, moved)),
         ):
-            directory = Path(root) / name
+            # Resolved, as main() resolves the input folder: on macOS the
+            # temporary folder sits behind a symbolic link.
+            directory = Path(root).resolve() / name
             directory.mkdir()
             out, err = io.StringIO(), io.StringIO()
             with redirect_stdout(out), redirect_stderr(err):
@@ -3344,11 +3421,13 @@ def test_relabeling_deaths_and_moves_changes_no_written_byte(relabeling):
 
 
 def test_a_failure_from_outside_this_script_prints_no_value(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, capfd
 ):
-    """Condition 2 on failures: a library's message can quote a size, so
-    main() stops with the error's type and this script's line only, and
-    writes neither file."""
+    """Condition 2 on failures: inside the release, a library's failure
+    stops main() with a fixed text that names the phase alone, since its
+    message can quote a size and where it strikes can depend on
+    dispositions. Neither file is written, and the attempt record refuses
+    a rerun of this version: the stop withholds it."""
     _main_environment(tmp_path, monkeypatch, _b2_heads(12, 6))
 
     def failing(*_):
@@ -3359,41 +3438,127 @@ def test_a_failure_from_outside_this_script_prints_no_value(
     monkeypatch.setattr(script, "disclosure_registry", failing)
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"
-    with pytest.raises(
-        SystemExit,
-        match=r"^B0\.2 stopped in release_outputs, line \d+: ValueError$",
-    ):
+    with pytest.raises(SystemExit) as caught:
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert str(caught.value) == "B0.2 stopped in the release"
+    assert caught.value.__cause__ is None
+    assert caught.value.__suppress_context__
+    assert not out.exists() and not local.exists()
+    assert capfd.readouterr() == ("", "")
+    with pytest.raises(SystemExit, match="already has an attempt record"):
         script.main(["--out", str(out), "--local-copy", str(local)])
     assert not out.exists() and not local.exists()
 
 
+def test_a_failure_deep_in_the_disposition_rebuild_names_the_phase_alone(
+    tmp_path, monkeypatch, capfd
+):
+    """An invented failure inside the rebuild of B0.1's disposition sets,
+    whose message quotes a size and which writes a size to both
+    descriptors as it fails, reports the fixed text alone: no type, no
+    line and no message, and nothing it wrote is seen."""
+    _main_environment(tmp_path, monkeypatch, _b2_heads(12, 6))
+    calls = []
+
+    def failing(*arguments):
+        calls.append(arguments)
+        if len(calls) == 2:
+            os.write(1, b"7 deaths\n")
+            os.write(2, b"7 deaths\n")
+            raise IndexError("index 7 is out of bounds for axis 0 with size 7")
+        return b01._disposition(*arguments)
+
+    monkeypatch.setattr(script, "_disposition", failing)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    with pytest.raises(SystemExit) as caught:
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert str(caught.value) == "B0.2 stopped in the release"
+    assert len(calls) == 2
+    assert not out.exists() and not local.exists()
+    assert capfd.readouterr() == ("", "")
+
+
+def test_a_failure_while_reading_the_inputs_keeps_its_type_and_line(
+    tmp_path, monkeypatch
+):
+    """Reading and reducing the inputs builds no set and no atom, so a
+    failure there names its type and this script's line that led to it.
+    Its message, which can quote a value, is still dropped."""
+    import inspect
+
+    _main_environment(tmp_path, monkeypatch, _b2_heads(12, 6))
+
+    def failing(_):
+        raise IndexError("index 7 is out of bounds for axis 0 with size 7")
+
+    monkeypatch.setattr(script, "read_inputs", failing)
+    lines, start = inspect.getsourcelines(script.main)
+    (line,) = [
+        start + offset
+        for offset, text in enumerate(lines)
+        if "= read_inputs(" in text
+    ]
+    out = tmp_path / "counts.json"
+    with pytest.raises(SystemExit) as caught:
+        script.main(
+            ["--out", str(out), "--local-copy", str(tmp_path / "local.json")]
+        )
+    assert str(caught.value) == (
+        f"B0.2 stopped in main, line {line}: IndexError"
+    )
+
+
 @pytest.mark.parametrize(
-    ("value", "expected"),
+    ("value", "phase", "expected"),
     [
         (
             -7,
+            phase,
             r"^B0\.2 stopped in coarsen, line \d+: ValueError: counts and"
             r" effective sizes must be finite and nonnegative$",
-        ),
-        ("7", r"^B0\.2 stopped in coarsen, line \d+: TypeError$"),
+        )
+        for phase in (script.READING, script.RELEASE)
+    ]
+    + [
+        ("7", phase, r"^B0\.2 stopped in coarsen, line \d+: TypeError$")
+        for phase in (script.READING, script.WRITING)
+    ]
+    + [
+        ("7", phase, r"^B0\.2 stopped in the release$")
+        for phase in (script.RELEASE, "an unlisted phase")
     ],
 )
-def test_only_this_scripts_own_raise_keeps_its_message(value, expected):
-    """A message this script's ``raise`` wrote names no value and is kept,
-    though the statement spans lines; one a builtin wrote while running
-    this script's code is dropped."""
+def test_only_this_scripts_own_raise_keeps_its_message(value, phase, expected):
+    """A message this script's ``raise`` wrote names no value and is kept
+    in every phase, though the statement spans lines: which check fired is
+    a gate decision. One a builtin wrote while running this script's code
+    is dropped; outside the release its type and line are told, and inside
+    the release, or in a phase not listed, only the phase."""
     with pytest.raises(SystemExit, match=expected):
-        with script.count_free_failures():
+        with script.count_free_failures(phase):
             script.coarsen(value, 10)
 
 
 @pytest.mark.parametrize(
+    ("phase", "expected"),
+    [
+        (
+            script.READING,
+            r"^B0\.2 stopped in .+, line \d+: (KeyboardInterrupt|SystemExit)$",
+        ),
+        (script.RELEASE, r"^B0\.2 stopped in the release$"),
+    ],
+)
+@pytest.mark.parametrize(
     "interruption", [KeyboardInterrupt, lambda: SystemExit("size 7")]
 )
-def test_an_interruption_or_a_librarys_exit_prints_no_chain(interruption):
+def test_an_interruption_or_a_librarys_exit_prints_no_chain(
+    interruption, phase, expected
+):
     """An interruption, or a library's own exit, is a failure like any
-    other: its report names its type alone, and the error it interrupted,
-    whose message may quote a size, is not chained to it."""
+    other: its report follows its phase's rule, and the error it
+    interrupted, whose message may quote a size, is not chained to it."""
 
     def failing():
         try:
@@ -3402,11 +3567,8 @@ def test_an_interruption_or_a_librarys_exit_prints_no_chain(interruption):
             # Chained to the ValueError, as a library's would be.
             raise interruption()  # noqa: B904
 
-    with pytest.raises(
-        SystemExit,
-        match=r"^B0\.2 stopped in .+: (KeyboardInterrupt|SystemExit)$",
-    ) as caught:
-        with script.count_free_failures():
+    with pytest.raises(SystemExit, match=expected) as caught:
+        with script.count_free_failures(phase):
             failing()
     assert caught.value.__cause__ is None
     assert caught.value.__suppress_context__
@@ -3420,7 +3582,7 @@ def test_warnings_inside_the_guard_are_dropped_unseen(capsys):
 
     with warnings.catch_warnings(record=True) as seen:
         warnings.simplefilter("always")
-        with script.count_free_failures():
+        with script.count_free_failures(script.RELEASE):
             warnings.warn("an atom of size 7", RuntimeWarning, stacklevel=1)
         assert seen == []
         warnings.warn("outside the guard", RuntimeWarning, stacklevel=1)
@@ -3428,6 +3590,60 @@ def test_warnings_inside_the_guard_are_dropped_unseen(capsys):
             "outside the guard"
         ]
     assert capsys.readouterr() == ("", "")
+
+
+def _c_stdout(libc):
+    """The C library's standard output stream (macOS, then glibc)."""
+    import ctypes
+
+    for name in ("__stdoutp", "stdout"):
+        try:
+            return ctypes.c_void_p.in_dll(libc, name)
+        except ValueError:
+            continue
+    pytest.skip("this C library names no standard output stream")
+
+
+@pytest.mark.parametrize("fails", [False, True])
+def test_nothing_printed_inside_the_guard_is_seen(capfd, fails):
+    """Condition 2 on output. Inside the guard, descriptors 1 and 2 point
+    at the null device and Python's streams at a null stream, so nothing
+    printed there is seen: not through Python, not through a write to a
+    descriptor, and not through the C library's buffered stream, which is
+    flushed before the descriptors are restored. A failure's report is
+    the one line, raised after they are restored; output after the guard
+    is seen again."""
+    import ctypes
+
+    libc = ctypes.CDLL(None)
+    libc.fputs.argtypes = [ctypes.c_char_p, ctypes.c_void_p]
+    stream = _c_stdout(libc)
+    libc.fflush(None)
+    capfd.readouterr()
+    before = (os.fstat(1).st_ino, os.fstat(2).st_ino)
+    with pytest.raises(SystemExit) if fails else nullcontext() as caught:
+        with script.count_free_failures(script.RELEASE):
+            print("atom 7")
+            print("atom 7", file=sys.stderr)
+            sys.__stdout__.write("atom 7")
+            sys.__stderr__.write("atom 7")
+            os.write(1, b"atom 7")
+            os.write(2, b"atom 7")
+            # Buffered with no newline, so it stays in the C library's
+            # buffer until something flushes it.
+            libc.fputs(b"atom 7", stream)
+            if fails:
+                raise ValueError("an atom of size 7")
+    if fails:
+        assert str(caught.value) == "B0.2 stopped in the release"
+    assert (os.fstat(1).st_ino, os.fstat(2).st_ino) == before
+    print("after")
+    libc.fputs(b"after C\n", stream)
+    libc.fflush(None)
+    sys.__stdout__.flush()
+    out, err = capfd.readouterr()
+    assert "atom" not in out and "atom" not in err
+    assert "after\n" in out and "after C\n" in out
 
 
 #: The only names a ``raise`` in the count script may put into its message:
@@ -3518,7 +3734,63 @@ def test_every_output_the_script_can_make_names_no_value():
         for node in calls
         if isinstance(node.func, ast.Attribute) and node.func.attr in writes
     }
-    assert writers == {"write_new", "_start_attempt", "_sha256_file"}
+    assert writers == {
+        "write_new",
+        "_start_attempt",
+        "_sha256_file",
+        "_silenced",
+    }
+    # The guard opens the null device and nothing else; no builtin open()
+    # writes anywhere else; the C library is used only to flush.
+    opened = sorted(
+        (function(node), ast.unparse(node))
+        for node in calls
+        if (isinstance(node.func, ast.Name) and node.func.id == "open")
+        or (
+            function(node) == "_silenced"
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in writes
+        )
+    )
+    assert opened == [
+        ("_silenced", "open(os.devnull, 'w')"),
+        ("_silenced", "os.open(os.devnull, os.O_WRONLY)"),
+    ]
+    assert sorted(
+        (function(node), ast.unparse(node))
+        for node in calls
+        if ast.unparse(node.func).startswith("ctypes")
+    ) == [
+        ("_flush_streams", "ctypes.CDLL(None)"),
+        ("_flush_streams", "ctypes.CDLL(None).fflush(None)"),
+    ]
+    # main() runs three guarded phases, and the release phase holds only
+    # the release.
+    (main,) = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name == "main"
+    ]
+    phases = [
+        (ast.unparse(item.context_expr), statement)
+        for statement in main.body
+        if isinstance(statement, ast.With)
+        for item in statement.items
+        if ast.unparse(item.context_expr).startswith("count_free_failures")
+    ]
+    assert [name for name, _ in phases] == [
+        "count_free_failures(READING)",
+        "count_free_failures(RELEASE)",
+        "count_free_failures(WRITING)",
+    ]
+    assert [ast.unparse(line) for line in phases[1][1].body] == [
+        "local_bytes, public_bytes = release_outputs(person_wave, validity,"
+        " anchor, design, committed, provenance)"
+    ]
+    assert [ast.unparse(line) for line in phases[2][1].body] == [
+        "write_new(local, local_bytes)",
+        "write_new(out, public_bytes)",
+    ]
     (read,) = [
         node
         for node in calls

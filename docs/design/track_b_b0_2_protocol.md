@@ -112,6 +112,38 @@ any freeze:
   reached first, so which targets were this release's own depended on
   B0.1's sets.
 
+The coordinator then ruled that a stop counts as a decision, a withhold
+of the version, and narrowed its report:
+- **A stop withholds the version.** The attempt record already refused
+  a rerun; the block now says that the stop is a decision, and that the
+  next attempt is a new version, ruled on before it runs, that treats the
+  stop as public.
+- **The report follows the phase.** A failure while reading the inputs
+  or writing the files still names its type and the script's line. One
+  in the release, where dispositions and atom sizes enter, names the
+  phase alone. The script's own raises keep their fixed messages in
+  every phase.
+- **Nothing printed inside a phase is seen.** File descriptors 1 and 2
+  point at the null device inside each phase, and every stream is
+  flushed before they are restored, so output from compiled code is
+  covered too.
+- **The stated limit** now names the run's total time as a channel, and
+  says that no time is written or printed.
+- **Operations.** The one run is detached from the session that starts
+  it, with no wall limit, since the number of programs is bounded.
+
+Three tests failed when they first ran, and each was fixed in the
+tests alone:
+- the property-based relabeling test built its folder behind a symbolic
+  link on macOS, which `main()` resolves;
+- the exhaustive readers compared a target that is both wide and
+  irrelevant by name, though the script may prove either;
+- the test that records the solver's options kept the dicts it was
+  given, from which SciPy's `milp` removes `disp`; it now keeps copies.
+
+The relabeling test, and its fixed companion, now include panels that
+release as well as panels that withhold.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -499,27 +531,40 @@ rules.
          structured file can be inverted by enumerating the values the
          coarsened counts leave open.
 
-       The rest of the provenance is the schema, the repository head, the
-       clean-worktree flag, the attempt's start time and the output's
-       path;
+       The rest of the provenance is the schema, the repository head and
+       the clean-worktree flag. The attempt record also holds the start
+       time, and standard output the published file's path;
      - this release's own counts, exact in the local copy and coarsened
        in the committed file;
      - B0.1's published counts;
      - the audit's decisions: the status, released or withheld, and the
        decision record below;
-     - if the run stops, its report: the error's type, the script's line
-       that led to it, and the script's own message, which names only
-       paths and settings.
+     - if the run stops, its report, one line under the rule below.
 
      This covers both files, the attempt record, standard output and
      standard error, exception text, logs and caches. No atom size, no
      count of a set only B0.1 counts beyond B0.1's own, no value by
      disposition and no frequency of death or attrition is written or
      printed on any path. So:
-     - a failure, an interruption or a library's own exit included,
-       prints its type and the script's line that led to it, and its
-       message only when the script's own `raise` wrote it; no error
-       before it is chained to the report;
+     - the run has three phases: reading and reducing the inputs, the
+       release (the rebuild of B0.1's sets, the rerun gate, the counts and
+       the audit), and writing the two files. Reading builds no set,
+       B0.1's disposition sets included, and no atom, and writing starts
+       once both files' bytes are fixed;
+     - a stop, including an interruption or a library's own exit,
+       prints one line, and no earlier error is chained to it:
+       - when the script's own `raise` stopped it, in any phase, the
+         error's type, the script's line and the script's message, which
+         names only paths and settings: which check fired is a gate
+         decision;
+       - otherwise, while reading or writing, the error's type and the
+         script's line that led to it, and no message;
+       - otherwise, in the release, the fixed text "B0.2 stopped in the
+         release", with no type, no line and no message;
+     - nothing printed inside a phase is seen: file descriptors 1 and 2
+       point at the null device and Python's streams at a null stream,
+       and every stream, the C library's included, is flushed before the
+       descriptors are restored for the report;
      - a warning prints nothing, since whether one fires, and where, can
        depend on the data;
      - the solver prints nothing;
@@ -537,10 +582,13 @@ rules.
      the one channel the decisions open, and a rerun of the frozen code
      on the frozen inputs gives them again.
   4. **The stated limit.** The decisions depend on atom sizes, which
-     B0.1's sets refine. So which targets are narrow, and whether the
-     release is withheld, can depend on dispositions. So can whether the
-     run stops, and where, though its report holds no value. Those are
-     the only channels from dispositions to the outputs.
+     B0.1's sets refine. So which targets are narrow, whether the release
+     is withheld, and whether the run stops inside the release can depend
+     on dispositions. So can the run's total time: whoever runs it sees
+     it, and the files' modification times and the commit that adds the
+     published file show when it ended. No time is written into either
+     file or printed. Those are the only channels from dispositions to
+     the outputs.
   5. **The invariant.** On invented panels, relabeling deaths and
      move-outs so that B0.1's counts, this release's class sizes and
      every decision are unchanged must leave every byte the run writes
@@ -579,7 +627,10 @@ rules.
   - **against an exhaustive reader,** on small random tables and on
     tables that withhold: every atom-size vector with the same
     publication is enumerated, the rule is rerun on each, and the
-    script's decision, disclosures and classifications must match. The
+    script's decision and disclosures must match. Each other verdict must
+    hold of the final candidates: a target whose candidates span 4 or
+    more and stay out of 1 to 9 is both wide and irrelevant, and the
+    script may prove either. The
     vectors whose rerun releases must be exactly the final constraint
     set, and the sizes each sensitive target of a released table takes
     among them must span at least 4;
@@ -617,16 +668,25 @@ rules.
       the provenance and this release's counts, and nothing about the
       rounds; the committed provenance holds only the listed fields, its
       geometry is the requested shape, and every hash either file holds
-      is of an input or of code; a library's failure
-      prints its type and the script's line only; only the script's own
-      `raise` keeps its message; an interruption, or a library's own exit,
-      prints no chain; a warning prints nothing; and a static
-      check of the script finds that every `raise` message interpolates
-      only paths and settings, that it prints only the output's path, and
-      that only the outputs and the attempt record write files;
+      is of an input or of code. Its key set is exact;
+    - the stop report: a library's failure in the release, and an
+      invented one deep in the rebuild of B0.1's disposition sets that
+      quotes a size, print only the fixed text, and a rerun of the version
+      is refused; a failure while reading or writing prints its type and
+      the script's line only; only the script's own `raise` keeps its
+      message, in every phase; an interruption, or a library's own exit,
+      prints no chain; a warning prints nothing; and nothing written
+      inside a phase, through Python, a file descriptor or the C
+      library's buffered stream, is seen, while output after it is;
+    - a static check of the script, which finds that every `raise`
+      message interpolates only paths and settings, that it prints only
+      the output's path, that only the outputs, the attempt record and
+      the null device are opened for writing, and that `main()` runs the
+      three phases with the release alone in the second;
     - the invariant: swapping a death and a move-out on invented panels,
-      once where the atoms change and the decisions do not and again in
-      property-based examples, leaves every byte `main()` writes or prints
+      where the atoms change and the decisions do not, in one panel that
+      withholds and one that releases and again in property-based
+      examples of both, leaves every byte `main()` writes or prints
       unchanged, with the run's directory as its working directory. A
       mutant that writes or prints an atom size must fail these tests.
 
@@ -660,8 +720,19 @@ new version.
     head, the script's SHA-256 and the start time, and no count.
   - It refuses to start if an attempt record for this protocol version
     already exists, so a failed run cannot be retried silently.
-  - If it fails, the failure is published, and the protocol is revised in
-    a new, dated version before any rerun.
+  - A stop once the attempt record exists, for any reason and in any
+    phase, is a decision: it withholds this version, since the attempt
+    record refuses a rerun of it. The stop and its report are published.
+    The next attempt is a new, dated protocol version, ruled on before it
+    runs, that treats the stop and its report as public.
+  - The run is started in a detached process that survives the end of
+    the session that starts it, with standard output and standard error
+    sent to a file in B0.2's evidence folder. Each program has a limit of
+    300 seconds, and the audit runs at most 9(T + 2) + 5T(T + 1)/2 of
+    them for T targets: nine seed programs at the start and at most nine
+    more in each round, at most five for each target in each round, and
+    at most T + 1 rounds. So the run ends without a wall limit, and none
+    is set: one could only stop a run that would have finished.
 - **No changes after counts.** No definition above changes once counts
   are seen. A change is a new protocol version, recorded as such, with
   the reason.

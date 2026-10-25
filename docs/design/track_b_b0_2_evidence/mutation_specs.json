@@ -698,8 +698,8 @@
   "mutation": "a failure keeps a library's message",
   "replacements": [
    {
-    "old": "    return f\"{text}: {error}\" if raised_here else text\n",
-    "new": "    return f\"{text}: {error}\"\n",
+    "old": "    return f\"B0.2 stopped in {where}: {type(error).__name__}\"\n",
+    "new": "    return f\"B0.2 stopped in {where}: {type(error).__name__}: {error}\"\n",
     "occurrence": 1
    }
   ]
@@ -708,8 +708,8 @@
   "mutation": "warnings shown inside the guard",
   "replacements": [
    {
-    "old": "        warnings.simplefilter(\"ignore\")\n        try:\n            yield\n",
-    "new": "        warnings.simplefilter(\"default\")\n        try:\n            yield\n",
+    "old": "            warnings.simplefilter(\"ignore\")\n            yield\n",
+    "new": "            warnings.simplefilter(\"default\")\n            yield\n",
     "occurrence": 1
    }
   ]
@@ -768,8 +768,8 @@
   "mutation": "the guard catches only Exception",
   "replacements": [
    {
-    "old": "        except BaseException as error:\n            failure = _failure_text(error)\n",
-    "new": "        except Exception as error:\n            failure = _failure_text(error)\n",
+    "old": "    except BaseException as error:\n        failure = _failure_text(error, phase)\n",
+    "new": "    except Exception as error:\n        failure = _failure_text(error, phase)\n",
     "occurrence": 1
    }
   ]
@@ -800,6 +800,76 @@
    {
     "old": "            \"worktree_clean\": True,\n",
     "new": "            \"worktree_clean\": True,\n            \"rows_read\": len(person_wave),\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a failure in the release prints its type and line",
+  "replacements": [
+   {
+    "old": "    if phase not in LOCATED_PHASES:\n        return f\"B0.2 stopped in {RELEASE}\"\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the guard skips the descriptor redirect",
+  "replacements": [
+   {
+    "old": "        os.dup2(null, 1)\n        os.dup2(null, 2)\n",
+    "new": "        pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the guard skips the C library's flush",
+  "replacements": [
+   {
+    "old": "    ctypes.CDLL(None).fflush(None)\n",
+    "new": "    pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the guard leaves Python's streams unredirected",
+  "replacements": [
+   {
+    "old": "            with redirect_stdout(python_null), redirect_stderr(python_null):\n                yield\n",
+    "new": "            yield\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the guard restores the descriptors before flushing",
+  "replacements": [
+   {
+    "old": "        try:\n            _flush_streams()\n        finally:\n            os.dup2(saved[0], 1)\n            os.dup2(saved[1], 2)\n",
+    "new": "        try:\n            os.dup2(saved[0], 1)\n            os.dup2(saved[1], 2)\n        finally:\n            _flush_streams()\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "main runs the release in the reading phase",
+  "replacements": [
+   {
+    "old": "    with count_free_failures(RELEASE):\n",
+    "new": "    with count_free_failures(READING):\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the script's own raise in the release loses its message",
+  "replacements": [
+   {
+    "old": "    if raised_here:\n        where",
+    "new": "    if raised_here and phase in LOCATED_PHASES:\n        where",
     "occurrence": 1
    }
   ]
