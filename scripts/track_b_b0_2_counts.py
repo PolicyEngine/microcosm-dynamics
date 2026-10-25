@@ -21,7 +21,7 @@ import time
 import traceback
 import warnings
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "31af2b857c36dd20858267eebb07882b586fce5b711bb0c68cf85ae696e9a60b"
+    "038ee180be5b9f8b86e132dde71cceba234c2aa465a4866f22e907c86b430e42"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -554,10 +554,16 @@ def build_model(registry: SetRegistry) -> dict:
         if rows:
             own.setdefault((unit_type, rows), []).append(column)
     targets: dict[tuple[int, ...], dict] = {}
-    for (unit_type, _), columns in sorted(own.items()):
+    for (unit_type, rows), columns in sorted(own.items()):
+        held = set(rows)
         targets[tuple(columns)] = {
             "kind": "atom",
             "unit_type": unit_type,
+            # The paths of this release's sets that hold the class, in the
+            # release's order.
+            "sets": [
+                list(path) for path in registry.sets if path_rows[path] in held
+            ],
             "earlier": False,
         }
     shared = (matrix @ matrix.T).toarray()
@@ -675,7 +681,10 @@ class AuditSystem:
     here in exact integer arithmetic, so a protection claim never rests on
     solver tolerances."""
 
-    def __init__(self, model, lower, upper, relations, disclosed):
+    def __init__(
+        self, model, lower, upper, relations, disclosed, before_program=None
+    ):
+        self.before_program = before_program
         matrix = model["matrix"]
         self.matrix = matrix
         self.atoms = matrix.shape[1]
@@ -747,6 +756,10 @@ class AuditSystem:
         return True
 
     def _program(self, objective, extra, seconds, integral=True, gap=0.0):
+        if self.before_program is not None:
+            # The run's conditions, checked and waited out between
+            # programs, never during one.
+            self.before_program()
         with warnings.catch_warnings():
             # HiGHS receives threads verbatim. Both its internal threads
             # and the required BLAS environment stay at one.
@@ -953,6 +966,7 @@ def audit_counts(
     base: int = DISCLOSURE_BASE,
     *,
     seconds: float = PROGRAM_SECONDS,
+    before_program: Callable[[], None] | None = None,
 ) -> dict:
     """Decide whether the counts may be released at ``base``.
 
@@ -967,7 +981,14 @@ def audit_counts(
     Every target of true size 1 to 9 is then wide under everything a
     release discloses. A round whose disclosures rule out every pool
     point seeds the pool again under them; if no seed program then finds
-    a point, nothing can be shown wide and the release is withheld."""
+    a point, nothing can be shown wide and the release is withheld.
+
+    Each target's final decision is its classification in the round that
+    ended the audit, or in the round that disclosed it or proved it
+    irrelevant, which no later round changes. A target the ending round
+    did not reach is "unreached", whichever round that was, so the
+    decisions show no round. ``before_program`` is called before every
+    program (``RunConditions.before_program``)."""
     started = time.monotonic()
     _validate_registry(counts, registry)
     model = build_model(registry)
@@ -981,7 +1002,9 @@ def audit_counts(
     status = "released"
     pool = WitnessPool(len(truth))
     if targets:
-        system = AuditSystem(model, lower, upper, relations, [])
+        system = AuditSystem(
+            model, lower, upper, relations, [], before_program
+        )
         if not system.feasible(truth):
             raise ValueError(
                 "true atom sizes violate the published constraints"
@@ -993,7 +1016,12 @@ def audit_counts(
     # With no atom there is nothing to protect and no program to run.
     while status == "released" and targets:
         system = AuditSystem(
-            model, lower, upper, relations, [targets[i] for i in disclosed]
+            model,
+            lower,
+            upper,
+            relations,
+            [targets[i] for i in disclosed],
+            before_program,
         )
         pool.keep(system)
         reseeded = pool.size == 0
@@ -1039,6 +1067,18 @@ def audit_counts(
         if not added:
             break
         disclosed.extend(added)
+    ending = len(rounds)
+
+    def decision(index: int) -> dict:
+        outcome = settled.get(index)
+        if outcome is not None and (
+            outcome["round"] == ending
+            or index in disclosed
+            or outcome["result"] == "irrelevant"
+        ):
+            return outcome
+        return {"result": "unreached"}
+
     return {
         "base": base,
         "status": status,
@@ -1051,12 +1091,12 @@ def audit_counts(
                 "columns": list(target["columns"]),
                 **{
                     key: target[key]
-                    for key in ("superset", "subset")
+                    for key in ("sets", "superset", "subset")
                     if key in target
                 },
                 "true_size": target["true_size"],
                 "earlier": target["earlier"],
-                **settled.get(index, {"result": "unclassified"}),
+                **decision(index),
             }
             for index, target in enumerate(targets)
         ],
@@ -1096,10 +1136,13 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
 
 
 #: What the local copy records of each of this release's targets: what it
-#: is, its true size, and the audit's final decision about it.
+#: is (its unit type and kind, and its sets: those of this release that
+#: hold a class, or a difference's superset and subset), its true size,
+#: and the audit's final decision about it.
 TARGET_FIELDS = (
     "unit_type",
     "kind",
+    "sets",
     "superset",
     "subset",
     "true_size",
@@ -1115,7 +1158,8 @@ def local_audit(audit: dict) -> dict:
     may and may not compute"), so nothing about them beyond B0.1's own
     counts is written. The record holds the base and the status; for each
     target of this release (a class of its units, or a difference of two
-    of its sets), what it is, its true size and its final classification;
+    of its sets), what it is, its true size and its final classification
+    ("unreached" when the round that ended the audit did not reach it);
     and its classes' sizes, by unit type. Targets that involve a set only
     B0.1 counts are left out. So are the rounds: which round disclosed or
     settled a target, whether the pool was seeded again and how many
@@ -1145,12 +1189,16 @@ def local_audit(audit: dict) -> dict:
 
 
 def release_counts(
-    counts: dict, registry: SetRegistry, base: int = DISCLOSURE_BASE
+    counts: dict,
+    registry: SetRegistry,
+    base: int = DISCLOSURE_BASE,
+    *,
+    before_program: Callable[[], None] | None = None,
 ) -> tuple[dict, dict, dict]:
     """Coarsen and audit once at the fixed base. The public block holds the
     base, the rules and the status, and nothing the audit computed; the
     local copy holds ``local_audit``'s record."""
-    audit = audit_counts(counts, registry, base)
+    audit = audit_counts(counts, registry, base, before_program=before_program)
     published = {}
     if audit["status"] == "released":
         published = deepcopy(counts)
@@ -1690,6 +1738,29 @@ def read_inputs(
     return person_wave, validity, anchor, design, allowlist
 
 
+def _require_unit_identifiers(
+    person_wave: pd.DataFrame, anchor: pd.DataFrame, design: pd.DataFrame
+) -> None:
+    """Every unit a published set counts has its identifiers: each present
+    row (sequence 1 to 20, positive weight) its person and interview
+    numbers, and each present person a design stratum and cluster. A row
+    without one would be counted as a person but in no household or
+    design cluster, so an effective size could exceed the count it
+    bounds and stop the audit. The readers give integer columns, so this
+    never fires on them; it stops the run while reading, before any set
+    is built, rather than in the release."""
+    rows = {"person-wave": _present(person_wave), "anchor": _present(anchor)}
+    for name, present in rows.items():
+        if present[["person_id", "interview"]].isna().any(axis=None):
+            raise ValueError(
+                f"a present {name} row has no person or interview number"
+            )
+    complete = design.dropna(subset=["person_id", "stratum", "cluster"])
+    persons = pd.concat([present["person_id"] for present in rows.values()])
+    if not persons.isin(complete["person_id"]).all():
+        raise ValueError("a present person has no design stratum or cluster")
+
+
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -1758,41 +1829,241 @@ def _start_attempt(
         ) from error
 
 
-#: Holds off idle and system sleep for as long as the process it waits on.
-CAFFEINATE = "/usr/bin/caffeinate"
+#: macOS's power-management and Core Foundation libraries, which the run's
+#: conditions call through ``ctypes``.
+IOKIT = "/System/Library/Frameworks/IOKit.framework/IOKit"
+CORE_FOUNDATION = (
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation"
+)
+#: The power source IOKit names while the host draws from the mains.
+AC_POWER = "AC Power"
+#: The sleep assertions the run holds on its own process: no idle sleep,
+#: and no system sleep while on AC power. The system releases both when
+#: the process ends.
+SLEEP_ASSERTIONS = ("PreventUserIdleSystemSleep", "PreventSystemSleep")
+#: ``PRIO_DARWIN_PROCESS`` in <sys/resource.h>, which Python names only
+#: from 3.12: ``getpriority`` reads 1 for it under the Darwin background
+#: policy (``taskpolicy -b``) and 0 otherwise.
+PRIO_DARWIN_PROCESS = 4
+#: QoS classes below the default (<sys/qos.h>): utility, background and
+#: maintenance. A process clamped to one (``taskpolicy -c``) reads it as
+#: its thread's class, with niceness and Darwin priority both still 0.
+LOW_QOS_CLASSES = (0x11, 0x09, 0x05)
+#: The run's conditions, by the fixed name a refusal or a stop reports,
+#: in the order they are checked (Output and stop rules, "One run").
+RUN_CONDITIONS = (
+    "ac_power",
+    "sleep_assertions",
+    "nice",
+    "background",
+    "qos",
+    "load",
+)
+#: Before a program, a failed condition is rechecked every minute, and the
+#: run stops when 1,440 rechecks in a row, 24 hours, have found one
+#: failing.
+RECHECK_SECONDS = 60
+RECHECKS = 1440
+#: kCFStringEncodingUTF8 and kIOPMAssertionLevelOn.
+_UTF8 = 0x08000100
+_ASSERTION_ON = 255
 
 
-def _host_state() -> tuple[int, float, int]:
-    """This process's niceness, the five-minute load average and the
-    number of CPUs."""
+class _Host:
+    """The macOS calls the run's conditions make: the providing power
+    source, this process's sleep assertions and the calling thread's QoS
+    class."""
+
+    def __init__(self):
+        pointer, uint32 = ctypes.c_void_p, ctypes.c_uint32
+        try:
+            self.iokit = ctypes.CDLL(IOKIT)
+            self.cf = ctypes.CDLL(CORE_FOUNDATION)
+            self.libc = ctypes.CDLL(None)
+            for library, name, arguments, result in (
+                (
+                    self.cf,
+                    "CFStringCreateWithCString",
+                    [pointer, ctypes.c_char_p, uint32],
+                    pointer,
+                ),
+                (
+                    self.cf,
+                    "CFStringGetCString",
+                    [pointer, ctypes.c_char_p, ctypes.c_long, uint32],
+                    ctypes.c_bool,
+                ),
+                (self.cf, "CFRelease", [pointer], None),
+                (self.iokit, "IOPSCopyPowerSourcesInfo", [], pointer),
+                (
+                    self.iokit,
+                    "IOPSGetProvidingPowerSourceType",
+                    [pointer],
+                    pointer,
+                ),
+                (
+                    self.iokit,
+                    "IOPMAssertionCreateWithName",
+                    [pointer, uint32, pointer, ctypes.POINTER(uint32)],
+                    ctypes.c_int,
+                ),
+                (
+                    self.iokit,
+                    "IOPMAssertionCopyProperties",
+                    [uint32],
+                    pointer,
+                ),
+                (self.iokit, "IOPMAssertionRelease", [uint32], ctypes.c_int),
+                (self.libc, "pthread_self", [], pointer),
+                (
+                    self.libc,
+                    "pthread_get_qos_class_np",
+                    [
+                        pointer,
+                        ctypes.POINTER(ctypes.c_uint),
+                        ctypes.POINTER(ctypes.c_int),
+                    ],
+                    ctypes.c_int,
+                ),
+            ):
+                function = getattr(library, name)
+                function.argtypes = arguments
+                function.restype = result
+        except (OSError, AttributeError):
+            raise SystemExit(
+                "B0.2 needs macOS IOKit for its run conditions"
+            ) from None
+
+    def power_source(self) -> str:
+        """The providing power source's name, or "" when none is read."""
+        snapshot = self.iokit.IOPSCopyPowerSourcesInfo()
+        if not snapshot:
+            return ""
+        try:
+            # The snapshot owns the name.
+            source = self.iokit.IOPSGetProvidingPowerSourceType(snapshot)
+            text = ctypes.create_string_buffer(64)
+            if not source or not self.cf.CFStringGetCString(
+                source, text, len(text), _UTF8
+            ):
+                return ""
+            return text.value.decode()
+        finally:
+            self.cf.CFRelease(snapshot)
+
+    def hold(self, kind: str) -> int:
+        """Take a sleep assertion of ``kind`` on this process: its ID, or
+        0 when IOKit refuses it."""
+        strings = [
+            self.cf.CFStringCreateWithCString(None, text.encode(), _UTF8)
+            for text in (kind, "B0.2 structural counts")
+        ]
+        try:
+            if not all(strings):
+                return 0
+            assertion = ctypes.c_uint32(0)
+            status = self.iokit.IOPMAssertionCreateWithName(
+                strings[0], _ASSERTION_ON, strings[1], ctypes.byref(assertion)
+            )
+            return assertion.value if status == 0 else 0
+        finally:
+            for string in strings:
+                if string:
+                    self.cf.CFRelease(string)
+
+    def held(self, assertion: int) -> bool:
+        """Whether this process still holds the assertion."""
+        if not assertion:
+            return False
+        properties = self.iokit.IOPMAssertionCopyProperties(assertion)
+        if not properties:
+            return False
+        self.cf.CFRelease(properties)
+        return True
+
+    def release(self, assertion: int) -> None:
+        if assertion:
+            self.iokit.IOPMAssertionRelease(assertion)
+
+    def qos_class(self) -> int:
+        """The calling thread's QoS class."""
+        qos, relative = ctypes.c_uint(0), ctypes.c_int(0)
+        self.libc.pthread_get_qos_class_np(
+            self.libc.pthread_self(), ctypes.byref(qos), ctypes.byref(relative)
+        )
+        return qos.value
+
+
+def _host_state(host: _Host) -> tuple[int, int, int, float, int]:
+    """This process's niceness and Darwin priority, the calling thread's
+    QoS class, the five-minute load average and the number of CPUs."""
     return (
         os.getpriority(os.PRIO_PROCESS, 0),
+        os.getpriority(PRIO_DARWIN_PROCESS, 0),
+        host.qos_class(),
         os.getloadavg()[1],
         os.cpu_count() or 1,
     )
 
 
-def _keep_awake() -> subprocess.Popen:
-    """Hold off idle and system sleep for the rest of this process's life.
+class RunConditions:
+    """The host conditions under which each program's limit, which is
+    wall-clock time, measures that program alone: AC power; this
+    process's sleep assertions; nice 0, no Darwin background policy and
+    a QoS class of default or above; and a five-minute load below the
+    CPU count.
 
-    Each program's limit is wall-clock time, so a host asleep mid-program
-    would read as a slow one, and could add a disclosure or withhold the
-    release. ``caffeinate -w`` ends when this process does; it prints
-    nothing."""
-    try:
-        keeper = subprocess.Popen(
-            [CAFFEINATE, "-i", "-s", "-w", str(os.getpid())],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-    except OSError:
-        raise SystemExit(
-            "B0.2 needs caffeinate to keep the host awake"
-        ) from None
-    if keeper.poll() is not None:
-        raise SystemExit("B0.2 needs caffeinate to keep the host awake")
-    return keeper
+    ``main()`` checks them before the attempt record, where a failure
+    refuses the run, and the audit before every program, where a failure
+    is waited out between programs. The sleep assertions are taken at
+    construction, and a lapsed one is taken again before each check.
+    Waiting delays a program and changes nothing it is given, so it
+    cannot change an answer."""
+
+    def __init__(self, host: _Host):
+        self.host = host
+        self.assertions = {kind: host.hold(kind) for kind in SLEEP_ASSERTIONS}
+
+    def failing(self) -> str | None:
+        """The fixed name of the first condition that does not hold, or
+        None when all hold."""
+        for kind, assertion in self.assertions.items():
+            if not self.host.held(assertion):
+                self.assertions[kind] = self.host.hold(kind)
+        niceness, background, qos, load, cpus = _host_state(self.host)
+        holds = {
+            "ac_power": self.host.power_source() == AC_POWER,
+            "sleep_assertions": all(
+                self.host.held(assertion)
+                for assertion in self.assertions.values()
+            ),
+            "nice": niceness == 0,
+            "background": background == 0,
+            "qos": qos not in LOW_QOS_CLASSES,
+            "load": load < cpus,
+        }
+        return next((name for name in RUN_CONDITIONS if not holds[name]), None)
+
+    def before_program(self) -> None:
+        """Return once every condition holds. While one fails, recheck
+        every ``RECHECK_SECONDS``; once ``RECHECKS`` rechecks in a row have
+        found one failing, stop the run with the name of the one the last
+        recheck found."""
+        name = self.failing()
+        rechecks = 0
+        while name is not None:
+            if rechecks == RECHECKS:
+                raise SystemExit(
+                    f"run condition {name} still failed after 24 hours of"
+                    " rechecks between programs"
+                )
+            time.sleep(RECHECK_SECONDS)
+            rechecks += 1
+            name = self.failing()
+
+    def release(self) -> None:
+        for assertion in self.assertions.values():
+            self.host.release(assertion)
 
 
 def _check_runtime() -> None:
@@ -1807,16 +2078,19 @@ def _check_runtime() -> None:
             raise SystemExit(f"set {name} to an integer from 1 to 4")
     if os.environ.get("OMP_WAIT_POLICY") != "PASSIVE":
         raise SystemExit("set OMP_WAIT_POLICY=PASSIVE")
-    # Each program's limit is wall-clock time, so a busy or deprioritized
-    # host can withhold a release.
-    niceness, load, cpus = _host_state()
-    if niceness != 0:
-        raise SystemExit("run B0.2 at nice 0")
-    if not load < cpus:
-        raise SystemExit(
-            "start B0.2 when the five-minute load is below the CPU count"
-        )
     _check_protocol()
+
+
+def _start_conditions() -> RunConditions:
+    """Take the sleep assertions and refuse to start unless every run
+    condition holds: before the attempt record, so a refusal spends no
+    version."""
+    conditions = RunConditions(_Host())
+    name = conditions.failing()
+    if name is not None:
+        conditions.release()
+        raise SystemExit(f"B0.2 refuses to start: run condition {name} fails")
+    return conditions
 
 
 def write_new(path: Path, data: bytes) -> None:
@@ -1857,6 +2131,7 @@ def release_outputs(
     design: pd.DataFrame,
     committed: Mapping,
     provenance: Mapping,
+    before_program: Callable[[], None] | None = None,
 ) -> tuple[bytes, bytes]:
     """The local copy's bytes and the published file's.
 
@@ -1882,7 +2157,9 @@ def release_outputs(
         person_wave, validity_by_wave, anchor, design
     )
     register_b0_1(registry, earlier, committed["counts"])
-    coarsened, disclosure, audit = release_counts(counts, registry)
+    coarsened, disclosure, audit = release_counts(
+        counts, registry, before_program=before_program
+    )
     payload = {**provenance, "counts": counts, "disclosure_audit": audit}
     public_payload = {**provenance, "disclosure": disclosure}
     if coarsened:
@@ -2033,7 +2310,7 @@ def main(argv: list[str] | None = None) -> int:
     _check_runtime()
     repository_head = _git("rev-parse", "HEAD")
     script_sha256 = _sha256_file(Path(__file__))
-    keeper = _keep_awake()
+    conditions = _start_conditions()
     _start_attempt(local, repository_head, script_sha256)
     with count_free_failures(READING):
         data_dir = psid._resolve_data_dir(None).resolve()
@@ -2041,6 +2318,7 @@ def main(argv: list[str] | None = None) -> int:
             person_wave, validity, anchor, design, allowlist = read_inputs(
                 data_dir
             )
+        _require_unit_identifiers(person_wave, anchor, design)
         committed = json.loads(B0_1_COUNTS.read_text(encoding="utf-8"))
         provenance = {
             "schema": SCHEMA,
@@ -2059,14 +2337,19 @@ def main(argv: list[str] | None = None) -> int:
         }
     with count_free_failures(RELEASE):
         local_bytes, public_bytes = release_outputs(
-            person_wave, validity, anchor, design, committed, provenance
+            person_wave,
+            validity,
+            anchor,
+            design,
+            committed,
+            provenance,
+            conditions.before_program,
         )
     with count_free_failures(WRITING):
         write_new(local, local_bytes)
         write_new(out, public_bytes)
     print(out)
-    keeper.terminate()
-    keeper.wait()
+    conditions.release()
     return 0
 
 

@@ -12,6 +12,8 @@ protocol writes, and B0.2's exposure inventory. Every other B0.2 file in
 the repository must be listed, so a new one cannot reach master unlisted:
 a file named as B0.2's, or any file in a folder so named, such as the
 evidence folder (review round 4 found its files left in review roots).
+Both the rule and the exclusions read full paths, so a file elsewhere
+that shares a basename with one of B0.2's is neither listed nor removed.
 """
 
 from __future__ import annotations
@@ -59,6 +61,15 @@ B0_2_FILES = NOT_YET_COMMITTED | {
 }
 #: Name B0.2's files without holding any of their content.
 NOT_EXCLUDED = {RECORD_PATH, "tests/test_track_b_b0_2_exclusions.py"}
+#: Files outside B0.2 that share a basename with one of its files. They
+#: are matched on their full paths, so each stays in a root.
+DECOYS = {
+    "docs/other/calibrate.py",
+    "docs/design/calibration.txt",
+    "scripts/oracle.py",
+    "tests/evidence/mutation_specs.json",
+    "docs/design/track_b_b0_1_evidence/search.txt",
+}
 
 
 def b0_2_named(path: str) -> bool:
@@ -108,6 +119,12 @@ def test_the_name_rule_catches_b0_2s_files_only():
     assert not b0_2_named("docs/design/track_b_b0_1_counts.json")
     assert not b0_2_named("docs/design/track_b_b0_2x/plain.md")
     assert not b0_2_named("scripts/old_track_b_b0_2_counts.py")
+    # The rule reads the full path: a basename shared with an evidence file
+    # is not B0.2's outside a B0.2 folder.
+    for decoy in DECOYS:
+        assert not b0_2_named(decoy), decoy
+        name = decoy.rsplit("/", 1)[1]
+        assert any(path.endswith(f"/{name}") for path in B0_2_FILES), decoy
 
 
 def test_build_removes_b0_2s_files_without_any_inventory(
@@ -116,6 +133,7 @@ def test_build_removes_b0_2s_files_without_any_inventory(
     files = {relative: "invented" for relative in B0_2_FILES}
     files["docs/keep.md"] = "kept text"
     files[RECORD_PATH] = "{}"
+    files.update({decoy: "decoy text" for decoy in DECOYS})
 
     def run(command, cwd=None, check=False):
         archive = Path(command[command.index("-o") + 1])
@@ -132,4 +150,12 @@ def test_build_removes_b0_2s_files_without_any_inventory(
     assert B0_2_FILES <= set(built["removed"])
     for relative in B0_2_FILES:
         assert not (out / relative).exists(), relative
-    assert set(review_root.manifest(out)) == {"docs/keep.md", RECORD_PATH}
+    # Exclusion is by full path: every decoy sharing a basename with an
+    # excluded file is kept, with its content.
+    assert set(review_root.manifest(out)) == {
+        "docs/keep.md",
+        RECORD_PATH,
+        *DECOYS,
+    }
+    for decoy in DECOYS:
+        assert (out / decoy).read_text() == "decoy text", decoy

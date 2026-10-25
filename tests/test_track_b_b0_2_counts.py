@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import sys
+from collections import Counter
 from contextlib import contextmanager, nullcontext
 from itertools import combinations
 from pathlib import Path
@@ -25,10 +26,10 @@ import track_b_b0_2_counts as script  # noqa: E402
 
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
-#: The script's own keeper, kept before any test replaces it.
-REAL_KEEP_AWAKE = script._keep_awake
+#: The script's own host calls, kept before any test replaces them.
+REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "31af2b857c36dd20858267eebb07882b586fce5b711bb0c68cf85ae696e9a60b"
+    "038ee180be5b9f8b86e132dde71cceba234c2aa465a4866f22e907c86b430e42"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1872,17 +1873,62 @@ def released_main(tmp_path, monkeypatch):
     )
 
 
-class _Keeper:
-    """Stands in for the caffeinate process main() starts."""
+class _FakeHost:
+    """Stands in for the macOS calls behind the run's conditions: a host on
+    AC power, at nice 0 with no background policy or QoS clamp, nearly
+    idle, whose sleep assertions are held until released.
 
-    def __init__(self):
-        self.ended = False
+    ``plan`` scripts the conditions check by check: each call of
+    ``RunConditions.failing`` reads the next entry, a condition's name to
+    make it fail at that check, or None; an empty plan fails nothing."""
 
-    def terminate(self):
-        self.ended = True
+    def __init__(self, *, power=None, state=None, refuse=False, plan=()):
+        self.power = script.AC_POWER if power is None else power
+        self.state = (0, 0, 0x21, 1.0, 18) if state is None else state
+        self.refuse = refuse
+        self.plan = list(plan)
+        self.live = set()
+        self.holds = []
+        self.checks = []
+        self.next_id = 1
 
-    def wait(self):
-        return 0
+    def read_state(self):
+        """One check's reads, as the plan makes them."""
+        name = self.plan.pop(0) if self.plan else None
+        self.checks.append(name)
+        power, state = self.power, self.state
+        if name == "ac_power":
+            power = "Battery Power"
+        elif name == "sleep_assertions":
+            self.live.clear()
+        elif name in ("nice", "background", "qos", "load"):
+            index = {"nice": 0, "background": 1, "qos": 2, "load": 3}[name]
+            value = {"nice": 10, "background": 1, "qos": 0x09, "load": 18.0}
+            state = tuple(
+                value[name] if i == index else v for i, v in enumerate(state)
+            )
+        self.read_power = power
+        return state
+
+    def power_source(self):
+        return self.read_power
+
+    def hold(self, kind):
+        if self.refuse:
+            return 0
+        assertion, self.next_id = self.next_id, self.next_id + 1
+        self.live.add(assertion)
+        self.holds.append(kind)
+        return assertion
+
+    def held(self, assertion):
+        return assertion in self.live
+
+    def release(self, assertion):
+        self.live.discard(assertion)
+
+    def qos_class(self):
+        return self.state[2]
 
 
 def _main_environment(tmp_path, monkeypatch, inputs):
@@ -1927,9 +1973,9 @@ def _main_environment(tmp_path, monkeypatch, inputs):
     for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
-    # A host at nice 0 and nearly idle, kept awake by a stand-in.
-    monkeypatch.setattr(script, "_host_state", lambda: (0, 1.0, 18))
-    monkeypatch.setattr(script, "_keep_awake", _Keeper)
+    # A host whose run conditions all hold, with stand-in assertions.
+    monkeypatch.setattr(script, "_Host", _FakeHost)
+    monkeypatch.setattr(script, "_host_state", _FakeHost.read_state)
     return supplied, baseline, calls
 
 
@@ -2377,143 +2423,395 @@ def test_runtime_rejects_dirty_worktree_before_read(
     assert not calls
 
 
+def _main_args(tmp_path):
+    return [
+        "--out",
+        str(tmp_path / "counts.json"),
+        "--local-copy",
+        str(tmp_path / "local.json"),
+    ]
+
+
 @pytest.mark.parametrize(
-    ("state", "message"),
+    ("host", "name"),
     [
-        ((10, 1.0, 18), "run B0.2 at nice 0"),
-        ((0, 18.0, 18), "five-minute load is below the CPU count"),
-        ((0, 40.5, 18), "five-minute load is below the CPU count"),
+        (_FakeHost(power="Battery Power"), "ac_power"),
+        (_FakeHost(power=""), "ac_power"),
+        (_FakeHost(refuse=True), "sleep_assertions"),
+        (_FakeHost(state=(10, 0, 0x21, 1.0, 18)), "nice"),
+        (_FakeHost(state=(0, 1, 0x21, 1.0, 18)), "background"),
+        (_FakeHost(state=(0, 0, 0x11, 1.0, 18)), "qos"),
+        (_FakeHost(state=(0, 0, 0x09, 1.0, 18)), "qos"),
+        (_FakeHost(state=(0, 0, 0x05, 1.0, 18)), "qos"),
+        (_FakeHost(state=(0, 0, 0x21, 18.0, 18)), "load"),
+        (_FakeHost(state=(0, 0, 0x21, 40.5, 18)), "load"),
     ],
 )
-def test_runtime_requires_nice_zero_and_a_quiet_host_before_read(
-    state, message, tmp_path, monkeypatch, invented_main
+def test_runtime_refuses_to_start_unless_every_run_condition_holds(
+    host, name, tmp_path, monkeypatch, invented_main
 ):
     """Each program's limit is wall-clock time, so the run refuses to start
-    deprioritized or on a busy host: before any attempt record, so the
-    version is not spent, and before any read."""
+    off AC power, without its sleep assertions, deprioritized (niceness,
+    the Darwin background policy or a QoS clamp) or on a busy host: before
+    any attempt record, so the version is not spent, and before any read.
+    The assertions it took are given back."""
     _, _, calls = invented_main
-    monkeypatch.setattr(script, "_host_state", lambda: state)
-    local = tmp_path / "local.json"
-    with pytest.raises(SystemExit, match=message):
-        script.main(
-            [
-                "--out",
-                str(tmp_path / "counts.json"),
-                "--local-copy",
-                str(local),
-            ]
-        )
+    monkeypatch.setattr(script, "_Host", lambda: host)
+    with pytest.raises(SystemExit) as caught:
+        script.main(_main_args(tmp_path))
+    assert str(caught.value) == (
+        f"B0.2 refuses to start: run condition {name} fails"
+    )
     assert not calls
-    assert not script._attempt_path(local).exists()
+    assert not script._attempt_path(tmp_path / "local.json").exists()
+    assert not host.live
 
 
-def test_host_state_is_the_niceness_the_five_minute_load_and_the_cpus(
+@pytest.mark.parametrize("qos", [0x00, 0x15, 0x19, 0x21])
+def test_unclamped_qos_classes_meet_the_run_conditions(qos, monkeypatch):
+    """Unspecified, default, user-initiated and user-interactive QoS all
+    run at full speed; only the classes below the default fail."""
+    monkeypatch.setattr(script, "_host_state", _FakeHost.read_state)
+    host = _FakeHost(state=(0, 0, qos, 1.0, 18))
+    assert script.RunConditions(host).failing() is None
+
+
+def test_host_state_reads_niceness_darwin_priority_qos_load_and_cpus(
     monkeypatch,
 ):
+    priorities = {
+        (script.os.PRIO_PROCESS, 0): 7,
+        (script.PRIO_DARWIN_PROCESS, 0): 1,
+    }
     monkeypatch.setattr(
-        script.os,
-        "getpriority",
-        lambda which, who: (
-            7 if (which, who) == (script.os.PRIO_PROCESS, 0) else -1
-        ),
+        script.os, "getpriority", lambda which, who: priorities[which, who]
     )
     monkeypatch.setattr(script.os, "getloadavg", lambda: (1.0, 2.0, 3.0))
     monkeypatch.setattr(script.os, "cpu_count", lambda: 18)
-    assert script._host_state() == (7, 2.0, 18)
+    host = SimpleNamespace(qos_class=lambda: 0x11)
+    assert script._host_state(host) == (7, 1, 0x11, 2.0, 18)
 
 
-def test_main_keeps_the_host_awake_from_before_the_attempt_to_the_end(
+def test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end(
     tmp_path, monkeypatch, invented_main
 ):
-    """The sleep assertion starts before the attempt record, so a host
-    that cannot hold one spends no version, and it lasts to the end."""
+    """The sleep assertions are taken before the attempt record, so a host
+    that cannot hold them spends no version; both are held through every
+    program and given back once both files are written."""
     local = tmp_path / "local.json"
-    processes = []
-
-    class Process:
-        def __init__(self, arguments, **streams):
-            self.arguments, self.streams = arguments, streams
-            self.attempted = script._attempt_path(local).exists()
-            self.ended = False
-            processes.append(self)
-
-        def poll(self):
-            return None
-
-        def terminate(self):
-            self.ended = True
-
-        def wait(self):
-            return 0
-
-    monkeypatch.setattr(script, "_keep_awake", REAL_KEEP_AWAKE)
-    monkeypatch.setattr(script.subprocess, "Popen", Process)
     out = tmp_path / "counts.json"
-    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
-    (process,) = processes
-    assert process.arguments == [
-        "/usr/bin/caffeinate",
-        "-i",
-        "-s",
-        "-w",
-        str(os.getpid()),
+    host = _FakeHost()
+    events = []
+    hold, release = host.hold, host.release
+
+    def holding(kind):
+        events.append(("hold", kind, script._attempt_path(local).exists()))
+        return hold(kind)
+
+    def releasing(assertion):
+        events.append(("release", out.exists() and local.exists()))
+        release(assertion)
+
+    host.hold, host.release = holding, releasing
+    held = []
+    real_milp = script.milp
+
+    def milp(*arguments, **options):
+        held.append(len(host.live))
+        return real_milp(*arguments, **options)
+
+    monkeypatch.setattr(script, "_Host", lambda: host)
+    monkeypatch.setattr(script, "milp", milp)
+    assert script.main(_main_args(tmp_path)) == 0
+    assert events == [
+        ("hold", "PreventUserIdleSystemSleep", False),
+        ("hold", "PreventSystemSleep", False),
+        ("release", True),
+        ("release", True),
     ]
-    assert process.streams == {
-        name: subprocess.DEVNULL for name in ("stdin", "stdout", "stderr")
-    }
-    assert not process.attempted
-    assert process.ended and out.exists()
+    assert held and set(held) == {2}
+    assert not host.live
 
 
-@pytest.mark.parametrize("failure", ["missing", "exited"])
-def test_main_refuses_without_caffeinate_before_the_attempt(
-    failure, tmp_path, monkeypatch, invented_main
+@pytest.mark.parametrize("missing", ["library", "symbol"])
+def test_main_refuses_without_iokit_before_the_attempt(
+    missing, tmp_path, monkeypatch, invented_main
 ):
     _, _, calls = invented_main
 
-    class Process:
-        def __init__(self, arguments, **streams):
-            if failure == "missing":
-                raise FileNotFoundError(2, "No such file", arguments[0])
+    def cdll(name):
+        if missing == "library":
+            raise OSError(f"dlopen({name}) failed")
+        return SimpleNamespace()
 
-        def poll(self):
-            return 1
-
-    monkeypatch.setattr(script, "_keep_awake", REAL_KEEP_AWAKE)
-    monkeypatch.setattr(script.subprocess, "Popen", Process)
-    local = tmp_path / "local.json"
+    monkeypatch.setattr(script, "_Host", REAL_HOST)
+    monkeypatch.setattr(script.ctypes, "CDLL", cdll)
     with pytest.raises(SystemExit) as caught:
-        script.main(
-            [
-                "--out",
-                str(tmp_path / "counts.json"),
-                "--local-copy",
-                str(local),
-            ]
-        )
-    assert str(caught.value) == "B0.2 needs caffeinate to keep the host awake"
+        script.main(_main_args(tmp_path))
+    assert str(caught.value) == "B0.2 needs macOS IOKit for its run conditions"
     assert caught.value.__cause__ is None
     assert not calls
-    assert not script._attempt_path(local).exists()
+    assert not script._attempt_path(tmp_path / "local.json").exists()
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="IOKit is macOS's")
+def test_the_host_calls_read_this_mac():
+    """On the host that runs B0.2: the power source reads, both sleep
+    assertions are held until released, and the QoS class and Darwin
+    priority read."""
+    host = REAL_HOST()
+    assert isinstance(host.power_source(), str) and host.power_source()
+    assertions = [host.hold(kind) for kind in script.SLEEP_ASSERTIONS]
+    try:
+        assert all(assertions) and len(set(assertions)) == 2
+        assert all(host.held(assertion) for assertion in assertions)
+    finally:
+        for assertion in assertions:
+            host.release(assertion)
+    assert not any(host.held(assertion) for assertion in assertions)
+    assert not host.held(0)
+    assert script.PRIO_DARWIN_PROCESS == getattr(
+        os, "PRIO_DARWIN_PROCESS", script.PRIO_DARWIN_PROCESS
+    )
+    niceness, background, qos, load, cpus = script._host_state(host)
+    assert background in (0, 1) and cpus >= 1 and load >= 0
+    assert qos in (0x00, 0x05, 0x09, 0x11, 0x15, 0x19, 0x21)
 
 
 @pytest.mark.skipif(
-    not Path(script.CAFFEINATE).exists(), reason="no caffeinate on this host"
+    not Path("/usr/sbin/taskpolicy").exists(), reason="no taskpolicy here"
 )
-def test_keep_awake_holds_caffeinate_on_this_process():
-    keeper = REAL_KEEP_AWAKE()
-    try:
-        assert keeper.poll() is None
-        assert keeper.args == [
-            script.CAFFEINATE,
-            "-i",
-            "-s",
-            "-w",
-            str(os.getpid()),
-        ]
-    finally:
-        keeper.terminate()
-        keeper.wait()
+@pytest.mark.parametrize(
+    ("policy", "name"),
+    [(["-b"], "background"), (["-c", "background"], "qos")],
+)
+def test_the_host_reads_see_a_background_policy_and_a_qos_clamp(policy, name):
+    """Review round 4 measured the Darwin background policy slowing a CPU
+    loop that niceness 0 let pass; a QoS clamp (``taskpolicy -c``) leaves
+    the Darwin priority at 0 too. Under each, the real reads give the
+    failing value."""
+    code = (
+        "import sys; sys.path.insert(0, 'scripts'); "
+        "import track_b_b0_2_counts as s; "
+        "print(list(s._host_state(s._Host())[:3]))"
+    )
+    run = subprocess.run(
+        ["/usr/sbin/taskpolicy", *policy, sys.executable, "-c", code],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+        env={
+            **os.environ,
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONPATH": f"{ROOT / 'src'}:{ROOT}",
+        },
+    )
+    niceness, background, qos = json.loads(run.stdout.strip().splitlines()[-1])
+    if name == "background":
+        assert background == 1
+    else:
+        assert background == 0 and qos == 0x09
+
+
+def _audit_without_time(audit):
+    return {key: value for key, value in audit.items() if key != "seconds"}
+
+
+def test_the_run_conditions_are_checked_before_every_program(
+    tmp_path, monkeypatch, invented_main
+):
+    """Through main(): after the start check, every program is preceded by
+    a full check of the run conditions, and none runs during one."""
+    host = _FakeHost()
+    events = []
+    real_milp = script.milp
+    read_state = _FakeHost.read_state
+
+    def checking(checked):
+        events.append("check")
+        return read_state(checked)
+
+    def milp(*arguments, **options):
+        events.append("program")
+        return real_milp(*arguments, **options)
+
+    monkeypatch.setattr(script, "_Host", lambda: host)
+    monkeypatch.setattr(script, "_host_state", checking)
+    monkeypatch.setattr(script, "milp", milp)
+    assert script.main(_main_args(tmp_path)) == 0
+    assert events[0] == "check" and "program" in events
+    assert events[1:] == ["check", "program"] * (len(events[1:]) // 2)
+
+
+@settings(max_examples=40, deadline=None)
+@given(st.data())
+def test_a_failed_condition_is_waited_out_and_changes_no_decision(data):
+    """Whatever conditions fail before whichever programs, for fewer
+    rechecks than the bound, the audit is the same, every program runs
+    after a check that passed, each failed check costs one recheck a
+    minute later, and a lapsed sleep assertion is taken again."""
+    counts, registry, _ = _two_atom_disclosure()
+    programs = []
+    real_milp = script.milp
+
+    def milp(*arguments, **options):
+        programs.append(None)
+        return real_milp(*arguments, **options)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(script, "milp", milp)
+        unchecked = script.audit_counts(counts, registry, 10)
+    plan = []
+    for _ in programs:
+        plan.extend(
+            data.draw(
+                st.lists(st.sampled_from(script.RUN_CONDITIONS), max_size=3)
+            )
+        )
+        plan.append(None)
+    events = []
+    host = _FakeHost(plan=plan)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(script, "_host_state", _FakeHost.read_state)
+        patch.setattr(script.time, "sleep", lambda s: events.append(s))
+        patch.setattr(
+            script,
+            "milp",
+            lambda *a, **k: (events.append("program"), real_milp(*a, **k))[1],
+        )
+        conditions = script.RunConditions(host)
+        checked = script.audit_counts(
+            counts, registry, 10, before_program=conditions.before_program
+        )
+    assert _audit_without_time(checked) == _audit_without_time(unchecked)
+    failed = [name for name in plan if name is not None]
+    assert host.checks == plan
+    assert events.count(script.RECHECK_SECONDS) == len(failed)
+    assert events.count("program") == len(programs)
+    # Each check is followed by a recheck a minute later if it failed, or
+    # by its program if it passed: no program runs while one fails.
+    assert len(events) == len(host.checks)
+    for happened, name in zip(events, host.checks, strict=True):
+        assert happened == (
+            "program" if name is None else script.RECHECK_SECONDS
+        )
+    lapses = failed.count("sleep_assertions")
+    assert len(host.holds) == 2 * (1 + lapses)
+
+
+def _raise_line(function, text):
+    """The line where ``function``'s one raise statement holding ``text``
+    starts, which is the line a traceback names."""
+    import inspect
+
+    lines, first = inspect.getsourcelines(function)
+    (offset,) = [i for i, line in enumerate(lines) if text in line]
+    while "raise " not in lines[offset]:
+        offset -= 1
+    return first + offset
+
+
+@pytest.mark.parametrize("name", script.RUN_CONDITIONS)
+def test_a_condition_failing_for_24_hours_stops_the_run_with_its_name(
+    name, tmp_path, monkeypatch, invented_main
+):
+    """The start check passes; before the first program the condition
+    fails, and keeps failing through 1,440 rechecks a minute apart. The
+    run then stops in the release with the script's own message, naming
+    the condition: the version is spent, and no program ran."""
+    host = _FakeHost(plan=[None] + [name] * (script.RECHECKS + 1))
+    sleeps, programs = [], []
+    monkeypatch.setattr(script, "_Host", lambda: host)
+    monkeypatch.setattr(script.time, "sleep", sleeps.append)
+    monkeypatch.setattr(script, "milp", lambda *a, **k: programs.append(a))
+    with pytest.raises(SystemExit) as caught:
+        script.main(_main_args(tmp_path))
+    line = _raise_line(script.RunConditions.before_program, "raise SystemExit")
+    assert str(caught.value) == (
+        f"B0.2 stopped in before_program, line {line}: SystemExit: run"
+        f" condition {name} still failed after 24 hours of rechecks"
+        " between programs"
+    )
+    assert caught.value.__cause__ is None
+    assert sleeps == [script.RECHECK_SECONDS] * script.RECHECKS
+    assert script.RECHECK_SECONDS * script.RECHECKS == 24 * 3600
+    assert not programs
+    assert script._attempt_path(tmp_path / "local.json").exists()
+    assert not (tmp_path / "local.json").exists()
+    assert not (tmp_path / "counts.json").exists()
+
+
+def _present_index(frame):
+    present = frame["sequence"].between(1, 20) & (frame["weight"] > 0)
+    return frame.index[present][0]
+
+
+def _missing_identifier(supplied, case):
+    """Take one identifier from a present unit of the inputs main() reads."""
+    people, _, anchor, design, _ = supplied
+    if case in ("person-wave", "anchor", "person id"):
+        frame = anchor if case == "anchor" else people
+        column = "person_id" if case == "person id" else "interview"
+        frame[column] = frame[column].astype(float)
+        frame.loc[_present_index(frame), column] = np.nan
+    elif case == "design row":
+        person = people.loc[_present_index(people), "person_id"]
+        design.drop(design.index[design["person_id"] == person], inplace=True)
+    else:
+        person = people.loc[_present_index(people), "person_id"]
+        design["cluster"] = design["cluster"].astype(float)
+        design.loc[design["person_id"] == person, "cluster"] = np.nan
+
+
+ROW_MESSAGE = "row has no person or interview number"
+DESIGN_MESSAGE = "a present person has no design stratum or cluster"
+
+
+@pytest.mark.parametrize(
+    ("case", "text", "literal"),
+    [
+        ("person-wave", f"a present person-wave {ROW_MESSAGE}", ROW_MESSAGE),
+        ("person id", f"a present person-wave {ROW_MESSAGE}", ROW_MESSAGE),
+        ("anchor", f"a present anchor {ROW_MESSAGE}", ROW_MESSAGE),
+        ("design row", DESIGN_MESSAGE, DESIGN_MESSAGE),
+        ("design value", DESIGN_MESSAGE, DESIGN_MESSAGE),
+    ],
+)
+def test_a_present_unit_without_an_identifier_stops_the_run_while_reading(
+    case, text, literal, tmp_path, invented_main
+):
+    """Review round 4 (S4): a missing person or interview number, or design
+    variable, for a present person would count them as a person but in no
+    household or design cluster, so an effective size could exceed the
+    count it bounds. The run stops while reading, before any set is
+    built, with the script's own message. (``literal`` is the message's
+    text after its formatted field, as the source holds it.)"""
+    supplied, _, calls = invented_main
+    _missing_identifier(supplied, case)
+    with pytest.raises(SystemExit) as caught:
+        script.main(_main_args(tmp_path))
+    line = _raise_line(script._require_unit_identifiers, literal)
+    assert str(caught.value) == (
+        f"B0.2 stopped in _require_unit_identifiers, line {line}:"
+        f" ValueError: {text}"
+    )
+    assert calls
+    assert script._attempt_path(tmp_path / "local.json").exists()
+    assert not (tmp_path / "local.json").exists()
+
+
+def test_a_missing_identifier_on_a_unit_no_set_counts_is_no_stop():
+    """Only present rows are counted, so a row out of the sample (sequence
+    0) or with no weight may lack an interview number."""
+    people, labor, anchor, design = _worked_rosters()
+    people = people.copy()
+    people["interview"] = people["interview"].astype(float)
+    absent = people.index[~people["sequence"].between(1, 20)]
+    weightless = people.index[people["weight"] <= 0]
+    assert len(absent) or len(weightless)
+    people.loc[absent.union(weightless), "interview"] = np.nan
+    script._require_unit_identifiers(people, anchor, design)
 
 
 @pytest.mark.parametrize("failure", ["draft", "pin"])
@@ -3327,6 +3625,7 @@ def test_the_local_copy_holds_this_releases_counts_and_decisions_only():
     assert script.TARGET_FIELDS == (
         "unit_type",
         "kind",
+        "sets",
         "superset",
         "subset",
         "true_size",
@@ -3338,12 +3637,154 @@ def test_the_local_copy_holds_this_releases_counts_and_decisions_only():
         assert {"unit_type", "kind", "true_size", "result"} <= set(target)
         if target["kind"] == "difference":
             assert {"superset", "subset"} <= set(target)
+            assert "sets" not in target
+        else:
+            assert target["sets"] and "superset" not in target
     # The audit itself ran rounds and settled each target in one; none of
     # that reaches the record.
     full = script.audit_counts(counts, registry, 10)
     assert full["rounds"] and all("round" in t for t in full["targets"])
     text = json.dumps(audit, sort_keys=True)
     assert '"round' not in text and '"reseeded"' not in text
+
+
+def _brute_classes(registry):
+    """This release's classes by direct membership: units of one type that
+    belong to exactly the same of this release's sets, with those sets'
+    paths in registry order."""
+    signatures = {}
+    for path, (unit_type, units) in registry.sets.items():
+        for unit in units:
+            signatures.setdefault((unit_type, unit), []).append(list(path))
+    classes = Counter(
+        (unit_type, json.dumps(paths))
+        for (unit_type, _), paths in signatures.items()
+    )
+    return sorted(
+        (unit_type, json.loads(paths), size)
+        for (unit_type, paths), size in classes.items()
+    )
+
+
+@pytest.mark.parametrize(
+    "case",
+    ["nested", "coinciding", "household", "release_panel", "worked_rosters"],
+)
+def test_each_class_names_this_releases_sets_that_hold_it(case):
+    """Condition 3's "sets" for a class (review round 4, S1): the paths of
+    this release's sets that hold it, exactly as direct membership gives
+    them and in the release's order, and none of B0.1's, even when a B0.1
+    set is the same set as one of this release's."""
+    if case == "nested":
+        _, registry, _ = _nested_prior_release(range(12))
+    elif case == "coinciding":
+        registry = script.SetRegistry()
+        registry.add(("total",), "persons", range(30))
+        registry.add(("part",), "persons", range(20))
+        registry.add_prior(("b0_1", "died"), "persons", range(20), 20)
+        assert (
+            registry.prior[("b0_1", "died")][1] == registry.sets[("part",)][1]
+        )
+    else:
+        inputs = {
+            "household": _household_prior_panel,
+            "release_panel": _release_panel,
+            "worked_rosters": _worked_rosters,
+        }[case]()
+        people, labor, anchor, design = inputs
+        validity = _validity(labor)
+        registry = script.disclosure_registry(people, validity, anchor, design)
+        script.register_b0_1(
+            registry,
+            script.b0_1_sets(people, validity),
+            b01.structural_counts(people, validity),
+        )
+    classes = sorted(
+        (target["unit_type"], target["sets"], target["true_size"])
+        for target in script.build_model(registry)["targets"]
+        if target["kind"] == "atom"
+    )
+    assert classes == _brute_classes(registry)
+    assert all(
+        tuple(path) in registry.sets for _, sets, _ in classes for path in sets
+    )
+
+
+def _three_target_table():
+    """Three targets of this release, in order: A (true size 12), then S
+    (true size 3, sensitive), then B."""
+    counts, registry = _atom_table([(0, 1, 2), (1, 2), (2,)], [12, 3, 20])
+    targets = script.build_model(registry)["targets"]
+    sizes = [target["true_size"] for target in targets]
+    a = sizes.index(12)
+    s = sizes.index(3)
+    b = next(i for i in range(s + 1, len(targets)))
+    assert a < s < b
+    return counts, registry, a, s, b
+
+
+@pytest.mark.parametrize("withheld_in", [1, 2])
+@pytest.mark.parametrize("b_first", ["wide", "irrelevant"])
+def test_a_target_the_ending_round_did_not_reach_is_unreached(
+    withheld_in, b_first, monkeypatch
+):
+    """Review round 4 (S1, exp17) found the targets after a withholding
+    target written as "unclassified" after a round-1 withhold but with
+    their round-1 result after a later one, so the record showed the
+    round. Now a target the ending round did not reach is "unreached"
+    whichever round withheld; a disclosed target keeps "narrow", and one
+    proven irrelevant keeps "irrelevant", which no later round changes.
+
+    Forced: S is wide in round 1 and narrow in round 2; A is narrow in
+    round 1, and so disclosed, when the withhold comes in round 2."""
+    counts, registry, a, s, b = _three_target_table()
+    forced = {
+        1: {s: "narrow"},
+        2: {a: "narrow", s: "wide", b: b_first},
+    }[withheld_in]
+
+    def forcing(system, target, pool, *, seconds):
+        index = [t["columns"] for t in targets].index(target["columns"])
+        result = forced.get(index, b_first if index == b else "wide")
+        if system.disclosed:
+            result = "narrow" if index == s else "wide"
+        return {"programs": [], "result": result, "proof": "forced"}, None
+
+    targets = script.build_model(registry)["targets"]
+    monkeypatch.setattr(script, "classify", forcing)
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["status"] == "withheld"
+    assert len(audit["rounds"]) == withheld_in
+    results = [target["result"] for target in audit["targets"]]
+    # B is never reached in the ending round. After a round-1 withhold it
+    # was never classified; after a round-2 one it keeps only a round-1
+    # irrelevance.
+    kept = withheld_in == 2 and b_first == "irrelevant"
+    expected = {
+        a: "narrow" if withheld_in == 2 else "wide",
+        s: "narrow",
+        b: "irrelevant" if kept else "unreached",
+    }
+    assert {index: results[index] for index in expected} == expected
+    local = script.local_audit(audit)["targets"]
+    assert local[b]["result"] == expected[b]
+    assert '"round' not in json.dumps(local)
+
+
+def test_every_target_of_an_audit_stopped_before_any_round_is_unreached(
+    monkeypatch,
+):
+    """When no seed program finds a point, nothing is classified, and every
+    target reads "unreached", as after a withhold in any round."""
+    counts, registry, _, _, _ = _three_target_table()
+    monkeypatch.setattr(
+        script.AuditSystem,
+        "_program",
+        lambda self, *a, **k: SimpleNamespace(x=None, status=1, fun=None),
+    )
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["status"] == "withheld" and audit["rounds"] == []
+    assert {target["result"] for target in audit["targets"]} == {"unreached"}
 
 
 def _settled_audit():
@@ -3509,8 +3950,8 @@ FILE_EVENTS = {
     "os.truncate": 0,
 }
 #: Audit events that start a process or open a connection, either of which
-#: could carry a value past every file check. main()'s own process, the
-#: caffeinate keeper, is a stand-in in these tests.
+#: could carry a value past every file check. main() starts none; its
+#: sleep assertions are stand-ins in these tests.
 PROCESS_EVENTS = {
     "subprocess.Popen",
     "os.system",
@@ -4227,8 +4668,44 @@ def test_every_output_the_script_can_make_names_no_value():
         for node in calls
         if ast.unparse(node.func).startswith("ctypes")
     ) == [
+        ("__init__", "ctypes.CDLL(CORE_FOUNDATION)"),
+        ("__init__", "ctypes.CDLL(IOKIT)"),
+        ("__init__", "ctypes.CDLL(None)"),
+        ("__init__", "ctypes.POINTER(ctypes.c_int)"),
+        ("__init__", "ctypes.POINTER(ctypes.c_uint)"),
+        ("__init__", "ctypes.POINTER(uint32)"),
         ("_flush_streams", "ctypes.CDLL(None)"),
         ("_flush_streams", "ctypes.CDLL(None).fflush(None)"),
+        ("hold", "ctypes.byref(assertion)"),
+        ("hold", "ctypes.c_uint32(0)"),
+        ("power_source", "ctypes.create_string_buffer(64)"),
+        ("qos_class", "ctypes.byref(qos)"),
+        ("qos_class", "ctypes.byref(relative)"),
+        ("qos_class", "ctypes.c_int(0)"),
+        ("qos_class", "ctypes.c_uint(0)"),
+    ]
+    # The run's conditions call these C functions and no others: they read
+    # the power source and the QoS class, and take, test and give back
+    # this process's sleep assertions.
+    assert sorted(
+        {
+            node.func.attr
+            for node in calls
+            if isinstance(node.func, ast.Attribute)
+            and ast.unparse(node.func.value)
+            in ("self.iokit", "self.cf", "self.libc")
+        }
+    ) == [
+        "CFRelease",
+        "CFStringCreateWithCString",
+        "CFStringGetCString",
+        "IOPMAssertionCopyProperties",
+        "IOPMAssertionCreateWithName",
+        "IOPMAssertionRelease",
+        "IOPSCopyPowerSourcesInfo",
+        "IOPSGetProvidingPowerSourceType",
+        "pthread_get_qos_class_np",
+        "pthread_self",
     ]
     # main() runs three guarded phases, and the release phase holds only
     # the release.
@@ -4251,7 +4728,8 @@ def test_every_output_the_script_can_make_names_no_value():
     ]
     assert [ast.unparse(line) for line in phases[1][1].body] == [
         "local_bytes, public_bytes = release_outputs(person_wave, validity,"
-        " anchor, design, committed, provenance)"
+        " anchor, design, committed, provenance,"
+        " conditions.before_program)"
     ]
     assert [ast.unparse(line) for line in phases[2][1].body] == [
         "write_new(local, local_bytes)",
@@ -4368,7 +4846,9 @@ def test_an_empty_reseeding_withholds_with_complete_files(
     # the two-atom table whose second seeding finds nothing.
     real_release = script.release_counts
     monkeypatch.setattr(
-        script, "release_counts", lambda *args: real_release(counts, registry)
+        script,
+        "release_counts",
+        lambda *args, **kwargs: real_release(counts, registry, **kwargs),
     )
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"

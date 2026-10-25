@@ -155,6 +155,43 @@ tests alone:
 The relabeling test, and its fixed companion, now include panels that
 release as well as panels that withhold.
 
+Review round 4 (Opus, at `60d77cff`) approved the block and the script.
+It found four test gaps (T1–T4), four script gaps (S1–S4) and three
+points for the block (B1–B3), and the coordinator ruled that all eleven
+go in before the freeze:
+- **Tests (T1–T4):**
+  - `main()` runs under an audit hook that refuses any write outside its
+    three outputs, and any new process;
+  - a property test checks that the local copy is the same whatever the
+    rounds;
+  - dropping B0.1's household sets now fails a test;
+  - the relabeling property draws its swaps from heads of different ages
+    and checks that the atoms change.
+- **The decision record (S1):** a target the round that ended the audit
+  did not reach is `unreached`, whichever round that was, and each class
+  names this release's sets that hold it.
+- **The run's conditions (S2):**
+  - the sleep assertions are held in-process through IOKit, in place of
+    `caffeinate`, whose death the script would not have seen;
+  - AC power, the Darwin background policy and the QoS class are checked
+    with niceness and the load. A measurement after the round added the
+    QoS class: under `taskpolicy -c background` a CPU loop ran about a
+    twelfth as fast, with niceness and Darwin priority both 0;
+  - every condition is checked again before every program, and a failure
+    is waited out between programs for up to 24 hours before the run
+    stops.
+- **Separation (S3):** the evidence folder's twelve files are on the
+  exclusion record, and the name rule and the exclusions both read full
+  paths, which a test with same-basename decoys checks.
+- **Identifiers (S4):** a present unit without its person or interview
+  number, or its design variables, stops the run while reading.
+- **The block (B1–B3):**
+  - the status of a withheld release is listed among the audit's limits;
+  - condition 4 names the script's own checks as part of the stop
+    channel;
+  - the operations rule says that running without a wall limit rests on
+    the calibrations, not on the bound.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -255,6 +292,14 @@ requires every output to stay byte-identical. A second unit test adds
 arbitrary extra columns of a forbidden kind to the input frames (marital
 status, death year, Social Security amount) and requires every output to
 stay byte-identical.
+
+Every unit a published set counts must have its identifiers. Each present
+row (sequence number 1 to 20 and a positive weight) needs its person and
+interview number, and each present person a design stratum and cluster.
+Without one, a person would be counted but sit in no household or design
+cluster, so an effective size could exceed the count it bounds. A
+missing identifier stops the run while reading, before any set is built.
+The readers give integer columns, so this check never fires on them.
 
 ### Definitions
 
@@ -520,6 +565,16 @@ rules.
     limits are the one input to a program's answer that the publication
     does not fix; the guarantee above treats a timed-out program as
     giving the same answer on every rerun.
+  - The committed status is evidence too, and the guarantee does not
+    cover a withheld one. Read with B0.1's exact counts, "withheld" rules
+    out every table whose rerun releases.
+    - Review round 4 executed this on a 97-head table. The natural tables
+      withheld at only four splits of the 62-64 band, but other household,
+      cluster and stratum configurations withheld at every other split.
+    - So a reader who can rule out no configuration, as this block's
+      reader cannot, learns no band from the status. A reader who
+      believes some configurations likelier than others could narrow one.
+    - The audit does not model that reader.
 - **B0.1's sets: the conditions on their use.** The coordinator ruled on
   2026-10-24 that B0.1's sets, its disposition sets among them, may
   constrain the audit on these conditions:
@@ -585,6 +640,13 @@ rules.
      - for each target of this release (a class of its units, or a
        difference of two of its sets): its kind, unit type and sets, its
        true size and its final classification;
+       - a class's sets are the paths of this release's sets that hold it,
+         in the release's order, so they depend on this release's sets
+         alone; a difference's are its superset and subset;
+       - a target's final classification is the one from the round that
+         ended the audit, or from the round that disclosed it or proved it
+         irrelevant, which no later round changes. A target the ending
+         round did not reach is `unreached`, whichever round that was;
      - the sizes of this release's classes, by unit type.
 
      Nothing about the rounds is written, on any path: not which round
@@ -595,11 +657,17 @@ rules.
   4. **The stated limit.** The decisions depend on atom sizes, which
      B0.1's sets refine. So which targets are narrow, whether the release
      is withheld, and whether the run stops inside the release can depend
-     on dispositions. So can the run's total time: whoever runs it sees
-     it, and the files' modification times and the commit that adds the
-     published file show when it ended. No time is written into either
-     file or printed. Those are the only channels from dispositions to
-     the outputs.
+     on dispositions.
+     - So can which of the script's own checks stops it. The stop report
+       names that check, by its fixed message and the path or run
+       condition the message names. A stop in the release from any other
+       cause prints only the fixed text.
+     - So can the run's total time. Whoever runs it sees it, and the
+       files' modification times and the commit that adds the published
+       file show when it ended. No time is written into either file or
+       printed.
+
+     Those are the only channels from dispositions to the outputs.
   5. **The invariant.** On invented panels, relabeling deaths and
      move-outs so that B0.1's counts, this release's class sizes and
      every decision are unchanged must leave every byte the run writes
@@ -689,11 +757,28 @@ rules.
       prints no chain; a warning prints nothing; and nothing written
       inside a phase, through Python, a file descriptor or the C
       library's buffered stream, is seen, while output after it is;
-    - the run's conditions: it refuses to start, before the attempt
-      record and any read, at a niceness other than 0, at a five-minute
-      load at or above the CPU count, or when `caffeinate` cannot start;
-      and the sleep assertion is on the script's own process, from before
-      the attempt record to the end;
+    - the run's conditions:
+      - it refuses to start, before the attempt record and any read, when
+        any of the six fails or IOKit is missing;
+      - the sleep assertions are held from before the attempt record to
+        the end, through every program;
+      - through `main()`, every program follows a check that passed;
+      - whenever failures clear within the bound, the audit is unchanged,
+        each failed check costs one recheck a minute later, and a lapsed
+        assertion is taken again;
+      - a condition failing through 1,440 rechecks stops the run in the
+        release with its name, before any program;
+      - on the host that runs it, the real reads see the Darwin
+        background policy and a QoS clamp;
+    - the decision record: each class's sets are this release's sets that
+      hold it, by direct membership and in the release's order, and none
+      of B0.1's. A target the ending round did not reach is `unreached`
+      after a withhold in round 1 or in round 2, and every target is when
+      no seed program finds a point;
+    - identifiers: a present row without its person or interview number,
+      or a present person without a design stratum and cluster, stops the
+      run while reading with the script's own message; a row no set
+      counts may lack one;
     - a static check of the script, which finds that every `raise`
       message interpolates only paths and settings, that it prints only
       the output's path, that only the outputs, the attempt record and
@@ -746,22 +831,49 @@ new version.
     sent to a file in B0.2's evidence folder. It prints nothing until it
     ends, since a count of programs solved depends on sizes, so its
     liveness is checked by its process ID alone.
-  - Each program has a limit of 300 seconds, and the audit runs at most
-    9(T + 2) + 5T(T + 1)/2 of them for T targets: nine seed programs at
+  - Each program has a limit of 300 seconds. The audit runs at most
+    9(T + 2) + 5T(T + 1)/2 programs for T targets: nine seed programs at
     the start and at most nine more in each round, at most five for each
-    target in each round, and at most T + 1 rounds. So the run ends
-    without a wall limit, and none is set: one could only stop a run that
-    would have finished.
+    target in each round, and at most T + 1 rounds.
+    - That bound is finite but says nothing useful about the run's
+      length. At about 3,000 targets it allows about 2×10^7 programs,
+      centuries at 300 seconds each.
+    - So running without a wall limit rests on the calibrations' timings
+      (below), not on the bound. None is set: a wall limit could only
+      stop a run that would have finished, and a stop spends the version.
   - The limit is wall-clock time, so anything that slows the host can
-    add a disclosure or withhold the release. So, before the attempt
-    record is created:
-    - the script starts `caffeinate -i -s -w` on its own process, which
-      holds off idle and system sleep until the script ends, and refuses
-      to start if it cannot;
-    - it refuses to start unless it runs at nice 0 and the five-minute
-      load average is below the host's CPU count (18 on the host that
-      runs it). If the load does not come down, Fleet ops is asked for a
-      quiet window.
+    add a disclosure or withhold the release. So the script holds the run
+    to six conditions, each with a fixed name:
+    - `ac_power`: the host draws from AC power, by IOKit's providing
+      power source;
+    - `sleep_assertions`: the script's own process holds two IOKit sleep
+      assertions, against idle sleep and against system sleep. They are
+      taken before the attempt record and held to the end, and the system
+      drops them when the process ends;
+    - `nice`: the process runs at nice 0;
+    - `background`: the Darwin background policy is off, so
+      `getpriority(PRIO_DARWIN_PROCESS, 0)` reads 0;
+    - `qos`: the main thread's QoS class is not utility, background or
+      maintenance, as a `taskpolicy -c` clamp would make it;
+    - `load`: the five-minute load average is below the host's CPU count
+      (18 on the host that runs it).
+  - Before the attempt record, the run refuses to start unless all six
+    hold, so a refusal spends no version. If the load does not come down,
+    Fleet ops is asked for a quiet window, which must last the whole run.
+  - Before every program, never during one, the script checks all six
+    again.
+    - When one fails, no program starts. A lapsed sleep assertion is
+      taken again; every other failure is left to clear. The six are
+      rechecked every 60 seconds, and the next program runs once all
+      hold.
+    - After 1,440 rechecks in a row, 24 hours, have found one failing,
+      the run stops with the name of the one the last recheck found. That
+      stop, like any other once the attempt record exists, spends the
+      version.
+    - A wait changes nothing a program is given, so it cannot change an
+      answer. The bound counts waiting, not programs.
+  - The operator also keeps the host's lid open and schedules no restart
+    for the run's length; the script checks neither.
   - Before the freeze, an expected run time, extrapolated from the
     calibrations' timings on invented panels of 800, 3,000 and 9,000
     households, goes to the coordinator, so that a run measured in weeks

@@ -875,26 +875,6 @@
   ]
  },
  {
-  "mutation": "the nice check is dropped",
-  "replacements": [
-   {
-    "old": "    if niceness != 0:\n        raise SystemExit(\"run B0.2 at nice 0\")\n",
-    "new": "",
-    "occurrence": 1
-   }
-  ]
- },
- {
-  "mutation": "the load check is dropped",
-  "replacements": [
-   {
-    "old": "    if not load < cpus:\n        raise SystemExit(\n            \"start B0.2 when the five-minute load is below the CPU count\"\n        )\n",
-    "new": "",
-    "occurrence": 1
-   }
-  ]
- },
- {
   "mutation": "the load check reads the one-minute load",
   "replacements": [
    {
@@ -905,31 +885,211 @@
   ]
  },
  {
-  "mutation": "caffeinate holds no idle-sleep assertion",
+  "mutation": "the AC power check is dropped",
   "replacements": [
    {
-    "old": "            [CAFFEINATE, \"-i\", \"-s\", \"-w\", str(os.getpid())],\n",
-    "new": "            [CAFFEINATE, \"-s\", \"-w\", str(os.getpid())],\n",
+    "old": "            \"ac_power\": self.host.power_source() == AC_POWER,\n",
+    "new": "            \"ac_power\": True,\n",
     "occurrence": 1
    }
   ]
  },
  {
-  "mutation": "the host is kept awake only after the attempt record",
+  "mutation": "the sleep-assertion check is dropped",
   "replacements": [
    {
-    "old": "    keeper = _keep_awake()\n    _start_attempt(local, repository_head, script_sha256)\n",
-    "new": "    _start_attempt(local, repository_head, script_sha256)\n    keeper = _keep_awake()\n",
+    "old": "            \"sleep_assertions\": all(\n",
+    "new": "            \"sleep_assertions\": True or all(\n",
     "occurrence": 1
    }
   ]
  },
  {
-  "mutation": "a caffeinate that exits at once is accepted",
+  "mutation": "the nice check is dropped",
   "replacements": [
    {
-    "old": "    if keeper.poll() is not None:\n        raise SystemExit(\"B0.2 needs caffeinate to keep the host awake\")\n",
+    "old": "            \"nice\": niceness == 0,\n",
+    "new": "            \"nice\": True,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the background-policy check is dropped",
+  "replacements": [
+   {
+    "old": "            \"background\": background == 0,\n",
+    "new": "            \"background\": True,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the QoS check is dropped",
+  "replacements": [
+   {
+    "old": "            \"qos\": qos not in LOW_QOS_CLASSES,\n",
+    "new": "            \"qos\": True,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the load check is dropped",
+  "replacements": [
+   {
+    "old": "            \"load\": load < cpus,\n",
+    "new": "            \"load\": True,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the QoS check passes a background clamp",
+  "replacements": [
+   {
+    "old": "LOW_QOS_CLASSES = (0x11, 0x09, 0x05)\n",
+    "new": "LOW_QOS_CLASSES = (0x11, 0x05)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a lapsed sleep assertion is not taken again",
+  "replacements": [
+   {
+    "old": "                self.assertions[kind] = self.host.hold(kind)\n",
+    "new": "                pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the sleep assertions are taken only after the attempt record",
+  "replacements": [
+   {
+    "old": "    conditions = _start_conditions()\n    _start_attempt(local, repository_head, script_sha256)\n",
+    "new": "    _start_attempt(local, repository_head, script_sha256)\n    conditions = _start_conditions()\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the run conditions are checked only at the start",
+  "replacements": [
+   {
+    "old": "            self.before_program()\n",
+    "new": "            pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a failing condition stops the run at once",
+  "replacements": [
+   {
+    "old": "            if rechecks == RECHECKS:\n",
+    "new": "            if rechecks == 0:\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "rechecks do not wait",
+  "replacements": [
+   {
+    "old": "            time.sleep(RECHECK_SECONDS)\n",
+    "new": "            pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an unreached target keeps an earlier round's result",
+  "replacements": [
+   {
+    "old": "            outcome[\"round\"] == ending\n",
+    "new": "            True\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a class names no sets",
+  "replacements": [
+   {
+    "old": "                    for key in (\"sets\", \"superset\", \"subset\")\n",
+    "new": "                    for key in (\"superset\", \"subset\")\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a class's sets include B0.1's",
+  "replacements": [
+   {
+    "old": "                list(path) for path in registry.sets if path_rows[path] in held\n",
+    "new": "                list(path) for path in path_rows if path_rows[path] in held\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the identifier check is dropped",
+  "replacements": [
+   {
+    "old": "        _require_unit_identifiers(person_wave, anchor, design)\n",
     "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the identifier check counts every row",
+  "replacements": [
+   {
+    "old": "    rows = {\"person-wave\": _present(person_wave), \"anchor\": _present(anchor)}\n",
+    "new": "    rows = {\"person-wave\": person_wave, \"anchor\": anchor}\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the audit saves the atom sizes to a file in the temporary directory (np.save)",
+  "replacements": [
+   {
+    "old": "    truth = model[\"sizes\"]\n",
+    "new": "    truth = model[\"sizes\"]\n    np.save(os.path.join(os.environ.get(\"TMPDIR\", \"/tmp\"), \"b02_atoms.npy\"), truth)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy marks a result settled after round 1 with a trailing dot",
+  "replacements": [
+   {
+    "old": "        {key: target[key] for key in TARGET_FIELDS if key in target}\n",
+    "new": "        {**{key: target[key] for key in TARGET_FIELDS if key in target}, **({\"result\": target[\"result\"] + \".\"} if target.get(\"round\", 1) > 1 else {})}\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy orders this release's targets by settling round",
+  "replacements": [
+   {
+    "old": "        for target in audit[\"targets\"]\n        if not target[\"earlier\"]\n",
+    "new": "        for target in sorted(audit[\"targets\"], key=lambda t: -t.get(\"round\", 0))\n        if not target[\"earlier\"]\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "B0.1's household sets are not registered",
+  "replacements": [
+   {
+    "old": "    for path, (unit_type, units, terms) in sets.items():\n        value = sum(",
+    "new": "    for path, (unit_type, units, terms) in sets.items():\n        if unit_type != \"persons\":\n            continue\n        value = sum(",
     "occurrence": 1
    }
   ]
