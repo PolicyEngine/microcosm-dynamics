@@ -2013,6 +2013,37 @@ def test_a_conflicting_landed_merge_leaves_the_union_as_predecessor(
     assert len(problems) == 1
 
 
+@pytest.mark.parametrize("change", ["rewrite", "drop"])
+def test_a_landed_merge_after_a_failing_own_commit_unions_the_last_valid(
+    tmp_path, no_ci_env, change
+):
+    """An own commit that fails is reported and is not a predecessor, so
+    a master merge right after it is compared with the union of the last
+    valid registry, not of the failing one. A merge resolved to master's
+    registry after H001's units are rewritten passes, since the valid
+    H001 is master's. One that leaves out H006, after an own commit that
+    dropped it, is reported, since the valid registry held H006."""
+    repository = init_repository(tmp_path)
+    first = registered(["candidate"])
+    commit_registry(repository, first, "registry")
+    branch(repository, "pr")
+    if change == "rewrite":
+        failing = copy.deepcopy(first)
+        failing["entries"][0]["unit_keys"] = ["s_c:2199"]
+    else:
+        commit_registry(repository, grown(first, 5), "own H006")
+        failing = first
+    bad = commit_registry(repository, failing, f"{change} an own entry")
+    switch(repository, "master")
+    landed = grown(first, 1)
+    base = commit_registry(repository, landed, "master grows")
+    switch(repository, "pr")
+    merge = merge_with(repository, "master", landed)
+    problems = pr_problems(repository, base, head_of(repository))
+    expected = {bad[:12]} | ({merge[:12]} if change == "drop" else set())
+    assert reported(problems) == expected
+
+
 def test_an_octopus_of_a_landed_and_a_contained_parent_is_one_line(
     tmp_path, no_ci_env
 ):
