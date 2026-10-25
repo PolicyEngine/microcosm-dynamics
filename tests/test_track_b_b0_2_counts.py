@@ -25,7 +25,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "f5396be957892518a9d03de18ae6921830bbbfedb870528960d212f9fb74b32b"
+    "dcfac276c806d62e59c450383b7244a0f36395b15cb14e656f464d916573d2ff"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1946,6 +1946,68 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, released_main):
     _assert_no_forbidden_output(record)
 
 
+#: Every provenance field the committed file may hold: the requested shape,
+#: fixed before any count (labels, dimensions and unit types), and SHA-256
+#: hashes of inputs and code.
+COMMITTED_PROVENANCE = {
+    "schema",
+    "repository_head",
+    "worktree_clean",
+    "requested_label_allowlist",
+    "geometry",
+    "script_sha256",
+    "b0_1_counts_sha256",
+    "psid_files_opened_sha256",
+}
+
+
+def test_committed_provenance_is_the_requested_shape_and_input_hashes(
+    tmp_path, released_main
+):
+    """Provenance goes into the committed file, so it holds only the shape
+    the run requested, fixed before any count, and hashes of inputs and
+    code. A hash of the local copy, the attempt record or any other file
+    holding a figure that is not committed could be inverted by
+    enumerating the values the coarsened counts leave open, so no such
+    hash appears in either file."""
+    import re
+
+    supplied, baseline, _ = released_main
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    record = json.loads(out.read_text())
+    assert record["disclosure"]["status"] == "released"
+    assert set(record) - {"counts", "disclosure"} == COMMITTED_PROVENANCE
+    local_record = json.loads(local.read_text())
+    assert set(local_record) - {"counts", "disclosure_audit"} == (
+        COMMITTED_PROVENANCE
+    )
+    # The geometry is the requested shape, set by constants before any
+    # count; the labels are the ones the run requested.
+    assert record["geometry"] == {
+        "collection_waves": list(script.WAVES),
+        "reference_years": [wave - 1 for wave in script.WAVES],
+        "age_convention": "collection_wave",
+        "lag_years": list(script.LAGS),
+    }
+    assert record["requested_label_allowlist"] == supplied[-1]
+    # Every hash either file holds is of an input or of code.
+    inputs_and_code = {
+        hashlib.sha256(Path(script.__file__).read_bytes()).hexdigest(),
+        hashlib.sha256(baseline.read_bytes()).hexdigest(),
+        "a" * 64,  # the invented input file's recorded hash
+    }
+    written = out.read_text() + local.read_text()
+    hashes = set(re.findall(r"\b[0-9a-f]{64}\b", written))
+    assert hashes == inputs_and_code
+    uncommitted = {
+        hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in (local, script._attempt_path(local))
+    }
+    assert not uncommitted & hashes
+
+
 def _nested_prior_release(died):
     """B0.2 publishes 30 persons and 20 of them; B0.1 counted ``died``, 12
     of the 20, exactly."""
@@ -1961,7 +2023,7 @@ def test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts():
     """Which 12 of the 20 B0.1 counted is B0.1's to know, and the local
     copy must not say: it is the same for both splits. The audit itself
     holds the targets that involve B0.1's set; the local copy leaves them
-    out, with their places in the rounds, and gives this release's class
+    out, writes nothing about the rounds, and gives this release's class
     sizes rather than the atoms that B0.1's set refines."""
     records = []
     for died in (range(5, 17), range(12)):
@@ -1977,11 +2039,7 @@ def test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts():
         assert len(local["targets"]) == len(full["targets"]) - len(hidden)
         for target in local["targets"]:
             assert "columns" not in target and "earlier" not in target
-        assert all(
-            0 <= i < len(local["targets"])
-            for r in local["rounds"]
-            for i in r["disclosed"]
-        )
+        assert "rounds" not in local and "disclosed" not in local
         text = json.dumps(local, sort_keys=True)
         assert "b0_1" not in text and "died" not in text
         records.append(text)
@@ -2998,27 +3056,35 @@ def test_main_stops_at_the_rerun_gate_before_any_count_is_written(
 
 
 def test_the_local_copy_holds_this_releases_counts_and_decisions_only():
-    """Condition 2: the local audit is the decision record. Each target of
-    this release is what it is, its true size and its decision; nothing
-    computed from the atoms that is not a decision is written."""
-    (_, _, private), _, _ = _nested_prior_release(range(12))
+    """Conditions 2 and 3: the local audit is the decision record. Each
+    target of this release is what it is, its true size and its final
+    classification; nothing computed from the atoms that is not a
+    decision is written, and nothing about the rounds: not which round
+    disclosed or settled a target, whether the pool was seeded again, or
+    how many rounds ran."""
+    (_, _, private), registry, counts = _nested_prior_release(range(12))
     audit = private["audit"]
-    assert set(audit) == {
-        "base",
-        "status",
-        "rounds",
-        "disclosed",
-        "targets",
-        "class_sizes",
-    }
-    assert audit["rounds"] and all(
-        set(round_) == {"round", "disclosed", "reseeded"}
-        for round_ in audit["rounds"]
+    assert set(audit) == {"base", "status", "targets", "class_sizes"}
+    assert script.TARGET_FIELDS == (
+        "unit_type",
+        "kind",
+        "superset",
+        "subset",
+        "true_size",
+        "result",
     )
     assert audit["targets"]
     for target in audit["targets"]:
         assert set(target) <= set(script.TARGET_FIELDS)
         assert {"unit_type", "kind", "true_size", "result"} <= set(target)
+        if target["kind"] == "difference":
+            assert {"superset", "subset"} <= set(target)
+    # The audit itself ran rounds and settled each target in one; none of
+    # that reaches the record.
+    full = script.audit_counts(counts, registry, 10)
+    assert full["rounds"] and all("round" in t for t in full["targets"])
+    text = json.dumps(audit, sort_keys=True)
+    assert '"round' not in text and '"reseeded"' not in text
 
 
 def _own_targets(registry):
@@ -3137,15 +3203,8 @@ def _decisions(written):
     audit = json.loads(written["local.json"])["disclosure_audit"]["audit"]
     return (
         audit["status"],
-        audit["rounds"],
         [
-            (
-                t["kind"],
-                t.get("superset"),
-                t.get("subset"),
-                t["result"],
-                t.get("round"),
-            )
+            (t["kind"], t.get("superset"), t.get("subset"), t["result"])
             for t in audit["targets"]
         ],
     )
@@ -3579,12 +3638,10 @@ def test_an_empty_reseeding_withholds_with_complete_files(
     record = json.loads(out.read_text())
     assert record["disclosure"]["status"] == "withheld"
     audit = json.loads(local.read_text())["disclosure_audit"]["audit"]
-    assert "pool" not in audit
-    assert audit["rounds"][-1] == {
-        "round": 2,
-        "disclosed": [],
-        "reseeded": True,
-    }
+    # The second seeding ran, but the record says nothing of rounds or of
+    # the pool.
+    assert set(audit) == {"base", "status", "targets", "class_sizes"}
+    assert audit["status"] == "withheld"
     assert calls.count("seed") == 2 * (1 + script.POOL_DIRECTIONS)
 
 

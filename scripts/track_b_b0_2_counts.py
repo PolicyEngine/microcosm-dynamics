@@ -64,7 +64,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "f5396be957892518a9d03de18ae6921830bbbfedb870528960d212f9fb74b32b"
+    "dcfac276c806d62e59c450383b7244a0f36395b15cb14e656f464d916573d2ff"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1094,7 +1094,7 @@ def _validate_registry(counts: dict, registry: SetRegistry) -> None:
 
 
 #: What the local copy records of each of this release's targets: what it
-#: is, its true size, and the audit's decision about it.
+#: is, its true size, and the audit's final decision about it.
 TARGET_FIELDS = (
     "unit_type",
     "kind",
@@ -1102,7 +1102,6 @@ TARGET_FIELDS = (
     "subset",
     "true_size",
     "result",
-    "round",
 )
 
 
@@ -1112,29 +1111,22 @@ def local_audit(audit: dict) -> dict:
 
     B0.1's sets enter the audit in memory only (protocol, "What this audit
     may and may not compute"), so nothing about them beyond B0.1's own
-    counts is written. The record holds the base and the status; each
-    round's targets found narrow and whether it seeded the pool again;
-    and, for each target of this release (a class of its units, or a
-    difference of two of its sets), what it is, its true size, its
-    classification and the round that settled it. Its classes' sizes are
-    given by unit type. Targets that involve a set only B0.1 counts are
-    left out, with their places in the rounds. So are the atoms, which
-    B0.1's sets refine, and everything computed from them that is not a
-    decision: each target's atom columns, proof, programs and range, the
-    pool's size, the relation count and the timing."""
-    shown = [
-        index
-        for index, target in enumerate(audit["targets"])
-        if not target["earlier"]
-    ]
-    renumber = {old: new for new, old in enumerate(shown)}
+    counts is written. The record holds the base and the status; for each
+    target of this release (a class of its units, or a difference of two
+    of its sets), what it is, its true size and its final classification;
+    and its classes' sizes, by unit type. Targets that involve a set only
+    B0.1 counts are left out. So are the rounds: which round disclosed or
+    settled a target, whether the pool was seeded again and how many
+    rounds ran would add resolution to the one channel the decisions
+    open, and a rerun of the frozen code on the frozen inputs gives them
+    again. So are the atoms, which B0.1's sets refine, and everything
+    computed from them that is not a decision: each target's atom
+    columns, proof, programs and range, the pool's size, the relation
+    count and the timing."""
     targets = [
-        {
-            key: audit["targets"][index][key]
-            for key in TARGET_FIELDS
-            if key in audit["targets"][index]
-        }
-        for index in shown
+        {key: target[key] for key in TARGET_FIELDS if key in target}
+        for target in audit["targets"]
+        if not target["earlier"]
     ]
     class_sizes: dict[str, list[int]] = {}
     for target in targets:
@@ -1145,19 +1137,6 @@ def local_audit(audit: dict) -> dict:
     return {
         "base": audit["base"],
         "status": audit["status"],
-        "rounds": [
-            {
-                "round": round_["round"],
-                "disclosed": [
-                    renumber[i] for i in round_["disclosed"] if i in renumber
-                ],
-                "reseeded": round_["reseeded"],
-            }
-            for round_ in audit["rounds"]
-        ],
-        "disclosed": [
-            renumber[i] for i in audit["disclosed"] if i in renumber
-        ],
         "targets": targets,
         "class_sizes": class_sizes,
     }

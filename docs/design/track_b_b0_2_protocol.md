@@ -92,9 +92,13 @@ boundary over every output path, a decision record, a stated limit, an
 invariant test and no precedent. Meeting them changed the script before
 any freeze:
 - **The local copy** now holds only this release's counts and the
-  audit's decisions. It had also held each target's proof, programs and
-  range, the pool's size, the relation count and the times, which depend
-  on atoms that B0.1's sets refine.
+  audit's final decisions. It had also held each target's proof,
+  programs and range, the pool's size, the relation count and the times,
+  which depend on atoms that B0.1's sets refine, and the rounds, which
+  add resolution to the decisions.
+- **Provenance** goes into the committed file, so it holds only the
+  requested shape, fixed before any count, and hashes of inputs and
+  code.
 - **Failures and warnings** print no value. A library's message, which
   can quote a size, is dropped. A warning prints nothing, since whether
   one fires, and where, can depend on the data. The solver prints
@@ -482,9 +486,22 @@ rules.
      written but the attempt record, which holds no count.
   2. **The write boundary.** Every byte the run writes or prints, on
      every path, a failure's included, is one of:
-     - provenance that holds no count: the schema, the repository head,
-       the clean-worktree flag, file hashes, the requested labels and the
-       geometry; the attempt's start time; and the output's path;
+     - provenance that holds no count, within two limits, since it goes
+       into the committed file:
+       - its shape is only what the run requested, fixed before any
+         count: the requested labels, and a geometry of the collection
+         waves, the reference years, the age convention and the lags.
+         Nothing in it is derived from the panel;
+       - its hashes are SHA-256 hashes of inputs and code only: the
+         opened PSID files, B0.1's committed counts and the script. There
+         is no hash of the local copy, the attempt record or any other
+         file that holds a figure not committed, since a hash of a small,
+         structured file can be inverted by enumerating the values the
+         coarsened counts leave open.
+
+       The rest of the provenance is the schema, the repository head, the
+       clean-worktree flag, the attempt's start time and the output's
+       path;
      - this release's own counts, exact in the local copy and coarsened
        in the committed file;
      - B0.1's published counts;
@@ -507,22 +524,23 @@ rules.
        depend on the data;
      - the solver prints nothing;
      - nothing but the two outputs and the attempt record writes a file.
-  3. **The decision record.** The local copy's audit record holds the
-     base and the status; for each round, which of this release's targets
-     it disclosed, numbered among this release's targets, and whether it
-     seeded the pool again; for each target of this release (a class of
-     its units, or a difference of two of its sets), its kind, unit type
-     and sets, its true size, its classification and the round that
-     settled it; and the sizes of this release's classes, by unit type.
-     The number of rounds is part of it, so the record can show that a
-     round disclosed only targets that involve a set only B0.1 counts,
-     though not which targets or their sizes.
+  3. **The decision record.** The local copy's audit record holds:
+     - the base and the status;
+     - for each target of this release (a class of its units, or a
+       difference of two of its sets): its kind, unit type and sets, its
+       true size and its final classification;
+     - the sizes of this release's classes, by unit type.
+
+     Nothing about the rounds is written, on any path: not which round
+     disclosed or settled a target, not whether the pool was seeded
+     again, and not how many rounds ran. Rounds would add resolution to
+     the one channel the decisions open, and a rerun of the frozen code
+     on the frozen inputs gives them again.
   4. **The stated limit.** The decisions depend on atom sizes, which
-     B0.1's sets refine. So which targets are narrow, which round settles
-     each, and whether the release is withheld can depend on
-     dispositions. So can whether the run stops, and where, though its
-     report holds no value. Those are the only channels from dispositions
-     to the outputs.
+     B0.1's sets refine. So which targets are narrow, and whether the
+     release is withheld, can depend on dispositions. So can whether the
+     run stops, and where, though its report holds no value. Those are
+     the only channels from dispositions to the outputs.
   5. **The invariant.** On invented panels, relabeling deaths and
      move-outs so that B0.1's counts, this release's class sizes and
      every decision are unchanged must leave every byte the run writes
@@ -544,7 +562,7 @@ rules.
   and the decision record (above).
 
   Targets that involve a set only B0.1 counts are audited but not
-  written, nor are their places in the rounds. Nor are the atoms, which
+  written, and nothing about the rounds is. Nor are the atoms, which
   B0.1's sets refine, or anything computed from them that is not a
   decision: a target's atoms, proof, programs or range, the pool's size,
   the relations or the times. That file is never committed.
@@ -596,7 +614,10 @@ rules.
       same with and without earlier sets that coincide with them or hold
       the same units as their differences;
     - the write boundary: the local copy holds only the decision record,
-      the provenance and this release's counts; a library's failure
+      the provenance and this release's counts, and nothing about the
+      rounds; the committed provenance holds only the listed fields, its
+      geometry is the requested shape, and every hash either file holds
+      is of an input or of code; a library's failure
       prints its type and the script's line only; only the script's own
       `raise` keeps its message; an interruption, or a library's own exit,
       prints no chain; a warning prints nothing; and a static

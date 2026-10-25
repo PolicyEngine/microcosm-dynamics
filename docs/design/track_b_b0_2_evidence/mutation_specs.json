@@ -648,8 +648,8 @@
   "mutation": "the local copy writes atom columns",
   "replacements": [
    {
-    "old": "            for key in TARGET_FIELDS\n",
-    "new": "            for key in (*TARGET_FIELDS, \"columns\")\n",
+    "old": "        {key: target[key] for key in TARGET_FIELDS if key in target}\n",
+    "new": "        {key: target[key] for key in (*TARGET_FIELDS, \"columns\") if key in target}\n",
     "occurrence": 1
    }
   ]
@@ -770,6 +770,36 @@
    {
     "old": "        except BaseException as error:\n            failure = _failure_text(error)\n",
     "new": "        except Exception as error:\n            failure = _failure_text(error)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy writes the rounds",
+  "replacements": [
+   {
+    "old": "        \"status\": audit[\"status\"],\n        \"targets\": targets,\n",
+    "new": "        \"status\": audit[\"status\"],\n        \"rounds\": audit[\"rounds\"],\n        \"targets\": targets,\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the local copy writes each target's settling round",
+  "replacements": [
+   {
+    "old": "    \"true_size\",\n    \"result\",\n)\n",
+    "new": "    \"true_size\",\n    \"result\",\n    \"round\",\n)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "provenance gains a figure from the panel",
+  "replacements": [
+   {
+    "old": "            \"worktree_clean\": True,\n",
+    "new": "            \"worktree_clean\": True,\n            \"rows_read\": len(person_wave),\n",
     "occurrence": 1
    }
   ]
