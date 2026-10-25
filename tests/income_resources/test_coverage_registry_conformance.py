@@ -6,21 +6,22 @@ survey observations and do not implement the CE3 component classifier.
 
 import gzip
 import hashlib
+import importlib.util
 import json
 import re
 from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
     CAPTURE_DIRECTORY,
+    REGISTRY_PATH,
     TRIGGER_FACTS,
     CoverageRegistry,
     CoverageRegistryError,
-    CoverageRule,
     OpenRuleError,
     ThresholdUnavailableError,
     load_registry,
@@ -48,7 +49,7 @@ def registry():
 
 def citations(value):
     if isinstance(value, dict):
-        if "capture" in value and "sha256" in value:
+        if "capture" in value:
             yield value
         for child in value.values():
             yield from citations(child)
@@ -57,48 +58,21 @@ def citations(value):
             yield from citations(child)
 
 
-def test_canonical_registry_matches_research_fragments(registry):
-    root = CAPTURE_DIRECTORY.parent.parent / "income_resources_ce1"
+@pytest.fixture(scope="module")
+def assemble():
+    spec = importlib.util.spec_from_file_location(
+        "ce1_assemble_registry", REGISTRY_PATH.parent / "assemble_registry.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.build
 
-    def read(name):
-        return json.loads((root / name).read_text())
 
+def test_canonical_registry_matches_research_fragments(registry, assemble):
     assert PUBLISHED_CASES, "CE1 needs published conformance cases"
     assert len(PUBLISHED_CASES) == len(set(PUBLISHED_CASES))
-    rows = [
-        CoverageRule.from_dict(row).to_dict()
-        for name in (
-            "government_rules.json",
-            "se_rules.json",
-            "other_rules.json",
-            "se_modifier_rules.json",
-        )
-        for row in read(name)
-    ]
-    assert {r["rule_id"]: r for r in rows} == {
-        r.rule_id: r.to_dict() for r in registry.rules
-    }
-    thresholds = [
-        threshold
-        for name in (
-            "thresholds_government.json",
-            "thresholds_se.json",
-            "thresholds_other.json",
-        )
-        for threshold in read(name)
-    ]
-    canonical = registry.to_dict()
-    assert {t["threshold_id"]: t for t in thresholds} == {
-        t["threshold_id"]: t for t in canonical["thresholds"]
-    }
-    ret = read("earnings_test_root.json")
-    ret["self_employment_guidance"] = read("earnings_test_se.json")
-    ret["historical_research"] = read("ret_history_government.json")
-    ret["definition_modifier_research"] = read("ret_history_modifiers.json")
-    assert ret == canonical["earnings_test"]
-    assert (
-        read("table_definitions_root.json") == canonical["table_definitions"]
-    )
+    assert assemble().encode("utf-8") == REGISTRY_PATH.read_bytes()
+    assert registry.to_json().encode("utf-8") == REGISTRY_PATH.read_bytes()
 
 
 def test_every_pinned_citation_matches_its_capture(registry):
@@ -166,6 +140,10 @@ def test_page_extracts_record_their_originals():
         data = (CAPTURE_DIRECTORY / row["file"]).read_bytes()
         assert hashlib.sha256(data).hexdigest() == row["sha256"]
         original = row["provenance"]["extracted_from"]
+        assert row["provenance"]["signature_status"] == (
+            "original_signature_invalidated_by_page_extraction"
+        )
+        assert "recorded URL" in row["provenance"]["original_retrieval"]
         assert not (CAPTURE_DIRECTORY / original["file"]).exists()
         assert original["bytes"] > len(data)
         assert re.fullmatch(r"[0-9a-f]{64}", original["sha256"])
@@ -233,7 +211,7 @@ def test_archived_pre1994_footnote_agrees_with_quarterly_statute(
         if t["threshold_id"] == "domestic_cash_quarterly"
     )
     assert registry.threshold("domestic_cash_quarterly", year) == 50
-    assert threshold["aggregation_scope"] == "calendar_quarter"
+    assert threshold["aggregation_scope"] == "employer_employee_quarter"
     assert any(
         c["capture"] == "lii_42_409.html" for c in threshold["citations"]
     )
@@ -255,7 +233,10 @@ def test_family_year_lookup_is_never_silently_empty(registry, year, data):
         assert rules
         assert all(r.family == family for r in rules)
         assert min(r.effective_start for r in rules) <= date(year, 1, 1)
-        assert max(r.effective_end for r in rules) >= date(year, 12, 31)
+        if rules[0].parameters.get("effective_basis") == "taxable_year_start":
+            assert max(r.effective_end for r in rules) >= date(year, 1, 1)
+        else:
+            assert max(r.effective_end for r in rules) >= date(year, 12, 31)
 
 
 def test_all_family_year_coordinates_return_or_refuse(registry):
@@ -304,18 +285,90 @@ def test_trigger_vocabulary_and_awaiting_identification(registry, data):
             assert candidate["citation"]
 
 
-@settings(deadline=None)
-@given(st.booleans())
+@settings(
+    deadline=None,
+    max_examples=8,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@given(st.randoms())
 def test_real_loader_is_row_order_independent_and_round_trips(
-    registry, reverse
+    registry, assemble, tmp_path, random
 ):
     raw = registry.to_dict()
-    if reverse:
-        raw["rules"].reverse()
-        raw["thresholds"].reverse()
+    random.shuffle(raw["rules"])
+    random.shuffle(raw["thresholds"])
     restored = CoverageRegistry.from_dict(raw, capture_root=CAPTURE_DIRECTORY)
     assert restored.to_json() == registry.to_json()
     assert json.loads(restored.to_json()) == restored.to_dict()
+    for path in REGISTRY_PATH.parent.glob("*.json"):
+        if path == REGISTRY_PATH:
+            continue
+        fragment = json.loads(path.read_text())
+        if path.name.endswith("_rules.json") or path.name.startswith(
+            "thresholds_"
+        ):
+            random.shuffle(fragment)
+        (tmp_path / path.name).write_text(json.dumps(fragment))
+    assert assemble(tmp_path).encode("utf-8") == REGISTRY_PATH.read_bytes()
+
+
+@settings(deadline=None)
+@given(st.data())
+def test_real_cases_and_open_readings_obey_schema(registry, data):
+    rule = data.draw(st.sampled_from(registry.rules))
+    assert rule.residual_default["consequence"] == rule.consequence
+    for case in rule.cases:
+        assert case["when"]
+        assert set(case["when"]) <= set(rule.trigger_facts)
+        assert case["consequence"] in {
+            "covered",
+            "noncovered",
+            "covered_above_threshold",
+            "open",
+        }
+    if rule.open_reason:
+        assert rule.consequence in {None, "open"}
+        assert len(rule.open_alternatives) >= 2
+        assert rule.alternative is None
+
+
+def test_tribal_default_and_uncaptured_crp_history(registry):
+    tribal = registry.lookup("tribal_council_service", 2019)[0]
+    assert tribal.consequence == "noncovered"
+    assert any(c["consequence"] == "covered" for c in tribal.cases)
+    with pytest.raises(OpenRuleError, match="CRP_PRE2008"):
+        registry.lookup("self_employment_conservation_reserve", 2007)
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(
+        [
+            "domestic_cash_quarterly",
+            "casual_cash_quarterly",
+            "homeworker_cash_quarterly",
+            "election_remuneration_quarterly",
+            "cash_tips_monthly",
+        ]
+    )
+)
+def test_period_thresholds_keep_employers_separate(registry, threshold_id):
+    threshold = next(
+        t for t in registry.thresholds if t["threshold_id"] == threshold_id
+    )
+    period = "month" if threshold_id == "cash_tips_monthly" else "quarter"
+    assert threshold["aggregation_scope"] == f"employer_employee_{period}"
+
+
+@settings(deadline=None)
+@given(st.integers(1984, 2026))
+def test_federal_legislative_branch_exception_is_returned(registry, year):
+    rule = registry.lookup("federal_retirement_service", year)[0]
+    assert any(
+        c["consequence"] == "covered"
+        and "legislative" in str(c["when"]).lower()
+        for c in rule.cases
+    )
 
 
 @pytest.mark.parametrize(
@@ -333,7 +386,6 @@ def test_published_examples_conform_to_legal_lookup(
     citation = example["citation"]
     passage = " ".join(example["source_passage"].split())
     assert passage in source_text(CAPTURE_DIRECTORY / citation["capture"])
-    assert example["expected_rule_id"] == rule.rule_id
     if example.get("income_year_basis") == (
         "source_edition_lookup_year_for_undated_published_example"
     ):
@@ -341,12 +393,223 @@ def test_published_examples_conform_to_legal_lookup(
     returned = registry.lookup(rule.family, example["income_year"])
     matched = [r for r in returned if r.rule_id == example["expected_rule_id"]]
     assert len(matched) == 1
-    for key, value in example["expected_parameters"].items():
-        assert matched[0].parameters[key] == value
     for threshold_id, amount in example.get("expected_thresholds", {}).items():
         assert (
             registry.threshold(threshold_id, example["income_year"]) == amount
         )
+    outcome = published_outcome(registry, matched[0], example)
+    assert outcome == example["published_outputs"]
+    if "expected_amount" in example:
+        assert (
+            outcome["annual_cash_wages_dollars"] == example["expected_amount"]
+        )
+
+
+def published_outcome(registry, rule, example):
+    """Evaluate only the published example's facts against the returned law.
+
+    The oracle is test-side arithmetic and condition checks, independent of
+    stored expected parameters. Exhausting the inputs and comparing the whole
+    output mapping prevents unused published facts or outcomes.
+    """
+    facts = dict(example["published_inputs"])
+    kind = example["calculation"]
+    params = rule.parameters
+    year = example["income_year"]
+    if kind == "domestic_threshold":
+        annual = facts.pop("weekly_cash_wages") * facts.pop("weeks")
+        over_18 = facts.pop("employee_over_18")
+        unrelated = facts.pop("employee_unrelated")
+        eligible = over_18 and unrelated
+        threshold = registry.threshold(params["threshold_id"], year)
+        result = {
+            "annual_cash_wages_dollars": annual,
+            "social_security_coverage": (
+                "covered"
+                if eligible
+                and annual >= threshold
+                and rule.consequence == "covered_above_threshold"
+                else "noncovered"
+            ),
+        }
+    elif kind in {"agricultural_cash_wages", "domestic_cash_wages"}:
+        cash = facts.pop("cash_wages_cents")
+        employer_paid_tax = facts.pop("employer_paid_employee_fica_cents")
+        if kind == "agricultural_cash_wages":
+            threshold_id = params["threshold_ids"][0]
+            clears = cash >= 100 * registry.threshold(threshold_id, year)
+            all_cash = params["all_cash_covered_when_test_met"]
+            suffix = ""
+        else:
+            annual = facts.pop("expected_annual_cash_at_least_cents")
+            over_18 = facts.pop("employee_over_18")
+            unrelated = facts.pop("employee_unrelated")
+            eligible = over_18 and unrelated
+            clears = eligible and annual >= 100 * registry.threshold(
+                params["threshold_id"], year
+            )
+            all_cash = params["all_cash_covered_when_threshold_met"]
+            suffix = "_per_payday"
+        ss_cash = cash + (
+            employer_paid_tax
+            if params["employer_paid_employee_fica_included_in_wages"]
+            else 0
+        )
+        result = {
+            f"social_security_wages{suffix}_cents": (
+                ss_cash
+                if clears
+                and all_cash
+                and rule.consequence == "covered_above_threshold"
+                else 0
+            ),
+            f"federal_income_tax_wages{suffix}_cents": cash
+            + employer_paid_tax,
+        }
+    elif kind == "agricultural_commodity":
+        dominion = facts.pop("employee_exercises_dominion_and_control")
+        if dominion:
+            assert params["genuine_noncash"] == "noncovered"
+            consequence = next(
+                c["consequence"]
+                for c in rule.cases
+                if "cash_remuneration" in c["when"]
+            )
+        else:
+            case = next(
+                c
+                for c in rule.cases
+                if c["when"].get("noncash_transfer_cash_equivalence") is True
+            )
+            assert date(year, 1, 1) >= date.fromisoformat(
+                case["when"]["services_performed_date"].removeprefix(
+                    "on or after "
+                )
+            )
+            consequence = case["consequence"]
+        result = {
+            "commodity_remuneration": {
+                "noncovered": "not_wages",
+                "covered_above_threshold": "wages",
+            }[consequence]
+        }
+    elif kind == "parent_child_business":
+        parent = facts.pop("parent_works_for_child")
+        business = facts.pop("trade_or_business")
+        controlled = facts.pop("son_controls_work")
+        assert parent and business and controlled
+        case = next(
+            c
+            for c in rule.cases
+            if c["when"]
+            .get("family_service", "")
+            .startswith("parent employed by child in")
+        )
+        result = {"social_security_coverage": case["consequence"]}
+    elif kind == "order_service":
+        required = facts.pop("required_order_duties")
+        vow = facts.pop("vow_of_poverty")
+        if required and vow:
+            excluded = params["poverty_vow_self_employment_excluded"]
+            result = {
+                "self_employment_coverage": (
+                    "noncovered" if excluded else "covered"
+                )
+            }
+        else:
+            consequence = next(
+                c["consequence"]
+                for c in rule.cases
+                if c["when"]
+                .get("religious_order_service", "")
+                .startswith("ordinary employment for a third party")
+            )
+            result = {
+                "social_security_and_medicare_treatment": {
+                    "noncovered": "not_subject_to_FICA",
+                    "covered": "subject_to_FICA",
+                }[consequence]
+            }
+    elif kind == "minister_exemption":
+        effective = facts.pop("exemption_granted")
+        condition = (
+            "effective 1402(e) exemption" if effective else "not established"
+        )
+        consequence = next(
+            c["consequence"]
+            for c in rule.cases
+            if c["when"].get("clergy_or_religious_exemption") == condition
+        )
+        result = {"social_security_coverage": consequence}
+    elif kind == "section_218_reentry":
+        new_member = facts.pop("state_treats_as_new_member")
+        prior_vote = facts.pop("prior_vote")
+        rule_value = params["section_218_divided_vote_same_group_return"][
+            "state_new_member" if new_member else "state_existing_member"
+        ]
+        covered = rule_value == "compulsorily_covered" or (
+            rule_value == "retains_prior_vote" and prior_vote == "yes"
+        )
+        assert params["section_218_first"]
+        result = {"agreement_coverage": "covered" if covered else "noncovered"}
+    elif kind == "state_local_mandatory":
+        agreement = facts.pop("section_218_covered")
+        member = facts.pop("qualified_retirement_system_member")
+        assert params["section_218_first"]
+        assert date(year, 1, 1) >= date.fromisoformat(
+            params["mandatory_start"]
+        )
+        if agreement:
+            case = next(
+                c
+                for c in rule.cases
+                if c["when"]
+                .get("section_218_position", "")
+                .startswith("covered by effective")
+            )
+        else:
+            membership = (
+                "member of an IRS-qualified system"
+                if member
+                else "not a member of an IRS-qualified system"
+            )
+            case = next(
+                c
+                for c in rule.cases
+                if c["when"].get("public_retirement_system_participation")
+                == membership
+            )
+        result = {"social_security_coverage": case["consequence"]}
+    elif kind == "minister_gross_concept":
+        salary = facts.pop("salary_cents")
+        housing = facts.pop("parsonage_value_cents", 0)
+        foreign_exclusion = facts.pop("income_tax_foreign_exclusion_cents", 0)
+        exclusions = params["gross_income_exclusions_disregarded"]
+        amount = salary + (housing if "26USC107" in exclusions else 0)
+        if "26USC911" not in exclusions:
+            amount -= foreign_exclusion
+        result = {"included_se_gross_concept_cents": amount}
+    elif kind == "farm_agent":
+        owner_participates = facts.pop("owner_personally_participates")
+        agent_participates = facts.pop("agent_participates")
+        participation = owner_participates or (
+            agent_participates and params["agent_activities_count"]
+        )
+        case = next(
+            c
+            for c in rule.cases
+            if c["when"].get("material_participation") is participation
+        )
+        result = {
+            "rental_income_included_in_nese": {
+                "covered": True,
+                "noncovered": False,
+            }[case["consequence"]]
+        }
+    else:
+        pytest.fail(f"missing published-example oracle: {kind}")
+    assert not facts, f"unused published inputs: {facts}"
+    return result
 
 
 @settings(deadline=None)
@@ -412,15 +675,14 @@ def test_primary_act_boundaries_preserve_midyear_changes(registry):
 
 def test_community_income_uses_operational_taxable_year_change(registry):
     before = registry.lookup("self_employment_community_income", 1979)[0]
-    after = registry.lookup("self_employment_community_income", 1980)[0]
     assert before.rule_id == "se_community_income_1968_1979"
-    assert after.rule_id == "se_community_income_1980_2026"
-    assert (
-        after.parameters["operational_taxable_year_condition"][
-            "first_included_month"
-        ]
-        == "1980-10"
-    )
+    for year in (1980, 2000, 2003, 2004):
+        with pytest.raises(OpenRuleError):
+            registry.lookup("self_employment_community_income", year)
+    after = registry.lookup_date(
+        "self_employment_community_income", date(2004, 3, 2)
+    )[0]
+    assert after.rule_id == "se_community_income_2004_2026"
     assert after.parameters["statutory_text_amendment_date"] == "2004-03-02"
 
 

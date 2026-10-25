@@ -14,7 +14,7 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "1987 amendment note for former day test"
       }
     ],
@@ -37,7 +37,11 @@
         "at_least_20_days_and_cash_pay_computed_on_time_basis"
       ],
       "noncash": "noncovered",
-      "all_cash_covered_when_test_met": true
+      "all_cash_covered_when_test_met": true,
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -46,81 +50,87 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "IRS Publications 15 and 225 and foreign-agricultural-worker guidance explain thresholds and exemptions; no excluded-population bound was located.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRS Publications 15 and 225 and foreign-agricultural-worker guidance explain thresholds and exemptions; no excluded-population bound was located."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov",
             "congress.gov/crs-product"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "GAO GGD-75-53 gives broad historical agricultural-worker totals and coverage rules without establishing the population excluded by the registry thresholds; other results concern collective bargaining. The congress.gov/crs-product search domain was blocked by robots.txt.",
           "source_group": "GAO/CRS",
-          "result": "GAO GGD-75-53 gives broad historical agricultural-worker totals and coverage rules without establishing the population excluded by the registry thresholds; other results concern collective bargaining. The congress.gov/crs-product search domain was blocked by robots.txt."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS RS 01402.025, SL 30001.357 and RS 00301.320 give legal guidance without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS RS 01402.025, SL 30001.357 and RS 00301.320 give legal guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "BLS Agricultural Workers and NAICS 115 pages describe occupations or industries without identifying workers excluded by the remuneration tests.",
           "source_group": "Census/BLS",
-          "result": "BLS Agricultural Workers and NAICS 115 pages describe occupations or industries without identifying workers excluded by the remuneration tests."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs agricultural employees noncovered coverage statistics -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs agricultural employees noncovered coverage statistics -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "ORES search returned state/local noncoverage research, historical agricultural unemployment-insurance articles and restricted source snippets. No applicable bound was established; restricted pages were not opened.",
           "source_group": "SSA ORES targeted",
-          "result": "ORES search returned state/local noncoverage research, historical agricultural unemployment-insurance articles and restricted source snippets. No applicable bound was established; restricted pages were not opened."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural wages \"social security\" exemption prevalence (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural wages \"social security\" exemption prevalence (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned farmer guidance, broad SOI publications and general TIGTA employment-tax reports; no bound for this agricultural exclusion was established.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned farmer guidance, broad SOI publications and general TIGTA employment-tax reports; no bound for this agricultural exclusion was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "agricultural_service_1988",
@@ -132,7 +142,7 @@
         "capture": "poms_rs_01402020.html",
         "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
         "authority": "SSA POMS RS 01402.020",
-        "location": "A; C.1"
+        "location": "A; C.1; D.1-D.3; F Examples 1-3"
       },
       {
         "capture": "poms_rs_01402025.html",
@@ -143,13 +153,13 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(7)"
       },
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 U.S.C. 409, pinned Code republication with amendment/effective-date notes",
+        "authority": "42 U.S.C. 409, pinned Code republication with amendment/effective-date notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(5)(A), employer-paid employee FICA for agricultural/domestic service"
       },
       {
@@ -175,11 +185,15 @@
       "agricultural_service",
       "amount",
       "month_or_exposure",
-      "reporting_unit"
+      "reporting_unit",
+      "services_performed_date",
+      "cash_remuneration",
+      "noncash_transfer_cash_equivalence",
+      "noncash_transfer_dominion_control"
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Noncash remuneration is excluded.",
+    "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. From August 7, 1995, an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
     "parameters": {
       "threshold_ids": [
         "agricultural_employee_cash",
@@ -195,9 +209,13 @@
         "daily_commute_from_permanent_residence",
         "agricultural_employment_prior_year_less_than_13_weeks"
       ],
-      "noncash": "noncovered",
       "all_cash_covered_when_test_met": true,
-      "employer_paid_employee_fica_included_in_wages": false
+      "employer_paid_employee_fica_included_in_wages": false,
+      "genuine_noncash": "noncovered",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [
       {
@@ -213,10 +231,6 @@
         },
         "source_passage": "For 2026, Gavrielle paid Dan $1,000 during the year.",
         "expected_rule_id": "agricultural_service_1988",
-        "expected_parameters": {
-          "all_cash_covered_when_test_met": true,
-          "employer_paid_employee_fica_included_in_wages": false
-        },
         "expected_thresholds": {
           "agricultural_employee_cash": 150,
           "agricultural_employer_payroll": 2500
@@ -228,7 +242,8 @@
         "published_outputs": {
           "social_security_wages_cents": 100000,
           "federal_income_tax_wages_cents": 107650
-        }
+        },
+        "calculation": "agricultural_cash_wages"
       },
       {
         "example_id": "irs51_2023_gavrielle_dan_2022_wages",
@@ -243,10 +258,6 @@
         },
         "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year.",
         "expected_rule_id": "agricultural_service_1988",
-        "expected_parameters": {
-          "all_cash_covered_when_test_met": true,
-          "employer_paid_employee_fica_included_in_wages": false
-        },
         "expected_thresholds": {
           "agricultural_employee_cash": 150,
           "agricultural_employer_payroll": 2500
@@ -258,7 +269,8 @@
         "published_outputs": {
           "social_security_wages_cents": 100000,
           "federal_income_tax_wages_cents": 107650
-        }
+        },
+        "calculation": "agricultural_cash_wages"
       },
       {
         "example_id": "poms_2024_agricultural_cattle_dominion_control",
@@ -273,18 +285,34 @@
         },
         "source_passage": "the commodity payments are not wages because",
         "expected_rule_id": "agricultural_service_1988",
-        "expected_parameters": {
-          "noncash": "noncovered"
-        },
         "published_inputs": {
-          "monthly_cash_wages_dollars": 50,
-          "monthly_cattle_head": 10,
-          "worker_maintains_separate_cattle": true,
-          "worker_bears_ownership_costs": true
+          "employee_exercises_dominion_and_control": true
         },
         "published_outputs": {
           "commodity_remuneration": "not_wages"
-        }
+        },
+        "calculation": "agricultural_commodity"
+      },
+      {
+        "example_id": "poms_2024_agricultural_cattle_cash_equivalent",
+        "income_year": 2024,
+        "source_edition_year": 2024,
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "citation": {
+          "capture": "poms_rs_01402020.html",
+          "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
+          "authority": "SSA POMS RS 01402.020, revision June 12, 2024",
+          "location": "F, Example 1, employer sale with direct checks for employee share"
+        },
+        "source_passage": "the cash proceeds from the sale are wages because the employee did not exercise dominion and control over the cattle.",
+        "expected_rule_id": "agricultural_service_1988",
+        "published_inputs": {
+          "employee_exercises_dominion_and_control": false
+        },
+        "published_outputs": {
+          "commodity_remuneration": "wages"
+        },
+        "calculation": "agricultural_commodity"
       }
     ],
     "rare_exclusion": {
@@ -293,81 +321,104 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "IRS Publications 15 and 225 and foreign-agricultural-worker guidance explain thresholds and exemptions; no excluded-population bound was located.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRS Publications 15 and 225 and foreign-agricultural-worker guidance explain thresholds and exemptions; no excluded-population bound was located."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov",
             "congress.gov/crs-product"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "GAO GGD-75-53 gives broad historical agricultural-worker totals and coverage rules without establishing the population excluded by the registry thresholds; other results concern collective bargaining. The congress.gov/crs-product search domain was blocked by robots.txt.",
           "source_group": "GAO/CRS",
-          "result": "GAO GGD-75-53 gives broad historical agricultural-worker totals and coverage rules without establishing the population excluded by the registry thresholds; other results concern collective bargaining. The congress.gov/crs-product search domain was blocked by robots.txt."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS RS 01402.025, SL 30001.357 and RS 00301.320 give legal guidance without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS RS 01402.025, SL 30001.357 and RS 00301.320 give legal guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural labor social security excluded wages below 150 2500 prevalence statistics",
+          "result": "BLS Agricultural Workers and NAICS 115 pages describe occupations or industries without identifying workers excluded by the remuneration tests.",
           "source_group": "Census/BLS",
-          "result": "BLS Agricultural Workers and NAICS 115 pages describe occupations or industries without identifying workers excluded by the remuneration tests."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs agricultural employees noncovered coverage statistics -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs agricultural employees noncovered coverage statistics -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "ORES search returned state/local noncoverage research, historical agricultural unemployment-insurance articles and restricted source snippets. No applicable bound was established; restricted pages were not opened.",
           "source_group": "SSA ORES targeted",
-          "result": "ORES search returned state/local noncoverage research, historical agricultural unemployment-insurance articles and restricted source snippets. No applicable bound was established; restricted pages were not opened."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "agricultural wages \"social security\" exemption prevalence (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "agricultural wages \"social security\" exemption prevalence (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned farmer guidance, broad SOI publications and general TIGTA employment-tax reports; no bound for this agricultural exclusion was established.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned farmer guidance, broad SOI publications and general TIGTA employment-tax reports; no bound for this agricultural exclusion was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "when": {
+          "cash_remuneration": "genuine noncash remuneration; employee obtained dominion and control"
+        },
+        "consequence": "noncovered",
+        "description": "A bona fide commodity transfer remains outside agricultural cash wages."
+      },
+      {
+        "when": {
+          "services_performed_date": "on or after 1995-08-07",
+          "noncash_transfer_cash_equivalence": true,
+          "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "agricultural_share_service_1968",
@@ -602,81 +653,87 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "result": "Publication 225 explains crop-share rental and material-participation treatment without a prevalence bound.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Publication 225 explains crop-share rental and material-participation treatment without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov",
             "congress.gov/crs-product"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "result": "Returned USDA-program payment and agricultural-producer reports whose populations do not identify workers affected by 42 USC 410(a)(16). The congress.gov/crs-product search domain was blocked by robots.txt.",
           "source_group": "GAO/CRS",
-          "result": "Returned USDA-program payment and agricultural-producer reports whose populations do not identify workers affected by 42 USC 410(a)(16). The congress.gov/crs-product search domain was blocked by robots.txt."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "sharecroppers crop share social security coverage number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "sharecroppers crop share social security coverage number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS RS 02101.246 gives the share-farmer rule without a numeric prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS RS 02101.246 gives the share-farmer rule without a numeric prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "sharecroppers crop share social security coverage number workers statistics",
+          "result": "Historical Census farm-tenure material identifies crop-share categories, principally before the registry's 1968 start; no bound for this exclusion was established.",
           "source_group": "Census/BLS",
-          "result": "Historical Census farm-tenure material identifies crop-share categories, principally before the registry's 1968 start; no bound for this exclusion was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs sharecroppers share farmers number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs sharecroppers share farmers number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned historical farm-coverage articles and guidance, alongside restricted source snippets; no applicable 1968-2026 bound was established and restricted pages were not opened.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned historical farm-coverage articles and guidance, alongside restricted source snippets; no applicable 1968-2026 bound was established and restricted pages were not opened."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "sharecroppers crop share employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "sharecroppers crop share employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned SOI indexes, W-2 and business statistics, and Publication 225 without a section 410(a)(16) population bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned SOI indexes, W-2 and business statistics, and Publication 225 without a section 410(a)(16) population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "casual_service_1968",
@@ -693,7 +750,7 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(6)(A),(C); 1977 amendment note"
       }
     ],
@@ -709,7 +766,11 @@
     "parameters": {
       "threshold_id": "casual_cash_quarterly",
       "noncash": "noncovered",
-      "farm_for_profit": "agricultural_service"
+      "farm_for_profit": "agricultural_service",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -718,80 +779,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "IRM examination and fraud guidance concerns classification and reporting; no prevalence bound for nonbusiness nondomestic service was located.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRM examination and fraud guidance concerns classification and reporting; no prevalence bound for nonbusiness nondomestic service was located."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "Returned presidential-transition casual payroll and employment-tax audit reports; these uses of casual labor do not establish the statutory excluded population.",
           "source_group": "GAO/CRS",
-          "result": "Returned presidential-transition casual payroll and employment-tax audit reports; these uses of casual labor do not establish the statutory excluded population."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Empty search results.",
           "source_group": "SSA ORES/POMS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "BLS/Census coverage histories concern FUTA/UI exclusions; administrative-record research discusses omissions without bounding this OASDI exclusion.",
           "source_group": "Census/BLS",
-          "result": "BLS/Census coverage histories concern FUTA/UI exclusions; administrative-record research discusses omissions without bounding this OASDI exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"casual\" employment excluded number workers -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"casual\" employment excluded number workers -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Located the 1939 Estimated Numbers of Persons in Employments Excluded from Old-Age Insurance and the 1985 Employment Covered Under the Social Security Program, 1935-84. Neither was opened or pinned; the former predates the registry years and the latter remains an unverified lead.",
           "source_group": "SSA ORES targeted",
-          "result": "Located the 1939 Estimated Numbers of Persons in Employments Excluded from Old-Age Insurance and the 1985 Employment Covered Under the Social Security Program, 1935-84. Neither was opened or pinned; the former predates the registry years and the latter remains an unverified lead."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" social security employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" social security employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned individual nonprofit tax filings, an SS-8 classification determination and IRM/audit guidance without a population bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned individual nonprofit tax filings, an SS-8 classification determination and IRM/audit guidance without a population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "casual_service_1978",
@@ -808,7 +875,7 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(6)(A),(C)"
       }
     ],
@@ -824,7 +891,11 @@
     "parameters": {
       "threshold_id": "casual_cash_annual",
       "noncash": "noncovered",
-      "farm_for_profit": "agricultural_service"
+      "farm_for_profit": "agricultural_service",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -833,80 +904,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "IRM examination and fraud guidance concerns classification and reporting; no prevalence bound for nonbusiness nondomestic service was located.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRM examination and fraud guidance concerns classification and reporting; no prevalence bound for nonbusiness nondomestic service was located."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "Returned presidential-transition casual payroll and employment-tax audit reports; these uses of casual labor do not establish the statutory excluded population.",
           "source_group": "GAO/CRS",
-          "result": "Returned presidential-transition casual payroll and employment-tax audit reports; these uses of casual labor do not establish the statutory excluded population."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Empty search results.",
           "source_group": "SSA ORES/POMS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" \"social security\" excluded statistics number",
+          "result": "BLS/Census coverage histories concern FUTA/UI exclusions; administrative-record research discusses omissions without bounding this OASDI exclusion.",
           "source_group": "Census/BLS",
-          "result": "BLS/Census coverage histories concern FUTA/UI exclusions; administrative-record research discusses omissions without bounding this OASDI exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"casual\" employment excluded number workers -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"casual\" employment excluded number workers -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Located the 1939 Estimated Numbers of Persons in Employments Excluded from Old-Age Insurance and the 1985 Employment Covered Under the Social Security Program, 1935-84. Neither was opened or pinned; the former predates the registry years and the latter remains an unverified lead.",
           "source_group": "SSA ORES targeted",
-          "result": "Located the 1939 Estimated Numbers of Persons in Employments Excluded from Old-Age Insurance and the 1985 Employment Covered Under the Social Security Program, 1935-84. Neither was opened or pinned; the former predates the registry years and the latter remains an unverified lead."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"casual labor\" social security employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"casual labor\" social security employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned individual nonprofit tax filings, an SS-8 classification determination and IRM/audit guidance without a population bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned individual nonprofit tax filings, an SS-8 classification determination and IRM/audit guidance without a population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "college_club_domestic_service_1968",
@@ -1020,80 +1097,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "result": "Publication 15 and student-FICA rulings describe eligibility without bounding qualifying student domestic workers.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Publication 15 and student-FICA rulings describe eligibility without bounding qualifying student domestic workers."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "result": "GAO GGD-93-72 discusses Form 941 instructions for college-club domestic service without a prevalence bound.",
           "source_group": "GAO/CRS",
-          "result": "GAO GGD-93-72 discusses Form 941 instructions for college-club domestic service without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS RS 01901.220 explains the exclusion and history without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS RS 01901.220 explains the exclusion and history without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"college\" \"fraternity\" domestic service social security exemption statistics number students",
+          "result": "Returned UI coverage histories and college/group-quarters census material; residence or enrollment counts do not identify qualifying domestic service.",
           "source_group": "Census/BLS",
-          "result": "Returned UI coverage histories and college/group-quarters census material; residence or enrollment counts do not identify qualifying domestic service."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"fraternity\" student employment excluded number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"fraternity\" student employment excluded number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned POMS, CFR and legislative-history guidance; no bound was established.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned POMS, CFR and legislative-history guidance; no bound was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fraternity\" student employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fraternity\" student employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned publications, fraternal-organization guidance and student-FICA rulings; no bound was established.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned publications, fraternal-organization guidance and student-FICA rulings; no bound was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "communist_organization_service_1968",
@@ -1244,80 +1327,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned Publication 17 indexes and unrelated tax guidance; no population bound was established.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Returned Publication 17 indexes and unrelated tax guidance; no population bound was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned Flemming v. Nestor legal history, foreign-affairs and unrelated administration reports; no count of employees of designated organizations was established.",
           "source_group": "GAO/CRS",
-          "result": "Returned Flemming v. Nestor legal history, foreign-affairs and unrelated administration reports; no count of employees of designated organizations was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Returned Romanian benefit guidance and unrelated POMS references without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "Returned Romanian benefit guidance and unrelated POMS references without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned foreign labor-market and Communist-country historical material without a U.S. excluded-employment bound.",
           "source_group": "Census/BLS",
-          "result": "Returned foreign labor-market and Communist-country historical material without a U.S. excluded-employment bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"Communist\" organization employees coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"Communist\" organization employees coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned 1956 amendment history and historical legislative descriptions without a published employee-population bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned 1956 amendment history and historical legislative descriptions without a published employee-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned international SOI studies, charitable-deduction guidance and unrelated criminal-enforcement material without a relevant bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned international SOI studies, charitable-deduction guidance and unrelated criminal-enforcement material without a relevant bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "communist_organization_service_2014_1219",
@@ -1426,80 +1515,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned Publication 17 indexes and unrelated tax guidance; no population bound was established.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Returned Publication 17 indexes and unrelated tax guidance; no population bound was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned Flemming v. Nestor legal history, foreign-affairs and unrelated administration reports; no count of employees of designated organizations was established.",
           "source_group": "GAO/CRS",
-          "result": "Returned Flemming v. Nestor legal history, foreign-affairs and unrelated administration reports; no count of employees of designated organizations was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Returned Romanian benefit guidance and unrelated POMS references without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "Returned Romanian benefit guidance and unrelated POMS references without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" organization \"social security\" employment exclusion statistics number",
+          "result": "Returned foreign labor-market and Communist-country historical material without a U.S. excluded-employment bound.",
           "source_group": "Census/BLS",
-          "result": "Returned foreign labor-market and Communist-country historical material without a U.S. excluded-employment bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"Communist\" organization employees coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"Communist\" organization employees coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned 1956 amendment history and historical legislative descriptions without a published employee-population bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned 1956 amendment history and historical legislative descriptions without a published employee-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Communist\" employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Communist\" employment social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned international SOI studies, charitable-deduction guidance and unrelated criminal-enforcement material without a relevant bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned international SOI studies, charitable-deduction guidance and unrelated criminal-enforcement material without a relevant bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "domestic_service_1968",
@@ -1522,7 +1617,7 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "1994 amendment note, former 409(a)(6)(B)"
       }
     ],
@@ -1543,7 +1638,11 @@
         "employee",
         "calendar_quarter"
       ],
-      "all_cash_covered_when_threshold_met": true
+      "all_cash_covered_when_threshold_met": true,
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1554,7 +1653,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "domestic_service_1994",
@@ -1571,7 +1676,7 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(6)(B); 1994 amendment and effective date notes"
       }
     ],
@@ -1594,7 +1699,11 @@
         "quarter_of_coverage_if_620_to_999": 1
       },
       "noncash": "noncovered",
-      "domestic_farm_service": "apply_agricultural_rule_through_1994"
+      "domestic_farm_service": "apply_agricultural_rule_through_1994",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1605,7 +1714,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "domestic_service_1995",
@@ -1735,25 +1850,25 @@
         },
         "source_passage": "Jane worked for the remainder of the year (a total of 48 weeks).",
         "expected_rule_id": "domestic_service_1995",
-        "expected_parameters": {
-          "threshold_id": "domestic_cash_annual"
-        },
         "expected_thresholds": {
           "domestic_cash_annual": 3000
         },
-        "inputs": {
-          "weekly_cash_wages": 70,
-          "weeks": 48,
+        "expected_amount": 3360,
+        "calculation": "domestic_threshold",
+        "published_inputs": {
+          "employee_over_18": true,
           "employee_unrelated": true,
-          "employee_over_18": true
+          "weekly_cash_wages": 70,
+          "weeks": 48
         },
-        "expected_amount": 3360
+        "published_outputs": {
+          "annual_cash_wages_dollars": 3360,
+          "social_security_coverage": "covered"
+        }
       },
       {
         "example_id": "irs926_2026_employer_paid_fica_cash_wages",
         "income_year": 2026,
-        "source_edition_year": 2026,
-        "income_year_basis": "published_transaction_year",
         "citation": {
           "capture": "irs_pub926_2026.html",
           "sha256": "d52a3a6b5a481a13668586196522e9113f0252fabc61df1d003c95b128d4bd38",
@@ -1762,24 +1877,23 @@
         },
         "source_passage": "For social security and Medicare tax purposes, your employee\u2019s wages each payday are $100.",
         "expected_rule_id": "domestic_service_1995",
-        "expected_parameters": {
-          "all_cash_covered_when_threshold_met": true,
-          "employer_paid_employee_fica_included_in_wages": false
-        },
         "expected_thresholds": {
           "domestic_cash_annual": 3000
         },
+        "income_year_basis": "published_transaction_year",
         "published_inputs": {
-          "weekly_cash_wages_cents": 10000,
-          "employee_unrelated": true,
           "employee_over_18": true,
-          "employer_pays_employee_fica": true,
-          "expected_annual_cash_at_least_cents": 300000
+          "employee_unrelated": true,
+          "expected_annual_cash_at_least_cents": 300000,
+          "cash_wages_cents": 10000,
+          "employer_paid_employee_fica_cents": 765
         },
         "published_outputs": {
-          "social_security_wages_per_payday_cents": 10000,
-          "federal_income_tax_wages_per_payday_cents": 10765
-        }
+          "federal_income_tax_wages_per_payday_cents": 10765,
+          "social_security_wages_per_payday_cents": 10000
+        },
+        "source_edition_year": 2026,
+        "calculation": "domestic_cash_wages"
       }
     ],
     "rare_exclusion": {
@@ -1790,7 +1904,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "election_work_1968",
@@ -1897,80 +2017,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion.",
           "source_group": "GAO/CRS",
-          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service.",
           "source_group": "Census/BLS",
-          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "election_work_1978",
@@ -2077,80 +2203,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion.",
           "source_group": "GAO/CRS",
-          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service.",
           "source_group": "Census/BLS",
-          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "election_work_1991_0702",
@@ -2279,80 +2411,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion.",
           "source_group": "GAO/CRS",
-          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service.",
           "source_group": "Census/BLS",
-          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "election_work_1995",
@@ -2462,80 +2600,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Election-workers reporting/withholding guidance and Publication 15 describe thresholds without counting workers below the applicable agreement-specific thresholds."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion.",
           "source_group": "GAO/CRS",
-          "result": "Public-employee coverage reports discuss populations excluding students and election workers, so those counts do not bound this exclusion."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS optional-exclusion and reporting provisions give rules without an excluded-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" \"social security\" exempt number statistics",
+          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service.",
           "source_group": "Census/BLS",
-          "result": "Returned UI coverage histories and Census administrative-earnings methodology without a bound on excluded election service."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"election workers\" number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned threshold, Section 218 and reporting guidance, plus beneficiary research, without an election-exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"election workers\" exempt employment statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned IRS election reporting, W-2 and employer-tax guidance without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "family_service_1968",
@@ -2547,7 +2691,7 @@
         "capture": "poms_rs_01901250.html",
         "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f",
         "authority": "SSA POMS RS 01901.250",
-        "location": "A.2; B.2; C.1; D-E"
+        "location": "A.2; B.1 NOTE (corporation rule); B.2; C.1; D-E"
       },
       {
         "capture": "lii_42_410.html",
@@ -2629,7 +2773,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "family_service_1988",
@@ -2780,21 +2930,15 @@
         },
         "source_passage": "Sawyer\u2019s wages are covered for Social Security.",
         "expected_rule_id": "family_service_1988",
-        "expected_parameters": {
-          "parent_child_trade_business_excluded": false
-        },
         "published_inputs": {
           "parent_works_for_child": true,
-          "trade_or_business": "building_contractor",
-          "parent_occupation": "carpenter",
-          "employment": "part_time",
-          "pay_rate_set_by": "union",
-          "son_controls_work": true,
-          "published_duration_years": 9
+          "trade_or_business": true,
+          "son_controls_work": true
         },
         "published_outputs": {
           "social_security_coverage": "covered"
-        }
+        },
+        "calculation": "parent_child_business"
       }
     ],
     "rare_exclusion": {
@@ -2806,7 +2950,35 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "when": {
+          "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
+        },
+        "consequence": "covered",
+        "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions."
+      },
+      {
+        "when": {
+          "family_service": "spouse employed in the employer's trade or business"
+        },
+        "consequence": "covered",
+        "description": "The spousal nonbusiness exclusion does not exclude trade-or-business employment."
+      },
+      {
+        "when": {
+          "incorporation": "corporation is the employer"
+        },
+        "consequence": "covered",
+        "description": "The family relationship exclusion does not apply to a corporation; POMS RS 01901.250 B.1 NOTE, subject to other exclusions."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "The qualifying family-service exclusions apply when none of the stated trade-or-business or corporation exceptions applies; apply the remaining statutory conditions and other families."
+    }
   },
   {
     "rule_id": "fishing_crew_share_service_1968",
@@ -2823,7 +2995,7 @@
       {
         "capture": "poms_rs_01901280.html",
         "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-        "authority": "SSA POMS RS01901.280",
+        "authority": "SSA POMS RS 01901.280",
         "location": "A.1-A.3"
       },
       {
@@ -2870,7 +3042,7 @@
       "age",
       "services_performed_date"
     ],
-    "consequence": "covered",
+    "consequence": null,
     "identification_class": "awaiting_ce2",
     "description": "Historical catch-share fishing services require further verification of the family-service exception transition. Recorded primary findings establish retroactive fishing employment/SE provisions and historical payor-treatment conditions, but this interval remains unavailable rather than backcasting the current regime.",
     "parameters": {
@@ -2881,43 +3053,6 @@
       ],
       "wage_employment_excluded_when_arrangement_qualifies": true,
       "self_employment_treatment": "other_net_earnings_from_self_employment_under_411c2F",
-      "family_service_exclusion_first": true,
-      "additional_cash_threshold_id": "fishing_additional_cash_per_trip",
-      "cash_limit_per_trip": 100,
-      "additional_cash_requires_all": [
-        "not_more_than_100_dollars_per_trip",
-        "contingent_on_a_minimum_catch",
-        "solely_for_traditional_additional_duties_such_as_mate_engineer_or_cook"
-      ],
-      "named_options": {
-        "current_statute_crew_test": {
-          "crew": "fewer_than_10",
-          "averaging_period": "preceding_4_calendar_quarters",
-          "cash_limit_per_trip": 100,
-          "additional_cash_conditions": [
-            "minimum_catch_contingency",
-            "traditional_additional_duties"
-          ]
-        },
-        "poms_crew_test": {
-          "crew": "no_more_than_10",
-          "averaging_period": "previous_calendar_quarter",
-          "cash_limit_per_trip": 100,
-          "additional_cash_conditions": [
-            "traditional_additional_duties"
-          ]
-        }
-      },
-      "additional_named_source_options": {
-        "unamended_cfr_cash_prohibition": {
-          "additional_cash": "none_except_catch_share",
-          "source": "20 CFR 404.1031(a)(1), April 1, 2024 edition"
-        }
-      },
-      "source_disagreement_resolution": {
-        "operative_current_text": "current_statute_crew_test",
-        "basis": "Public Law 104-188 section 1116(a)(2) expressly states fewer than 10 and preceding four calendar quarters, with all three additional-cash conditions; inconsistent POMS and older CFR wording remain recorded as named options."
-      },
       "historical_findings": {
         "original_1976_act": "Public Law 94-455 section 1207(e), later retroactivity changed by Public Law 95-600 section 701(z)",
         "wage_exclusion_service_after": "1954-12-31",
@@ -2945,7 +3080,7 @@
             {
               "capture": "poms_rs_01901280.html",
               "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-              "authority": "SSA POMS RS01901.280",
+              "authority": "SSA POMS RS 01901.280",
               "location": "A.1-A.3"
             },
             {
@@ -3028,7 +3163,7 @@
             {
               "capture": "poms_rs_01901280.html",
               "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-              "authority": "SSA POMS RS01901.280",
+              "authority": "SSA POMS RS 01901.280",
               "location": "A.1-A.3"
             },
             {
@@ -3079,7 +3214,35 @@
             "1976"
           ]
         }
-      ]
+      ],
+      "historical_cash_and_crew_rules": {
+        "1968_through_1984": {
+          "additional_compensation": "none apart from catch share or share of sale proceeds",
+          "crew": "normally fewer than 10; no preceding-four-calendar-quarter averaging imposed by the 1996 amendment"
+        },
+        "1985_through_1988": {
+          "condition": "1996 amendment applies unless payor treated remuneration when paid as subject to FICA",
+          "if_payor_treated_as_fica_taxable": {
+            "additional_compensation": "none apart from catch share or share of sale proceeds",
+            "crew": "normally fewer than 10"
+          },
+          "otherwise": {
+            "cash_limit_per_trip": 100,
+            "additional_cash_requires_all": [
+              "minimum-catch contingency",
+              "traditional additional duties such as mate, engineer or cook"
+            ],
+            "crew": "fewer than 10 averaged over preceding four calendar quarters"
+          },
+          "citation": {
+            "authority": "Public Law 104-188, August 20, 1996, 110 Stat. 1762-1763",
+            "capture": "ce1c_plaw104_188.html",
+            "location": "1116(a)(2)-(3)",
+            "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db"
+          }
+        }
+      },
+      "family_service_priority": "Historical effective date remains unverified; neither open alternative is selected."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3088,80 +3251,95 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions.",
           "source_group": "GAO/CRS",
-          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Empty search results.",
           "source_group": "SSA ORES/POMS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Empty search results.",
           "source_group": "Census/BLS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": "Exact applicability of Public Law 99-272 section 13303(c)(2), as corrected by Public Law 100-647 section 8016(a)(4), and its interaction with earlier retroactive fishing provisions remains unverified. The current crew-size disagreement is settled by Public Law 104-188 but does not settle these earlier dependencies."
+    "open_reason": "Exact applicability of Public Law 99-272 section 13303(c)(2), as corrected by Public Law 100-647 section 8016(a)(4), and its interaction with earlier retroactive fishing provisions remains unverified. The current crew-size disagreement is settled by Public Law 104-188 but does not settle these earlier dependencies.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "name": "family_service_priority_applies_to_earlier_services",
+        "description": "The corrected family-service limitation reaches the earlier retroactive fishing exclusion."
+      },
+      {
+        "name": "family_service_priority_has_later_applicability",
+        "description": "The corrected family-service limitation applies only from a later effective date that remains to be established from the amending acts."
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   },
   {
     "rule_id": "fishing_crew_share_service_1989",
@@ -3178,7 +3356,7 @@
       {
         "capture": "poms_rs_01901280.html",
         "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-        "authority": "SSA POMS RS01901.280",
+        "authority": "SSA POMS RS 01901.280",
         "location": "A.1-A.3"
       },
       {
@@ -3237,13 +3415,6 @@
       "wage_employment_excluded_when_arrangement_qualifies": true,
       "self_employment_treatment": "other_net_earnings_from_self_employment_under_411c2F",
       "family_service_exclusion_first": true,
-      "additional_cash_threshold_id": "fishing_additional_cash_per_trip",
-      "cash_limit_per_trip": 100,
-      "additional_cash_requires_all": [
-        "not_more_than_100_dollars_per_trip",
-        "contingent_on_a_minimum_catch",
-        "solely_for_traditional_additional_duties_such_as_mate_engineer_or_cook"
-      ],
       "named_options": {
         "current_statute_crew_test": {
           "crew": "fewer_than_10",
@@ -3268,10 +3439,6 @@
           "additional_cash": "none_except_catch_share",
           "source": "20 CFR 404.1031(a)(1), April 1, 2024 edition"
         }
-      },
-      "source_disagreement_resolution": {
-        "operative_current_text": "current_statute_crew_test",
-        "basis": "Public Law 104-188 section 1116(a)(2) expressly states fewer than 10 and preceding four calendar quarters, with all three additional-cash conditions; inconsistent POMS and older CFR wording remain recorded as named options."
       },
       "verification_window_start": "1989-01-01",
       "verification_window_explanation": "This is the first complete calendar-year window after the 1988 correcting act, not an asserted original effective date for the family-service amendment.",
@@ -3306,7 +3473,7 @@
             {
               "capture": "poms_rs_01901280.html",
               "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-              "authority": "SSA POMS RS01901.280",
+              "authority": "SSA POMS RS 01901.280",
               "location": "A.1-A.3"
             },
             {
@@ -3411,7 +3578,7 @@
             {
               "capture": "poms_rs_01901280.html",
               "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-              "authority": "SSA POMS RS01901.280",
+              "authority": "SSA POMS RS 01901.280",
               "location": "A.1-A.3"
             },
             {
@@ -3482,7 +3649,8 @@
             "1976"
           ]
         }
-      ]
+      ],
+      "historical_default_cash_rule": "No compensation apart from catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3491,80 +3659,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions.",
           "source_group": "GAO/CRS",
-          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Empty search results.",
           "source_group": "SSA ORES/POMS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Empty search results.",
           "source_group": "Census/BLS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "fishing_crew_share_service_1995",
@@ -3581,7 +3755,7 @@
       {
         "capture": "poms_rs_01901280.html",
         "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
-        "authority": "SSA POMS RS01901.280",
+        "authority": "SSA POMS RS 01901.280",
         "location": "A.1-A.3"
       },
       {
@@ -3811,80 +3985,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "Publication 334 explains crew self-employment treatment without bounding qualifying catch-share crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions.",
           "source_group": "GAO/CRS",
-          "result": "Returned SBA disaster-loan and fishing-industry oversight material without counts satisfying the statutory crew and remuneration conditions."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "Empty search results.",
           "source_group": "SSA ORES/POMS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing crew\" social security exemption number workers statistics",
+          "result": "Empty search results.",
           "source_group": "Census/BLS",
-          "result": "Empty search results."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"fishermen\" self employed number coverage -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned POMS/CFR, fishing rulings, legislative history and foreign social-insurance descriptions without a U.S. catch-share exclusion bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"fishing\" self employed crew statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned Publication 334, corporate/industry SOI statistics and business-income studies whose populations do not establish qualifying crew members."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "foreign_agricultural_service_1968",
@@ -3995,80 +4175,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"H-2A\" workers social security exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"H-2A\" workers social security exempt number statistics",
+          "result": "IRS foreign-agricultural-worker and alien-employment guidance confirms the exemption without a population bound.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRS foreign-agricultural-worker and alien-employment guidance confirms the exemption without a population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"H-2A\" workers social security exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"H-2A\" workers social security exempt number statistics",
+          "result": "GAO-15-154 reports H-2A visa statistics but explicitly omits workers from visa-exempt countries; visa counts therefore do not upper-bound the full excluded population. GAO-25-106389 is a newer oversight lead. Plain requests to the GAO source product pages returned HTTP 403.",
           "source_group": "GAO/CRS",
-          "result": "GAO-15-154 reports H-2A visa statistics but explicitly omits workers from visa-exempt countries; visa counts therefore do not upper-bound the full excluded population. GAO-25-106389 is a newer oversight lead. Plain requests to the GAO source product pages returned HTTP 403."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"H-2A\" workers social security exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"H-2A\" workers social security exempt number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS immigration-classification guidance supplies eligibility facts without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS immigration-classification guidance supplies eligibility facts without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"H-2A\" workers social security exempt number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"H-2A\" workers social security exempt number statistics",
+          "result": "Returned Census meeting public comments and labor-mobility research. Public-comment estimates and certification or visa totals do not establish a complete exclusion-population bound.",
           "source_group": "Census/BLS",
-          "result": "Returned Census meeting public comments and labor-mobility research. Public-comment estimates and certification or visa totals do not establish a complete exclusion-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"H-2A\" workers number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"H-2A\" workers number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned immigration guidance and restricted OACT source snippets; no permissible bound was established and restricted pages were not opened.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned immigration guidance and restricted OACT source snippets; no permissible bound was established and restricted pages were not opened."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"H-2A\" employment tax statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"H-2A\" employment tax statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned Publications 15, 225 and 519, Forms 943/W-2 instructions and IRM provisions without an excluded-population bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned Publications 15, 225 and 519, Forms 943/W-2 instructions and IRM provisions without an excluded-population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "foreign_government_service_1968",
@@ -4201,7 +4387,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "foreign_vessel_aircraft_service_1968",
@@ -4317,80 +4509,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "result": "IRS alien-employment and overseas-employment guidance and Publications 54/519 explain coverage without a matching population bound.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRS alien-employment and overseas-employment guidance and Publications 54/519 explain coverage without a matching population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "result": "Returned noncitizen SSN/benefit and maritime-administration reports without counts matching vessel nationality, employee citizenship, employer nationality and place-of-service conditions.",
           "source_group": "GAO/CRS",
-          "result": "Returned noncitizen SSN/benefit and maritime-administration reports without counts matching vessel nationality, employee citizenship, employer nationality and place-of-service conditions."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS RS 01901.170 and related guidance describe the rule without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS RS 01901.170 and related guidance describe the rule without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"foreign\" \"vessel\" \"aircraft\" social security excluded employees statistics",
+          "result": "Returned foreign-trade shipping definitions and transport occupations; shipments or broad occupational counts do not identify the statutory excluded population.",
           "source_group": "Census/BLS",
-          "result": "Returned foreign-trade shipping definitions and transport occupations; shipments or broad occupational counts do not identify the statutory excluded population."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"foreign vessel\" employees number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"foreign vessel\" employees number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Located the 1964 United States Social Security Programs: Their Application To Nonnationals and to Beneficiaries Living Abroad; it was not opened or pinned. Other results were guidance without a verified bound.",
           "source_group": "SSA ORES targeted",
-          "result": "Located the 1964 United States Social Security Programs: Their Application To Nonnationals and to Beneficiaries Living Abroad; it was not opened or pinned. Other results were guidance without a verified bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"foreign vessel\" employees social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"foreign vessel\" employees social security statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned IRS alien-employment and foreign-source-income guidance without a matching population bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned IRS alien-employment and foreign-source-income guidance without a matching population bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "guam_philippines_temporary_service_1968",
@@ -4516,80 +4714,86 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "result": "IRS alien-employment guidance identifies the Guam/Philippine H-2 exemption without a prevalence bound.",
           "source_group": "IRS/Statistics of Income/TIGTA",
-          "result": "IRS alien-employment guidance identifies the Guam/Philippine H-2 exemption without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "date": "2026-10-24",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "result": "GAO-11-805T reports a combined Filipino/Korean contract-worker population excluded from SSA data in CNMI. Its geography and combined citizenship population do not directly identify the Guam-only row. GAO NSIAD-91-192 is an older Guam labor lead. Plain source product-page requests returned HTTP 403.",
           "source_group": "GAO/CRS",
-          "result": "GAO-11-805T reports a combined Filipino/Korean contract-worker population excluded from SSA data in CNMI. Its geography and combined citizenship population do not directly identify the Guam-only row. GAO NSIAD-91-192 is an older Guam labor lead. Plain source product-page requests returned HTTP 403."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov/policy/docs",
             "secure.ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics -MINT -DYNASIM -Trustees -solvency -projections",
+          "result": "POMS notice language and territorial-employment guidance describe the exclusion without a prevalence bound.",
           "source_group": "SSA ORES/POMS",
-          "result": "POMS notice language and territorial-employment guidance describe the exclusion without a prevalence bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "date": "2026-10-24",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Guam\" \"Philippines\" social security exempt workers number statistics",
+          "result": "Returned Guam population, birthplace and employment tables and metadata without jointly identifying temporary admission and Philippine residence.",
           "source_group": "Census/BLS",
-          "result": "Returned Guam population, birthplace and employment tables and metadata without jointly identifying temporary admission and Philippine residence."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "site:ssa.gov/policy/docs \"Guam\" \"Philippines\" workers number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "date": "2026-10-24",
           "domains": [
             "ssa.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "site:ssa.gov/policy/docs \"Guam\" \"Philippines\" workers number -MINT -DYNASIM -Trustees -solvency -projections -inurl:oact",
+          "result": "Returned geographic beneficiary and SSI tables, which measure beneficiaries rather than excluded workers; no bound was established.",
           "source_group": "SSA ORES targeted",
-          "result": "Returned geographic beneficiary and SSI tables, which measure beneficiaries rather than excluded workers; no bound was established."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         },
         {
-          "query": "\"Guam\" \"Philippines\" employment tax statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "date": "2026-10-24",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-24",
-          "timezone": "America/New_York",
-          "utc_date": "2026-10-25",
+          "query": "\"Guam\" \"Philippines\" employment tax statistics (\"Statistics of Income\" OR SOI OR TIGTA)",
+          "result": "Returned territorial tax guidance, broad SOI publications and IRM provisions without a matching excluded-worker bound.",
           "source_group": "IRS SOI/TIGTA targeted",
-          "result": "Returned territorial tax guidance, broad SOI publications and IRM provisions without a matching excluded-worker bound."
+          "timezone": "America/New_York",
+          "utc_date": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "international_organization_service_1968",
@@ -4707,7 +4911,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "international_organization_service_1995",
@@ -4800,7 +5010,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "newspaper_service_1968",
@@ -4817,7 +5033,7 @@
       {
         "capture": "poms_rs_01901500.html",
         "sha256": "165a4fe4f7696cbd4ea2f50d8ee9d8e52dc9a48b5d707f257a27d53e80be24cf",
-        "authority": "SSA POMS RS01901.500",
+        "authority": "SSA POMS RS 01901.500",
         "location": "A-B"
       },
       {
@@ -4898,7 +5114,7 @@
             {
               "capture": "poms_rs_01901500.html",
               "sha256": "165a4fe4f7696cbd4ea2f50d8ee9d8e52dc9a48b5d707f257a27d53e80be24cf",
-              "authority": "SSA POMS RS01901.500",
+              "authority": "SSA POMS RS 01901.500",
               "location": "A-B"
             },
             {
@@ -4987,7 +5203,7 @@
             {
               "capture": "poms_rs_01901500.html",
               "sha256": "165a4fe4f7696cbd4ea2f50d8ee9d8e52dc9a48b5d707f257a27d53e80be24cf",
-              "authority": "SSA POMS RS01901.500",
+              "authority": "SSA POMS RS 01901.500",
               "location": "A-B"
             },
             {
@@ -5043,32 +5259,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"newspaper carriers\" \"social security\" (prevalence OR statistics OR \"number\")",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS guidance and historical Publication334; no exclusion-population bound located.",
-          "date_timezone": "UTC"
+          "query": "\"newspaper carriers\" \"social security\" (prevalence OR statistics OR \"number\")",
+          "result": "IRS guidance and historical Publication 334; no exclusion-population bound located."
         },
         {
-          "query": "\"newspaper carriers\" \"coverage\" (number OR employment) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "BLS coverage timeline, industry counts and occupation definitions; no age-and-employment-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"newspaper carriers\" \"coverage\" (number OR employment) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "BLS coverage timeline, industry counts and occupation definitions; no age-and-employment-exclusion bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "newspaper_service_1996",
@@ -5085,7 +5307,7 @@
       {
         "capture": "poms_rs_01901500.html",
         "sha256": "165a4fe4f7696cbd4ea2f50d8ee9d8e52dc9a48b5d707f257a27d53e80be24cf",
-        "authority": "SSA POMS RS01901.500",
+        "authority": "SSA POMS RS 01901.500",
         "location": "A-B"
       },
       {
@@ -5248,32 +5470,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"newspaper carriers\" \"social security\" (prevalence OR statistics OR \"number\")",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS guidance and historical Publication334; no exclusion-population bound located.",
-          "date_timezone": "UTC"
+          "query": "\"newspaper carriers\" \"social security\" (prevalence OR statistics OR \"number\")",
+          "result": "IRS guidance and historical Publication 334; no exclusion-population bound located."
         },
         {
-          "query": "\"newspaper carriers\" \"coverage\" (number OR employment) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "BLS coverage timeline, industry counts and occupation definitions; no age-and-employment-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"newspaper carriers\" \"coverage\" (number OR employment) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "BLS coverage timeline, industry counts and occupation definitions; no age-and-employment-exclusion bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "nonresident_alien_cultural_exchange_service_1968",
@@ -5302,7 +5530,7 @@
     "identification_class": "awaiting_ce2",
     "description": "Q cultural exchange services had no specific Q-class exclusion before October 1, 1994; apply the ordinary employment definition and other exclusions.",
     "parameters": {
-      "visa_class": "Q-1",
+      "visa_class": "Q",
       "other_coverage_rules_required": true,
       "code_edition_evidence": [
         {
@@ -5375,32 +5603,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS visa eligibility, Form14581-B and employer guidance; no visa-specific exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "result": "IRS visa eligibility, Form 14581-B and employer guidance; no visa-specific exclusion bound located."
         },
         {
-          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "nonresident_alien_cultural_exchange_service_1994_1001",
@@ -5429,7 +5663,7 @@
     "identification_class": "awaiting_ce2",
     "description": "Nonimmigrant nonresident Q cultural exchange visitors are excluded for U.S. services participating in their international cultural exchange program for the qualified employer through which Q status was obtained. Work outside the program is subject to ordinary coverage rules.",
     "parameters": {
-      "visa_class": "Q-1",
+      "visa_class": "Q",
       "requires_admission_purpose_service": true,
       "code_edition_evidence": [
         {
@@ -5477,32 +5711,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS visa eligibility, Form14581-B and employer guidance; no visa-specific exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "result": "IRS visa eligibility, Form 14581-B and employer guidance; no visa-specific exclusion bound located."
         },
         {
-          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "nonresident_alien_service_1968",
@@ -5636,32 +5876,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"nonresident alien\" \"FICA\" exemption (statistics OR prevalence OR count)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS FICA eligibility and immigration guidance; no prevalence bound for exempt employment located.",
-          "date_timezone": "UTC"
+          "query": "\"nonresident alien\" \"FICA\" exemption (statistics OR prevalence OR count)",
+          "result": "IRS FICA eligibility and immigration guidance; no prevalence bound for exempt employment located."
         },
         {
-          "query": "\"nonresident alien\" \"social security\" excluded employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying excluded-employment bound located.",
-          "date_timezone": "UTC"
+          "query": "\"nonresident alien\" \"social security\" excluded employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying excluded-employment bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "nonresident_alien_vocational_service_1968",
@@ -5701,7 +5947,7 @@
       "statutory_student_service",
       "services_performed_date"
     ],
-    "consequence": "noncovered",
+    "consequence": null,
     "identification_class": "awaiting_ce2",
     "description": "The original applicability of the M-1 vocational-student service exclusion remains open. The 1988 correction adds M as if included in a related 1986 provision, whose reproduced applicability note carries a scholarship/fellowship qualification. The named options are retained without selecting an unconditional service-effective date.",
     "parameters": {
@@ -5770,32 +6016,47 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS visa eligibility, Form14581-B and employer guidance; no visa-specific exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "result": "IRS visa eligibility, Form 14581-B and employer guidance; no visa-specific exclusion bound located."
         },
         {
-          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": "The exact original and retroactive M-class applicability boundary remains unverified after reviewing the 1988 correction and the related 1986 applicability notes. Named options remain unselected; earlier income years are refused."
+    "open_reason": "The exact original and retroactive M-class applicability boundary remains unverified after reviewing the 1988 correction and the related 1986 applicability notes. Named options remain unselected; earlier income years are refused.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Unselected source reading: {\"latest_enactment_date\": \"1988-11-10\", \"qualification\": \"Retained locator alternative; not selected as the legal original effective date.\"}",
+        "name": "1988_enactment_only_pending_applicability_resolution"
+      },
+      {
+        "description": "Unselected source reading: {\"basis\": \"Public Law 100-647 sections 1001(d)(2)(E),1019(a)\", \"original_applicability_note\": \"section 151(d): taxable years beginning after 1986; scholarship/fellowship grant-date qualification\", \"related_original_provision\": \"Tax Reform Act of 1986 section 123\"}",
+        "name": "as_if_tra1986_section123_applicability"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   },
   {
     "rule_id": "nonresident_alien_vocational_service_1989",
@@ -5936,32 +6197,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS visa eligibility, Form14581-B and employer guidance; no visa-specific exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"M-1\" \"Q-1\" \"FICA\" (statistics OR number OR exemptions)",
+          "result": "IRS visa eligibility, Form 14581-B and employer guidance; no visa-specific exclusion bound located."
         },
         {
-          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"vocational students\" \"cultural exchange\" employment statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "statutory_homeworker_service_1968",
@@ -5972,13 +6239,13 @@
       {
         "capture": "poms_rs_01402230.html",
         "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
-        "authority": "SSA POMS RS01402.230",
-        "location": "A-B,1951-1977and1978+cash thresholds"
+        "authority": "SSA POMS RS 01402.230",
+        "location": "A-B; 1951-1977 and 1978+ cash thresholds"
       },
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(8),currentlaw and1977notes",
+        "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(8); 1977 amendment and effective-date notes"
       }
     ],
@@ -5995,53 +6262,63 @@
     "parameters": {
       "threshold_id": "homeworker_cash_quarterly",
       "statutory_homeworker_covered_pay": "cash_and_noncash_if_cash_test_met",
-      "common_law_employee": "cash_and_noncash_without_this_threshold"
+      "common_law_employee": "cash_and_noncash_without_this_threshold",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
       "strict": "unresolved",
       "negligible_candidate": null,
       "searches": [
-        "Reviewed POMS RS01402.230 definitions/policy; no numeric prevalence bound in these passages. Broader search remains open.",
+        "Reviewed POMS RS 01402.230 definitions/policy; no numeric prevalence bound in these passages. Broader search remains open.",
         {
-          "query": "\"statutory homeworkers\" (statistics OR number OR prevalence)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS definitions and SOI form documentation; no below-cash-threshold prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"statutory homeworkers\" (statistics OR number OR prevalence)",
+          "result": "IRS definitions and SOI form documentation; no below-cash-threshold prevalence bound located."
         },
         {
-          "query": "\"homeworkers\" \"social security\" coverage -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "Coverage and industry classification guidance; no exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"homeworkers\" \"social security\" coverage -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "Coverage and industry classification guidance; no exclusion bound located."
         },
         {
-          "query": "\"statutory homeworkers\" employment (statistics OR number)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying homeworker-exclusion prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"statutory homeworkers\" employment (statistics OR number)",
+          "result": "No qualifying homeworker-exclusion prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "statutory_homeworker_service_1978",
@@ -6052,13 +6329,13 @@
       {
         "capture": "poms_rs_01402230.html",
         "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
-        "authority": "SSA POMS RS01402.230",
-        "location": "A-B,1951-1977and1978+cash thresholds"
+        "authority": "SSA POMS RS 01402.230",
+        "location": "A-B; 1951-1977 and 1978+ cash thresholds"
       },
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(8),currentlaw and1977notes",
+        "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(8); 1977 amendment and effective-date notes"
       }
     ],
@@ -6075,53 +6352,63 @@
     "parameters": {
       "threshold_id": "homeworker_cash_annual",
       "statutory_homeworker_covered_pay": "cash_and_noncash_if_cash_test_met",
-      "common_law_employee": "cash_and_noncash_without_this_threshold"
+      "common_law_employee": "cash_and_noncash_without_this_threshold",
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
       "strict": "unresolved",
       "negligible_candidate": null,
       "searches": [
-        "Reviewed POMS RS01402.230 definitions/policy; no numeric prevalence bound in these passages. Broader search remains open.",
+        "Reviewed POMS RS 01402.230 definitions/policy; no numeric prevalence bound in these passages. Broader search remains open.",
         {
-          "query": "\"statutory homeworkers\" (statistics OR number OR prevalence)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS definitions and SOI form documentation; no below-cash-threshold prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"statutory homeworkers\" (statistics OR number OR prevalence)",
+          "result": "IRS definitions and SOI form documentation; no below-cash-threshold prevalence bound located."
         },
         {
-          "query": "\"homeworkers\" \"social security\" coverage -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "Coverage and industry classification guidance; no exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"homeworkers\" \"social security\" coverage -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "Coverage and industry classification guidance; no exclusion bound located."
         },
         {
-          "query": "\"statutory homeworkers\" employment (statistics OR number)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying homeworker-exclusion prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"statutory homeworkers\" employment (statistics OR number)",
+          "result": "No qualifying homeworker-exclusion prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "student_nurse_service_1968",
@@ -6235,32 +6522,38 @@
       "searches": [
         "Web, domains irs.gov and secure.ssa.gov: \"student nurse\" \"exemption\" \"number\" social security; eligibility guidance and qualitative legislative discussion returned, no numeric prevalence bound located.",
         {
-          "query": "\"student nurse\" \"social security\" exemption (statistics OR prevalence)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS2004-10 and Publication15 describe student-nurse eligibility; no prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student nurse\" \"social security\" exemption (statistics OR prevalence)",
+          "result": "IRS2004-10 and Publication 15 describe student-nurse eligibility; no prevalence bound located."
         },
         {
-          "query": "\"student nurse\" excluded employment (statistics OR number) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "BLS occupational classification includes student nurse; no employment-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student nurse\" excluded employment (statistics OR number) -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "BLS occupational classification includes student nurse; no employment-exclusion bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "student_service_1968",
@@ -6340,58 +6633,64 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"student\" \"FICA exemption\" statistics audit",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"FICA exemption\" statistics audit",
+          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
         },
         {
-          "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
+          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
         },
         {
-          "query": "\"student\" employment exclusion coverage statistics -\"Trustees\" -\"projections\" -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying student-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" employment exclusion coverage statistics -\"Trustees\" -\"projections\" -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying student-exclusion bound located."
         },
         {
-          "query": "\"student\" university employment \"FICA\" exemption",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "BLS UI timeline concerns different coverage law; no FICA exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" university employment \"FICA\" exemption",
+          "result": "BLS UI timeline concerns different coverage law; no FICA exclusion bound located."
         },
         {
-          "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
+          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "student_service_1973",
@@ -6521,7 +6820,20 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "auxiliary_organization_source_disagreement": {
+        "named_options": {
+          "act_1973_service_start": "Public Law 92-603 section 129(b) applies the auxiliary-organization amendment to service after December 31, 1972.",
+          "poms_1951_grouped_description": "POMS RS 01901.720 A groups school and auxiliary-organization service under its Beginning 1/1/51 statement."
+        },
+        "resolution": "The enacted auxiliary-organization amendment supplies the historical start, 1973-01-01. The later POMS grouped description does not establish the earlier auxiliary-organization effective date.",
+        "citation": {
+          "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
+          "capture": "govinfo_statute86_pg1329_extract.pdf",
+          "location": "printed p.1359 (original PDF p.31; extract p.7)",
+          "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6530,58 +6842,64 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"student\" \"FICA exemption\" statistics audit",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"FICA exemption\" statistics audit",
+          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
         },
         {
-          "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
+          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
         },
         {
-          "query": "\"student\" employment exclusion coverage statistics -\"Trustees\" -\"projections\" -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying student-exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" employment exclusion coverage statistics -\"Trustees\" -\"projections\" -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying student-exclusion bound located."
         },
         {
-          "query": "\"student\" university employment \"FICA\" exemption",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "BLS UI timeline concerns different coverage law; no FICA exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"student\" university employment \"FICA\" exemption",
+          "result": "BLS UI timeline concerns different coverage law; no FICA exclusion bound located."
         },
         {
-          "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions.",
-          "date_timezone": "UTC"
+          "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
+          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "tips_service_1968",
@@ -6592,14 +6910,14 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(10),currentlaw and1965notes",
+        "authority": "42 USC 409(a)(10), current law and 1965 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(10); 1965 enactment and effective-date notes"
       },
       {
         "capture": "irs_pub15_2026.html",
         "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
-        "authority": "IRS Publication15(2026)",
-        "location": "section6, cash tips20permonth"
+        "authority": "IRS Publication 15(2026)",
+        "location": "section 6, cash tips of $20 per month"
       }
     ],
     "trigger_facts": [
@@ -6610,45 +6928,55 @@
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Noncash tips are excluded. Cash tips received by an employee in a calendar month in the course of employment for an employer count when they reach20dollars. This cash-tip inclusion began after1965.",
+    "description": "Noncash tips are excluded. Cash tips received by an employee in a calendar month in the course of employment for an employer count when they reach 20 dollars. This cash-tip inclusion began after 1965.",
     "parameters": {
       "threshold_id": "cash_tips_monthly",
       "noncash_tips": "noncovered",
-      "all_cash_tips_covered_when_test_met": true
+      "all_cash_tips_covered_when_test_met": true,
+      "later_edition_reliance": {
+        "status": "explicitly_labeled",
+        "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
       "strict": "unresolved",
       "negligible_candidate": null,
       "searches": [
-        "Reviewed409(a)(10) and IRS15section6; no numeric prevalence bound for below-threshold tip remuneration was found in these passages. Broader search remains open.",
+        "Reviewed 409(a)(10) and IRS Publication 15 section 6; no numeric prevalence bound for below-threshold tip remuneration was found in these passages. Broader search remains open.",
         {
-          "query": "\"tips\" \"less than $20\" (statistics OR prevalence OR number)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS reporting guidance and SOI line-count documentation; reported tax-return amounts do not bound all below-threshold employee-months. No candidate established.",
-          "date_timezone": "UTC"
+          "query": "\"tips\" \"less than $20\" (statistics OR prevalence OR number)",
+          "result": "IRS reporting guidance and SOI line-count documentation; reported tax-return amounts do not bound all below-threshold employee-months. No candidate established."
         },
         {
-          "query": "\"tips\" \"social security\" \"threshold\" statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "Census Tip of the Iceberg studies tip-reporting behavior; no bound for all below-$20 employer/employee-months located.",
-          "date_timezone": "UTC"
+          "query": "\"tips\" \"social security\" \"threshold\" statistics -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "Census Tip of the Iceberg studies tip-reporting behavior; no bound for all below-$20 employer/employee-months located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "tribal_council_service_1968",
@@ -6672,7 +7000,7 @@
         "capture": "ce1c_plaw115_243.html",
         "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
         "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2895",
-        "location": "2(a), adding 42 USC 418a(a)-(d);2(b)(1), adding 410(a)(22)"
+        "location": "2(a), adding 42 USC 418a(a)-(d) ; 2(b)(1), adding 410(a)(22)"
       },
       {
         "capture": "ce1c_poms_rs_01901700.html",
@@ -6737,7 +7065,7 @@
               "capture": "ce1c_plaw115_243.html",
               "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
               "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2895",
-              "location": "2(a), adding 42 USC 418a(a)-(d);2(b)(1), adding 410(a)(22)"
+              "location": "2(a), adding 42 USC 418a(a)-(d) ; 2(b)(1), adding 410(a)(22)"
             },
             {
               "capture": "ce1c_poms_rs_01901700.html",
@@ -6772,32 +7100,38 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"tribal council\" \"social security\" (statistics OR \"number\" OR prevalence)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS Indian Tribal Governments News and legal guidance; no council-service exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"tribal council\" \"social security\" (statistics OR \"number\" OR prevalence)",
+          "result": "IRS Indian Tribal Governments News and legal guidance; no council-service exclusion bound located."
         },
         {
-          "query": "\"tribal council\" \"coverage\" employment -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"tribal council\" \"coverage\" employment -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "tribal_council_service_2018_0920",
@@ -6820,8 +7154,8 @@
       {
         "capture": "ce1c_plaw115_243.html",
         "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
-        "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2895",
-        "location": "2(a), adding 42 USC 418a(a)-(d);2(b)(1), adding 410(a)(22)"
+        "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2896",
+        "location": "2(a), adding 42 USC 418a(a)-(d) ; 2(b)(1), adding 410(a)(22)"
       },
       {
         "capture": "ce1c_poms_rs_01901700.html",
@@ -6840,7 +7174,7 @@
       "historical_earnings_posting",
       "services_performed_date"
     ],
-    "consequence": "covered",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "The 2018 Act codifies the council-member exclusion and permits voluntary section 418a coverage agreements for all council positions and services in that capacity. Prospective coverage starts no earlier than the month after both parties execute; specified prior services may qualify through timely good-faith unrefunded equivalent taxes. Agreement coverage cannot terminate after its effective date.",
     "parameters": {
@@ -6871,16 +7205,6 @@
         "earliest": "first_day_of_calendar_month_after_both_parties_execute_agreement"
       },
       "agreement_nonterminable_after_effective_date": true,
-      "cases": [
-        {
-          "when": "council_capacity_services_included_under_effective_418a_agreement",
-          "consequence": "covered"
-        },
-        {
-          "when": "council_capacity_services_not_included_under_effective_418a_agreement",
-          "consequence": "noncovered"
-        }
-      ],
       "code_edition_evidence": [
         {
           "title": 42,
@@ -6935,31 +7259,50 @@
       "searches": [
         "Reviewed the cited primary legal guidance for eligibility facts and prevalence; no numeric bound in those passages. Broader prevalence-source search remains open.",
         {
-          "query": "\"tribal council\" \"social security\" (statistics OR \"number\" OR prevalence)",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "irs.gov",
             "tigta.gov",
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "date": "2026-10-25",
-          "result": "IRS Indian Tribal Governments News and legal guidance; no council-service exclusion bound located.",
-          "date_timezone": "UTC"
+          "query": "\"tribal council\" \"social security\" (statistics OR \"number\" OR prevalence)",
+          "result": "IRS Indian Tribal Governments News and legal guidance; no council-service exclusion bound located."
         },
         {
-          "query": "\"tribal council\" \"coverage\" employment -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "date": "2026-10-25",
+          "date_timezone": "UTC",
           "domains": [
             "ssa.gov/policy/docs",
             "census.gov",
             "bls.gov"
           ],
-          "date": "2026-10-25",
-          "result": "No qualifying prevalence bound located.",
-          "date_timezone": "UTC"
+          "query": "\"tribal council\" \"coverage\" employment -Trustees -MINT -DYNASIM -inurl:oact -inurl:projections",
+          "result": "No qualifying prevalence bound located."
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "when": {
+          "tribal_coverage_agreement": "council-capacity services included under an effective section 418a agreement"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "when": {
+          "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "Council-capacity service is excluded unless included under an effective section 418a agreement."
+    }
   }
 ]

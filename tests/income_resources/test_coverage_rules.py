@@ -15,6 +15,7 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
+    CONSEQUENCES,
     SCHEMA_VERSION,
     AlternativeRequiredError,
     CaptureIntegrityError,
@@ -29,6 +30,7 @@ from populace_dynamics.income_resources.coverage_rules import (
     TableDefinitionUnverifiedError,
     ThresholdUnavailableError,
     load_registry,
+    source_text,
 )
 
 INVENTED_BYTES = b"<p>Invented source passage for schema tests only.</p>"
@@ -49,6 +51,12 @@ def invented_row(start=1968, end=2026, rule_id="INVENTED_rule"):
         "citations": [copy.deepcopy(INVENTED_CITATION)],
         "trigger_facts": ["amount"],
         "consequence": "covered",
+        "residual_default": {
+            "consequence": "covered",
+            "description": "INVENTED residual when no case applies.",
+        },
+        "cases": [],
+        "open_alternatives": [],
         "identification_class": "awaiting_ce2",
         "description": "INVENTED regime for schema tests only.",
         "parameters": {"invented_value": 17},
@@ -66,6 +74,28 @@ def invented_payload(rows=None, thresholds=None):
         "rules": rows if rows is not None else [invented_row()],
         "thresholds": thresholds or [],
     }
+
+
+@given(
+    st.sampled_from(["calculation", "published_inputs", "published_outputs"])
+)
+def test_example_schema_requires_inputs_outcome_and_oracle(field):
+    row = invented_row()
+    example = {
+        "example_id": "INVENTED_example",
+        "income_year": 2024,
+        "citation": copy.deepcopy(INVENTED_CITATION),
+        "source_passage": "INVENTED passage; no published legal example.",
+        "expected_rule_id": row["rule_id"],
+        "calculation": "INVENTED_calculation",
+        "published_inputs": {"INVENTED_input": 1},
+        "published_outputs": {"INVENTED_output": 1},
+    }
+    row["worked_examples"] = [example]
+    CoverageRule.from_dict(row)
+    del example[field]
+    with pytest.raises(RegistryValidationError, match="example"):
+        CoverageRule.from_dict(row)
 
 
 def invented_registry(tmp_path, rows=None, thresholds=None):
@@ -324,7 +354,7 @@ def test_quarter_sum_uses_named_exact_cents(tmp_path, cents, numerator):
     ) == Fraction(cents * 4 * numerator, 200)
 
 
-@pytest.mark.parametrize("year", [True, 1967, 2027, "2024", None])
+@pytest.mark.parametrize("year", [1967, 2027])
 def test_year_support_is_explicit(tmp_path, year):
     with pytest.raises(NoRuleError):
         invented_registry(tmp_path).lookup("INVENTED_family", year)
@@ -333,6 +363,12 @@ def test_year_support_is_explicit(tmp_path, year):
 def test_open_rule_refuses_and_payload_is_immutable(tmp_path):
     row = invented_row()
     row["open_reason"] = "INVENTED blocked source"
+    row["consequence"] = None
+    row["residual_default"]["consequence"] = None
+    row["open_alternatives"] = [
+        {"name": "INVENTED_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_b", "description": "INVENTED second reading"},
+    ]
     registry = invented_registry(tmp_path, [row])
     with pytest.raises(OpenRuleError):
         registry.lookup("INVENTED_family", 2000)
@@ -400,12 +436,10 @@ def test_loader_verifies_nested_citation_and_path(tmp_path):
     path.write_text(registry.to_json())
     assert load_registry(path) == registry
     raw = registry.to_dict()
-    raw["nested_citation"] = {
-        **INVENTED_CITATION,
-        "capture": "../invented.html",
-    }
-    with pytest.raises(CaptureIntegrityError):
-        CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+    raw["nested_citation"] = copy.deepcopy(INVENTED_CITATION)
+    loaded = CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+    assert loaded.rules == registry.rules
+    assert dict(loaded.metadata["nested_citation"]) == INVENTED_CITATION
 
 
 def test_loader_accepts_separate_registry_and_capture_directories(tmp_path):
@@ -436,3 +470,378 @@ def test_schema_rejects_malformed_rows(mutation):
         row["identification_class"] = "pending_means_identified"
     with pytest.raises(RegistryValidationError):
         CoverageRule.from_dict(row)
+
+
+@given(st.lists(st.just(INVENTED_CITATION), max_size=3))
+@settings(deadline=None)
+def test_every_rule_requires_at_least_one_pinned_citation(citations):
+    row = invented_row()
+    row["citations"] = citations
+    if citations:
+        assert CoverageRule.from_dict(row).citations
+    else:
+        with pytest.raises(
+            RegistryValidationError, match="at least one citation"
+        ):
+            CoverageRule.from_dict(row)
+
+
+@given(st.sampled_from(sorted(CONSEQUENCES)), st.booleans())
+@settings(deadline=None)
+def test_residual_default_equals_top_level_consequence(consequence, mismatch):
+    row = invented_row()
+    row["consequence"] = consequence
+    row["residual_default"]["consequence"] = consequence
+    assert (
+        CoverageRule.from_dict(row).residual_default["consequence"]
+        == consequence
+    )
+    if mismatch:
+        row["residual_default"]["consequence"] = (
+            "noncovered" if consequence == "covered" else "covered"
+        )
+        with pytest.raises(RegistryValidationError, match="residual default"):
+            CoverageRule.from_dict(row)
+
+
+@given(st.sampled_from(sorted(CONSEQUENCES)), st.booleans())
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_lookup_returns_validated_cases_and_residual(
+    tmp_path, consequence, fact
+):
+    row = invented_row()
+    row["cases"] = [{"when": {"amount": fact}, "consequence": consequence}]
+    registry = invented_registry(tmp_path, [row])
+    result = registry.lookup("INVENTED_family", 2024)[0]
+    assert result.cases[0]["when"]["amount"] is fact
+    assert result.cases[0]["consequence"] == consequence
+    assert result.residual_default["consequence"] == result.consequence
+    assert CoverageRule.from_dict(result.to_dict()) == result
+    with pytest.raises(TypeError):
+        result.cases[0]["when"]["amount"] = not fact
+
+
+@given(st.sampled_from(["consequence", "when", "undeclared_fact"]))
+@settings(deadline=None)
+def test_malformed_case_is_refused(field):
+    row = invented_row()
+    row["cases"] = [
+        {"when": {"amount": "INVENTED condition"}, "consequence": "covered"}
+    ]
+    case = row["cases"][0]
+    if field == "consequence":
+        case[field] = "unresolved"
+    elif field == "when":
+        case[field] = {}
+    else:
+        case["when"] = {"occupation": "INVENTED undeclared fact"}
+    with pytest.raises(RegistryValidationError, match="case"):
+        CoverageRule.from_dict(row)
+
+
+@given(
+    st.sampled_from([None, "open"]),
+    st.sampled_from(["covered", "noncovered", "covered_above_threshold"]),
+)
+@settings(deadline=None)
+def test_open_row_has_named_options_and_no_chosen_consequence(
+    open_value, chosen
+):
+    row = invented_row()
+    row["open_reason"] = "INVENTED unresolved legal question"
+    row["consequence"] = open_value
+    row["residual_default"]["consequence"] = open_value
+    row["open_alternatives"] = [
+        {"name": "INVENTED_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_b", "description": "INVENTED second reading"},
+    ]
+    parsed = CoverageRule.from_dict(row)
+    assert parsed.consequence in {None, "open"}
+    assert len({o["name"] for o in parsed.open_alternatives}) >= 2
+    saved_alternatives = row["open_alternatives"]
+    row["open_alternatives"] = []
+    with pytest.raises(RegistryValidationError, match="named alternatives"):
+        CoverageRule.from_dict(row)
+    row["open_alternatives"] = saved_alternatives
+    row["consequence"] = chosen
+    row["residual_default"]["consequence"] = chosen
+    with pytest.raises(RegistryValidationError, match="chosen consequence"):
+        CoverageRule.from_dict(row)
+
+
+@given(
+    st.sampled_from(
+        ["chosen_reading", "selected_reading", "operative_current_text"]
+    )
+)
+@settings(deadline=None)
+def test_open_row_cannot_choose_an_operative_reading(field):
+    row = invented_row()
+    row["open_reason"] = "INVENTED unresolved legal question"
+    row["consequence"] = None
+    row["residual_default"]["consequence"] = None
+    row["open_alternatives"] = [
+        {"name": "INVENTED_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_b", "description": "INVENTED second reading"},
+    ]
+    row["parameters"][field] = "INVENTED_a"
+    with pytest.raises(RegistryValidationError, match="chosen reading"):
+        CoverageRule.from_dict(row)
+    row["parameters"] = {"INVENTED_nested": [{field: "INVENTED_a"}]}
+    with pytest.raises(RegistryValidationError, match="chosen reading"):
+        CoverageRule.from_dict(row)
+
+
+@given(st.text().filter(lambda value: value != "unresolved"))
+@settings(deadline=None)
+def test_rare_strict_reading_remains_unresolved(value):
+    row = invented_row()
+    row["rare_exclusion"] = {
+        "strict": value,
+        "negligible_candidate": None,
+        "searches": ["INVENTED search"],
+    }
+    with pytest.raises(RegistryValidationError, match="strict reading"):
+        CoverageRule.from_dict(row)
+
+
+@given(st.integers(0, 4999))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_quarter_sum_cannot_breach_statutory_nondecrease(tmp_path, cents):
+    index = {
+        "kind": "quarter_of_coverage_sum",
+        "first_year": 2025,
+        "last_year": 2026,
+        "parameter_name": "INVENTED_quarters_cents",
+        "multiplier_numerator": 1,
+        "multiplier_denominator": 2,
+    }
+    registry = invented_registry(
+        tmp_path, thresholds=[invented_threshold(indexing=index)]
+    )
+    with pytest.raises(ValueError, match="statutory nondecrease"):
+        registry.threshold(
+            "INVENTED_threshold",
+            2026,
+            index_inputs={"INVENTED_quarters_cents": [cents] * 4},
+        )
+
+
+@pytest.mark.parametrize("escape", ["traversal", "absolute", "symlink"])
+@given(st.binary(min_size=1, max_size=100))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_capture_path_escape_is_refused_with_existing_matching_bytes(
+    tmp_path, escape, data
+):
+    captures = tmp_path / "captures"
+    captures.mkdir(exist_ok=True)
+    registry = invented_registry(captures)
+    outside = tmp_path / "outside.html"
+    outside.write_bytes(data)
+    link = captures / "outside_link.html"
+    link.unlink(missing_ok=True)
+    link.symlink_to(outside)
+    paths = {
+        "traversal": "../outside.html",
+        "absolute": str(outside),
+        "symlink": link.name,
+    }
+    raw = registry.to_dict()
+    raw["nested_citation"] = {
+        **INVENTED_CITATION,
+        "capture": paths[escape],
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
+    with pytest.raises(
+        CaptureIntegrityError, match="escapes capture directory"
+    ):
+        CoverageRegistry.from_dict(raw, capture_root=captures)
+
+
+@given(st.sampled_from(["sha256", "authority", "location"]))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_any_nested_capture_key_requires_a_complete_citation(
+    tmp_path, missing
+):
+    registry = invented_registry(tmp_path)
+    raw = registry.to_dict()
+    raw["nested_citation"] = copy.deepcopy(INVENTED_CITATION)
+    del raw["nested_citation"][missing]
+    with pytest.raises(RegistryValidationError, match="incomplete citation"):
+        CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+
+
+@pytest.mark.parametrize("verified", [True, False])
+@given(st.sampled_from(["sha256", "authority", "location"]))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_all_table_definition_citations_are_schema_validated(
+    tmp_path, verified, missing
+):
+    invented_registry(tmp_path)
+    good = {**INVENTED_CITATION, "quote": "INVENTED quote"}
+    bad = copy.deepcopy(INVENTED_CITATION)
+    del bad[missing]
+    raw = invented_payload()
+    raw["table_definitions"] = [
+        {
+            "definition_id": "INVENTED_table",
+            "status": (
+                "verified" if verified else "TABLE_DEFINITION_UNVERIFIED"
+            ),
+            "source_definition": "INVENTED definition",
+            "reason": "INVENTED unverified definition",
+            "citations": [good, bad],
+        }
+    ]
+    with pytest.raises(RegistryValidationError, match="incomplete citation"):
+        CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+
+
+@pytest.mark.parametrize("year", [True, "2024", None])
+def test_bad_caller_year_type_raises_type_error(tmp_path, year):
+    registry = invented_registry(tmp_path)
+    with pytest.raises(TypeError, match="integer"):
+        registry.lookup("INVENTED_family", year)
+
+
+@pytest.mark.parametrize("service_date", [None, "2024-01-01", 2024])
+def test_bad_caller_service_date_type_raises_type_error(
+    tmp_path, service_date
+):
+    registry = invented_registry(tmp_path)
+    with pytest.raises(TypeError, match="must be a date"):
+        registry.lookup_date("INVENTED_family", service_date)
+
+
+@pytest.mark.parametrize(
+    "value, error",
+    [
+        (True, TypeError),
+        (1.5, TypeError),
+        ("bad", ValueError),
+        ("-1", ValueError),
+        (None, TypeError),
+    ],
+)
+def test_bad_caller_index_raises_argument_error(tmp_path, value, error):
+    registry = invented_registry(
+        tmp_path, thresholds=[invented_threshold(indexing=INVENTED_INDEX)]
+    )
+    with pytest.raises(error, match="exact index input") as caught:
+        registry.threshold(
+            "INVENTED_threshold",
+            2025,
+            index_inputs={"national_average_wage_index_2023": value},
+        )
+    assert type(caught.value) is error
+
+
+def test_source_text_omits_script_and_style_content(tmp_path):
+    path = tmp_path / "INVENTED_source.html"
+    path.write_text(
+        "<script>INVENTED hidden script</script><p>INVENTED passage</p><style>INVENTED hidden style</style>"
+    )
+    assert source_text(path) == "INVENTED passage"
+
+
+@given(st.integers(1969, 2025), st.integers(1, 12), st.integers(2, 28))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_taxable_year_boundary_uses_actual_start_not_every_calendar_day(
+    tmp_path, year, month, day
+):
+    from datetime import timedelta
+
+    boundary = date(year, month, day)
+    before = invented_row(rule_id="INVENTED_before")
+    after = invented_row(rule_id="INVENTED_after")
+    before["effective_end"] = (boundary - timedelta(days=1)).isoformat()
+    after["effective_start"] = boundary.isoformat()
+    for row in (before, after):
+        row["parameters"]["effective_basis"] = "taxable_year_start"
+        row["trigger_facts"].append("taxable_year_start")
+    registry = invented_registry(tmp_path, [before, after])
+    assert [r.rule_id for r in registry.lookup("INVENTED_family", year)] == [
+        "INVENTED_before"
+    ]
+    assert (
+        registry.lookup_date("INVENTED_family", boundary)[0].rule_id
+        == "INVENTED_after"
+    )
+    assert (
+        registry.lookup("INVENTED_family", year + 1)[0].rule_id
+        == "INVENTED_after"
+    )
+    del after["parameters"]["effective_basis"]
+    with pytest.raises(RegistryValidationError, match="mixes service"):
+        invented_registry(tmp_path, [before, after])
+    after["parameters"]["effective_basis"] = "taxable_year_start"
+    before["trigger_facts"].remove("taxable_year_start")
+    with pytest.raises(RegistryValidationError, match="taxable-year axis"):
+        invented_registry(tmp_path, [before, after])
+
+
+@given(st.permutations(tuple(range(5))), st.integers(1968, 2026))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_arbitrary_row_permutations_preserve_lookup_and_round_trip(
+    tmp_path, order, year
+):
+    spans = [
+        (1968, 1979),
+        (1980, 1989),
+        (1990, 1999),
+        (2000, 2009),
+        (2010, 2026),
+    ]
+    rows = [
+        invented_row(start, end, f"INVENTED_{i}")
+        for i, (start, end) in enumerate(spans)
+    ]
+    original = invented_registry(tmp_path, rows)
+    permuted = invented_registry(tmp_path, [rows[i] for i in order])
+    assert original.to_json() == permuted.to_json()
+    assert original.lookup("INVENTED_family", year) == permuted.lookup(
+        "INVENTED_family", year
+    )
+    assert (
+        CoverageRegistry.from_dict(
+            json.loads(permuted.to_json()), capture_root=tmp_path
+        )
+        == original
+    )
+
+
+@given(st.binary(min_size=1, max_size=100))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_capture_symlink_within_root_is_accepted(tmp_path, data):
+    registry = invented_registry(tmp_path)
+    path = tmp_path / "INVENTED_inside.html"
+    path.write_bytes(data)
+    link = tmp_path / "INVENTED_inside_link.html"
+    link.unlink(missing_ok=True)
+    link.symlink_to(path)
+    raw = registry.to_dict()
+    raw["nested_citation"] = {
+        **INVENTED_CITATION,
+        "capture": link.name,
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
+    assert (
+        CoverageRegistry.from_dict(raw, capture_root=tmp_path).rules
+        == registry.rules
+    )

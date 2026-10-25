@@ -37,7 +37,8 @@
     "retrieved_at": "2026-10-24T12:46:24.014005Z",
     "bytes": 27481,
     "sha256": "54983d7e1719c0408542163b8c58ade88221127f09157ba958e049449e1e2012",
-    "provenance": "Byte copy of D4 bdbd9146; see source manifest for original retrieval."
+    "provenance": "Byte copy of D4 bdbd9146; see source manifest for original retrieval.",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "poms_rs_01505_toc.html",
@@ -45,7 +46,8 @@
     "retrieved_at": "2026-10-24T12:41:26.961290Z",
     "bytes": 18436,
     "sha256": "fdc07d643ddf12867f5f205b69f2f263f7ae860fc2384c7549fbc926842b7b88",
-    "provenance": "Byte copy of D4 bdbd9146; see source manifest for original retrieval."
+    "provenance": "Byte copy of D4 bdbd9146; see source manifest for original retrieval.",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "supplement2025_4b.html",

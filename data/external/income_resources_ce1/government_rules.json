@@ -44,36 +44,12 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "covered",
+    "consequence": "open",
     "identification_class": "awaiting_ce2",
     "description": "Compulsory self-employment coverage applies for taxable years ending after 1967 absent an effective exemption; foreign-ministry restrictions remain through 1972.",
     "parameters": {
       "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
       "self_employment_default": "covered_self_employment",
-      "cases": [
-        {
-          "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
-          },
-          "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
-          },
-          "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "not established"
-          },
-          "consequence": "unresolved",
-          "description": "Do not infer exemption status from clergy occupation."
-        }
-      ],
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
@@ -276,8 +252,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound."
+          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exemptions\" \"1402(e)\" number",
@@ -286,16 +262,16 @@
             "crsreports.congress.gov",
             "congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules."
+          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" statistics",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound."
+          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" number approved",
@@ -303,8 +279,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch."
+          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"statistics\" -site:ssa.gov -site:urban.org",
@@ -312,8 +288,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound."
+          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"number\" \"approved\" -site:ssa.gov -site:urban.org",
@@ -321,8 +297,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence."
+          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exempt\" \"noncovered\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -330,8 +306,8 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" exemption \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -339,40 +315,40 @@
             "ssa.gov/policy/docs",
             "ssa.gov/history"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"Statistics of Income\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage."
+          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"waiver\" \"4361\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"exempt\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"exempt\" \"Social Security\" prevalence",
@@ -380,24 +356,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No exemption-prevalence bound in the four-query batch."
+          "result": "No exemption-prevalence bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound."
+          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"reports\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in this four-query batch."
+          "result": "No applicable result in this four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"noncovered employment\" \"ministers\"",
@@ -405,64 +381,64 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" \"percent\" -site:ssa.gov/oact -solvency -MINT -DYNASIM -Trustees -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"respondents\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence."
+          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"social security\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound."
+          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" OR \"4029\" \"exemption\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf"
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"clergy\" exemption",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"ministers\" \"exempt\" statistics",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound."
+          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" -site:ssa.gov/oact -MINT -DYNASIM -Trustees -projections -solvency",
           "domains": [
             "ssa.gov/policy/docs"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"social security\" \"exemption\"",
@@ -470,24 +446,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information."
+          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/ssb/ clergy exemption coverage -oact -solvency -Trustees -MINT -DYNASIM -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used."
+          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/rsnotes/ ministers exemptions -oact -solvency -Trustees -MINT -DYNASIM -projections -rsn2017-02",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used."
+          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"self-employment\" \"exempt\" \"statistics\"",
@@ -495,8 +471,8 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"1402\" \"exemption\"",
@@ -504,13 +480,42 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+        "when": {
+          "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+        }
+      },
+      {
+        "consequence": "open",
+        "description": "Do not infer exemption status from clergy occupation.",
+        "when": {
+          "clergy_or_religious_exemption": "not established"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "open",
+      "description": "If no stated clergy case establishes treatment, obtain the missing ministry, exemption or poverty-vow facts before classification."
+    }
   },
   {
     "rule_id": "clergy_1973_1981",
@@ -557,36 +562,12 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "covered",
+    "consequence": "open",
     "identification_class": "awaiting_ce2",
     "description": "From taxable years beginning in 1973, qualifying US citizen ministry abroad no longer needs a US employer or a predominantly US citizen congregation.",
     "parameters": {
       "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
       "self_employment_default": "covered_self_employment",
-      "cases": [
-        {
-          "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
-          },
-          "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
-          },
-          "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "not established"
-          },
-          "consequence": "unresolved",
-          "description": "Do not infer exemption status from clergy occupation."
-        }
-      ],
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
@@ -789,8 +770,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound."
+          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exemptions\" \"1402(e)\" number",
@@ -799,16 +780,16 @@
             "crsreports.congress.gov",
             "congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules."
+          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" statistics",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound."
+          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" number approved",
@@ -816,8 +797,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch."
+          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"statistics\" -site:ssa.gov -site:urban.org",
@@ -825,8 +806,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound."
+          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"number\" \"approved\" -site:ssa.gov -site:urban.org",
@@ -834,8 +815,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence."
+          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exempt\" \"noncovered\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -843,8 +824,8 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" exemption \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -852,40 +833,40 @@
             "ssa.gov/policy/docs",
             "ssa.gov/history"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"Statistics of Income\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage."
+          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"waiver\" \"4361\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"exempt\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"exempt\" \"Social Security\" prevalence",
@@ -893,24 +874,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No exemption-prevalence bound in the four-query batch."
+          "result": "No exemption-prevalence bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound."
+          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"reports\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in this four-query batch."
+          "result": "No applicable result in this four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"noncovered employment\" \"ministers\"",
@@ -918,64 +899,64 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" \"percent\" -site:ssa.gov/oact -solvency -MINT -DYNASIM -Trustees -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"respondents\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence."
+          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"social security\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound."
+          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" OR \"4029\" \"exemption\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf"
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"clergy\" exemption",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"ministers\" \"exempt\" statistics",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound."
+          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" -site:ssa.gov/oact -MINT -DYNASIM -Trustees -projections -solvency",
           "domains": [
             "ssa.gov/policy/docs"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"social security\" \"exemption\"",
@@ -983,24 +964,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information."
+          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/ssb/ clergy exemption coverage -oact -solvency -Trustees -MINT -DYNASIM -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used."
+          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/rsnotes/ ministers exemptions -oact -solvency -Trustees -MINT -DYNASIM -projections -rsn2017-02",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used."
+          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"self-employment\" \"exempt\" \"statistics\"",
@@ -1008,8 +989,8 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"1402\" \"exemption\"",
@@ -1017,13 +998,42 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+        "when": {
+          "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+        }
+      },
+      {
+        "consequence": "open",
+        "description": "Do not infer exemption status from clergy occupation.",
+        "when": {
+          "clergy_or_religious_exemption": "not established"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "open",
+      "description": "If no stated clergy case establishes treatment, obtain the missing ministry, exemption or poverty-vow facts before classification."
+    }
   },
   {
     "rule_id": "clergy_1982_2026",
@@ -1076,36 +1086,12 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "covered",
+    "consequence": "open",
     "identification_class": "awaiting_ce2",
     "description": "Qualifying ministry is self-employment unless an effective exemption applies; cantor and later coverage-election histories are recorded.",
     "parameters": {
       "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
       "self_employment_default": "covered_self_employment",
-      "cases": [
-        {
-          "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow"
-          },
-          "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
-          },
-          "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work."
-        },
-        {
-          "when": {
-            "clergy_or_religious_exemption": "not established"
-          },
-          "consequence": "unresolved",
-          "description": "Do not infer exemption status from clergy occupation."
-        }
-      ],
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
@@ -1400,8 +1386,12 @@
         },
         "source_passage": "Rev. Hayden Austin, ordained in 2022, had $400 or more in net self-employment earnings, in both 2022 and 2025, part of which was from her services as a minister. Rev. Austin files an application for exemption on February 19, 2026. If an exemption is granted, it is effective for 2022 and the following years.",
         "expected_rule_id": "clergy_1982_2026",
-        "expected_parameters": {
-          "effective_exemption_consequence": "noncovered"
+        "calculation": "minister_exemption",
+        "published_inputs": {
+          "exemption_granted": true
+        },
+        "published_outputs": {
+          "social_security_coverage": "noncovered"
         }
       }
     ],
@@ -1455,8 +1445,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound."
+          "result": "The four-query batch returned IRS forms, IRM and EIC guidance; no applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exemptions\" \"1402(e)\" number",
@@ -1465,16 +1455,16 @@
             "crsreports.congress.gov",
             "congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules."
+          "result": "No applicable unrestricted bound in the four-query batch; search service reported congress.gov inaccessible under robots rules.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" statistics",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound."
+          "result": "Restricted OACT solvency memo snippet appeared; it was not opened, captured or used. Other batch results describe coverage law; no usable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" number approved",
@@ -1482,8 +1472,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch."
+          "result": "IRS approval-code and processing guidance; no count bounding the target population in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"statistics\" -site:ssa.gov -site:urban.org",
@@ -1491,8 +1481,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound."
+          "result": "Four-query batch returned guidance and historical form editions, without an applicable prevalence bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"number\" \"approved\" -site:ssa.gov -site:urban.org",
@@ -1500,8 +1490,8 @@
             "irs.gov",
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence."
+          "result": "IRM 4.19.6 and form instructions in the four-query batch explain approval, not prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"exempt\" \"noncovered\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -1509,8 +1499,8 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" exemption \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
@@ -1518,40 +1508,40 @@
             "ssa.gov/policy/docs",
             "ssa.gov/history"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"Statistics of Income\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage."
+          "result": "Located SOI Publications 4801/5384 and embedded Schedule SE. Plain retrieval of current Publication 4801 showed 2023 estimates and no estimate for the Form 4361 checkbox A; cached search text described an older vintage.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"waiver\" \"4361\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"exempt\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"minister\" \"exempt\" \"Social Security\" prevalence",
@@ -1559,24 +1549,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No exemption-prevalence bound in the four-query batch."
+          "result": "No exemption-prevalence bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"Social Security\" \"exemption\" \"number\" -MINT -DYNASIM -Trustees -oact -projections -solvency",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound."
+          "result": "Coverage histories, POMS and legislative descriptions appeared in the four-query batch; no usable whole-population bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Form 4361\" \"reports\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in this four-query batch."
+          "result": "No applicable result in this four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"noncovered employment\" \"ministers\"",
@@ -1584,64 +1574,64 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"exempt\" \"social security\" \"percent\" -site:ssa.gov/oact -solvency -MINT -DYNASIM -Trustees -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"respondents\"",
           "domains": [
             "irs.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence."
+          "result": "IRB paperwork discussion returned by the four-query batch concerns other collections; its respondent figures do not establish Form 4361 prevalence.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"noncovered\" \"social security\"",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound."
+          "result": "Four-query batch returned an unrelated broad oversight report, without a clergy-exemption bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" OR \"4029\" \"exemption\"",
           "domains": [
             "tigta.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf"
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"clergy\" exemption",
           "domains": [
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable result in the four-query batch."
+          "result": "No applicable result in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"Social Security\" \"ministers\" \"exempt\" statistics",
           "domains": [
             "gao.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound."
+          "result": "Four-query batch returned broad statistical and oversight reports, without an applicable bound.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"4361\" \"4029\" -site:ssa.gov/oact -MINT -DYNASIM -Trustees -projections -solvency",
           "domains": [
             "ssa.gov/policy/docs"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"social security\" \"exemption\"",
@@ -1649,24 +1639,24 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information."
+          "result": "Four-query batch returned BLS unemployment-legislation discussions, without section 1402(e) prevalence information.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/ssb/ clergy exemption coverage -oact -solvency -Trustees -MINT -DYNASIM -projections",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used."
+          "result": "Located Exemption of Clergyman From Social Security Coverage, SSA Bulletin 35(3), March 1972, page 30, and a pre-1968 coverage article. Plain request to https://www.ssa.gov/policy/docs/ssb/v35n3/v35n3p30.pdf returned SOURCE_BLOCKED HTTP 403; no retry or alternate route. Historical application counts remain unverified. Restricted snippets also appeared despite exclusions; none was opened or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "site:ssa.gov/policy/docs/rsnotes/ ministers exemptions -oact -solvency -Trustees -MINT -DYNASIM -projections -rsn2017-02",
           "domains": [
             "ssa.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used."
+          "result": "No applicable bound in the four-query batch. Restricted snippets appeared; none was opened, captured or used.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"clergy\" \"self-employment\" \"exempt\" \"statistics\"",
@@ -1674,8 +1664,8 @@
             "census.gov",
             "bls.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         },
         {
           "query": "\"ministers\" \"1402\" \"exemption\"",
@@ -1683,13 +1673,42 @@
             "gao.gov",
             "crsreports.congress.gov"
           ],
-          "searched_utc": "2026-10-25",
-          "result": "No applicable bound in the four-query batch."
+          "result": "No applicable bound in the four-query batch.",
+          "searched_utc": "2026-10-25"
         }
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+        "when": {
+          "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+        }
+      },
+      {
+        "consequence": "open",
+        "description": "Do not infer exemption status from clergy occupation.",
+        "when": {
+          "clergy_or_religious_exemption": "not established"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "open",
+      "description": "If no stated clergy case establishes treatment, obtain the missing ministry, exemption or poverty-vow facts before classification."
+    }
   },
   {
     "rule_id": "electing_church_1968_1983",
@@ -1847,7 +1866,13 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "electing_church_1984_1985",
@@ -1881,7 +1906,7 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "covered_above_threshold",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Church election service is excluded from employment but covered as self-employment from 1984; the original 411(a)(13) threshold is per employer.",
     "parameters": {
@@ -1890,22 +1915,6 @@
       "self_employment_consequence": "covered_self_employment",
       "church_se_threshold_cents": 10000,
       "church_election_service_start": "1984-01-01",
-      "cases": [
-        {
-          "when": {
-            "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
-          },
-          "consequence": "covered_above_threshold",
-          "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies."
-        },
-        {
-          "when": {
-            "church_employee_service": "unrelated trade or business"
-          },
-          "consequence": "covered",
-          "description": "Not excluded from employment by 410(a)(8)(B); apply other families."
-        }
-      ],
       "personal_religious_exemption": "Apply the year-specific religious sect exemption rule from the self-employment registry. The historical interaction of 1402(g), church employee income, and 3127 is not resolved by employer election alone; no current exemption rule is backcast here.",
       "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
       "threshold_aggregation_unit": "same_employer_employee_taxable_year",
@@ -2011,7 +2020,28 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered_above_threshold",
+        "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies.",
+        "when": {
+          "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Not excluded from employment by 410(a)(8)(B); apply other families.",
+        "when": {
+          "church_employee_service": "unrelated trade or business"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "When no qualifying electing-church case applies, this exclusion does not establish noncoverage; apply the other coverage families."
+    }
   },
   {
     "rule_id": "electing_church_1986_2026",
@@ -2045,7 +2075,7 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "covered_above_threshold",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Separate church employee computation under 411(i) begins for taxable years after 1985, distinct from 1984 coverage and the $100 threshold.",
     "parameters": {
@@ -2054,22 +2084,6 @@
       "self_employment_consequence": "covered_self_employment",
       "church_se_threshold_cents": 10000,
       "church_election_service_start": "1984-01-01",
-      "cases": [
-        {
-          "when": {
-            "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
-          },
-          "consequence": "covered_above_threshold",
-          "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies."
-        },
-        {
-          "when": {
-            "church_employee_service": "unrelated trade or business"
-          },
-          "consequence": "covered",
-          "description": "Not excluded from employment by 410(a)(8)(B); apply other families."
-        }
-      ],
       "personal_religious_exemption": "Apply the year-specific religious sect exemption rule from the self-employment registry. The historical interaction of 1402(g), church employee income, and 3127 is not resolved by employer election alone; no current exemption rule is backcast here.",
       "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
       "threshold_aggregation_unit": "person_taxable_year_church_employee_unit",
@@ -2268,7 +2282,28 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered_above_threshold",
+        "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies.",
+        "when": {
+          "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Not excluded from employment by 410(a)(8)(B); apply other families.",
+        "when": {
+          "church_employee_service": "unrelated trade or business"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "When no qualifying electing-church case applies, this exclusion does not establish noncoverage; apply the other coverage families."
+    }
   },
   {
     "rule_id": "federal_1968_1972",
@@ -2300,36 +2335,6 @@
     "description": "Pre-1984 federal coverage depends on the exclusions in former 410(a)(5)-(6), including federal retirement-system and statutory instrumentality exclusions.",
     "parameters": {
       "coverage_default": "covered unless a statutory exclusion applies",
-      "cases": [
-        {
-          "when": {
-            "federal_retirement_system": "established by a law of the United States"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(A) as in effect in January 1983."
-        },
-        {
-          "when": {
-            "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(5) as in effect in January 1983."
-        },
-        {
-          "when": {
-            "federal_service": "exempt-1950 instrumentality and retirement system"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there."
-        },
-        {
-          "when": {
-            "occupation": "President/Vice President/Congress/legislative employee"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(C) as in effect in January 1983."
-        }
-      ],
       "persistent_exclusions": [
         "Federal penal inmate",
         "specified Federal hospital student employees other than medical/dental interns/residents",
@@ -2339,7 +2344,7 @@
       "federal_home_loan_bank_transition": {
         "enactment": "1972-10-30",
         "ordinary_coverage_start": "1973-01-01",
-        "conditional_retroactivity": "For employees present on Jan1,1973, service after 1965 may be covered if required taxes paid byJuly1,1973 or agreed later date (PL92-603 section125)."
+        "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125)."
       },
       "code_edition_evidence": [
         {
@@ -2388,7 +2393,42 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(A) as in effect in January 1983.",
+        "when": {
+          "federal_retirement_system": "established by a law of the United States"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(5) as in effect in January 1983.",
+        "when": {
+          "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
+        "when": {
+          "federal_service": "exempt-1950 instrumentality and retirement system"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(C) as in effect in January 1983.",
+        "when": {
+          "occupation": "President/Vice President/Congress/legislative employee"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+    }
   },
   {
     "rule_id": "federal_1973_1983",
@@ -2420,36 +2460,6 @@
     "description": "Pre-1984 exclusion regime continues; Federal home loan bank ordinary coverage now applies, subject to other exclusions.",
     "parameters": {
       "coverage_default": "covered unless a statutory exclusion applies",
-      "cases": [
-        {
-          "when": {
-            "federal_retirement_system": "established by a law of the United States"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(A) as in effect in January 1983."
-        },
-        {
-          "when": {
-            "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(5) as in effect in January 1983."
-        },
-        {
-          "when": {
-            "federal_service": "exempt-1950 instrumentality and retirement system"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there."
-        },
-        {
-          "when": {
-            "occupation": "President/Vice President/Congress/legislative employee"
-          },
-          "consequence": "noncovered",
-          "description": "410(a)(6)(C) as in effect in January 1983."
-        }
-      ],
       "persistent_exclusions": [
         "Federal penal inmate",
         "specified Federal hospital student employees other than medical/dental interns/residents",
@@ -2459,7 +2469,7 @@
       "federal_home_loan_bank_transition": {
         "enactment": "1972-10-30",
         "ordinary_coverage_start": "1973-01-01",
-        "conditional_retroactivity": "For employees present on Jan1,1973, service after 1965 may be covered if required taxes paid byJuly1,1973 or agreed later date (PL92-603 section125)."
+        "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125)."
       },
       "code_edition_evidence": [
         {
@@ -2509,7 +2519,42 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(A) as in effect in January 1983.",
+        "when": {
+          "federal_retirement_system": "established by a law of the United States"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(5) as in effect in January 1983.",
+        "when": {
+          "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
+        "when": {
+          "federal_service": "exempt-1950 instrumentality and retirement system"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "410(a)(6)(C) as in effect in January 1983.",
+        "when": {
+          "occupation": "President/Vice President/Congress/legislative employee"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+    }
   },
   {
     "rule_id": "federal_1984_1986",
@@ -2561,48 +2606,18 @@
         "temporary emergency employees",
         "other independent statutory exclusions"
       ],
-      "cases": [
-        {
-          "when": {
-            "federal_service": "first hired after 1983"
-          },
-          "consequence": "covered",
-          "description": "Coverage of newly hired Federal employees."
-        },
-        {
-          "when": {
-            "federal_service": "excluded under January 1983 law and continuously performing that service sinceDec31,1983"
-          },
-          "consequence": "noncovered",
-          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies."
-        },
-        {
-          "when": {
-            "federal_retirement_system": "reemployed CSRS annuitant"
-          },
-          "consequence": "noncovered",
-          "description": "Subject to statutory exceptions, including covered high federal officials and approved waiver-of-offset service; Medicare is a separate concept."
-        },
-        {
-          "when": {
-            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
-          },
-          "consequence": "covered",
-          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides."
-        }
-      ],
       "continuity_preserving_service": [
         "eligible transfer/detail to international organization",
         "American Institute in Taiwan",
         "uniformed service with restoration/reemployment rights",
-        "qualifying Indian tribal organization employment (PL99-221 section3(b), retroactive returns after 1983)"
+        "qualifying Indian tribal organization employment (Public Law 99-221 section 3(b), retroactive returns after 1983)"
       ],
       "named_options": [
         {
           "group": "exactly_365_day_federal_separation",
           "name": "statutory_less_than_366_days",
           "conditions": {
-            "federal_service": "exactly365 consecutive separation days"
+            "federal_service": "exactly 365 consecutive separation days"
           },
           "consequence": "noncovered if other grandfather conditions apply",
           "source": {
@@ -2611,14 +2626,14 @@
             "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
             "location": "410(a) and amendment/effective-date notes"
           },
-          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than366 days as continuous.",
+          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than 366 days as continuous.",
           "status": "operational_primary_statute"
         },
         {
           "group": "exactly_365_day_federal_separation",
           "name": "poms_365_days_or_more",
           "conditions": {
-            "federal_service": "exactly365 consecutive separation days"
+            "federal_service": "exactly 365 consecutive separation days"
           },
           "consequence": "covered if no independent exclusion applies",
           "source": {
@@ -2627,11 +2642,11 @@
             "authority": "POMS RS 01901.340 (2024-06-14)",
             "location": "A-C"
           },
-          "explanation": "RS01901.340 B.2 says365 days or more; CE1 leaves this conflict open.",
+          "explanation": "POMS RS 01901.340 B.2 says 365 days or more. The enacted 1983 rule resolves exactly 365 days as continuous; this conflicting later guidance is retained as a nonoperative source reading.",
           "status": "conflicting_guidance_retained_not_operational"
         }
       ],
-      "retired_federal_judges": "410(a)(5) and409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive PL99-272 amendment; do not classify from ordinary judge title alone.",
+      "retired_federal_judges": "410(a)(5) and 409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive Public Law 99-272 amendment; do not classify from ordinary judge title alone.",
       "continuity_source_disagreement_resolution": {
         "question": "exactly_365_day_federal_separation",
         "status": "resolved_by_primary_amending_act",
@@ -2643,7 +2658,7 @@
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
           "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days"
         },
-        "explanation": "The enacted1983text says the separation does not exceed365consecutive days. Exactly365days therefore preserves continuity when the other grandfather conditions hold."
+        "explanation": "The enacted 1983 text says the separation does not exceed 365 consecutive days. Exactly 365 days therefore preserves continuity when the other grandfather conditions hold."
       },
       "code_edition_evidence": [
         {
@@ -2703,7 +2718,50 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Coverage of newly hired Federal employees.",
+        "when": {
+          "federal_service": "first hired after 1983"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies.",
+        "when": {
+          "federal_service": "excluded under January 1983 law and continuously performing that service since December 31, 1983"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Subject to the statutory covered-official exceptions; Medicare is a separate concept.",
+        "when": {
+          "federal_retirement_system": "reemployed CSRS annuitant"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides.",
+        "when": {
+          "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
+        }
+      },
+      {
+        "when": {
+          "federal_service": "service in legislative branch other than Member, Delegate or Resident Commissioner",
+          "federal_retirement_system": "not subject to CSRS on December 31, 1983"
+        },
+        "consequence": "covered",
+        "description": "Public Law 98-21 section 101(a)(1), clause (v), 97 Stat. 68, overrides the grandfather exclusion for this legislative-branch service."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Federal service is covered when no grandfathered or reemployed-annuitant exclusion case applies."
+    }
   },
   {
     "rule_id": "federal_1987_2026",
@@ -2734,6 +2792,12 @@
         "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
         "authority": "Public Law 98-21, Social Security Amendments of 1983",
         "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days"
+      },
+      {
+        "capture": "ce1r1_usc2024_5_8331.html",
+        "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc",
+        "authority": "5 U.S.C. 8331, official United States Code 2024 edition historical notes",
+        "location": "Effective Date of 1986 Amendment; Public Law 99-335 section 702(a), effective January 1, 1987"
       }
     ],
     "trigger_facts": [
@@ -2755,48 +2819,18 @@
         "temporary emergency employees",
         "other independent statutory exclusions"
       ],
-      "cases": [
-        {
-          "when": {
-            "federal_service": "first hired after 1983"
-          },
-          "consequence": "covered",
-          "description": "Coverage of newly hired Federal employees."
-        },
-        {
-          "when": {
-            "federal_service": "excluded under January 1983 law and continuously performing that service sinceDec31,1983"
-          },
-          "consequence": "noncovered",
-          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies."
-        },
-        {
-          "when": {
-            "federal_retirement_system": "reemployed CSRS annuitant"
-          },
-          "consequence": "noncovered",
-          "description": "Subject to statutory exceptions, including covered high federal officials and approved waiver-of-offset service; Medicare is a separate concept."
-        },
-        {
-          "when": {
-            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
-          },
-          "consequence": "covered",
-          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides."
-        }
-      ],
       "continuity_preserving_service": [
         "eligible transfer/detail to international organization",
         "American Institute in Taiwan",
         "uniformed service with restoration/reemployment rights",
-        "qualifying Indian tribal organization employment (PL99-221 section3(b), retroactive returns after 1983)"
+        "qualifying Indian tribal organization employment (Public Law 99-221 section 3(b), retroactive returns after 1983)"
       ],
       "named_options": [
         {
           "group": "exactly_365_day_federal_separation",
           "name": "statutory_less_than_366_days",
           "conditions": {
-            "federal_service": "exactly365 consecutive separation days"
+            "federal_service": "exactly 365 consecutive separation days"
           },
           "consequence": "noncovered if other grandfather conditions apply",
           "source": {
@@ -2805,14 +2839,14 @@
             "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
             "location": "410(a) and amendment/effective-date notes"
           },
-          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than366 days as continuous.",
+          "explanation": "410(a)(5)(B)(i)(I) expressly treats a separation shorter than 366 days as continuous.",
           "status": "operational_primary_statute"
         },
         {
           "group": "exactly_365_day_federal_separation",
           "name": "poms_365_days_or_more",
           "conditions": {
-            "federal_service": "exactly365 consecutive separation days"
+            "federal_service": "exactly 365 consecutive separation days"
           },
           "consequence": "covered if no independent exclusion applies",
           "source": {
@@ -2821,13 +2855,13 @@
             "authority": "POMS RS 01901.340 (2024-06-14)",
             "location": "A-C"
           },
-          "explanation": "RS01901.340 B.2 says365 days or more; CE1 leaves this conflict open.",
+          "explanation": "POMS RS 01901.340 B.2 says 365 days or more. The enacted 1983 rule resolves exactly 365 days as continuous; this conflicting later guidance is retained as a nonoperative source reading.",
           "status": "conflicting_guidance_retained_not_operational"
         }
       ],
-      "retired_federal_judges": "410(a)(5) and409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive PL99-272 amendment; do not classify from ordinary judge title alone.",
-      "fers_election": "From effective date of qualifying FERS/FSPS election, 410(a)(5)(H) overrides grandfather exclusion; PL99-335, later PL100-647 and 1997 open-enrollment authorities are listed in410 notes.",
-      "legislative_branch": "410(a)(5)(G): test Dec31,1983 retirement participation, lump-sum withdrawals, and cessation of coverage, including statutory requalification provisions.",
+      "retired_federal_judges": "410(a)(5) and 409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive Public Law 99-272 amendment; do not classify from ordinary judge title alone.",
+      "fers_election": "From effective date of qualifying FERS/FSPS election, 410(a)(5)(H) overrides grandfather exclusion; Public Law 99-335, later Public Law 100-647 and 1997 open-enrollment authorities are listed in 410 notes.",
+      "legislative_branch": "410(a)(5)(G): test December 31, 1983 retirement participation, lump-sum withdrawals, and cessation of coverage, including statutory requalification provisions.",
       "continuity_source_disagreement_resolution": {
         "question": "exactly_365_day_federal_separation",
         "status": "resolved_by_primary_amending_act",
@@ -2839,7 +2873,7 @@
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
           "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days"
         },
-        "explanation": "The enacted1983text says the separation does not exceed365consecutive days. Exactly365days therefore preserves continuity when the other grandfather conditions hold."
+        "explanation": "The enacted 1983 text says the separation does not exceed 365 consecutive days. Exactly 365 days therefore preserves continuity when the other grandfather conditions hold."
       },
       "code_edition_evidence": [
         {
@@ -2949,12 +2983,70 @@
             "1986"
           ]
         }
-      ]
+      ],
+      "regime_start_citation": {
+        "capture": "ce1r1_usc2024_5_8331.html",
+        "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc",
+        "authority": "5 U.S.C. 8331, official United States Code 2024 edition historical notes",
+        "location": "Effective Date of 1986 Amendment; Public Law 99-335 section 702(a), effective January 1, 1987"
+      },
+      "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H).",
+      "later_poms_waiver_guidance": "POMS RS 01901.340 C.3.c describes FEPCA waiver-of-offset coverage. This later guidance is not a condition applied throughout the row beginning in 1987; verify the applicable waiver law and effective date for such service."
     },
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Coverage of newly hired Federal employees.",
+        "when": {
+          "federal_service": "first hired after 1983"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies.",
+        "when": {
+          "federal_service": "excluded under January 1983 law and continuously performing that service since December 31, 1983"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Subject to the statutory covered-official exceptions; Medicare is a separate concept.",
+        "when": {
+          "federal_retirement_system": "reemployed CSRS annuitant"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides.",
+        "when": {
+          "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
+        }
+      },
+      {
+        "when": {
+          "federal_service": "service in legislative branch other than Member, Delegate or Resident Commissioner",
+          "federal_retirement_system": "not subject to CSRS on December 31, 1983"
+        },
+        "consequence": "covered",
+        "description": "Public Law 98-21 section 101(a)(1), clause (v), 97 Stat. 68, overrides the grandfather exclusion for this legislative-branch service."
+      },
+      {
+        "when": {
+          "federal_retirement_system": "qualifying FERS or FSPS election effective under 410(a)(5)(H)"
+        },
+        "consequence": "covered",
+        "description": "The qualifying election overrides grandfathered noncoverage from its effective date."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Federal service is covered when no grandfathered or reemployed-annuitant exclusion case applies."
+    }
   },
   {
     "rule_id": "nonprofit_1968_1977",
@@ -2995,27 +3087,10 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "covered_above_threshold",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "Before mandatory coverage, eligible nonprofit employees require an effective actual or deemed waiver; the separate small-remuneration exclusion applies.",
     "parameters": {
-      "cases": [
-        {
-          "when": {
-            "nonprofit_coverage_waiver": "valid and effective",
-            "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
-          },
-          "consequence": "covered_above_threshold",
-          "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions."
-        },
-        {
-          "when": {
-            "nonprofit_coverage_waiver": "none or terminated"
-          },
-          "consequence": "noncovered",
-          "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate."
-        }
-      ],
       "waiver_effective_date_options": [
         "quarter of filing",
         "quarter following filing",
@@ -3023,14 +3098,14 @@
       ],
       "waiver_history": [
         {
-          "law": "PL94-563 as amended byPL95-216",
+          "law": "Public Law 94-563 as amended by Public Law 95-216",
           "service_effect": "after 1950 to extent actual/deemed waiver covers service",
-          "constructive_filing": "Three consecutive paid quarters beginning with/afterSeptember 1973 quarter, subject to refund/validation exceptions inRS01901.540 D.7-D.8."
+          "constructive_filing": "Three consecutive paid quarters beginning with or after the September 1973 quarter, subject to refund/validation exceptions in RS 01901.540 D.7-D.8."
         },
         {
-          "law": "PL98-21 section102(d)",
+          "law": "Public Law 98-21 section 102(d)",
           "date": "1983-03-31",
-          "effect": "No waiver termination on/afterMarch31,1983."
+          "effect": "No waiver termination on or after March 31, 1983."
         }
       ],
       "other_exclusions_still_apply": true,
@@ -3039,7 +3114,7 @@
         "comparison": "at_least",
         "aggregation_unit": "same_employer_employee_calendar_quarter",
         "concept": "remuneration for service to a qualifying tax-exempt organization",
-        "source": "Former410(a)(10)(A); repealed for remuneration and service after 1977 byPL95-216 section351."
+        "source": "Former 410(a)(10)(A); repealed for remuneration and service after 1977 by Public Law 95-216 section 351."
       },
       "threshold_id": "nonprofit_remuneration_quarter",
       "code_edition_evidence": [
@@ -3091,7 +3166,29 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered_above_threshold",
+        "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+        "when": {
+          "nonprofit_coverage_waiver": "valid and effective",
+          "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+        "when": {
+          "nonprofit_coverage_waiver": "none or terminated"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+    }
   },
   {
     "rule_id": "nonprofit_1978_1983",
@@ -3138,27 +3235,10 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "covered_above_threshold",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "Waiver requirement continues; from 1978 the nonprofit small-remuneration rule uses $100 per employer per year.",
     "parameters": {
-      "cases": [
-        {
-          "when": {
-            "nonprofit_coverage_waiver": "valid and effective",
-            "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
-          },
-          "consequence": "covered_above_threshold",
-          "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions."
-        },
-        {
-          "when": {
-            "nonprofit_coverage_waiver": "none or terminated"
-          },
-          "consequence": "noncovered",
-          "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate."
-        }
-      ],
       "waiver_effective_date_options": [
         "quarter of filing",
         "quarter following filing",
@@ -3166,14 +3246,14 @@
       ],
       "waiver_history": [
         {
-          "law": "PL94-563 as amended byPL95-216",
+          "law": "Public Law 94-563 as amended by Public Law 95-216",
           "service_effect": "after 1950 to extent actual/deemed waiver covers service",
-          "constructive_filing": "Three consecutive paid quarters beginning with/afterSeptember 1973 quarter, subject to refund/validation exceptions inRS01901.540 D.7-D.8."
+          "constructive_filing": "Three consecutive paid quarters beginning with or after the September 1973 quarter, subject to refund/validation exceptions in RS 01901.540 D.7-D.8."
         },
         {
-          "law": "PL98-21 section102(d)",
+          "law": "Public Law 98-21 section 102(d)",
           "date": "1983-03-31",
-          "effect": "No waiver termination on/afterMarch31,1983."
+          "effect": "No waiver termination on or after March 31, 1983."
         }
       ],
       "other_exclusions_still_apply": true,
@@ -3181,8 +3261,8 @@
         "amount_cents": 10000,
         "comparison": "at_least",
         "aggregation_unit": "same_employer_employee_calendar_year",
-        "concept": "remuneration for service to qualifying501(a)/521 organization, excluding401(a)trusts",
-        "source": "409(a)(14), originally409(p); PL95-216 section351 after 1977."
+        "concept": "remuneration for service to qualifying 501(a)/521 organization, excluding 401(a) trusts",
+        "source": "409(a)(14), originally 409(p); Public Law 95-216 section 351 after 1977."
       },
       "threshold_id": "nonprofit_remuneration_year",
       "named_options": [
@@ -3224,7 +3304,7 @@
           "authority": "42 USC 409, official 1994 United States Code edition",
           "location": "409(p)(1); 1977 amendment note; Public Law 95-216 section 351(d) effective-date note"
         },
-        "explanation": "1994Code409(p)(1)uses100dollars per employer-calendar-year;the section351(d)note applies the1977amendment to remuneration paid and services rendered after1977."
+        "explanation": "The 1994 Code, 409(p)(1), uses 100 dollars per employer-calendar-year; the section 351(d) note applies the 1977 amendment to remuneration paid and services rendered after 1977."
       },
       "code_edition_evidence": [
         {
@@ -3268,7 +3348,29 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered_above_threshold",
+        "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+        "when": {
+          "nonprofit_coverage_waiver": "valid and effective",
+          "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+        "when": {
+          "nonprofit_coverage_waiver": "none or terminated"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+    }
   },
   {
     "rule_id": "nonprofit_1984_2026",
@@ -3286,7 +3388,7 @@
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
         "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
-        "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes"
+        "location": "409(a)(14), nonprofit annual remuneration exclusion; 1977 amendment and effective-date notes"
       },
       {
         "capture": "govinfo_statute97_pg65_extract.pdf",
@@ -3299,6 +3401,12 @@
         "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
         "authority": "POMS RS 01901.540 (2008-08-29)",
         "location": "B-D"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07), later-edition text with historical notes",
+        "location": "3121(a)(16), qualifying section 501(a)/521 organization and section 401(a) trust exception"
       }
     ],
     "trigger_facts": [
@@ -3316,11 +3424,11 @@
         "amount_cents": 10000,
         "comparison": "at_least",
         "aggregation_unit": "same_employer_employee_calendar_year",
-        "concept": "remuneration for service to qualifying501(a)/521 organization, excluding401(a)trusts"
+        "concept": "remuneration for service to qualifying 501(a)/521 organization, excluding 401(a) trusts"
       },
       "other_exclusions_still_apply": true,
       "church_election_family": "electing_church_employee_service",
-      "federal_employee_nonprofit_special_case": "PL98-369 section 2601(e): employees required to participate inCSRS for nonprofit service can be treated as service for aUS instrumentality.",
+      "federal_employee_nonprofit_special_case": "Public Law 98-369 section 2601(e): employees required to participate in CSRS for nonprofit service can be treated as service for a US instrumentality.",
       "threshold_id": "nonprofit_remuneration_year",
       "code_edition_evidence": [
         {
@@ -3414,7 +3522,13 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "railroad_1968_2026",
@@ -3445,7 +3559,7 @@
     "description": "Services as a railroad employee or employee representative defined in 26 U.S.C. 3231 are excluded from OASDI employment.",
     "parameters": {
       "scope": "OASDI employment and payroll coverage only; railroad compensation may be used under separate benefit coordination statutes, not inferred here.",
-      "history": "1984 technical recodification replaced reference to former 1939 Code 1532 with 1986 Code 3231 without changing existing rights/status.",
+      "history": "1984 technical recodification replaced reference to former 1939 Code 1532 with 1954 Code 3231 without changing existing rights/status.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -3524,7 +3638,13 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "rule_id": "religious_order_1968_1983",
@@ -3554,7 +3674,7 @@
         "capture": "govinfo_statute86_pg1329_extract.pdf",
         "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-        "location": "section 123, printed pages 1354-1356"
+        "location": "section 123, printed pages 1354-1357"
       },
       {
         "capture": "uscode_119_120_26_3121.html",
@@ -3571,7 +3691,7 @@
       {
         "capture": "irs_p517_2025.pdf",
         "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
-        "authority": "IRS Publication 517 (2025)",
+        "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
         "location": "printed pages 4-7"
       }
     ],
@@ -3582,37 +3702,12 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "covered",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "A poverty vow ordinarily excludes coverage; an order's effective 3121(r) election can create covered deemed employment, including statutorily permitted retroactive coverage.",
     "parameters": {
       "poverty_vow_self_employment_excluded": true,
       "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
-      "cases": [
-        {
-          "when": {
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
-            "clergy_or_religious_exemption": "no effective 3121(r) election"
-          },
-          "consequence": "noncovered",
-          "description": "A poverty vow excludes self-employment and employee employment absent an order election."
-        },
-        {
-          "when": {
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
-            "clergy_or_religious_exemption": "effective 3121(r) election"
-          },
-          "consequence": "covered",
-          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor."
-        },
-        {
-          "when": {
-            "religious_order_service": "ordinary employment for a third party outside duties required by the order"
-          },
-          "consequence": "covered",
-          "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions."
-        }
-      ],
       "election_irrevocable": true,
       "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
       "retroactive_election": {
@@ -3647,7 +3742,7 @@
               "capture": "govinfo_statute86_pg1329_extract.pdf",
               "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-              "location": "section 123, printed pages 1354-1356"
+              "location": "section 123, printed pages 1354-1357"
             },
             {
               "capture": "poms_rs_01901620.html",
@@ -3691,7 +3786,7 @@
               "capture": "govinfo_statute86_pg1329_extract.pdf",
               "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
               "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-              "location": "section 123, printed pages 1354-1356"
+              "location": "section 123, printed pages 1354-1357"
             },
             {
               "capture": "poms_rs_01901620.html",
@@ -3744,7 +3839,37 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "noncovered",
+        "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+        "when": {
+          "clergy_or_religious_exemption": "no effective 3121(r) election",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 3121(r) election",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
+        "when": {
+          "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+    }
   },
   {
     "rule_id": "religious_order_1984_2026",
@@ -3808,37 +3933,12 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "covered",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "An order coverage election can deem poverty vow members covered employees; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
     "parameters": {
       "poverty_vow_self_employment_excluded": true,
       "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
-      "cases": [
-        {
-          "when": {
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
-            "clergy_or_religious_exemption": "no effective 3121(r) election"
-          },
-          "consequence": "noncovered",
-          "description": "A poverty vow excludes self-employment and employee employment absent an order election."
-        },
-        {
-          "when": {
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty",
-            "clergy_or_religious_exemption": "effective 3121(r) election"
-          },
-          "consequence": "covered",
-          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor."
-        },
-        {
-          "when": {
-            "religious_order_service": "ordinary employment for a third party outside duties required by the order"
-          },
-          "consequence": "covered",
-          "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions."
-        }
-      ],
       "election_irrevocable": true,
       "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
       "retroactive_election": {
@@ -4040,20 +4140,25 @@
         "citation": {
           "capture": "irs_p517_2025.html",
           "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
-          "authority": "IRS Publication517 (2025)",
+          "authority": "IRS Publication 517 (2025)",
           "location": "Members of Religious Orders; Example Pat Brown and Chris Green"
         },
         "source_passage": "Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA.",
         "expected_rule_id": "religious_order_1984_2026",
-        "expected_parameters": {
-          "poverty_vow_self_employment_excluded": true
-        }
+        "calculation": "order_service",
+        "published_inputs": {
+          "required_order_duties": true,
+          "vow_of_poverty": true
+        },
+        "published_outputs": {
+          "self_employment_coverage": "noncovered"
+        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "source_edition_year": 2025
       },
       {
         "example_id": "irs517_2025_pat_brown_third_party_employment",
         "income_year": 2025,
-        "source_edition_year": 2025,
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "citation": {
           "capture": "irs_p517_2025.html",
           "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
@@ -4062,18 +4167,16 @@
         },
         "source_passage": "Pat's services aren't duties required by the order.",
         "expected_rule_id": "religious_order_1984_2026",
-        "expected_parameters": {
-          "third_party_ordinary_employment_excluded_by_vow": false
-        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {
-          "vow_of_poverty": true,
-          "occupation": "licensed_attorney",
-          "employer": "law_firm",
-          "salary_paid_directly_to_order": true
+          "required_order_duties": false,
+          "vow_of_poverty": true
         },
         "published_outputs": {
           "social_security_and_medicare_treatment": "subject_to_FICA"
-        }
+        },
+        "source_edition_year": 2025,
+        "calculation": "order_service"
       }
     ],
     "rare_exclusion": {
@@ -4099,7 +4202,37 @@
       ]
     },
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "noncovered",
+        "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+        "when": {
+          "clergy_or_religious_exemption": "no effective 3121(r) election",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 3121(r) election",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
+        "when": {
+          "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+    }
   },
   {
     "rule_id": "state_local_1968_1983",
@@ -4138,22 +4271,6 @@
     "parameters": {
       "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
       "section_218_first": true,
-      "cases": [
-        {
-          "when": {
-            "section_218_position": "covered by effective agreement/modification"
-          },
-          "consequence": "covered",
-          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
-        },
-        {
-          "when": {
-            "section_218_position": "not covered"
-          },
-          "consequence": "noncovered",
-          "description": "State/local exclusion applies unless covered transportation or another statutory exception applies."
-        }
-      ],
       "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
       "agreement_trigger_evidence": [
         "employing entity",
@@ -4216,7 +4333,28 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+        "when": {
+          "section_218_position": "covered by effective agreement/modification"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
+        "when": {
+          "section_218_position": "not covered"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+    }
   },
   {
     "rule_id": "state_local_1983_1991",
@@ -4255,22 +4393,6 @@
     "parameters": {
       "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
       "section_218_first": true,
-      "cases": [
-        {
-          "when": {
-            "section_218_position": "covered by effective agreement/modification"
-          },
-          "consequence": "covered",
-          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
-        },
-        {
-          "when": {
-            "section_218_position": "not covered"
-          },
-          "consequence": "noncovered",
-          "description": "State/local exclusion applies unless covered transportation or another statutory exception applies."
-        }
-      ],
       "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
       "agreement_trigger_evidence": [
         "employing entity",
@@ -4331,7 +4453,28 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+        "when": {
+          "section_218_position": "covered by effective agreement/modification"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
+        "when": {
+          "section_218_position": "not covered"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+    }
   },
   {
     "rule_id": "state_local_1991_2026",
@@ -4376,37 +4519,12 @@
       "section_218_position",
       "public_retirement_system_participation"
     ],
-    "consequence": "covered",
+    "consequence": "noncovered",
     "identification_class": "awaiting_ce2",
     "description": "First establish Section 218 coverage; if absent, nonmembers of a qualified retirement system have mandatory coverage, subject to statutory exclusions.",
     "parameters": {
       "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
       "section_218_first": true,
-      "cases": [
-        {
-          "when": {
-            "section_218_position": "covered by effective agreement/modification"
-          },
-          "consequence": "covered",
-          "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage."
-        },
-        {
-          "when": {
-            "section_218_position": "not covered",
-            "public_retirement_system_participation": "not a member of an IRS-qualified system"
-          },
-          "consequence": "covered",
-          "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies."
-        },
-        {
-          "when": {
-            "section_218_position": "not covered",
-            "public_retirement_system_participation": "member of an IRS-qualified system"
-          },
-          "consequence": "noncovered",
-          "description": "The state/local exclusion remains unless another statutory exception applies."
-        }
-      ],
       "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
       "agreement_trigger_evidence": [
         "employing entity",
@@ -4544,16 +4662,20 @@
         },
         "source_passage": "A City\u2019s Section 218 Agreement excludes part-time positions that require less than 20 hours of work per week. The City\u2019s cafeteria has part-time employees who work part-time 15 hours per week. The City\u2019s retirement system membership is only for employees who work in full-time positions. Therefore, part-time employees of the cafeteria are subject to mandatory Social Security and Medicare.",
         "expected_rule_id": "state_local_1991_2026",
-        "expected_parameters": {
-          "mandatory_start": "1991-07-02",
-          "section_218_first": true
-        }
+        "calculation": "state_local_mandatory",
+        "published_inputs": {
+          "section_218_covered": false,
+          "qualified_retirement_system_member": false
+        },
+        "published_outputs": {
+          "social_security_coverage": "covered"
+        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "source_edition_year": 2015
       },
       {
         "example_id": "handbook_2020_mers_retained_membership_no_vote",
         "income_year": 2020,
-        "source_edition_year": 2020,
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "citation": {
           "capture": "ce1c_poms_sl_30001334.html",
           "sha256": "c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41",
@@ -4562,32 +4684,20 @@
         },
         "source_passage": "A is not a new member for purposes of coverage.",
         "expected_rule_id": "state_local_1991_2026",
-        "expected_parameters": {
-          "section_218_first": true,
-          "section_218_divided_vote_same_group_return": {
-            "state_existing_member": "retains_prior_vote",
-            "state_new_member": "compulsorily_covered"
-          }
-        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {
-          "prior_vote": "no",
-          "retirement_system": "MERS",
-          "prior_city": "City X",
-          "return_city": "City X",
-          "private_employment_break_years": 2,
-          "retained_membership": true,
           "state_treats_as_new_member": false,
-          "referendum_type": "divided_vote"
+          "prior_vote": "no"
         },
         "published_outputs": {
-          "original_no_vote": "retained"
-        }
+          "agreement_coverage": "noncovered"
+        },
+        "source_edition_year": 2020,
+        "calculation": "section_218_reentry"
       },
       {
         "example_id": "handbook_2020_mers_withdrawal_new_member",
         "income_year": 2020,
-        "source_edition_year": 2020,
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "citation": {
           "capture": "ce1c_poms_sl_30001334.html",
           "sha256": "c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41",
@@ -4596,31 +4706,51 @@
         },
         "source_passage": "A is a new member for purposes of coverage and is covered compulsorily.",
         "expected_rule_id": "state_local_1991_2026",
-        "expected_parameters": {
-          "section_218_first": true,
-          "section_218_divided_vote_same_group_return": {
-            "state_existing_member": "retains_prior_vote",
-            "state_new_member": "compulsorily_covered"
-          }
-        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {
-          "prior_vote": "no",
-          "retirement_system": "MERS",
-          "prior_city": "City X",
-          "return_city": "City X",
-          "private_employment_break_years": 2,
-          "withdrew_contributions": true,
           "state_treats_as_new_member": true,
-          "referendum_type": "divided_vote"
+          "prior_vote": "no"
         },
         "published_outputs": {
-          "agreement_coverage": "covered_compulsorily"
-        }
+          "agreement_coverage": "covered"
+        },
+        "source_edition_year": 2020,
+        "calculation": "section_218_reentry"
       }
     ],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": null
+    "open_reason": null,
+    "cases": [
+      {
+        "consequence": "covered",
+        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+        "when": {
+          "section_218_position": "covered by effective agreement/modification"
+        }
+      },
+      {
+        "consequence": "covered",
+        "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies.",
+        "when": {
+          "public_retirement_system_participation": "not a member of an IRS-qualified system",
+          "section_218_position": "not covered"
+        }
+      },
+      {
+        "consequence": "noncovered",
+        "description": "The state/local exclusion remains unless another statutory exception applies.",
+        "when": {
+          "public_retirement_system_participation": "member of an IRS-qualified system",
+          "section_218_position": "not covered"
+        }
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "The state or local government exclusion applies when no agreement, mandatory nonmember coverage or other statutory exception applies."
+    }
   },
   {
     "rule_id": "state_local_territories_history_open",
@@ -4637,14 +4767,14 @@
       {
         "capture": "poms_rs_01901300.html",
         "sha256": "384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104",
-        "authority": "SSA POMS RS01901.300(2012-06-18)",
-        "location": "Policy1-2;D.C.coverage from1965-10-01;new hires after1987-09-30;listed exclusions"
+        "authority": "SSA POMS RS 01901.300(2012-06-18)",
+        "location": "Policy 1-2; D.C. coverage from 1965-10-01; new hires after 1987-09-30; listed exclusions"
       },
       {
         "capture": "poms_rs_01901320.html",
         "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
-        "authority": "SSA POMS RS01901.320(2013-04-03)",
-        "location": "Covered services1-3;AmericanSamoa,Guam,CNMI dates and Philippines temporary-admission notes"
+        "authority": "SSA POMS RS 01901.320(2013-04-03)",
+        "location": "Covered services 1-3; American Samoa, Guam, CNMI dates and Philippines temporary-admission notes"
       }
     ],
     "trigger_facts": [
@@ -4652,7 +4782,7 @@
       "federal_retirement_system",
       "public_retirement_system_participation"
     ],
-    "consequence": "noncovered",
+    "consequence": null,
     "identification_class": "awaiting_ce2",
     "description": "District of Columbia, Guam, and American Samoa have special rules in 410(a)(7)(C)-(E).",
     "parameters": {
@@ -4665,7 +4795,7 @@
         {
           "jurisdiction": "District of Columbia",
           "coverage_from": "1965-10-01",
-          "condition": "not covered by a U.S.-law retirement system other thanFERS;no independent or listed exclusion",
+          "condition": "not covered by a U.S.-law retirement system other than FERS; no independent or listed exclusion",
           "new_hires_covered_after": "1987-09-30",
           "specific_exclusions": [
             "hospital/penal patients or inmates",
@@ -4676,43 +4806,43 @@
           "citation": {
             "capture": "poms_rs_01901300.html",
             "sha256": "384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104",
-            "authority": "SSA POMS RS01901.300(2012-06-18)",
-            "location": "Policy1-2;D.C.coverage from1965-10-01;new hires after1987-09-30;listed exclusions"
+            "authority": "SSA POMS RS 01901.300(2012-06-18)",
+            "location": "Policy 1-2; D.C. coverage from 1965-10-01; new hires after 1987-09-30; listed exclusions"
           }
         },
         {
           "jurisdiction": "American Samoa",
-          "government_service_coverage_from": "1961-01-01",
-          "qualification": "POMSgeneral statement does not replace statutory federal-retirement and other applicable exclusions",
           "citation": {
             "capture": "poms_rs_01901320.html",
             "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
-            "authority": "SSA POMS RS01901.320(2013-04-03)",
-            "location": "Covered services1-3;AmericanSamoa,Guam,CNMI dates and Philippines temporary-admission notes"
-          }
+            "authority": "SSA POMS RS 01901.320(2013-04-03)",
+            "location": "Covered services 1-3; American Samoa, Guam, CNMI dates and Philippines temporary-admission notes"
+          },
+          "government_service_coverage_from": "1961-01-01",
+          "qualification": "POMS general statement does not replace statutory federal-retirement and other applicable exclusions"
         },
         {
           "jurisdiction": "Guam",
-          "temporary_or_intermittent_coverage_from": "1973-01-01",
-          "condition": "not covered by retirement system established by law ofGuam;Philippine temporary-admission and independent exclusions still apply",
+          "condition": "not covered by retirement system established by law of Guam; Philippine temporary-admission and independent exclusions still apply",
           "citation": {
             "capture": "poms_rs_01901320.html",
             "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
-            "authority": "SSA POMS RS01901.320(2013-04-03)",
-            "location": "Covered services1-3;AmericanSamoa,Guam,CNMI dates and Philippines temporary-admission notes"
-          }
+            "authority": "SSA POMS RS 01901.320(2013-04-03)",
+            "location": "Covered services 1-3; American Samoa, Guam, CNMI dates and Philippines temporary-admission notes"
+          },
+          "temporary_or_intermittent_coverage_from": "1973-01-01"
         },
         {
           "jurisdiction": "CNMI",
-          "temporary_or_intermittent_coverage_from": "1987-01-01",
-          "condition": "not covered by retirement system established by law ofCNMI;Philippine temporary-admission exclusion still applies",
-          "general_government_service_coverage_from": "2012-10-01",
+          "condition": "not covered by retirement system established by law of CNMI; Philippine temporary-admission exclusion still applies",
           "citation": {
             "capture": "poms_rs_01901320.html",
             "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
-            "authority": "SSA POMS RS01901.320(2013-04-03)",
-            "location": "Covered services1-3;AmericanSamoa,Guam,CNMI dates and Philippines temporary-admission notes"
-          }
+            "authority": "SSA POMS RS 01901.320(2013-04-03)",
+            "location": "Covered services 1-3; American Samoa, Guam, CNMI dates and Philippines temporary-admission notes"
+          },
+          "general_government_service_coverage_from": "2012-10-01",
+          "temporary_or_intermittent_coverage_from": "1987-01-01"
         }
       ],
       "code_edition_evidence": [
@@ -4734,14 +4864,14 @@
             {
               "capture": "poms_rs_01901300.html",
               "sha256": "384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104",
-              "authority": "SSA POMS RS01901.300(2012-06-18)",
-              "location": "Policy1-2;D.C.coverage from1965-10-01;new hires after1987-09-30;listed exclusions"
+              "authority": "SSA POMS RS 01901.300(2012-06-18)",
+              "location": "Policy 1-2; D.C. coverage from 1965-10-01; new hires after 1987-09-30; listed exclusions"
             },
             {
               "capture": "poms_rs_01901320.html",
               "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
-              "authority": "SSA POMS RS01901.320(2013-04-03)",
-              "location": "Covered services1-3;AmericanSamoa,Guam,CNMI dates and Philippines temporary-admission notes"
+              "authority": "SSA POMS RS 01901.320(2013-04-03)",
+              "location": "Covered services 1-3; American Samoa, Guam, CNMI dates and Philippines temporary-admission notes"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -4804,6 +4934,21 @@
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
-    "open_reason": "TERRITORIAL_GOVERNMENT_HISTORY_UNVERIFIED: POMSdates and selected exceptions are pinned, but the complete family still requires the historical governor-certification records under PublicLaw86-778section103(v), federal-retirement exceptions, independent410(a)exclusions, and CNMI pre1987/2012transition authorities. The verified subcases must not imply that every territorial government record is classified."
+    "open_reason": "TERRITORIAL_GOVERNMENT_HISTORY_UNVERIFIED: POMS dates and selected exceptions are pinned, but the complete family still requires the historical governor-certification records under Public Law 86-778 section 103(v), federal-retirement exceptions, independent 410(a) exclusions, and CNMI pre-1987/2012 transition authorities. The verified subcases must not imply that every territorial government record is classified.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Apply a territorial exception only where its historical conditions and effective date are established.",
+        "name": "territorial_statutory_exception"
+      },
+      {
+        "description": "Apply the government-service exclusion when no territorial or other statutory exception applies.",
+        "name": "general_government_exclusion"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   }
 ]

@@ -80,8 +80,8 @@
       }
     ],
     "indexing": null,
-    "description": "Fixed150/year, one alternative to the era-specific days or employer-payroll test.",
-    "monotone": true,
+    "description": "Fixed 150/year, one alternative to the era-specific days or employer-payroll test.",
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -151,8 +151,8 @@
       }
     ],
     "indexing": null,
-    "description": "Employer-wide2500alternative from1988; unavailable for the specified seasonal hand-harvest employees.",
-    "monotone": true,
+    "description": "Employer-wide 2500 alternative from 1988; unavailable for the specified seasonal hand-harvest employees.",
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -193,17 +193,17 @@
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
         "authority": "42 USC 409, current law and historical notes captured 2026-10-24",
-        "location": "1987 amendment notes, former agricultural20-day test"
+        "location": "1987 amendment notes, former agricultural 20-day test"
       }
     ],
     "indexing": null,
-    "description": "This threshold is in days, not dollars. It is an alternative to the150cash test for1968-1987.",
-    "monotone": true,
+    "description": "This threshold is in days, not dollars. It is an alternative to the 150 cash test for 1968-1987.",
+    "monotone": false,
     "unit": "days"
   },
   {
     "threshold_id": "cash_tips_monthly",
-    "aggregation_scope": "calendar_month",
+    "aggregation_scope": "employer_employee_month",
     "eligible_concept": "Cash tips received in employment for one employer by an employee in the calendar month.",
     "comparison": "at_least",
     "published_values": {
@@ -271,13 +271,13 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(10),currentlaw and1965notes",
+        "authority": "42 USC 409(a)(10), current law and 1965 notes",
         "location": "409(a)(10); 1965 enactment and effective-date notes"
       }
     ],
     "indexing": null,
     "description": "Noncash tips remain excluded. Cash-tip threshold applies by employer-employee-month.",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -352,12 +352,12 @@
     ],
     "indexing": null,
     "description": "",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
     "threshold_id": "casual_cash_quarterly",
-    "aggregation_scope": "calendar_quarter",
+    "aggregation_scope": "employer_employee_quarter",
     "eligible_concept": "Cash remuneration from one employer for nonbusiness nondomestic services in one calendar quarter.",
     "comparison": "at_least",
     "published_values": {
@@ -388,7 +388,7 @@
     ],
     "indexing": null,
     "description": "",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -441,7 +441,7 @@
       {
         "capture": "lii_26_3121.html",
         "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
-        "authority": "26 USC 3121(x), current law captured2026-10-24",
+        "authority": "26 USC 3121(x), current law captured 2026-10-24",
         "location": "3121(x)"
       },
       {
@@ -561,55 +561,55 @@
       {
         "capture": "irs_pub15_1999.pdf",
         "sha256": "4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a",
-        "authority": "IRS Publication15 (1999)",
+        "authority": "IRS Publication 15 (1999)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2000.pdf",
         "sha256": "0b260e568bb67a518416ba6bed5cdc9009b98f3ddcd9cbbbecf0fe8cf471c1cf",
-        "authority": "IRS Publication15 (2000)",
+        "authority": "IRS Publication 15 (2000)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2001.pdf",
         "sha256": "bcca2c54a7b9add4e07a50db85886117d2628439068bc21c30d34e1fead6065e",
-        "authority": "IRS Publication15 (2001)",
+        "authority": "IRS Publication 15 (2001)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2002.pdf",
         "sha256": "de232610a85d471a8a6a8bc36ddb763cd8f4308a0b6a14ee19637867a1ef3cf8",
-        "authority": "IRS Publication15 (2002)",
+        "authority": "IRS Publication 15 (2002)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2003.pdf",
         "sha256": "dc10b5026ca0f8cdf677ebcc4078fd9de608585fb4792c57124cbecd622e04aa",
-        "authority": "IRS Publication15 (2003)",
+        "authority": "IRS Publication 15 (2003)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2004.pdf",
         "sha256": "885d1e0ea9ca9057266067c148db6ea065dfc1591de3a3b22cfaa92bf8231161",
-        "authority": "IRS Publication15 (2004)",
+        "authority": "IRS Publication 15 (2004)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2005.pdf",
         "sha256": "6f3867d20acd1c0fff2323026c66c47e0e13c8815460eb0f71bd5a169fc67401",
-        "authority": "IRS Publication15 (2005)",
+        "authority": "IRS Publication 15 (2005)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2006.pdf",
         "sha256": "7b807cecffec8425c49b297a205236f69a927ca4041b986572c9d2dde5743c66",
-        "authority": "IRS Publication15 (2006)",
+        "authority": "IRS Publication 15 (2006)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
         "capture": "irs_pub15_2007.pdf",
         "sha256": "d56262a59664f59649c5ea28db568d4e9a14706adae0923aa7bcb14ae364c670",
-        "authority": "IRS Publication15 (2007)",
+        "authority": "IRS Publication 15 (2007)",
         "location": "Special Rules for Various Types of Services and Payments; Household employees; Domestic service in private homes"
       },
       {
@@ -631,7 +631,7 @@
       "first_year": 1996,
       "last_year": 2026
     },
-    "description": "1994-1995 fixed at1000; 1996+ index1000 by AWI(year-2)/AWI1993, round down100. Named AWI inputs required when published threshold is absent. No prior-year floor has been inferred from current3121(x).",
+    "description": "1994-1995 fixed at 1000; 1996+ index 1000 by AWI(year-2)/AWI 1993, round down 100. Named AWI inputs required when published threshold is absent. No prior-year floor has been inferred from current 3121(x).",
     "monotone": false,
     "unit": "dollars",
     "archived_published_table": {
@@ -653,7 +653,7 @@
   },
   {
     "threshold_id": "domestic_cash_quarterly",
-    "aggregation_scope": "calendar_quarter",
+    "aggregation_scope": "employer_employee_quarter",
     "eligible_concept": "Cash remuneration for one employer-employee domestic-service relationship in one calendar quarter.",
     "comparison": "at_least",
     "published_values": {
@@ -701,13 +701,13 @@
         "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
         "sha256": "5d970dc1ffc0495496bd122312f73c5831c67544fca2dd6f15da4197a7a70b5d",
         "authority": "SSA Employment Coverage Thresholds, archived copy of published table",
-        "location": "Footnote a; cross-checked against former 42 USC409(a)(6)(B), reproduced in its 1994 amendment notes",
+        "location": "Footnote a; cross-checked against former 42 USC 409(a)(6)(B), reproduced in its 1994 amendment notes",
         "quote": "Prior to 1994, the threshold wage amount was $50 per calendar quarter for domestic employees."
       }
     ],
     "indexing": null,
     "description": "Statutory fixed $50/quarter. Distinct employers never combine. Once met, all cash remuneration for the quarter is wages.",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -770,73 +770,73 @@
       {
         "capture": "poms_sl_90015501.html",
         "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d",
-        "authority": "SSA POMS SL90015.501",
-        "location": "D,1978-2016published thresholds"
+        "authority": "SSA POMS SL 90015.501",
+        "location": "D, 1978-2016 published thresholds"
       },
       {
         "capture": "lii_42_418.html",
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
-        "authority": "42USC418(c)(8)(B),currentlaw captured2026-10-24",
+        "authority": "42 USC 418(c)(8)(B), current law captured 2026-10-24",
         "location": "418(c)(8)(B)"
       },
       {
         "capture": "irs_pub15_2017.pdf",
         "sha256": "5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742",
-        "authority": "IRS Publication15 (2017)",
+        "authority": "IRS Publication 15 (2017)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2018.pdf",
         "sha256": "4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524",
-        "authority": "IRS Publication15 (2018)",
+        "authority": "IRS Publication 15 (2018)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2019.pdf",
         "sha256": "897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d",
-        "authority": "IRS Publication15 (2019)",
+        "authority": "IRS Publication 15 (2019)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2020.pdf",
         "sha256": "1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03",
-        "authority": "IRS Publication15 (2020)",
+        "authority": "IRS Publication 15 (2020)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2021.pdf",
         "sha256": "4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577",
-        "authority": "IRS Publication15 (2021)",
+        "authority": "IRS Publication 15 (2021)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2022.pdf",
         "sha256": "da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929",
-        "authority": "IRS Publication15 (2022)",
+        "authority": "IRS Publication 15 (2022)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2023.pdf",
         "sha256": "8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3",
-        "authority": "IRS Publication15 (2023)",
+        "authority": "IRS Publication 15 (2023)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2024.pdf",
         "sha256": "3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0",
-        "authority": "IRS Publication15 (2024)",
+        "authority": "IRS Publication 15 (2024)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2025.pdf",
         "sha256": "168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0",
-        "authority": "IRS Publication15 (2025)",
+        "authority": "IRS Publication 15 (2025)",
         "location": "What is New; election-workers threshold"
       },
       {
         "capture": "irs_pub15_2026.html",
         "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
-        "authority": "IRS Publication15(2026)",
+        "authority": "IRS Publication 15(2026)",
         "location": "What is New; Social Security and Medicare Taxes"
       },
       {
@@ -858,7 +858,7 @@
       "first_year": 2000,
       "last_year": 2026
     },
-    "description": "1995-1999fixed1000;2000+ index1000 byAWI(year-2)/AWI1997, nearest100 with50ties upward. Agreement lower thresholds/no exclusion may supersede this statutory ceiling. No prior-year floor inferred.",
+    "description": "1995-1999 fixed 1000; 2000+ index 1000 by AWI(year-2)/AWI 1997, nearest 100 with 50 ties upward. Agreement lower thresholds/no exclusion may supersede this statutory ceiling. No prior-year floor inferred.",
     "monotone": false,
     "unit": "dollars",
     "archived_published_table": {
@@ -880,8 +880,8 @@
   },
   {
     "threshold_id": "election_remuneration_quarterly",
-    "aggregation_scope": "calendar_quarter",
-    "eligible_concept": "Election official/worker remuneration under a Section218 optional exclusion, one calendar quarter.",
+    "aggregation_scope": "employer_employee_quarter",
+    "eligible_concept": "Election official/worker remuneration under a Section 218 optional exclusion, one calendar quarter.",
     "comparison": "at_least",
     "published_values": {
       "1968": 50,
@@ -899,19 +899,19 @@
       {
         "capture": "poms_sl_90015501.html",
         "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d",
-        "authority": "SSA POMS SL90015.501",
-        "location": "D,1968-1977history"
+        "authority": "SSA POMS SL 90015.501",
+        "location": "D, 1968-1977 history"
       },
       {
         "capture": "govinfo_statute81_pg821_extract.pdf",
         "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f",
-        "authority": "Public Law90-248 section116(c),81Stat840-841",
-        "location": "printedpp840-841"
+        "authority": "Public Law 90-248 section 116(c), 81 Stat 840-841",
+        "location": "printed pp. 840-841"
       }
     ],
     "indexing": null,
     "description": "Agreement-specific lower thresholds or no exclusion control instead of this statutory ceiling when applicable.",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -974,18 +974,18 @@
       {
         "capture": "poms_rs_01402230.html",
         "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
-        "authority": "SSA POMS RS01402.230",
-        "location": "A-B,1951-1977and1978+cash thresholds"
+        "authority": "SSA POMS RS 01402.230",
+        "location": "A-B, 1951-1977 and 1978+ cash thresholds"
       }
     ],
     "indexing": null,
     "description": "Common-law employees are covered without this occupational-group cash-pay test.",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
     "threshold_id": "homeworker_cash_quarterly",
-    "aggregation_scope": "calendar_quarter",
+    "aggregation_scope": "employer_employee_quarter",
     "eligible_concept": "Cash remuneration from one employer to one statutory home worker in the stated period; crossing the cash test makes both cash and noncash pay wages.",
     "comparison": "at_least",
     "published_values": {
@@ -1004,13 +1004,13 @@
       {
         "capture": "poms_rs_01402230.html",
         "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
-        "authority": "SSA POMS RS01402.230",
-        "location": "A-B,1951-1977and1978+cash thresholds"
+        "authority": "SSA POMS RS 01402.230",
+        "location": "A-B, 1951-1977 and 1978+ cash thresholds"
       }
     ],
     "indexing": null,
     "description": "Common-law employees are covered without this occupational-group cash-pay test.",
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars"
   },
   {
@@ -1066,14 +1066,14 @@
       {
         "capture": "ce1c_plaw104_188.html",
         "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db",
-        "authority": "Public Law 104-188 section1116(a)(2)-(3)",
-        "location": "Additional cash amount does not exceed100 per trip; minimum-catch and additional-duty conditions; applicability after1994 and conditional1985-1994",
+        "authority": "Public Law 104-188 section 1116(a)(2)-(3)",
+        "location": "Additional cash amount does not exceed 100 per trip; minimum-catch and additional-duty conditions; applicability after 1994 and conditional 1985-1994",
         "quote": "which does not exceed $100 per trip;"
       }
     ],
     "indexing": null,
-    "monotone": true,
     "description": "This is an upper bound, not a minimum earnings exemption. For1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
+    "monotone": false,
     "unit": "dollars"
   }
 ]

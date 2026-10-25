@@ -287,7 +287,7 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 
 ## Additional unavailable or blocked requests
 
-- https://www.govinfo.gov/metadata/granule/USCODE-2014-title42/USCODE-2014-title42-chap7-subchapII-sec410/mods.xml: SOURCE_BLOCKED; Plain request returned Please Retry later in15Seconds refresh/challenge page; stopped with no retry or alternate endpoint.; retrieved_at=None; recorded_at=2026-10-25T02:43:23Z.
+- https://www.govinfo.gov/metadata/granule/USCODE-2014-title42/USCODE-2014-title42-chap7-subchapII-sec410/mods.xml: SOURCE_BLOCKED; Plain request returned Please Retry later in 15 seconds refresh/challenge page; stopped with no retry or alternate endpoint.; retrieved_at=None; recorded_at=2026-10-25T02:43:23Z.
 - https://www.loc.gov/item/uscode1970-028042007/?fo=json: SOURCE_BLOCKED; Earlier registry_audit plain request refused; no retry, alternate host or attempt to obtain the linked LoC files.; retrieved_at=None; recorded_at=2026-10-25T02:43:23Z.
 
 ## Additional pinned primary sources
@@ -301,7 +301,7 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 
 ## Page-range extracts
 
-Five whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's size and SHA-256 identify the bytes the extract was cut from; the originals are in this pull request's commit history.
+Five whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's URL, size and SHA-256 identify the authentic bytes and allow retrieval independently of this pull request's commit history. Extraction preserves the original signature fields, but changes the signed bytes: the GPO digital signatures in all five extracts are invalidated by extraction. The captures' integrity is checked with the recorded SHA-256 hashes; the extracts do not have valid original signatures.
 
 | Extract | Original | Original bytes | Original SHA-256 | Original PDF pages kept | Kept for |
 |---|---|---:|---|---|---|
@@ -315,7 +315,47 @@ Command: `qpdf --deterministic-id --empty --pages <original> <pages> -- <extract
 
 ## Removed uncited captures
 
-No registry row cites these files, so they are not retained. The inventory rows above keep each PDF's URL, size and SHA-256.
+These general publications were removed as redundant research captures. The inventory rows above keep each PDF's URL, size and SHA-256. Retention is based on a registry citation or a recorded source/derivative relationship, including the archived transport bytes. Uncited section captures without such a relationship are removed under the same criterion.
 
 - irs_pub17_1999.pdf, irs_pub17_2000.pdf, irs_pub17_2001.pdf, irs_pub17_2002.pdf, irs_pub17_2003.pdf, irs_pub17_2004.pdf, irs_pub17_2005.pdf, irs_pub17_2006.pdf, irs_pub17_2007.pdf: IRS Publication 17, 1999-2007.
 - govinfo_statute86_pg1329.pdf.txt, govinfo_statute81_pg821.pdf.txt, govinfo_statute97_pg65.pdf.txt: whole-act text renderings of the originals, with no manifest entry.
+
+## Review-round source records
+
+`sources_r1_se.json` and `sources_r1_other.json` record the new requests, including unsuccessful URLs. Their successful capture records are also in `source_inventory.json` and the matching `capture_manifest_r1_*.txt` files. Failed requests use `attempted_filename`, where needed, rather than a filename that could be mistaken for retained bytes. An unsuccessful URL and a later successful request remain distinct attempts.
+
+Derivative commands use separated page flags: `pdftotext -f 2 -l 3 -raw` for the Federal Register extract and `pdftotext -f 2 -l 2 -layout` for the 1965 Act extract.
+
+The round-1 retention check also removed these 29 uncited captures with no retained derivative dependency. Their retrieval records retain their URLs, sizes and hashes:
+
+- `cfr_2024_20_4041081.xml`
+- `govinfo_statute88_pg420.pdf.txt`
+- `irs_form1040_instructions_1985.pdf.txt`
+- `irs_schedule_se_1984.pdf.txt`
+- `irs_schedule_se_1985.pdf.txt`
+- `irs_schedule_se_instructions_2025.pdf`
+- `poms_rm_04907001.html`
+- `poms_rs_01505_toc.html`
+- `poms_rs_01802060.html`
+- `poms_rs_01802234.html`
+- `poms_rs_01803160.html`
+- `poms_rs_01803185.html`
+- `poms_rs_01803_toc.html`
+- `poms_rs_01804050.html`
+- `poms_rs_01901735.html`
+- `poms_rs_01901_toc.html`
+- `poms_rs_0301505044.html`
+- `uscode_1997_26_1402.html`
+- `uscode_2000_26_1402.html`
+- `uscode_2000_42_410.html`
+- `uscode_2004_42_410.html`
+- `uscode_2006_26_1402.html`
+- `uscode_2006_42_410.html`
+- `uscode_2007_26_1402.html`
+- `uscode_2008_42_410.html`
+- `uscode_2010_26_1402.html`
+- `uscode_2012_26_1402.html`
+- `uscode_2018_26_1402.html`
+- `uscode_2018_42_411.html`
+
+The round-1 plain request to https://www.ssa.gov/OP_Home/rulings/oasi/33/SSR95-03-oasi-33.html returned HTTP 403 on 2026-10-25 (`SOURCE_BLOCKED`; exact attempt time was not recorded). No circumvention was attempted. The already pinned POMS RS 01402.020 provides the cited rule.

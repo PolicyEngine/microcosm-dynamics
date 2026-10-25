@@ -9,10 +9,21 @@ CE2 has not supplied identification evidence: ``awaiting_ce2`` is not
 Invariants (property tests in ``tests/income_resources``):
 
 * Every family/year lookup returns rules or raises a typed refusal, never an
-  empty result. A year lookup checks every day, preserving midyear changes.
+  empty result. A service-year lookup checks every day, preserving midyear
+  changes. A family whose rows set ``parameters.effective_basis`` to
+  ``taxable_year_start`` uses the beginning of the taxable year: year-only
+  lookup assumes January 1, while ``lookup_date`` accepts the actual start.
+  Every row of one family must use the same date axis.
 * Effective ranges partition each family's support. Unexplained overlaps
   are invalid; named alternatives require an explicit selection at lookup.
   Gaps and explicitly open legal questions refuse the affected query.
+* Each row states its residual default, equal to its top-level consequence.
+  Cases carry nonempty trigger-fact conditions and an enum consequence.
+  Lookup returns these cases with the row; CE3 must apply matching cases
+  before using the residual when no case applies. It never classifies from
+  the top-level consequence alone. ``open`` also represents missing facts.
+* Open legal rows have null/``open`` consequences, named alternatives and
+  no chosen reading. They refuse even if a caller selects an alternative.
 * Each rule cites a capture; loading checks every citation's SHA-256 against
   a file inside the capture directory, including nested example/bound cites.
 * Trigger facts belong to FIELD_PURPOSES or the listed CE1 extensions.
@@ -20,15 +31,28 @@ Invariants (property tests in ``tests/income_resources``):
 * A negligible candidate requires a cited prevalence bound and population;
   a missing bound preserves strict unresolved treatment and search history.
 * A threshold declared monotone cannot decline across its published years.
+  Only the optional-method limits carry this flag: their quarter-of-coverage
+  inputs follow the statutory prior-year floor in 42 U.S.C. 413(d)(2).
+  Constant series carry no claim of a statutory nondecrease requirement.
   The indexed domestic/election laws use their specified rounding and floors;
   future computation requires named index inputs, never an extrapolation.
 * Row order does not affect validation, lookup or canonical JSON round trips.
+* Worked examples carry an oracle label and nonempty inputs and outcomes.
+  Conformance tests consume every published field and check the outcome.
 
 Threshold amounts use the record's unit (dollars unless stated as days).
+Aggregation scopes identify the statutory unit: ``component`` is one payment;
+``employer_employee_year``, ``employer_employee_quarter``,
+``employer_employee_month``, ``employer_employee_day`` and
+``employer_employee_trip`` aggregate one employer-worker relationship over
+that period or trip. ``employer_year`` aggregates the employer's payroll;
+``person_year`` and ``person_month`` aggregate one person's eligible amounts;
+``calendar_quarter`` and ``calendar_month`` aggregate all eligible amounts
+within that period only where the law actually specifies that broader unit.
 Each record retains its lower- or upper-bound comparison and aggregation.
 Threshold computation returns exact Fractions. No classification, tax cap or
-empirical prior is implemented here. A published example tests a legal lookup and its
-parameters, not a classifier that belongs to CE3.
+empirical prior is implemented here. Published examples test source-backed
+conditions and amounts against legal lookup results.
 """
 
 from __future__ import annotations
@@ -49,7 +73,7 @@ from populace_dynamics.data.historical_coverage_rule_validation import (
     FIELD_PURPOSES,
 )
 
-SCHEMA_VERSION = "coverage_rules.ce1.v1"
+SCHEMA_VERSION = "coverage_rules.ce1.v2"
 FIRST_INCOME_YEAR = 1968
 LAST_INCOME_YEAR = 2026
 CAPTURE_DIRECTORY = (
@@ -131,11 +155,30 @@ CE1_FIELD_PURPOSES = (
     "partner_death_date",
     "partnership_taxable_year",
     "taxable_year",
+    "taxable_year_start",
     "clergy_retirement_benefit",
     "benefit_type",
     "early_retirement_age_year",
+    # Fee-based public office: irrevocable 1968 election.
+    "public_office_1968_exemption_election",
+    # Treaty fishing: membership and member-performed activity share.
+    "tribal_membership",
+    "tribal_fishing_member_activity",
+    # Spousal venture election and joint-return conditions under 761(f).
+    "qualified_joint_venture_election",
+    "joint_return",
+    # Retired-partner payments: services, obligations and capital conditions.
+    "partner_no_services",
+    "partner_no_other_obligation",
+    "partner_capital_paid",
+    # Noncash agricultural transfers: control and economic cash equivalence.
+    "noncash_transfer_cash_equivalence",
+    "noncash_transfer_dominion_control",
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
+CONSEQUENCES = frozenset(
+    {"covered", "noncovered", "covered_above_threshold", "open"}
+)
 
 
 class CoverageRegistryError(ValueError):
@@ -200,6 +243,20 @@ def _plain(value: Any) -> Any:
     return value
 
 
+def _has_chosen_reading(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        return bool(
+            {
+                "chosen_reading",
+                "selected_reading",
+                "operative_current_text",
+            }.intersection(value)
+        ) or any(_has_chosen_reading(child) for child in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_has_chosen_reading(child) for child in value)
+    return False
+
+
 def _require(condition: bool, message: str) -> None:
     if not condition:
         raise RegistryValidationError(message)
@@ -221,10 +278,9 @@ def _date(value: Any) -> date:
 
 
 def _year(value: Any) -> int:
-    if (
-        type(value) is not int
-        or not FIRST_INCOME_YEAR <= value <= LAST_INCOME_YEAR
-    ):
+    if type(value) is not int:
+        raise TypeError("income year must be an integer")
+    if not FIRST_INCOME_YEAR <= value <= LAST_INCOME_YEAR:
         raise NoRuleError(f"income year outside 1968–2026: {value!r}")
     return value
 
@@ -275,7 +331,7 @@ class Citation:
 
 @dataclass(frozen=True)
 class CoverageRule:
-    """One legal regime; conditional qualifications live in parameters."""
+    """One regime with explicit conditional cases and a residual default."""
 
     rule_id: str
     family: str
@@ -283,7 +339,10 @@ class CoverageRule:
     effective_end: date
     citations: tuple[Citation, ...]
     trigger_facts: tuple[str, ...]
-    consequence: str
+    consequence: str | None
+    residual_default: Mapping[str, Any]
+    cases: tuple[Mapping[str, Any], ...]
+    open_alternatives: tuple[Mapping[str, str], ...]
     identification_class: str
     description: str
     parameters: Mapping[str, Any]
@@ -321,11 +380,80 @@ class CoverageRule:
         )
         _require(len(facts) == len(set(facts)), "duplicate trigger fact")
         _require(set(facts) <= TRIGGER_FACTS, "unknown trigger fact")
+        consequence = raw["consequence"]
         _require(
-            raw["consequence"]
-            in {"covered", "noncovered", "covered_above_threshold"},
+            consequence is None or consequence in CONSEQUENCES,
             "unknown consequence",
         )
+        residual = raw["residual_default"]
+        _require(isinstance(residual, Mapping), "residual default object")
+        _require(
+            set(residual) == {"consequence", "description"},
+            "residual default fields",
+        )
+        _require(
+            residual["consequence"] == consequence,
+            "residual default must equal top-level consequence",
+        )
+        _text(residual["description"], "residual default description")
+        cases = raw["cases"]
+        _require(isinstance(cases, (list, tuple)), "cases list")
+        for case in cases:
+            _require(isinstance(case, Mapping), "case object")
+            _require(
+                {"when", "consequence"}
+                <= set(case)
+                <= {"when", "consequence", "description"},
+                "case fields",
+            )
+            when = case["when"]
+            _require(
+                isinstance(when, Mapping) and bool(when),
+                "case conditions must be a nonempty object",
+            )
+            _require(
+                set(when) <= set(facts), "case uses undeclared trigger fact"
+            )
+            for condition in when.values():
+                _require(
+                    isinstance(condition, bool)
+                    or (
+                        isinstance(condition, str) and bool(condition.strip())
+                    ),
+                    "case condition must be nonempty text or a boolean",
+                )
+            _require(case["consequence"] in CONSEQUENCES, "case consequence")
+            if "description" in case:
+                _text(case["description"], "case description")
+        alternatives = raw["open_alternatives"]
+        _require(
+            isinstance(alternatives, (list, tuple)), "open alternatives list"
+        )
+        for option in alternatives:
+            _require(
+                isinstance(option, Mapping)
+                and set(option) == {"name", "description"},
+                "open alternative fields",
+            )
+            _text(option["name"], "open alternative name")
+            _text(option["description"], "open alternative description")
+        _require(
+            len({o["name"] for o in alternatives}) == len(alternatives),
+            "duplicate open alternative name",
+        )
+        if raw["open_reason"] is not None:
+            _require(
+                consequence in {None, "open"},
+                "open row has chosen consequence",
+            )
+            _require(
+                len(alternatives) >= 2, "open row needs named alternatives"
+            )
+        else:
+            _require(
+                consequence is not None, "null consequence needs open reason"
+            )
+            _require(not alternatives, "closed row has open alternatives")
         _require(
             raw["identification_class"]
             in {"awaiting_ce2", "identified", "prior", "unidentified"},
@@ -333,19 +461,43 @@ class CoverageRule:
         )
         _require(isinstance(raw["parameters"], Mapping), "parameters object")
         _require(
+            "cases" not in raw["parameters"], "cases belong in the schema"
+        )
+        if raw["parameters"].get("effective_basis") == "taxable_year_start":
+            _require(
+                "taxable_year_start" in facts,
+                "taxable-year axis needs taxable_year_start trigger fact",
+            )
+        if raw["open_reason"] is not None:
+            _require(
+                not _has_chosen_reading(raw["parameters"]),
+                "open row has chosen reading",
+            )
+        _require(
             isinstance(raw["worked_examples"], (list, tuple)),
             "worked_examples list",
         )
         examples = []
         for example in raw["worked_examples"]:
             _require(isinstance(example, Mapping), "example object")
-            for name in ("example_id", "source_passage", "expected_rule_id"):
+            for name in (
+                "example_id",
+                "source_passage",
+                "expected_rule_id",
+                "calculation",
+            ):
                 _text(example.get(name), f"example.{name}")
             _year(example.get("income_year"))
             Citation.from_dict(example.get("citation"))
+            for name in ("published_inputs", "published_outputs"):
+                _require(
+                    isinstance(example.get(name), Mapping)
+                    and bool(example[name]),
+                    f"example.{name} nonempty object",
+                )
             _require(
-                isinstance(example.get("expected_parameters"), Mapping),
-                "example.expected_parameters object",
+                "expected_parameters" not in example,
+                "examples must test outcomes rather than repeated parameters",
             )
             examples.append(_freeze(example))
         rare = raw["rare_exclusion"]
@@ -393,7 +545,10 @@ class CoverageRule:
                 sorted(citations, key=lambda c: (c.capture, c.location))
             ),
             trigger_facts=tuple(sorted(facts)),
-            consequence=raw["consequence"],
+            consequence=consequence,
+            residual_default=_freeze(residual),
+            cases=tuple(_freeze(case) for case in cases),
+            open_alternatives=tuple(_freeze(o) for o in alternatives),
             identification_class=raw["identification_class"],
             description=raw["description"],
             parameters=_freeze(raw["parameters"]),
@@ -420,9 +575,19 @@ class _CaptureText(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.parts: list[str] = []
+        self.ignored_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: Any) -> None:
+        if tag in {"script", "style"}:
+            self.ignored_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style"} and self.ignored_depth:
+            self.ignored_depth -= 1
 
     def handle_data(self, data: str) -> None:
-        self.parts.append(data)
+        if not self.ignored_depth:
+            self.parts.append(data)
 
 
 def source_text(path: Path) -> str:
@@ -449,7 +614,7 @@ def _verify_citations(
     if verified is None:
         verified = {}
     if isinstance(value, Mapping):
-        if "capture" in value and "sha256" in value:
+        if "capture" in value:
             citation = Citation.from_dict(value)
             relative = Path(citation.capture)
             path = (root / relative).resolve()
@@ -480,14 +645,19 @@ def _verify_citations(
             _verify_citations(child, root, verified)
 
 
-def _fraction(value: Any) -> Fraction:
+def _fraction(value: Any, *, caller: bool = False) -> Fraction:
     try:
         if isinstance(value, bool) or isinstance(value, float):
-            raise ValueError("use an integer or exact decimal string")
+            raise TypeError("use an integer or exact decimal string")
         result = Fraction(value)
-        _require(result >= 0, "threshold/index must be nonnegative")
+        if result < 0:
+            raise ValueError("threshold/index must be nonnegative")
         return result
     except (ValueError, TypeError, ZeroDivisionError) as exc:
+        if caller:
+            if isinstance(exc, TypeError):
+                raise TypeError("invalid exact index input") from exc
+            raise ValueError("invalid exact index input") from exc
         raise RegistryValidationError("invalid exact threshold/index") from exc
 
 
@@ -521,6 +691,15 @@ class CoverageRegistry:
             )
         )
         _require(len({r.rule_id for r in rules}) == len(rules), "duplicate ID")
+        for family in {r.family for r in rules}:
+            axes = {
+                r.parameters.get("effective_basis") == "taxable_year_start"
+                for r in rules
+                if r.family == family
+            }
+            _require(
+                len(axes) == 1, "family mixes service and taxable-year axes"
+            )
         for i, left in enumerate(rules):
             for right in rules[i + 1 :]:
                 if left.family != right.family:
@@ -659,12 +838,17 @@ class CoverageRegistry:
                     isinstance(evidence, list) and bool(evidence),
                     "table citations",
                 )
+                citations = [Citation.from_dict(c) for c in evidence]
                 _require(
-                    any(Citation.from_dict(c).quote for c in evidence),
+                    any(c.quote for c in citations),
                     "verified table definition needs a quoted source passage",
                 )
             else:
                 _text(definition.get("reason"), "unverified table reason")
+                evidence = definition.get("citations", [])
+                _require(isinstance(evidence, list), "table citations")
+                for citation in evidence:
+                    Citation.from_dict(citation)
         _require(
             len(definition_ids) == len(set(definition_ids)),
             "duplicate table definition ID",
@@ -768,11 +952,22 @@ class CoverageRegistry:
     def lookup(
         self, family: str, income_year: int, *, alternative: str | None = None
     ) -> tuple[CoverageRule, ...]:
-        """Return every regime in the income year, checking all its dates."""
+        """Return regimes and cases on the family's stated date axis.
+
+        Service years check every date. Taxable-year families assume January
+        1; use lookup_date for a fiscal year's actual start.
+        Conditions remain declarative: consumers evaluate every case from its
+        trigger facts, then apply the residual only when no case matches.
+        """
         year = _year(income_year)
-        return self._lookup_interval(
-            family, date(year, 1, 1), date(year, 12, 31), alternative
+        start = date(year, 1, 1)
+        taxable_year_axis = any(
+            r.family == family
+            and r.parameters.get("effective_basis") == "taxable_year_start"
+            for r in self.rules
         )
+        end = start if taxable_year_axis else date(year, 12, 31)
+        return self._lookup_interval(family, start, end, alternative)
 
     def lookup_date(
         self,
@@ -781,8 +976,13 @@ class CoverageRegistry:
         *,
         alternative: str | None = None,
     ) -> tuple[CoverageRule, ...]:
-        """Resolve a service date, or refuse its gap/open/ambiguous law."""
-        _require(type(service_date) is date, "service_date must be a date")
+        """Resolve a service date or an actual taxable-year start.
+
+        ``parameters.effective_basis == "taxable_year_start"`` makes the
+        date the beginning of that taxable year, including fiscal years.
+        """
+        if type(service_date) is not date:
+            raise TypeError("service_date must be a date")
         _year(service_date.year)
         return self._lookup_interval(
             family, service_date, service_date, alternative
@@ -818,32 +1018,35 @@ class CoverageRegistry:
             raise ThresholdUnavailableError(
                 f"unpublished: {threshold_id}, {year}"
             )
+        if index_inputs is not None and not isinstance(index_inputs, Mapping):
+            raise TypeError("index_inputs must be a mapping")
         supplied = index_inputs or {}
 
         def need(name: str) -> Fraction:
             if name not in supplied:
                 raise ThresholdUnavailableError(f"missing named input: {name}")
-            return _fraction(supplied[name])
+            return _fraction(supplied[name], caller=True)
 
         if index["kind"] == "quarter_of_coverage_sum":
             name = index["parameter_name"]
             if name not in supplied:
                 raise ThresholdUnavailableError(f"missing named input: {name}")
             quarters = supplied[name]
-            _require(
-                isinstance(quarters, (list, tuple)) and len(quarters) == 4,
-                "four named calendar-quarter inputs required",
+            if not isinstance(quarters, (list, tuple)) or len(quarters) != 4:
+                raise ValueError("four named calendar-quarter inputs required")
+            amount = (
+                sum((_fraction(q, caller=True) for q in quarters), Fraction(0))
+                / 100
             )
-            amount = sum((_fraction(q) for q in quarters), Fraction(0)) / 100
             amount *= Fraction(
                 index["multiplier_numerator"], index["multiplier_denominator"]
             )
             earlier = [int(y) for y in values if int(y) < year]
             if threshold.get("monotone") and earlier:
-                _require(
-                    amount >= _fraction(values[str(max(earlier))]),
-                    "supplied quarters violate the statutory nondecrease",
-                )
+                if amount < _fraction(values[str(max(earlier))]):
+                    raise ValueError(
+                        "supplied quarters violate the statutory nondecrease"
+                    )
             return amount
 
         current = need(
@@ -855,7 +1058,8 @@ class CoverageRegistry:
             base = need(
                 f"national_average_wage_index_{index['base_index_year']}"
             )
-        _require(base > 0, "index denominator must be positive")
+        if base <= 0:
+            raise ValueError("index denominator must be positive")
         multiple = _fraction(index["round_to"])
         raw = _fraction(index["base_amount"]) * current / base / multiple
         if index["rounding"] == "nearest":

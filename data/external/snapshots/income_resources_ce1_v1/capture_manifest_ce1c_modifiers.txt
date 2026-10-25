@@ -14,10 +14,6 @@
 # URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec416.htm
 # Provenance: "Official 2024 United States Code section; retirement age in subsection(l) and amendment history."
 
-2026-10-25T02:37:51Z ec9e86ab383ef8d3b196c3755c96d6a4348e27e1a8aff45d6b354a783d378060 5552 cfr_2024_20_4041081.xml
-# URL: https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1081.xml
-# Provenance: "Official 2024 20 CFR404.1081; accounting, business aggregation and partnership rules."
-
 2026-10-25T02:37:51Z ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455 12198 cfr_2024_20_4041082.xml
 # URL: https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1082.xml
 # Provenance: "Official 2024 20 CFR404.1082; rental-income rule, limitations and published examples."

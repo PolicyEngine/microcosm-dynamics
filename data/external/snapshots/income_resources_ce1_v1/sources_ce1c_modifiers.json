@@ -42,7 +42,8 @@
     "bytes": 5552,
     "sha256": "ec9e86ab383ef8d3b196c3755c96d6a4348e27e1a8aff45d6b354a783d378060",
     "provenance": "Official 2024 20 CFR404.1081; accounting, business aggregation and partnership rules.",
-    "status": "captured"
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "cfr_2024_20_4041082.xml",
@@ -59,7 +60,7 @@
     "retrieved_at": "2026-10-25T02:37:51Z",
     "bytes": 359285,
     "sha256": "a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4",
-    "provenance": "Public Law111-240 section2042; temporary2010 health-insurance deduction for SE-tax NESE.",
+    "provenance": "Public Law 111-240 section 2042; temporary 2010 health-insurance deduction for SE-tax NESE.",
     "status": "captured"
   },
   {
@@ -84,7 +85,9 @@
       ],
       "kept": "first page; section 325 (79 Stat. 399-400); approval date (79 Stat. 423)",
       "method": "qpdf --deterministic-id --empty --pages govinfo_statute79_pg286.pdf 1,114,115,138 -- govinfo_statute79_pg286_extract.pdf (qpdf version 12.4.2)",
-      "note": "Public Law 89-97, Social Security Amendments of 1965; section 325, 79 Stat. 399. Official HTML, text and OCR renditions were Page Not Found, so the cited pages are kept as an extract of the whole act."
+      "note": "Public Law 89-97, Social Security Amendments of 1965; section 325, 79 Stat. 399. Official HTML, text and OCR renditions were Page Not Found, so the cited pages are kept as an extract of the whole act.",
+      "signature_status": "original_signature_invalidated_by_page_extraction",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
     },
     "status": "captured"
   },
@@ -97,7 +100,7 @@
     "provenance": {
       "derived_from": "govinfo_statute79_pg286_extract.pdf",
       "source_sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129",
-      "method": "pdftotext -f2 -l2 -layout",
+      "method": "pdftotext -f 2 -l 2 -layout",
       "pdf_pages": [
         2
       ],

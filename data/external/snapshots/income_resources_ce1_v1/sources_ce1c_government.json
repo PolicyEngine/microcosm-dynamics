@@ -106,7 +106,8 @@
         1
       ]
     },
-    "status": "captured"
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "irs_schedule_se_1985.pdf.txt",
@@ -125,7 +126,8 @@
         1
       ]
     },
-    "status": "captured"
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "irs_form1040_instructions_1985.pdf.txt",
@@ -144,7 +146,8 @@
         31
       ]
     },
-    "status": "captured"
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "govinfo_statute88_pg420.pdf.txt",
@@ -157,7 +160,8 @@
       "source_sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
       "method": "pdftotext -layout; full source granule"
     },
-    "status": "captured"
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "federal_register_1975_07_10_extract.pdf",
@@ -180,7 +184,9 @@
       ],
       "kept": "cover; FR Doc. 75-17887, 40 FR 29071-29072, from its heading to its filing line",
       "method": "qpdf --deterministic-id --empty --pages federal_register_1975_07_10.pdf 1,13,14 -- federal_register_1975_07_10_extract.pdf (qpdf version 12.4.2)",
-      "note": "Official Federal Register issue; final 20 CFR 404.1053(c)(5), 40 FR 29071-29072. Current CFR section XML is small but omits the pre-1974 rule. No smaller official historical rendition was located, so the cited pages are kept as an extract of the whole issue."
+      "note": "Official Federal Register issue; final 20 CFR 404.1053(c)(5), 40 FR 29071-29072. Current CFR section XML is small but omits the pre-1974 rule. No smaller official historical rendition was located, so the cited pages are kept as an extract of the whole issue.",
+      "signature_status": "original_signature_invalidated_by_page_extraction",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
     },
     "status": "captured"
   },
@@ -193,7 +199,7 @@
     "provenance": {
       "derived_from": "federal_register_1975_07_10_extract.pdf",
       "source_sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
-      "method": "pdftotext -f2 -l3 -raw",
+      "method": "pdftotext -f 2 -l 3 -raw",
       "pdf_pages": [
         2,
         3

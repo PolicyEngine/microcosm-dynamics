@@ -1,6 +1,0 @@
-{
-  "nonprofit_organization": "Whether the employer is described in the relevant 501(a), 501(c)(3), 521, or 401(a) provisions; do not infer legal status from industry alone.",
-  "nonprofit_coverage_waiver": "Actual or deemed pre-1984 waiver certificate, its effective coverage period and termination history.",
-  "nonprofit_employee_concurrence": "Whether an existing employee is covered by required concurrence or is a later hire under a pre-1984 waiver.",
-  "place_of_work": "Whether services occurred within the United States or abroad; distinct from residence."
-}

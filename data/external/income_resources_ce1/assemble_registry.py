@@ -10,12 +10,14 @@ from pathlib import Path
 
 from populace_dynamics.income_resources.coverage_rules import (
     CAPTURE_DIRECTORY,
+    SCHEMA_VERSION,
     CoverageRegistry,
 )
 
 
-def main():
-    root = Path(__file__).resolve().parent
+def build(root: Path | None = None) -> str:
+    """Validate fragments and return the complete canonical registry text."""
+    root = Path(root) if root is not None else Path(__file__).resolve().parent
 
     def read(name):
         return json.loads((root / name).read_text())
@@ -37,11 +39,10 @@ def main():
         thresholds.extend(read(name))
     ret = read("earnings_test_root.json")
     ret["self_employment_guidance"] = read("earnings_test_se.json")
-    if (root / "ret_history_government.json").exists():
-        ret["historical_research"] = read("ret_history_government.json")
+    ret["historical_research"] = read("ret_history_government.json")
     ret["definition_modifier_research"] = read("ret_history_modifiers.json")
     raw = {
-        "schema_version": "coverage_rules.ce1.v1",
+        "schema_version": SCHEMA_VERSION,
         "income_years": [1968, 2026],
         "rules": rules,
         "thresholds": thresholds,
@@ -56,13 +57,14 @@ def main():
             if rule["open_reason"]
         ],
     }
-    registry = CoverageRegistry.from_dict(raw, capture_root=CAPTURE_DIRECTORY)
-    (root / "coverage_rules.json").write_text(registry.to_json())
-    print(
-        f"Verified {len(registry.rules)} rules, "
-        f"{len(registry.families)} families, "
-        f"{len(registry.thresholds)} thresholds."
-    )
+    return CoverageRegistry.from_dict(
+        raw, capture_root=CAPTURE_DIRECTORY
+    ).to_json()
+
+
+def main():
+    root = Path(__file__).resolve().parent
+    (root / "coverage_rules.json").write_text(build(), encoding="utf-8")
 
 
 if __name__ == "__main__":

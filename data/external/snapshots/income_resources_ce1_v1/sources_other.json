@@ -48,7 +48,6 @@
     "url": "https://secure.ssa.gov/poms.Nsf/lnx/1930001357"
   },
   {
-    "file": "ssa_coverage_thresholds.html",
     "reason": "HTTP 403",
     "resolution": {
       "archive_timestamp": "20261013081352",
@@ -58,7 +57,8 @@
       "status": "answered_by_archived_capture"
     },
     "status": "SOURCE_BLOCKED",
-    "url": "https://www.ssa.gov/oact/cola/CovThresh.html"
+    "url": "https://www.ssa.gov/oact/cola/CovThresh.html",
+    "attempted_filename": "ssa_coverage_thresholds.html"
   },
   {
     "file": "irs_pub926_2026.html",
@@ -69,10 +69,10 @@
     "url": "https://www.irs.gov/publications/p926"
   },
   {
-    "file": "irs_pub51_2025.html",
     "reason": "HTTP 404",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/publications/p51"
+    "url": "https://www.irs.gov/publications/p51",
+    "attempted_filename": "irs_pub51_2025.html"
   },
   {
     "file": "lii_42_409.html",
@@ -112,7 +112,8 @@
     "sha256": "d8acd05fc550aad264efdf9fd48d818d25c47d18146f7cefb141ec83d6a87e50",
     "size_bytes": 29281,
     "status": "captured",
-    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901000"
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901000",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "poms_rs_01402025.html",
@@ -139,58 +140,58 @@
     "url": "https://www.irs.gov/publications/p15"
   },
   {
-    "file": "irs_pub926_1999.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--1999.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--1999.pdf",
+    "attempted_filename": "irs_pub926_1999.pdf"
   },
   {
-    "file": "irs_pub926_2000.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2000.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2000.pdf",
+    "attempted_filename": "irs_pub926_2000.pdf"
   },
   {
-    "file": "irs_pub926_2001.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2001.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2001.pdf",
+    "attempted_filename": "irs_pub926_2001.pdf"
   },
   {
-    "file": "irs_pub926_2002.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2002.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2002.pdf",
+    "attempted_filename": "irs_pub926_2002.pdf"
   },
   {
-    "file": "irs_pub926_2003.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2003.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2003.pdf",
+    "attempted_filename": "irs_pub926_2003.pdf"
   },
   {
-    "file": "irs_pub926_2004.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2004.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2004.pdf",
+    "attempted_filename": "irs_pub926_2004.pdf"
   },
   {
-    "file": "irs_pub926_2005.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2005.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2005.pdf",
+    "attempted_filename": "irs_pub926_2005.pdf"
   },
   {
-    "file": "irs_pub926_2006.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2006.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2006.pdf",
+    "attempted_filename": "irs_pub926_2006.pdf"
   },
   {
-    "file": "irs_pub926_2007.pdf",
     "reason": "HTTP Error 404: Not Found",
     "status": "SOURCE_UNAVAILABLE",
-    "url": "https://www.irs.gov/pub/irs-prior/p926--2007.pdf"
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2007.pdf",
+    "attempted_filename": "irs_pub926_2007.pdf"
   },
   {
     "file": "irs_pub926_2008.pdf",
@@ -438,7 +439,8 @@
     "sha256": "e45f20ca6dbdb891b88fbc9f78cb878f9412ac16e12fc436e94875f04d243be7",
     "size_bytes": 147650,
     "status": "captured",
-    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901735"
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901735",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "poms_rs_01901740.html",

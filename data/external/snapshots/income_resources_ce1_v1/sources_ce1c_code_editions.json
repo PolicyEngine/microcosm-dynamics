@@ -69,7 +69,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_1997_42_410.html",
@@ -123,7 +124,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2000_42_410.html",
@@ -141,7 +143,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2000_42_411.html",
@@ -177,7 +180,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2004_42_411.html",
@@ -213,7 +217,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2006_42_410.html",
@@ -231,7 +236,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2006_42_411.html",
@@ -267,7 +273,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2007_42_411.html",
@@ -321,7 +328,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2008_42_411.html",
@@ -357,7 +365,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2012_26_1402.html",
@@ -375,7 +384,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2012_42_410.html",
@@ -447,7 +457,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2018_42_410.html",
@@ -483,7 +494,8 @@
       "actual_section_heading_verified": true,
       "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim."
     },
-    "status": "retrieved"
+    "status": "retrieved",
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "file": "uscode_2024_26_1402.html",
@@ -530,7 +542,7 @@
     "sha256": null,
     "status": "SOURCE_BLOCKED",
     "http_status": 503,
-    "reason": "Plain request returned Please Retry later in15Seconds refresh/challenge page; stopped with no retry or alternate endpoint.",
+    "reason": "Plain request returned Please Retry later in 15 seconds refresh/challenge page; stopped with no retry or alternate endpoint.",
     "request_time_limitation": "Exact request/retrieval second was not retained. recorded_at is the UTC audit timestamp, not retrieval time."
   },
   {

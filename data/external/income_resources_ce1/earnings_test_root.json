@@ -5,12 +5,12 @@
       "capture": "lii_42usc403.html",
       "sha256": "089ec01fbef104c50892cc9097a12a5a259d3b58c0f335a16f6d67f0021df41a",
       "authority": "42 U.S.C.403(f)(5), assignment-pinned current text and amendment notes",
-      "location": "(f)(5)(A)\u2013(E); amendment notes1965,1980,1983,1989,1990"
+      "location": "(f)(5)(A)\u2013(E); amendment notes 1965, 1980, 1983, 1989, 1990"
     },
     {
       "capture": "lii_42_409.html",
       "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-      "authority": "42 U.S.C.409(a), text captured2026-10-24",
+      "authority": "42 U.S.C. 409(a), text captured 2026-10-24",
       "location": "(a)(1),(6)(B),(6)(C),(7)(B),(8)"
     }
   ],
@@ -109,7 +109,7 @@
     {
       "clause": "403(f)(5)(D)(ii)",
       "conditions": [
-        "entitled to titleII benefits other than disability insurance or disabled-child benefits",
+        "entitled to title II benefits other than disability insurance or disabled-child benefits",
         "receipt in year after initial entitlement year",
         "income not attributable to services after initial entitlement month",
         "facts shown to satisfaction of Commissioner"
@@ -137,12 +137,12 @@
     {
       "year": 1989,
       "act": "P.L.101-239\u00a710208(d)(2)",
-      "change": "renumbered409 cross references"
+      "change": "renumbered 409 cross references"
     },
     {
       "year": 1990,
       "act": "P.L.101-508\u00a75123(a)",
-      "change": "moved director timing sentence from411(a) to403(f)(5)(E)"
+      "change": "moved director timing sentence from 411(a) to 403(f)(5)(E)"
     }
   ],
   "refusal_reasons": [

@@ -5,7 +5,7 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a) introductory sentence and paragraphs (1)-(4); concluding partnership-year sentence; 411(d)-(f)",
+        "location": "411(a) introductory sentence and paragraphs (1)-(4); concluding partnership-year sentence; 411(d)-(f); current text supports the definition as printed only, not its independent continuity in 1968-1993",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
@@ -27,86 +27,14 @@
           "title": 42,
           "section": 411,
           "edition_year": 1994,
-          "support_kind": "later_text_and_source_credit_comparison",
-          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
-          "contemporaneous_code_status": "unavailable",
-          "unavailable_contemporaneous_edition_labels": [
-            1964,
-            1970,
-            1976,
-            1982,
-            1988
-          ],
-          "primary_history_citations": [],
-          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "support_kind": "section_text_as_printed",
+          "scope": "The 1994 edition supports the base definition as printed; current and later edition labels do not independently establish continuity in 1968-1993.",
           "citation": {
             "capture": "uscode_1994_42_411.html",
             "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
-            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "Historical comparison only, related to 411(a), 411(a)(1), 411(a)(2), 411(a)(3), 411(a)(4), 411(d), 411(e), 411(f); section text and source credit; no earlier effective-date claim"
-          },
-          "section_references_verified_present": [
-            "411(a)",
-            "411(a)(1)",
-            "411(a)(2)",
-            "411(a)(3)",
-            "411(a)(4)",
-            "411(d)",
-            "411(e)",
-            "411(f)"
-          ],
-          "historical_note_headings_verified_present": [],
-          "amendment_year_entries_verified_present": []
-        },
-        {
-          "title": 42,
-          "section": 411,
-          "edition_year": 1994,
-          "support_kind": "section_text_as_printed",
-          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
-          "citation": {
-            "capture": "uscode_1994_42_411.html",
-            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
-            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "Section text as printed: 411(a), 411(a)(1), 411(a)(2), 411(a)(3), 411(a)(4), 411(d), 411(e), 411(f)"
-          },
-          "section_references_verified_present": [
-            "411(a)",
-            "411(a)(1)",
-            "411(a)(2)",
-            "411(a)(3)",
-            "411(a)(4)",
-            "411(d)",
-            "411(e)",
-            "411(f)"
-          ],
-          "historical_note_headings_verified_present": [],
-          "amendment_year_entries_verified_present": []
-        },
-        {
-          "title": 42,
-          "section": 411,
-          "edition_year": 2024,
-          "support_kind": "section_text_as_printed",
-          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
-          "citation": {
-            "capture": "uscode_2024_42_411.html",
-            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
-            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
-            "location": "Section text as printed: 411(a), 411(a)(1), 411(a)(2), 411(a)(3), 411(a)(4), 411(d), 411(e), 411(f)"
-          },
-          "section_references_verified_present": [
-            "411(a)",
-            "411(a)(1)",
-            "411(a)(2)",
-            "411(a)(3)",
-            "411(a)(4)",
-            "411(d)",
-            "411(e)",
-            "411(f)"
-          ],
-          "historical_note_headings_verified_present": [],
-          "amendment_year_entries_verified_present": []
+            "authority": "42 U.S.C. 411, official 1994 United States Code edition",
+            "location": "411(a) introductory definition and 411(d)-(f), text as printed"
+          }
         }
       ]
     },
@@ -119,26 +47,32 @@
       "trade_or_business",
       "partnership_status"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
-        "location": "411(a)(3),(4);1964amendmentnote ironoreprecedes1968",
+        "location": "411(a)(3), (4); 1964 amendment note iron ore precedes 1968",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "uscode_2024_42_411.html",
-        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
         "authority": "42 USC 411, official 2024 United States Code section granule",
-        "location": "411(a)(3)(A)-(C),(4);1964 iron-ore amendment predates1968;1984 technical cross-reference substitutions preserve the named concepts"
+        "capture": "uscode_2024_42_411.html",
+        "location": "411(a)(3)(A)-(C), (4); 1964 iron-ore amendment predates 1968; 1984 technical cross-reference substitutions preserve the named concepts",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
       }
     ],
     "consequence": "noncovered",
-    "description": "Exclude capital gains/losses,timber/coal/iron-ore631transactions,and noninventory/noncustomerproperty dispositions;no172net-operating-loss deduction. Dealer-specific rules override where applicable.",
+    "description": "Exclude capital gains/losses, timber/coal/iron-ore 631 transactions, and noninventory/noncustomer property dispositions; no 172 net-operating-loss deduction. Dealer-specific rules override where applicable.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_capital_gains_and_nol",
@@ -147,16 +81,16 @@
     "parameters": {
       "NOLcarryover_deduction_allowed": false,
       "excluded_concepts": [
-        "subtitleAcapitalgains/losses",
-        "IRC631timber/coal/ironoregains/losses",
-        "otherpropertygains/lossesunlessinventoryorheldforsaletocustomers"
+        "Subtitle A capital gains/losses",
+        "IRC 631 timber/coal/iron-ore gains/losses",
+        "Other property gains/losses unless inventory or held for sale to customers"
       ],
       "override_family": "self_employment_options_dealers",
-      "capital_asset_gains_and_losses": "Exclude gains/losses treated as capital under applicable SubtitleA provisions.",
-      "specified_natural_resource_dispositions": "Exclude timber,coal,iron-ore gains/losses when631 applies.",
+      "capital_asset_gains_and_losses": "Exclude gains/losses treated as capital under applicable Subtitle A provisions.",
+      "specified_natural_resource_dispositions": "Exclude timber, coal, iron-ore gains/losses when 631 applies.",
       "other_property_dispositions": "Exclude unless stock-in-trade/inventory or held primarily for sale to customers in the ordinary course of business.",
       "nol_rule": "The172 net-operating-loss deduction is not allowed; this does not prevent current ordinary business losses from entering the NESE base.",
-      "cross_reference_history": "1984 technical amendments replace obsolete1939 Code references by1954Code/SubtitleA and172; no new economic inclusion rule is inferred from the reference correction.",
+      "cross_reference_history": "1984 technical amendments replace obsolete 1939 Code references by 1954 Code/Subtitle A and 172; no new economic inclusion rule is inferred from the reference correction.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -248,26 +182,32 @@
       "property_disposition_type",
       "trade_or_business"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
         "location": "411(c)(6)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "26USC1402(g),pinnedLIIrepublication",
+        "authority": "26 USC 1402(g), pinned LII republication",
         "capture": "lii_26_1402.html",
-        "location": "1986amendment noteadding(g)(5);1989amendmentnote",
+        "location": "1986 amendment note adding (g)(5); 1989 amendment note",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
     "consequence": "noncovered",
-    "description": "General1402(g)religious-sect exemption is incorporated by411(c)(6);church income exists onlyfrom1984. Later express church carveout must not be backcast.",
+    "description": "General 1402(g) religious-sect exemption is incorporated by 411(c)(6); church income exists only from 1984. Later express church carveout must not be backcast.",
     "effective_end": "1985-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_church_sect_exemption",
@@ -276,7 +216,7 @@
     "parameters": {
       "church_specific_carveout_not_yet_added": true,
       "electingchurch_income_exists_from": 1984,
-      "general1402g_exemption": "applieswhenapprovedandeffective",
+      "general1402g_exemption": "Applies when approved and effective",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -310,7 +250,7 @@
           "section": 411,
           "edition_year": 1994,
           "support_kind": "later_text_and_source_credit_comparison",
-          "scope": "Section411(c)(6)text/source-credit comparison only;the corresponding1402(g)history is cited separately. This unchanged cross-reference supplies no initial section1882(a)effective-date inference.",
+          "scope": "Section 411(c)(6) text/source-credit comparison only; the corresponding 1402(g) history is cited separately. This unchanged cross-reference supplies no initial section 1882(a) effective-date inference.",
           "contemporaneous_code_status": "unavailable",
           "unavailable_contemporaneous_edition_labels": [
             1964,
@@ -324,7 +264,7 @@
             "capture": "uscode_1994_42_411.html",
             "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
             "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "411(c)(6),later text/source-credit comparison only;no sect-exemption effective-date claim"
+            "location": "411(c)(6), later text/source-credit comparison only; no sect-exemption effective-date claim"
           },
           "section_references_verified_present": [
             "411(c)(6)"
@@ -339,7 +279,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
+        "domains:irs.gov, secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
       ],
       "strict": "unresolved"
     },
@@ -348,34 +288,39 @@
       "clergy_or_religious_exemption",
       "church_employee_service"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "26USC1402(g),pinnedLIIrepublication",
+        "authority": "26 USC 1402(g), pinned LII republication",
         "capture": "lii_26_1402.html",
-        "location": "1986,1988,1989amendmentnotes",
+        "location": "1986, 1988, 1989 amendment notes",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
-    "consequence": "covered",
-    "description": "TRA1986added express disapplication of religious-sect exemption to church employee income;exact1986effective boundary remains open.",
+    "consequence": null,
+    "description": "TRA 1986 added express disapplication of religious-sect exemption to church employee income; exact 1986 effective boundary remains open.",
     "effective_end": "1989-12-31",
     "effective_start": "1986-01-01",
     "family": "self_employment_church_sect_exemption",
     "identification_class": "awaiting_ce2",
-    "open_reason": "CHURCH_SECT_1986_EFFECTIVE_BOUNDARY_UNVERIFIED: section1882(a) added the restriction, while1882(b)(3) expressly dates only subsection(b). Section1881 lies in SubtitleA and1882 in SubtitleB. No primary text located establishes an annual start for subsection(a); retain the named alternatives and refuse the provisional1986-1989 row.",
+    "open_reason": "CHURCH_SECT_1986_EFFECTIVE_BOUNDARY_UNVERIFIED: the captured notes identify section 1882(a) restriction and separately date subsection (b). The operative taxable-year start for subsection (a) is not established by these captures.",
     "parameters": {
-      "church1402g_exemption": "disallowedbyformer1402(g)(5),renumbered(g)(3)in1988",
       "named_options": [
         {
-          "explanation": "SSAhandbook1136describesrestrictionasof1986;capturewasnotavailableinthissubtask.",
+          "explanation": "SSA Handbook 1136 describes restriction as of 1986; the capture was not available in this subtask.",
           "name": "1986_taxable_year"
         },
         {
-          "explanation": "Section1882(a)mustbereadwithtitleeffectivedate;1882(b)(3)byitstermscoversonlysubsectionb.",
+          "explanation": "Section 1882(a) must be read with the title effective date; 1882(b)(3) by its terms covers only subsection (b).",
           "name": "1986_statutory_effective_boundary_unverified"
         }
       ],
@@ -416,7 +361,7 @@
           "section": 411,
           "edition_year": 1994,
           "support_kind": "later_text_and_source_credit_comparison",
-          "scope": "Section411(c)(6)text/source-credit comparison only;the corresponding1402(g)history is cited separately. This unchanged cross-reference supplies no initial section1882(a)effective-date inference.",
+          "scope": "Section 411(c)(6) text/source-credit comparison only; the corresponding 1402(g) history is cited separately. This unchanged cross-reference supplies no initial section 1882(a) effective-date inference.",
           "contemporaneous_code_status": "unavailable",
           "unavailable_contemporaneous_edition_labels": [
             1982,
@@ -428,7 +373,7 @@
             "capture": "uscode_1994_42_411.html",
             "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
             "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "411(c)(6),later text/source-credit comparison only;no sect-exemption effective-date claim"
+            "location": "411(c)(6), later text/source-credit comparison only; no sect-exemption effective-date claim"
           },
           "section_references_verified_present": [
             "411(c)(6)"
@@ -443,7 +388,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
+        "domains:irs.gov, secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
       ],
       "strict": "unresolved"
     },
@@ -452,34 +397,49 @@
       "clergy_or_religious_exemption",
       "church_employee_service"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "SSA Handbook 1136 describes restriction as of 1986; the capture was not available in this subtask.",
+        "name": "1986_taxable_year"
+      },
+      {
+        "description": "Section 1882(a) must be read with the title effective date; 1882(b)(3) by its terms covers only subsection (b).",
+        "name": "1986_statutory_effective_boundary_unverified"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
         "location": "411(c)(6)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "26USC1402(g)(3),PublicLaw101-239section10204(a)(2)",
+        "authority": "26 USC 1402(g)(3), Public Law 101-239 section 10204(a)(2)",
         "capture": "lii_26_1402.html",
-        "location": "current(g)(3);1989amendment/effective-date notes",
+        "location": "current(g)(3); 1989 amendment/effective-date notes",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
     "consequence": "noncovered",
-    "description": "An effective1402(g)religious-sect exemption applies to church employee income fromtaxableyearsafter1989.",
+    "description": "An effective 1402(g) religious-sect exemption applies to church employee income from taxable years after 1989.",
     "effective_end": "2026-12-31",
     "effective_start": "1990-01-01",
     "family": "self_employment_church_sect_exemption",
     "identification_class": "awaiting_ce2",
     "open_reason": null,
     "parameters": {
-      "church1402g_exemption": "applieswhenapprovedandeffective",
-      "conditions": "1402(g)(1)-(2)recognizedsect,belief,waiver,findingsandeffectiveperiod;donotconfusewithministerial1402(e)exemption",
+      "church1402g_exemption": "Applies when approved and effective",
+      "conditions": "1402(g)(1)-(2) recognized sect, belief, waiver, findings and effective period; do not confuse with the ministerial 1402(e) exemption",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -546,7 +506,7 @@
           "section": 411,
           "edition_year": 1994,
           "support_kind": "later_text_and_source_credit_comparison",
-          "scope": "Section411(c)(6)text/source-credit comparison only;the corresponding1402(g)history is cited separately. This unchanged cross-reference supplies no initial section1882(a)effective-date inference.",
+          "scope": "Section 411(c)(6) text/source-credit comparison only; the corresponding 1402(g) history is cited separately. This unchanged cross-reference supplies no initial section 1882(a) effective-date inference.",
           "contemporaneous_code_status": "unavailable",
           "unavailable_contemporaneous_edition_labels": [
             1988
@@ -557,7 +517,7 @@
             "capture": "uscode_1994_42_411.html",
             "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
             "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "411(c)(6),later text/source-credit comparison only;no sect-exemption effective-date claim"
+            "location": "411(c)(6), later text/source-credit comparison only; no sect-exemption effective-date claim"
           },
           "section_references_verified_present": [
             "411(c)(6)"
@@ -576,7 +536,7 @@
             "capture": "uscode_1994_42_411.html",
             "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
             "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
-            "location": "411(c)(6),section cross-reference as printed;1402(g)history supplies the separate exemption rules"
+            "location": "411(c)(6), section cross-reference as printed; 1402(g) history supplies the separate exemption rules"
           },
           "section_references_verified_present": [
             "411(c)(6)"
@@ -595,7 +555,7 @@
             "capture": "uscode_2024_42_411.html",
             "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
             "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
-            "location": "411(c)(6),section cross-reference as printed;1402(g)history supplies the separate exemption rules"
+            "location": "411(c)(6), section cross-reference as printed; 1402(g) history supplies the separate exemption rules"
           },
           "section_references_verified_present": [
             "411(c)(6)"
@@ -610,7 +570,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
+        "domains:irs.gov, secure.ssa.gov | \"church employee income\" \"1402(g)\" \"number\""
       ],
       "strict": "unresolved"
     },
@@ -619,7 +579,13 @@
       "clergy_or_religious_exemption",
       "church_employee_service"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -627,26 +593,26 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a)(7);1972 amendment notes",
+        "location": "411(a)(7); 1972 amendment notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "govinfo_statute86_pg1329_extract.pdf",
-        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Public Law 92-603, Social Security Amendments of 1972",
-        "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972"
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
       },
       {
-        "capture": "govinfo_plaw_108publ203.html",
-        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
         "authority": "Public Law 108-203, Social Security Protection Act of 2004",
-        "location": "sections 422(a)-(b) and 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004"
+        "capture": "govinfo_plaw_108publ203.html",
+        "location": "sections 422(a)-(b) and 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
       },
       {
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
         "capture": "govinfo_plaw_108publ203.html",
-        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
-        "authority": "Pub L108-203, Social Security Protection Act of2004",
-        "location": "section422(a)-(b),118Stat536; retired parsonage/allowance/church-plan exception applies to years beginning before,on,orafter1994-12-31"
+        "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
       }
     ],
     "consequence": "covered",
@@ -662,20 +628,20 @@
         "26USC119"
       ],
       "foreign_exclusions_disregarded": [
-        "26USC911",
-        "26USC931"
+        "26 USC 911",
+        "26 USC 931"
       ],
       "foreign_exclusions_condition": {
         "citizenship": "United States",
         "any_of": [
-          "religious service as employee of an American employer under 42USC410(e)",
+          "religious service as employee of an American employer under 42 USC 410(e)",
           "minister in foreign country with congregation composed predominantly of United States citizens"
         ]
       },
       "service_exemption_decided_by": "clergy_religious_service family",
-      "retired_clergy_housing_and_church_plan_benefits": "excluded under Public Law108-203 section422, applicable to years beginning before,on,or after1994-12-31",
-      "historical_foreign_qualification_removed_for": "taxable years beginning after1972-12-31",
-      "retired_clergy_exception_effective_scope": "Years beginning before,on,orafter1994-12-31 under section422(b); no1995/2004 start is inferred.",
+      "retired_clergy_housing_and_church_plan_benefits": "excluded under Public Law 108-203 section 422, applicable to years beginning before, on, or after 1994-12-31",
+      "historical_foreign_qualification_removed_for": "taxable years beginning after 1972-12-31",
+      "retired_clergy_exception_effective_scope": "Years beginning before, on, or after 1994-12-31 under section 422(b); no 1995/2004 start is inferred.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -704,8 +670,8 @@
             {
               "capture": "govinfo_plaw_108publ203.html",
               "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
-              "authority": "Pub L108-203, Social Security Protection Act of2004",
-              "location": "section422(a)-(b),118Stat536; retired parsonage/allowance/church-plan exception applies to years beginning before,on,orafter1994-12-31"
+              "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+              "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -766,7 +732,13 @@
       "ministerial_service",
       "place_of_work"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -774,30 +746,30 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a)(7);1972 amendment/effective-date notes;2004 section422 amendment/effective-date note",
+        "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "IRS Publication517(2025)",
+        "authority": "IRS Publication 517(2025)",
         "capture": "irs_p517_2025.html",
-        "location": "Regular Method;Amounts Included in Gross Income;Pastor Leslie Adams example",
+        "location": "Regular Method; Amounts Included in Gross Income; Pastor Leslie Adams example",
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
       },
       {
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
         "capture": "govinfo_plaw_108publ203.html",
-        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
-        "authority": "Pub L108-203, Social Security Protection Act of2004",
-        "location": "section422(a)-(b),118Stat536; retired parsonage/allowance/church-plan exception applies to years beginning before,on,orafter1994-12-31"
+        "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
       },
       {
-        "capture": "irs_p517_2025.html",
-        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025)",
-        "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example"
+        "capture": "irs_p517_2025.html",
+        "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
       }
     ],
     "consequence": "covered",
-    "description": "Nonexempt clergy include parsonage value/allowance, employer meals/lodging, and qualifying foreign earnings without107,119,911 exclusions; postretirement church benefits are excluded under(a)(7).",
+    "description": "Nonexempt clergy include parsonage value/allowance, employer meals/lodging, and qualifying foreign earnings without 107, 119, 911 exclusions; postretirement church benefits are excluded under (a)(7).",
     "effective_end": "2026-12-31",
     "effective_start": "1973-01-01",
     "family": "self_employment_clergy_gross_concept",
@@ -809,9 +781,9 @@
         "26USC119",
         "26USC911"
       ],
-      "retired_clergy_housing_and_church_plan_benefits": "excluded;PublicLaw108-203section422 applies to years before,on,orafter1994-12-31",
+      "retired_clergy_housing_and_church_plan_benefits": "excluded; Public Law 108-203 section 422 applies to years before, on, or after 1994-12-31",
       "service_exemption_decided_by": "clergy_religious_service family",
-      "retired_clergy_exception_effective_scope": "Years beginning before,on,orafter1994-12-31 under section422(b); no1995/2004 start is inferred.",
+      "retired_clergy_exception_effective_scope": "Years beginning before, on, or after 1994-12-31 under section 422(b); no 1995/2004 start is inferred.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -830,8 +802,8 @@
             {
               "capture": "govinfo_plaw_108publ203.html",
               "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
-              "authority": "Pub L108-203, Social Security Protection Act of2004",
-              "location": "section422(a)-(b),118Stat536; retired parsonage/allowance/church-plan exception applies to years beginning before,on,orafter1994-12-31"
+              "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+              "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -938,58 +910,55 @@
     "worked_examples": [
       {
         "citation": {
-          "authority": "IRS Publication517(2025)",
+          "authority": "IRS Publication 517 (2025)",
           "capture": "irs_p517_2025.html",
           "location": "Amounts Included in Gross Income, Pastor Leslie Adams example",
           "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
         },
         "example_id": "irs517_2025_adams_parsonage",
-        "expected_parameters": {
-          "gross_income_exclusions_disregarded": [
-            "26USC107",
-            "26USC119",
-            "26USC911"
-          ]
-        },
         "expected_rule_id": "se_clergy_gross_concept_1973_2026",
         "income_year": 2025,
-        "published_gross_concept_cents": 5100000,
         "published_inputs": {
           "parsonage_value_cents": 1200000,
           "salary_cents": 3900000
         },
-        "source_passage": "Pastor Leslie Adams receives an annual salary of $39,000 as a full-time minister. The $39,000 includes $5,000 that is designated as a rental allowance to pay utilities. His church owns a parsonage that has a fair rental value of $12,000 per year. The church gives Pastor Adams the use of the parsonage. Pastor Adams isn\u2019t exempt from SE tax and must include $51,000 ($39,000 plus $12,000) when figuring his net earnings for SE tax purposes."
+        "source_passage": "Pastor Leslie Adams receives an annual salary of $39,000 as a full-time minister. The $39,000 includes $5,000 that is designated as a rental allowance to pay utilities. His church owns a parsonage that has a fair rental value of $12,000 per year. The church gives Pastor Adams the use of the parsonage. Pastor Adams isn\u2019t exempt from SE tax and must include $51,000 ($39,000 plus $12,000) when figuring his net earnings for SE tax purposes.",
+        "calculation": "minister_gross_concept",
+        "published_outputs": {
+          "included_se_gross_concept_cents": 5100000
+        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "source_edition_year": 2025
       },
       {
-        "example_id": "irs517_2025_mexico_clergy_foreign_exclusion",
-        "income_year": 2025,
-        "source_edition_year": 2025,
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "citation": {
-          "capture": "irs_p517_2025.html",
-          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
           "authority": "IRS Publication 517 (2025)",
-          "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example"
+          "capture": "irs_p517_2025.html",
+          "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
         },
-        "source_passage": "must include $35,000 when figuring net earnings from self-employment.",
+        "example_id": "irs517_2025_mexico_clergy_foreign_exclusion",
         "expected_rule_id": "se_clergy_gross_concept_1973_2026",
-        "expected_parameters": {
-          "gross_income_exclusions_disregarded": [
-            "26USC107",
-            "26USC119",
-            "26USC911"
-          ]
-        },
+        "income_year": 2025,
         "published_inputs": {
-          "church": "U.S. church in Mexico",
-          "ministerial_earnings_cents": 3500000,
+          "salary_cents": 3500000,
           "income_tax_foreign_exclusion_cents": 3500000
         },
+        "source_passage": "must include $35,000 when figuring net earnings from self-employment.",
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_outputs": {
           "included_se_gross_concept_cents": 3500000
-        }
+        },
+        "source_edition_year": 2025,
+        "calculation": "minister_gross_concept"
       }
-    ]
+    ],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -1001,16 +970,16 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "uscode_1994_42_411.html",
-        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
         "authority": "42 USC 411, official 1994 United States Code edition",
-        "location": "411(a)(5), (b)(2); 1986 amendment note quoting former 411(a)(13); effective-date notes"
+        "capture": "uscode_1994_42_411.html",
+        "location": "411(a)(5), (b)(2); 1986 amendment note quoting former 411(a)(13); effective-date notes",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
       },
       {
-        "capture": "poms_rs_01802400.html",
-        "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
         "authority": "SSA POMS RS 01802.400 (2024-05-07)",
-        "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples"
+        "capture": "poms_rs_01802400.html",
+        "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+        "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
       }
     ],
     "consequence": "covered",
@@ -1023,8 +992,8 @@
     "parameters": {
       "nonpartnership_assignment": "husband unless wife exercises substantially all management/control; then wife",
       "partnership_assignment": "partner whose distributive share it is",
-      "calendar_year_mapping": "1968-1979; the successor rule applies to taxable years including October1980",
-      "taxable_year_condition": "does not include October1980 and precedes that operational change",
+      "calendar_year_mapping": "1968-1979; the successor rule applies to taxable years including October 1980",
+      "taxable_year_condition": "does not include October 1980 and precedes that operational change",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1095,7 +1064,13 @@
       "substantially_all_business_management_and_control",
       "trade_or_business"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -1107,37 +1082,26 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "capture": "poms_rs_01802400.html",
-        "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
         "authority": "SSA POMS RS 01802.400 (2024-05-07)",
-        "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples"
+        "capture": "poms_rs_01802400.html",
+        "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+        "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
       },
       {
-        "capture": "govinfo_plaw_108publ203.html",
-        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
         "authority": "Public Law 108-203, Social Security Protection Act of 2004",
-        "location": "sections 422(a)-(b) and 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004"
+        "capture": "govinfo_plaw_108publ203.html",
+        "location": "section 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
       }
     ],
-    "consequence": "covered",
-    "description": "Effective for taxable years including October 1980, community business income follows the spouse carrying on the business and the respective shares of a jointly operated business. Section425 of Public Law108-203 formally conformed the statutory wording on March2,2004; it did not first introduce this operational rule.",
-    "effective_end": "2026-12-31",
+    "consequence": null,
+    "description": "The statutory husband presumption ceased for taxable years including October 1980. POMS identifies a superseded Edwards court-order procedure, whose operative instructions are not captured; the later allocation procedure is not backcast.",
+    "effective_end": "2004-03-01",
     "effective_start": "1980-01-01",
     "family": "self_employment_community_income",
     "identification_class": "awaiting_ce2",
-    "open_reason": null,
+    "open_reason": "COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED: current RS 01802.400 states that section 425 replaced the Edwards court-order procedure and obsolete RS 01802.410 through .470; their pre-amendment allocation procedure is not captured.",
     "parameters": {
-      "nonpartnership_assignment": "spouse carrying on business, or each respective share if jointly operated",
-      "partnership_assignment": "partner whose distributive share it is",
-      "joint_business_assignment": "respective_distributive_shares",
-      "operational_taxable_year_condition": {
-        "first_included_month": "1980-10",
-        "applies_to_taxable_years": "including that month and subsequent taxable years",
-        "calendar_year_start": 1980
-      },
-      "statutory_text_amendment_date": "2004-03-02",
-      "statutory_text_before_amendment": "husband unless wife exercises substantially all management/control; statutory presumption ceased operationally for taxable years including October1980",
-      "noncalendar_taxable_years": "apply the stated October1980 taxable-year condition; calendar-year effective dates alone do not establish a fiscal-year result",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1153,16 +1117,16 @@
           ],
           "primary_history_citations": [
             {
-              "capture": "poms_rs_01802400.html",
-              "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
               "authority": "SSA POMS RS 01802.400 (2024-05-07)",
-              "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples"
+              "capture": "poms_rs_01802400.html",
+              "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+              "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
             },
             {
-              "capture": "govinfo_plaw_108publ203.html",
-              "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
               "authority": "Public Law 108-203, Social Security Protection Act of 2004",
-              "location": "sections 422(a)-(b) and 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004"
+              "capture": "govinfo_plaw_108publ203.html",
+              "location": "section 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004",
+              "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -1238,10 +1202,11 @@
             "2004"
           ]
         }
-      ]
+      ],
+      "historical_procedure_source_status": "Obsolete RS 01802.410 and RS 01802.470 returned HTTP 404 on plain official requests; their contents were not reconstructed."
     },
     "rare_exclusion": null,
-    "rule_id": "se_community_income_1980_2026",
+    "rule_id": "se_community_income_1980_2004_open",
     "trigger_facts": [
       "assignment",
       "business_operator_spouse",
@@ -1251,38 +1216,22 @@
       "reporting_unit",
       "trade_or_business"
     ],
-    "worked_examples": [
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [
       {
-        "example_id": "poms_community_property_lisa_2004",
-        "income_year": 2004,
-        "citation": {
-          "capture": "poms_rs_01802400.html",
-          "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
-          "authority": "SSA POMS RS 01802.400 (2024-05-07)",
-          "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples"
-        },
-        "source_passage": "For the year 2004 their accountant erroneously reported all of the NESE ($90,000) under Scott\u2019s social security number (SSN).",
-        "expected_rule_id": "se_community_income_1980_2026",
-        "expected_parameters": {
-          "nonpartnership_assignment": "spouse carrying on business, or each respective share if jointly operated"
-        }
+        "name": "edwards_order_procedure",
+        "description": "Apply the historical Edwards court-order procedure if its operative instructions establish allocation."
       },
       {
-        "example_id": "poms_community_property_joint_2000",
-        "income_year": 2000,
-        "citation": {
-          "capture": "poms_rs_01802400.html",
-          "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
-          "authority": "SSA POMS RS 01802.400 (2024-05-07)",
-          "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples"
-        },
-        "source_passage": "Lisa is married to Scott and both own and operate a restaurant jointly in a community property State. Each spouse contributes 50 percent of the services rendered and makes management decisions.",
-        "expected_rule_id": "se_community_income_1980_2026",
-        "expected_parameters": {
-          "joint_business_assignment": "respective_distributive_shares"
-        }
+        "name": "current_procedure_retrospective_correction",
+        "description": "Apply the current allocation procedure to historical corrections only where a primary source establishes that treatment."
       }
-    ]
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   },
   {
     "alternative": null,
@@ -1290,17 +1239,172 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "2008 amendment/effective-date notes for Public Law110-246 section15301",
+        "location": "411(a)(5)(A)-(B); 2004 amendment note",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "SSA POMS RS 01802.400 (2024-05-07)",
+        "capture": "poms_rs_01802400.html",
+        "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+        "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
+      },
+      {
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "capture": "govinfo_plaw_108publ203.html",
+        "location": "section 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
       }
     ],
     "consequence": "covered",
-    "description": "The specific 2008 exclusion of Conservation Reserve payments to Social Security retirement/disability beneficiaries has not yet taken effect.",
+    "description": "Section 425 of Public Law 108-203 replaces the statutory spouse presumption with allocation to the spouse carrying on the business, or respective distributive shares when jointly operated.",
+    "effective_end": "2026-12-31",
+    "effective_start": "2004-03-02",
+    "family": "self_employment_community_income",
+    "identification_class": "awaiting_ce2",
+    "open_reason": null,
+    "parameters": {
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [
+            {
+              "authority": "SSA POMS RS 01802.400 (2024-05-07)",
+              "capture": "poms_rs_01802400.html",
+              "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+              "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
+            },
+            {
+              "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+              "capture": "govinfo_plaw_108publ203.html",
+              "location": "section 425(a)-(b), 118 Stat. 536-537; enacted March 2, 2004",
+              "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Historical comparison only, related to 411(a)(5); Amendments entries: 2004"
+          },
+          "section_references_verified_present": [
+            "411(a)(5)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(5)"
+          },
+          "section_references_verified_present": [
+            "411(a)(5)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": []
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Section text as printed: 411(a)(5)"
+          },
+          "section_references_verified_present": [
+            "411(a)(5)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(5)"
+          },
+          "section_references_verified_present": [
+            "411(a)(5)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [
+            "2004"
+          ]
+        }
+      ],
+      "joint_business_assignment": "respective_distributive_shares",
+      "nonpartnership_assignment": "spouse carrying on business, or each respective share if jointly operated",
+      "partnership_assignment": "partner whose distributive share it is",
+      "statutory_text_amendment_date": "2004-03-02"
+    },
+    "rare_exclusion": null,
+    "rule_id": "se_community_income_2004_2026",
+    "trigger_facts": [
+      "assignment",
+      "business_operator_spouse",
+      "community_property_income",
+      "joint_business_distributive_shares",
+      "partnership_status",
+      "reporting_unit",
+      "trade_or_business"
+    ],
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
+  },
+  {
+    "alternative": null,
+    "citations": [
+      {
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "capture": "lii_42_411.html",
+        "location": "2008 amendment/effective-date notes for Public Law 110-246 section 15301",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      }
+    ],
+    "consequence": null,
+    "description": "Before the special exclusion for payments after 2007, the captured effective-date note does not establish whether a Conservation Reserve payment was trade-or-business income or excluded rental income. Defer that classification to se_base_definition and se_rental_income; no CRP consequence is selected for this window.",
     "effective_end": "2007-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_conservation_reserve",
     "identification_class": "awaiting_ce2",
-    "open_reason": null,
+    "open_reason": "CRP_PRE2008_CLASSIFICATION_UNVERIFIED: the 2008 amendment note establishes only when the beneficiary exclusion begins. Earlier payments require the trade-or-business and rental-income tests, and the registry support window does not imply that CRP existed in 1968.",
     "parameters": {
       "special_2008_crp_exclusion": false,
       "code_edition_evidence": [
@@ -1394,7 +1498,15 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "defer_to_families": [
+        "self_employment_base_definition",
+        "self_employment_rental_income"
+      ],
+      "named_alternatives": {
+        "excluded_rental_income": "Apply se_rental_income if a payment is established to fall within the rental-income exclusion.",
+        "trade_or_business_income": "Apply se_base_definition if a payment is established to derive from a trade or business."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_conservation_reserve_1968_2007",
@@ -1402,7 +1514,22 @@
       "conservation_reserve_payment",
       "amount"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Determine whether the payment belongs to net earnings under se_base_definition.",
+        "name": "trade_or_business_receipts"
+      },
+      {
+        "description": "Determine whether se_rental_income excludes the payment under the rental exception.",
+        "name": "rental_income_exclusion"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
   },
   {
     "alternative": null,
@@ -1410,12 +1537,12 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a)(1); 2008 amendment/effective-date notes for Public Law110-246 section15301",
+        "location": "411(a)(1); 2008 amendment/effective-date notes for Public Law 110-246 section 15301",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
     "consequence": "noncovered",
-    "description": "Exclude Conservation Reserve payments specified in 16 USC3833(2) to individuals receiving 42USC402 or423 benefits; payments after2007 are the statutory effective condition.",
+    "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
     "effective_end": "2026-12-31",
     "effective_start": "2008-01-01",
     "family": "self_employment_conservation_reserve",
@@ -1423,7 +1550,7 @@
     "open_reason": null,
     "parameters": {
       "effective_basis": "payments_made_after_2007_12_31",
-      "excluded_concept": "16 USC3833(2) payments to recipient of 42 USC402 or423 benefits",
+      "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or423 benefits",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1478,21 +1605,27 @@
       "amount",
       "retirement_payment"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411",
+        "authority": "42 USC 411",
         "capture": "lii_42_411.html",
-        "location": "1987and1990amendmentnotes;effective-date notesforPL100-203section9022(a)andPL101-508section5123(a)(1)",
+        "location": "1987 and 1990 amendment notes; effective-date notes for Public Law 100-203 section 9022(a) and Public Law 101-508 section 5123(a)(1)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "26USC1402,pinnedLIIrepublication",
+        "authority": "26 USC 1402, pinned LII republication",
         "capture": "lii_26_1402.html",
-        "location": "1990amendmentnotequotingformerlastundesignatedparagraph",
+        "location": "1990 amendment note quoting the former last undesignated paragraph",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
@@ -1505,7 +1638,7 @@
     "open_reason": null,
     "parameters": {
       "director_specific_service_year_deeming": false,
-      "timing_rule": "ordinary applicable411income computation",
+      "timing_rule": "ordinary applicable 411 income computation",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -1576,26 +1709,32 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411",
+        "authority": "42 USC 411",
         "capture": "lii_42_411.html",
-        "location": "1987and1990amendmentnotes;effective-date notesforPL100-203section9022(a)andPL101-508section5123(a)(1)",
+        "location": "1987 and 1990 amendment notes; effective-date notes for Public Law 100-203 section 9022(a) and Public Law 101-508 section 5123(a)(1)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "26USC1402,pinnedLIIrepublication",
+        "authority": "26 USC 1402, pinned LII republication",
         "capture": "lii_26_1402.html",
-        "location": "1990amendmentnotequotingformerlastundesignatedparagraph",
+        "location": "1990 amendment note quoting the former last undesignated paragraph",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
     "consequence": "covered",
-    "description": "Corporate-director income is deemed derived and received in the taxable year when services were performed,unless actually paid and received earlier.",
+    "description": "Corporate-director income is deemed derived and received in the taxable year when services were performed, unless actually paid and received earlier.",
     "effective_end": "1990-12-31",
     "effective_start": "1988-01-01",
     "family": "self_employment_director_income_timing",
@@ -1603,7 +1742,7 @@
     "open_reason": null,
     "parameters": {
       "director_specific_service_year_deeming": true,
-      "effective_basis": "servicesperformedintaxableyearsbeginningonorafter1988-01-01",
+      "effective_basis": "Services performed in taxable years beginning on or after 1988-01-01",
       "exception": "actual_payment_and_receipt_before_service_year",
       "timing_rule": "taxable_year_services_performed",
       "code_edition_evidence": [
@@ -1670,26 +1809,32 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411",
+        "authority": "42 USC 411",
         "capture": "lii_42_411.html",
-        "location": "1987and1990amendmentnotes;effective-date notesforPL100-203section9022(a)andPL101-508section5123(a)(1)",
+        "location": "1987 and 1990 amendment notes; effective-date notes for Public Law 100-203 section 9022(a) and Public Law 101-508 section 5123(a)(1)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "26USC1402,pinnedLIIrepublication",
+        "authority": "26 USC 1402, pinned LII republication",
         "capture": "lii_26_1402.html",
-        "location": "1990amendmentnotequotingformerlastundesignatedparagraph",
+        "location": "1990 amendment note quoting the former last undesignated paragraph",
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
     "consequence": "covered",
-    "description": "Director service-year deeming is removed from411and retained in403(f)(5)forRET;coverage uses applicable411computation.",
+    "description": "Director service-year deeming is removed from 411 and retained in 403(f)(5) for RET; coverage uses the applicable 411 computation.",
     "effective_end": "2026-12-31",
     "effective_start": "1991-01-01",
     "family": "self_employment_director_income_timing",
@@ -1698,8 +1843,8 @@
     "parameters": {
       "RET_director_deeming": "403(f)(5)(E)",
       "director_specific_service_year_deeming": false,
-      "effective_basis": "incomereceivedforservicesperformedintaxableyearsbeginningafter1990-12-31",
-      "timing_rule": "ordinary applicable411income computation",
+      "effective_basis": "Income received for services performed in taxable years beginning after 1990-12-31",
+      "timing_rule": "ordinary applicable 411 income computation",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -1844,20 +1989,26 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
-        "location": "411(c)(2)(A)-(G);1968,1976,1984,1994amendment/effective-date notes",
+        "location": "411(c)(2)(A)-(G); 1968, 1976, 1984, 1994 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
     "consequence": "noncovered",
-    "description": "Employee service is generally outside trade/business;apply the expressly enumerated historical exceptions before calling employee remuneration net earnings.",
+    "description": "Employee service is generally outside trade/business; apply the expressly enumerated historical exceptions before calling employee remuneration net earnings.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_employee_definition",
@@ -1865,16 +2016,16 @@
     "open_reason": null,
     "parameters": {
       "exceptions_requiring_other_family": [
-        "410(a)(14)(B)serviceage18+",
-        "410(a)(16)service",
-        "410(a)(11),(12),(15)domesticUScitizenservice,withlater410(r)exception",
-        "ministerial/religious411(c)(4)service",
-        "state/localsole-feeuncoveredposition",
-        "small-boatfishing410(a)(20)fromapplicable1976law",
-        "electingchurch410(a)(8)(B)from1984"
+        "410(a)(14)(B) service at age 18 or older",
+        "410(a)(16) service",
+        "410(a)(11), (12), (15) domestic US citizen service, with the later 410(r) exception",
+        "Ministerial/religious 411(c)(4) service",
+        "State/local sole-fee uncovered position",
+        "Small-boat fishing under 410(a)(20) from the applicable 1976 law",
+        "Electing church under 410(a)(8)(B) from 1984"
       ],
       "general_rule": "employee_service_excluded_under411(c)(2)",
-      "scope_note": "This row supplies general rule;it does not backcast any enumerated exception into years before its own effective law.",
+      "scope_note": "This row supplies general rule; it does not backcast any enumerated exception into years before its own effective law.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1979,7 +2130,13 @@
       "church_employee_service",
       "ministerial_service"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -1991,26 +2148,26 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
+        "authority": "Public Law 93-368",
         "capture": "govinfo_statute88_pg420.pdf",
-        "sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
-        "authority": "Public Law93-368",
-        "location": "section10(a)-(c),88Stat422"
+        "location": "section 10(a)-(c), 88 Stat 422",
+        "sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c"
       },
       {
+        "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
         "capture": "federal_register_1975_07_10_extract.pdf",
-        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
-        "authority": "20 CFR404.1053(c)(5),final1975regulation",
-        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
+        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
       },
       {
+        "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
         "capture": "federal_register_1975_07_10_extract.pdf.txt",
-        "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-        "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
+        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
+        "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
       }
     ],
     "consequence": "noncovered",
-    "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after1955 and beginning before1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf.",
+    "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after 1955 and beginning before 1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf.",
     "effective_end": "1973-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_farm_rental_participation",
@@ -2036,7 +2193,7 @@
         "taxable_year_begins_after": "1973-12-31",
         "agent_or_employee_services_count_for_owner_participation": false,
         "agent_entered_arrangement_counts_for_owner": true,
-        "authority": "Public Law93-368 section10;20CFR404.1053(c)(5),final1975regulation"
+        "authority": "Public Law 93-368 section 10; 20 CFR 404.1053(c)(5), final 1975 regulation"
       },
       "code_edition_evidence": [
         {
@@ -2054,19 +2211,19 @@
             {
               "capture": "govinfo_statute88_pg420.pdf",
               "sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
-              "authority": "Public Law93-368",
-              "location": "section10(a)-(c),88Stat422"
+              "authority": "Public Law 93-368",
+              "location": "section 10(a)-(c), 88 Stat 422"
             },
             {
               "capture": "federal_register_1975_07_10_extract.pdf",
               "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
-              "authority": "20 CFR404.1053(c)(5),final1975regulation",
+              "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
               "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
             },
             {
               "capture": "federal_register_1975_07_10_extract.pdf.txt",
               "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-              "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
+              "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
               "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
             }
           ],
@@ -2098,7 +2255,13 @@
       "material_participation",
       "rental_arrangement_requires_material_participation"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2110,19 +2273,19 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
+        "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
         "capture": "federal_register_1975_07_10_extract.pdf",
-        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
-        "authority": "20 CFR404.1053(c)(5),final1975regulation",
-        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
+        "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3",
+        "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b"
       },
       {
+        "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
         "capture": "federal_register_1975_07_10_extract.pdf.txt",
-        "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-        "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
-        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
+        "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
+        "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
       }
     ],
-    "consequence": "covered",
+    "consequence": "open",
     "description": "Agricultural rental receipts enter net earnings when the arrangement requires material participation and the owner or tenant materially participates; determine participation without activities of an agent.",
     "effective_end": "2026-12-31",
     "effective_start": "1974-01-01",
@@ -2156,13 +2319,13 @@
             {
               "capture": "federal_register_1975_07_10_extract.pdf",
               "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
-              "authority": "20 CFR404.1053(c)(5),final1975regulation",
+              "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
               "location": "40 FR 29071-29072; published 1975-07-10; original PDF pages 13-14, extract pages 2-3"
             },
             {
               "capture": "federal_register_1975_07_10_extract.pdf.txt",
               "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-              "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
+              "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
               "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
             }
           ],
@@ -2244,15 +2407,21 @@
         "citation": {
           "capture": "federal_register_1975_07_10_extract.pdf.txt",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-          "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
+          "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
           "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
         },
         "source_passage": "Example 5. J owned a farm several miles from the town in which he lived. He rented the farm to K under an ar\u00ad rangement which contemplated J\u2019s mate\u00ad rial participation in the management of production of wheat. J furnished one- half the seed and fertilizer and all the farm equipment and livestock. He em\u00ad ployed H to perform all the services in advising, consulting, and inspecting which were contemplated by the arrange\u00ad ment, effective with taxable years begin\u00ad ning after December 31, 1973. J is not materially participating in the manage\u00ad ment of production of wheat by K. The work done by J\u2019s employee, H, is not attributable to J in determining the ex\u00ad tent of J\u2019s participation. J\u2019s rental in\u00ad come from the arrangement is not to be included in computing his net earn\u00ad ings from self-employment.",
         "expected_rule_id": "se_material_participation_1974_2026",
-        "expected_parameters": {
-          "agent_activities_count": false,
-          "agent_entered_arrangement_counts_for_owner": true
-        }
+        "calculation": "farm_agent",
+        "published_inputs": {
+          "owner_personally_participates": false,
+          "agent_participates": true
+        },
+        "published_outputs": {
+          "rental_income_included_in_nese": false
+        },
+        "income_year_basis": "regulation_effective_taxable_year",
+        "source_edition_year": 1975
       },
       {
         "example_id": "cfr1975_farm_agent_example_6",
@@ -2260,17 +2429,52 @@
         "citation": {
           "capture": "federal_register_1975_07_10_extract.pdf.txt",
           "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
-          "authority": "Text derivative of final20CFR404.1053(c)(5)-(6)",
+          "authority": "Text derivative of final 20 CFR 404.1053(c)(5)-(6)",
           "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order"
         },
         "source_passage": "Example 6. Assume the same facts as in the previous example except that J appointed the X Bank as his agent to enter into the rental arrangement with K and to perform the services which were contemplated by the arrangement, ef\u00ad fective with taxable years beginning after December 31, 1973. J is not materially participating in the management of pro\u00ad duction of wheat by K because the work done by X Bank is not attributable to J in determining the extent of J\u2019s par\u00ad ticipation. J\u2019s rental income from the arrangement would not be included in computing his net earnings from self- employment.",
         "expected_rule_id": "se_material_participation_1974_2026",
-        "expected_parameters": {
-          "agent_activities_count": false,
-          "agent_entered_arrangement_counts_for_owner": true
-        }
+        "calculation": "farm_agent",
+        "published_inputs": {
+          "owner_personally_participates": false,
+          "agent_participates": true
+        },
+        "published_outputs": {
+          "rental_income_included_in_nese": false
+        },
+        "income_year_basis": "regulation_effective_taxable_year",
+        "source_edition_year": 1975
       }
-    ]
+    ],
+    "cases": [
+      {
+        "when": {
+          "material_participation": false
+        },
+        "consequence": "noncovered",
+        "description": "The owner does not materially participate; agent activity alone is not attributable after 1973."
+      },
+      {
+        "when": {
+          "rental_arrangement_requires_material_participation": false
+        },
+        "consequence": "noncovered",
+        "description": "The agricultural rental exception requires an arrangement that provides for material participation."
+      },
+      {
+        "when": {
+          "material_participation": true,
+          "rental_arrangement_requires_material_participation": true
+        },
+        "consequence": "covered",
+        "description": "The owner actually materially participates under the required arrangement; apply other applicable rules."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "open",
+      "description": "Establish actual participation and the arrangement requirement from the trigger facts; no residual coverage is chosen when their cases cannot decide."
+    }
   },
   {
     "alternative": null,
@@ -2350,7 +2554,13 @@
       "insurance_sales_termination_payment",
       "amount"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2376,7 +2586,7 @@
         "no services for company after termination and before end of taxable year",
         "covenant not to compete for at least one year after termination",
         "payment depends primarily on last-year policies or persistency",
-        "payment does not depend on length of service or overall earnings"
+        "payment amount does not depend to any extent on length of service or overall company-service earnings, without regard to whether eligibility for payment depends on length of service"
       ],
       "code_edition_evidence": [
         {
@@ -2451,7 +2661,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"insurance\" \"termination payments\" \"self-employment\" prevalence statistics"
+        "domains:irs.gov, secure.ssa.gov | \"insurance\" \"termination payments\" \"self-employment\" prevalence statistics"
       ],
       "strict": "unresolved"
     },
@@ -2460,7 +2670,13 @@
       "insurance_sales_termination_payment",
       "amount"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2522,7 +2738,13 @@
       "employee_self_or_mixed",
       "amount"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2626,7 +2848,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"limited partner\" \"self-employment\" \"number\" \"exclusion\" prevalence"
+        "domains:irs.gov, secure.ssa.gov | \"limited partner\" \"self-employment\" \"number\" \"exclusion\" prevalence"
       ],
       "strict": "unresolved"
     },
@@ -2636,7 +2858,13 @@
       "employee_self_or_mixed",
       "amount"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2662,7 +2890,7 @@
         "numerator": 2
       },
       "farm_available": true,
-      "farm_deemed_earnings": "2/3 gross if gross<=2400;1600 if gross>2400 and actual NESE<1600",
+      "farm_deemed_earnings": "2/3 gross if gross<=2400; 1600 if gross>2400 and actual NESE<1600",
       "lower_limit_cents": 160000,
       "nonfarm_available": false,
       "regular_factor_applied_again": false,
@@ -2754,7 +2982,13 @@
       "amount",
       "partnership_status"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2762,13 +2996,13 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a) final sentences;411(g);1972/2008 amendment/effective-date notes",
+        "location": "411(a) final sentences; 411(g); 1972/2008 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "Public Law92-603,86 Stat.1329(1972)",
+        "authority": "Public Law 92-603, 86 Stat.1329(1972)",
         "capture": "govinfo_statute86_pg1329_extract.pdf",
-        "location": "section121,printedpp1353-1354",
+        "location": "section 121, printed pp. 1353-1354",
         "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
       }
     ],
@@ -2787,14 +3021,14 @@
         "numerator": 2
       },
       "farm_available": true,
-      "farm_deemed_earnings": "2/3 gross if gross<=2400;1600 if gross>2400 and actual NESE<1600",
+      "farm_deemed_earnings": "2/3 gross if gross<=2400; 1600 if gross>2400 and actual NESE<1600",
       "lower_limit_cents": 160000,
       "nonfarm_available": true,
       "nonfarm_required_conditions": [
-        "NESE below1600",
-        "NESE below2/3 gross nonfarm income",
-        "at least400 NESE in2of3 preceding taxable years",
-        "used in at most5 taxable years"
+        "NESE below 1600",
+        "NESE below 66 2/3 percent of the sum of gross income from all individual trades or businesses and distributive income or loss from all partnerships, as section 411(a) specifies",
+        "at least 400 NESE in 2 of 3 preceding taxable years",
+        "used in at most 5 taxable years"
       ],
       "regular_factor_applied_again": false,
       "upper_limit_cents": 240000,
@@ -2814,9 +3048,9 @@
           ],
           "primary_history_citations": [
             {
-              "authority": "Public Law92-603,86 Stat.1329(1972)",
+              "authority": "Public Law 92-603, 86 Stat.1329(1972)",
               "capture": "govinfo_statute86_pg1329_extract.pdf",
-              "location": "section121,printedpp1353-1354",
+              "location": "section 121, printed pp. 1353-1354",
               "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
             }
           ],
@@ -2937,7 +3171,13 @@
       "amount",
       "partnership_status"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -2945,140 +3185,140 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a) concluding provisions;411(g),(k);2008 amendment/effective-date notes",
+        "location": "411(a) concluding provisions; 411(g), (k); 2008 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2011",
+        "authority": "IRS Schedule SE (Form 1040), 2011",
         "capture": "irs_schedule_se_2011.pdf",
-        "location": "PartII,lines14-17",
+        "location": "Part II, lines 14-17",
         "sha256": "f639b7a6b81ea22d386130dac53d5a7cccba84fbf54ae6442568cd17eaa9a16d"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2012",
+        "authority": "IRS Schedule SE (Form 1040), 2012",
         "capture": "irs_schedule_se_2012.pdf",
-        "location": "PartII,lines14-17",
+        "location": "Part II, lines 14-17",
         "sha256": "99ea6d8a7252dd83b070a61fc1668f5b2db3a269bd740437443fab0c1731553f"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2025",
+        "authority": "IRS Schedule SE (Form 1040), 2025",
         "capture": "irs_schedule_se_2025.pdf",
-        "location": "PartII,lines14-17",
+        "location": "Part II, lines 14-17",
         "sha256": "05bc2b3e1dfca65d8c6fc6d652af4fa3736e953c6575d6e9f82590484677d347"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2008",
+        "authority": "IRS Schedule SE (Form 1040), 2008",
         "capture": "irs_schedule_se_2008.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "94ed7b76529ed8270fc7132aa2c68119c9977b29a76049e8c258c02ebea8a9ed"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2009",
+        "authority": "IRS Schedule SE (Form 1040), 2009",
         "capture": "irs_schedule_se_2009.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "6644ed97cb30866b052ecb11b55701f33736130bc6826ebd32a95230b967edf9"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2010",
+        "authority": "IRS Schedule SE (Form 1040), 2010",
         "capture": "irs_schedule_se_2010.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "e9984e568e0ade3b2ea4ecd93d01db85c5a0c14ffb3915f8f749d1cd45114a36"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2013",
+        "authority": "IRS Schedule SE (Form 1040), 2013",
         "capture": "irs_schedule_se_2013.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "4b412967e1b73d4ff7e0dcd779a4ee577b87eb0f1468e14772d13f8107a97882"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2014",
+        "authority": "IRS Schedule SE (Form 1040), 2014",
         "capture": "irs_schedule_se_2014.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "763f68df5cec68e44742ee693207fd241c335b571f57f87b3096dcc817204d85"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2015",
+        "authority": "IRS Schedule SE (Form 1040), 2015",
         "capture": "irs_schedule_se_2015.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "18d156b748768daa20917a5c8916f704319084c32200c386d95febcbaeb655ce"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2016",
+        "authority": "IRS Schedule SE (Form 1040), 2016",
         "capture": "irs_schedule_se_2016.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "a37053ca569e98cb2647a836844949bf06171018f797d68e4e60aca5143b4bed"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2017",
+        "authority": "IRS Schedule SE (Form 1040), 2017",
         "capture": "irs_schedule_se_2017.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "aefe3565f69e47ccea2beaca0822a0c3cbd3b83bc9c48f326c4c54369fe24180"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2018",
+        "authority": "IRS Schedule SE (Form 1040), 2018",
         "capture": "irs_schedule_se_2018.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "d9252d7f7d8202a341204f79c19a3238cbbf2e917173d1c72133f47f987d7eb7"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2019",
+        "authority": "IRS Schedule SE (Form 1040), 2019",
         "capture": "irs_schedule_se_2019.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "79cf20b576733e8e994e37300b81c217e49f600452bebda989d60ad34ce95b38"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2020",
+        "authority": "IRS Schedule SE (Form 1040), 2020",
         "capture": "irs_schedule_se_2020.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "60a44d23087c4631d27f8114f65297ce11994446fe1e4d97e717554bc5c51186"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2021",
+        "authority": "IRS Schedule SE (Form 1040), 2021",
         "capture": "irs_schedule_se_2021.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "474ef0024350fcc7aa2d2c879b28f362e6fdc11e41ef9ea3fba9e6f51ee01e51"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2022",
+        "authority": "IRS Schedule SE (Form 1040), 2022",
         "capture": "irs_schedule_se_2022.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "60900671b35f6076b3dd6b24ede232d7e40da1c4dc4eaac49f84257d3a4dc269"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2023",
+        "authority": "IRS Schedule SE (Form 1040), 2023",
         "capture": "irs_schedule_se_2023.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "ae11beaaedd525f47155e1692c7f7e5386c912c334912978f5f87507dcdc0b30"
       },
       {
-        "authority": "IRS Schedule SE(Form1040),2024",
+        "authority": "IRS Schedule SE (Form 1040), 2024",
         "capture": "irs_schedule_se_2024.pdf",
-        "location": "PartII optional-method limits",
+        "location": "Part II optional-method limits",
         "sha256": "ac8ba97e554b67275d0e888d709e0ecadc9b45634c52cd934fa9bdcfd15179b0"
       },
       {
-        "authority": "SSA POMS RS00301.250",
+        "authority": "SSA POMS RS 00301.250",
         "capture": "poms_rs_00301250.html",
-        "location": "Chart of Increment Amounts,2008-2026;Amount Required for4QCs",
+        "location": "Chart of Increment Amounts, 2008-2026; Amount Required for 4 QCs",
         "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
       },
       {
-        "authority": "SSA POMS RS01803.180",
+        "authority": "SSA POMS RS 01803.180",
         "capture": "poms_rs_01803180.html",
-        "location": "A.1,2013formula and final explanatory sentence",
+        "location": "A.1, 2013 formula and final explanatory sentence",
         "sha256": "3ca7c4bdf902230ab179dd06023ed195130d499f89721e97e2260e2c7a72eb74"
       },
       {
-        "authority": "42 USC413,pinnedLIIcurrentrepublication",
+        "authority": "42 USC 413, pinned LII current republication",
         "capture": "lii_42_413.html",
-        "location": "413(d)quarter-of-coverage indexing formula",
+        "location": "413(d) quarter-of-coverage indexing formula",
         "sha256": "2dc803f32773ee70e257a7de9a04ccdd04018f55d42078b93bec198bcd832cd3"
       },
       {
-        "capture": "uscode_2013_42_411.html",
-        "sha256": "ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8",
         "authority": "42 USC 411, official 2013 United States Code edition",
-        "location": "411(a) optional computation and 411(k) lower/upper limits"
+        "capture": "uscode_2013_42_411.html",
+        "location": "411(a) optional computation and 411(k) lower/upper limits",
+        "sha256": "ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -3095,7 +3335,7 @@
           1134000
         ]
       },
-      "computed_value_provenance": "2026pair uses explicit published quarterlyQCinput named in supplied_index_inputs_cents;2026upper is not an IRS-published optional limit.",
+      "computed_value_provenance": "The 2026 pair uses the explicit published quarterly QC input named in supplied_index_inputs_cents; the 2026 upper limit is not an IRS-published optional limit.",
       "factor": {
         "denominator": 3,
         "numerator": 2
@@ -3103,11 +3343,11 @@
       "farm_available": true,
       "guidance_profit_limit_note": "These are annually printed Schedule SE whole-dollar guidance limits; exact statutory eligibility uses the lower limit and regular-method factor, without inventing further rounding.",
       "index_parameter": "quarter_of_coverage_amounts_cents_by_calendar_quarter",
-      "lower_limit_formula": "sum of 42 USC413(d) amounts for each calendar quarter ending within taxable year",
-      "monotonicity": "Calendar-year lower/upper optional limits inherit the statutory nondecrease of413(d)QCamounts.",
+      "lower_limit_formula": "sum of 42 USC 413(d) amounts for each calendar quarter ending within taxable year",
+      "monotonicity": "Calendar-year lower/upper optional limits inherit the statutory nondecrease of 413(d) QC amounts.",
       "named_source_options": [
         {
-          "explanation": "411(k)lower=sum of fourQC amounts;upper=150 percent lower;IRS2013ScheduleSEline14prints4640.",
+          "explanation": "411(k) lower limit = sum of four QC amounts; upper limit = 150 percent of lower; IRS 2013 Schedule SE line 14 prints 4640.",
           "lower_limit_cents": 464000,
           "name": "statute_and_irs2013",
           "source": "411(k);irs_schedule_se_2013.pdf",
@@ -3115,11 +3355,11 @@
           "status": "operational_primary_source"
         },
         {
-          "claimed_maximum_reportable_cents": 696000,
-          "explanation": "Final explanatory sentence calls6960 maximum amount reportable, while its preceding formulas give4640NESE ceiling. Internal inconsistency is retained for review.",
+          "explanation": "The final explanatory sentence calls 6960 the maximum amount reportable, while its preceding formulas give a 4640 NESE ceiling. The internal inconsistency is retained for review.",
           "name": "poms_rs01803180_2013_sentence",
           "source": "poms_rs_01803180.html A.1 final bullet",
-          "status": "inconsistent_guidance_retained_not_operational"
+          "status": "inconsistent_guidance_retained_not_operational",
+          "claimed_maximum_reportable_cents": 696000
         }
       ],
       "nonfarm_available": true,
@@ -3241,7 +3481,7 @@
       },
       "quarter_of_coverage_indexing": {
         "annual_index_lag_years": 2,
-        "authority": "42USC413(d)(1)-(2)",
+        "authority": "42 USC 413(d)(1)-(2)",
         "base_amount_dollars": 250,
         "base_index_year": 1976,
         "base_year": 1978,
@@ -3251,9 +3491,9 @@
           "national_average_wage_index_1976",
           "prior_year_quarter_of_coverage_amount_YYYY"
         ],
-        "rounding": "nearest10dollars,tiesup"
+        "rounding": "nearest 10 dollars, ties up"
       },
-      "regular_basis_required": "NESE at least400 in2of3 preceding taxable years",
+      "regular_basis_required": "NESE at least 400 in 2 of 3 preceding taxable years",
       "regular_factor_applied_again": false,
       "supplied_index_inputs_cents": {
         "2026": {
@@ -3283,7 +3523,7 @@
           "authority": "42 USC 411, official 2013 United States Code edition",
           "location": "411(a) optional computation and 411(k) lower/upper limits"
         },
-        "explanation": "411(k) defines the lower limit from fourQC amounts and the upper as150percent of lower;IRS2013ScheduleSEline14 prints4640.The6960amount is the upper gross-income limit,not maximum optional net earnings."
+        "explanation": "411(k) defines the lower limit from four QC amounts and the upper as 150 percent of lower; IRS 2013 Schedule SE line 14 prints 4640. The 6960 amount is the upper gross-income limit, not maximum optional net earnings."
       },
       "code_edition_evidence": [
         {
@@ -3365,20 +3605,26 @@
       "amount",
       "partnership_status"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
-        "location": "1984amendmentnotes adding411(h);effective-date note102(c)(2)",
+        "location": "1984 amendment notes adding 411(h); effective-date note 102(c)(2)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
     "consequence": "covered",
-    "description": "The special411(h)rule for options/commodities dealers does not yet apply.",
+    "description": "The special 411(h) rule for options/commodities dealers does not yet apply.",
     "effective_end": "1984-07-18",
     "effective_start": "1968-01-01",
     "family": "self_employment_options_dealers",
@@ -3386,7 +3632,7 @@
     "open_reason": null,
     "parameters": {
       "411_h_available": false,
-      "effective_basis": "taxableyearsbeginningafter1984-07-18",
+      "effective_basis": "taxable_year_start",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -3419,29 +3665,38 @@
             "1984"
           ]
         }
-      ]
+      ],
+      "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+      "historical_effective_date_wording": "Taxable years beginning after 1984-07-18"
     },
     "rare_exclusion": null,
     "rule_id": "se_options_dealers_1968_1984",
     "trigger_facts": [
       "trade_or_business",
       "industry",
-      "amount"
+      "amount",
+      "taxable_year_start"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
-        "location": "411(h)(1)-(2);1984amendment/effective-date notes",
+        "location": "411(h)(1)-(2); 1984 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
     "consequence": "covered",
-    "description": "Options/commodities dealers include normal-course1256contract and related-property gain/loss despite capital-gain exclusion,and disallow1202deduction.",
+    "description": "Options/commodities dealers include normal-course 1256 contract and related-property gain/loss despite capital-gain exclusion, and disallow 1202 deduction.",
     "effective_end": "2026-12-31",
     "effective_start": "1984-07-19",
     "family": "self_employment_options_dealers",
@@ -3450,9 +3705,9 @@
     "parameters": {
       "1202deduction_allowed": false,
       "411_h_available": true,
-      "dealer_definitions": "optionsdealerunder1256(g)(8);commoditiesdealeractivelytrading1256contractsregisteredwithdomesticboardoftradedesignatedCFTCcontractmarket",
-      "effective_basis": "taxableyearsbeginningafter1984-07-18;calendaryearfirst1985;fiscalyearmaybegin1984",
-      "included_concept": "normal-course1256contract/relatedpropertygains/losses",
+      "dealer_definitions": "Options dealer under 1256(g)(8); commodities dealer actively trading 1256 contracts, registered with a domestic board of trade designated as a CFTC contract market",
+      "effective_basis": "taxable_year_start",
+      "included_concept": "Normal-course 1256 contract/related-property gains/losses",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -3527,29 +3782,44 @@
             "1984"
           ]
         }
-      ]
+      ],
+      "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+      "historical_effective_date_wording": "Taxable years beginning after 1984-07-18; calendar-year first 1985; fiscal year may begin in 1984"
     },
     "rare_exclusion": null,
     "rule_id": "se_options_dealers_1984_2026",
     "trigger_facts": [
       "trade_or_business",
       "industry",
-      "amount"
+      "amount",
+      "taxable_year_start"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
-        "location": "411(c)(1),(2)(E);1968amendment/effective-date notes",
+        "location": "411(c)(1), (2)(E); 1968 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "26 U.S.C. 1402, pinned LII republication",
+        "capture": "lii_26_1402.html",
+        "location": "Effective Date of 1968 Amendment; Public Law 90-248 section 122(c)(1)-(2), 81 Stat. 844",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
     "consequence": "noncovered",
-    "description": "A public office is excluded from trade/business except state/local positions compensated solely by fees and outside Section218coverage for the relevant period.",
+    "description": "Public-office functions are excluded from trade or business. State or local fee-only positions outside Section 218 are an exception, subject to an applicable irrevocable 1968 exemption election.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_public_office",
@@ -3557,12 +3827,12 @@
     "open_reason": null,
     "parameters": {
       "covered_exception_conditions": [
-        "state/localpublicoffice",
-        "compensatedsolelyonfeebasis",
-        "positionnotcoveredbySection218forrelevantperiod"
+        "State/local public office",
+        "Compensated solely on a fee basis",
+        "Position not covered by Section 218 for the relevant period"
       ],
       "default": "public_office_not_trade_or_business",
-      "effective_basis": "feesreceivedafter1967",
+      "effective_basis": "Fees received after 1967",
       "eligible_exception_unit": "other_net_earnings",
       "code_edition_evidence": [
         {
@@ -3653,9 +3923,34 @@
       "public_office_fee_basis",
       "section_218_group",
       "section_218_position",
-      "amount"
+      "amount",
+      "public_office_1968_exemption_election"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [
+      {
+        "when": {
+          "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees."
+        },
+        "consequence": "noncovered",
+        "description": "The election exempts fees received in 1968 and every year thereafter."
+      },
+      {
+        "when": {
+          "government_level": "state or political subdivision",
+          "public_office_fee_basis": "position compensated solely on a fee basis",
+          "section_218_position": "not covered by a Section 218 agreement in the relevant period",
+          "public_office_1968_exemption_election": "no applicable election"
+        },
+        "consequence": "covered",
+        "description": "The fee-office exception to the public-office exclusion applies, subject to the other net-earnings rules."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -3780,7 +4075,13 @@
       "reporting_unit",
       "assignment"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -3790,18 +4091,24 @@
         "capture": "lii_42_411.html",
         "location": "411(a)(16); 2007 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "26 U.S.C. 761, pinned LII republication",
+        "capture": "lii_26_761_r1.html",
+        "location": "761(f)(1)-(2), joint return, spouses as sole members, material participation, and both spouses election; 2007 effective-date note",
+        "sha256": "4dca1c604de8d06f0c4a469a9f66f1014c266f743840600108012c3332b156d5"
       }
     ],
     "consequence": "covered",
-    "description": "Each spouse qualified-joint-venture income or loss is taken into account under 26 USC761(f); election and eligibility facts are necessary.",
+    "description": "Each spouse qualified-joint-venture income or loss is taken into account under 26 USC 761(f); election and eligibility facts are necessary.",
     "effective_end": "2026-12-31",
     "effective_start": "2007-01-01",
     "family": "self_employment_qualified_joint_venture",
     "identification_class": "awaiting_ce2",
     "open_reason": null,
     "parameters": {
-      "eligibility_source_required": "26 USC761(f) conditions and election must be established",
-      "income_assignment": "each spouse share under 26 USC761(f)",
+      "eligibility_source_required": "26 USC 761(f) conditions and election must be established",
+      "income_assignment": "each spouse share under 26 USC 761(f)",
       "qualified_joint_venture_411_a_16_available": true,
       "code_edition_evidence": [
         {
@@ -3850,6 +4157,12 @@
             "2007"
           ]
         }
+      ],
+      "required_conditions": [
+        "spouses are the only joint-venture members",
+        "spouses file a joint return for the taxable year",
+        "both spouses materially participate under 469(h), disregarding paragraph (5)",
+        "both spouses elect section 761(f) treatment"
       ]
     },
     "rare_exclusion": null,
@@ -3857,29 +4170,39 @@
     "trigger_facts": [
       "partnership_status",
       "reporting_unit",
-      "assignment"
+      "assignment",
+      "qualified_joint_venture_election",
+      "joint_return",
+      "material_participation",
+      "trade_or_business"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
     "citations": [
       {
-        "authority": "42USC411,pinnedLIIrepublication",
+        "authority": "42 USC 411, pinned LII republication",
         "capture": "lii_42_411.html",
         "location": "411(c)(3)",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
     "consequence": "noncovered",
-    "description": "Railroad employee or employee-representative service under26USC3231is outside self-employment trade/business.",
+    "description": "Railroad employee or employee-representative service under 26 USC 3231 is outside self-employment trade/business.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_railroad_service",
     "identification_class": "awaiting_ce2",
     "open_reason": null,
     "parameters": {
-      "excluded_concept": "serviceasanemployeeoremployeerepresentativedefinedin26USC3231",
+      "excluded_concept": "Service as an employee or employee representative defined in 26 USC 3231",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -3954,7 +4277,13 @@
       "railroad_covered_service",
       "employee_self_or_mixed"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -3962,13 +4291,13 @@
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "capture": "lii_42_411.html",
-        "location": "411(a)(9); 1968 amendment note; effective date of section118(b), years ending on/after1967-12-31",
+        "location": "411(a)(9); 1968 amendment note; effective date of section 118(b), years ending on/after 1967-12-31",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "Public Law90-248, 81 Stat.821 (1968)",
+        "authority": "Public Law 90-248, 81 Stat.821 (1968)",
         "capture": "govinfo_statute81_pg821_extract.pdf",
-        "location": "section118, printed pp841-842",
+        "location": "section 118, printed pp841-842",
         "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
       }
     ],
@@ -4004,9 +4333,9 @@
           ],
           "primary_history_citations": [
             {
-              "authority": "Public Law90-248, 81 Stat.821 (1968)",
+              "authority": "Public Law 90-248, 81 Stat.821 (1968)",
               "capture": "govinfo_statute81_pg821_extract.pdf",
-              "location": "section118, printed pp841-842",
+              "location": "section 118, printed pp841-842",
               "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
             }
           ],
@@ -4077,7 +4406,7 @@
       "negligible_candidate": null,
       "search_result": "No source giving a quantitative bound for the exclusion population was located; guidance and legal cases establish rules but do not bound prevalence.",
       "searches": [
-        "domains:irs.gov,secure.ssa.gov | \"retired partner\" \"retirement payments\" prevalence statistics"
+        "domains:irs.gov, secure.ssa.gov | \"retired partner\" \"retirement payments\" prevalence statistics"
       ],
       "strict": "unresolved"
     },
@@ -4085,9 +4414,18 @@
     "trigger_facts": [
       "partnership_status",
       "retirement_payment",
-      "amount"
+      "amount",
+      "partner_no_services",
+      "partner_no_other_obligation",
+      "partner_capital_paid"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "noncovered",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -4188,7 +4526,13 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -4200,28 +4544,28 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
+        "authority": "IRS Schedule SE (Form 1040), 1984",
         "capture": "irs_schedule_se_1984.pdf",
-        "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
-        "authority": "IRS Schedule SE(Form1040),1984",
-        "location": "PartI line2;PartIII lines7-9,12a,12c,13"
+        "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13",
+        "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373"
       },
       {
+        "authority": "IRS Schedule SE (Form 1040), 1985",
         "capture": "irs_schedule_se_1985.pdf",
-        "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
-        "authority": "IRS Schedule SE(Form1040),1985",
-        "location": "PartI line2;PartIII lines7-9,12a,12c,13"
+        "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13",
+        "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8"
       },
       {
+        "authority": "IRS Form 1040 instructions, 1985",
         "capture": "irs_form1040_instructions_1985.pdf",
-        "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
-        "authority": "IRS Form1040 instructions,1985",
-        "location": "printedpage31,Employees of Churches and Qualified Church-Controlled Organizations;Lines9and13"
+        "location": "printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13",
+        "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5"
       },
       {
-        "capture": "uscode_1994_42_411.html",
-        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
         "authority": "42 USC 411, official 1994 United States Code edition",
-        "location": "411(a)(5), (b)(2); 1986 amendment note quoting former 411(a)(13); effective-date notes"
+        "capture": "uscode_1994_42_411.html",
+        "location": "411(a)(5), (b)(2); 1986 amendment note quoting former 411(a)(13); effective-date notes",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -4240,7 +4584,7 @@
         "numerator": 1,
         "denominator": 1
       },
-      "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least100dollars in the taxable year",
+      "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least 100 dollars in the taxable year",
       "ordinary_net_earnings": "admissible farm/nonfarm/partnership earnings after their own allowed deductions and ordinary losses, including applicable optional-method amounts",
       "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
       "ordinary_losses_may_offset_church_remuneration": true,
@@ -4252,32 +4596,32 @@
           "eligible_base": "ordinary_net_earnings if threshold met"
         },
         {
-          "when": "qualifying church remuneration and combined earnings below100dollars",
+          "when": "qualifying church remuneration and combined earnings below 100 dollars",
           "eligible_base_cents": 0
         },
         {
-          "when": "qualifying church remuneration and100<=combined earnings<400dollars and no ScheduleC,ScheduleF,or partnership loss",
+          "when": "qualifying church remuneration and 100 <= combined earnings < 400 dollars and no Schedule C, Schedule F, or partnership loss",
           "eligible_base": "qualifying_church_remuneration"
         },
         {
-          "when": "qualifying church remuneration and combined earnings at least100dollars and a ScheduleC,ScheduleF,or partnership loss",
+          "when": "qualifying church remuneration and combined earnings at least 100 dollars and a Schedule C, Schedule F, or partnership loss",
           "eligible_base": "combined_earnings"
         },
         {
-          "when": "qualifying church remuneration and combined earnings at least400dollars and no such loss",
+          "when": "qualifying church remuneration and combined earnings at least 400 dollars and no such loss",
           "eligible_base": "combined_earnings"
         }
       ],
-      "statutory_units": "one historical combined computation with the stated conditional church/ordinary floors; not the post1985 two-unit rule",
+      "statutory_units": "One historical combined computation with the stated conditional church/ordinary floors; not the post-1985 two-unit rule",
       "wage_first_cap": "after the eligible-base cases, cap self-employment earnings at the combined maximum remaining after covered wages",
       "published_form_flow": {
         "line2": "qualifying church wages join nonfarm net profit or loss",
-        "lines7_8_9": "farm and nonfarm amounts combine; form refers church employees below400 to instructions",
-        "instructions_lines9_13": "below100 stop;100to399.99 without ordinary loss use min(line12a,line12c);otherwise min(line9,line12a)",
+        "lines7_8_9": "Farm and nonfarm amounts combine; the form refers church employees below 400 to the instructions",
+        "instructions_lines9_13": "Below 100, stop; from 100 to 399.99 without ordinary loss, use min(line 12a, line 12c); otherwise use min(line 9, line 12a)",
         "line12a": "remaining combined maximum after covered wages",
         "line12c": "church wages"
       },
-      "historical_statutory_basis": "former411(a)(13)(A)-(C),quoted in official1994Code;1986 separate-unit amendment applies to remuneration paid or derived in taxable years beginning after1985-12-31",
+      "historical_statutory_basis": "former 411(a)(13)(A)-(C), quoted in the official 1994 Code; 1986 separate-unit amendment applies to remuneration paid or derived in taxable years beginning after 1985-12-31",
       "units": [
         {
           "unit_id": "historical_combined_net_earnings",
@@ -4288,7 +4632,7 @@
             "denominator": 1
           },
           "loss_treatment": "ordinary business losses may offset qualifying church remuneration; no self-employment loss offsets covered wages",
-          "threshold_basis": "piecewise coverage_base_cases, retaining the church employer-year100dollar gate and conditional aggregate100/400dollar rules",
+          "threshold_basis": "Piecewise coverage_base_cases, retaining the church employer-year 100-dollar gate and conditional aggregate 100/400-dollar rules",
           "threshold_scope": "person_taxable_year_combined_computation",
           "threshold_rule_parameters": "coverage_base_cases",
           "rounding": "no new intermediate monetary rounding inferred from forms"
@@ -4309,20 +4653,20 @@
             {
               "capture": "irs_schedule_se_1984.pdf",
               "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
-              "authority": "IRS Schedule SE(Form1040),1984",
-              "location": "PartI line2;PartIII lines7-9,12a,12c,13"
+              "authority": "IRS Schedule SE (Form 1040), 1984",
+              "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13"
             },
             {
               "capture": "irs_schedule_se_1985.pdf",
               "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
-              "authority": "IRS Schedule SE(Form1040),1985",
-              "location": "PartI line2;PartIII lines7-9,12a,12c,13"
+              "authority": "IRS Schedule SE (Form 1040), 1985",
+              "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13"
             },
             {
               "capture": "irs_form1040_instructions_1985.pdf",
               "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
-              "authority": "IRS Form1040 instructions,1985",
-              "location": "printedpage31,Employees of Churches and Qualified Church-Controlled Organizations;Lines9and13"
+              "authority": "IRS Form 1040 instructions, 1985",
+              "location": "printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",
@@ -4359,7 +4703,13 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -4405,12 +4755,12 @@
           },
           "loss_treatment": "no ordinary expenses or losses from other units; 411(a)(11) deduction applies after 411(i)(1)",
           "rounding": "none_prescribed_for_base_in_411",
-          "separate_computation": true,
           "threshold_basis": "church_income_after_411(a)(11)_deduction",
           "threshold_cents": 10000,
           "threshold_comparison": "greater_than_or_equal",
           "threshold_scope": "person_year_aggregate",
-          "unit_id": "church_employee_income"
+          "unit_id": "church_employee_income",
+          "separate_computation": true
         }
       ],
       "wages_consume_annual_maximum_first": true,
@@ -4461,7 +4811,13 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   },
   {
     "alternative": null,
@@ -4475,7 +4831,7 @@
       {
         "authority": "Public Law 98-21, 97 Stat. 65 (1983)",
         "capture": "govinfo_statute97_pg65_extract.pdf",
-        "location": "section 124(c)(3), printed p. 90; section 124(d)(2), printed p. 91",
+        "location": "section 124(a), printed p. 89 (extract p. 8); section 124(c)(3), printed p. 90 (extract p. 9); section 124(d)(2), printed p. 91 (extract p. 10)",
         "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
       },
       {
@@ -4491,10 +4847,22 @@
         "sha256": "05bc2b3e1dfca65d8c6fc6d652af4fa3736e953c6575d6e9f82590484677d347"
       },
       {
-        "authority": "SSA POMS RS01803.170",
+        "authority": "SSA POMS RS 01803.170",
         "capture": "poms_rs_01803170.html",
         "location": "Computation of Farm Net Earnings; farm net earnings combined with nonfarm net earnings or loss",
         "sha256": "ef8afe38331709b08516fd15a8e19f72ef11b0e93230b2811999249ddb5edadf"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2011",
+        "capture": "irs_schedule_se_2011.pdf",
+        "location": "Page 1, line 4; page 2, lines 4a and 5b (92.35 percent), and line 10 (temporary 10.4 percent OASDI tax rate)",
+        "sha256": "f639b7a6b81ea22d386130dac53d5a7cccba84fbf54ae6442568cd17eaa9a16d"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2012",
+        "capture": "irs_schedule_se_2012.pdf",
+        "location": "Page 1, line 4; page 2, lines 4a and 5b (92.35 percent), and line 10 (temporary 10.4 percent OASDI tax rate)",
+        "sha256": "99ea6d8a7252dd83b070a61fc1668f5b2db3a269bd740437443fab0c1731553f"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -4532,12 +4900,12 @@
           },
           "loss_treatment": "no ordinary expenses or losses from other units; 411(a)(11) deduction applies after 411(i)(1)",
           "rounding": "none_prescribed_for_base_in_411",
-          "separate_computation": true,
           "threshold_basis": "church_income_after_411(a)(11)_deduction",
           "threshold_cents": 10000,
           "threshold_comparison": "greater_than_or_equal",
           "threshold_scope": "person_year_aggregate",
-          "unit_id": "church_employee_income"
+          "unit_id": "church_employee_income",
+          "separate_computation": true
         }
       ],
       "wages_consume_annual_maximum_first": true,
@@ -4566,7 +4934,7 @@
               "sha256": "296dc3070792cc7db1b9c73a19b9c5dbd71ab1e97c755e89bbcd53f675939529"
             },
             {
-              "authority": "SSA POMS RS01803.170",
+              "authority": "SSA POMS RS 01803.170",
               "capture": "poms_rs_01803170.html",
               "location": "Computation of Farm Net Earnings; farm net earnings combined with nonfarm net earnings or loss",
               "sha256": "ef8afe38331709b08516fd15a8e19f72ef11b0e93230b2811999249ddb5edadf"
@@ -4657,7 +5025,8 @@
             "1986"
           ]
         }
-      ]
+      ],
+      "factor_history_support": "Public Law 98-21 section 124(a) sets the post-1989 12.4 percent plus 2.9 percent rates underlying section 411(a)(11); the 2011 and 2012 Schedule SE forms expressly retain the 92.35 percent base factor during those temporary rate-cut years."
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1990_2026",
@@ -4666,6 +5035,12 @@
       "amount",
       "reporting_unit"
     ],
-    "worked_examples": []
+    "worked_examples": [],
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered_above_threshold",
+      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
   }
 ]

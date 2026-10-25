@@ -37,7 +37,7 @@
       }
     ],
     "indexing": null,
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars",
     "value_provenance": "Fixed statutory amount in former 410(a)(10)(A), corroborated by former 3121(b)(10)(A) history in OLRC release 119-120; Public Law 95-216 changed the rule for remuneration and services after 1977.",
     "description": "Fixed $50 per employer/employee calendar quarter; not a separate threshold for each pay component."
@@ -113,7 +113,7 @@
       }
     ],
     "indexing": null,
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars",
     "value_provenance": "Fixed statutory amount under 409(a)(14), originally 409(p), added by Public Law 95-216 section 351 effective after 1977; printed in the pinned statute and amendment notes.",
     "description": "Fixed $100 per employer/employee calendar year, including the post-1983 mandatory nonprofit coverage period."
@@ -189,7 +189,7 @@
         "capture": "govinfo_statute86_pg1329_extract.pdf",
         "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Pub. L. 92-603, 86 Stat. 1329 (1972)",
-        "location": "section 123, printed pages 1354-1356"
+        "location": "section 123, printed pages 1354-1357"
       },
       {
         "capture": "lii_42_409.html",
@@ -205,10 +205,10 @@
       }
     ],
     "indexing": null,
-    "monotone": true,
+    "monotone": false,
     "unit": "dollars",
     "value_provenance": "Fixed statutory minimum in Public Law 92-603 section 123(c), 86 Stat. 1356, and current 409(g)/3121(i)(4); election retroactivity up to 20 quarters reaches 1968 services.",
-    "application": "deemed_remuneration_floor",
-    "description": "A minimum for deemed monthly remuneration, not a minimum earnings condition for service coverage; actual remuneration is the greater of perquisite value and this floor."
+    "description": "A minimum for deemed monthly remuneration, not a minimum earnings condition for service coverage; actual remuneration is the greater of perquisite value and this floor.",
+    "application": "deemed_remuneration_floor"
   }
 ]
