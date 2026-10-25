@@ -873,5 +873,65 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "the nice check is dropped",
+  "replacements": [
+   {
+    "old": "    if niceness != 0:\n        raise SystemExit(\"run B0.2 at nice 0\")\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the load check is dropped",
+  "replacements": [
+   {
+    "old": "    if not load < cpus:\n        raise SystemExit(\n            \"start B0.2 when the five-minute load is below the CPU count\"\n        )\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the load check reads the one-minute load",
+  "replacements": [
+   {
+    "old": "        os.getloadavg()[1],\n",
+    "new": "        os.getloadavg()[0],\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "caffeinate holds no idle-sleep assertion",
+  "replacements": [
+   {
+    "old": "            [CAFFEINATE, \"-i\", \"-s\", \"-w\", str(os.getpid())],\n",
+    "new": "            [CAFFEINATE, \"-s\", \"-w\", str(os.getpid())],\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the host is kept awake only after the attempt record",
+  "replacements": [
+   {
+    "old": "    keeper = _keep_awake()\n    _start_attempt(local, repository_head, script_sha256)\n",
+    "new": "    _start_attempt(local, repository_head, script_sha256)\n    keeper = _keep_awake()\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a caffeinate that exits at once is accepted",
+  "replacements": [
+   {
+    "old": "    if keeper.poll() is not None:\n        raise SystemExit(\"B0.2 needs caffeinate to keep the host awake\")\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
  }
 ]

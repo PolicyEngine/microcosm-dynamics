@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import subprocess
 import sys
 from contextlib import contextmanager, nullcontext
 from itertools import combinations
@@ -24,8 +25,10 @@ import track_b_b0_2_counts as script  # noqa: E402
 
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
+#: The script's own keeper, kept before any test replaces it.
+REAL_KEEP_AWAKE = script._keep_awake
 PROTOCOL_SHA256 = (
-    "ebdc3565831a696f4b708f53ea020e94a4deff44d5b966cc3ed501b502d1595e"
+    "31af2b857c36dd20858267eebb07882b586fce5b711bb0c68cf85ae696e9a60b"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -1869,6 +1872,19 @@ def released_main(tmp_path, monkeypatch):
     )
 
 
+class _Keeper:
+    """Stands in for the caffeinate process main() starts."""
+
+    def __init__(self):
+        self.ended = False
+
+    def terminate(self):
+        self.ended = True
+
+    def wait(self):
+        return 0
+
+
 def _main_environment(tmp_path, monkeypatch, inputs):
     people, labor, anchor, design = inputs
     allowlist = {"invented": {"variable": "X1", "label": "AGE"}}
@@ -1911,6 +1927,9 @@ def _main_environment(tmp_path, monkeypatch, inputs):
     for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+    # A host at nice 0 and nearly idle, kept awake by a stand-in.
+    monkeypatch.setattr(script, "_host_state", lambda: (0, 1.0, 18))
+    monkeypatch.setattr(script, "_keep_awake", _Keeper)
     return supplied, baseline, calls
 
 
@@ -2290,6 +2309,145 @@ def test_runtime_rejects_dirty_worktree_before_read(
             ]
         )
     assert not calls
+
+
+@pytest.mark.parametrize(
+    ("state", "message"),
+    [
+        ((10, 1.0, 18), "run B0.2 at nice 0"),
+        ((0, 18.0, 18), "five-minute load is below the CPU count"),
+        ((0, 40.5, 18), "five-minute load is below the CPU count"),
+    ],
+)
+def test_runtime_requires_nice_zero_and_a_quiet_host_before_read(
+    state, message, tmp_path, monkeypatch, invented_main
+):
+    """Each program's limit is wall-clock time, so the run refuses to start
+    deprioritized or on a busy host: before any attempt record, so the
+    version is not spent, and before any read."""
+    _, _, calls = invented_main
+    monkeypatch.setattr(script, "_host_state", lambda: state)
+    local = tmp_path / "local.json"
+    with pytest.raises(SystemExit, match=message):
+        script.main(
+            [
+                "--out",
+                str(tmp_path / "counts.json"),
+                "--local-copy",
+                str(local),
+            ]
+        )
+    assert not calls
+    assert not script._attempt_path(local).exists()
+
+
+def test_host_state_is_the_niceness_the_five_minute_load_and_the_cpus(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        script.os,
+        "getpriority",
+        lambda which, who: (
+            7 if (which, who) == (script.os.PRIO_PROCESS, 0) else -1
+        ),
+    )
+    monkeypatch.setattr(script.os, "getloadavg", lambda: (1.0, 2.0, 3.0))
+    monkeypatch.setattr(script.os, "cpu_count", lambda: 18)
+    assert script._host_state() == (7, 2.0, 18)
+
+
+def test_main_keeps_the_host_awake_from_before_the_attempt_to_the_end(
+    tmp_path, monkeypatch, invented_main
+):
+    """The sleep assertion starts before the attempt record, so a host
+    that cannot hold one spends no version, and it lasts to the end."""
+    local = tmp_path / "local.json"
+    processes = []
+
+    class Process:
+        def __init__(self, arguments, **streams):
+            self.arguments, self.streams = arguments, streams
+            self.attempted = script._attempt_path(local).exists()
+            self.ended = False
+            processes.append(self)
+
+        def poll(self):
+            return None
+
+        def terminate(self):
+            self.ended = True
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr(script, "_keep_awake", REAL_KEEP_AWAKE)
+    monkeypatch.setattr(script.subprocess, "Popen", Process)
+    out = tmp_path / "counts.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    (process,) = processes
+    assert process.arguments == [
+        "/usr/bin/caffeinate",
+        "-i",
+        "-s",
+        "-w",
+        str(os.getpid()),
+    ]
+    assert process.streams == {
+        name: subprocess.DEVNULL for name in ("stdin", "stdout", "stderr")
+    }
+    assert not process.attempted
+    assert process.ended and out.exists()
+
+
+@pytest.mark.parametrize("failure", ["missing", "exited"])
+def test_main_refuses_without_caffeinate_before_the_attempt(
+    failure, tmp_path, monkeypatch, invented_main
+):
+    _, _, calls = invented_main
+
+    class Process:
+        def __init__(self, arguments, **streams):
+            if failure == "missing":
+                raise FileNotFoundError(2, "No such file", arguments[0])
+
+        def poll(self):
+            return 1
+
+    monkeypatch.setattr(script, "_keep_awake", REAL_KEEP_AWAKE)
+    monkeypatch.setattr(script.subprocess, "Popen", Process)
+    local = tmp_path / "local.json"
+    with pytest.raises(SystemExit) as caught:
+        script.main(
+            [
+                "--out",
+                str(tmp_path / "counts.json"),
+                "--local-copy",
+                str(local),
+            ]
+        )
+    assert str(caught.value) == "B0.2 needs caffeinate to keep the host awake"
+    assert caught.value.__cause__ is None
+    assert not calls
+    assert not script._attempt_path(local).exists()
+
+
+@pytest.mark.skipif(
+    not Path(script.CAFFEINATE).exists(), reason="no caffeinate on this host"
+)
+def test_keep_awake_holds_caffeinate_on_this_process():
+    keeper = REAL_KEEP_AWAKE()
+    try:
+        assert keeper.poll() is None
+        assert keeper.args == [
+            script.CAFFEINATE,
+            "-i",
+            "-s",
+            "-w",
+            str(os.getpid()),
+        ]
+    finally:
+        keeper.terminate()
+        keeper.wait()
 
 
 @pytest.mark.parametrize("failure", ["draft", "pin"])

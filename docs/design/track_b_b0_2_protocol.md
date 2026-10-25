@@ -130,7 +130,18 @@ of the version, and narrowed its report:
 - **The stated limit** now names the run's total time as a channel, and
   says that no time is written or printed.
 - **Operations.** The one run is detached from the session that starts
-  it, with no wall limit, since the number of programs is bounded.
+  it, with no wall limit, since the number of programs is bounded. Since
+  any stop spends the version, and each program's limit is wall-clock
+  time, the coordinator set three conditions in its place, and the
+  script enforces the first two before the attempt record:
+  - it holds off sleep with `caffeinate` on its own process;
+  - it runs at nice 0, and starts only when the five-minute load is below
+    the CPU count;
+  - an expected run time, extrapolated from the calibrations, goes to the
+    coordinator before the freeze.
+
+  The run prints nothing until it ends; its liveness is checked by its
+  process ID.
 
 Three tests failed when they first ran, and each was fixed in the
 tests alone:
@@ -678,6 +689,11 @@ rules.
       prints no chain; a warning prints nothing; and nothing written
       inside a phase, through Python, a file descriptor or the C
       library's buffered stream, is seen, while output after it is;
+    - the run's conditions: it refuses to start, before the attempt
+      record and any read, at a niceness other than 0, at a five-minute
+      load at or above the CPU count, or when `caffeinate` cannot start;
+      and the sleep assertion is on the script's own process, from before
+      the attempt record to the end;
     - a static check of the script, which finds that every `raise`
       message interpolates only paths and settings, that it prints only
       the output's path, that only the outputs, the attempt record and
@@ -727,12 +743,29 @@ new version.
     runs, that treats the stop and its report as public.
   - The run is started in a detached process that survives the end of
     the session that starts it, with standard output and standard error
-    sent to a file in B0.2's evidence folder. Each program has a limit of
-    300 seconds, and the audit runs at most 9(T + 2) + 5T(T + 1)/2 of
-    them for T targets: nine seed programs at the start and at most nine
-    more in each round, at most five for each target in each round, and
-    at most T + 1 rounds. So the run ends without a wall limit, and none
-    is set: one could only stop a run that would have finished.
+    sent to a file in B0.2's evidence folder. It prints nothing until it
+    ends, since a count of programs solved depends on sizes, so its
+    liveness is checked by its process ID alone.
+  - Each program has a limit of 300 seconds, and the audit runs at most
+    9(T + 2) + 5T(T + 1)/2 of them for T targets: nine seed programs at
+    the start and at most nine more in each round, at most five for each
+    target in each round, and at most T + 1 rounds. So the run ends
+    without a wall limit, and none is set: one could only stop a run that
+    would have finished.
+  - The limit is wall-clock time, so anything that slows the host can
+    add a disclosure or withhold the release. So, before the attempt
+    record is created:
+    - the script starts `caffeinate -i -s -w` on its own process, which
+      holds off idle and system sleep until the script ends, and refuses
+      to start if it cannot;
+    - it refuses to start unless it runs at nice 0 and the five-minute
+      load average is below the host's CPU count (18 on the host that
+      runs it). If the load does not come down, Fleet ops is asked for a
+      quiet window.
+  - Before the freeze, an expected run time, extrapolated from the
+    calibrations' timings on invented panels of 800, 3,000 and 9,000
+    households, goes to the coordinator, so that a run measured in weeks
+    is caught while the protocol can still change.
 - **No changes after counts.** No definition above changes once counts
   are seen. A change is a new protocol version, recorded as such, with
   the reason.

@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "ebdc3565831a696f4b708f53ea020e94a4deff44d5b966cc3ed501b502d1595e"
+    "31af2b857c36dd20858267eebb07882b586fce5b711bb0c68cf85ae696e9a60b"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -1758,6 +1758,43 @@ def _start_attempt(
         ) from error
 
 
+#: Holds off idle and system sleep for as long as the process it waits on.
+CAFFEINATE = "/usr/bin/caffeinate"
+
+
+def _host_state() -> tuple[int, float, int]:
+    """This process's niceness, the five-minute load average and the
+    number of CPUs."""
+    return (
+        os.getpriority(os.PRIO_PROCESS, 0),
+        os.getloadavg()[1],
+        os.cpu_count() or 1,
+    )
+
+
+def _keep_awake() -> subprocess.Popen:
+    """Hold off idle and system sleep for the rest of this process's life.
+
+    Each program's limit is wall-clock time, so a host asleep mid-program
+    would read as a slow one, and could add a disclosure or withhold the
+    release. ``caffeinate -w`` ends when this process does; it prints
+    nothing."""
+    try:
+        keeper = subprocess.Popen(
+            [CAFFEINATE, "-i", "-s", "-w", str(os.getpid())],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        raise SystemExit(
+            "B0.2 needs caffeinate to keep the host awake"
+        ) from None
+    if keeper.poll() is not None:
+        raise SystemExit("B0.2 needs caffeinate to keep the host awake")
+    return keeper
+
+
 def _check_runtime() -> None:
     if _git("status", "--porcelain"):
         raise SystemExit("B0.2 requires a clean protocol-freezing worktree")
@@ -1770,6 +1807,15 @@ def _check_runtime() -> None:
             raise SystemExit(f"set {name} to an integer from 1 to 4")
     if os.environ.get("OMP_WAIT_POLICY") != "PASSIVE":
         raise SystemExit("set OMP_WAIT_POLICY=PASSIVE")
+    # Each program's limit is wall-clock time, so a busy or deprioritized
+    # host can withhold a release.
+    niceness, load, cpus = _host_state()
+    if niceness != 0:
+        raise SystemExit("run B0.2 at nice 0")
+    if not load < cpus:
+        raise SystemExit(
+            "start B0.2 when the five-minute load is below the CPU count"
+        )
     _check_protocol()
 
 
@@ -1987,6 +2033,7 @@ def main(argv: list[str] | None = None) -> int:
     _check_runtime()
     repository_head = _git("rev-parse", "HEAD")
     script_sha256 = _sha256_file(Path(__file__))
+    keeper = _keep_awake()
     _start_attempt(local, repository_head, script_sha256)
     with count_free_failures(READING):
         data_dir = psid._resolve_data_dir(None).resolve()
@@ -2018,6 +2065,8 @@ def main(argv: list[str] | None = None) -> int:
         write_new(local, local_bytes)
         write_new(out, public_bytes)
     print(out)
+    keeper.terminate()
+    keeper.wait()
     return 0
 
 
