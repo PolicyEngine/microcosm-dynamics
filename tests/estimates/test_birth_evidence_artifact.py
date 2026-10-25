@@ -255,6 +255,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/group_breakdowns/fra68.py"),
         Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
         Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+        Path("src/populace_dynamics/mortality_ses/__init__.py"),
+        Path("src/populace_dynamics/mortality_ses/specification.py"),
+        Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+        Path("src/populace_dynamics/mortality_ses/model.py"),
+        Path("src/populace_dynamics/mortality_ses/step.py"),
         # The PSID income and wealth readers (D1a) are opt-in source readers;
         # nothing in the historical projection imports them.
         Path("src/populace_dynamics/data/psid_income_wealth.py"),
@@ -636,6 +641,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
+    mortality_ses_modules = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.mortality_ses"
+        or name.startswith("populace_dynamics.mortality_ses.")
+    }
+    assert len(mortality_ses_modules) == 5
+    assert mortality_ses_modules.isdisjoint(
+        reachable
+    ), "SM1 became reachable from the historical birth-evidence reducer"
     scenario_module = "populace_dynamics.scenario_benefits"
     assert scenario_module in module_paths
     assert scenario_module not in reachable, (
