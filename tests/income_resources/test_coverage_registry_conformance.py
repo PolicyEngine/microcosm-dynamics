@@ -361,6 +361,82 @@ def test_period_thresholds_keep_employers_separate(registry, threshold_id):
 
 
 @settings(deadline=None)
+@given(st.data())
+def test_real_case_precedence_is_first_match(registry, data):
+    rule = data.draw(st.sampled_from([r for r in registry.rules if r.cases]))
+    by_id = {case["case_id"]: case for case in rule.cases}
+    assert len(by_id) == len(rule.cases)
+    assert sorted(c["precedence"] for c in rule.cases) == list(
+        range(1, len(rule.cases) + 1)
+    )
+    matched = data.draw(st.sets(st.sampled_from(sorted(by_id))))
+    result = rule.resolve(matched)
+    if matched:
+        winner = min(matched, key=lambda case_id: by_id[case_id]["precedence"])
+        assert result is by_id[winner]
+    else:
+        assert result == rule.residual_default
+    for case in rule.cases:
+        for target in case.get("overrides", ()):
+            assert by_id[target]["precedence"] > case["precedence"]
+            assert by_id[target]["consequence"] != case["consequence"]
+            assert rule.resolve({case["case_id"], target}) is case
+
+
+FEDERAL_EXCEPTIONS = (
+    "official_position_service",
+    "after_official_service_from_1988_11_10",
+    "fers_or_fsps_election",
+    "legislative_not_retirement_covered_1983",
+    "legislative_lump_sum_after_1983",
+    "legislative_ceased_coverage_after_1983",
+)
+FEDERAL_PARAGRAPH_6 = (
+    "federal_penal_inmate",
+    "federal_hospital_student_employee",
+    "temporary_emergency_employee",
+)
+
+
+@settings(deadline=None)
+@given(st.integers(1984, 2026), st.data())
+def test_federal_exceptions_outrank_the_grandfather_exclusion(
+    registry, year, data
+):
+    (rule,) = registry.lookup("federal_retirement_service", year)
+    ids = {case["case_id"] for case in rule.cases}
+    assert ("fers_or_fsps_election" in ids) == (year >= 1987)
+    # Review MED-1 repro: a Member of Congress serving since 1983.
+    member = {"grandfathered_continuous_service", "official_position_service"}
+    assert rule.resolve(member)["consequence"] == "covered"
+    excluded = data.draw(
+        st.sets(
+            st.sampled_from(
+                ["grandfathered_continuous_service", "federal_annuitant"]
+            ),
+            min_size=1,
+        )
+    )
+    exception = data.draw(
+        st.sampled_from(sorted(ids.intersection(FEDERAL_EXCEPTIONS)))
+    )
+    assert rule.resolve(excluded | {exception})["consequence"] == "covered"
+    # 410(a)(5)(C)-(H) lift paragraph (5) only; paragraph (6) still applies.
+    inmate = data.draw(st.sampled_from(FEDERAL_PARAGRAPH_6))
+    assert (
+        rule.resolve(excluded | {exception, inmate})["consequence"]
+        == "noncovered"
+    )
+    # Pub. L. 98-369 section 2601(d) requalification displaces (G)(ii).
+    requalified = {
+        "defra_2601d_requalification",
+        "legislative_lump_sum_after_1983",
+        "grandfathered_continuous_service",
+    }
+    assert rule.resolve(requalified)["consequence"] == "noncovered"
+
+
+@settings(deadline=None)
 @given(st.integers(1984, 2026))
 def test_federal_legislative_branch_exception_is_returned(registry, year):
     rule = registry.lookup("federal_retirement_service", year)[0]

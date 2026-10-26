@@ -398,6 +398,8 @@
     "open_reason": null,
     "cases": [
       {
+        "case_id": "genuine_noncash_with_dominion",
+        "precedence": 1,
         "when": {
           "cash_remuneration": "genuine noncash remuneration; employee obtained dominion and control"
         },
@@ -405,6 +407,8 @@
         "description": "A bona fide commodity transfer remains outside agricultural cash wages."
       },
       {
+        "case_id": "cash_equivalent_transfer_from_1995_08_07",
+        "precedence": 2,
         "when": {
           "services_performed_date": "on or after 1995-08-07",
           "noncash_transfer_cash_equivalence": true,
@@ -2953,6 +2957,8 @@
     "open_reason": null,
     "cases": [
       {
+        "case_id": "parent_in_child_trade_or_business",
+        "precedence": 1,
         "when": {
           "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
         },
@@ -2960,6 +2966,8 @@
         "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions."
       },
       {
+        "case_id": "spouse_in_trade_or_business",
+        "precedence": 2,
         "when": {
           "family_service": "spouse employed in the employer's trade or business"
         },
@@ -2967,6 +2975,8 @@
         "description": "The spousal nonbusiness exclusion does not exclude trade-or-business employment."
       },
       {
+        "case_id": "corporate_employer",
+        "precedence": 3,
         "when": {
           "incorporation": "corporation is the employer"
         },
@@ -7287,12 +7297,16 @@
     "open_reason": null,
     "cases": [
       {
+        "case_id": "section_418a_agreement_inclusion",
+        "precedence": 1,
         "consequence": "covered",
         "when": {
           "tribal_coverage_agreement": "council-capacity services included under an effective section 418a agreement"
         }
       },
       {
+        "case_id": "no_section_418a_inclusion",
+        "precedence": 2,
         "consequence": "noncovered",
         "when": {
           "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"

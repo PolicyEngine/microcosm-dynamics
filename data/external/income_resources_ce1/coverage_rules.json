@@ -914,15 +914,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "genuine_noncash_with_dominion",
           "consequence": "noncovered",
           "description": "A bona fide commodity transfer remains outside agricultural cash wages.",
+          "precedence": 1,
           "when": {
             "cash_remuneration": "genuine noncash remuneration; employee obtained dominion and control"
           }
         },
         {
+          "case_id": "cash_equivalent_transfer_from_1995_08_07",
           "consequence": "covered_above_threshold",
           "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3.",
+          "precedence": 2,
           "when": {
             "noncash_transfer_cash_equivalence": true,
             "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
@@ -1767,23 +1771,29 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
           }
         },
         {
+          "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption"
           }
         },
         {
+          "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2285,23 +2295,29 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
           }
         },
         {
+          "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption"
           }
         },
         {
+          "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2803,23 +2819,29 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
           }
         },
         {
+          "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption"
           }
         },
         {
+          "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -4569,15 +4591,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "electing_church_nonministerial_service",
           "consequence": "covered_above_threshold",
           "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies.",
+          "precedence": 1,
           "when": {
             "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
           }
         },
         {
+          "case_id": "unrelated_trade_or_business",
           "consequence": "covered",
           "description": "Not excluded from employment by 410(a)(8)(B); apply other families.",
+          "precedence": 2,
           "when": {
             "church_employee_service": "unrelated trade or business"
           }
@@ -4738,15 +4764,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "electing_church_nonministerial_service",
           "consequence": "covered_above_threshold",
           "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies.",
+          "precedence": 1,
           "when": {
             "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties"
           }
         },
         {
+          "case_id": "unrelated_trade_or_business",
           "consequence": "covered",
           "description": "Not excluded from employment by 410(a)(8)(B); apply other families.",
+          "precedence": 2,
           "when": {
             "church_employee_service": "unrelated trade or business"
           }
@@ -5869,22 +5899,28 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "parent_in_child_trade_or_business",
           "consequence": "covered",
           "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions.",
+          "precedence": 1,
           "when": {
             "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
           }
         },
         {
+          "case_id": "spouse_in_trade_or_business",
           "consequence": "covered",
           "description": "The spousal nonbusiness exclusion does not exclude trade-or-business employment.",
+          "precedence": 2,
           "when": {
             "family_service": "spouse employed in the employer's trade or business"
           }
         },
         {
+          "case_id": "corporate_employer",
           "consequence": "covered",
           "description": "The family relationship exclusion does not apply to a corporation; POMS RS 01901.250 B.1 NOTE, subject to other exclusions.",
+          "precedence": 3,
           "when": {
             "incorporation": "corporation is the employer"
           }
@@ -6068,29 +6104,37 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "federal_retirement_system_service",
           "consequence": "noncovered",
           "description": "410(a)(6)(A) as in effect in January 1983.",
+          "precedence": 1,
           "when": {
             "federal_retirement_system": "established by a law of the United States"
           }
         },
         {
+          "case_id": "statutory_1410_instrumentality",
           "consequence": "noncovered",
           "description": "410(a)(5) as in effect in January 1983.",
+          "precedence": 2,
           "when": {
             "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
           }
         },
         {
+          "case_id": "exempt_1950_instrumentality_system",
           "consequence": "noncovered",
           "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
+          "precedence": 3,
           "when": {
             "federal_service": "exempt-1950 instrumentality and retirement system"
           }
         },
         {
+          "case_id": "president_congress_legislative",
           "consequence": "noncovered",
           "description": "410(a)(6)(C) as in effect in January 1983.",
+          "precedence": 4,
           "when": {
             "occupation": "President/Vice President/Congress/legislative employee"
           }
@@ -6193,29 +6237,37 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "federal_retirement_system_service",
           "consequence": "noncovered",
           "description": "410(a)(6)(A) as in effect in January 1983.",
+          "precedence": 1,
           "when": {
             "federal_retirement_system": "established by a law of the United States"
           }
         },
         {
+          "case_id": "statutory_1410_instrumentality",
           "consequence": "noncovered",
           "description": "410(a)(5) as in effect in January 1983.",
+          "precedence": 2,
           "when": {
             "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410"
           }
         },
         {
+          "case_id": "exempt_1950_instrumentality_system",
           "consequence": "noncovered",
           "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
+          "precedence": 3,
           "when": {
             "federal_service": "exempt-1950 instrumentality and retirement system"
           }
         },
         {
+          "case_id": "president_congress_legislative",
           "consequence": "noncovered",
           "description": "410(a)(6)(C) as in effect in January 1983.",
+          "precedence": 4,
           "when": {
             "occupation": "President/Vice President/Congress/legislative employee"
           }
@@ -6319,39 +6371,140 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "retired_judge_371b_payment",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 409(h) excludes these 371(b) payments from wages; Pub. L. 99-272 section 12112(c) makes the amendment effective for service after 1983, and POMS RS 01901.340 C.4.c says this remuneration is excluded from employment. It ranks above the 410(a)(5)(E) judge exception, which does not make these payments wages.",
+          "overrides": [
+            "official_position_service"
+          ],
+          "precedence": 1,
+          "when": {
+            "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b) during that service"
+          }
+        },
+        {
+          "case_id": "federal_penal_inmate",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(A). The 410(a)(5)(C)-(H) exceptions lift only paragraph (5), so this exclusion still applies.",
+          "precedence": 2,
+          "when": {
+            "federal_service": "performed in a penal institution of the United States by an inmate thereof"
+          }
+        },
+        {
+          "case_id": "federal_hospital_student_employee",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(B); not lifted by the 410(a)(5) exceptions.",
+          "precedence": 3,
+          "when": {
+            "federal_service": "performed as an employee included under 5 U.S.C. 5351(2) (certain interns, student nurses and other student employees of Federal hospitals), other than as a medical or dental intern or a medical or dental resident in training"
+          }
+        },
+        {
+          "case_id": "temporary_emergency_employee",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(C); not lifted by the 410(a)(5) exceptions.",
+          "precedence": 4,
+          "when": {
+            "federal_service": "performed as an employee serving on a temporary basis in case of fire, storm, earthquake, flood, or other similar emergency"
+          }
+        },
+        {
+          "case_id": "official_position_service",
           "consequence": "covered",
-          "description": "Coverage of newly hired Federal employees.",
+          "description": "410(a)(5)(C)-(F), first enacted as Pub. L. 98-21 section 101(a)(1) clauses (i)-(iv) (97 Stat. 67-68) and redesignated by Pub. L. 98-369 section 2601(a)(2) for service after 1983. Paragraph (5) does not apply to this service, so it is covered even when the individual is grandfathered or an annuitant.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 5,
+          "when": {
+            "occupation": "the service itself is performed as President or Vice President; in a position placed in the Executive Schedule under 5 U.S.C. 5312-5317, as a noncareer appointee in the Senior Executive Service or a noncareer member of the Senior Foreign Service, or in a position to which the individual is appointed under 3 U.S.C. 105(a)(1), 106(a)(1) or 107(a)(1) or (b)(1) at a maximum basic pay at or above level V of the Executive Schedule; as a justice, judge, magistrate or bankruptcy referee or judge listed in 410(a)(5)(E) as then in effect; or as a Member, Delegate or Resident Commissioner of or to the Congress"
+          }
+        },
+        {
+          "case_id": "defra_2601d_requalification",
+          "consequence": "noncovered",
+          "description": "Pub. L. 98-369 section 2601(d), as amended by Pub. L. 99-514 section 1883(a)(5)(A): the individual requalifies for the 410(a)(5) exemption as if the cessation had not occurred, which displaces 410(a)(5)(G)(ii)-(iii). Section 2601(f) makes the 1984 amendments effective for service after 1983 except as subsection (d) provides.",
+          "overrides": [
+            "legislative_lump_sum_after_1983",
+            "legislative_ceased_coverage_after_1983"
+          ],
+          "precedence": 6,
+          "when": {
+            "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows",
+            "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)"
+          }
+        },
+        {
+          "case_id": "legislative_not_retirement_covered_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 7,
+          "when": {
+            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services)",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "legislative_lump_sum_after_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(ii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 8,
+          "when": {
+            "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "legislative_ceased_coverage_after_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 9,
+          "when": {
+            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "grandfathered_continuous_service",
+          "consequence": "noncovered",
+          "description": "410(a)(5)(A) and (B)(i). Separations of 365 days or fewer preserve continuity (parameters.continuity_source_disagreement_resolution); parameters.continuity_preserving_service lists the other continuity rules.",
+          "precedence": 10,
+          "when": {
+            "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+          }
+        },
+        {
+          "case_id": "federal_annuitant",
+          "consequence": "noncovered",
+          "description": "410(a)(5)(A) and (B)(ii). Medicare coverage is a separate concept.",
+          "precedence": 11,
+          "when": {
+            "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)",
+            "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
+          }
+        },
+        {
+          "case_id": "first_hired_after_1983",
+          "consequence": "covered",
+          "description": "Coverage of newly hired Federal employees when no higher-ranked exclusion applies.",
+          "precedence": 12,
           "when": {
             "federal_service": "first hired after 1983"
-          }
-        },
-        {
-          "consequence": "noncovered",
-          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies.",
-          "when": {
-            "federal_service": "excluded under January 1983 law and continuously performing that service since December 31, 1983"
-          }
-        },
-        {
-          "consequence": "noncovered",
-          "description": "Subject to the statutory covered-official exceptions; Medicare is a separate concept.",
-          "when": {
-            "federal_retirement_system": "reemployed CSRS annuitant"
-          }
-        },
-        {
-          "consequence": "covered",
-          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides.",
-          "when": {
-            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
-          }
-        },
-        {
-          "consequence": "covered",
-          "description": "Public Law 98-21 section 101(a)(1), clause (v), 97 Stat. 68, overrides the grandfather exclusion for this legislative-branch service.",
-          "when": {
-            "federal_retirement_system": "not subject to CSRS on December 31, 1983",
-            "federal_service": "service in legislative branch other than Member, Delegate or Resident Commissioner"
           }
         }
       ],
@@ -6369,9 +6522,21 @@
           "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
+          "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
+          "capture": "lii_42_409.html",
+          "location": "409(h); note quoting Pub. L. 99-272 section 12112(c)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(5)(A)-(H) and (a)(6)(A)-(C); notes on Pub. L. 100-647 section 8015(c)(3) and on Pub. L. 98-369 section 2601(d) and (f)",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -6465,7 +6630,7 @@
           "separation_preserves_continuity_through_days": 365,
           "status": "resolved_by_primary_amending_act"
         },
-        "coverage_default": "covered unless grandfathered or independently excluded",
+        "coverage_default": "covered unless a higher-ranked case excludes the service; cases apply in precedence order",
         "named_options": [
           {
             "conditions": {
@@ -6499,19 +6664,12 @@
             },
             "status": "conflicting_guidance_retained_not_operational"
           }
-        ],
-        "persistent_exclusions": [
-          "Federal penal inmate",
-          "specified Federal hospital student employees other than medical/dental interns/residents",
-          "temporary emergency employees",
-          "other independent statutory exclusions"
-        ],
-        "retired_federal_judges": "410(a)(5) and 409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive Public Law 99-272 amendment; do not classify from ordinary judge title alone."
+        ]
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when no grandfathered or reemployed-annuitant exclusion case applies."
+        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
       },
       "rule_id": "federal_1984_1986",
       "trigger_facts": [
@@ -6526,46 +6684,182 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "retired_judge_371b_payment",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 409(h) excludes these 371(b) payments from wages; Pub. L. 99-272 section 12112(c) makes the amendment effective for service after 1983, and POMS RS 01901.340 C.4.c says this remuneration is excluded from employment. It ranks above the 410(a)(5)(E) judge exception, which does not make these payments wages.",
+          "overrides": [
+            "official_position_service"
+          ],
+          "precedence": 1,
+          "when": {
+            "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b) during that service"
+          }
+        },
+        {
+          "case_id": "federal_penal_inmate",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(A). The 410(a)(5)(C)-(H) exceptions lift only paragraph (5), so this exclusion still applies.",
+          "precedence": 2,
+          "when": {
+            "federal_service": "performed in a penal institution of the United States by an inmate thereof"
+          }
+        },
+        {
+          "case_id": "federal_hospital_student_employee",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(B); not lifted by the 410(a)(5) exceptions.",
+          "precedence": 3,
+          "when": {
+            "federal_service": "performed as an employee included under 5 U.S.C. 5351(2) (certain interns, student nurses and other student employees of Federal hospitals), other than as a medical or dental intern or a medical or dental resident in training"
+          }
+        },
+        {
+          "case_id": "temporary_emergency_employee",
+          "consequence": "noncovered",
+          "description": "410(a)(6)(C); not lifted by the 410(a)(5) exceptions.",
+          "precedence": 4,
+          "when": {
+            "federal_service": "performed as an employee serving on a temporary basis in case of fire, storm, earthquake, flood, or other similar emergency"
+          }
+        },
+        {
+          "case_id": "official_position_service",
           "consequence": "covered",
-          "description": "Coverage of newly hired Federal employees.",
+          "description": "410(a)(5)(C)-(F), first enacted as Pub. L. 98-21 section 101(a)(1) clauses (i)-(iv) (97 Stat. 67-68) and redesignated by Pub. L. 98-369 section 2601(a)(2) for service after 1983. Paragraph (5) does not apply to this service, so it is covered even when the individual is grandfathered or an annuitant.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 5,
+          "when": {
+            "occupation": "the service itself is performed as President or Vice President; in a position placed in the Executive Schedule under 5 U.S.C. 5312-5317, as a noncareer appointee in the Senior Executive Service or a noncareer member of the Senior Foreign Service, or in a position to which the individual is appointed under 3 U.S.C. 105(a)(1), 106(a)(1) or 107(a)(1) or (b)(1) at a maximum basic pay at or above level V of the Executive Schedule; as a justice, judge, magistrate or bankruptcy referee or judge listed in 410(a)(5)(E) as then in effect; or as a Member, Delegate or Resident Commissioner of or to the Congress"
+          }
+        },
+        {
+          "case_id": "after_official_service_from_1988_11_10",
+          "consequence": "covered",
+          "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3) applies it to an individual only upon performance of (C)-(H) service on or after November 10, 1988.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 6,
+          "when": {
+            "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
+          }
+        },
+        {
+          "case_id": "fers_or_fsps_election",
+          "consequence": "covered",
+          "description": "410(a)(5)(H), added by Pub. L. 99-335 section 304(a) and amended generally by Pub. L. 100-647 section 8015(b)(1). The election lifts the grandfather exclusion from its effective date.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 7,
+          "when": {
+            "federal_retirement_system": "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System"
+          }
+        },
+        {
+          "case_id": "fepca_waiver_reemployed_annuitant",
+          "consequence": "open",
+          "description": "POMS RS 01901.340 C.3.c says these services are covered. The waiver law and its effective date are not captured, so CE1 does not apply that guidance across a row that begins in 1987; obtain the waiver law before classifying.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 8,
+          "when": {
+            "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act"
+          }
+        },
+        {
+          "case_id": "defra_2601d_requalification",
+          "consequence": "noncovered",
+          "description": "Pub. L. 98-369 section 2601(d), as amended by Pub. L. 99-514 section 1883(a)(5)(A): the individual requalifies for the 410(a)(5) exemption as if the cessation had not occurred, which displaces 410(a)(5)(G)(ii)-(iii). Section 2601(f) makes the 1984 amendments effective for service after 1983 except as subsection (d) provides.",
+          "overrides": [
+            "legislative_lump_sum_after_1983",
+            "legislative_ceased_coverage_after_1983"
+          ],
+          "precedence": 9,
+          "when": {
+            "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows",
+            "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)"
+          }
+        },
+        {
+          "case_id": "legislative_not_retirement_covered_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 10,
+          "when": {
+            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services)",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "legislative_lump_sum_after_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(ii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 11,
+          "when": {
+            "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "legislative_ceased_coverage_after_1983",
+          "consequence": "covered",
+          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test.",
+          "overrides": [
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 12,
+          "when": {
+            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending",
+            "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
+          }
+        },
+        {
+          "case_id": "grandfathered_continuous_service",
+          "consequence": "noncovered",
+          "description": "410(a)(5)(A) and (B)(i). Separations of 365 days or fewer preserve continuity (parameters.continuity_source_disagreement_resolution); parameters.continuity_preserving_service lists the other continuity rules.",
+          "precedence": 13,
+          "when": {
+            "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+          }
+        },
+        {
+          "case_id": "federal_annuitant",
+          "consequence": "noncovered",
+          "description": "410(a)(5)(A) and (B)(ii). Medicare coverage is a separate concept.",
+          "precedence": 14,
+          "when": {
+            "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)",
+            "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
+          }
+        },
+        {
+          "case_id": "first_hired_after_1983",
+          "consequence": "covered",
+          "description": "Coverage of newly hired Federal employees when no higher-ranked exclusion applies.",
+          "precedence": 15,
           "when": {
             "federal_service": "first hired after 1983"
-          }
-        },
-        {
-          "consequence": "noncovered",
-          "description": "Grandfathered service, unless mandatory federal-official or other statutory override applies.",
-          "when": {
-            "federal_service": "excluded under January 1983 law and continuously performing that service since December 31, 1983"
-          }
-        },
-        {
-          "consequence": "noncovered",
-          "description": "Subject to the statutory covered-official exceptions; Medicare is a separate concept.",
-          "when": {
-            "federal_retirement_system": "reemployed CSRS annuitant"
-          }
-        },
-        {
-          "consequence": "covered",
-          "description": "Mandatory official-position exception; subsequent return to permanent position remains covered as statute provides.",
-          "when": {
-            "occupation": "President, Vice President, covered Executive Schedule or noncareer senior position, specified White House staff, federal judge, or Member of Congress"
-          }
-        },
-        {
-          "consequence": "covered",
-          "description": "Public Law 98-21 section 101(a)(1), clause (v), 97 Stat. 68, overrides the grandfather exclusion for this legislative-branch service.",
-          "when": {
-            "federal_retirement_system": "not subject to CSRS on December 31, 1983",
-            "federal_service": "service in legislative branch other than Member, Delegate or Resident Commissioner"
-          }
-        },
-        {
-          "consequence": "covered",
-          "description": "The qualifying election overrides grandfathered noncoverage from its effective date.",
-          "when": {
-            "federal_retirement_system": "qualifying FERS or FSPS election effective under 410(a)(5)(H)"
           }
         }
       ],
@@ -6589,9 +6883,21 @@
           "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
         },
         {
+          "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
+          "capture": "lii_42_409.html",
+          "location": "409(h); note quoting Pub. L. 99-272 section 12112(c)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(5)(A)-(H) and (a)(6)(A)-(C); notes on Pub. L. 100-647 section 8015(c)(3) and on Pub. L. 98-369 section 2601(d) and (f)",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -6740,10 +7046,8 @@
           "separation_preserves_continuity_through_days": 365,
           "status": "resolved_by_primary_amending_act"
         },
-        "coverage_default": "covered unless grandfathered or independently excluded",
-        "fers_election": "From effective date of qualifying FERS/FSPS election, 410(a)(5)(H) overrides grandfather exclusion; Public Law 99-335, later Public Law 100-647 and 1997 open-enrollment authorities are listed in 410 notes.",
+        "coverage_default": "covered unless a higher-ranked case excludes the service; cases apply in precedence order",
         "later_poms_waiver_guidance": "POMS RS 01901.340 C.3.c describes FEPCA waiver-of-offset coverage. This later guidance is not a condition applied throughout the row beginning in 1987; verify the applicable waiver law and effective date for such service.",
-        "legislative_branch": "410(a)(5)(G): test December 31, 1983 retirement participation, lump-sum withdrawals, and cessation of coverage, including statutory requalification provisions.",
         "named_options": [
           {
             "conditions": {
@@ -6778,25 +7082,18 @@
             "status": "conflicting_guidance_retained_not_operational"
           }
         ],
-        "persistent_exclusions": [
-          "Federal penal inmate",
-          "specified Federal hospital student employees other than medical/dental interns/residents",
-          "temporary emergency employees",
-          "other independent statutory exclusions"
-        ],
         "regime_start_citation": {
           "authority": "5 U.S.C. 8331, official United States Code 2024 edition historical notes",
           "capture": "ce1r1_usc2024_5_8331.html",
           "location": "Effective Date of 1986 Amendment; Public Law 99-335 section 702(a), effective January 1, 1987",
           "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc"
         },
-        "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H).",
-        "retired_federal_judges": "410(a)(5) and 409 amendment notes must be read together: services of retired judges/justices are excluded after 1983 following retroactive Public Law 99-272 amendment; do not classify from ordinary judge title alone."
+        "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H)."
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when no grandfathered or reemployed-annuitant exclusion case applies."
+        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
       },
       "rule_id": "federal_1987_2026",
       "trigger_facts": [
@@ -9334,16 +9631,20 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "effective_waiver_concurring_employee",
           "consequence": "covered_above_threshold",
           "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+          "precedence": 1,
           "when": {
             "nonprofit_coverage_waiver": "valid and effective",
             "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
           }
         },
         {
+          "case_id": "no_effective_waiver",
           "consequence": "noncovered",
           "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+          "precedence": 2,
           "when": {
             "nonprofit_coverage_waiver": "none or terminated"
           }
@@ -9476,16 +9777,20 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "effective_waiver_concurring_employee",
           "consequence": "covered_above_threshold",
           "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+          "precedence": 1,
           "when": {
             "nonprofit_coverage_waiver": "valid and effective",
             "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
           }
         },
         {
+          "case_id": "no_effective_waiver",
           "consequence": "noncovered",
           "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+          "precedence": 2,
           "when": {
             "nonprofit_coverage_waiver": "none or terminated"
           }
@@ -10659,24 +10964,30 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "vow_duties_without_election",
           "consequence": "noncovered",
           "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+          "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no effective 3121(r) election",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
         {
+          "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
           "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
         {
+          "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
+          "precedence": 3,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -10884,24 +11195,30 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "vow_duties_without_election",
           "consequence": "noncovered",
           "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+          "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no effective 3121(r) election",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
         {
+          "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
           "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
         {
+          "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
+          "precedence": 3,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -11247,15 +11564,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "section_218_agreement_coverage",
           "consequence": "covered",
           "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+          "precedence": 1,
           "when": {
             "section_218_position": "covered by effective agreement/modification"
           }
         },
         {
+          "case_id": "no_section_218_agreement",
           "consequence": "noncovered",
           "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
+          "precedence": 2,
           "when": {
             "section_218_position": "not covered"
           }
@@ -11369,15 +11690,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "section_218_agreement_coverage",
           "consequence": "covered",
           "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+          "precedence": 1,
           "when": {
             "section_218_position": "covered by effective agreement/modification"
           }
         },
         {
+          "case_id": "no_section_218_agreement",
           "consequence": "noncovered",
           "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
+          "precedence": 2,
           "when": {
             "section_218_position": "not covered"
           }
@@ -11489,23 +11814,29 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "section_218_agreement_coverage",
           "consequence": "covered",
           "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+          "precedence": 1,
           "when": {
             "section_218_position": "covered by effective agreement/modification"
           }
         },
         {
+          "case_id": "mandatory_nonmember_coverage",
           "consequence": "covered",
           "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies.",
+          "precedence": 2,
           "when": {
             "public_retirement_system_participation": "not a member of an IRS-qualified system",
             "section_218_position": "not covered"
           }
         },
         {
+          "case_id": "qualified_system_member_without_agreement",
           "consequence": "noncovered",
           "description": "The state/local exclusion remains unless another statutory exception applies.",
+          "precedence": 3,
           "when": {
             "public_retirement_system_participation": "member of an IRS-qualified system",
             "section_218_position": "not covered"
@@ -14029,22 +14360,28 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "no_actual_material_participation",
           "consequence": "noncovered",
           "description": "The owner does not materially participate; agent activity alone is not attributable after 1973.",
+          "precedence": 1,
           "when": {
             "material_participation": false
           }
         },
         {
+          "case_id": "arrangement_lacks_participation_term",
           "consequence": "noncovered",
           "description": "The agricultural rental exception requires an arrangement that provides for material participation.",
+          "precedence": 2,
           "when": {
             "rental_arrangement_requires_material_participation": false
           }
         },
         {
+          "case_id": "participation_under_required_arrangement",
           "consequence": "covered",
           "description": "The owner actually materially participates under the required arrangement; apply other applicable rules.",
+          "precedence": 3,
           "when": {
             "material_participation": true,
             "rental_arrangement_requires_material_participation": true
@@ -17032,15 +17369,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "public_law_90_248_election",
           "consequence": "noncovered",
           "description": "The election exempts fees received in 1968 and every year thereafter.",
+          "precedence": 1,
           "when": {
             "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees."
           }
         },
         {
+          "case_id": "state_local_fee_basis_office",
           "consequence": "covered",
           "description": "The fee-office exception to the public-office exclusion applies, subject to the other net-earnings rules.",
+          "precedence": 2,
           "when": {
             "government_level": "state or political subdivision",
             "public_office_1968_exemption_election": "no applicable election",
@@ -17688,15 +18029,19 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "real_estate_dealer_rentals",
           "consequence": "covered",
           "description": "Investment or speculative holdings do not enter the dealer-business exception.",
+          "precedence": 1,
           "when": {
             "real_estate_dealer_status": "rental received in dealer business from real estate held for sale to customers"
           }
         },
         {
+          "case_id": "services_to_occupants",
           "consequence": "covered",
           "description": "The services exception in 20 CFR 404.1082(d) applies.",
+          "precedence": 2,
           "when": {
             "services_to_occupants": "services primarily for occupant convenience beyond customary occupancy services"
           }
@@ -19986,13 +20331,17 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "section_418a_agreement_inclusion",
           "consequence": "covered",
+          "precedence": 1,
           "when": {
             "tribal_coverage_agreement": "council-capacity services included under an effective section 418a agreement"
           }
         },
         {
+          "case_id": "no_section_418a_inclusion",
           "consequence": "noncovered",
+          "precedence": 2,
           "when": {
             "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"
           }
@@ -20155,7 +20504,7 @@
       "worked_examples": []
     }
   ],
-  "schema_version": "coverage_rules.ce1.v2",
+  "schema_version": "coverage_rules.ce1.v3",
   "scope_status": "partial_statutory_registry_open_histories_refuse",
   "table_definitions": [
     {

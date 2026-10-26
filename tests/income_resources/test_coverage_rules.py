@@ -29,6 +29,7 @@ from populace_dynamics.income_resources.coverage_rules import (
     RuleOverlapError,
     TableDefinitionUnverifiedError,
     ThresholdUnavailableError,
+    UnknownIdentifierError,
     load_registry,
     source_text,
 )
@@ -512,33 +513,189 @@ def test_lookup_returns_validated_cases_and_residual(
     tmp_path, consequence, fact
 ):
     row = invented_row()
-    row["cases"] = [{"when": {"amount": fact}, "consequence": consequence}]
+    row["cases"] = [
+        invented_case("invented_case", 1, consequence, when={"amount": fact})
+    ]
     registry = invented_registry(tmp_path, [row])
     result = registry.lookup("INVENTED_family", 2024)[0]
     assert result.cases[0]["when"]["amount"] is fact
     assert result.cases[0]["consequence"] == consequence
     assert result.residual_default["consequence"] == result.consequence
+    assert result.resolve({"invented_case"})["consequence"] == consequence
+    assert result.resolve(()) == result.residual_default
     assert CoverageRule.from_dict(result.to_dict()) == result
     with pytest.raises(TypeError):
         result.cases[0]["when"]["amount"] = not fact
 
 
-@given(st.sampled_from(["consequence", "when", "undeclared_fact"]))
+def invented_case(case_id, precedence, consequence="covered", **extra):
+    case = {
+        "case_id": case_id,
+        "precedence": precedence,
+        "when": {"amount": f"INVENTED condition for {case_id}"},
+        "consequence": consequence,
+    }
+    case.update(extra)
+    return case
+
+
+@given(
+    st.sampled_from(
+        [
+            "consequence",
+            "when",
+            "undeclared_fact",
+            "case_id_missing",
+            "case_id_format",
+            "case_id_duplicate",
+            "unknown_field",
+        ]
+    )
+)
 @settings(deadline=None)
 def test_malformed_case_is_refused(field):
     row = invented_row()
     row["cases"] = [
-        {"when": {"amount": "INVENTED condition"}, "consequence": "covered"}
+        invented_case("invented_a", 1),
+        invented_case("invented_b", 2, "noncovered"),
     ]
+    CoverageRule.from_dict(row)
     case = row["cases"][0]
     if field == "consequence":
         case[field] = "unresolved"
     elif field == "when":
         case[field] = {}
-    else:
+    elif field == "undeclared_fact":
         case["when"] = {"occupation": "INVENTED undeclared fact"}
+    elif field == "case_id_missing":
+        del case["case_id"]
+    elif field == "case_id_format":
+        case["case_id"] = "INVENTED Case"
+    elif field == "case_id_duplicate":
+        case["case_id"] = "invented_b"
+    else:
+        case["INVENTED_extra"] = "INVENTED"
     with pytest.raises(RegistryValidationError, match="case"):
         CoverageRule.from_dict(row)
+
+
+@given(
+    st.sampled_from(["gap", "duplicate", "zero", "boolean", "text", "missing"])
+)
+@settings(deadline=None)
+def test_case_precedence_runs_from_one_without_gaps(defect):
+    row = invented_row()
+    first = invented_case("invented_a", 1)
+    second = invented_case("invented_b", 2, "noncovered")
+    row["cases"] = [first, second]
+    CoverageRule.from_dict(row)
+    if defect == "gap":
+        second["precedence"] = 3
+    elif defect == "duplicate":
+        second["precedence"] = 1
+    elif defect == "zero":
+        first["precedence"], second["precedence"] = 0, 1
+    elif defect == "boolean":
+        first["precedence"] = True
+    elif defect == "text":
+        second["precedence"] = "2"
+    else:
+        del second["precedence"]
+    with pytest.raises(RegistryValidationError, match="case"):
+        CoverageRule.from_dict(row)
+
+
+@given(st.lists(st.sampled_from(sorted(CONSEQUENCES)), max_size=6), st.data())
+@settings(deadline=None)
+def test_first_matching_case_by_precedence_decides(consequences, data):
+    cases = [
+        invented_case(f"invented_case_{rank}", rank, consequence)
+        for rank, consequence in enumerate(consequences, 1)
+    ]
+    rank_of = {case["case_id"]: case["precedence"] for case in cases}
+    row = invented_row()
+    row["cases"] = data.draw(st.permutations(cases))
+    rule = CoverageRule.from_dict(row)
+    row["cases"] = cases
+    assert CoverageRule.from_dict(row) == rule
+    assert [c["precedence"] for c in rule.cases] == sorted(rank_of.values())
+    matched = (
+        data.draw(st.sets(st.sampled_from(sorted(rank_of))))
+        if cases
+        else set()
+    )
+    result = rule.resolve(matched)
+    if matched:
+        winner = min(matched, key=rank_of.__getitem__)
+        assert result["case_id"] == winner
+        assert result["consequence"] == consequences[rank_of[winner] - 1]
+    else:
+        assert result == rule.residual_default
+
+
+@given(
+    st.sampled_from(
+        [
+            "valid",
+            "later",
+            "same_consequence",
+            "unknown",
+            "self",
+            "empty",
+            "duplicate",
+        ]
+    )
+)
+@settings(deadline=None)
+def test_case_override_precedes_and_changes_its_target(kind):
+    row = invented_row()
+    exception = invented_case(
+        "invented_exception", 1, "covered", overrides=["invented_exclusion"]
+    )
+    exclusion = invented_case("invented_exclusion", 2, "noncovered")
+    row["cases"] = [exclusion, exception]
+    if kind == "later":
+        exception["precedence"], exclusion["precedence"] = 2, 1
+    elif kind == "same_consequence":
+        exclusion["consequence"] = "covered"
+    elif kind == "unknown":
+        exception["overrides"] = ["invented_missing"]
+    elif kind == "self":
+        exception["overrides"] = ["invented_exception"]
+    elif kind == "empty":
+        exception["overrides"] = []
+    elif kind == "duplicate":
+        exception["overrides"] = ["invented_exclusion"] * 2
+    if kind != "valid":
+        with pytest.raises(RegistryValidationError, match="overrid"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    both = {"invented_exclusion", "invented_exception"}
+    assert rule.resolve(both)["consequence"] == "covered"
+    assert rule.resolve({"invented_exclusion"})["consequence"] == "noncovered"
+
+
+def test_resolve_separates_caller_errors_from_refusals():
+    row = invented_row()
+    row["cases"] = [invented_case("invented_a", 1)]
+    rule = CoverageRule.from_dict(row)
+    with pytest.raises(UnknownIdentifierError) as caught:
+        rule.resolve({"invented_typo"})
+    assert not isinstance(caught.value, CoverageRegistryError)
+    for malformed in ("invented_a", [1], None):
+        with pytest.raises(TypeError):
+            rule.resolve(malformed)
+    row["cases"] = []
+    row["open_reason"] = "INVENTED unresolved legal question"
+    row["consequence"] = None
+    row["residual_default"]["consequence"] = None
+    row["open_alternatives"] = [
+        {"name": "INVENTED_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_b", "description": "INVENTED second reading"},
+    ]
+    with pytest.raises(OpenRuleError):
+        CoverageRule.from_dict(row).resolve(())
 
 
 @given(

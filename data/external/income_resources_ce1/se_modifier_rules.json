@@ -189,6 +189,8 @@
     "open_reason": null,
     "cases": [
       {
+        "case_id": "real_estate_dealer_rentals",
+        "precedence": 1,
         "when": {
           "real_estate_dealer_status": "rental received in dealer business from real estate held for sale to customers"
         },
@@ -196,6 +198,8 @@
         "description": "Investment or speculative holdings do not enter the dealer-business exception."
       },
       {
+        "case_id": "services_to_occupants",
+        "precedence": 2,
         "when": {
           "services_to_occupants": "services primarily for occupant convenience beyond customary occupancy services"
         },

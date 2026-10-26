@@ -2448,6 +2448,8 @@
     ],
     "cases": [
       {
+        "case_id": "no_actual_material_participation",
+        "precedence": 1,
         "when": {
           "material_participation": false
         },
@@ -2455,6 +2457,8 @@
         "description": "The owner does not materially participate; agent activity alone is not attributable after 1973."
       },
       {
+        "case_id": "arrangement_lacks_participation_term",
+        "precedence": 2,
         "when": {
           "rental_arrangement_requires_material_participation": false
         },
@@ -2462,6 +2466,8 @@
         "description": "The agricultural rental exception requires an arrangement that provides for material participation."
       },
       {
+        "case_id": "participation_under_required_arrangement",
+        "precedence": 3,
         "when": {
           "material_participation": true,
           "rental_arrangement_requires_material_participation": true
@@ -3929,6 +3935,8 @@
     "worked_examples": [],
     "cases": [
       {
+        "case_id": "public_law_90_248_election",
+        "precedence": 1,
         "when": {
           "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees."
         },
@@ -3936,6 +3944,8 @@
         "description": "The election exempts fees received in 1968 and every year thereafter."
       },
       {
+        "case_id": "state_local_fee_basis_office",
+        "precedence": 2,
         "when": {
           "government_level": "state or political subdivision",
           "public_office_fee_basis": "position compensated solely on a fee basis",

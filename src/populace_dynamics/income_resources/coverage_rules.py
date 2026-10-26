@@ -18,10 +18,22 @@ Invariants (property tests in ``tests/income_resources``):
   are invalid; named alternatives require an explicit selection at lookup.
   Gaps and explicitly open legal questions refuse the affected query.
 * Each row states its residual default, equal to its top-level consequence.
-  Cases carry nonempty trigger-fact conditions and an enum consequence.
-  Lookup returns these cases with the row; CE3 must apply matching cases
-  before using the residual when no case applies. It never classifies from
-  the top-level consequence alone. ``open`` also represents missing facts.
+  Cases carry a row-unique ``case_id``, an integer ``precedence``, nonempty
+  trigger-fact conditions and an enum consequence. Precedence is first match
+  wins: a row's precedence values are exactly 1..n, the matching case with
+  the smallest value decides, and the residual applies only when no case
+  matches (``CoverageRule.resolve``). A case's ``overrides`` names the cases
+  it displaces by statute, such as an exclusion an exception lifts; each
+  must rank below it and carry a different consequence. Cases are stored in
+  precedence order, so input order never changes resolution. CE3 never
+  classifies from the top-level consequence alone. ``open`` also represents
+  missing facts.
+* Cases are ranked rather than required to be mutually exclusive because
+  the statutes are drafted as exclusions, exceptions to them and exceptions
+  to those exceptions (42 U.S.C. 410(a)(5)(B) with (C)–(H), and Pub. L.
+  98-369 section 2601(d)). Mutually exclusive cases would repeat the
+  negation of every higher-ranked condition in free text that no loader can
+  check; ranks and override references are checked here.
 * Open legal rows have null/``open`` consequences, named alternatives and
   no chosen reading. They refuse even if a caller selects an alternative.
 * Each rule cites a capture; loading checks every citation's SHA-256 against
@@ -60,7 +72,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 from fractions import Fraction
@@ -73,7 +85,7 @@ from populace_dynamics.data.historical_coverage_rule_validation import (
     FIELD_PURPOSES,
 )
 
-SCHEMA_VERSION = "coverage_rules.ce1.v2"
+SCHEMA_VERSION = "coverage_rules.ce1.v3"
 FIRST_INCOME_YEAR = 1968
 LAST_INCOME_YEAR = 2026
 CAPTURE_DIRECTORY = (
@@ -179,6 +191,19 @@ TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 CONSEQUENCES = frozenset(
     {"covered", "noncovered", "covered_above_threshold", "open"}
 )
+CASE_FIELDS = frozenset(
+    {
+        "case_id",
+        "precedence",
+        "when",
+        "consequence",
+        "description",
+        "overrides",
+    }
+)
+REQUIRED_CASE_FIELDS = frozenset(
+    {"case_id", "precedence", "when", "consequence"}
+)
 
 
 class CoverageRegistryError(ValueError):
@@ -223,6 +248,14 @@ class TableDefinitionUnverifiedError(CoverageRegistryError):
 
 class SourceTextUnavailableError(CoverageRegistryError):
     """A binary source needs a pinned text derivative for passage checks."""
+
+
+class UnknownIdentifierError(LookupError):
+    """The caller named an identifier this registry does not define.
+
+    A typo is a caller error, not a legal refusal, so this class sits
+    outside ``CoverageRegistryError``.
+    """
 
 
 def _freeze(value: Any) -> Any:
@@ -283,6 +316,74 @@ def _year(value: Any) -> int:
     if not FIRST_INCOME_YEAR <= value <= LAST_INCOME_YEAR:
         raise NoRuleError(f"income year outside 1968–2026: {value!r}")
     return value
+
+
+def _validated_cases(
+    raw: Any, facts: set[str]
+) -> tuple[Mapping[str, Any], ...]:
+    """Check case fields and first-match ranks; return precedence order."""
+    _require(isinstance(raw, (list, tuple)), "cases list")
+    by_id: dict[str, Mapping[str, Any]] = {}
+    for case in raw:
+        _require(isinstance(case, Mapping), "case object")
+        _require(
+            REQUIRED_CASE_FIELDS <= set(case) <= CASE_FIELDS, "case fields"
+        )
+        case_id = _text(case["case_id"], "case_id")
+        _require(
+            re.fullmatch(r"[a-z0-9][a-z0-9_]*", case_id) is not None,
+            "case_id must be a lowercase identifier",
+        )
+        _require(case_id not in by_id, "duplicate case_id")
+        _require(
+            type(case["precedence"]) is int, "case precedence must be int"
+        )
+        when = case["when"]
+        _require(
+            isinstance(when, Mapping) and bool(when),
+            "case conditions must be a nonempty object",
+        )
+        _require(set(when) <= facts, "case uses undeclared trigger fact")
+        for condition in when.values():
+            _require(
+                isinstance(condition, bool)
+                or (isinstance(condition, str) and bool(condition.strip())),
+                "case condition must be nonempty text or a boolean",
+            )
+        _require(case["consequence"] in CONSEQUENCES, "case consequence")
+        if "description" in case:
+            _text(case["description"], "case description")
+        by_id[case_id] = case
+    ranks = sorted(case["precedence"] for case in by_id.values())
+    _require(
+        ranks == list(range(1, len(ranks) + 1)),
+        "case precedence must run exactly 1..n",
+    )
+    for case in by_id.values():
+        if "overrides" not in case:
+            continue
+        targets = case["overrides"]
+        _require(
+            isinstance(targets, (list, tuple))
+            and bool(targets)
+            and all(isinstance(t, str) for t in targets)
+            and len(set(targets)) == len(targets),
+            "case overrides must list distinct case IDs",
+        )
+        for target in targets:
+            _require(target in by_id, "case overrides an unknown case_id")
+            _require(
+                by_id[target]["precedence"] > case["precedence"],
+                "an overriding case must precede the case it overrides",
+            )
+            _require(
+                by_id[target]["consequence"] != case["consequence"],
+                "a case override must change the consequence",
+            )
+    return tuple(
+        _freeze(case)
+        for case in sorted(by_id.values(), key=lambda c: c["precedence"])
+    )
 
 
 @dataclass(frozen=True)
@@ -396,35 +497,7 @@ class CoverageRule:
             "residual default must equal top-level consequence",
         )
         _text(residual["description"], "residual default description")
-        cases = raw["cases"]
-        _require(isinstance(cases, (list, tuple)), "cases list")
-        for case in cases:
-            _require(isinstance(case, Mapping), "case object")
-            _require(
-                {"when", "consequence"}
-                <= set(case)
-                <= {"when", "consequence", "description"},
-                "case fields",
-            )
-            when = case["when"]
-            _require(
-                isinstance(when, Mapping) and bool(when),
-                "case conditions must be a nonempty object",
-            )
-            _require(
-                set(when) <= set(facts), "case uses undeclared trigger fact"
-            )
-            for condition in when.values():
-                _require(
-                    isinstance(condition, bool)
-                    or (
-                        isinstance(condition, str) and bool(condition.strip())
-                    ),
-                    "case condition must be nonempty text or a boolean",
-                )
-            _require(case["consequence"] in CONSEQUENCES, "case consequence")
-            if "description" in case:
-                _text(case["description"], "case description")
+        cases = _validated_cases(raw["cases"], set(facts))
         alternatives = raw["open_alternatives"]
         _require(
             isinstance(alternatives, (list, tuple)), "open alternatives list"
@@ -547,7 +620,7 @@ class CoverageRule:
             trigger_facts=tuple(sorted(facts)),
             consequence=consequence,
             residual_default=_freeze(residual),
-            cases=tuple(_freeze(case) for case in cases),
+            cases=cases,
             open_alternatives=tuple(_freeze(o) for o in alternatives),
             identification_class=raw["identification_class"],
             description=raw["description"],
@@ -559,6 +632,33 @@ class CoverageRule:
             alternative=_freeze(alternative),
             open_reason=raw["open_reason"],
         )
+
+    def resolve(self, matching_case_ids: Iterable[str]) -> Mapping[str, Any]:
+        """Apply first-match precedence to the cases whose conditions hold.
+
+        ``matching_case_ids`` names every case whose ``when`` conditions the
+        caller found true. Return the matching case with the smallest
+        precedence, or the residual default when none matches. An unknown
+        case ID is a caller error; an open row refuses.
+        """
+        if isinstance(matching_case_ids, (str, bytes)) or not isinstance(
+            matching_case_ids, Iterable
+        ):
+            raise TypeError("matching_case_ids must be an iterable of IDs")
+        matched = set(matching_case_ids)
+        if not all(isinstance(case_id, str) for case_id in matched):
+            raise TypeError("case IDs must be strings")
+        unknown = matched - {case["case_id"] for case in self.cases}
+        if unknown:
+            raise UnknownIdentifierError(
+                f"{self.rule_id}: unknown case IDs {sorted(unknown)}"
+            )
+        if self.open_reason is not None:
+            raise OpenRuleError(f"{self.rule_id}: {self.open_reason}")
+        for case in self.cases:
+            if case["case_id"] in matched:
+                return case
+        return self.residual_default
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -957,7 +1057,9 @@ class CoverageRegistry:
         Service years check every date. Taxable-year families assume January
         1; use lookup_date for a fiscal year's actual start.
         Conditions remain declarative: consumers evaluate every case from its
-        trigger facts, then apply the residual only when no case matches.
+        trigger facts, then pass the matching case IDs to
+        ``CoverageRule.resolve``, which applies the first match in
+        precedence order or the residual when none matches.
         """
         year = _year(income_year)
         start = date(year, 1, 1)
