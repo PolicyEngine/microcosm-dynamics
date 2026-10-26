@@ -28,6 +28,19 @@ Invariants (property tests in ``tests/income_resources``):
   precedence order, so input order never changes resolution. CE3 never
   classifies from the top-level consequence alone. ``open`` also represents
   missing facts.
+* Consequences are family-level. ``covered`` means this family's law does
+  not exclude the item, so the other families still apply; ``noncovered``
+  means this family's law excludes it; ``covered_above_threshold`` means a
+  cited threshold decides. ``deferred`` means this family's law gives no
+  consequence for the matched facts and points to the families named in
+  ``defers_to``; the registry refuses a deferral to an unknown family, to
+  the row's own family, or around a cycle, so every deferral ends at a
+  family that decides.
+* A closed row's residual is what the law gives when none of its cases
+  holds. Every statutory condition on an exclusion is therefore a case, and
+  a closed row whose description or parameters name a condition carries
+  cases, unless ``parameters.case_free_basis`` explains why the condition
+  changes no consequence.
 * Cases are ranked rather than required to be mutually exclusive because
   the statutes are drafted as exclusions, exceptions to them and exceptions
   to those exceptions (42 U.S.C. 410(a)(5)(B) with (C)–(H), and Pub. L.
@@ -189,7 +202,7 @@ CE1_FIELD_PURPOSES = (
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 CONSEQUENCES = frozenset(
-    {"covered", "noncovered", "covered_above_threshold", "open"}
+    {"covered", "noncovered", "covered_above_threshold", "open", "deferred"}
 )
 CASE_FIELDS = frozenset(
     {
@@ -199,6 +212,7 @@ CASE_FIELDS = frozenset(
         "consequence",
         "description",
         "overrides",
+        "defers_to",
     }
 )
 REQUIRED_CASE_FIELDS = frozenset(
@@ -318,8 +332,26 @@ def _year(value: Any) -> int:
     return value
 
 
+def _check_deferral(outcome: Mapping[str, Any], family: str) -> None:
+    """A ``deferred`` outcome names other families; no other outcome does."""
+    if outcome["consequence"] != "deferred":
+        _require(
+            "defers_to" not in outcome, "defers_to needs deferred outcome"
+        )
+        return
+    targets = outcome.get("defers_to")
+    _require(
+        isinstance(targets, (list, tuple))
+        and bool(targets)
+        and all(isinstance(t, str) and t.strip() for t in targets)
+        and len(set(targets)) == len(targets),
+        "deferred outcome must list distinct families in defers_to",
+    )
+    _require(family not in targets, "a family cannot defer to itself")
+
+
 def _validated_cases(
-    raw: Any, facts: set[str]
+    raw: Any, facts: set[str], family: str
 ) -> tuple[Mapping[str, Any], ...]:
     """Check case fields and first-match ranks; return precedence order."""
     _require(isinstance(raw, (list, tuple)), "cases list")
@@ -351,6 +383,7 @@ def _validated_cases(
                 "case condition must be nonempty text or a boolean",
             )
         _require(case["consequence"] in CONSEQUENCES, "case consequence")
+        _check_deferral(case, family)
         if "description" in case:
             _text(case["description"], "case description")
         by_id[case_id] = case
@@ -384,6 +417,39 @@ def _validated_cases(
         _freeze(case)
         for case in sorted(by_id.values(), key=lambda c: c["precedence"])
     )
+
+
+def _check_deferral_graph(rules: Iterable[CoverageRule]) -> None:
+    """Deferrals name registry families and never return to their source.
+
+    A family defers when its own law gives no consequence and another
+    family's does. Following ``defers_to`` from any row must reach a family
+    that decides, so the family-level deferral graph must be acyclic.
+    """
+    rules = tuple(rules)
+    families = {rule.family for rule in rules}
+    edges: dict[str, set[str]] = {family: set() for family in families}
+    for rule in rules:
+        for outcome in (rule.residual_default, *rule.cases):
+            for target in outcome.get("defers_to", ()):
+                _require(target in families, "defers_to names no family")
+                edges[rule.family].add(target)
+    state: dict[str, int] = {}
+
+    def visit(family: str) -> None:
+        state[family] = 1
+        for target in sorted(edges[family]):
+            _require(
+                state.get(target) != 1,
+                f"deferral cycle through {family} and {target}",
+            )
+            if target not in state:
+                visit(target)
+        state[family] = 2
+
+    for family in sorted(families):
+        if family not in state:
+            visit(family)
 
 
 @dataclass(frozen=True)
@@ -489,7 +555,9 @@ class CoverageRule:
         residual = raw["residual_default"]
         _require(isinstance(residual, Mapping), "residual default object")
         _require(
-            set(residual) == {"consequence", "description"},
+            {"consequence", "description"}
+            <= set(residual)
+            <= {"consequence", "description", "defers_to"},
             "residual default fields",
         )
         _require(
@@ -497,7 +565,8 @@ class CoverageRule:
             "residual default must equal top-level consequence",
         )
         _text(residual["description"], "residual default description")
-        cases = _validated_cases(raw["cases"], set(facts))
+        _check_deferral(residual, raw["family"])
+        cases = _validated_cases(raw["cases"], set(facts), raw["family"])
         alternatives = raw["open_alternatives"]
         _require(
             isinstance(alternatives, (list, tuple)), "open alternatives list"
@@ -536,6 +605,14 @@ class CoverageRule:
         _require(
             "cases" not in raw["parameters"], "cases belong in the schema"
         )
+        if "case_free_basis" in raw["parameters"]:
+            _text(raw["parameters"]["case_free_basis"], "case_free_basis")
+            _require(
+                raw["open_reason"] is None
+                and not raw["cases"]
+                and consequence not in {"noncovered", "deferred"},
+                "case_free_basis is only for case-free non-excluding rows",
+            )
         if raw["parameters"].get("effective_basis") == "taxable_year_start":
             _require(
                 "taxable_year_start" in facts,
@@ -639,7 +716,11 @@ class CoverageRule:
         ``matching_case_ids`` names every case whose ``when`` conditions the
         caller found true. Return the matching case with the smallest
         precedence, or the residual default when none matches. An unknown
-        case ID is a caller error; an open row refuses.
+        case ID is a caller error; an open row refuses. The residual is
+        what the law gives when every case's conditions fail, so a caller
+        that cannot establish a case's facts must not leave that case out
+        and read the residual; it has a missing fact, not a failed
+        condition.
         """
         if isinstance(matching_case_ids, (str, bytes)) or not isinstance(
             matching_case_ids, Iterable
@@ -800,6 +881,7 @@ class CoverageRegistry:
             _require(
                 len(axes) == 1, "family mixes service and taxable-year axes"
             )
+        _check_deferral_graph(rules)
         for i, left in enumerate(rules):
             for right in rules[i + 1 :]:
                 if left.family != right.family:

@@ -83,7 +83,7 @@
       "services_to_occupants",
       "material_participation"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Real-estate rentals, personal property leased with the real estate, and their attributable deductions are excluded from NESE, subject to the statutory real-estate-dealer and farm material-participation exceptions.",
     "parameters": {
@@ -205,12 +205,48 @@
         },
         "consequence": "covered",
         "description": "The services exception in 20 CFR 404.1082(d) applies."
+      },
+      {
+        "case_id": "parking_warehouse_storage_space",
+        "precedence": 3,
+        "when": {
+          "rental_income": "payments for the use of space in parking lots, warehouses or storage garages"
+        },
+        "consequence": "covered",
+        "description": "20 CFR 404.1082(d)(2)(i) includes these payments in net earnings.",
+        "overrides": [
+          "real_estate_rentals"
+        ]
+      },
+      {
+        "case_id": "farm_rental_arrangement",
+        "precedence": 4,
+        "when": {
+          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+        },
+        "consequence": "deferred",
+        "description": "411(a)(1) proviso; the farm rental participation family decides.",
+        "overrides": [
+          "real_estate_rentals"
+        ],
+        "defers_to": [
+          "self_employment_farm_rental_participation"
+        ]
+      },
+      {
+        "case_id": "real_estate_rentals",
+        "precedence": 5,
+        "when": {
+          "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(1); 20 CFR 404.1082(a) and (d)(1)."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "Not rental income from real estate, so 411(a)(1) does not exclude it (20 CFR 404.1082(e)); apply the other families."
     }
   },
   {
@@ -988,7 +1024,7 @@
       "foreign_earned_income_exclusion",
       "taxable_year"
     ],
-    "consequence": "covered",
+    "consequence": "open",
     "identification_class": "awaiting_ce2",
     "description": "For an individual resident of the United States during the entire taxable year, disregard the former 911(a)(2) exclusion in computing NESE.",
     "parameters": {
@@ -1033,17 +1069,31 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "nonresident_reading": {
+        "candidate": "411(a) starts from subtitle A gross income, so a 911 exclusion this clause does not override would keep the excluded amount out of net earnings.",
+        "status": "not verified: the 1973-1981 text of the 411(a) gross-income clause is not captured"
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
     "alternative": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "us_resident_entire_taxable_year",
+        "precedence": 1,
+        "when": {
+          "residence_period": "resident of the United States during the entire taxable year"
+        },
+        "consequence": "covered",
+        "description": "Public Law 92-603 section 124(a): the 911(a)(2) exclusion does not apply."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "open",
+      "description": "Section 124 says nothing for anyone else. The candidate reading in parameters.nonresident_reading is recorded but not chosen."
     }
   },
   {
@@ -1395,7 +1445,7 @@
       "tribal_membership",
       "tribal_fishing_member_activity"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Exclude income exempt under 7873 from NESE, subject to the tribal fishing-right, membership, activity and qualified-entity conditions. The amendment expressly reaches periods before enactment.",
     "parameters": {
@@ -1516,11 +1566,24 @@
     },
     "alternative": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "section_7873_exempt_income",
+        "precedence": 1,
+        "when": {
+          "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+          "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity",
+          "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
+          "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(14); 7873(a)-(b)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "The income is not exempt under 7873, so 411(a)(14) does not exclude it; apply the other families."
     }
   },
   {

@@ -71,7 +71,7 @@
         "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "Exclude capital gains/losses, timber/coal/iron-ore 631 transactions, and noninventory/noncustomer property dispositions; no 172 net-operating-loss deduction. Dealer-specific rules override where applicable.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
@@ -183,11 +183,46 @@
       "trade_or_business"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "options_dealer_from_1984",
+        "precedence": 1,
+        "when": {
+          "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
+          "property_disposition_type": "section 1256 contract or related property, in the normal course of dealing"
+        },
+        "consequence": "deferred",
+        "description": "411(h) overrides 411(a)(3) for these gains and losses; the options dealer family decides.",
+        "overrides": [
+          "excluded_property_gain_or_loss"
+        ],
+        "defers_to": [
+          "self_employment_options_dealers"
+        ]
+      },
+      {
+        "case_id": "excluded_property_gain_or_loss",
+        "precedence": 2,
+        "when": {
+          "property_disposition_type": "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(3)(A)-(C)."
+      },
+      {
+        "case_id": "net_operating_loss_deduction",
+        "precedence": 3,
+        "when": {
+          "net_operating_loss_deduction": "section 172 deduction"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(4): the 172 deduction does not enter net earnings; current-year business losses still do."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "Ordinary income and inventory or customer property dispositions are not excluded by 411(a)(3)-(4); apply the other families."
     }
   },
   {
@@ -206,7 +241,7 @@
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "General 1402(g) religious-sect exemption is incorporated by 411(c)(6); church income exists only from 1984. Later express church carveout must not be backcast.",
     "effective_end": "1985-12-31",
     "effective_start": "1968-01-01",
@@ -289,11 +324,21 @@
       "church_employee_service"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "effective_1402g_exemption",
+        "precedence": 1,
+        "when": {
+          "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
+        },
+        "consequence": "noncovered",
+        "description": "411(c)(6)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "No effective 1402(g) exemption, so 411(c)(6) does not exclude the income; apply the other families."
     }
   },
   {
@@ -430,7 +475,7 @@
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "An effective 1402(g) religious-sect exemption applies to church employee income from taxable years after 1989.",
     "effective_end": "2026-12-31",
     "effective_start": "1990-01-01",
@@ -580,11 +625,21 @@
       "church_employee_service"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "effective_1402g_exemption",
+        "precedence": 1,
+        "when": {
+          "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
+        },
+        "consequence": "noncovered",
+        "description": "411(c)(6)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "No effective 1402(g) exemption, so 411(c)(6) does not exclude the income; apply the other families."
     }
   },
   {
@@ -730,14 +785,51 @@
       "clergy_retirement_benefit",
       "congregation_predominantly_us_citizens",
       "ministerial_service",
-      "place_of_work"
+      "place_of_work",
+      "clergy_or_religious_exemption"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "exempt_minister",
+        "precedence": 1,
+        "when": {
+          "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
+      },
+      {
+        "case_id": "retired_clergy_benefits",
+        "precedence": 2,
+        "when": {
+          "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
+      },
+      {
+        "case_id": "foreign_minister_without_qualification",
+        "precedence": 3,
+        "when": {
+          "place_of_work": "outside the United States",
+          "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister to a congregation composed predominantly of United States citizens"
+        },
+        "consequence": "deferred",
+        "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for qualifying citizens; the foreign income and possessions families decide for anyone else.",
+        "defers_to": [
+          "self_employment_foreign_911_income",
+          "self_employment_possessions_931_income"
+        ]
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values, and for a qualifying citizen abroad the 911 and 931 exclusions are disregarded; apply the other families."
     }
   },
   {
@@ -953,11 +1045,33 @@
         "calculation": "minister_gross_concept"
       }
     ],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "exempt_minister",
+        "precedence": 1,
+        "when": {
+          "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
+      },
+      {
+        "case_id": "retired_clergy_benefits",
+        "precedence": 2,
+        "when": {
+          "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values; apply the other families."
     }
   },
   {
@@ -1050,7 +1164,8 @@
             "2004"
           ]
         }
-      ]
+      ],
+      "case_free_basis": "The management and partnership conditions decide which spouse the community business income belongs to (the assignment parameters), not whether it is net earnings, so no condition changes the consequence."
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_1968_1979",
@@ -1541,7 +1656,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "deferred",
     "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
     "effective_end": "2026-12-31",
     "effective_start": "2008-01-01",
@@ -1603,14 +1718,30 @@
     "trigger_facts": [
       "conservation_reserve_payment",
       "amount",
-      "retirement_payment"
+      "retirement_payment",
+      "benefit_type"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "crp_payment_to_beneficiary",
+        "precedence": 1,
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+          "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(1) excludes these payments with rentals from real estate."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "deferred",
+      "description": "411(a)(1) excludes only payments to individuals receiving 402 or 423 benefits. Other CRP payments are decided by the rental and base definition families.",
+      "defers_to": [
+        "self_employment_rental_income",
+        "self_employment_base_definition"
+      ]
     }
   },
   {
@@ -1798,7 +1929,8 @@
             "1987"
           ]
         }
-      ]
+      ],
+      "case_free_basis": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings."
     },
     "rare_exclusion": null,
     "rule_id": "se_director_timing_1988_1990",
@@ -2128,14 +2260,136 @@
       "foreign_government_service",
       "international_organization_service",
       "church_employee_service",
-      "ministerial_service"
+      "ministerial_service",
+      "age",
+      "newspaper_service_arrangement",
+      "agricultural_share_arrangement",
+      "citizenship",
+      "place_of_work",
+      "public_office_fee_basis",
+      "fishing_catch_share_arrangement"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "not_employee_service",
+        "precedence": 1,
+        "when": {
+          "employee_self_or_mixed": "not performed as an employee"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2) concerns employee service only; the base definition decides.",
+        "defers_to": [
+          "self_employment_base_definition"
+        ]
+      },
+      {
+        "case_id": "adult_fixed_price_vendor",
+        "precedence": 2,
+        "when": {
+          "age": "18 or older",
+          "newspaper_service_arrangement": "410(a)(14)(B) fixed-price sale to ultimate consumers"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(A).",
+        "defers_to": [
+          "newspaper_service"
+        ]
+      },
+      {
+        "case_id": "sharefarmer",
+        "precedence": 3,
+        "when": {
+          "agricultural_share_arrangement": "410(a)(16) arrangement"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(B).",
+        "defers_to": [
+          "agricultural_share_service"
+        ]
+      },
+      {
+        "case_id": "us_citizen_foreign_government",
+        "precedence": 4,
+        "when": {
+          "citizenship": "United States citizen",
+          "place_of_work": "United States",
+          "foreign_government_service": "410(a)(11) or (12) service"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(C).",
+        "defers_to": [
+          "foreign_government_service"
+        ]
+      },
+      {
+        "case_id": "us_citizen_international_organization",
+        "precedence": 5,
+        "when": {
+          "citizenship": "United States citizen",
+          "place_of_work": "United States",
+          "international_organization_service": "410(a)(15) service"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(C), with the later 410(r) exception.",
+        "defers_to": [
+          "international_organization_service"
+        ]
+      },
+      {
+        "case_id": "ministry_or_order_duties",
+        "precedence": 6,
+        "when": {
+          "ministerial_service": "411(c)(4) service: ministry, or duties required by a religious order"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(D).",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
+      },
+      {
+        "case_id": "fee_basis_state_local_position",
+        "precedence": 7,
+        "when": {
+          "government_level": "State or political subdivision",
+          "public_office_fee_basis": "position compensated solely on a fee basis and not covered by a section 418 agreement"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(E).",
+        "defers_to": [
+          "self_employment_public_office"
+        ]
+      },
+      {
+        "case_id": "small_boat_fishing",
+        "precedence": 8,
+        "when": {
+          "fishing_catch_share_arrangement": "410(a)(20) service, from the applicable 1976 law"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(F).",
+        "defers_to": [
+          "fishing_crew_share_service"
+        ]
+      },
+      {
+        "case_id": "electing_church_employee",
+        "precedence": 9,
+        "when": {
+          "church_employee_service": "410(a)(8)(B) service for an electing church or qualified church-controlled organization, from 1984"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(2)(G).",
+        "defers_to": [
+          "electing_church_employee_service"
+        ]
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Other employee service is not a trade or business (411(c)(2))."
     }
   },
   {
@@ -2164,9 +2418,15 @@
         "capture": "federal_register_1975_07_10_extract.pdf.txt",
         "location": "40 FR 29071-29072 (original PDF pages 13-14, extract pages 2-3); pdftotext -raw derivative in column reading order",
         "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "411(a)(1)"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "open",
     "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after 1955 and beginning before 1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf.",
     "effective_end": "1973-12-31",
     "effective_start": "1968-01-01",
@@ -2253,14 +2513,57 @@
       "agricultural_service",
       "amount",
       "material_participation",
-      "rental_arrangement_requires_material_participation"
+      "rental_arrangement_requires_material_participation",
+      "real_estate_dealer_status"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "real_estate_dealer_rentals",
+        "precedence": 1,
+        "when": {
+          "real_estate_dealer_status": "rentals received in the course of a trade or business as a real estate dealer"
+        },
+        "consequence": "covered",
+        "description": "411(a)(1) does not exclude rentals received in the course of a real estate dealer's business; apply the other families.",
+        "overrides": [
+          "no_actual_material_participation",
+          "arrangement_lacks_participation_term"
+        ]
+      },
+      {
+        "case_id": "no_actual_material_participation",
+        "precedence": 2,
+        "when": {
+          "material_participation": "no material participation by the owner or tenant, counting services an employee or agent performed for that person"
+        },
+        "consequence": "noncovered",
+        "description": "The farm rental stays excluded."
+      },
+      {
+        "case_id": "arrangement_lacks_participation_term",
+        "precedence": 3,
+        "when": {
+          "rental_arrangement_requires_material_participation": false
+        },
+        "consequence": "noncovered",
+        "description": "The farm rental exception requires an arrangement that provides for material participation."
+      },
+      {
+        "case_id": "participation_under_required_arrangement",
+        "precedence": 4,
+        "when": {
+          "rental_arrangement_requires_material_participation": true,
+          "material_participation": "material participation by the owner or tenant, counting services an employee or agent performed for that person"
+        },
+        "consequence": "covered",
+        "description": "Before 1974 the services of an employee or agent count as the owner's or tenant's; apply the other families."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "open",
+      "description": "Establish actual participation and the arrangement requirement from the trigger facts; no residual coverage is chosen when their cases cannot decide."
     }
   },
   {
@@ -2578,7 +2881,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "deferred",
     "description": "Exclude insurance-sales termination payments when every condition in 411(j) is established.",
     "effective_end": "2026-12-31",
     "effective_start": "1998-01-01",
@@ -2677,11 +2980,24 @@
       "amount"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "qualifying_termination_payment",
+        "precedence": 1,
+        "when": {
+          "insurance_sales_termination_payment": "received after the agreement ends; no services for the company after termination and before the year closes; a covenant not to compete for at least one year; the amount depends primarily on last-year policies or their persistence, and not at all on length of service or overall earnings"
+        },
+        "consequence": "noncovered",
+        "description": "411(j)(1)-(4)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "deferred",
+      "description": "411(j) only says what subsection (a) does not include; when a condition fails, the base definition decides.",
+      "defers_to": [
+        "self_employment_base_definition"
+      ]
     }
   },
   {
@@ -2762,7 +3078,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "Exclude the distributive income or loss of a limited partner as such; retain established guaranteed payments for services actually rendered.",
     "effective_end": "2026-12-31",
     "effective_start": "1978-01-01",
@@ -2865,11 +3181,33 @@
       "amount"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "guaranteed_payment_for_services",
+        "precedence": 1,
+        "when": {
+          "partnership_status": "707(c) guaranteed payment to a limited partner for services actually rendered, established as pay for those services"
+        },
+        "consequence": "covered",
+        "description": "411(a)(12) excepts these payments.",
+        "overrides": [
+          "limited_partner_distributive_share"
+        ]
+      },
+      {
+        "case_id": "limited_partner_distributive_share",
+        "precedence": 2,
+        "when": {
+          "partnership_status": "distributive share of income or loss of a limited partner, as such"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(12)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "Not a limited partner's distributive share, so 411(a)(12) does not exclude it; apply the other families."
     }
   },
   {
@@ -3167,7 +3505,8 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "case_free_basis": "The nonfarm conditions decide whether the optional computation is available; when they fail the regular computation applies, and both are tested against the self-employment unit minimum."
     },
     "rare_exclusion": null,
     "rule_id": "se_optional_1973_2007",
@@ -3824,7 +4163,7 @@
         "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "Public-office functions are excluded from trade or business. State or local fee-only positions outside Section 218 are an exception, subject to an applicable irrevocable 1968 exemption election.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
@@ -3954,12 +4293,21 @@
         },
         "consequence": "covered",
         "description": "The fee-office exception to the public-office exclusion applies, subject to the other net-earnings rules."
+      },
+      {
+        "case_id": "public_office_functions",
+        "precedence": 3,
+        "when": {
+          "government_level": "performance of the functions of a public office"
+        },
+        "consequence": "noncovered",
+        "description": "411(c)(1)."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "Not the performance of public-office functions, so 411(c)(1) does not exclude it; apply the other families."
     }
   },
   {
@@ -4187,11 +4535,24 @@
       "trade_or_business"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "qualified_joint_venture",
+        "precedence": 1,
+        "when": {
+          "qualified_joint_venture_election": "both spouses elect 761(f) treatment",
+          "joint_return": true,
+          "partnership_status": "the spouses are the only members",
+          "material_participation": "both spouses materially participate under 469(h), disregarding paragraph (5)"
+        },
+        "consequence": "covered",
+        "description": "411(a)(16) and 761(f): each spouse takes their share into account as a sole proprietor."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Without a qualified joint venture, the partnership rules assign each partner's distributive share; apply the other families."
     }
   },
   {
@@ -4204,7 +4565,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "Railroad employee or employee-representative service under 26 USC 3231 is outside self-employment trade/business.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
@@ -4288,11 +4649,21 @@
       "employee_self_or_mixed"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "railroad_act_service",
+        "precedence": 1,
+        "when": {
+          "railroad_covered_service": "service as an employee or employee representative as defined in 26 U.S.C. 3231"
+        },
+        "consequence": "noncovered",
+        "description": "411(c)(3)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "Not 3231 service, so 411(c)(3) does not exclude it; apply the other families."
     }
   },
   {
@@ -4311,7 +4682,7 @@
         "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
       }
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "description": "Exclude a qualifying partner retirement-plan payment only when all three statutory conditions hold.",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
@@ -4430,11 +4801,24 @@
       "partner_capital_paid"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "qualifying_retirement_payment",
+        "precedence": 1,
+        "when": {
+          "retirement_payment": "periodic payment on account of retirement under a written partnership plan, continuing at least until the partner's death",
+          "partner_no_services": true,
+          "partner_no_other_obligation": true,
+          "partner_capital_paid": true
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(9)(A)-(C)."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "A payment failing any 411(a)(9) condition is not excluded by it; apply the other families."
     }
   },
   {

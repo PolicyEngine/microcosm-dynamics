@@ -5,13 +5,14 @@ of the schema. They make no claim about actual coverage law.
 """
 
 import copy
+import graphlib
 import hashlib
 import json
 from datetime import date
 from fractions import Fraction
 
 import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
@@ -75,6 +76,16 @@ def invented_payload(rows=None, thresholds=None):
         "rules": rows if rows is not None else [invented_row()],
         "thresholds": thresholds or [],
     }
+
+
+INVENTED_TARGET_FAMILY = "INVENTED_other_family"
+
+
+def invented_target_row():
+    """An invented second family that a deferral can name."""
+    row = invented_row(rule_id="INVENTED_other_rule")
+    row["family"] = INVENTED_TARGET_FAMILY
+    return row
 
 
 @given(
@@ -493,6 +504,8 @@ def test_residual_default_equals_top_level_consequence(consequence, mismatch):
     row = invented_row()
     row["consequence"] = consequence
     row["residual_default"]["consequence"] = consequence
+    if consequence == "deferred":
+        row["residual_default"]["defers_to"] = [INVENTED_TARGET_FAMILY]
     assert (
         CoverageRule.from_dict(row).residual_default["consequence"]
         == consequence
@@ -516,7 +529,7 @@ def test_lookup_returns_validated_cases_and_residual(
     row["cases"] = [
         invented_case("invented_case", 1, consequence, when={"amount": fact})
     ]
-    registry = invented_registry(tmp_path, [row])
+    registry = invented_registry(tmp_path, [row, invented_target_row()])
     result = registry.lookup("INVENTED_family", 2024)[0]
     assert result.cases[0]["when"]["amount"] is fact
     assert result.cases[0]["consequence"] == consequence
@@ -535,6 +548,8 @@ def invented_case(case_id, precedence, consequence="covered", **extra):
         "when": {"amount": f"INVENTED condition for {case_id}"},
         "consequence": consequence,
     }
+    if consequence == "deferred":
+        case["defers_to"] = [INVENTED_TARGET_FAMILY]
     case.update(extra)
     return case
 
@@ -674,6 +689,177 @@ def test_case_override_precedes_and_changes_its_target(kind):
     both = {"invented_exclusion", "invented_exception"}
     assert rule.resolve(both)["consequence"] == "covered"
     assert rule.resolve({"invented_exclusion"})["consequence"] == "noncovered"
+
+
+DEFERRAL_NAMES = [
+    "INVENTED_family",
+    INVENTED_TARGET_FAMILY,
+    "INVENTED_third_family",
+    " ",
+]
+
+
+@given(
+    st.sampled_from(["case", "residual"]),
+    st.sampled_from(sorted(CONSEQUENCES)),
+    st.none() | st.lists(st.sampled_from(DEFERRAL_NAMES), max_size=4),
+)
+@example("case", "deferred", ["INVENTED_family"])
+@example("residual", "deferred", [INVENTED_TARGET_FAMILY, "INVENTED_family"])
+@example("case", "deferred", [INVENTED_TARGET_FAMILY] * 2)
+@example("residual", "deferred", [" "])
+@example("residual", "deferred", [])
+@example("case", "deferred", None)
+@example("case", "covered", [INVENTED_TARGET_FAMILY])
+@example("residual", "deferred", [INVENTED_TARGET_FAMILY])
+@settings(deadline=None)
+def test_defers_to_appears_exactly_on_deferred_outcomes(
+    where, consequence, targets
+):
+    """A deferred outcome names distinct other families; no other does."""
+    row = invented_row()
+    outcome = {"consequence": consequence}
+    if targets is not None:
+        outcome["defers_to"] = targets
+    if where == "case":
+        row["cases"] = [
+            {
+                "case_id": "invented_case",
+                "precedence": 1,
+                "when": {"amount": True},
+                **outcome,
+            }
+        ]
+    else:
+        row["consequence"] = consequence
+        row["residual_default"].update(outcome)
+    if consequence == "deferred":
+        valid = (
+            bool(targets)
+            and len(set(targets)) == len(targets)
+            and all(target.strip() for target in targets)
+            and row["family"] not in targets
+        )
+    else:
+        valid = targets is None
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="defer"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    resolved = rule.resolve({"invented_case"} if where == "case" else ())
+    assert resolved["consequence"] == consequence
+    assert list(resolved.get("defers_to", ())) == (targets or [])
+    assert CoverageRule.from_dict(rule.to_dict()) == rule
+
+
+@given(st.integers(1, 5), st.booleans(), st.data())
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_registry_refuses_unknown_or_cyclic_deferrals(
+    tmp_path, size, unknown, data
+):
+    """Every deferral chain ends at a family that decides.
+
+    The reference is the standard library's topological sort: the registry
+    must accept exactly the acyclic family graphs whose targets exist.
+    """
+    families = [f"INVENTED_family_{index}" for index in range(size)]
+    pairs = [(a, b) for a in families for b in families if a != b]
+    edges = data.draw(st.sets(st.sampled_from(pairs))) if pairs else set()
+    graph = {f: sorted(b for a, b in edges if a == f) for f in families}
+    rows = []
+    for index, family in enumerate(families):
+        row = invented_row(rule_id=f"INVENTED_rule_{index}")
+        row["family"] = family
+        targets = list(graph[family])
+        if unknown and index == 0:
+            targets.append("INVENTED_missing_family")
+        if targets and data.draw(st.booleans()):
+            row["consequence"] = "deferred"
+            row["residual_default"]["consequence"] = "deferred"
+            row["residual_default"]["defers_to"] = targets
+        elif targets:
+            row["cases"] = [
+                invented_case(
+                    "invented_case", 1, "deferred", defers_to=targets
+                )
+            ]
+        rows.append(row)
+    try:
+        tuple(graphlib.TopologicalSorter(graph).static_order())
+        acyclic = True
+    except graphlib.CycleError:
+        acyclic = False
+    if unknown or not acyclic:
+        message = "names no family" if unknown else "deferral cycle"
+        with pytest.raises(RegistryValidationError, match=message):
+            invented_registry(tmp_path, rows)
+        return
+    registry = invented_registry(tmp_path, rows)
+    for start in families:
+        frontier, steps = {start}, 0
+        while frontier:
+            assert steps <= size, "deferral chain longer than the registry"
+            following = set()
+            for family in frontier:
+                (rule,) = registry.lookup(family, 2024)
+                for outcome in (rule.residual_default, *rule.cases):
+                    following.update(outcome.get("defers_to", ()))
+            frontier, steps = following, steps + 1
+
+
+def test_deferral_to_an_unknown_family_is_refused(tmp_path):
+    row = invented_row()
+    row["cases"] = [invented_case("invented_case", 1, "deferred")]
+    assert invented_registry(tmp_path, [row, invented_target_row()])
+    with pytest.raises(RegistryValidationError, match="names no family"):
+        invented_registry(tmp_path, [row])
+
+
+@given(
+    st.sampled_from(sorted(CONSEQUENCES)),
+    st.booleans(),
+    st.booleans(),
+    st.sampled_from(["INVENTED reason the condition decides nothing", " ", 7]),
+)
+@settings(deadline=None)
+def test_case_free_basis_only_explains_case_free_non_excluding_rows(
+    consequence, with_case, is_open, basis
+):
+    """``case_free_basis`` cannot hide an exclusion or a conditional row."""
+    row = invented_row()
+    row["parameters"]["case_free_basis"] = basis
+    if is_open:
+        row["open_reason"] = "INVENTED unresolved legal question"
+        row["consequence"] = None
+        row["residual_default"]["consequence"] = None
+        row["open_alternatives"] = [
+            {"name": "INVENTED_a", "description": "INVENTED first reading"},
+            {"name": "INVENTED_b", "description": "INVENTED second reading"},
+        ]
+    else:
+        row["consequence"] = consequence
+        row["residual_default"]["consequence"] = consequence
+        if consequence == "deferred":
+            row["residual_default"]["defers_to"] = [INVENTED_TARGET_FAMILY]
+    if with_case:
+        row["cases"] = [invented_case("invented_case", 1)]
+    valid = (
+        isinstance(basis, str)
+        and bool(basis.strip())
+        and not is_open
+        and not with_case
+        and consequence not in {"noncovered", "deferred"}
+    )
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="case_free_basis"):
+            CoverageRule.from_dict(row)
+        return
+    parsed = CoverageRule.from_dict(row)
+    assert parsed.parameters["case_free_basis"] == basis
+    assert parsed.resolve(()) == parsed.residual_default
 
 
 def test_resolve_separates_caller_errors_from_refusals():

@@ -20,8 +20,10 @@ from populace_dynamics.income_resources.coverage_rules import (
     CAPTURE_DIRECTORY,
     REGISTRY_PATH,
     TRIGGER_FACTS,
+    AlternativeRequiredError,
     CoverageRegistry,
     CoverageRegistryError,
+    NoRuleError,
     OpenRuleError,
     ThresholdUnavailableError,
     load_registry,
@@ -317,27 +319,248 @@ def test_real_loader_is_row_order_independent_and_round_trips(
 def test_real_cases_and_open_readings_obey_schema(registry, data):
     rule = data.draw(st.sampled_from(registry.rules))
     assert rule.residual_default["consequence"] == rule.consequence
+    for outcome in (rule.residual_default, *rule.cases):
+        deferred = outcome["consequence"] == "deferred"
+        assert deferred == ("defers_to" in outcome)
+        if deferred:
+            assert rule.family not in outcome["defers_to"]
+            assert set(outcome["defers_to"]) <= set(registry.families)
     for case in rule.cases:
         assert case["when"]
         assert set(case["when"]) <= set(rule.trigger_facts)
-        assert case["consequence"] in {
-            "covered",
-            "noncovered",
-            "covered_above_threshold",
-            "open",
-        }
+        assert case["consequence"] in CONSEQUENCE_VALUES
     if rule.open_reason:
         assert rule.consequence in {None, "open"}
         assert len(rule.open_alternatives) >= 2
         assert rule.alternative is None
 
 
-def test_tribal_default_and_uncaptured_crp_history(registry):
+CONSEQUENCE_VALUES = {
+    "covered",
+    "noncovered",
+    "covered_above_threshold",
+    "open",
+    "deferred",
+}
+PARAMETER_EVIDENCE = {
+    "citation",
+    "citations",
+    "code_edition_evidence",
+    "later_edition_reliance",
+    "case_free_basis",
+}
+CONDITION_KEY = re.compile(
+    r"(^|_)(conditions?|requires_all|any_of|exceptions?)$"
+)
+CONDITION_WORDS = re.compile(
+    r"\b(only when|only if|unless|except|excepts|excepted|is excluded|"
+    r"are excluded|excludes|remains excluded|depends on)\b",
+    re.IGNORECASE,
+)
+
+
+def parameter_leaves(value, path=()):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key not in PARAMETER_EVIDENCE:
+                yield from parameter_leaves(child, (*path, key))
+    elif isinstance(value, (list, tuple)):
+        for child in value:
+            yield from parameter_leaves(child, path)
+    else:
+        yield path, value
+
+
+def condition_signals(row):
+    """Why a closed row's text or parameters name a statutory condition."""
+    signals = []
+    if row["consequence"] == "noncovered":
+        signals.append("noncovered residual")
+    for path, value in parameter_leaves(row["parameters"]):
+        if value in CONSEQUENCE_VALUES:
+            signals.append(f"consequence parameter {'.'.join(path)}")
+        if path and CONDITION_KEY.search(path[-1]):
+            signals.append(f"condition parameter {'.'.join(path)}")
+    words = CONDITION_WORDS.search(row["description"])
+    if words:
+        signals.append(f"description says {words.group(0)!r}")
+    return signals
+
+
+def rows_missing_condition_cases(rows):
+    """Closed rows that name a condition but carry neither cases nor basis.
+
+    A closed row's residual applies when no case holds, so a condition left
+    in prose or parameters would apply its exclusion unconditionally.
+    """
+    return {
+        row["rule_id"]: signals
+        for row in rows
+        if row["open_reason"] is None
+        and not row["cases"]
+        and "case_free_basis" not in row["parameters"]
+        and (signals := condition_signals(row))
+    }
+
+
+def test_closed_rows_naming_a_condition_carry_cases():
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    assert rows_missing_condition_cases(rows) == {}
+    for row in rows:
+        if "case_free_basis" in row["parameters"]:
+            assert not row["cases"]
+            assert row["consequence"] not in {"noncovered", "deferred"}
+            leaves = parameter_leaves(row["parameters"])
+            assert not any(v in CONSEQUENCE_VALUES for _, v in leaves)
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(sorted(CONSEQUENCE_VALUES - {"open"})),
+    st.sampled_from(["", "unless the employer elects", "only when paid"]),
+    st.booleans(),
+)
+def test_condition_detector_flags_every_signal(consequence, words, key):
+    """The detector is the test's oracle, so its own signals are tested."""
+    row = {
+        "consequence": consequence,
+        "description": f"INVENTED rule {words}".strip(),
+        "parameters": {"required_conditions": ["a"]} if key else {},
+        "open_reason": None,
+        "cases": [],
+    }
+    expected = (consequence == "noncovered") + bool(words) + key
+    assert len(condition_signals(row)) == expected
+    flagged = rows_missing_condition_cases([{"rule_id": "INVENTED", **row}])
+    assert bool(flagged) == bool(expected)
+    with_case = {**row, "rule_id": "INVENTED", "cases": [{"case_id": "a"}]}
+    assert rows_missing_condition_cases([with_case]) == {}
+
+
+def test_consequences_live_in_cases_not_parameters():
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    stored = [
+        (row["rule_id"], ".".join(path))
+        for row in rows
+        for path, value in parameter_leaves(row["parameters"])
+        if value in CONSEQUENCE_VALUES
+    ]
+    assert stored == []
+
+
+def test_real_deferral_targets_cover_the_deferring_years(registry):
+    """Every deferral names a family with a rule in each deferring year.
+
+    Exhaustive over every deferring outcome and every year of its row, so
+    no target family leaves a year where the deferral reaches no rule. An
+    open or alternative-only target refuses rather than misclassifying.
+    """
+    absent, checked = [], set()
+    for rule in registry.rules:
+        for outcome in (rule.residual_default, *rule.cases):
+            if outcome["consequence"] != "deferred":
+                continue
+            for target in outcome["defers_to"]:
+                for year in range(
+                    rule.effective_start.year, rule.effective_end.year + 1
+                ):
+                    if (target, year) in checked:
+                        continue
+                    checked.add((target, year))
+                    try:
+                        assert registry.lookup(target, year)
+                    except (OpenRuleError, AlternativeRequiredError):
+                        continue
+                    except NoRuleError:
+                        absent.append((rule.rule_id, target, year))
+    assert checked
+    assert absent == []
+
+
+def test_tribal_council_cases_and_uncaptured_crp_history(registry):
     tribal = registry.lookup("tribal_council_service", 2019)[0]
-    assert tribal.consequence == "noncovered"
-    assert any(c["consequence"] == "covered" for c in tribal.cases)
+    council = {"no_section_418a_inclusion"}
+    assert tribal.resolve(council)["consequence"] == "noncovered"
+    agreement = council | {"section_418a_agreement_inclusion"}
+    assert tribal.resolve(agreement)["consequence"] == "covered"
+    # Council staff and tribal employees are not council-member service.
+    assert tribal.resolve(set())["consequence"] == "covered"
     with pytest.raises(OpenRuleError, match="CRP_PRE2008"):
         registry.lookup("self_employment_conservation_reserve", 2007)
+
+
+@pytest.mark.parametrize(
+    ("family", "year", "matched", "expected"),
+    [
+        # HIGH-1 repros: each condition's failure no longer excludes.
+        ("self_employment_conservation_reserve", 2010, set(), "deferred"),
+        (
+            "self_employment_conservation_reserve",
+            2010,
+            {"crp_payment_to_beneficiary"},
+            "noncovered",
+        ),
+        ("self_employment_farm_rental_participation", 1970, set(), "open"),
+        (
+            "self_employment_farm_rental_participation",
+            1970,
+            {"participation_under_required_arrangement"},
+            "covered",
+        ),
+        ("self_employment_retired_partner", 2000, set(), "covered"),
+        (
+            "self_employment_limited_partner",
+            2000,
+            {
+                "guaranteed_payment_for_services",
+                "limited_partner_distributive_share",
+            },
+            "covered",
+        ),
+        ("self_employment_insurance_termination", 2000, set(), "deferred"),
+        ("self_employment_treaty_fishing", 2000, set(), "covered"),
+        (
+            "student_service",
+            1980,
+            {
+                "section_218_agreement_covers_students",
+                "enrolled_student_at_employing_school",
+            },
+            "covered",
+        ),
+        (
+            "tribal_council_service",
+            2000,
+            {
+                "later_418a_retroactive_coverage",
+                "federally_recognized_council_member",
+            },
+            "covered",
+        ),
+        (
+            "self_employment_rental_income",
+            2000,
+            {"parking_warehouse_storage_space", "real_estate_rentals"},
+            "covered",
+        ),
+        (
+            "international_organization_service",
+            2000,
+            {
+                "transferred_federal_employee_410r",
+                "designated_international_organization",
+            },
+            "covered",
+        ),
+        ("nonresident_alien_service", 2000, set(), "covered"),
+        ("foreign_government_service", 2000, set(), "covered"),
+    ],
+)
+def test_failed_conditions_no_longer_exclude(
+    registry, family, year, matched, expected
+):
+    (rule,) = registry.lookup(family, year)
+    assert rule.resolve(matched)["consequence"] == expected
 
 
 @settings(deadline=None)
@@ -545,12 +768,14 @@ def published_outcome(registry, rule, example):
     elif kind == "agricultural_commodity":
         dominion = facts.pop("employee_exercises_dominion_and_control")
         if dominion:
-            assert params["genuine_noncash"] == "noncovered"
-            consequence = next(
-                c["consequence"]
+            matched = {
+                c["case_id"]
                 for c in rule.cases
-                if "cash_remuneration" in c["when"]
-            )
+                if "dominion and control"
+                in c["when"].get("cash_remuneration", "")
+            }
+            assert matched
+            consequence = rule.resolve(matched)["consequence"]
         else:
             case = next(
                 c

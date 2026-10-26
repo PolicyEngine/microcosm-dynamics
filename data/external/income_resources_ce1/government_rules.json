@@ -54,7 +54,6 @@
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
       "foreign_ministry": "For taxable years beginning after 1967 through 1972, a US citizen serving abroad must be an employee of a US employer or serve a congregation predominantly composed of US citizens (POMS NL 00711.065 1331.1).",
-      "effective_exemption_consequence": "noncovered",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -578,7 +577,6 @@
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
       "foreign_ministry": "Covered if a US citizen, subject to minister exemption and other 411 rules; nationality and residency facts remain necessary.",
-      "effective_exemption_consequence": "noncovered",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -1109,7 +1107,6 @@
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
       "foreign_ministry": "Nationality, residency, and totalization rules of 411 apply; clergy exemption facts remain necessary.",
       "cantor": "Effective January 1, 1982, a cantor is treated as an ordained minister if the cantor and congregation agree on the relationship (RS 01901.600 B.4.b).",
-      "effective_exemption_consequence": "noncovered",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -1760,7 +1757,7 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "covered",
+    "consequence": "deferred",
     "identification_class": "awaiting_ce2",
     "description": "The 3121(w) church employer election did not exist; ordinary church employee coverage follows the then effective nonprofit employer waiver and small remuneration rules.",
     "parameters": {
@@ -1888,8 +1885,11 @@
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "deferred",
+      "description": "No 3121(w) church employer election existed. Church employee service follows the nonprofit family's waiver and small remuneration rules.",
+      "defers_to": [
+        "nonprofit_service"
+      ]
     }
   },
   {
@@ -2348,6 +2348,18 @@
         "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
         "authority": "POMS RS 01901.340 (2024-06-14)",
         "location": "A-C"
+      },
+      {
+        "capture": "uscode_1994_42_410.html",
+        "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+        "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+        "location": "1983 amendment notes quoting former 410(a)(5) and (a)(6)(A)-(C)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees"
       }
     ],
     "trigger_facts": [
@@ -2361,16 +2373,10 @@
     "description": "Pre-1984 federal coverage depends on the exclusions in former 410(a)(5)-(6), including federal retirement-system and statutory instrumentality exclusions.",
     "parameters": {
       "coverage_default": "covered unless a statutory exclusion applies",
-      "persistent_exclusions": [
-        "Federal penal inmate",
-        "specified Federal hospital student employees other than medical/dental interns/residents",
-        "temporary emergency employees",
-        "other independent statutory exclusions"
-      ],
       "federal_home_loan_bank_transition": {
         "enactment": "1972-10-30",
         "ordinary_coverage_start": "1973-01-01",
-        "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125)."
+        "conditional_retroactivity": "For employees of a Federal home loan bank on January 1, 1973, service after December 31, 1966 (the last day of the sixth calendar year before 1972) is covered if taxes equal to the 3101 and 3111 taxes on all such employees' service are paid by July 1, 1973 or a later agreed date (Public Law 92-603 section 125(a)(2))."
       },
       "code_edition_evidence": [
         {
@@ -2440,28 +2446,76 @@
         }
       },
       {
-        "case_id": "exempt_1950_instrumentality_system",
+        "case_id": "fhlb_retroactive_coverage",
         "precedence": 3,
+        "when": {
+          "federal_service": "employee of a Federal home loan bank on 1973-01-01, for service after 1966-12-31, with taxes equal to the 3101 and 3111 taxes on all such employees' service paid by 1973-07-01 or a later agreed date"
+        },
+        "consequence": "covered",
+        "description": "Public Law 92-603 section 125(a)(2) extends the 410(a)(6)(B)(ii) Federal home loan bank exception back to this service.",
+        "overrides": [
+          "exempt_1950_instrumentality_system"
+        ]
+      },
+      {
+        "case_id": "exempt_1950_instrumentality_system",
+        "precedence": 4,
         "consequence": "noncovered",
         "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
         "when": {
-          "federal_service": "exempt-1950 instrumentality and retirement system"
+          "federal_service": "service for an instrumentality exempt from the former IRC 1410 tax on 1950-12-31 and covered by a retirement system the instrumentality established, other than service the January 1983 text of former 410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; the listed Federal banks and credit associations, Federal Reserve Banks (Federal home loan banks only from 1973) and Federal Credit Unions; Production and Marketing Administration committees; and nonappropriated-fund exchange and welfare employees of the Defense Department and the Coast Guard"
         }
       },
       {
         "case_id": "president_congress_legislative",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "noncovered",
         "description": "410(a)(6)(C) as in effect in January 1983.",
         "when": {
           "occupation": "President/Vice President/Congress/legislative employee"
         }
+      },
+      {
+        "case_id": "federal_penal_inmate",
+        "precedence": 6,
+        "when": {
+          "occupation": "inmate of a penal institution of the United States"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(iii) as in effect in January 1983."
+      },
+      {
+        "case_id": "federal_hospital_student_employee",
+        "precedence": 7,
+        "when": {
+          "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(iv) as in effect in January 1983."
+      },
+      {
+        "case_id": "temporary_emergency_employee",
+        "precedence": 8,
+        "when": {
+          "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(v) as in effect in January 1983."
+      },
+      {
+        "case_id": "other_federal_retirement_system",
+        "precedence": 9,
+        "when": {
+          "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(vi) as in effect in January 1983."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
     }
   },
   {
@@ -2481,6 +2535,18 @@
         "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
         "authority": "POMS RS 01901.340 (2024-06-14)",
         "location": "A-C"
+      },
+      {
+        "capture": "uscode_1994_42_410.html",
+        "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+        "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+        "location": "1983 amendment notes quoting former 410(a)(5) and (a)(6)(A)-(C)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees"
       }
     ],
     "trigger_facts": [
@@ -2494,16 +2560,10 @@
     "description": "Pre-1984 exclusion regime continues; Federal home loan bank ordinary coverage now applies, subject to other exclusions.",
     "parameters": {
       "coverage_default": "covered unless a statutory exclusion applies",
-      "persistent_exclusions": [
-        "Federal penal inmate",
-        "specified Federal hospital student employees other than medical/dental interns/residents",
-        "temporary emergency employees",
-        "other independent statutory exclusions"
-      ],
       "federal_home_loan_bank_transition": {
         "enactment": "1972-10-30",
         "ordinary_coverage_start": "1973-01-01",
-        "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125)."
+        "conditional_retroactivity": "For employees of a Federal home loan bank on January 1, 1973, service after December 31, 1966 (the last day of the sixth calendar year before 1972) is covered if taxes equal to the 3101 and 3111 taxes on all such employees' service are paid by July 1, 1973 or a later agreed date (Public Law 92-603 section 125(a)(2))."
       },
       "code_edition_evidence": [
         {
@@ -2579,7 +2639,7 @@
         "consequence": "noncovered",
         "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
         "when": {
-          "federal_service": "exempt-1950 instrumentality and retirement system"
+          "federal_service": "service for an instrumentality exempt from the former IRC 1410 tax on 1950-12-31 and covered by a retirement system the instrumentality established, other than service the January 1983 text of former 410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; the listed Federal banks and credit associations, Federal Reserve Banks, Federal home loan banks and Federal Credit Unions; Production and Marketing Administration committees; and nonappropriated-fund exchange and welfare employees of the Defense Department and the Coast Guard"
         }
       },
       {
@@ -2590,12 +2650,48 @@
         "when": {
           "occupation": "President/Vice President/Congress/legislative employee"
         }
+      },
+      {
+        "case_id": "federal_penal_inmate",
+        "precedence": 5,
+        "when": {
+          "occupation": "inmate of a penal institution of the United States"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(iii) as in effect in January 1983."
+      },
+      {
+        "case_id": "federal_hospital_student_employee",
+        "precedence": 6,
+        "when": {
+          "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(iv) as in effect in January 1983."
+      },
+      {
+        "case_id": "temporary_emergency_employee",
+        "precedence": 7,
+        "when": {
+          "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(v) as in effect in January 1983."
+      },
+      {
+        "case_id": "other_federal_retirement_system",
+        "precedence": 8,
+        "when": {
+          "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(6)(C)(vi) as in effect in January 1983."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
     }
   },
   {
@@ -3374,7 +3470,7 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Before mandatory coverage, eligible nonprofit employees require an effective actual or deemed waiver; the separate small-remuneration exclusion applies.",
     "parameters": {
@@ -3471,14 +3567,15 @@
         "consequence": "noncovered",
         "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
         "when": {
-          "nonprofit_coverage_waiver": "none or terminated"
+          "nonprofit_coverage_waiver": "none or terminated",
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
         }
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+      "consequence": "covered",
+      "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
     }
   },
   {
@@ -3526,7 +3623,7 @@
       "reporting_unit",
       "month_or_exposure"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Waiver requirement continues; from 1978 the nonprofit small-remuneration rule uses $100 per employer per year.",
     "parameters": {
@@ -3657,14 +3754,15 @@
         "consequence": "noncovered",
         "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
         "when": {
-          "nonprofit_coverage_waiver": "none or terminated"
+          "nonprofit_coverage_waiver": "none or terminated",
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
         }
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+      "consequence": "covered",
+      "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
     }
   },
   {
@@ -3702,13 +3800,20 @@
         "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
         "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07), later-edition text with historical notes",
         "location": "3121(a)(16), qualifying section 501(a)/521 organization and section 401(a) trust exception"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "note on Pub. L. 98-369 section 2601(e), services performed for nonprofit organizations by Federal employees"
       }
     ],
     "trigger_facts": [
       "nonprofit_organization",
       "amount",
       "reporting_unit",
-      "month_or_exposure"
+      "month_or_exposure",
+      "federal_retirement_system"
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
@@ -3818,11 +3923,25 @@
     "rare_exclusion": null,
     "alternative": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "csrs_required_nonprofit_employee",
+        "precedence": 1,
+        "when": {
+          "nonprofit_organization": "501(c)(3) organization",
+          "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service"
+        },
+        "consequence": "deferred",
+        "description": "Public Law 98-369 section 2601(e)(1) treats this service as service for a United States instrumentality under 410(a)(5); the federal family decides.",
+        "defers_to": [
+          "federal_retirement_service"
+        ]
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
     }
   },
   {
@@ -3849,7 +3968,7 @@
       "railroad_covered_employer",
       "railroad_covered_service"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Services as a railroad employee or employee representative defined in 26 U.S.C. 3231 are excluded from OASDI employment.",
     "parameters": {
@@ -3934,11 +4053,21 @@
     "rare_exclusion": null,
     "alternative": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "railroad_act_service",
+        "precedence": 1,
+        "when": {
+          "railroad_covered_service": "service as an employee or employee representative as defined in 26 U.S.C. 3231"
+        },
+        "consequence": "noncovered",
+        "description": "42 U.S.C. 410(a)(9); POMS RS 01901.580 A."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "consequence": "covered",
+      "description": "The service is not railroad service under 26 U.S.C. 3231, so 410(a)(9) does not exclude it; apply the other families."
     }
   },
   {
@@ -3997,7 +4126,7 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "A poverty vow ordinarily excludes coverage; an order's effective 3121(r) election can create covered deemed employment, including statutorily permitted retroactive coverage.",
     "parameters": {
@@ -4164,12 +4293,24 @@
         "when": {
           "religious_order_service": "ordinary employment for a third party outside duties required by the order"
         }
+      },
+      {
+        "case_id": "order_duties_without_vow",
+        "precedence": 4,
+        "when": {
+          "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
+        },
+        "consequence": "deferred",
+        "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+      "consequence": "covered",
+      "description": "The service is not duties a religious order requires of its member, so neither 410(a)(8)(A) nor the order election rules exclude it; apply the other families."
     }
   },
   {
@@ -4234,7 +4375,7 @@
       "nonresident_alien_status",
       "place_of_work"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "An order coverage election can deem poverty vow members covered employees; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
     "parameters": {
@@ -4533,12 +4674,24 @@
         "when": {
           "religious_order_service": "ordinary employment for a third party outside duties required by the order"
         }
+      },
+      {
+        "case_id": "order_duties_without_vow",
+        "precedence": 4,
+        "when": {
+          "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
+        },
+        "consequence": "deferred",
+        "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+      "consequence": "covered",
+      "description": "The service is not duties a religious order requires of its member, so neither 410(a)(8)(A) nor the order election rules exclude it; apply the other families."
     }
   },
   {
@@ -4570,9 +4723,10 @@
       "government_level",
       "section_218_group",
       "section_218_position",
-      "public_retirement_system_participation"
+      "public_retirement_system_participation",
+      "industry"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Section 218 agreements may cover state/local service; the statutory exclusion otherwise applies subject to enumerated exceptions.",
     "parameters": {
@@ -4652,19 +4806,32 @@
         }
       },
       {
-        "case_id": "no_section_218_agreement",
+        "case_id": "covered_transportation_service",
         "precedence": 2,
+        "when": {
+          "industry": "covered transportation service under 410(k)"
+        },
+        "consequence": "covered",
+        "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+        "overrides": [
+          "no_section_218_agreement"
+        ]
+      },
+      {
+        "case_id": "no_section_218_agreement",
+        "precedence": 3,
         "consequence": "noncovered",
         "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
         "when": {
-          "section_218_position": "not covered"
+          "section_218_position": "not covered",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+      "consequence": "covered",
+      "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
     }
   },
   {
@@ -4696,9 +4863,10 @@
       "government_level",
       "section_218_group",
       "section_218_position",
-      "public_retirement_system_participation"
+      "public_retirement_system_participation",
+      "industry"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "Section 218 coverage remains voluntary, but no agreement or coverage group may terminate on or after April 20, 1983.",
     "parameters": {
@@ -4776,19 +4944,32 @@
         }
       },
       {
-        "case_id": "no_section_218_agreement",
+        "case_id": "covered_transportation_service",
         "precedence": 2,
+        "when": {
+          "industry": "covered transportation service under 410(k)"
+        },
+        "consequence": "covered",
+        "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+        "overrides": [
+          "no_section_218_agreement"
+        ]
+      },
+      {
+        "case_id": "no_section_218_agreement",
+        "precedence": 3,
         "consequence": "noncovered",
         "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
         "when": {
-          "section_218_position": "not covered"
+          "section_218_position": "not covered",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+      "consequence": "covered",
+      "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
     }
   },
   {
@@ -4832,9 +5013,13 @@
       "government_level",
       "section_218_group",
       "section_218_position",
-      "public_retirement_system_participation"
+      "public_retirement_system_participation",
+      "industry",
+      "assignment",
+      "election_work",
+      "public_office_fee_basis"
     ],
-    "consequence": "noncovered",
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
     "description": "First establish Section 218 coverage; if absent, nonmembers of a qualified retirement system have mandatory coverage, subject to statutory exclusions.",
     "parameters": {
@@ -5047,30 +5232,83 @@
         }
       },
       {
-        "case_id": "mandatory_nonmember_coverage",
+        "case_id": "covered_transportation_service",
         "precedence": 2,
+        "when": {
+          "industry": "covered transportation service under 410(k)"
+        },
+        "consequence": "covered",
+        "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+        "overrides": [
+          "qualified_system_member_without_agreement"
+        ]
+      },
+      {
+        "case_id": "mandatory_rule_exclusions",
+        "precedence": 3,
+        "when": {
+          "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency",
+          "section_218_position": "not covered"
+        },
+        "consequence": "noncovered",
+        "description": "410(a)(7)(F)(i)-(iii) keep these services outside mandatory coverage.",
+        "overrides": [
+          "mandatory_nonmember_coverage"
+        ]
+      },
+      {
+        "case_id": "mandatory_rule_election_worker",
+        "precedence": 4,
+        "when": {
+          "election_work": "election official or election worker",
+          "section_218_position": "not covered"
+        },
+        "consequence": "deferred",
+        "description": "410(a)(7)(F)(iv) sets a remuneration threshold for election service; the election family decides.",
+        "defers_to": [
+          "election_work"
+        ]
+      },
+      {
+        "case_id": "mandatory_rule_fee_basis_position",
+        "precedence": 5,
+        "when": {
+          "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business",
+          "section_218_position": "not covered"
+        },
+        "consequence": "deferred",
+        "description": "410(a)(7)(F)(v) leaves these fees to self-employment; the public office family decides.",
+        "defers_to": [
+          "self_employment_public_office"
+        ]
+      },
+      {
+        "case_id": "mandatory_nonmember_coverage",
+        "precedence": 6,
         "consequence": "covered",
         "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies.",
         "when": {
           "public_retirement_system_participation": "not a member of an IRS-qualified system",
-          "section_218_position": "not covered"
+          "section_218_position": "not covered",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       },
       {
         "case_id": "qualified_system_member_without_agreement",
-        "precedence": 3,
+        "precedence": 7,
         "consequence": "noncovered",
         "description": "The state/local exclusion remains unless another statutory exception applies.",
         "when": {
           "public_retirement_system_participation": "member of an IRS-qualified system",
-          "section_218_position": "not covered"
+          "section_218_position": "not covered",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       }
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "noncovered",
-      "description": "The state or local government exclusion applies when no agreement, mandatory nonmember coverage or other statutory exception applies."
+      "consequence": "covered",
+      "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
     }
   },
   {

@@ -779,13 +779,35 @@
   "rules": [
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "Before SSR 95-3P (1995-08-07) SSA excluded noncash transfers from agricultural wages (POMS RS 01402.020 A); 409(a)(7)(A).",
+          "precedence": 1,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash, including commodity transfers"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
           "capture": "lii_42_409.html",
           "location": "1987 amendment note for former day test",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(7)(A)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "SSA POMS RS 01402.020",
+          "capture": "poms_rs_01402020.html",
+          "location": "A",
+          "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2"
         },
         {
           "authority": "SSA POMS RS 01402.020",
@@ -812,7 +834,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash": "noncovered",
         "threshold_ids": [
           "agricultural_employee_cash",
           "agricultural_time_days"
@@ -899,12 +920,13 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Agricultural cash pay is wages once one of the cash tests is met; apply the other families."
       },
       "rule_id": "agricultural_service_1968",
       "trigger_facts": [
         "agricultural_service",
         "amount",
+        "cash_remuneration",
         "month_or_exposure",
         "reporting_unit"
       ],
@@ -993,7 +1015,6 @@
           "employer_agricultural_expenditures_at_least_2500_unless_seasonal_exception"
         ],
         "employer_paid_employee_fica_included_in_wages": false,
-        "genuine_noncash": "noncovered",
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -1204,7 +1225,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "qualifying_sharefarmer_arrangement",
+          "consequence": "covered",
+          "description": "410(a)(16) excludes the service from wage employment and 411(c)(2)(B) makes it a trade or business: covered as self-employment.",
+          "precedence": 1,
+          "when": {
+            "agricultural_share_arrangement": "the worker produces agricultural or horticultural commodities on the owner's or tenant's land, the commodities or their proceeds are divided between them, and the worker's share depends on the amount produced"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "20 CFR 404.1017, April 1, 2024 edition",
@@ -1231,7 +1262,7 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
-      "consequence": "covered",
+      "consequence": "deferred",
       "description": "Qualifying sharefarmer services are excluded from employee employment by section 410(a)(16), but section 411(c)(2)(B) treats them as a trade or business even if the worker would otherwise be an employee. Apply other-net-earnings self-employment unit rules after determining the arrangement; this is not an exclusion from both coverage channels.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -1504,8 +1535,12 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "agricultural_service",
+          "self_employment_base_definition"
+        ],
+        "description": "The arrangement is not a 410(a)(16) sharefarming arrangement (for example fixed pay or a fixed commodity quantity). An employee's pay falls to the agricultural service family, and a self-employed worker's to the self-employment base definition."
       },
       "rule_id": "agricultural_share_service_1968",
       "trigger_facts": [
@@ -1519,13 +1554,68 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "farm_operated_for_profit",
+          "consequence": "deferred",
+          "defers_to": [
+            "agricultural_service"
+          ],
+          "description": "410(f)(5) makes this agricultural labor, and 409(a)(6)(C) excludes 410(f)(5) service from nonbusiness work.",
+          "precedence": 1,
+          "when": {
+            "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit"
+          }
+        },
+        {
+          "case_id": "domestic_service_in_private_home",
+          "consequence": "deferred",
+          "defers_to": [
+            "domestic_service"
+          ],
+          "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work.",
+          "precedence": 2,
+          "when": {
+            "domestic_service": "domestic service in a private home of the employer"
+          }
+        },
+        {
+          "case_id": "business_or_corporate_service",
+          "consequence": "covered",
+          "description": "This is not nonbusiness work (POMS RS 01901.520 A), so this family's cash test does not apply; apply the other families.",
+          "precedence": 3,
+          "when": {
+            "casual_service": "service in the course of the employer's trade or business, or any service for a corporation"
+          }
+        },
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "409(a)(6)(A) excludes noncash pay for nonbusiness work.",
+          "precedence": 4,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash"
+          }
+        }
+      ],
       "citations": [
+        {
+          "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(6)(A),(C)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
         {
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
           "capture": "lii_42_409.html",
           "location": "409(a)(6)(A),(C); 1977 amendment note",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(f)(5)",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
           "authority": "SSA POMS RS 01901.520",
@@ -1548,7 +1638,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash": "noncovered",
         "threshold_id": "casual_cash_quarterly"
       },
       "rare_exclusion": {
@@ -1631,12 +1720,14 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash pay for nonbusiness work is wages once the $50 calendar-quarter cash test is met; apply the other families."
       },
       "rule_id": "casual_service_1968",
       "trigger_facts": [
         "amount",
+        "cash_remuneration",
         "casual_service",
+        "domestic_service",
         "month_or_exposure",
         "reporting_unit"
       ],
@@ -1644,13 +1735,62 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "farm_operated_for_profit",
+          "consequence": "deferred",
+          "defers_to": [
+            "agricultural_service"
+          ],
+          "description": "410(f)(5) makes this agricultural labor, and 409(a)(6)(C) excludes 410(f)(5) service from nonbusiness work.",
+          "precedence": 1,
+          "when": {
+            "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit"
+          }
+        },
+        {
+          "case_id": "domestic_service_in_private_home",
+          "consequence": "deferred",
+          "defers_to": [
+            "domestic_service"
+          ],
+          "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work.",
+          "precedence": 2,
+          "when": {
+            "domestic_service": "domestic service in a private home of the employer"
+          }
+        },
+        {
+          "case_id": "business_or_corporate_service",
+          "consequence": "covered",
+          "description": "This is not nonbusiness work (POMS RS 01901.520 A), so this family's cash test does not apply; apply the other families.",
+          "precedence": 3,
+          "when": {
+            "casual_service": "service in the course of the employer's trade or business, or any service for a corporation"
+          }
+        },
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "409(a)(6)(A) excludes noncash pay for nonbusiness work.",
+          "precedence": 4,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
           "capture": "lii_42_409.html",
           "location": "409(a)(6)(A),(C)",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(f)(5)",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
           "authority": "SSA POMS RS 01901.520",
@@ -1673,7 +1813,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash": "noncovered",
         "threshold_id": "casual_cash_annual"
       },
       "rare_exclusion": {
@@ -1756,12 +1895,14 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash pay for nonbusiness work is wages once the $100 calendar-year cash test is met; apply the other families."
       },
       "rule_id": "casual_service_1978",
       "trigger_facts": [
         "amount",
+        "cash_remuneration",
         "casual_service",
+        "domestic_service",
         "month_or_exposure",
         "reporting_unit"
       ],
@@ -1985,7 +2126,6 @@
             ]
           }
         ],
-        "effective_exemption_consequence": "noncovered",
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
         "foreign_ministry": "For taxable years beginning after 1967 through 1972, a US citizen serving abroad must be an employee of a US employer or serve a congregation predominantly composed of US citizens (POMS NL 00711.065 1331.1).",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
@@ -2509,7 +2649,6 @@
             ]
           }
         ],
-        "effective_exemption_consequence": "noncovered",
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
         "foreign_ministry": "Covered if a US citizen, subject to minister exemption and other 411 rules; nationality and residency facts remain necessary.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
@@ -3170,7 +3309,6 @@
             "title": 42
           }
         ],
-        "effective_exemption_consequence": "noncovered",
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
         "foreign_ministry": "Nationality, residency, and totalization rules of 411 apply; clergy exemption facts remain necessary.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
@@ -3498,7 +3636,31 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "commercial_enterprise",
+          "consequence": "covered",
+          "description": "POMS RS 01901.220 A NOTE: domestic service in a commercial enterprise is not excluded.",
+          "overrides": [
+            "enrolled_student_in_local_club"
+          ],
+          "precedence": 1,
+          "when": {
+            "domestic_service": "domestic service for a club or chapter engaged in a commercial enterprise"
+          }
+        },
+        {
+          "case_id": "enrolled_student_in_local_club",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(2); POMS RS 01901.220 A.1 and B.",
+          "precedence": 2,
+          "when": {
+            "domestic_service": "domestic service in a local college club or a local chapter of a college fraternity or sorority",
+            "employer_school_nexus": "club or chapter membership composed mostly of students enrolled in the college (for a club, or of persons directly connected with it)",
+            "enrollment": "enrolled and regularly attending classes at a school, college or university"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -3513,7 +3675,7 @@
           "sha256": "fd39ebaca7c1ea96ac0fcf46f92142356eed890b931b0c5957621067f05f6470"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Domestic service in a local college club or local fraternity/sorority chapter by a student enrolled and regularly attending classes at a school, college, or university is excluded. This regime began in 1951; commercial-enterprise service does not receive this exclusion.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -3677,8 +3839,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The worker is not an enrolled, regularly attending student, or the employer is not a local college club or chapter, so 410(a)(2) does not exclude the service; apply the other families."
       },
       "rule_id": "college_club_domestic_service_1968",
       "trigger_facts": [
@@ -3691,7 +3853,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "registered_organization_employer",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(17), for service after 1956-06-30.",
+          "precedence": 1,
+          "when": {
+            "communist_organization_registration": "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "20 CFR 404.1035, April 1, 2024 edition",
@@ -3718,7 +3890,7 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Former section 410(a)(17) excludes employee service in any year during any part of which the employer organization is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front, or Communist-infiltrated organization. The original provision applies after June 30, 1956; the specific exclusion is repealed on December 19, 2014.",
       "effective_end": "2014-12-18",
       "effective_start": "1968-01-01",
@@ -3907,8 +4079,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The employer is not so registered or ordered, so former 410(a)(17) does not exclude the service; apply the other families."
       },
       "rule_id": "communist_organization_service_1968",
       "trigger_facts": [
@@ -4109,7 +4281,29 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "domestic_farm_service_before_1995",
+          "consequence": "deferred",
+          "defers_to": [
+            "agricultural_service"
+          ],
+          "description": "Until 1995 domestic employees on farms operated for profit were agricultural employees (POMS RS 01402.216 A).",
+          "precedence": 1,
+          "when": {
+            "domestic_service": "domestic service on a farm operated for profit"
+          }
+        },
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "409(a)(6)(A) excludes noncash pay for domestic service in a private home.",
+          "precedence": 2,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
@@ -4122,6 +4316,12 @@
           "capture": "poms_rs_01402215.html",
           "location": "A-B",
           "sha256": "3e91a5b94b9f053a45afbcb34421db1c6d107b6ed0cf1bd4500fd52cb4dc6b07"
+        },
+        {
+          "authority": "SSA POMS RS 01402.216",
+          "capture": "poms_rs_01402216.html",
+          "location": "A, farm domestic employees from 1995",
+          "sha256": "e535abe2282e2e7f6eab472eab2da2df380b201aaaf44454665e23cfd5ceca05"
         },
         {
           "authority": "SSA POMS RS 01901.200",
@@ -4149,7 +4349,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash": "noncovered",
         "threshold_id": "domestic_cash_quarterly"
       },
       "rare_exclusion": {
@@ -4161,11 +4360,12 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash pay from one employer is wages once the $50 calendar-quarter test is met; apply the other families."
       },
       "rule_id": "domestic_service_1968",
       "trigger_facts": [
         "amount",
+        "cash_remuneration",
         "domestic_service",
         "month_or_exposure",
         "reporting_unit"
@@ -4174,7 +4374,38 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "domestic_farm_service_before_1995",
+          "consequence": "deferred",
+          "defers_to": [
+            "agricultural_service"
+          ],
+          "description": "Until 1995 domestic employees on farms operated for profit were agricultural employees (POMS RS 01402.216 A).",
+          "precedence": 1,
+          "when": {
+            "domestic_service": "domestic service on a farm operated for profit"
+          }
+        },
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "409(a)(6)(A) excludes noncash pay for domestic service in a private home.",
+          "precedence": 2,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash"
+          }
+        },
+        {
+          "case_id": "benefit_credit_transition_1994",
+          "consequence": "covered",
+          "description": "For 1994 only the worker still receives earnings credit (one quarter of coverage when total earnings are $620 to $999), but no FICA tax is due (POMS RS 01402.216 A). Keep the benefit-credit and tax channels separate.",
+          "precedence": 3,
+          "when": {
+            "amount": "cash remuneration from one employer in 1994 of at least $50 but less than $1,000"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
@@ -4209,7 +4440,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash": "noncovered",
         "tax_threshold": 1000,
         "threshold_id": "domestic_cash_annual"
       },
@@ -4222,11 +4452,12 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash pay from one employer is wages once the $1,000 annual test is met; apply the other families."
       },
       "rule_id": "domestic_service_1994",
       "trigger_facts": [
         "amount",
+        "cash_remuneration",
         "domestic_service",
         "month_or_exposure",
         "reporting_unit"
@@ -4235,7 +4466,27 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "noncash_remuneration",
+          "consequence": "noncovered",
+          "description": "409(a)(6)(A) excludes noncash pay for domestic service in a private home.",
+          "precedence": 1,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash"
+          }
+        },
+        {
+          "case_id": "minor_not_principal_occupation",
+          "consequence": "noncovered",
+          "description": "410(a)(21); POMS RS 01402.216 B, for service after 1994.",
+          "precedence": 2,
+          "when": {
+            "age": "under 18 during any portion of the year",
+            "occupation": "domestic service is not the individual's principal occupation"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "IRS Publication 926 (2026)",
@@ -4332,8 +4583,6 @@
         ],
         "domestic_farm_service": "domestic_service",
         "employer_paid_employee_fica_included_in_wages": false,
-        "minor_nonprincipal_occupation": "noncovered",
-        "noncash": "noncovered",
         "rounding": {
           "authority": "42 USC 409(c)",
           "mode": "nearest_dollar_half_up",
@@ -4352,11 +4601,13 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash pay from one employer is wages once the annual domestic threshold is met; apply the other families."
       },
       "rule_id": "domestic_service_1995",
       "trigger_facts": [
+        "age",
         "amount",
+        "cash_remuneration",
         "domestic_service",
         "enrollment",
         "family_service",
@@ -4446,7 +4697,7 @@
           "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9"
         }
       ],
-      "consequence": "covered",
+      "consequence": "deferred",
       "description": "The 3121(w) church employer election did not exist; ordinary church employee coverage follows the then effective nonprofit employer waiver and small remuneration rules.",
       "effective_end": "1983-12-31",
       "effective_start": "1968-01-01",
@@ -4574,8 +4825,11 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "nonprofit_service"
+        ],
+        "description": "No 3121(w) church employer election existed. Church employee service follows the nonprofit family's waiver and small remuneration rules."
       },
       "rule_id": "electing_church_1968_1983",
       "trigger_facts": [
@@ -5028,7 +5282,44 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "agreement_with_lower_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C).",
+          "precedence": 1,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_with_statutory_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "418(c)(8); the referenced statutory threshold applies.",
+          "precedence": 2,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_without_election_exclusion",
+          "consequence": "covered",
+          "description": "Taxes apply from the first dollar (POMS SL 30001.357 C).",
+          "precedence": 3,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          }
+        },
+        {
+          "case_id": "outside_agreement",
+          "consequence": "noncovered",
+          "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02.",
+          "precedence": 4,
+          "when": {
+            "section_218_position": "not covered"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -5055,7 +5346,7 @@
           "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "covered",
       "description": "Election official/worker coverage depends on the Section 218 agreement. An agreement with no election exclusion covers remuneration from the first dollar; a stated lower exclusion threshold controls if the agreement uses one. The statutory ceiling is the referenced threshold. Before mandatory nonmember coverage, state/local service outside an agreement remains excluded.",
       "effective_end": "1977-12-31",
       "effective_start": "1968-01-01",
@@ -5196,8 +5487,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not state or local election work, so this family does not exclude it; apply the other families."
       },
       "rule_id": "election_work_1968",
       "trigger_facts": [
@@ -5214,7 +5505,44 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "agreement_with_lower_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C).",
+          "precedence": 1,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_with_statutory_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "418(c)(8); the referenced statutory threshold applies.",
+          "precedence": 2,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_without_election_exclusion",
+          "consequence": "covered",
+          "description": "Taxes apply from the first dollar (POMS SL 30001.357 C).",
+          "precedence": 3,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          }
+        },
+        {
+          "case_id": "outside_agreement",
+          "consequence": "noncovered",
+          "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02.",
+          "precedence": 4,
+          "when": {
+            "section_218_position": "not covered"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -5241,7 +5569,7 @@
           "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "covered",
       "description": "Election official/worker coverage depends on the Section 218 agreement. An agreement with no election exclusion covers remuneration from the first dollar; a stated lower exclusion threshold controls if the agreement uses one. The statutory ceiling is the referenced threshold. Before mandatory nonmember coverage, state/local service outside an agreement remains excluded.",
       "effective_end": "1991-07-01",
       "effective_start": "1978-01-01",
@@ -5382,8 +5710,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not state or local election work, so this family does not exclude it; apply the other families."
       },
       "rule_id": "election_work_1978",
       "trigger_facts": [
@@ -5400,7 +5728,55 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "agreement_with_lower_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C).",
+          "precedence": 1,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_with_statutory_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "418(c)(8); the referenced statutory threshold applies.",
+          "precedence": 2,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_without_election_exclusion",
+          "consequence": "covered",
+          "description": "Taxes apply from the first dollar (POMS SL 30001.357 C).",
+          "precedence": 3,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          }
+        },
+        {
+          "case_id": "outside_agreement_nonmember",
+          "consequence": "covered_above_threshold",
+          "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)).",
+          "precedence": 4,
+          "when": {
+            "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality",
+            "section_218_position": "not covered"
+          }
+        },
+        {
+          "case_id": "outside_agreement_member",
+          "consequence": "noncovered",
+          "description": "The state and local exclusion in 410(a)(7) applies.",
+          "precedence": 5,
+          "when": {
+            "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality",
+            "section_218_position": "not covered"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -5427,7 +5803,7 @@
           "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "covered",
       "description": "Election official/worker coverage depends on the Section 218 agreement. An agreement with no election exclusion covers remuneration from the first dollar; a stated lower exclusion threshold controls if the agreement uses one. The statutory ceiling is the referenced threshold. For service after July 1, 1991, the mandatory state/local nonmember rule applies except election remuneration below the statutory annual threshold.",
       "effective_end": "1994-12-31",
       "effective_start": "1991-07-02",
@@ -5590,8 +5966,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not state or local election work, so this family does not exclude it; apply the other families."
       },
       "rule_id": "election_work_1991_0702",
       "trigger_facts": [
@@ -5608,7 +5984,55 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "agreement_with_lower_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C).",
+          "precedence": 1,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_with_statutory_threshold",
+          "consequence": "covered_above_threshold",
+          "description": "418(c)(8); the referenced statutory threshold applies.",
+          "precedence": 2,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
+          }
+        },
+        {
+          "case_id": "agreement_without_election_exclusion",
+          "consequence": "covered",
+          "description": "Taxes apply from the first dollar (POMS SL 30001.357 C).",
+          "precedence": 3,
+          "when": {
+            "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          }
+        },
+        {
+          "case_id": "outside_agreement_nonmember",
+          "consequence": "covered_above_threshold",
+          "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)).",
+          "precedence": 4,
+          "when": {
+            "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality",
+            "section_218_position": "not covered"
+          }
+        },
+        {
+          "case_id": "outside_agreement_member",
+          "consequence": "noncovered",
+          "description": "The state and local exclusion in 410(a)(7) applies.",
+          "precedence": 5,
+          "when": {
+            "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality",
+            "section_218_position": "not covered"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -5635,7 +6059,7 @@
           "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "covered",
       "description": "Election official/worker coverage depends on the Section 218 agreement. An agreement with no election exclusion covers remuneration from the first dollar; a stated lower exclusion threshold controls if the agreement uses one. The statutory ceiling is the referenced threshold. For service after July 1, 1991, the mandatory state/local nonmember rule applies except election remuneration below the statutory annual threshold.",
       "effective_end": "2026-12-31",
       "effective_start": "1995-01-01",
@@ -5779,8 +6203,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not state or local election work, so this family does not exclude it; apply the other families."
       },
       "rule_id": "election_work_1995",
       "trigger_facts": [
@@ -5797,7 +6221,56 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "corporate_employer",
+          "consequence": "covered",
+          "description": "The family relationship exclusion does not apply to a corporation; POMS RS 01901.250 B.1 NOTE, subject to other exclusions.",
+          "precedence": 1,
+          "when": {
+            "incorporation": "corporation is the employer"
+          }
+        },
+        {
+          "case_id": "parent_domestic_care_exception",
+          "consequence": "covered",
+          "description": "410(a)(3)(B)(i)-(iii), from 1968; POMS RS 01901.250.",
+          "overrides": [
+            "parent_for_child_nonbusiness_or_domestic"
+          ],
+          "precedence": 2,
+          "when": {
+            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter"
+          }
+        },
+        {
+          "case_id": "child_under_21",
+          "consequence": "noncovered",
+          "description": "410(a)(3) before the 1987 amendment.",
+          "precedence": 3,
+          "when": {
+            "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship)"
+          }
+        },
+        {
+          "case_id": "spouse_employee",
+          "consequence": "noncovered",
+          "description": "410(a)(3) before the 1987 amendment.",
+          "precedence": 4,
+          "when": {
+            "family_service": "individual employed by a spouse (for a partnership, every partner has this relationship)"
+          }
+        },
+        {
+          "case_id": "parent_for_child_nonbusiness_or_domestic",
+          "consequence": "noncovered",
+          "description": "410(a)(3)(B).",
+          "precedence": 5,
+          "when": {
+            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -5812,7 +6285,7 @@
           "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Service by a child under 21 for a parent and service for a spouse is excluded. Service by a parent for a son or daughter is excluded if outside the employer trade/business or domestic in the private home, except qualifying domestic care from 1968. Corporation employment is not family employment; partnership exclusion requires a disqualifying relationship to every partner.",
       "effective_end": "1987-12-31",
       "effective_start": "1968-01-01",
@@ -5882,8 +6355,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "No family-service exclusion applies; apply the other families."
       },
       "rule_id": "family_service_1968",
       "trigger_facts": [
@@ -5899,10 +6372,31 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "corporate_employer",
+          "consequence": "covered",
+          "description": "The family relationship exclusion does not apply to a corporation; POMS RS 01901.250 B.1 NOTE, subject to other exclusions.",
+          "precedence": 1,
+          "when": {
+            "incorporation": "corporation is the employer"
+          }
+        },
+        {
+          "case_id": "parent_domestic_care_exception",
+          "consequence": "covered",
+          "description": "410(a)(3)(B)(i)-(iii), from 1968; POMS RS 01901.250.",
+          "overrides": [
+            "parent_for_child_nonbusiness_or_domestic"
+          ],
+          "precedence": 2,
+          "when": {
+            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter"
+          }
+        },
+        {
           "case_id": "parent_in_child_trade_or_business",
           "consequence": "covered",
           "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions.",
-          "precedence": 1,
+          "precedence": 3,
           "when": {
             "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
           }
@@ -5911,18 +6405,45 @@
           "case_id": "spouse_in_trade_or_business",
           "consequence": "covered",
           "description": "The spousal nonbusiness exclusion does not exclude trade-or-business employment.",
-          "precedence": 2,
+          "precedence": 4,
           "when": {
             "family_service": "spouse employed in the employer's trade or business"
           }
         },
         {
-          "case_id": "corporate_employer",
-          "consequence": "covered",
-          "description": "The family relationship exclusion does not apply to a corporation; POMS RS 01901.250 B.1 NOTE, subject to other exclusions.",
-          "precedence": 3,
+          "case_id": "child_under_18",
+          "consequence": "noncovered",
+          "description": "410(a)(3)(A).",
+          "precedence": 5,
           "when": {
-            "incorporation": "corporation is the employer"
+            "family_service": "child under 18 employed by a parent (for a partnership, every partner has this relationship)"
+          }
+        },
+        {
+          "case_id": "child_under_21_nonbusiness_or_domestic",
+          "consequence": "noncovered",
+          "description": "410(a)(3)(B).",
+          "precedence": 6,
+          "when": {
+            "family_service": "child under 21 employed by a parent in service not in the course of the parent's trade or business, or in domestic service in the parent's private home (for a partnership, every partner has this relationship)"
+          }
+        },
+        {
+          "case_id": "spouse_nonbusiness_or_domestic",
+          "consequence": "noncovered",
+          "description": "410(a)(3)(B).",
+          "precedence": 7,
+          "when": {
+            "family_service": "individual employed by a spouse in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+          }
+        },
+        {
+          "case_id": "parent_for_child_nonbusiness_or_domestic",
+          "consequence": "noncovered",
+          "description": "410(a)(3)(B).",
+          "precedence": 8,
+          "when": {
+            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
           }
         }
       ],
@@ -5952,7 +6473,7 @@
           "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Service by a child under 18 for a parent is excluded; age 18-20 is excluded only for domestic service in the parent private home or service outside the employer trade/business. Spousal trade/business employment is covered subject to other exclusions; spousal nonbusiness/private-home domestic service is excluded. Parent-for-child nonbusiness exclusion and the special domestic-care exception continue.",
       "effective_end": "2026-12-31",
       "effective_start": "1988-01-01",
@@ -6063,8 +6584,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "The qualifying family-service exclusions apply when none of the stated trade-or-business or corporation exceptions applies; apply the remaining statutory conditions and other families."
+        "consequence": "covered",
+        "description": "No family-service exclusion applies; apply the other families."
       },
       "rule_id": "family_service_1988",
       "trigger_facts": [
@@ -6122,21 +6643,69 @@
           }
         },
         {
+          "case_id": "fhlb_retroactive_coverage",
+          "consequence": "covered",
+          "description": "Public Law 92-603 section 125(a)(2) extends the 410(a)(6)(B)(ii) Federal home loan bank exception back to this service.",
+          "overrides": [
+            "exempt_1950_instrumentality_system"
+          ],
+          "precedence": 3,
+          "when": {
+            "federal_service": "employee of a Federal home loan bank on 1973-01-01, for service after 1966-12-31, with taxes equal to the 3101 and 3111 taxes on all such employees' service paid by 1973-07-01 or a later agreed date"
+          }
+        },
+        {
           "case_id": "exempt_1950_instrumentality_system",
           "consequence": "noncovered",
           "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
-            "federal_service": "exempt-1950 instrumentality and retirement system"
+            "federal_service": "service for an instrumentality exempt from the former IRC 1410 tax on 1950-12-31 and covered by a retirement system the instrumentality established, other than service the January 1983 text of former 410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; the listed Federal banks and credit associations, Federal Reserve Banks (Federal home loan banks only from 1973) and Federal Credit Unions; Production and Marketing Administration committees; and nonappropriated-fund exchange and welfare employees of the Defense Department and the Coast Guard"
           }
         },
         {
           "case_id": "president_congress_legislative",
           "consequence": "noncovered",
           "description": "410(a)(6)(C) as in effect in January 1983.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "occupation": "President/Vice President/Congress/legislative employee"
+          }
+        },
+        {
+          "case_id": "federal_penal_inmate",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(iii) as in effect in January 1983.",
+          "precedence": 6,
+          "when": {
+            "occupation": "inmate of a penal institution of the United States"
+          }
+        },
+        {
+          "case_id": "federal_hospital_student_employee",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(iv) as in effect in January 1983.",
+          "precedence": 7,
+          "when": {
+            "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
+          }
+        },
+        {
+          "case_id": "temporary_emergency_employee",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(v) as in effect in January 1983.",
+          "precedence": 8,
+          "when": {
+            "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
+          }
+        },
+        {
+          "case_id": "other_federal_retirement_system",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(vi) as in effect in January 1983.",
+          "precedence": 9,
+          "when": {
+            "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
           }
         }
       ],
@@ -6148,10 +6717,22 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "POMS RS 01901.340 (2024-06-14)",
           "capture": "poms_rs_01901340.html",
           "location": "A-C",
           "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c"
+        },
+        {
+          "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+          "capture": "uscode_1994_42_410.html",
+          "location": "1983 amendment notes quoting former 410(a)(5) and (a)(6)(A)-(C)",
+          "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b"
         }
       ],
       "consequence": "covered",
@@ -6208,21 +6789,15 @@
         ],
         "coverage_default": "covered unless a statutory exclusion applies",
         "federal_home_loan_bank_transition": {
-          "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125).",
+          "conditional_retroactivity": "For employees of a Federal home loan bank on January 1, 1973, service after December 31, 1966 (the last day of the sixth calendar year before 1972) is covered if taxes equal to the 3101 and 3111 taxes on all such employees' service are paid by July 1, 1973 or a later agreed date (Public Law 92-603 section 125(a)(2)).",
           "enactment": "1972-10-30",
           "ordinary_coverage_start": "1973-01-01"
-        },
-        "persistent_exclusions": [
-          "Federal penal inmate",
-          "specified Federal hospital student employees other than medical/dental interns/residents",
-          "temporary emergency employees",
-          "other independent statutory exclusions"
-        ]
+        }
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
       },
       "rule_id": "federal_1968_1972",
       "trigger_facts": [
@@ -6260,7 +6835,7 @@
           "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
           "precedence": 3,
           "when": {
-            "federal_service": "exempt-1950 instrumentality and retirement system"
+            "federal_service": "service for an instrumentality exempt from the former IRC 1410 tax on 1950-12-31 and covered by a retirement system the instrumentality established, other than service the January 1983 text of former 410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; the listed Federal banks and credit associations, Federal Reserve Banks, Federal home loan banks and Federal Credit Unions; Production and Marketing Administration committees; and nonappropriated-fund exchange and welfare employees of the Defense Department and the Coast Guard"
           }
         },
         {
@@ -6270,6 +6845,42 @@
           "precedence": 4,
           "when": {
             "occupation": "President/Vice President/Congress/legislative employee"
+          }
+        },
+        {
+          "case_id": "federal_penal_inmate",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(iii) as in effect in January 1983.",
+          "precedence": 5,
+          "when": {
+            "occupation": "inmate of a penal institution of the United States"
+          }
+        },
+        {
+          "case_id": "federal_hospital_student_employee",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(iv) as in effect in January 1983.",
+          "precedence": 6,
+          "when": {
+            "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
+          }
+        },
+        {
+          "case_id": "temporary_emergency_employee",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(v) as in effect in January 1983.",
+          "precedence": 7,
+          "when": {
+            "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
+          }
+        },
+        {
+          "case_id": "other_federal_retirement_system",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(6)(C)(vi) as in effect in January 1983.",
+          "precedence": 8,
+          "when": {
+            "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
           }
         }
       ],
@@ -6281,10 +6892,22 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "POMS RS 01901.340 (2024-06-14)",
           "capture": "poms_rs_01901340.html",
           "location": "A-C",
           "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c"
+        },
+        {
+          "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+          "capture": "uscode_1994_42_410.html",
+          "location": "1983 amendment notes quoting former 410(a)(5) and (a)(6)(A)-(C)",
+          "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b"
         }
       ],
       "consequence": "covered",
@@ -6342,21 +6965,15 @@
         ],
         "coverage_default": "covered unless a statutory exclusion applies",
         "federal_home_loan_bank_transition": {
-          "conditional_retroactivity": "For employees present on January 1, 1973, service after 1965 may be covered if required taxes paid by July 1, 1973 or agreed later date (Public Law 92-603 section 125).",
+          "conditional_retroactivity": "For employees of a Federal home loan bank on January 1, 1973, service after December 31, 1966 (the last day of the sixth calendar year before 1972) is covered if taxes equal to the 3101 and 3111 taxes on all such employees' service are paid by July 1, 1973 or a later agreed date (Public Law 92-603 section 125(a)(2)).",
           "enactment": "1972-10-30",
           "ordinary_coverage_start": "1973-01-01"
-        },
-        "persistent_exclusions": [
-          "Federal penal inmate",
-          "specified Federal hospital student employees other than medical/dental interns/residents",
-          "temporary emergency employees",
-          "other independent statutory exclusions"
-        ]
+        }
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when none of the stated statutory exclusion cases applies."
+        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
       },
       "rule_id": "federal_1973_1983",
       "trigger_facts": [
@@ -7467,7 +8084,29 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "child_under_18_for_parent",
+          "consequence": "deferred",
+          "defers_to": [
+            "family_service"
+          ],
+          "description": "410(a)(20) does not reach 410(a)(3)(A) service; the family service family decides.",
+          "precedence": 1,
+          "when": {
+            "family_service": "service described in 410(a)(3)(A): a child under 18 employed by a parent"
+          }
+        },
+        {
+          "case_id": "qualifying_catch_share_arrangement",
+          "consequence": "covered",
+          "description": "410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
+          "precedence": 2,
+          "when": {
+            "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, meeting the additional-cash and crew tests that the conditional_1996_clarification parameter selects by the payor's FICA treatment"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "20 CFR 404.1031, April 1, 2024 edition",
@@ -7846,7 +8485,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The arrangement does not qualify under 410(a)(20), so the ordinary employment rules apply; apply the other families."
       },
       "rule_id": "fishing_crew_share_service_1989",
       "trigger_facts": [
@@ -7866,7 +8505,29 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "child_under_18_for_parent",
+          "consequence": "deferred",
+          "defers_to": [
+            "family_service"
+          ],
+          "description": "410(a)(20) does not reach 410(a)(3)(A) service; the family service family decides.",
+          "precedence": 1,
+          "when": {
+            "family_service": "service described in 410(a)(3)(A): a child under 18 employed by a parent"
+          }
+        },
+        {
+          "case_id": "qualifying_catch_share_arrangement",
+          "consequence": "covered",
+          "description": "410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
+          "precedence": 2,
+          "when": {
+            "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew averaged fewer than 10 over the preceding 4 calendar quarters, with no other pay except cash of at most $100 per trip that depends on a minimum catch and is paid solely for traditional additional duties"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "20 CFR 404.1031, April 1, 2024 edition",
@@ -8172,7 +8833,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The arrangement does not qualify under 410(a)(20), so the ordinary employment rules apply; apply the other families."
       },
       "rule_id": "fishing_crew_share_service_1995",
       "trigger_facts": [
@@ -8192,7 +8853,18 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "temporary_agricultural_admission",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(1); POMS RS 01901.120 A.",
+          "precedence": 1,
+          "when": {
+            "agricultural_service": "agricultural labor",
+            "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -8207,7 +8879,7 @@
           "sha256": "f1a38bd51fd4856cedf573081ecaefcf681de65ba82b76b053937838f877de23"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Agricultural service by foreign workers lawfully admitted temporarily to the United States to perform agricultural labor is excluded. POMS dates the all-country temporary foreign agricultural-worker exclusion to after 1956.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -8370,8 +9042,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The worker was not admitted temporarily to perform agricultural labor, so 410(a)(1) does not exclude the service; apply the other families."
       },
       "rule_id": "foreign_agricultural_service_1968",
       "trigger_facts": [
@@ -8382,13 +9054,53 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "us_citizen_in_united_states",
+          "consequence": "covered",
+          "description": "411(c)(2)(C) makes this service a trade or business: covered as self-employment (POMS RS 01802.050).",
+          "overrides": [
+            "direct_foreign_government",
+            "qualifying_wholly_owned_instrumentality"
+          ],
+          "precedence": 1,
+          "when": {
+            "citizenship": "United States citizen",
+            "foreign_government_service": "employee of a foreign government or of a wholly owned instrumentality meeting 410(a)(12)",
+            "place_of_work": "United States"
+          }
+        },
+        {
+          "case_id": "direct_foreign_government",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(11); POMS RS 01901.400 A.1.",
+          "precedence": 2,
+          "when": {
+            "foreign_government_service": "employee of a foreign government, including a consular or other officer or employee or a nondiplomatic representative"
+          }
+        },
+        {
+          "case_id": "qualifying_wholly_owned_instrumentality",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(12); POMS RS 01901.400 A.2.",
+          "precedence": 3,
+          "when": {
+            "foreign_government_service": "employee of an instrumentality wholly owned by a foreign government, in service similar to that performed abroad by United States Government employees, with a Secretary of State certification of an equivalent foreign exemption"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(11)-(12)",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(2)(C)",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
           "authority": "SSA POMS RS 01802.050",
@@ -8403,7 +9115,7 @@
           "sha256": "bcd09bd15e01e94ab9d9b46a82c27a3c8e06bd19214350809e0968196ec9252a"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Direct foreign-government service is excluded from employment. For a wholly owned instrumentality the exclusion also requires similar foreign-country service by U.S. government employees and State Department certification of reciprocal exemption. A U.S. citizen performing the excepted services in the United States is compulsorily covered as self-employed; failure of instrumentality conditions leaves ordinary employment coverage applicable.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -8508,20 +9220,45 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Neither 410(a)(11) nor (12) applies; an instrumentality that fails a 410(a)(12) condition is covered employment (POMS RS 01802.050 b). Apply the other families."
       },
       "rule_id": "foreign_government_service_1968",
       "trigger_facts": [
+        "citizenship",
         "employee_self_or_mixed",
         "foreign_government_service",
-        "nonresident_alien_status"
+        "nonresident_alien_status",
+        "place_of_work"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "foreign_craft_noncitizen",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(4)(A) and (B)(i).",
+          "precedence": 1,
+          "when": {
+            "assignment": "employed on and in connection with a vessel that is not an American vessel, or an aircraft that is not an American aircraft",
+            "citizenship": "not a United States citizen",
+            "place_of_work": "outside the United States"
+          }
+        },
+        {
+          "case_id": "foreign_craft_non_american_employer",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(4)(A) and (B)(ii).",
+          "precedence": 2,
+          "when": {
+            "american_employer": "employer is not an American employer",
+            "assignment": "employed on and in connection with a vessel that is not an American vessel, or an aircraft that is not an American aircraft",
+            "place_of_work": "outside the United States"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -8536,7 +9273,7 @@
           "sha256": "95291729040678c2604e901962e85f62b7b33da783e8433bb7f42d017badfcdd"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "For a non-American vessel/aircraft, service is excluded when the individual is employed on/in connection with it outside the United States and either the individual is not a U.S. citizen or the employer is not an American employer. This formulation has applied since 1955.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -8703,20 +9440,35 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "410(a)(4) does not exclude the service; apply the other families."
       },
       "rule_id": "foreign_vessel_aircraft_service_1968",
       "trigger_facts": [
+        "american_employer",
         "assignment",
+        "citizenship",
         "employee_self_or_mixed",
-        "nonresident_alien_status"
+        "nonresident_alien_status",
+        "place_of_work"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "philippine_resident_h2_in_guam",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(18), for service after 1960.",
+          "precedence": 1,
+          "when": {
+            "country_of_residence": "Republic of the Philippines",
+            "place_of_work": "Guam",
+            "visa_status": "nonimmigrant temporarily in Guam under 8 U.S.C. 1101(a)(15)(H)(ii)"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
@@ -8731,7 +9483,7 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Section 410(a)(18) excludes service performed in Guam by a resident of the Republic of the Philippines temporarily in Guam as a nonimmigrant admitted under 8 USC 1101(a)(15)(H)(ii). Public Law 86-778 section 103(d) added this exclusion for services after 1960. Philippine residence, Guam work location and the specified temporary admission are separate required facts.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -8906,8 +9658,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "At least one 410(a)(18) condition fails, so it does not exclude the service; apply the other families."
       },
       "rule_id": "guam_philippines_temporary_service_1968",
       "trigger_facts": [
@@ -8921,13 +9673,43 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "us_citizen_in_united_states",
+          "consequence": "covered",
+          "description": "411(c)(2)(C) makes this service a trade or business: covered as self-employment (POMS RS 01802.050 c).",
+          "overrides": [
+            "designated_international_organization"
+          ],
+          "precedence": 1,
+          "when": {
+            "citizenship": "United States citizen",
+            "international_organization_service": "employee of a designated international organization",
+            "place_of_work": "United States"
+          }
+        },
+        {
+          "case_id": "designated_international_organization",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(15); POMS RS 01901.400 A.3.",
+          "precedence": 2,
+          "when": {
+            "international_organization_service": "employee of a public international organization designated under the International Organizations Immunities Act, while the designation is in effect and its conditions are met"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(15), 1994 amendment/effective-date notes",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(2)(C)",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
           "authority": "SSA POMS RS 01802.050",
@@ -8942,7 +9724,7 @@
           "sha256": "bcd09bd15e01e94ab9d9b46a82c27a3c8e06bd19214350809e0968196ec9252a"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Employment for a public international organization designated under the International Organizations Immunities Act, while the designation and conditions remain effective, is excluded. U.S. citizens performing these services in the United States are covered as self-employed.",
       "effective_end": "1994-12-31",
       "effective_start": "1968-01-01",
@@ -9032,26 +9814,70 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The organization is not designated, or the designation's conditions are not met, so 410(a)(15) does not exclude the service; apply the other families."
       },
       "rule_id": "international_organization_service_1968",
       "trigger_facts": [
+        "citizenship",
         "employee_self_or_mixed",
         "international_organization_service",
-        "nonresident_alien_status"
+        "nonresident_alien_status",
+        "place_of_work"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "transferred_federal_employee_410r",
+          "consequence": "covered",
+          "description": "410(r) makes this service employment.",
+          "overrides": [
+            "designated_international_organization"
+          ],
+          "precedence": 1,
+          "when": {
+            "federal_service": "transferred to the organization under 5 U.S.C. 3582, after Federal service that was employment, with a right to reemployment under section 3582"
+          }
+        },
+        {
+          "case_id": "us_citizen_in_united_states",
+          "consequence": "covered",
+          "description": "411(c)(2)(C) makes this service a trade or business: covered as self-employment (POMS RS 01802.050 c).",
+          "overrides": [
+            "designated_international_organization"
+          ],
+          "precedence": 2,
+          "when": {
+            "citizenship": "United States citizen",
+            "international_organization_service": "employee of a designated international organization",
+            "place_of_work": "United States"
+          }
+        },
+        {
+          "case_id": "designated_international_organization",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(15); POMS RS 01901.400 A.3.",
+          "precedence": 3,
+          "when": {
+            "international_organization_service": "employee of a public international organization designated under the International Organizations Immunities Act, while the designation is in effect and its conditions are met"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(15); 410(r); Pub L 103-296 section 319(c) effective-date note",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(2)(C)",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
           "authority": "SSA POMS RS 01802.050",
@@ -9066,7 +9892,7 @@
           "sha256": "bcd09bd15e01e94ab9d9b46a82c27a3c8e06bd19214350809e0968196ec9252a"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "The international-organization exclusion continues, except a transferred Federal employee whose immediately preceding Federal service was covered and who retains reemployment entitlement under 5 USC 3582 remains covered employment under section 410(r). U.S. citizens in U.S. service otherwise excepted enter self-employment.",
       "effective_end": "2026-12-31",
       "effective_start": "1995-01-01",
@@ -9130,21 +9956,57 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The organization is not designated, or the designation's conditions are not met, so 410(a)(15) does not exclude the service; apply the other families."
       },
       "rule_id": "international_organization_service_1995",
       "trigger_facts": [
+        "citizenship",
         "employee_self_or_mixed",
         "federal_service",
         "international_organization_service",
-        "nonresident_alien_status"
+        "nonresident_alien_status",
+        "place_of_work"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "under_18_delivery",
+          "consequence": "noncovered",
+          "description": "410(a)(14)(A); 411(c)(2) gives no self-employment exception for it.",
+          "precedence": 1,
+          "when": {
+            "age": "under 18",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution"
+          }
+        },
+        {
+          "case_id": "fixed_price_vendor_adult",
+          "consequence": "covered",
+          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment.",
+          "precedence": 2,
+          "when": {
+            "age": "18 or older",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+          }
+        },
+        {
+          "case_id": "fixed_price_vendor_minor",
+          "consequence": "noncovered",
+          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18.",
+          "precedence": 3,
+          "when": {
+            "age": "under 18",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 104-188, August 20, 1996, 110 Stat. 1764",
@@ -9403,7 +10265,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Other newspaper service follows the ordinary employee or trade or business rules; apply the other families."
       },
       "rule_id": "newspaper_service_1968",
       "trigger_facts": [
@@ -9418,7 +10280,54 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "section_3508_direct_seller",
+          "consequence": "covered",
+          "description": "410(q) applies 3508; a qualifying direct seller is self-employed (POMS RS 01802.232 B.2). If a condition fails, common-law control decides (B.3).",
+          "overrides": [
+            "under_18_delivery",
+            "fixed_price_vendor_minor"
+          ],
+          "precedence": 1,
+          "when": {
+            "direct_seller_contract": "trade or business of delivering or distributing newspapers or shopping news (including related services); substantially all pay related to sales or other output rather than hours; written contract providing the individual is not an employee for federal tax purposes"
+          }
+        },
+        {
+          "case_id": "under_18_delivery",
+          "consequence": "noncovered",
+          "description": "410(a)(14)(A); 411(c)(2) gives no self-employment exception for it.",
+          "precedence": 2,
+          "when": {
+            "age": "under 18",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution"
+          }
+        },
+        {
+          "case_id": "fixed_price_vendor_adult",
+          "consequence": "covered",
+          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment.",
+          "precedence": 3,
+          "when": {
+            "age": "18 or older",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+          }
+        },
+        {
+          "case_id": "fixed_price_vendor_minor",
+          "consequence": "noncovered",
+          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18.",
+          "precedence": 4,
+          "when": {
+            "age": "under 18",
+            "employee_self_or_mixed": "employee",
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 104-188, August 20, 1996, 110 Stat. 1764",
@@ -9454,6 +10363,12 @@
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(14); historical amendment notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(q)",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -9614,7 +10529,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Other newspaper service follows the ordinary employee or trade or business rules; apply the other families."
       },
       "rule_id": "newspaper_service_1996",
       "trigger_facts": [
@@ -9646,7 +10561,8 @@
           "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
           "precedence": 2,
           "when": {
-            "nonprofit_coverage_waiver": "none or terminated"
+            "nonprofit_coverage_waiver": "none or terminated",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         }
       ],
@@ -9676,7 +10592,7 @@
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Before mandatory coverage, eligible nonprofit employees require an effective actual or deemed waiver; the separate small-remuneration exclusion applies.",
       "effective_end": "1977-12-31",
       "effective_start": "1968-01-01",
@@ -9759,8 +10675,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+        "consequence": "covered",
+        "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
       },
       "rule_id": "nonprofit_1968_1977",
       "trigger_facts": [
@@ -9792,7 +10708,8 @@
           "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
           "precedence": 2,
           "when": {
-            "nonprofit_coverage_waiver": "none or terminated"
+            "nonprofit_coverage_waiver": "none or terminated",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         }
       ],
@@ -9828,7 +10745,7 @@
           "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Waiver requirement continues; from 1978 the nonprofit small-remuneration rule uses $100 per employer per year.",
       "effective_end": "1983-12-31",
       "effective_start": "1978-01-01",
@@ -9945,8 +10862,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "Service for the qualifying nonprofit is excluded absent an effective actual or deemed waiver covering the worker."
+        "consequence": "covered",
+        "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
       },
       "rule_id": "nonprofit_1978_1983",
       "trigger_facts": [
@@ -9961,7 +10878,21 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "csrs_required_nonprofit_employee",
+          "consequence": "deferred",
+          "defers_to": [
+            "federal_retirement_service"
+          ],
+          "description": "Public Law 98-369 section 2601(e)(1) treats this service as service for a United States instrumentality under 410(a)(5); the federal family decides.",
+          "precedence": 1,
+          "when": {
+            "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service",
+            "nonprofit_organization": "501(c)(3) organization"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Pub. L. 98-21, 97 Stat. 65 (1983)",
@@ -9979,6 +10910,12 @@
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "note on Pub. L. 98-369 section 2601(e), services performed for nonprofit organizations by Federal employees",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -10106,11 +11043,12 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
       },
       "rule_id": "nonprofit_1984_2026",
       "trigger_facts": [
         "amount",
+        "federal_retirement_system",
         "month_or_exposure",
         "nonprofit_organization",
         "reporting_unit"
@@ -10252,7 +11190,19 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "q_cultural_exchange_program_service",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(19), from 1994-10-01; POMS RS 01901.740 C.3.",
+          "precedence": 1,
+          "when": {
+            "assignment": "service in the United States in the international cultural exchange program, for the qualified employer through which Q status was obtained",
+            "nonresident_alien_status": "nonresident alien",
+            "visa_status": "Q nonimmigrant temporarily present in the United States"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -10267,7 +11217,7 @@
           "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Nonimmigrant nonresident Q cultural exchange visitors are excluded for U.S. services participating in their international cultural exchange program for the qualified employer through which Q status was obtained. Work outside the program is subject to ordinary coverage rules.",
       "effective_end": "2026-12-31",
       "effective_start": "1994-10-01",
@@ -10348,19 +11298,32 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Work outside the Q program is not excluded by 410(a)(19); apply the other families."
       },
       "rule_id": "nonresident_alien_cultural_exchange_service_1994_1001",
       "trigger_facts": [
+        "assignment",
         "employee_self_or_mixed",
-        "nonresident_alien_status"
+        "nonresident_alien_status",
+        "visa_status"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "f1_j1_admission_purpose_service",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(19); POMS RS 01901.740 C.",
+          "precedence": 1,
+          "when": {
+            "nonresident_alien_status": "nonresident alien temporarily present as an F-1 or J-1 nonimmigrant",
+            "statutory_student_service": "authorized service performed to carry out the purpose of the F or J admission"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -10375,7 +11338,7 @@
           "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "F-1 academic students and J-1 exchange visitors temporarily in the U.S. as nonresident aliens are excluded only for authorized services carrying out their admission purpose. F-2/J-2 dependent work and unauthorized work are subject to ordinary coverage rules. F/J exclusion began in 1962. M-1 and Q-1 changes are separate subfamilies.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -10511,8 +11474,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "F-2 and J-2 dependents' work and unauthorized work are covered unless another 410 exception applies (POMS RS 01901.740 C); apply the other families."
       },
       "rule_id": "nonresident_alien_service_1968",
       "trigger_facts": [
@@ -10674,7 +11637,19 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "m1_admission_purpose_service",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(19); POMS RS 01901.740 C.1.b.",
+          "precedence": 1,
+          "when": {
+            "nonresident_alien_status": "nonresident alien",
+            "statutory_student_service": "authorized service performed to carry out the purpose of the M admission",
+            "visa_status": "M-1 nonimmigrant temporarily present in the United States"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
@@ -10701,7 +11676,7 @@
           "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "In the verified calendar-year window after the 1988 adding act, section 410(a)(19) excludes services by a nonresident alien temporarily present in M status only when the services carry out the purpose for which the individual was admitted. The earlier original-applicability question remains open separately.",
       "effective_end": "2026-12-31",
       "effective_start": "1989-01-01",
@@ -10831,8 +11806,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not authorized M-1 admission-purpose work, so 410(a)(19) does not exclude it; apply the other families."
       },
       "rule_id": "nonresident_alien_vocational_service_1989",
       "trigger_facts": [
@@ -10846,7 +11821,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "railroad_act_service",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(9); POMS RS 01901.580 A.",
+          "precedence": 1,
+          "when": {
+            "railroad_covered_service": "service as an employee or employee representative as defined in 26 U.S.C. 3231"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -10862,7 +11847,7 @@
           "sha256": "d69a4e83bbac40eb02b2d3177b6e5f0337eeceda0d41d0303f4aec737c736a08"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Services as a railroad employee or employee representative defined in 26 U.S.C. 3231 are excluded from OASDI employment.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -10950,8 +11935,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The service is not railroad service under 26 U.S.C. 3231, so 410(a)(9) does not exclude it; apply the other families."
       },
       "rule_id": "railroad_1968_2026",
       "trigger_facts": [
@@ -10990,6 +11975,18 @@
           "precedence": 3,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+          }
+        },
+        {
+          "case_id": "order_duties_without_vow",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+          "precedence": 4,
+          "when": {
+            "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
         }
       ],
@@ -11037,7 +12034,7 @@
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "A poverty vow ordinarily excludes coverage; an order's effective 3121(r) election can create covered deemed employment, including statutorily permitted retroactive coverage.",
       "effective_end": "1983-12-31",
       "effective_start": "1968-01-01",
@@ -11178,8 +12175,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+        "consequence": "covered",
+        "description": "The service is not duties a religious order requires of its member, so neither 410(a)(8)(A) nor the order election rules exclude it; apply the other families."
       },
       "rule_id": "religious_order_1968_1983",
       "trigger_facts": [
@@ -11221,6 +12218,18 @@
           "precedence": 3,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
+          }
+        },
+        {
+          "case_id": "order_duties_without_vow",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+          "precedence": 4,
+          "when": {
+            "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
         }
       ],
@@ -11274,7 +12283,7 @@
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "An order coverage election can deem poverty vow members covered employees; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
       "effective_end": "2026-12-31",
       "effective_start": "1984-01-01",
@@ -11502,8 +12511,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "Required duties of an active member under a vow of poverty are excluded absent an effective order election."
+        "consequence": "covered",
+        "description": "The service is not duties a religious order requires of its member, so neither 410(a)(8)(A) nor the order election rules exclude it; apply the other families."
       },
       "rule_id": "religious_order_1984_2026",
       "trigger_facts": [
@@ -11573,11 +12582,24 @@
           }
         },
         {
+          "case_id": "covered_transportation_service",
+          "consequence": "covered",
+          "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+          "overrides": [
+            "no_section_218_agreement"
+          ],
+          "precedence": 2,
+          "when": {
+            "industry": "covered transportation service under 410(k)"
+          }
+        },
+        {
           "case_id": "no_section_218_agreement",
           "consequence": "noncovered",
           "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
+            "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
             "section_218_position": "not covered"
           }
         }
@@ -11602,7 +12624,7 @@
           "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Section 218 agreements may cover state/local service; the statutory exclusion otherwise applies subject to enumerated exceptions.",
       "effective_end": "1983-04-19",
       "effective_start": "1968-01-01",
@@ -11674,12 +12696,13 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+        "consequence": "covered",
+        "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
       },
       "rule_id": "state_local_1968_1983",
       "trigger_facts": [
         "government_level",
+        "industry",
         "public_retirement_system_participation",
         "section_218_group",
         "section_218_position"
@@ -11699,11 +12722,24 @@
           }
         },
         {
+          "case_id": "covered_transportation_service",
+          "consequence": "covered",
+          "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+          "overrides": [
+            "no_section_218_agreement"
+          ],
+          "precedence": 2,
+          "when": {
+            "industry": "covered transportation service under 410(k)"
+          }
+        },
+        {
           "case_id": "no_section_218_agreement",
           "consequence": "noncovered",
           "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
+            "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
             "section_218_position": "not covered"
           }
         }
@@ -11728,7 +12764,7 @@
           "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Section 218 coverage remains voluntary, but no agreement or coverage group may terminate on or after April 20, 1983.",
       "effective_end": "1991-07-01",
       "effective_start": "1983-04-20",
@@ -11798,12 +12834,13 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "The state or local government exclusion applies when no agreement or other statutory exception applies."
+        "consequence": "covered",
+        "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
       },
       "rule_id": "state_local_1983_1991",
       "trigger_facts": [
         "government_level",
+        "industry",
         "public_retirement_system_participation",
         "section_218_group",
         "section_218_position"
@@ -11823,11 +12860,63 @@
           }
         },
         {
+          "case_id": "covered_transportation_service",
+          "consequence": "covered",
+          "description": "410(a)(7)(B) excepts covered transportation service from the state and local exclusion.",
+          "overrides": [
+            "qualified_system_member_without_agreement"
+          ],
+          "precedence": 2,
+          "when": {
+            "industry": "covered transportation service under 410(k)"
+          }
+        },
+        {
+          "case_id": "mandatory_rule_exclusions",
+          "consequence": "noncovered",
+          "description": "410(a)(7)(F)(i)-(iii) keep these services outside mandatory coverage.",
+          "overrides": [
+            "mandatory_nonmember_coverage"
+          ],
+          "precedence": 3,
+          "when": {
+            "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency",
+            "section_218_position": "not covered"
+          }
+        },
+        {
+          "case_id": "mandatory_rule_election_worker",
+          "consequence": "deferred",
+          "defers_to": [
+            "election_work"
+          ],
+          "description": "410(a)(7)(F)(iv) sets a remuneration threshold for election service; the election family decides.",
+          "precedence": 4,
+          "when": {
+            "election_work": "election official or election worker",
+            "section_218_position": "not covered"
+          }
+        },
+        {
+          "case_id": "mandatory_rule_fee_basis_position",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_public_office"
+          ],
+          "description": "410(a)(7)(F)(v) leaves these fees to self-employment; the public office family decides.",
+          "precedence": 5,
+          "when": {
+            "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business",
+            "section_218_position": "not covered"
+          }
+        },
+        {
           "case_id": "mandatory_nonmember_coverage",
           "consequence": "covered",
           "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies.",
-          "precedence": 2,
+          "precedence": 6,
           "when": {
+            "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
             "public_retirement_system_participation": "not a member of an IRS-qualified system",
             "section_218_position": "not covered"
           }
@@ -11836,8 +12925,9 @@
           "case_id": "qualified_system_member_without_agreement",
           "consequence": "noncovered",
           "description": "The state/local exclusion remains unless another statutory exception applies.",
-          "precedence": 3,
+          "precedence": 7,
           "when": {
+            "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
             "public_retirement_system_participation": "member of an IRS-qualified system",
             "section_218_position": "not covered"
           }
@@ -11875,7 +12965,7 @@
           "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "First establish Section 218 coverage; if absent, nonmembers of a qualified retirement system have mandatory coverage, subject to statutory exclusions.",
       "effective_end": "2026-12-31",
       "effective_start": "1991-07-02",
@@ -12013,12 +13103,16 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "The state or local government exclusion applies when no agreement, mandatory nonmember coverage or other statutory exception applies."
+        "consequence": "covered",
+        "description": "The service is not for a State or local government within this family's scope, so 410(a)(7) does not exclude it; apply the other families."
       },
       "rule_id": "state_local_1991_2026",
       "trigger_facts": [
+        "assignment",
+        "election_work",
         "government_level",
+        "industry",
+        "public_office_fee_basis",
         "public_retirement_system_participation",
         "section_218_group",
         "section_218_position"
@@ -12150,7 +13244,42 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "options_dealer_from_1984",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_options_dealers"
+          ],
+          "description": "411(h) overrides 411(a)(3) for these gains and losses; the options dealer family decides.",
+          "overrides": [
+            "excluded_property_gain_or_loss"
+          ],
+          "precedence": 1,
+          "when": {
+            "property_disposition_type": "section 1256 contract or related property, in the normal course of dealing",
+            "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18"
+          }
+        },
+        {
+          "case_id": "excluded_property_gain_or_loss",
+          "consequence": "noncovered",
+          "description": "411(a)(3)(A)-(C).",
+          "precedence": 2,
+          "when": {
+            "property_disposition_type": "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
+          }
+        },
+        {
+          "case_id": "net_operating_loss_deduction",
+          "consequence": "noncovered",
+          "description": "411(a)(4): the 172 deduction does not enter net earnings; current-year business losses still do.",
+          "precedence": 3,
+          "when": {
+            "net_operating_loss_deduction": "section 172 deduction"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 411, pinned LII republication",
@@ -12165,7 +13294,7 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Exclude capital gains/losses, timber/coal/iron-ore 631 transactions, and noninventory/noncustomer property dispositions; no 172 net-operating-loss deduction. Dealer-specific rules override where applicable.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -12270,8 +13399,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Ordinary income and inventory or customer property dispositions are not excluded by 411(a)(3)-(4); apply the other families."
       },
       "rule_id": "se_capital_gain_nol_1968_2026",
       "trigger_facts": [
@@ -12285,7 +13414,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "effective_1402g_exemption",
+          "consequence": "noncovered",
+          "description": "411(c)(6).",
+          "precedence": 1,
+          "when": {
+            "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "26 USC 1402(g), pinned LII republication",
@@ -12300,7 +13439,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "General 1402(g) religious-sect exemption is incorporated by 411(c)(6); church income exists only from 1984. Later express church carveout must not be backcast.",
       "effective_end": "1985-12-31",
       "effective_start": "1968-01-01",
@@ -12379,8 +13518,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "No effective 1402(g) exemption, so 411(c)(6) does not exclude the income; apply the other families."
       },
       "rule_id": "se_religious_sect_1968_1985",
       "trigger_facts": [
@@ -12509,7 +13648,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "effective_1402g_exemption",
+          "consequence": "noncovered",
+          "description": "411(c)(6).",
+          "precedence": 1,
+          "when": {
+            "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "26 USC 1402(g)(3), Public Law 101-239 section 10204(a)(2)",
@@ -12524,7 +13673,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "An effective 1402(g) religious-sect exemption applies to church employee income from taxable years after 1989.",
       "effective_end": "2026-12-31",
       "effective_start": "1990-01-01",
@@ -12670,8 +13819,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "No effective 1402(g) exemption, so 411(c)(6) does not exclude the income; apply the other families."
       },
       "rule_id": "se_religious_sect_1990_2026",
       "trigger_facts": [
@@ -12682,7 +13831,43 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "exempt_minister",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+          "precedence": 1,
+          "when": {
+            "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+          }
+        },
+        {
+          "case_id": "retired_clergy_benefits",
+          "consequence": "noncovered",
+          "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31.",
+          "precedence": 2,
+          "when": {
+            "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+          }
+        },
+        {
+          "case_id": "foreign_minister_without_qualification",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_foreign_911_income",
+            "self_employment_possessions_931_income"
+          ],
+          "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for qualifying citizens; the foreign income and possessions families decide for anyone else.",
+          "precedence": 3,
+          "when": {
+            "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister to a congregation composed predominantly of United States citizens",
+            "place_of_work": "outside the United States"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
@@ -12817,7 +14002,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values, and for a qualifying citizen abroad the 911 and 931 exclusions are disregarded; apply the other families."
       },
       "rule_id": "se_clergy_gross_concept_1968_1972",
       "trigger_facts": [
@@ -12825,6 +14010,7 @@
         "amount",
         "assignment",
         "citizenship",
+        "clergy_or_religious_exemption",
         "clergy_remuneration",
         "clergy_retirement_benefit",
         "congregation_predominantly_us_citizens",
@@ -12835,7 +14021,29 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "exempt_minister",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+          "precedence": 1,
+          "when": {
+            "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+          }
+        },
+        {
+          "case_id": "retired_clergy_benefits",
+          "consequence": "noncovered",
+          "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31.",
+          "precedence": 2,
+          "when": {
+            "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
@@ -12995,7 +14203,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values; apply the other families."
       },
       "rule_id": "se_clergy_gross_concept_1973_2026",
       "trigger_facts": [
@@ -13086,6 +14294,7 @@
       "open_reason": null,
       "parameters": {
         "calendar_year_mapping": "1968-1979; the successor rule applies to taxable years including October 1980",
+        "case_free_basis": "The management and partnership conditions decide which spouse the community business income belongs to (the assignment parameters), not whether it is net earnings, so no condition changes the consequence.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -13626,7 +14835,18 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "crp_payment_to_beneficiary",
+          "consequence": "noncovered",
+          "description": "411(a)(1) excludes these payments with rentals from real estate.",
+          "precedence": 1,
+          "when": {
+            "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423",
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -13635,7 +14855,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "deferred",
       "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
       "effective_end": "2026-12-31",
       "effective_start": "2008-01-01",
@@ -13695,12 +14915,17 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "self_employment_rental_income",
+          "self_employment_base_definition"
+        ],
+        "description": "411(a)(1) excludes only payments to individuals receiving 402 or 423 benefits. Other CRP payments are decided by the rental and base definition families."
       },
       "rule_id": "se_conservation_reserve_2008_2026",
       "trigger_facts": [
         "amount",
+        "benefit_type",
         "conservation_reserve_payment",
         "retirement_payment"
       ],
@@ -13836,6 +15061,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [],
@@ -14092,7 +15318,122 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "not_employee_service",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_base_definition"
+          ],
+          "description": "411(c)(2) concerns employee service only; the base definition decides.",
+          "precedence": 1,
+          "when": {
+            "employee_self_or_mixed": "not performed as an employee"
+          }
+        },
+        {
+          "case_id": "adult_fixed_price_vendor",
+          "consequence": "deferred",
+          "defers_to": [
+            "newspaper_service"
+          ],
+          "description": "411(c)(2)(A).",
+          "precedence": 2,
+          "when": {
+            "age": "18 or older",
+            "newspaper_service_arrangement": "410(a)(14)(B) fixed-price sale to ultimate consumers"
+          }
+        },
+        {
+          "case_id": "sharefarmer",
+          "consequence": "deferred",
+          "defers_to": [
+            "agricultural_share_service"
+          ],
+          "description": "411(c)(2)(B).",
+          "precedence": 3,
+          "when": {
+            "agricultural_share_arrangement": "410(a)(16) arrangement"
+          }
+        },
+        {
+          "case_id": "us_citizen_foreign_government",
+          "consequence": "deferred",
+          "defers_to": [
+            "foreign_government_service"
+          ],
+          "description": "411(c)(2)(C).",
+          "precedence": 4,
+          "when": {
+            "citizenship": "United States citizen",
+            "foreign_government_service": "410(a)(11) or (12) service",
+            "place_of_work": "United States"
+          }
+        },
+        {
+          "case_id": "us_citizen_international_organization",
+          "consequence": "deferred",
+          "defers_to": [
+            "international_organization_service"
+          ],
+          "description": "411(c)(2)(C), with the later 410(r) exception.",
+          "precedence": 5,
+          "when": {
+            "citizenship": "United States citizen",
+            "international_organization_service": "410(a)(15) service",
+            "place_of_work": "United States"
+          }
+        },
+        {
+          "case_id": "ministry_or_order_duties",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "411(c)(2)(D).",
+          "precedence": 6,
+          "when": {
+            "ministerial_service": "411(c)(4) service: ministry, or duties required by a religious order"
+          }
+        },
+        {
+          "case_id": "fee_basis_state_local_position",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_public_office"
+          ],
+          "description": "411(c)(2)(E).",
+          "precedence": 7,
+          "when": {
+            "government_level": "State or political subdivision",
+            "public_office_fee_basis": "position compensated solely on a fee basis and not covered by a section 418 agreement"
+          }
+        },
+        {
+          "case_id": "small_boat_fishing",
+          "consequence": "deferred",
+          "defers_to": [
+            "fishing_crew_share_service"
+          ],
+          "description": "411(c)(2)(F).",
+          "precedence": 8,
+          "when": {
+            "fishing_catch_share_arrangement": "410(a)(20) service, from the applicable 1976 law"
+          }
+        },
+        {
+          "case_id": "electing_church_employee",
+          "consequence": "deferred",
+          "defers_to": [
+            "electing_church_employee_service"
+          ],
+          "description": "411(c)(2)(G).",
+          "precedence": 9,
+          "when": {
+            "church_employee_service": "410(a)(8)(B) service for an electing church or qualified church-controlled organization, from 1984"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 411, pinned LII republication",
@@ -14218,22 +15559,71 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Other employee service is not a trade or business (411(c)(2))."
       },
       "rule_id": "se_ordinary_employee_1968_2026",
       "trigger_facts": [
+        "age",
+        "agricultural_share_arrangement",
         "church_employee_service",
+        "citizenship",
         "employee_self_or_mixed",
+        "fishing_catch_share_arrangement",
         "foreign_government_service",
         "government_level",
         "international_organization_service",
-        "ministerial_service"
+        "ministerial_service",
+        "newspaper_service_arrangement",
+        "place_of_work",
+        "public_office_fee_basis"
       ],
       "worked_examples": []
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "real_estate_dealer_rentals",
+          "consequence": "covered",
+          "description": "411(a)(1) does not exclude rentals received in the course of a real estate dealer's business; apply the other families.",
+          "overrides": [
+            "no_actual_material_participation",
+            "arrangement_lacks_participation_term"
+          ],
+          "precedence": 1,
+          "when": {
+            "real_estate_dealer_status": "rentals received in the course of a trade or business as a real estate dealer"
+          }
+        },
+        {
+          "case_id": "no_actual_material_participation",
+          "consequence": "noncovered",
+          "description": "The farm rental stays excluded.",
+          "precedence": 2,
+          "when": {
+            "material_participation": "no material participation by the owner or tenant, counting services an employee or agent performed for that person"
+          }
+        },
+        {
+          "case_id": "arrangement_lacks_participation_term",
+          "consequence": "noncovered",
+          "description": "The farm rental exception requires an arrangement that provides for material participation.",
+          "precedence": 3,
+          "when": {
+            "rental_arrangement_requires_material_participation": false
+          }
+        },
+        {
+          "case_id": "participation_under_required_arrangement",
+          "consequence": "covered",
+          "description": "Before 1974 the services of an employee or agent count as the owner's or tenant's; apply the other families.",
+          "precedence": 4,
+          "when": {
+            "material_participation": "material participation by the owner or tenant, counting services an employee or agent performed for that person",
+            "rental_arrangement_requires_material_participation": true
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
@@ -14258,9 +15648,15 @@
           "capture": "lii_42_411.html",
           "location": "1974 amendment/effective-date notes",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "411(a)(1)",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "open",
       "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after 1955 and beginning before 1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf.",
       "effective_end": "1973-12-31",
       "effective_start": "1968-01-01",
@@ -14343,8 +15739,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "open",
+        "description": "Establish actual participation and the arrangement requirement from the trigger facts; no residual coverage is chosen when their cases cannot decide."
       },
       "rule_id": "se_material_participation_1968_1973",
       "trigger_facts": [
@@ -14352,6 +15748,7 @@
         "agricultural_service",
         "amount",
         "material_participation",
+        "real_estate_dealer_status",
         "rental_arrangement_requires_material_participation"
       ],
       "worked_examples": []
@@ -14678,7 +16075,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "us_resident_entire_taxable_year",
+          "consequence": "covered",
+          "description": "Public Law 92-603 section 124(a): the 911(a)(2) exclusion does not apply.",
+          "precedence": 1,
+          "when": {
+            "residence_period": "resident of the United States during the entire taxable year"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 92-603, Social Security Amendments of 1972",
@@ -14693,7 +16100,7 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": "covered",
+      "consequence": "open",
       "description": "For an individual resident of the United States during the entire taxable year, disregard the former 911(a)(2) exclusion in computing NESE.",
       "effective_end": "1981-12-31",
       "effective_start": "1973-01-01",
@@ -14743,12 +16150,16 @@
         "effective_taxable_year_begin_after": "1972-12-31",
         "income_tax_exclusion_disregarded": "historical 26 USC 911(a)(2)",
         "individual_condition": "Resident of the United States during the entire taxable year",
+        "nonresident_reading": {
+          "candidate": "411(a) starts from subtitle A gross income, so a 911 exclusion this clause does not override would keep the excluded amount out of net earnings.",
+          "status": "not verified: the 1973-1981 text of the 411(a) gross-income clause is not captured"
+        },
         "scope": "Only the specified override; no conclusion for a person who fails the residency condition."
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "open",
+        "description": "Section 124 says nothing for anyone else. The candidate reading in parameters.nonresident_reading is recorded but not chosen."
       },
       "rule_id": "se_foreign_income_1973_1981",
       "trigger_facts": [
@@ -15496,7 +16907,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "qualifying_termination_payment",
+          "consequence": "noncovered",
+          "description": "411(j)(1)-(4).",
+          "precedence": 1,
+          "when": {
+            "insurance_sales_termination_payment": "received after the agreement ends; no services for the company after termination and before the year closes; a covenant not to compete for at least one year; the amount depends primarily on last-year policies or their persistence, and not at all on length of service or overall earnings"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -15505,7 +16926,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "deferred",
       "description": "Exclude insurance-sales termination payments when every condition in 411(j) is established.",
       "effective_end": "2026-12-31",
       "effective_start": "1998-01-01",
@@ -15600,8 +17021,11 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "self_employment_base_definition"
+        ],
+        "description": "411(j) only says what subsection (a) does not include; when a condition fails, the base definition decides."
       },
       "rule_id": "se_insurance_termination_1998_2026",
       "trigger_facts": [
@@ -15680,7 +17104,29 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "guaranteed_payment_for_services",
+          "consequence": "covered",
+          "description": "411(a)(12) excepts these payments.",
+          "overrides": [
+            "limited_partner_distributive_share"
+          ],
+          "precedence": 1,
+          "when": {
+            "partnership_status": "707(c) guaranteed payment to a limited partner for services actually rendered, established as pay for those services"
+          }
+        },
+        {
+          "case_id": "limited_partner_distributive_share",
+          "consequence": "noncovered",
+          "description": "411(a)(12).",
+          "precedence": 2,
+          "when": {
+            "partnership_status": "distributive share of income or loss of a limited partner, as such"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -15689,7 +17135,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Exclude the distributive income or loss of a limited partner as such; retain established guaranteed payments for services actually rendered.",
       "effective_end": "2026-12-31",
       "effective_start": "1978-01-01",
@@ -15787,8 +17233,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Not a limited partner's distributive share, so 411(a)(12) does not exclude it; apply the other families."
       },
       "rule_id": "se_limited_partner_1978_2026",
       "trigger_facts": [
@@ -15949,6 +17395,7 @@
       "open_reason": null,
       "parameters": {
         "aggregation_scope": "farm gross aggregated separately to determine method; optional amounts ultimately join other_net_earnings",
+        "case_free_basis": "The nonfarm conditions decide whether the optional computation is available; when they fail the regular computation applies, and both are tested against the self-employment unit minimum.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -17388,6 +18835,15 @@
             "public_office_fee_basis": "position compensated solely on a fee basis",
             "section_218_position": "not covered by a Section 218 agreement in the relevant period"
           }
+        },
+        {
+          "case_id": "public_office_functions",
+          "consequence": "noncovered",
+          "description": "411(c)(1).",
+          "precedence": 3,
+          "when": {
+            "government_level": "performance of the functions of a public office"
+          }
         }
       ],
       "citations": [
@@ -17404,7 +18860,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Public-office functions are excluded from trade or business. State or local fee-only positions outside Section 218 are an exception, subject to an applicable irrevocable 1968 exemption election.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -17505,8 +18961,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Not the performance of public-office functions, so 411(c)(1) does not exclude it; apply the other families."
       },
       "rule_id": "se_public_office_1968_2026",
       "trigger_facts": [
@@ -17773,7 +19229,20 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "qualified_joint_venture",
+          "consequence": "covered",
+          "description": "411(a)(16) and 761(f): each spouse takes their share into account as a sole proprietor.",
+          "precedence": 1,
+          "when": {
+            "joint_return": true,
+            "material_participation": "both spouses materially participate under 469(h), disregarding paragraph (5)",
+            "partnership_status": "the spouses are the only members",
+            "qualified_joint_venture_election": "both spouses elect 761(f) treatment"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "26 U.S.C. 761, pinned LII republication",
@@ -17858,7 +19327,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Without a qualified joint venture, the partnership rules assign each partner's distributive share; apply the other families."
       },
       "rule_id": "se_joint_venture_2007_2026",
       "trigger_facts": [
@@ -17874,7 +19343,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "railroad_act_service",
+          "consequence": "noncovered",
+          "description": "411(c)(3).",
+          "precedence": 1,
+          "when": {
+            "railroad_covered_service": "service as an employee or employee representative as defined in 26 U.S.C. 3231"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 411, pinned LII republication",
@@ -17883,7 +19362,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Railroad employee or employee-representative service under 26 USC 3231 is outside self-employment trade/business.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -17962,8 +19441,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Not 3231 service, so 411(c)(3) does not exclude it; apply the other families."
       },
       "rule_id": "se_railroad_employee_1968_2026",
       "trigger_facts": [
@@ -18045,6 +19524,42 @@
           "when": {
             "services_to_occupants": "services primarily for occupant convenience beyond customary occupancy services"
           }
+        },
+        {
+          "case_id": "parking_warehouse_storage_space",
+          "consequence": "covered",
+          "description": "20 CFR 404.1082(d)(2)(i) includes these payments in net earnings.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 3,
+          "when": {
+            "rental_income": "payments for the use of space in parking lots, warehouses or storage garages"
+          }
+        },
+        {
+          "case_id": "farm_rental_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 4,
+          "when": {
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
+          "case_id": "real_estate_rentals",
+          "consequence": "noncovered",
+          "description": "411(a)(1); 20 CFR 404.1082(a) and (d)(1).",
+          "precedence": 5,
+          "when": {
+            "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
+          }
         }
       ],
       "citations": [
@@ -18067,7 +19582,7 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Real-estate rentals, personal property leased with the real estate, and their attributable deductions are excluded from NESE, subject to the statutory real-estate-dealer and farm material-participation exceptions.",
       "effective_end": "2026-12-31",
       "effective_start": "1996-04-01",
@@ -18174,8 +19689,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Not rental income from real estate, so 411(a)(1) does not exclude it (20 CFR 404.1082(e)); apply the other families."
       },
       "rule_id": "se_rental_income_1996_2026",
       "trigger_facts": [
@@ -18189,7 +19704,20 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "qualifying_retirement_payment",
+          "consequence": "noncovered",
+          "description": "411(a)(9)(A)-(C).",
+          "precedence": 1,
+          "when": {
+            "partner_capital_paid": true,
+            "partner_no_other_obligation": true,
+            "partner_no_services": true,
+            "retirement_payment": "periodic payment on account of retirement under a written partnership plan, continuing at least until the partner's death"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 90-248, 81 Stat.821 (1968)",
@@ -18204,7 +19732,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Exclude a qualifying partner retirement-plan payment only when all three statutory conditions hold.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -18315,8 +19843,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "A payment failing any 411(a)(9) condition is not excluded by it; apply the other families."
       },
       "rule_id": "se_retired_partner_1968_2026",
       "trigger_facts": [
@@ -18457,7 +19985,20 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "section_7873_exempt_income",
+          "consequence": "noncovered",
+          "description": "411(a)(14); 7873(a)-(b).",
+          "precedence": 1,
+          "when": {
+            "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
+            "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)",
+            "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+            "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "26 USC 7873, official 2024 United States Code section granule",
@@ -18472,7 +20013,7 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Exclude income exempt under 7873 from NESE, subject to the tribal fishing-right, membership, activity and qualified-entity conditions. The amendment expressly reaches periods before enactment.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -18596,8 +20137,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The income is not exempt under 7873, so 411(a)(14) does not exclude it; apply the other families."
       },
       "rule_id": "se_treaty_fishing_1968_2026",
       "trigger_facts": [
@@ -19426,7 +20967,26 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "common_law_employee",
+          "consequence": "covered",
+          "description": "Cash and noncash pay are wages without the statutory homeworker cash test (POMS RS 01402.230 B.2).",
+          "precedence": 1,
+          "when": {
+            "employee_self_or_mixed": "common-law employee"
+          }
+        },
+        {
+          "case_id": "statutory_homeworker",
+          "consequence": "covered_above_threshold",
+          "description": "Once the $50 calendar-quarter cash test is met, cash and noncash pay are wages (409(a)(8); POMS RS 01402.230 B.1).",
+          "precedence": 2,
+          "when": {
+            "occupation": "home worker in a 410(j)(3)(C) occupational group who performs substantially all the services personally, has no substantial investment in facilities, and works in a continuing relationship"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
@@ -19441,7 +21001,7 @@
           "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "deferred",
       "description": "A statutory occupational-group home worker must meet the cash threshold; then both cash and noncash remuneration are wages. A common-law home worker has wages regardless of this statutory-worker threshold. Required occupational-group facts include substantially personal services, no substantial facility investment and continuing relationship.",
       "effective_end": "1977-12-31",
       "effective_start": "1968-01-01",
@@ -19501,8 +21061,11 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "self_employment_base_definition"
+        ],
+        "description": "Neither a common-law nor a statutory employee: the worker is self-employed and the self-employment base definition decides."
       },
       "rule_id": "statutory_homeworker_service_1968",
       "trigger_facts": [
@@ -19516,7 +21079,26 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "common_law_employee",
+          "consequence": "covered",
+          "description": "Cash and noncash pay are wages without the statutory homeworker cash test (POMS RS 01402.230 B.2).",
+          "precedence": 1,
+          "when": {
+            "employee_self_or_mixed": "common-law employee"
+          }
+        },
+        {
+          "case_id": "statutory_homeworker",
+          "consequence": "covered_above_threshold",
+          "description": "Once the $100 calendar-year cash test is met, cash and noncash pay are wages (409(a)(8); POMS RS 01402.230 B.1).",
+          "precedence": 2,
+          "when": {
+            "occupation": "home worker in a 410(j)(3)(C) occupational group who performs substantially all the services personally, has no substantial investment in facilities, and works in a continuing relationship"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
@@ -19531,7 +21113,7 @@
           "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561"
         }
       ],
-      "consequence": "covered_above_threshold",
+      "consequence": "deferred",
       "description": "A statutory occupational-group home worker must meet the cash threshold; then both cash and noncash remuneration are wages. A common-law home worker has wages regardless of this statutory-worker threshold. Required occupational-group facts include substantially personal services, no substantial facility investment and continuing relationship.",
       "effective_end": "2026-12-31",
       "effective_start": "1978-01-01",
@@ -19591,8 +21173,11 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "deferred",
+        "defers_to": [
+          "self_employment_base_definition"
+        ],
+        "description": "Neither a common-law nor a statutory employee: the worker is self-employed and the self-employment base definition decides."
       },
       "rule_id": "statutory_homeworker_service_1978",
       "trigger_facts": [
@@ -19606,7 +21191,19 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "enrolled_student_nurse",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(13); POMS RS 01901.760.",
+          "precedence": 1,
+          "when": {
+            "employer_school_nexus": "nurses' training school chartered or approved under State law",
+            "enrollment": "enrolled and regularly attending classes in a nurses' training school",
+            "occupation": "student nurse in the employ of a hospital or a nurses' training school"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -19621,7 +21218,7 @@
           "sha256": "be443d8357027cd98cbd9556a5dc383b9548fb96e4680786583dbadd2c746c78"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "A student nurse in the employ of a hospital or nurses training school is excluded when enrolled and regularly attending classes in a nurses training school chartered or approved under State law. The exclusion began in 1940. POMS describes part-time training-incidental work for nominal remuneration.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
@@ -19737,8 +21334,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "At least one 410(a)(13) condition fails, so it does not exclude the service; apply the other families."
       },
       "rule_id": "student_nurse_service_1968",
       "trigger_facts": [
@@ -19751,7 +21348,31 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "section_218_agreement_covers_students",
+          "consequence": "covered",
+          "description": "For a State or local school, the 218 agreement decides (POMS RS 01901.720 A).",
+          "overrides": [
+            "enrolled_student_at_employing_school"
+          ],
+          "precedence": 1,
+          "when": {
+            "section_218_position": "a State or local school whose section 218 agreement covers these student services"
+          }
+        },
+        {
+          "case_id": "enrolled_student_at_employing_school",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(10); POMS RS 01901.720 A and C.",
+          "precedence": 2,
+          "when": {
+            "employer_school_nexus": "employer is the school, college or university where the student is enrolled",
+            "enrollment": "enrolled and regularly attending classes",
+            "statutory_student_service": "service as a student"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -19766,7 +21387,7 @@
           "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "A student enrolled and regularly attending classes at the employer school, college, or university is excluded. A state/local Section 218 agreement can cover student services. The auxiliary-organization extension does not yet apply.",
       "effective_end": "1972-12-31",
       "effective_start": "1968-01-01",
@@ -19873,8 +21494,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The worker is not an enrolled, regularly attending student of the employing school, so 410(a)(10) does not exclude the service; apply the other families."
       },
       "rule_id": "student_service_1968",
       "trigger_facts": [
@@ -19888,7 +21509,31 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "section_218_agreement_covers_students",
+          "consequence": "covered",
+          "description": "For a State or local school, the 218 agreement decides (POMS RS 01901.720 A).",
+          "overrides": [
+            "enrolled_student_at_employing_school"
+          ],
+          "precedence": 1,
+          "when": {
+            "section_218_position": "a State or local school whose section 218 agreement covers these student services"
+          }
+        },
+        {
+          "case_id": "enrolled_student_at_employing_school",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(10); POMS RS 01901.720 A and C.",
+          "precedence": 2,
+          "when": {
+            "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization operated exclusively for it and operated, supervised or controlled by or in connection with it",
+            "enrollment": "enrolled and regularly attending classes",
+            "statutory_student_service": "service as a student"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
@@ -19909,7 +21554,7 @@
           "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "The student-school exclusion extends to section 509(a)(3) auxiliary organizations organized and operated exclusively for the school purposes and operated, supervised or controlled by or in connection with that school. Student must be enrolled and regularly attending classes at that school. A state/local Section 218 agreement can cover student services.",
       "effective_end": "2026-12-31",
       "effective_start": "1973-01-01",
@@ -20082,8 +21727,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "The worker is not an enrolled, regularly attending student of the employing school, so 410(a)(10) does not exclude the service; apply the other families."
       },
       "rule_id": "student_service_1973",
       "trigger_facts": [
@@ -20097,7 +21742,17 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "noncash_tips",
+          "consequence": "noncovered",
+          "description": "409(a)(10) excludes noncash tips.",
+          "precedence": 1,
+          "when": {
+            "cash_remuneration": "tips paid in any medium other than cash"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "IRS Publication 15(2026)",
@@ -20126,7 +21781,6 @@
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
-        "noncash_tips": "noncovered",
         "threshold_id": "cash_tips_monthly"
       },
       "rare_exclusion": {
@@ -20161,11 +21815,12 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Cash tips are wages once they reach $20 in a calendar month for one employer; apply the other families."
       },
       "rule_id": "tips_service_1968",
       "trigger_facts": [
         "amount",
+        "cash_remuneration",
         "employee_self_or_mixed",
         "month_or_exposure",
         "reporting_unit"
@@ -20174,7 +21829,31 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "later_418a_retroactive_coverage",
+          "consequence": "covered",
+          "description": "POMS RS 01901.700 C.2.b.",
+          "overrides": [
+            "federally_recognized_council_member"
+          ],
+          "precedence": 1,
+          "when": {
+            "historical_fica_treatment": "FICA-equivalent taxes were timely paid in good faith and not refunded",
+            "tribal_coverage_agreement": "a later section 418a agreement names the period for retroactive coverage"
+          }
+        },
+        {
+          "case_id": "federally_recognized_council_member",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.700 C.1, on the rationale of Revenue Ruling 59-354.",
+          "precedence": 2,
+          "when": {
+            "tribal_council_service": "service as a member of an Indian tribal council, in that capacity, for the tribal government",
+            "tribal_federal_recognition": "federally recognized tribe"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2895",
@@ -20201,7 +21880,7 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "Service as a council member for a federally recognized Indian tribe is excluded under the historical Revenue Ruling 59-354 rationale described by SSA. Separate employee roles are not swept into this exclusion. Later section 418a agreements can cover qualifying earlier services supported by timely good-faith, unrefunded FICA-equivalent payments. SSA also preserves posted earnings through tax year 2005 for applicable benefit computations.",
       "effective_end": "2018-09-19",
       "effective_start": "1968-01-01",
@@ -20264,7 +21943,6 @@
             ]
           }
         ],
-        "default_council_service": "noncovered",
         "historical_legal_basis": "POMS RS 01901.700C.1 expressly bases council-service noncoverage on Revenue Ruling 59-354; the 2018 Act adds the statutory exclusion and agreement route.",
         "later_2018_agreement_can_validate_qualifying_prior_services": true,
         "later_418a_retroactive_coverage": {
@@ -20311,8 +21989,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "consequence": "covered",
+        "description": "Not council-member service for a federally recognized tribe: council staff, tribal employees and enterprise employees are in employment (POMS RS 01901.700 C.1); apply the other families."
       },
       "rule_id": "tribal_council_service_1968",
       "trigger_facts": [
@@ -20343,6 +22021,7 @@
           "consequence": "noncovered",
           "precedence": 2,
           "when": {
+            "tribal_council_service": "service as a member of an Indian tribal council, in that capacity, for the tribal government",
             "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"
           }
         }
@@ -20373,7 +22052,7 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
-      "consequence": "noncovered",
+      "consequence": "covered",
       "description": "The 2018 Act codifies the council-member exclusion and permits voluntary section 418a coverage agreements for all council positions and services in that capacity. Prospective coverage starts no earlier than the month after both parties execute; specified prior services may qualify through timely good-faith unrefunded equivalent taxes. Agreement coverage cannot terminate after its effective date.",
       "effective_end": "2026-12-31",
       "effective_start": "2018-09-20",
@@ -20487,8 +22166,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": "noncovered",
-        "description": "Council-capacity service is excluded unless included under an effective section 418a agreement."
+        "consequence": "covered",
+        "description": "Not council-member service, so 410(a)(22) does not exclude it; apply the other families."
       },
       "rule_id": "tribal_council_service_2018_0920",
       "trigger_facts": [
