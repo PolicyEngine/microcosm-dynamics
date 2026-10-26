@@ -176,6 +176,16 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Experimental entrants are outside the registered projection call graph.
     Path("src/populace_dynamics/engine/entrant_schedule.py"),
     Path("src/populace_dynamics/engine/entrant_domains.py"),
+    # OP1 wraps the sealed loop through an explicit opt-in package.
+    Path("src/populace_dynamics/open_population/__init__.py"),
+    Path("src/populace_dynamics/open_population/errors.py"),
+    Path("src/populace_dynamics/open_population/events.py"),
+    Path("src/populace_dynamics/open_population/exits.py"),
+    Path("src/populace_dynamics/open_population/births.py"),
+    Path("src/populace_dynamics/open_population/schedule.py"),
+    Path("src/populace_dynamics/open_population/harness.py"),
+    Path("src/populace_dynamics/open_population/gates.py"),
+    Path("src/populace_dynamics/open_population/streams.py"),
     # The opt-in accounting-history validator is likewise unreachable.
     Path("src/populace_dynamics/engine/accounting_history.py"),
     # The opt-in identity transport is not imported by the historical reducer.
@@ -416,6 +426,12 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # SM1 is opt-in and absent from the historical projection call graph.
+    Path("src/populace_dynamics/mortality_ses/__init__.py"),
+    Path("src/populace_dynamics/mortality_ses/specification.py"),
+    Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+    Path("src/populace_dynamics/mortality_ses/model.py"),
+    Path("src/populace_dynamics/mortality_ses/step.py"),
     # The PSID income and wealth readers (D1a) are opt-in source readers;
     # nothing in the historical projection imports them.
     Path("src/populace_dynamics/data/psid_income_wealth.py"),
