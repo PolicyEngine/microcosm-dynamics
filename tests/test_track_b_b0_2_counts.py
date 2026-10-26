@@ -1118,6 +1118,41 @@ def test_relations_constrain_counts_across_unit_types():
     assert system.feasible(point)
 
 
+@pytest.mark.parametrize("related", [True, False])
+def test_the_audit_uses_the_relations_it_registers(related):
+    """Twelve households, and eleven of them, are both published as 10, so
+    alone the twelfth is anywhere from 0 to 4: wide. An earlier release
+    fixed the twelve persons exactly, and there are at most as many
+    households as persons, so with that relation the twelfth is 0 to 2:
+    narrow, at true size 1, and the release is withheld. The relation is
+    what withholds it."""
+    households = {f"h{index}" for index in range(12)}
+    persons = set(range(12))
+    registry = script.SetRegistry()
+    registry.add(("households",), "households_2011", households)
+    registry.add(("eleven",), "households_2011", households - {"h11"})
+    registry.add(("persons",), "persons", persons)
+    registry.add_prior(("b0_1", "persons"), "persons", persons, 12)
+    if related:
+        registry.relate("at_most", ("households",), ("persons",))
+    counts = {"households": 12, "eleven": 11, "persons": 12}
+    audit = script.audit_counts(counts, registry)
+    assert audit["relations"] == int(related)
+    (twelfth,) = [
+        target
+        for target in audit["targets"]
+        if target["unit_type"] == "households_2011"
+        and target["true_size"] == 1
+    ]
+    if related:
+        assert audit["status"] == "withheld"
+        assert twelfth["result"] == "narrow"
+        assert twelfth["range"] == [0, 2]
+    else:
+        assert audit["status"] == "released"
+        assert twelfth["result"] == "wide"
+
+
 def test_disclosure_integer_hidden_band_attack_is_blocked_on_full_release():
     inputs = _own_strata(
         _inputs(
