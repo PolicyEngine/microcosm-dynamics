@@ -59,7 +59,9 @@ rates and tagged person streams (`baselines/fertility.py:114–126`).
 registry for every module and adapter draw. (This section measures OP1 as
 merged in #566. Since the injection follow-up, §6, the adapters' person and
 tagged draws come from `DirectRNGStreams` by default; the script now
-compares three stream modes.)
+compares three stream modes. §6 reports its host run, kept in
+`op1_run_size_injection.json`; `op1_run_size.json` keeps this section's
+run.)
 
 All six runs reconciled 75 periods with zero count and weight residuals and
 zero revaluations. For each roster size, the direct and registry runs give
@@ -878,10 +880,41 @@ Each record names the stream classes the adapters and the exit adapter were
 observed to receive, the SHA-256 of `open_population/streams.py`, `harness.py`
 and `exits.py`, and the process CPU time. The script stops if a mode runs
 another class, or if the three modes' projection hashes differ for any
-size. In this build's sandbox one 10-person worker per mode completed, with
-identical projection hashes across the three. `op1_run_size.json` still
-holds OP1's two-mode measurement. The main session reruns the script on the
-host, with §2's command, and replaces the JSON.
+size. In the build's sandbox, one 10-person worker per mode completed, with
+identical projection hashes across the three.
+
+The main session then ran the script on the host at `441b9f77`, from
+07:50 to 07:52 UTC on 26 October, with one-minute loads of 76 to 92 at the
+projection starts:
+
+```sh
+.venv/bin/python docs/design/open_population_evidence/op1_run_size.py --sizes 25 100 400 --output docs/design/open_population_evidence/op1_run_size_injection.json
+```
+
+`op1_run_size_injection.json` holds that run, and `op1_run_size.json`
+keeps §2's two-mode run of `0d0c073c`. All nine workers reconciled 75
+periods with zero count and weight residuals and zero revaluations. Each
+record's source hashes match the files at `441b9f77`. For each size the
+three modes give the same projection hash, and it is §2's hash for that
+size.
+
+| Initial people | Mortality person-years | Projection seconds, `registry` | `direct_emigration` | `direct` | Peak RSS (MB), `direct` |
+|---:|---:|---:|---:|---:|---:|
+| 25 | 4,299 | 4.87 | 3.40 | 1.40 | 194.4 |
+| 100 | 11,936 | 8.03 | 5.00 | 1.77 | 194.9 |
+| 400 | 43,793 | 26.50 | 17.60 | 3.13 | 203.0 |
+
+- Process CPU time over each projection is 94 to 99% of its wall time.
+- At 400 people the direct default takes 12% of the `registry` mode's time
+  and 18% of the time OP1 took before this follow-up (`direct_emigration`).
+- Peak RSS over the nine workers ranges from 192.3 to 203.0 MB. At each size
+  the direct mode is within 1.3 MB of the `registry` mode.
+- The microbenchmark's median cost per address (one tagged-child generator
+  and one draw) is 6.7 µs at horizon 7 and 7.4 µs at horizon 75 on the
+  direct class, against 52.3 and 216.7 µs on the registry.
+
+These are single runs on a loaded host, so the ratios are indicative, not
+bounds. The full-size measurement is still due before OP10a.
 
 **5. Seal bookkeeping.** No module was added, so the exclusion tuple and its
 pin are unchanged. `tests/track_u2/test_u2_isolation.py` was not run, and CI
@@ -923,6 +956,20 @@ by process CPU time. In the sandbox, the existing 2100 production test took
 new tests took 12.7 (the hash grid), 6.8 (the every-period differential) and
 2.3 (the scan) sandbox CPU seconds. The main session's host rerun gives the
 times that count.
+
+On the host, at `441b9f77`, the main session ran the required command in two
+named-module processes. The first started at a one-minute load of 114.
+- `tests/open_population`: 337 passed and 1 strict xfail in 16.38 s, with
+  `test_sealed_code_holds_only_the_known_registry_type_check` deselected.
+  That test reads the source tree; it waits for the coordinator's ruling on
+  which modules the scan reads, and CI runs it.
+- The other four modules: 104 passed in 1.63 s.
+- Peak RSS was 223 MB.
+
+A timed run of the two stream modules, with the same test deselected, gave
+245 passed in 12.23 s. The slowest tests took 1.38 s (the fresh-interpreter
+import check), 1.0 to 1.2 s for each 2100 hash pair, and about 0.8 s (the
+every-period differential).
 
 ### Restricted-files statement
 

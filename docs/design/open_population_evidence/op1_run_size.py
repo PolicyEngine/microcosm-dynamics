@@ -1,9 +1,11 @@
 """Measure full-horizon OP1 resource use on invented rosters (design §8).
 
 Run ``python docs/design/open_population_evidence/op1_run_size.py --sizes 25
-100 --output docs/design/open_population_evidence/op1_run_size.json`` from the
-repository root. Each size and stream mode runs in a fresh worker,
-sequentially. The sealed loop's own module generators always come from its
+100 400 --output
+docs/design/open_population_evidence/op1_run_size_injection.json`` from the
+repository root. (``op1_run_size.json`` keeps the two-mode run of OP1 as
+merged in #566, which the report's section 2 cites.) Each size and stream
+mode runs in a fresh worker, sequentially. The sealed loop's own module generators always come from its
 registry (``engine/loop.py:217``, ``:297–350``). Three stream modes compare
 which class serves the other draws:
 

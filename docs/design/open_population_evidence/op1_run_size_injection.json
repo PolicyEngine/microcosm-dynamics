@@ -1,0 +1,2139 @@
+{
+  "draw_index": 0,
+  "full_size_measurement": "open OP1 item required before OP10a; intentionally not attempted in this build",
+  "marital_choice_reason": "nonnull emigration permits only no_marital_transitions until OP4; exits.py:64\u201367",
+  "measurements": [
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 1,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 92,
+      "deaths": 37,
+      "emigration_probability": 0.02,
+      "emigration_stream": "registry",
+      "emigration_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "emigration_survivor_person_years": 4262,
+      "emigrations": 82,
+      "final_people": 73,
+      "initial_people": 25,
+      "load_at_projection_end": [
+        88.61669921875,
+        90.19482421875,
+        83.58447265625
+      ],
+      "load_at_projection_start": [
+        91.978515625,
+        90.87353515625,
+        83.78271484375
+      ],
+      "load_at_worker_start": [
+        92.3251953125,
+        90.92236328125,
+        83.75830078125
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 73,
+      "mortality_person_years": 4299,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 4058725,
+      "peak_memory_bytes": 193069056,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_generator_setup": {
+          "calls": 4262,
+          "cumulative_seconds": 1.2429892630000001,
+          "share_of_profile_total": 0.2554745011863984
+        },
+        "emigration_registry_sequences": {
+          "calls": 4262,
+          "cumulative_seconds": 1.1571496410000002,
+          "share_of_profile_total": 0.2378316821651379
+        },
+        "sealed_generator_setup_total": {
+          "calls": 6337,
+          "cumulative_seconds": 1.811536779,
+          "share_of_profile_total": 0.3723294068356243
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.182575433,
+          "share_of_profile_total": 0.03752515734688667
+        },
+        "sealed_person_generator_setup": {
+          "calls": 4299,
+          "cumulative_seconds": 1.217434507,
+          "share_of_profile_total": 0.2502221721950094
+        },
+        "sealed_registry_sequences": {
+          "calls": 6337,
+          "cumulative_seconds": 1.716033849,
+          "share_of_profile_total": 0.3527004654361606
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 1438,
+          "cumulative_seconds": 0.41152683900000003,
+          "share_of_profile_total": 0.08458207729372823
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 10599,
+            "cumulative_seconds": 2.540184789,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 2.432237448
+          },
+          {
+            "calls": 10599,
+            "cumulative_seconds": 2.8687881980000003,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 0.310586996
+          },
+          {
+            "calls": 3628056,
+            "cumulative_seconds": 0.11997917200000001,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.11997917200000001
+          },
+          {
+            "calls": 882711,
+            "cumulative_seconds": 0.143962571,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.088605246
+          },
+          {
+            "calls": 5700,
+            "cumulative_seconds": 1.637622063,
+            "function": "rng.py:129:tagged_child_generator",
+            "self_seconds": 0.054463807
+          },
+          {
+            "calls": 10599,
+            "cumulative_seconds": 0.060140336,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.051705515
+          },
+          {
+            "calls": 11568,
+            "cumulative_seconds": 0.125923628,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.046797808
+          },
+          {
+            "calls": 273034,
+            "cumulative_seconds": 0.048789176000000004,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.033928863000000004
+          },
+          {
+            "calls": 4299,
+            "cumulative_seconds": 1.215222607,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.032663629
+          },
+          {
+            "calls": 10834,
+            "cumulative_seconds": 0.095850696,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.031637247
+          },
+          {
+            "calls": 3078,
+            "cumulative_seconds": 0.047616461000000006,
+            "function": "series.py:9066:any",
+            "self_seconds": 0.031103193
+          },
+          {
+            "calls": 9645,
+            "cumulative_seconds": 0.067164734,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.028366253
+          }
+        ],
+        "total_seconds": 4.865414189
+      },
+      "projection_process_cpu_seconds": 4.57397,
+      "projection_sha256": "b3326c38cab80d174f4336ac390c549cfc75dd0d3a5f91ddec1bfa6dc87a38e2",
+      "projection_wall_time_seconds": 4.867697209003381,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 4297,
+      "retained_slice_bytes": 2048303,
+      "rng_streams": "registry",
+      "scheduled_entries": 75,
+      "seconds_per_mortality_person_year": 0.0011322859290540548,
+      "shared_full_column_snapshot_counterfactual_bytes": 2048303,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "registry",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 7.314334249997046,
+      "unique_annual_snapshot_bytes": 117656,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 7.114830334001454
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 1,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 92,
+      "deaths": 37,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 4262,
+      "emigrations": 82,
+      "final_people": 73,
+      "initial_people": 25,
+      "load_at_projection_end": [
+        91.12939453125,
+        90.689453125,
+        83.79736328125
+      ],
+      "load_at_projection_start": [
+        88.61669921875,
+        90.19482421875,
+        83.58447265625
+      ],
+      "load_at_worker_start": [
+        88.61669921875,
+        90.19482421875,
+        83.58447265625
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 73,
+      "mortality_person_years": 4299,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 4058725,
+      "peak_memory_bytes": 192282624,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 4262,
+          "cumulative_seconds": 0.034404124,
+          "share_of_profile_total": 0.010123320844307476
+        },
+        "emigration_generator_setup": {
+          "calls": 4262,
+          "cumulative_seconds": 0.064852167,
+          "share_of_profile_total": 0.01908257550721563
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 6337,
+          "cumulative_seconds": 1.7444898260000001,
+          "share_of_profile_total": 0.5133114337754429
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.17013703800000002,
+          "share_of_profile_total": 0.05006236529010689
+        },
+        "sealed_person_generator_setup": {
+          "calls": 4299,
+          "cumulative_seconds": 1.182451575,
+          "share_of_profile_total": 0.34793319186332733
+        },
+        "sealed_registry_sequences": {
+          "calls": 6337,
+          "cumulative_seconds": 1.6507920610000002,
+          "share_of_profile_total": 0.48574111873153925
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 1438,
+          "cumulative_seconds": 0.391901213,
+          "share_of_profile_total": 0.11531587662200857
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 6337,
+            "cumulative_seconds": 1.4629054570000002,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 1.401919106
+          },
+          {
+            "calls": 6337,
+            "cumulative_seconds": 1.6485635250000001,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 0.17580309200000002
+          },
+          {
+            "calls": 882711,
+            "cumulative_seconds": 0.13433653,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.081200483
+          },
+          {
+            "calls": 2187650,
+            "cumulative_seconds": 0.06854330900000001,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.06854330900000001
+          },
+          {
+            "calls": 10599,
+            "cumulative_seconds": 0.048517357000000004,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.041730203
+          },
+          {
+            "calls": 11568,
+            "cumulative_seconds": 0.113484922,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.041564589000000006
+          },
+          {
+            "calls": 4299,
+            "cumulative_seconds": 1.180408421,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.036051529
+          },
+          {
+            "calls": 273034,
+            "cumulative_seconds": 0.044959796,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.031298997
+          },
+          {
+            "calls": 10834,
+            "cumulative_seconds": 0.086908015,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.028274732
+          },
+          {
+            "calls": 4262,
+            "cumulative_seconds": 0.032783199,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.025814243
+          },
+          {
+            "calls": 9645,
+            "cumulative_seconds": 0.060006478,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.024971534
+          },
+          {
+            "calls": 6087,
+            "cumulative_seconds": 0.097342891,
+            "function": "managers.py:410:apply",
+            "self_seconds": 0.024080961
+          }
+        ],
+        "total_seconds": 3.3985017890000053
+      },
+      "projection_process_cpu_seconds": 3.262602,
+      "projection_sha256": "b3326c38cab80d174f4336ac390c549cfc75dd0d3a5f91ddec1bfa6dc87a38e2",
+      "projection_wall_time_seconds": 3.4006981670099776,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 4297,
+      "retained_slice_bytes": 2048303,
+      "rng_streams": "registry",
+      "scheduled_entries": 75,
+      "seconds_per_mortality_person_year": 0.0007910440025610555,
+      "shared_full_column_snapshot_counterfactual_bytes": 2048303,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct_emigration",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 4.6255700000037905,
+      "unique_annual_snapshot_bytes": 117656,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 4.425728625006741
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 1,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 92,
+      "deaths": 37,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 4262,
+      "emigrations": 82,
+      "final_people": 73,
+      "initial_people": 25,
+      "load_at_projection_end": [
+        85.67333984375,
+        89.5654296875,
+        83.44091796875
+      ],
+      "load_at_projection_start": [
+        91.12939453125,
+        90.689453125,
+        83.79736328125
+      ],
+      "load_at_worker_start": [
+        91.12939453125,
+        90.689453125,
+        83.79736328125
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 73,
+      "mortality_person_years": 4299,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 4058725,
+      "peak_memory_bytes": 194428928,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 5737,
+          "cumulative_seconds": 0.059302122,
+          "share_of_profile_total": 0.04233927816000125
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 4299,
+          "cumulative_seconds": 0.042897757,
+          "share_of_profile_total": 0.03062723566726905
+        },
+        "adapter_direct_sequences": {
+          "calls": 5737,
+          "cumulative_seconds": 0.037031981000000005,
+          "share_of_profile_total": 0.02643931265014229
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 1438,
+          "cumulative_seconds": 0.016404365,
+          "share_of_profile_total": 0.011712042492732198
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 4262,
+          "cumulative_seconds": 0.029097968000000002,
+          "share_of_profile_total": 0.020774753406679364
+        },
+        "emigration_generator_setup": {
+          "calls": 4262,
+          "cumulative_seconds": 0.051349147000000005,
+          "share_of_profile_total": 0.03666118082775847
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 600,
+          "cumulative_seconds": 0.14499669,
+          "share_of_profile_total": 0.10352167819879146
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.14499669,
+          "share_of_profile_total": 0.10352167819879146
+        },
+        "sealed_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_registry_sequences": {
+          "calls": 600,
+          "cumulative_seconds": 0.13972700200000002,
+          "share_of_profile_total": 0.09975933751815916
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 600,
+            "cumulative_seconds": 0.123421634,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 0.11803000500000001
+          },
+          {
+            "calls": 882711,
+            "cumulative_seconds": 0.106486516,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.06400979500000001
+          },
+          {
+            "calls": 9999,
+            "cumulative_seconds": 0.062937386,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.049879093000000006
+          },
+          {
+            "calls": 11568,
+            "cumulative_seconds": 0.084155451,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.029059838
+          },
+          {
+            "calls": 273034,
+            "cumulative_seconds": 0.037316922,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.025147774
+          },
+          {
+            "calls": 10599,
+            "cumulative_seconds": 0.026607488000000002,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.022602153
+          },
+          {
+            "calls": 6087,
+            "cumulative_seconds": 0.074153735,
+            "function": "managers.py:410:apply",
+            "self_seconds": 0.018383427
+          },
+          {
+            "calls": 10834,
+            "cumulative_seconds": 0.059774351,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.018092093
+          },
+          {
+            "calls": 119610,
+            "cumulative_seconds": 0.039228103,
+            "function": "generic.py:45:_instancecheck",
+            "self_seconds": 0.016822800000000002
+          },
+          {
+            "calls": 9645,
+            "cumulative_seconds": 0.042945040000000004,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.016734969000000002
+          },
+          {
+            "calls": 600,
+            "cumulative_seconds": 0.13951417500000002,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 0.015202872000000001
+          },
+          {
+            "calls": 22231,
+            "cumulative_seconds": 0.019271135000000002,
+            "function": "generic.py:6359:__finalize__",
+            "self_seconds": 0.015115120000000001
+          }
+        ],
+        "total_seconds": 1.4006408370000007
+      },
+      "projection_process_cpu_seconds": 1.3916369999999998,
+      "projection_sha256": "b3326c38cab80d174f4336ac390c549cfc75dd0d3a5f91ddec1bfa6dc87a38e2",
+      "projection_wall_time_seconds": 1.4022743749956135,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "__main__._measure.<locals>.ProfiledAdapterDirect",
+      "retained_person_year_rows": 4297,
+      "retained_slice_bytes": 2048303,
+      "rng_streams": "direct",
+      "scheduled_entries": 75,
+      "seconds_per_mortality_person_year": 0.0003261861770168908,
+      "shared_full_column_snapshot_counterfactual_bytes": 2048303,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 5.514390625001397,
+      "unique_annual_snapshot_bytes": 117656,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 5.313682082982268
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 4,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 141,
+      "deaths": 148,
+      "emigration_probability": 0.02,
+      "emigration_stream": "registry",
+      "emigration_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "emigration_survivor_person_years": 11788,
+      "emigrations": 248,
+      "final_people": 145,
+      "initial_people": 100,
+      "load_at_projection_end": [
+        86.828125,
+        89.6923828125,
+        83.5576171875
+      ],
+      "load_at_projection_start": [
+        85.67333984375,
+        89.5654296875,
+        83.44091796875
+      ],
+      "load_at_worker_start": [
+        85.67333984375,
+        89.5654296875,
+        83.44091796875
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 179,
+      "mortality_person_years": 11936,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 11067075,
+      "peak_memory_bytes": 196067328,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_generator_setup": {
+          "calls": 11788,
+          "cumulative_seconds": 2.892233482,
+          "share_of_profile_total": 0.36045625031921646
+        },
+        "emigration_registry_sequences": {
+          "calls": 11788,
+          "cumulative_seconds": 2.750110487,
+          "share_of_profile_total": 0.3427435994628232
+        },
+        "sealed_generator_setup_total": {
+          "calls": 15153,
+          "cumulative_seconds": 3.63707803,
+          "share_of_profile_total": 0.45328550304508325
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.154433613,
+          "share_of_profile_total": 0.0192469112233412
+        },
+        "sealed_person_generator_setup": {
+          "calls": 11936,
+          "cumulative_seconds": 2.8490055990000003,
+          "share_of_profile_total": 0.355068801237947
+        },
+        "sealed_registry_sequences": {
+          "calls": 15153,
+          "cumulative_seconds": 3.490733596,
+          "share_of_profile_total": 0.43504673834540536
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 2617,
+          "cumulative_seconds": 0.633638818,
+          "share_of_profile_total": 0.07896979058379508
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 26941,
+            "cumulative_seconds": 5.529861207000001,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 5.283151297000001
+          },
+          {
+            "calls": 26941,
+            "cumulative_seconds": 6.2341446650000005,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 0.668485973
+          },
+          {
+            "calls": 9217526,
+            "cumulative_seconds": 0.273424278,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.273424278
+          },
+          {
+            "calls": 14405,
+            "cumulative_seconds": 3.498783012,
+            "function": "rng.py:129:tagged_child_generator",
+            "self_seconds": 0.084011982
+          },
+          {
+            "calls": 26941,
+            "cumulative_seconds": 0.09182984500000001,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.07862815100000001
+          },
+          {
+            "calls": 924352,
+            "cumulative_seconds": 0.12348626500000001,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.074667673
+          },
+          {
+            "calls": 11936,
+            "cumulative_seconds": 2.844968234,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.062083497
+          },
+          {
+            "calls": 12055,
+            "cumulative_seconds": 0.102264454,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.037614444000000004
+          },
+          {
+            "calls": 297862,
+            "cumulative_seconds": 0.043180588000000006,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.030018520000000003
+          },
+          {
+            "calls": 11263,
+            "cumulative_seconds": 0.075764704,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.024853667000000003
+          },
+          {
+            "calls": 9827,
+            "cumulative_seconds": 0.052569185000000004,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.021034104
+          },
+          {
+            "calls": 6131,
+            "cumulative_seconds": 0.090553221,
+            "function": "managers.py:410:apply",
+            "self_seconds": 0.021003182000000002
+          }
+        ],
+        "total_seconds": 8.023812818999994
+      },
+      "projection_process_cpu_seconds": 7.898680000000001,
+      "projection_sha256": "4b9f68442f0dc41eeff42decf3919a00c648e5ee0e6d8950853aa2e231bafc28",
+      "projection_wall_time_seconds": 8.026812291005626,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 11781,
+      "retained_slice_bytes": 5573799,
+      "rng_streams": "registry",
+      "scheduled_entries": 300,
+      "seconds_per_mortality_person_year": 0.0006724876249166912,
+      "shared_full_column_snapshot_counterfactual_bytes": 5573799,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "registry",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 9.137604458024725,
+      "unique_annual_snapshot_bytes": 300732,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 8.965502291015582
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 4,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 141,
+      "deaths": 148,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 11788,
+      "emigrations": 248,
+      "final_people": 145,
+      "initial_people": 100,
+      "load_at_projection_end": [
+        84.51953125,
+        89.166015625,
+        83.40771484375
+      ],
+      "load_at_projection_start": [
+        86.828125,
+        89.6923828125,
+        83.5576171875
+      ],
+      "load_at_worker_start": [
+        86.828125,
+        89.6923828125,
+        83.5576171875
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 179,
+      "mortality_person_years": 11936,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 11067075,
+      "peak_memory_bytes": 195362816,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 11788,
+          "cumulative_seconds": 0.07924793200000001,
+          "share_of_profile_total": 0.01585534964518718
+        },
+        "emigration_generator_setup": {
+          "calls": 11788,
+          "cumulative_seconds": 0.14063627,
+          "share_of_profile_total": 0.028137481665072954
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 15153,
+          "cumulative_seconds": 3.503757725,
+          "share_of_profile_total": 0.7010063530982812
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.14633537900000002,
+          "share_of_profile_total": 0.02927771792841208
+        },
+        "sealed_person_generator_setup": {
+          "calls": 11936,
+          "cumulative_seconds": 2.75070806,
+          "share_of_profile_total": 0.5503416551378844
+        },
+        "sealed_registry_sequences": {
+          "calls": 15153,
+          "cumulative_seconds": 3.372513048,
+          "share_of_profile_total": 0.6747478730296196
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 2617,
+          "cumulative_seconds": 0.606714286,
+          "share_of_profile_total": 0.12138698003198484
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 15153,
+            "cumulative_seconds": 2.991986024,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 2.8556592120000004
+          },
+          {
+            "calls": 15153,
+            "cumulative_seconds": 3.369168831,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 0.357964918
+          },
+          {
+            "calls": 5233332,
+            "cumulative_seconds": 0.15339357,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.15339357
+          },
+          {
+            "calls": 924352,
+            "cumulative_seconds": 0.11697504900000001,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.07098915
+          },
+          {
+            "calls": 26941,
+            "cumulative_seconds": 0.073656204,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.062839305
+          },
+          {
+            "calls": 11788,
+            "cumulative_seconds": 0.075618481,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.060378335000000005
+          },
+          {
+            "calls": 11936,
+            "cumulative_seconds": 2.7471474860000002,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.05642525600000001
+          },
+          {
+            "calls": 12055,
+            "cumulative_seconds": 0.09320281300000001,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.033131966
+          },
+          {
+            "calls": 297862,
+            "cumulative_seconds": 0.040801548,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.028110891000000002
+          },
+          {
+            "calls": 11263,
+            "cumulative_seconds": 0.067159862,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.021369538
+          },
+          {
+            "calls": 6131,
+            "cumulative_seconds": 0.083570424,
+            "function": "managers.py:410:apply",
+            "self_seconds": 0.019607999
+          },
+          {
+            "calls": 9827,
+            "cumulative_seconds": 0.048405000000000004,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.019117119000000002
+          }
+        ],
+        "total_seconds": 4.9981825550000005
+      },
+      "projection_process_cpu_seconds": 4.972636,
+      "projection_sha256": "4b9f68442f0dc41eeff42decf3919a00c648e5ee0e6d8950853aa2e231bafc28",
+      "projection_wall_time_seconds": 5.001278124982491,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 11781,
+      "retained_slice_bytes": 5573799,
+      "rng_streams": "registry",
+      "scheduled_entries": 300,
+      "seconds_per_mortality_person_year": 0.00041900788580617385,
+      "shared_full_column_snapshot_counterfactual_bytes": 5573799,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct_emigration",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 6.0602542080159765,
+      "unique_annual_snapshot_bytes": 300732,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 5.908851167012472
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 4,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 141,
+      "deaths": 148,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 11788,
+      "emigrations": 248,
+      "final_people": 145,
+      "initial_people": 100,
+      "load_at_projection_end": [
+        84.51953125,
+        89.166015625,
+        83.40771484375
+      ],
+      "load_at_projection_start": [
+        84.51953125,
+        89.166015625,
+        83.40771484375
+      ],
+      "load_at_worker_start": [
+        84.51953125,
+        89.166015625,
+        83.40771484375
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 179,
+      "mortality_person_years": 11936,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 11067075,
+      "peak_memory_bytes": 194854912,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 14553,
+          "cumulative_seconds": 0.145789579,
+          "share_of_profile_total": 0.08259692280584421
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 11936,
+          "cumulative_seconds": 0.11721286500000001,
+          "share_of_profile_total": 0.0664068174739488
+        },
+        "adapter_direct_sequences": {
+          "calls": 14553,
+          "cumulative_seconds": 0.090917966,
+          "share_of_profile_total": 0.0515094718763566
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 2617,
+          "cumulative_seconds": 0.028576714000000003,
+          "share_of_profile_total": 0.016190105331895414
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 11788,
+          "cumulative_seconds": 0.07896378200000001,
+          "share_of_profile_total": 0.044736842311009835
+        },
+        "emigration_generator_setup": {
+          "calls": 11788,
+          "cumulative_seconds": 0.139712802,
+          "share_of_profile_total": 0.07915413159799436
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 600,
+          "cumulative_seconds": 0.149306142,
+          "share_of_profile_total": 0.08458922763754201
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.149306142,
+          "share_of_profile_total": 0.08458922763754201
+        },
+        "sealed_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_registry_sequences": {
+          "calls": 600,
+          "cumulative_seconds": 0.142584772,
+          "share_of_profile_total": 0.08078124298701005
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 26341,
+            "cumulative_seconds": 0.16191934500000002,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.129520666
+          },
+          {
+            "calls": 600,
+            "cumulative_seconds": 0.126151002,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 0.120554723
+          },
+          {
+            "calls": 924352,
+            "cumulative_seconds": 0.116309748,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.070617372
+          },
+          {
+            "calls": 26941,
+            "cumulative_seconds": 0.064680602,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.055265024
+          },
+          {
+            "calls": 12055,
+            "cumulative_seconds": 0.092843305,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.033257641000000004
+          },
+          {
+            "calls": 297862,
+            "cumulative_seconds": 0.042102474,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.029433551000000002
+          },
+          {
+            "calls": 11263,
+            "cumulative_seconds": 0.066690724,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.020704661000000003
+          },
+          {
+            "calls": 6131,
+            "cumulative_seconds": 0.082222454,
+            "function": "managers.py:410:apply",
+            "self_seconds": 0.019358064
+          },
+          {
+            "calls": 9827,
+            "cumulative_seconds": 0.047981521000000006,
+            "function": "managers.py:1241:iget",
+            "self_seconds": 0.01892496
+          },
+          {
+            "calls": 124116,
+            "cumulative_seconds": 0.041744033,
+            "function": "generic.py:45:_instancecheck",
+            "self_seconds": 0.017956913
+          },
+          {
+            "calls": 22530,
+            "cumulative_seconds": 0.021647931000000002,
+            "function": "generic.py:6359:__finalize__",
+            "self_seconds": 0.01733838
+          },
+          {
+            "calls": 124116,
+            "cumulative_seconds": 0.023030232,
+            "function": "generic.py:40:_check",
+            "self_seconds": 0.015659417000000002
+          }
+        ],
+        "total_seconds": 1.765072766000001
+      },
+      "projection_process_cpu_seconds": 1.748469,
+      "projection_sha256": "4b9f68442f0dc41eeff42decf3919a00c648e5ee0e6d8950853aa2e231bafc28",
+      "projection_wall_time_seconds": 1.7678171249863226,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "__main__._measure.<locals>.ProfiledAdapterDirect",
+      "retained_person_year_rows": 11781,
+      "retained_slice_bytes": 5573799,
+      "rng_streams": "direct",
+      "scheduled_entries": 300,
+      "seconds_per_mortality_person_year": 0.00014810800309872005,
+      "shared_full_column_snapshot_counterfactual_bytes": 5573799,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 2.735384250001516,
+      "unique_annual_snapshot_bytes": 300732,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 2.5559256249980535
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 16,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 413,
+      "deaths": 599,
+      "emigration_probability": 0.02,
+      "emigration_stream": "registry",
+      "emigration_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "emigration_survivor_person_years": 43194,
+      "emigrations": 848,
+      "final_people": 566,
+      "initial_people": 400,
+      "load_at_projection_end": [
+        86.09716796875,
+        88.87451171875,
+        83.48681640625
+      ],
+      "load_at_projection_start": [
+        80.6337890625,
+        88.283203125,
+        83.1298828125
+      ],
+      "load_at_worker_start": [
+        84.51953125,
+        89.166015625,
+        83.40771484375
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 628,
+      "mortality_person_years": 43793,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 40445014,
+      "peak_memory_bytes": 202686464,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_generator_setup": {
+          "calls": 43194,
+          "cumulative_seconds": 11.216979618,
+          "share_of_profile_total": 0.4233701142758853
+        },
+        "emigration_registry_sequences": {
+          "calls": 43194,
+          "cumulative_seconds": 10.617094105000001,
+          "share_of_profile_total": 0.40072822609916936
+        },
+        "sealed_generator_setup_total": {
+          "calls": 51480,
+          "cumulative_seconds": 13.363794936000001,
+          "share_of_profile_total": 0.5043988294437692
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.165018153,
+          "share_of_profile_total": 0.006228392728920934
+        },
+        "sealed_person_generator_setup": {
+          "calls": 43793,
+          "cumulative_seconds": 11.363177699000001,
+          "share_of_profile_total": 0.4288881681877031
+        },
+        "sealed_registry_sequences": {
+          "calls": 51480,
+          "cumulative_seconds": 12.761152560000001,
+          "share_of_profile_total": 0.48165288710603116
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 7087,
+          "cumulative_seconds": 1.835599084,
+          "share_of_profile_total": 0.06928226852714518
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 94674,
+            "cumulative_seconds": 20.692070309,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 19.808926506000002
+          },
+          {
+            "calls": 94674,
+            "cumulative_seconds": 23.352410671,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 2.5295242040000003
+          },
+          {
+            "calls": 32382446,
+            "cumulative_seconds": 0.9815773000000001,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.9815773000000001
+          },
+          {
+            "calls": 94674,
+            "cumulative_seconds": 0.38618844700000005,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.33255432500000004
+          },
+          {
+            "calls": 50281,
+            "cumulative_seconds": 12.943766101000001,
+            "function": "rng.py:129:tagged_child_generator",
+            "self_seconds": 0.32570767
+          },
+          {
+            "calls": 43793,
+            "cumulative_seconds": 11.347398100000001,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.29581740100000004
+          },
+          {
+            "calls": 983326,
+            "cumulative_seconds": 0.134483551,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.08161415300000001
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 23.015921005000003,
+            "function": "exits.py:89:__call__",
+            "self_seconds": 0.071019989
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 11.495912293,
+            "function": "steps.py:113:apply_mortality",
+            "self_seconds": 0.045407214
+          },
+          {
+            "calls": 12277,
+            "cumulative_seconds": 0.113392637,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.042918117000000006
+          },
+          {
+            "calls": 370037,
+            "cumulative_seconds": 0.05175627,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.037876549
+          },
+          {
+            "calls": 43194,
+            "cumulative_seconds": 11.216979618,
+            "function": "op1_run_size.py:302:emigration_generator_setup",
+            "self_seconds": 0.032404761000000004
+          }
+        ],
+        "total_seconds": 26.49450029600001
+      },
+      "projection_process_cpu_seconds": 25.510653,
+      "projection_sha256": "a4c37e549fca912944d4c973033d24847c6fd962307025113981561a84ea42a2",
+      "projection_wall_time_seconds": 26.501004624995403,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 43159,
+      "retained_slice_bytes": 20380196,
+      "rng_streams": "registry",
+      "scheduled_entries": 1200,
+      "seconds_per_mortality_person_year": 0.0006051424799624461,
+      "shared_full_column_snapshot_counterfactual_bytes": 20380196,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "registry",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 27.671436167001957,
+      "unique_annual_snapshot_bytes": 1050396,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 27.46101104200352
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 16,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 413,
+      "deaths": 599,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 43194,
+      "emigrations": 848,
+      "final_people": 566,
+      "initial_people": 400,
+      "load_at_projection_end": [
+        76.18017578125,
+        86.43603515625,
+        82.73681640625
+      ],
+      "load_at_projection_start": [
+        86.09716796875,
+        88.87451171875,
+        83.48681640625
+      ],
+      "load_at_worker_start": [
+        86.09716796875,
+        88.87451171875,
+        83.48681640625
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 628,
+      "mortality_person_years": 43793,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 40445014,
+      "peak_memory_bytes": 201064448,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 43194,
+          "cumulative_seconds": 0.340070696,
+          "share_of_profile_total": 0.019325608575212018
+        },
+        "emigration_generator_setup": {
+          "calls": 43194,
+          "cumulative_seconds": 0.610949162,
+          "share_of_profile_total": 0.034719146645219315
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 51480,
+          "cumulative_seconds": 14.846981710000001,
+          "share_of_profile_total": 0.8437273791176408
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.18669654000000002,
+          "share_of_profile_total": 0.010609629988190495
+        },
+        "sealed_person_generator_setup": {
+          "calls": 43793,
+          "cumulative_seconds": 12.592001656,
+          "share_of_profile_total": 0.7155809013966835
+        },
+        "sealed_registry_sequences": {
+          "calls": 51480,
+          "cumulative_seconds": 14.135873357000001,
+          "share_of_profile_total": 0.8033163650364932
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 7087,
+          "cumulative_seconds": 2.068283514,
+          "share_of_profile_total": 0.11753684773276685
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 51480,
+            "cumulative_seconds": 12.515159946,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 11.999372961
+          },
+          {
+            "calls": 51480,
+            "cumulative_seconds": 14.117422491000001,
+            "function": "rng.py:69:seed_sequence",
+            "self_seconds": 1.520602111
+          },
+          {
+            "calls": 17783024,
+            "cumulative_seconds": 0.581127729,
+            "function": "multiarray.py:197:concatenate",
+            "self_seconds": 0.581127729
+          },
+          {
+            "calls": 94674,
+            "cumulative_seconds": 0.38431405100000005,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.33110685900000003
+          },
+          {
+            "calls": 43793,
+            "cumulative_seconds": 12.571475561000002,
+            "function": "rng.py:85:child_generator",
+            "self_seconds": 0.318008345
+          },
+          {
+            "calls": 43194,
+            "cumulative_seconds": 0.325147232,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.263370627
+          },
+          {
+            "calls": 983326,
+            "cumulative_seconds": 0.14885752700000002,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.09040123700000001
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 12.760022751000001,
+            "function": "steps.py:113:apply_mortality",
+            "self_seconds": 0.064254481
+          },
+          {
+            "calls": 7087,
+            "cumulative_seconds": 2.0645368680000002,
+            "function": "rng.py:129:tagged_child_generator",
+            "self_seconds": 0.057088431
+          },
+          {
+            "calls": 12277,
+            "cumulative_seconds": 0.12816397000000002,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.049616160000000006
+          },
+          {
+            "calls": 43194,
+            "cumulative_seconds": 0.5298472320000001,
+            "function": "streams.py:191:tagged_child_generator",
+            "self_seconds": 0.048927974000000006
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 13.678811127000001,
+            "function": "exits.py:89:__call__",
+            "self_seconds": 0.044570911000000005
+          }
+        ],
+        "total_seconds": 17.596894539000004
+      },
+      "projection_process_cpu_seconds": 17.026541,
+      "projection_sha256": "a4c37e549fca912944d4c973033d24847c6fd962307025113981561a84ea42a2",
+      "projection_wall_time_seconds": 17.604304209002294,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "populace_dynamics.engine.rng.ProjectionRNGRegistry",
+      "retained_person_year_rows": 43159,
+      "retained_slice_bytes": 20380196,
+      "rng_streams": "registry",
+      "scheduled_entries": 1200,
+      "seconds_per_mortality_person_year": 0.0004019889984472928,
+      "shared_full_column_snapshot_counterfactual_bytes": 20380196,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct_emigration",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 19.50619633300812,
+      "unique_annual_snapshot_bytes": 1050396,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 19.300122791988542
+    },
+    {
+      "accounted_periods": 75,
+      "adapter_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "all_count_residuals_zero": true,
+      "all_revaluations_zero": true,
+      "annual_cohort_rows": 16,
+      "annual_snapshot_columns": [
+        [
+          "person_id",
+          "year",
+          "weight"
+        ]
+      ],
+      "annual_snapshot_references": 150,
+      "births": 413,
+      "deaths": 599,
+      "emigration_probability": 0.02,
+      "emigration_stream": "direct",
+      "emigration_stream_class": "populace_dynamics.open_population.streams.DirectRNGStreams",
+      "emigration_survivor_person_years": 43194,
+      "emigrations": 848,
+      "final_people": 566,
+      "initial_people": 400,
+      "load_at_projection_end": [
+        77.44677734375,
+        86.5283203125,
+        82.791015625
+      ],
+      "load_at_projection_start": [
+        76.18017578125,
+        86.43603515625,
+        82.73681640625
+      ],
+      "load_at_worker_start": [
+        76.18017578125,
+        86.43603515625,
+        82.73681640625
+      ],
+      "maximum_absolute_weight_residual": 0.0,
+      "maximum_live_people": 628,
+      "mortality_person_years": 43793,
+      "numpy_version": "2.5.4",
+      "original_full_column_snapshot_counterfactual_bytes": 40445014,
+      "peak_memory_bytes": 203046912,
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "profile": {
+        "adapter_direct_generator_setup_total": {
+          "calls": 50880,
+          "cumulative_seconds": 0.5720793000000001,
+          "share_of_profile_total": 0.1832895904902548
+        },
+        "adapter_direct_module_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "adapter_direct_person_generator_setup": {
+          "calls": 43793,
+          "cumulative_seconds": 0.4857155,
+          "share_of_profile_total": 0.15561932600912032
+        },
+        "adapter_direct_sequences": {
+          "calls": 50880,
+          "cumulative_seconds": 0.355342604,
+          "share_of_profile_total": 0.11384890236528532
+        },
+        "adapter_direct_tagged_child_generator_setup": {
+          "calls": 7087,
+          "cumulative_seconds": 0.0863638,
+          "share_of_profile_total": 0.027670264481134462
+        },
+        "adapter_direct_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "emigration_direct_sequences": {
+          "calls": 43194,
+          "cumulative_seconds": 0.32503026900000004,
+          "share_of_profile_total": 0.10413707488096031
+        },
+        "emigration_generator_setup": {
+          "calls": 43194,
+          "cumulative_seconds": 0.576095019,
+          "share_of_profile_total": 0.18457619444714318
+        },
+        "emigration_registry_sequences": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_generator_setup_total": {
+          "calls": 600,
+          "cumulative_seconds": 0.176659964,
+          "share_of_profile_total": 0.056600426649912265
+        },
+        "sealed_module_generator_setup": {
+          "calls": 600,
+          "cumulative_seconds": 0.176659964,
+          "share_of_profile_total": 0.056600426649912265
+        },
+        "sealed_person_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_registry_sequences": {
+          "calls": 600,
+          "cumulative_seconds": 0.167608953,
+          "share_of_profile_total": 0.05370055577586947
+        },
+        "sealed_tagged_child_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "sealed_tagged_generator_setup": {
+          "calls": 0,
+          "cumulative_seconds": 0,
+          "share_of_profile_total": 0.0
+        },
+        "top_self_costs": [
+          {
+            "calls": 94074,
+            "cumulative_seconds": 0.649650453,
+            "function": "streams.py:122:_sequence",
+            "self_seconds": 0.525480774
+          },
+          {
+            "calls": 94674,
+            "cumulative_seconds": 0.253042251,
+            "function": "_ufunc_config.py:496:inner",
+            "self_seconds": 0.217728637
+          },
+          {
+            "calls": 600,
+            "cumulative_seconds": 0.148393999,
+            "function": "rng.py:61:_period_sequence",
+            "self_seconds": 0.142268801
+          },
+          {
+            "calls": 983326,
+            "cumulative_seconds": 0.136620141,
+            "function": "~:0:<built-in method builtins.isinstance>",
+            "self_seconds": 0.08377311500000001
+          },
+          {
+            "calls": 50281,
+            "cumulative_seconds": 0.586136062,
+            "function": "streams.py:191:tagged_child_generator",
+            "self_seconds": 0.053733186
+          },
+          {
+            "calls": 43793,
+            "cumulative_seconds": 0.47384786100000004,
+            "function": "streams.py:152:child_generator",
+            "self_seconds": 0.042886478000000006
+          },
+          {
+            "calls": 12277,
+            "cumulative_seconds": 0.110078717,
+            "function": "construction.py:580:sanitize_array",
+            "self_seconds": 0.041162303000000004
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 1.426090086,
+            "function": "exits.py:89:__call__",
+            "self_seconds": 0.040151318000000005
+          },
+          {
+            "calls": 370037,
+            "cumulative_seconds": 0.05059661100000001,
+            "function": "~:0:<built-in method builtins.len>",
+            "self_seconds": 0.036544109000000005
+          },
+          {
+            "calls": 11461,
+            "cumulative_seconds": 0.08366946900000001,
+            "function": "managers.py:904:_slice_take_blocks_ax0",
+            "self_seconds": 0.027125533
+          },
+          {
+            "calls": 75,
+            "cumulative_seconds": 0.586485545,
+            "function": "steps.py:113:apply_mortality",
+            "self_seconds": 0.025776378000000003
+          },
+          {
+            "calls": 43194,
+            "cumulative_seconds": 0.576095019,
+            "function": "op1_run_size.py:314:emigration_generator_setup",
+            "self_seconds": 0.02395366
+          }
+        ],
+        "total_seconds": 3.1211772500000023
+      },
+      "projection_process_cpu_seconds": 3.0486560000000003,
+      "projection_sha256": "a4c37e549fca912944d4c973033d24847c6fd962307025113981561a84ea42a2",
+      "projection_wall_time_seconds": 3.127639292011736,
+      "python_version": "3.14.7",
+      "result_rng_stream_class": "__main__._measure.<locals>.ProfiledAdapterDirect",
+      "retained_person_year_rows": 43159,
+      "retained_slice_bytes": 20380196,
+      "rng_streams": "direct",
+      "scheduled_entries": 1200,
+      "seconds_per_mortality_person_year": 7.141870372004056e-05,
+      "shared_full_column_snapshot_counterfactual_bytes": 20380196,
+      "source_sha256": {
+        "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+        "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+        "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+      },
+      "status": "completed",
+      "stream_mode": "direct",
+      "streams_py_sha256": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a",
+      "subprocess_wall_time_seconds": 4.405656750022899,
+      "unique_annual_snapshot_bytes": 1050396,
+      "unique_annual_snapshots": 76,
+      "wall_time_seconds": 4.214845292008249
+    }
+  ],
+  "nondrawing_adapters": [
+    "engine.steps.advance_age",
+    "open_population.exits.no_marital_transitions",
+    "no-op disability, earnings, claiming and household"
+  ],
+  "peak_memory_method": "resource.getrusage(RUSAGE_SELF).ru_maxrss; bytes on macOS, KiB converted to bytes on Linux",
+  "person_stream_adapters": [
+    "engine.steps.apply_mortality",
+    "baselines.fertility.AsfrFertilityStep"
+  ],
+  "process_isolation": "one fresh worker per size and stream mode; workers run sequentially",
+  "profile_method": "cProfile projection only; registry_sequences measure root/period/module seed_sequence cumulative cost, excluding child leaves and default_rng; sealed_generator_setup_total adds four disjoint module/child/tagged/tagged-child setup wrappers and includes all leaves/default_rng; emigration_direct_sequences measures direct construction; emigration_generator_setup includes complete tagged generator setup",
+  "projected_years": 75,
+  "registered_horizon": 2100,
+  "requested_initial_sizes": [
+    25,
+    100,
+    400
+  ],
+  "rng_microbenchmark": {
+    "draws_per_repetition": 400,
+    "limitation": "wall-clock samples include severe host scheduling variation; the direct path's medians do not establish a horizon cost relationship",
+    "load_at_end": [
+      77.44677734375,
+      86.5283203125,
+      82.791015625
+    ],
+    "load_at_start": [
+      77.44677734375,
+      86.5283203125,
+      82.791015625
+    ],
+    "maximum_microseconds_per_draw": {
+      "direct_7": 7.096562549122609,
+      "direct_75": 8.5842699627392,
+      "registry_7": 55.25676999241114,
+      "registry_75": 231.49354252382182
+    },
+    "median_microseconds_per_draw": {
+      "direct_7": 6.709375011269003,
+      "direct_75": 7.447707466781139,
+      "registry_7": 52.333019993966445,
+      "registry_75": 216.73916751751676
+    },
+    "method": "five interleaved repetitions; one tagged_child_generator plus random per address",
+    "microseconds_per_draw_samples": {
+      "direct_7": [
+        7.096562549122609,
+        6.709375011269003,
+        6.605102535104379,
+        6.885312468511984,
+        6.641352520091459
+      ],
+      "direct_75": [
+        7.47728998248931,
+        8.5842699627392,
+        7.0404174766736105,
+        7.447707466781139,
+        6.7262499942444265
+      ],
+      "registry_7": [
+        55.25676999241114,
+        52.81375000777189,
+        51.96177000470925,
+        52.333019993966445,
+        52.0922924624756
+      ],
+      "registry_75": [
+        231.49354252382182,
+        217.09874999942258,
+        211.6769774875138,
+        216.73916751751676,
+        209.36323002388235
+      ]
+    },
+    "minimum_microseconds_per_draw": {
+      "direct_7": 6.605102535104379,
+      "direct_75": 6.7262499942444265,
+      "registry_7": 51.96177000470925,
+      "registry_75": 209.36323002388235
+    }
+  },
+  "scope": "invented data; arithmetic conformance and resource use only",
+  "size_comparisons": {
+    "direct": {
+      "average_cost_extrapolation_seconds_per_million_person_years": [
+        71.41870372004055,
+        326.1861770168908
+      ],
+      "extrapolation_formula": "multiply the observed average-cost envelope by the full run's mortality person-years; this includes fixed overhead and is not a marginal estimate",
+      "fitted_estimate_status": "unusable under varying host load; the raw marginal coefficient is not a runtime prediction",
+      "fitted_fixed_seconds_per_projected_year": 0.016192866557898904,
+      "limitation": "two small profiled sizes on a loaded host; the average-cost envelope is an engineering extrapolation, not a bound; full-size measurement remains open before OP10a",
+      "marginal_seconds_per_mortality_person_year": 4.3686760445032724e-05,
+      "observed_average_seconds_per_mortality_person_year_envelope": [
+        7.141870372004056e-05,
+        0.0003261861770168908
+      ]
+    },
+    "direct_emigration": {
+      "average_cost_extrapolation_seconds_per_million_person_years": [
+        401.98899844729283,
+        791.0440025610555
+      ],
+      "extrapolation_formula": "multiply the observed average-cost envelope by the full run's mortality person-years; this includes fixed overhead and is not a marginal estimate",
+      "fitted_estimate_status": "unusable under varying host load; the raw marginal coefficient is not a runtime prediction",
+      "fitted_fixed_seconds_per_projected_year": 0.0247281008198265,
+      "limitation": "two small profiled sizes on a loaded host; the average-cost envelope is an engineering extrapolation, not a bound; full-size measurement remains open before OP10a",
+      "marginal_seconds_per_mortality_person_year": 0.00035963959188718074,
+      "observed_average_seconds_per_mortality_person_year_envelope": [
+        0.0004019889984472928,
+        0.0007910440025610555
+      ]
+    },
+    "registry": {
+      "average_cost_extrapolation_seconds_per_million_person_years": [
+        605.1424799624461,
+        1132.2859290540548
+      ],
+      "extrapolation_formula": "multiply the observed average-cost envelope by the full run's mortality person-years; this includes fixed overhead and is not a marginal estimate",
+      "fitted_estimate_status": "unusable under varying host load; the raw marginal coefficient is not a runtime prediction",
+      "fitted_fixed_seconds_per_projected_year": 0.03350491888760481,
+      "limitation": "two small profiled sizes on a loaded host; the average-cost envelope is an engineering extrapolation, not a bound; full-size measurement remains open before OP10a",
+      "marginal_seconds_per_mortality_person_year": 0.0005477618730944453,
+      "observed_average_seconds_per_mortality_person_year_envelope": [
+        0.0006051424799624461,
+        0.0011322859290540548
+      ]
+    }
+  },
+  "source_sha256": {
+    "src/populace_dynamics/open_population/exits.py": "5fd71d8918c851ce000019b2f7f8376a9a8bc3f30e40349cb249b56f9386e588",
+    "src/populace_dynamics/open_population/harness.py": "d88309faf4a3d8b3edde772d8a05b8a97242432292168fbfc8757074050e79ef",
+    "src/populace_dynamics/open_population/streams.py": "5dde79f3d249068e4b5b3dc1df83e55b1b469a80b66a67af4a508c5e6139bc3a"
+  },
+  "start_year": 2025,
+  "stream_modes": {
+    "direct": "every person and tagged draw on DirectRNGStreams (the default)",
+    "direct_emigration": "adapters on ProjectionRNGRegistry, emigration on DirectRNGStreams (OP1 before the injection)",
+    "loop_module_generators": "the sealed loop's 600 positional module generators stay on its registry in every mode",
+    "registry": "adapters' person and tagged draws and emigration draws on ProjectionRNGRegistry"
+  },
+  "stream_modes_have_identical_projection_hashes": true
+}
