@@ -7,6 +7,13 @@ slots. Wrappers declare causes at those boundaries without changing draws.
 ``engine/accounting.py:1044–1086`` reports revaluations separately from
 summation residuals; OP1 refuses revaluation because its identity fixes weights.
 ``engine/accounting_history.py:172–187`` supplies the single-presence contract.
+
+The loop builds one registry per run (``engine/loop.py:216–217``) and puts it
+on each period's context (``:287–294``). By default every slot here receives
+that context with ``DirectRNGStreams`` in its place, so the adapters' person
+and tagged draws avoid the registry's horizon-proportional spawn
+(``engine/rng.py:61–67``) and stay identical (design §§2.1, 5.4). The module
+generators the loop passes positionally stay on its registry.
 """
 
 from __future__ import annotations
@@ -37,6 +44,7 @@ from populace_dynamics.engine.entrant_schedule import (
 )
 from populace_dynamics.engine.loop import (
     SCHEDULED_ENTRIES_KEY,
+    PeriodContext,
     PeriodModules,
     ProjectionEngine,
     ProjectionResult,
@@ -56,10 +64,13 @@ from populace_dynamics.open_population.exits import (
 from populace_dynamics.open_population.schedule import (
     prepare_scheduled_entries,
 )
+from populace_dynamics.open_population.streams import DirectRNGStreams
 
 REGISTERED_PRODUCTION_HORIZONS = MappingProxyType(
     {"tr2026_intermediate": 2100}
 )
+RNG_STREAM_MODES = ("registry", "direct")
+RNGStreamMode = Literal["registry", "direct"]
 
 
 def _registered_horizon(scenario: str) -> int:
@@ -106,6 +117,8 @@ class OpenPopulationResult:
     horizon: int
     kind: Literal["production", "gate"]
     scenario: str | None
+    rng_streams: RNGStreamMode
+    rng_stream_class: str
 
     def read_prefix(self, end_year: int) -> ProjectionResult:
         """Copy a prefix of this run without scheduling or simulating again."""
@@ -155,6 +168,72 @@ def _fixed_stock(step: Callable, *, marital: bool = False) -> Callable:
     return checked
 
 
+class _AdapterStreams:
+    """Serve every slot's context draws from one stream class (§§2.1, 5.4).
+
+    ``"direct"`` replaces the loop's registry on the context with one
+    ``DirectRNGStreams`` of the same draw and horizon, built at the first
+    period. ``"registry"`` passes the loop's context through unchanged. Both
+    refuse a run whose loop changes registry between periods, since the
+    direct instance is built once (``engine/loop.py:217``, ``:292``).
+    """
+
+    def __init__(self, mode: RNGStreamMode) -> None:
+        if type(mode) is not str or mode not in RNG_STREAM_MODES:
+            raise ValueError(
+                f"rng_streams must be one of {RNG_STREAM_MODES}, got {mode!r}"
+            )
+        self.mode = mode
+        self.loop_registry = None
+        self.streams = None
+        self._bound: tuple[PeriodContext, PeriodContext] | None = None
+
+    @property
+    def stream_class(self) -> str:
+        """Name the class that served the adapters' context draws."""
+        if self.streams is None:
+            raise IdOrStreamCollision("no period bound the run's streams")
+        cls = type(self.streams)
+        return f"{cls.__module__}.{cls.__qualname__}"
+
+    def bind(self, context: PeriodContext) -> PeriodContext:
+        """Return the context every slot of this period receives."""
+        registry = context.rng_registry
+        if registry is None:
+            raise IdOrStreamCollision(
+                "OP1 slots need the projection's person-keyed RNG registry"
+            )
+        if self.loop_registry is None:
+            self.loop_registry = registry
+            self.streams = (
+                registry
+                if self.mode == "registry"
+                else DirectRNGStreams(registry.draw_index, registry.n_periods)
+            )
+        elif registry is not self.loop_registry:
+            raise IdOrStreamCollision(
+                "the sealed loop changed its RNG registry between periods"
+            )
+        if self.mode == "registry":
+            return context
+        # The loop gives all eight slots one context per period; so does this.
+        if self._bound is None or self._bound[0] is not context:
+            self._bound = (
+                context,
+                replace(context, rng_registry=self.streams),
+            )
+        return self._bound[1]
+
+    def wrap(self, step: Callable) -> Callable:
+        """Call ``step`` with this period's bound context, other args as-is."""
+
+        @wraps(step)
+        def bound(frame, context, *args):
+            return step(frame, self.bind(context), *args)
+
+        return bound
+
+
 def _project(
     initial_slice: pd.DataFrame,
     modules: PeriodModules,
@@ -175,8 +254,14 @@ def _project(
     reserved_real_ids: Iterable[int] = (),
     kind: Literal["production", "gate"],
     scenario: str | None,
+    rng_streams: RNGStreamMode = "direct",
 ) -> OpenPopulationResult:
-    """Wrap the sealed loop and reconcile every transition (design §§5.4, 7)."""
+    """Wrap the sealed loop and reconcile every transition (design §§5.4, 7).
+
+    ``rng_streams`` picks the class behind every slot's
+    ``context.rng_registry``; the projection is identical either way.
+    """
+    adapter_streams = _AdapterStreams(rng_streams)
     require_emigration_compatible(modules.marital_core, emigration_hazard)
     ProjectionEngine._validate_slice(initial_slice, "initial_slice")
     # Run the initializer exactly once, before constructing allocator metadata.
@@ -273,17 +358,22 @@ def _project(
         opening = transition.closing
         return closing
 
+    # Every slot, the exit and birth adapters included, reads its context
+    # through the run's stream binding; the loop's generators pass unchanged.
+    streamed = adapter_streams.wrap
     wrapped = replace(
         modules,
         initialize=None,
-        mortality=mortality,
-        aging=_fixed_stock(modules.aging),
-        marital_core=_fixed_stock(modules.marital_core, marital=True),
-        fertility=BirthEntryAdapter(modules.fertility, ledger),
-        disability=_fixed_stock(modules.disability),
-        earnings=_fixed_stock(modules.earnings),
-        claiming=_fixed_stock(modules.claiming),
-        household_composition=close_period,
+        mortality=streamed(mortality),
+        aging=streamed(_fixed_stock(modules.aging)),
+        marital_core=streamed(
+            _fixed_stock(modules.marital_core, marital=True)
+        ),
+        fertility=streamed(BirthEntryAdapter(modules.fertility, ledger)),
+        disability=streamed(_fixed_stock(modules.disability)),
+        earnings=streamed(_fixed_stock(modules.earnings)),
+        claiming=streamed(_fixed_stock(modules.claiming)),
+        household_composition=streamed(close_period),
     )
     try:
         projection = ProjectionEngine(wrapped).project(
@@ -306,6 +396,8 @@ def _project(
         horizon=end_year,
         kind=kind,
         scenario=scenario,
+        rng_streams=adapter_streams.mode,
+        rng_stream_class=adapter_streams.stream_class,
     )
 
 
@@ -313,9 +405,15 @@ def run_production(
     initial_slice: pd.DataFrame,
     modules: PeriodModules,
     request: ProductionRequest,
+    *,
+    rng_streams: RNGStreamMode = "direct",
     **kwargs: Any,
 ) -> OpenPopulationResult:
-    """Execute the registered production horizon through the sealed loop."""
+    """Execute the registered production horizon through the sealed loop.
+
+    ``rng_streams="registry"`` serves the adapters from the loop's own
+    registry, for differential checks; the default is identical and faster.
+    """
     if type(request) is not ProductionRequest:
         raise TypeError("run_production requires a ProductionRequest")
     return _project(
@@ -326,5 +424,6 @@ def run_production(
         start_year=request.start_year,
         kind="production",
         scenario=request.scenario,
+        rng_streams=rng_streams,
         **kwargs,
     )

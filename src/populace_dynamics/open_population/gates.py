@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -57,8 +57,13 @@ def run_gate(
     emigration_hazard: EmigrationHazard | None = None,
     reserved_real_ids: Iterable[int] = (),
     metadata: Mapping[str, Any] | None = None,
+    rng_streams: Literal["registry", "direct"] = "direct",
 ) -> OpenPopulationResult:
-    """Run the fixed gate horizon through the OP1 accounting harness."""
+    """Run the fixed gate horizon through the OP1 accounting harness.
+
+    ``rng_streams="registry"`` is for differential checks; both classes give
+    the same projection (design §§2.1, 5.4).
+    """
     if type(request) is not GateRunRequest:
         raise TypeError("run_gate requires a GateRunRequest")
     from populace_dynamics.open_population.errors import GateTargetRefused
@@ -86,4 +91,5 @@ def run_gate(
         metadata=gate_metadata,
         kind="gate",
         scenario=None,
+        rng_streams=rng_streams,
     )
