@@ -671,7 +671,9 @@ observer's refusal stays, with a clearer OP1 refusal under the default; the
 modules by path. Review inject-r1 asked for revisions at `8634858c`, and
 review inject-r2 for more at `33e383b4`. Review inject-r3 approved
 `5a4fc14c` with one minor finding and two nits, since fixed. Their
-subsections, below, give the findings and the fixes.
+subsections, below, give the findings and the fixes. In the coordinator's
+tier-count slot the branch then merged master `172f690f` and recounted the
+tier inventories (condition 5).
 
 ### Mechanism
 
@@ -742,11 +744,13 @@ so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
 
 ### The coordinator's conditions and their evidence
 
-**1. No sealed code changes.** Against master `9cced8ff`, the master it
-merged, the branch changes only `open_population/harness.py` and `gates.py`,
-OP1's two stream test modules and three files in this folder: this report,
-`op1_run_size.py` and `op1_run_size_injection.json` (§3's commands, with
-`9cced8ff` as the base). No engine or baselines attribute is patched, and
+**1. No sealed code changes.** Against master `172f690f`, the master it
+last merged, the branch changes only `open_population/harness.py` and
+`gates.py`, OP1's two stream test modules, three files in this folder (this
+report, `op1_run_size.py` and `op1_run_size_injection.json`) and the two
+tier files the recount sets, `tests/tier_counts.json` and
+`tests/README-tiers.md` (§3's commands, with `172f690f` as the base). No
+engine or baselines attribute is patched, and
 `DirectRNGStreams` is not a registry subclass:
 - `test_a_direct_run_patches_no_sealed_module_attribute` compares every
   attribute of `engine/rng.py`, `engine/loop.py`, `ProjectionRNGRegistry`
@@ -796,12 +800,12 @@ computes, and the runs listed above check that on the paths they take.
 
 `test_sealed_code_holds_only_the_known_registry_type_check` runs an AST scan
 of `src/populace_dynamics/` outside `open_population/`: 302 modules at
-`9cced8ff`, once the five excluded modules below are dropped.
+`172f690f`, once the five excluded modules below are dropped.
 - **What it reads.** The project's data-access record keeps two modules out
   of automated reads: `estimates/adjusted_poverty.py` and
   `uniform_cut_track_u/rows.py`. The scan also skips the depletion-cut
   modules, every path matching `src/populace_dynamics/bridge/depletion_cut*.py`,
-  so that what it reads does not depend on who runs it. At `9cced8ff` the
+  so that what it reads does not depend on who runs it. At `172f690f` the
   pattern matches three: `bridge/depletion_cut.py`,
   `bridge/depletion_cut_population.py` and
   `bridge/depletion_cut_population_child.py`. The walk decides from each
@@ -999,7 +1003,9 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   anything from such a container. The generated data modules of
   18.5, 11.1 and 1.6 MB are almost all such containers: pruning leaves
   178, 78 and 7 of their 706,994, 251,826 and 85,417 syntax-tree nodes, and
-  934,099 of the 2,007,887 in all 302 modules.
+  934,119 of the 2,007,907 in all 302 modules at `172f690f`. At `9cced8ff`
+  they were 934,099 of 2,007,887; master's Track B change is the only
+  source change between the two.
   `test_pruning_leaves_every_invented_scan_unchanged` and
   `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
   literals, each placed in fourteen positions, folded ones among them)
@@ -1217,7 +1223,7 @@ bounds. The full-size measurement is still due before OP10a.
 **4, by reader.** `test_every_stream_reader_is_run_or_named` takes a census
 of sealed code: each function, class or module that uses `rng_registry`,
 `person_generator` or `composition_rngs_from_registry` as an attribute, a
-name, a keyword or a string. At `9cced8ff` it finds 23 places and pins each
+name, a keyword or a string. At `172f690f` it finds 23 places and pins each
 with the run that checks it or the reason none does:
 - ten run with both classes, below;
 - six build their own `ProjectionRNGRegistry` and read only that one:
@@ -1262,13 +1268,29 @@ by.
 
 **5. Seal bookkeeping.** No module was added, so the exclusion tuple and its
 pin are unchanged. `tests/track_u2/test_u2_isolation.py` was not run, and CI
-gives its result. `tests/tier_counts.json` and `tests/README-tiers.md` are
-untouched, for the main session's recount.
+gives its result. `tests/tier_counts.json` and `tests/README-tiers.md`
+change only by the recount in the coordinator's tier-count slot, below.
 
 **Tier.** Every new test is in `tests/open_population/test_streams.py` or
 `test_stream_injection.py`, and `_classify_test_module` classifies both
 modules as `unit`. The stream differential, the reader runs and the hash
 identity therefore run on every CI push.
+
+In the slot, `619282e7` merges master `172f690f` (a Track B holdout
+registry change and master's own recount) into the fixes for review
+inject-r3, `56fa57ca`, without conflicts; its tree is the one
+`git merge-tree --write-tree 56fa57ca 172f690f` writes. Master's
+`tests/open_population` and `tests/conftest.py` are the same at `9cced8ff`
+and `172f690f`. `ec888be7` then sets the counts. Against master,
+`tests/open_population` collects 457 more node ids (432 in
+`test_stream_injection.py`, 25 in `test_streams.py`) and loses none, and
+all 695 collect as `unit`. The branch changes no other test module and no
+`conftest.py`, so no other directory's collection changes. `unit`
+therefore moves from 18,789 to 19,246 and the total from 25,359 to 25,816;
+the other four tiers keep master's counts. CI's
+`tests/test_tier_policy.py::test__given_collected_suite__then_tiers_match_policy_manifest`,
+which failed at `5a4fc14c` because the counts lagged, compares the whole
+collected suite with these files at each push.
 
 ### Review inject-r1
 
@@ -1380,10 +1402,15 @@ their own stacks.
 .venv/bin/python -m pytest --collect-only -q -p no:cacheprovider -m unit tests/open_population
 .venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
 .venv/bin/ruff check src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
-git diff --check 9cced8ff
-git diff --stat 9cced8ff
-git diff --quiet 9cced8ff -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b scripts tests/estimates tests/tier_counts.json tests/README-tiers.md
+git diff --check 172f690f
+git diff --stat 172f690f
+git diff --quiet 172f690f -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs scripts tests/estimates
+git diff --numstat 172f690f -- tests/tier_counts.json tests/README-tiers.md
 ```
+
+Rounds before the tier-count slot used master `9cced8ff` as the base and
+also held `tests/tier_counts.json` and `tests/README-tiers.md` quiet; the
+results below name the base each round used.
 
 The build ran the required command in its sandbox in five chunks of named
 modules, one process each, because the sandbox could not finish it within
@@ -1505,6 +1532,61 @@ person streams; shifting a tagged child's tag changes `_person_uniforms`,
 `draw_asfr_births` and the composition streams; shifting a tagged
 generator's tag changes the composition streams. Unmutated, no reader's
 output differs.
+
+After the fixes for review inject-r3, the merge of master `172f690f` and
+the recount, the main session ran the same commands on the host at
+`ec888be7` from 21:18 to 21:38 UTC on 26 October. The next commit changes
+only this report. Each process ran under the load-check audit hook and
+started only at a one-minute load under 100:
+- `tests/open_population`: **694 passed and 1 strict xfail** in 67.08 s.
+  These are OP1's 238 and the 457 tests this follow-up adds: 432 in
+  `test_stream_injection.py` and 25 in `test_streams.py`.
+- The other four modules: 104 passed in 3.41 s.
+- The two Track B holdout-registry modules: 224 passed and 2 skipped;
+  master's Track B change adds nine. The required command plus those two
+  modules, in one process: **1,022 passed, 2 skipped and 1 strict xfail**.
+- Peak RSS was 1.33 GB.
+- The slowest tests took 20.2 s (the real-tree scan), 3.8 s (the census),
+  2.5 s (the fresh-interpreter import check) and up to 2.1 s for a 2100
+  hash pair.
+- No file under a bar was opened, the pattern line named only
+  `baselines/asfr.py` (read by the scan and the census, never displayed),
+  and a call-count hook on the one-process run counted no call to either
+  barred function.
+- `--collect-only -m unit tests/open_population` collects all 695. Black,
+  Ruff and `git diff --check 172f690f` are clean. `git diff --stat
+  172f690f` lists the nine files of condition 1, and the sealed-path
+  `git diff --quiet` exits 0. `tests/tier_counts.json` differs from master
+  only in its `unit` line, and `tests/README-tiers.md` only in its `unit`
+  and total rows.
+- All 38 of review inject-r2's checks give hits. On the real tree the scan
+  gives exactly the pinned hit, and every module's folded values weigh
+  under 16,384, a sixty-fourth of the budget; the heaviest outside
+  `baselines/asfr.py` weighs 10,433.
+- The scan at `5a4fc14c` and at `ec888be7` give the same hits on 155 of 163
+  invented sources: the 125 spellings, the 20 negatives, the seven accessor
+  cases, nested depths one to seven and four pruning places. The eight
+  that differ are the intended ones: the six accessor cases the new rule
+  distrusts, now hits, and depths six and seven, now `dynamic-code`. On
+  the real tree both give the same single hit.
+- Seven working checks beside chains of 200, 1000 and 3000 links give
+  their hits with no `RecursionError`.
+
+Twenty-five mutants of the fixes for review inject-r3 ran at `ec888be7`
+against the deterministic scan tests. Twenty-four each fail the tests aimed
+at them: accessors trusted by spelling, an unchecked receiver, a rebound
+property kept, any decorator taken for `property`, and `_bound_names`
+skipping stores; embed depths of four and six, and an unreported sixth
+level; a budget that never raises, and source literals counted against it;
+a bounded source literal, and text, item, integer and template limits that
+refuse a value at the limit; `partition` dropped; the recursive part walk and module path
+restored; and the call receiver, call arguments, slice, conditional and
+`and` parts the four new spellings pin. The survivor drops `module_path`'s
+check for a missing base. It can only make a path that starts `None.`,
+which names no module, so it changes no result. The three stream mutants
+above, rerun at `ec888be7`, still each change some reader's output, and
+unmutated no reader's output differs. None of these ran against the real
+tree.
 
 ### Restricted-files statement
 
