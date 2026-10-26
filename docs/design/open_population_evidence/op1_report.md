@@ -286,8 +286,9 @@ Hypothesis budgets and no xdist. The build ran its checks inside its
 sandbox, so the main session reran them on the committed code. The timings
 in this section are pytest's own reported wall times, not measurements in
 `op1_run_size.json`. The build's sandboxed run of the required command
-reported 231 passed in 660.26 s, with the 2100 test dropped; on this host
-the command takes 8 to 15 s.
+reported 231 passed in 660.26 s, with the 2100 test dropped. On this host,
+runs by the author and reviews r8 to r10 took 8 to 20 s, varying with host
+load.
 
 The build dropped its production run to 2100 because its sandboxed pytest
 run reported 62 s for it. On this host, `pytest --durations` reports
@@ -300,7 +301,8 @@ The required command gives **341 passed and 1 strict xfail, with 2 existing
 fixture warnings**: OP1's 334, and the 7 OP0.1 record tests that master
 keeps in `tests/open_population/test_op0_1_records.py`, which the tier-slot
 merge `fa862935` brought in. Its time varies with host load: runs by the
-author and reviews r8 and r9 took 8 to 15 s by pytest's report. At
+author and reviews r8 to r10 took 8 to 20 s by pytest's report, r10's
+20.06 s at a one-minute load of 98. At
 `0d0c073c` OP1's part gave 232 passed in about 8 s; review r2's refusal tests
 added 37, review r3's fix 30, review r4's fix 3, review r5's fix 20, review
 r6's fix 10, review r7's fix 1 and review r9's fix 1. It covers the
@@ -333,11 +335,12 @@ git diff d8302233 -- tests/tier_counts.json tests/README-tiers.md
 ```
 
 Against master `d8302233`, merged at `fa862935`, the sealed paths are
-unchanged: `git diff --quiet` exits 0 and prints nothing, even if a sealed
-file differed. The shared tier files change only by the recount below.
+unchanged: `git diff --quiet` exits 0. It prints nothing whether or not a
+file differs, so its exit status is the check. The shared tier files
+change only by the recount below.
 Before review r9's fix these commands named `7e635bba`, the base before the
 first master merge, against which they show master's own changes; the r9
-fix named master `4e20c6e4`, and the tier-slot merge names `d8302233`. The
+fix named master `4e20c6e4`, and the tier-slot recount names `d8302233`. The
 three new files, `open_population/streams.py`,
 `tests/open_population/__init__.py` and
 `tests/open_population/test_streams.py`, lie within the allowed scope.
@@ -345,7 +348,7 @@ The test modules, including the new stream module, classify as `unit` under
 the repository's `_classify_test_module`.
 
 The tier-slot commit recounts the shared tier inventories without
-collecting the whole repository. Against `d8302233`, the only test files
+collecting the whole repository. Against `d8302233`, the only test modules
 that differ are OP1's seven new modules with their `__init__.py`, and
 `tests/estimates/test_birth_evidence_artifact.py`, whose only change adds
 OP1's nine module paths to a tuple. Collected tier by tier, OP1's modules
@@ -504,7 +507,7 @@ Review r5 (Opus 5.5 delta check at `6361b4c0`) approved, with three minor findin
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
 | r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14, as Hypothesis draws; 6 or 7; 1) |
-| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10 or 11) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7 or 8; 10; 54 or 55; 10 or 11) |
 | No cache, or seeds compared with `is not` | Survive as intended: they change cost only |
 | `not cached[0] == seed`; entropy rebuilt from the seed; default pool size (always 4); wrap by modulo | Survive: equivalent |
 | A refused seed cached | Survived. This row first called it equivalent, which was wrong: a negative `int` seed reaches the cache (review r6). It is now killed |
@@ -533,7 +536,7 @@ r6 also showed that a cache keyed by the seed's hash (its M16) passed every test
 | Entropy shared; shared for tailed streams; shared in the tagged child only; entropy as a tuple | Killed (6; 4; 1; 22) |
 | Wrap dropped; bound check before the wrap; wrap without the lower bound; wrap at `<= 0`; wrap by `length - 1`; no wrap on the probe path | Killed (1; 1; 1; 44; 1; 1) |
 | r4's B17; key holds the raw period; root after the lookup; period-zero tagged child shares the cached root | Killed (12 or 13; 13 or 14; 6 or 7; 1) |
-| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7; 10; 54; 10 or 11) |
+| Negative-count check removed; length bound removed; `ssize_t` re-raise removed; r3's A12; period-zero lookup skipped | Killed (15 or 16; 7 or 8; 10; 54 or 55; 10 or 11) |
 | No cache; seeds compared with `is not`; a non-`int` seed clears the cache | Survive as intended: they change cost only |
 | `not ==`; key compared by subtraction; default pool size; wrap by modulo; a negative `int` also bypasses; `isinstance` for the exact check; a typed key without the `int` check | Survive: equivalent, as r6 found with its probes |
 | Entropy rebuilt from the seed | Survives: equivalent for streams and refusals, as r6 found; it emits a second overflow warning under `np.errstate(over="warn")` |
@@ -596,9 +599,9 @@ Rerunning §3's commands for this fix, the author found that its scope commands 
 | r9's S18, the root from the seed modulo 2^1101 for non-negative seeds | Killed (1), by the property test alone, whose draws reach 2^1200 |
 | r9's four killed mutants: the key modulo 2^1100 (K16) or by popcount and bit length (K18); the root from the seed modulo 2^1100 for non-negative seeds (S17); a seed past 2^1024 keeping the previous root (S22) | Still killed (1; 2; 2; 2). K18, S17 and S22 gain the property test. In this run K16 fails only the old test; the property test alone killed it in 7 of 10 seeded runs |
 | S12 and S13 for every seed (r9's S12u and S13u) | Killed (6 each): the five r9 found and the property test |
-| r8's 18 mutants | Every verdict above holds. Fourteen killed mutants gain the property test. The memo keyed by hash (S11) and the cached root reused past 2^53 (S16) keep their one kill, and S10 and X8 survive |
+| r8's 18 mutants | Every verdict above holds. Ten killed mutants gain the property test in every seeded run: K1, K3 to K7, S9, S12, S13 and X9. K2, K8, S14, S15 and S16 gain it on some draws: in this run K2, K8, S14 and S15 did, and in review r10's 40 seeded runs they did 29, 22, 14, 25 and 20 times. The memo keyed by hash (S11) keeps its one kill, and S10 and X8 survive |
 | r7's 32 mutants and the two revisions | Every verdict above holds. Twelve killed mutants gain the property test: R1, R2, R3, R4, R7, R8, S4, S5, S6, S7, S8 and E3. R5 and r7's 13 equivalents survive. `6361b4c0` still fails 15 tests and passes the property test; `dee1e1b7` fails 29, the property test among them |
-| r6's 50 mutants | The same 39 are killed and the same 11 survive. Eight gain the property test: C2, C3, C4, C5, C6, M9, M12 and N3. The Hypothesis-dependent counts stay within their ranges, except that the period-zero lookup skipped (A5) failed `test_generated_malformed_addresses_match_registry` for the first time, 11 against 10. The r5 and r6 tables now give "10 or 11" |
+| r6's 50 mutants | The same 39 are killed and the same 11 survive. Eight gain the property test: C2, C3, C4, C5, C6, M9, M12 and N3. Eight counts have varied with Hypothesis's draws, and the r6 table gives each as a range. Four are in the row of five: the negative-count check removed (A1), the length bound removed (A2), r3's A12 (A4) and the period-zero lookup skipped (A5). In this run A5 failed `test_generated_malformed_addresses_match_registry` for the first time, 11 against 10, so the r5 and r6 tables give "10 or 11". Review r10's run gave A2 8 and A4 55, so they also give "7 or 8" and "54 or 55" |
 | The property test alone, with a fresh Hypothesis database, seeds 1 to 10 | Passes at the head in 10 of 10 runs, in 0.5 to 0.8 s. Kills K9, K11, K12, K13, K18, G1, S17, S18 and S22 in 10 of 10, K14 and K16 in 7 of 10, and K10 in none |
 
 ### Tier-slot merge
@@ -606,6 +609,20 @@ Rerunning §3's commands for this fix, the author found that its scope commands 
 `fa862935` merges master `d8302233` into the branch on top of review r9's fix `78c6c2d1`, without conflicts. Its tree equals `git merge-tree --write-tree 78c6c2d1 d8302233`. Git auto-merged `scripts/first_estimates_birth_evidence.py` and `tests/estimates/test_birth_evidence_artifact.py`; against master, each adds only OP1's nine module paths, to `POST_REVIEW_SOURCE_EXCLUSIONS` and to its pin. The merge brings in master's 7 OP0.1 record tests under `tests/open_population/`, so the OP1 command gives 341 passed and the seven-path regression command 556 passed, 2 skipped and 1 strict xfail.
 
 The next commit recounts the tier inventories (§3). It also points §3's scope commands at `d8302233`, and makes the sealed-path check `git diff --quiet`, the form the coordinator's check uses, so it prints nothing even if a sealed file changed. `streams.py` and every other OP1 source are unchanged from `78c6c2d1`.
+
+### Review r10
+
+Review r10 (Opus 5.5 delta check of `78c6c2d1` and the tier-slot head `88b5df28`; its review names its model) approved at `88b5df28`, with one minor finding and four nits, all in this report. It found the merge clean, with OP1's diff against master limited to OP1's 20 files, the two exclusion pins and the recount, and reproduced every count its brief asked for. It closed r9's finding as r9 asked: K9 and K11 fall to both new tests, K12, K13 and G1 fall to the property test in 40 of 40 seeded runs, and K10 survives. It tried 11 new mutants of `streams.py`. Five were killed and six survived, none equivalent. The six fall in r9's classes: two odd-factor moduli (7·2^64 and 2^64 + 1, like K10); two size keys (modulo 2^1150, which the property test killed in 9 of r10's 20 seeded runs, and bit length past 2^1201, which it killed in none of them); and two modulo 2^1203 that the strategy almost never reaches. One differs from the registry only for seeds of 2^1203 or more, which the strategy never draws. The other differs only for two seeds a multiple of 2^1203 apart; within the strategy's range that means exactly 2^1203, which takes one exact fresh value. The exact comparison `cached[0] != seed` (`streams.py:108`) rules out every lossy key. Its weakened strategies show that the negations, and the one-bit flips and steps past bit 64, carry the property test. Its variants of the deterministic test's draws (`test_cached_root_follows_exact_int_seeds_compared_exactly`) show that the swap matters: r9's order loses K9 and K11.
+
+| Finding | Fix |
+|---|---|
+| 1 (minor): the r9 table's r8-harness row gave one run's property-test gains as fixed. Which r8 mutants the property test kills depends on Hypothesis's draws: r10's run gained 12 where the author's gained 14 | The row names the ten mutants that gain it in each of r10's 40 seeded runs, and the five that gain it on some draws, with their counts and the author's run. |
+| Nit: two cells of the r5 and r6 tables, the length bound removed (A2) and r3's A12 (A4), were single values; r10's run gave 8 and 55 | Both tables give "7 or 8" and "54 or 55". The r9 table's r6 row says eight counts have varied and names the four in that row. |
+| Nit: "`git diff --quiet` exits 0 and prints nothing, even if a sealed file differed" could be read as exiting 0 when a file differs | §3 says the command prints nothing either way, so its exit status is the check. |
+| Nit: §3 said the tier-slot merge names `d8302233`, and its list of "the only test files that differ" left out the two tier files | The recount commit names it, and §3 says test modules. |
+| Nit: §3's opening paragraph gave 8 to 15 s as a property of the host; r10's run took 20.06 s at a one-minute load of 98 | Both §3 paragraphs give 8 to 20 s over the author's and reviews r8 to r10's runs, varying with host load. |
+
+r10 also noted that OP1's exit and harness tests import `baselines/asfr.py` through the `baselines` package. §5 now says so.
 
 ## 5. Remaining work and restricted-files statement
 
@@ -624,8 +641,12 @@ labelled engineering extrapolation. No other implementation work is deferred.
 Read `RESTRICTED-FILES.md` in full before source work. Opened nothing it
 restricts, no other session's transcript or scratchpad and no other Subfleet
 job folder. The expressly authorized coordinator RNG-check folder and OP1
-review/scratch folder were the only external evidence folders used. The
-three named NCHS source files and every OP0.1 review folder stayed unopened.
+review/scratch folder were the only external evidence folders used. No
+session or agent displayed or searched the three named NCHS source files
+or opened an OP0.1 review folder. One of the three, `baselines/asfr.py`, is
+imported through the `baselines` package by OP1's exit and harness tests
+(`test_exits.py:11`, `test_harness.py:20–21`), as by other test modules on
+master, so runs of those tests load it without displaying it (review r10).
 All tests, probes, mutation checks and measurements use invented inputs;
 no microdata or external statistical table was read and no real-data
 statistic was computed. Every delegated agent reports the same boundary.
