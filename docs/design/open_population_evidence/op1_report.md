@@ -668,8 +668,9 @@ on the build's four open questions. The branch then merged master
 `9cced8ff`, a docs-only ledger update, and applied the rulings: the
 observer's refusal stays, with a clearer OP1 refusal under the default; the
 2100 identity grid is the full product; and the scan skips the depletion-cut
-modules by path. Review inject-r1 then asked for revisions at `8634858c`;
-its subsection, below, gives the findings and the fixes.
+modules by path. Review inject-r1 asked for revisions at `8634858c`, and
+review inject-r2 for more at `33e383b4`; their subsections, below, give
+the findings and the fixes.
 
 ### Mechanism
 
@@ -690,7 +691,7 @@ its subsection, below, gives the findings and the fixes.
   period (`:228–234`), just as the loop gives its eight slots one context.
   Metadata, the person ordinals and every other field are the loop's own
   objects.
-- All eight slots are bound (`:393–405`): the mortality wrapper, and through
+- All eight slots are bound (`:393–406`): the mortality wrapper, and through
   it `_ExitAdapter` and the mortality adapter; aging; the marital core; the
   birth-entry adapter, and through it fertility; disability; earnings;
   claiming; and `close_period`, and through it household composition.
@@ -731,9 +732,12 @@ so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
 3. Within a run there is one direct instance and one context per period;
    the generator each slot receives equals the loop's module generator for
    its period and module.
-4. The two classes share the registry's public surface, and no sealed code
-   checks the registry's type except the one check recorded below, which
-   refuses rather than diverges.
+4. The two classes share the registry's public surface. Every sealed reader
+   of a context's streams that the census finds and that runs on invented
+   inputs gives exactly the same output from either class, and the one
+   sealed type check refuses the direct class rather than diverging. The
+   static scan, a heuristic with stated limits, finds no other check that
+   tells the classes apart in the code it reads.
 
 ### The coordinator's conditions and their evidence
 
@@ -773,6 +777,22 @@ parameters. The direct class must match each. The expected names are also
 pinned, so a member added to the registry fails the test until the direct
 class matches it.
 
+**What this condition claims.** The guarantee is behavioural, and three
+sets of runs carry it:
+- at every stream address, through the public interface, the direct stream
+  equals the registry's (condition 3);
+- each sealed reader of a context's streams that runs on invented inputs
+  gives exactly the same output from either class (condition 4, by reader);
+- OP1's projection is identical under either class (condition 4).
+
+The scan below is a heuristic. It searches the sealed code it reads for
+anything that could tell the classes apart other than by behaviour: a type
+check, a class or module name read as text, introspection. It finds one
+check, which refuses the direct class loudly. A clean scan is not a proof;
+its limits fall into four classes, listed at the end of its description.
+Code the scan cannot see matters only where it changes what a projection
+computes, and the runs listed above check that on the paths they take.
+
 `test_sealed_code_holds_only_the_known_registry_type_check` runs an AST scan
 of `src/populace_dynamics/` outside `open_population/`: 302 modules at
 `9cced8ff`, once the five excluded modules below are dropped.
@@ -804,104 +824,206 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   module and no module whose name contains `depletion_cut` is in
   `sys.modules`. Code a projection never imports can't check its
   registry's type.
+- **Both classes.** The scan tracks `DirectRNGStreams` as well as the
+  registry, since a check against either tells them apart. OP1's package
+  is not scanned, so sealed code that names the direct class or its module
+  counts like code that names the registry.
 - **Two layers.** Specific checks name the kind of each type check they
-  find. Under them, a catch-all reports every other mention of the class,
-  or of its name or its module's name as text, outside a benign place.
-  Benign places are imports, string statements (docstrings among them),
-  `__all__` listings, annotations other than dispatch hints, and the callee
-  of a construction such as `ProjectionRNGRegistry(draw_index, n_periods)`.
-  So a static spelling the specific checks miss still fails the pin, as a
-  `class-reference`, `class-name-string` or `module-name-string` hit on its
-  line.
+  find, and each read of a place the catch-all trusts. Under them, a
+  catch-all reports every other use of either class; of an instance built
+  from one; of a module object through which one can be reached; and of
+  either class's or module's name as text, in any case, once literal
+  expressions are folded. It trusts only these places:
+  - imports;
+  - string statements, docstrings among them;
+  - literal `__all__` listings at module level;
+  - annotations that no untrusted decorator, base class or metaclass reads;
+  - the callee of a construction, such as
+    `ProjectionRNGRegistry(draw_index, n_periods)`;
+  - plain attribute reads on a module;
+  - the plain uses of an instance: binding it to a name or a parameter
+    default, returning it, passing it to a call that does not compare,
+    look up, show or introspect it, reading a public attribute, testing
+    its truth and comparing it with `None` by identity.
+
+  A decorator is trusted only by the path it resolves to, such as
+  `functools.lru_cache` or `dataclasses.dataclass`; a local function
+  named `property` is not. A class is trusted only with trusted
+  decorators, no keywords and no base but `object`. A specific check is
+  reported at the outermost node that makes it, and nothing under that
+  node is reported again. So a spelling the specific checks miss still
+  fails the pin, as a catch-all hit on its line, whenever it uses a
+  tracked class, instance, module or name outside the trusted places.
 - **What the specific checks catch.**
   - `isinstance` and `issubclass`, also through aliases such as
     `check = isinstance` or `from builtins import issubclass as check`.
-  - `type(x)` or `x.__class__` compared with the class, by any comparison
-    operator, alone or in a chain; and any other comparison against the
-    class or class info.
-  - Comparisons with the class's name as text: `__name__` or
+  - `type(x)` or `x.__class__` compared with either class, by any
+    comparison operator, alone or in a chain; and any other comparison
+    against a class or class info.
+  - Comparisons with either class's name as text: `__name__` or
     `__qualname__` against a string, a string held in a name or a
-    container, or `ProjectionRNGRegistry.__name__`. Comparisons with its
-    module's name count the same way.
+    container, or `ProjectionRNGRegistry.__name__`. Comparisons with
+    either module's name count the same way.
   - `match` class and value patterns.
   - `__instancecheck__` and `__subclasscheck__`.
-  - `singledispatch` registration by argument or by hint, quoted hints
-    included.
+  - `singledispatch` registration by argument or by hint. The hint is the
+    one `register` dispatches on, the first in Python's order (positional
+    parameters, `*args`, keyword-only parameters, `**kwargs`, then the
+    return). Quoted hints are parsed at any depth, and so is
+    `typing.ForwardRef("…")`. `register` is followed through aliases such
+    as `reg = f.register`.
   - Private names found on only one class, whether read as an attribute,
     probed with `hasattr` or `getattr`, or held as a string.
-- **How it follows the class.** Directly; through an import alias; as a
+  - Reads of the trusted places, below.
+- **Reads of the trusted places.** Python can read each trusted place at
+  run time, so each read is a specific check of its own:
+  - `export-read`: any read of `__all__` other than a listing's own
+    `append` or `extend`, as a name, an attribute, a string, or
+    `from m import __all__`.
+  - `docstring-read`: in a module whose docstrings name either class,
+    either module or a probe name, a read of `__doc__`, `__code__`,
+    `co_consts`, `__dict__` or `__globals__`, or a call to `getdoc`,
+    `getmembers`, `globals`, `locals`, `vars` or `dir`.
+  - `annotation-read`: in a module whose trusted annotations name either
+    class, a read of `__annotations__`, `__annotate__`,
+    `__dataclass_fields__`, `__signature__` or `__dict__`, or a call such
+    as `typing.get_type_hints`, `inspect.get_annotations`,
+    `inspect.signature` or `dataclasses.fields`.
+  - `namespace-read`: `globals()`, `locals()`, `vars()` or `dir()` with
+    no argument, in a module that binds either class, class info, a name
+    string or an instance.
+  - `source-read`: `inspect.getsource` and its kin, and any call into
+    `linecache`, `dis`, `marshal` or `tokenize`.
+  - `dynamic-code`: `eval`, `exec` or `typing.ForwardRef` on text the
+    folder cannot read, in a module that binds anything tracked. Literal
+    code passed to `eval`, `exec`, `compile` or `ForwardRef` is parsed and
+    scanned with the module, and so is literal code nested in it.
+  - `member-introspection`: a dunder read on, or an introspection call
+    such as `inspect.getmodule` or `getattr` on, a member of a module
+    through which a class can be reached.
+- **How it follows the classes.** Directly; through an import alias; as a
   module attribute (`rng.ProjectionRNGRegistry`, the dotted path, or an
   aliased module); and through relative imports, local assignment chains,
   class and instance attributes, default arguments, loop variables, named
   expressions, `type(ProjectionRNGRegistry(...))` and `getattr` on the
-  module. It also follows the class inside class info: tuples, lists,
-  sets, unions written with `|` or `typing.Union`, tuples joined with `+`,
+  module. It also follows a class inside class info: tuples, lists, sets,
+  unions written with `|` or `typing.Union`, tuples joined with `+`,
   mappings, subscripts of any of these, and anything rebuilt or read from
-  them, such as `tuple(KINDS)` or `KINDS.get(key)`. Re-exports are followed
-  across modules to a fixed point. Bindings only accumulate, so the fixed
+  them, such as `tuple(KINDS)` or `KINDS.get(key)`. It follows instances
+  the same way, from a construction to a name, and through `type(...)`
+  and `.__class__` back to the class. Modules are followed through
+  `importlib.import_module` and `__import__` with literal names and
+  through `sys.modules` read with a literal key. Re-exports of classes
+  and instances are followed across modules to a fixed point; re-exported
+  modules come from import statements alone, fixed before that loop, so
+  no path changes between passes. Bindings only accumulate, so the fixed
   point ends even on a binding cycle such as `a = b.c; b = a`. The scan
   over-approximates on purpose: a binding anywhere in a module counts
-  everywhere in it, and an attribute counts wherever a name spelled like it
-  is bound.
+  everywhere in it, and an attribute counts wherever a name spelled like
+  it is bound.
 - **Text as the parser sees it.** Every module is parsed, with no text
   filter first. The build's filter parsed a module only if its text held a
   tracked name, and an escaped literal such as `"\x50rojectionRNGRegistry"`
   passed it, though the parser decodes it to the class's name. The scan
   reads strings after the parser has joined adjacent literals and decoded
-  escapes, and it folds `+` and f-strings made only of literals. It sees
-  identifiers after the parser's NFKC normalization, so a fullwidth first
-  letter still names the class.
-- **Cost.** Right after parsing, each literal container of constants whose
-  strings hold none of the class's name, its module's name or a probe name
-  is replaced by `None`. No check can report or bind anything from such a
-  container. The generated data modules of 18.5, 11.1 and 1.6 MB are almost
-  all such containers: pruning leaves 178, 78 and 7 of their 706,994,
-  251,826 and 85,417 syntax-tree nodes, and 930,518 of the 2,007,887 in all
-  302 modules. `test_pruning_leaves_every_invented_scan_unchanged`
-  and `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
-  literals, each placed in eight positions) check that pruning changes no
-  result. On the host the real-tree test takes 6.5 s, and its process peaks
-  near 1.3 GB, mostly while parsing the largest data module.
+  escapes, reads bytes as Latin-1, and matches names whatever their case.
+  It sees identifiers after the parser's NFKC normalization, so a
+  fullwidth first letter still names the class.
+- **The folder.** Before it reads text, the scan folds literal
+  expressions: `+`, `*` and `%`; f-strings with their conversions and
+  format specs; indexing and slicing; `str.format`, `join`, `replace` and
+  the other pure `str` and `bytes` methods it lists, such as `lower`,
+  `strip`, `split`, `encode` and `decode`; and `str`, `bytes`, `repr`,
+  `ascii`, `format`, `chr`, `tuple`, `list`, `sorted` and `reversed`. It
+  does not follow names. It holds no text over 64 KiB, no integer larger
+  than 4096 in magnitude and no tuple over 256 items, and it formats no
+  template over 4096 characters or with a four-digit width or precision.
+  It runs `str.format` one field at a time, so a template that reads one
+  argument in many fields stops at the limit.
+  - `test_folder_refuses_results_past_its_limits` checks
+    19 expressions past those limits: the folder gives
+    no value, and holds under 1 MiB while refusing.
+  - `test_folder_agrees_with_python_on_literal_expressions` checks 300
+    Hypothesis expressions against Python itself, by value and type. Where
+    Python fails or passes a limit, the folder must give no value. The one
+    exception it allows is the four-digit width rule; with that rule off,
+    the folder must agree.
+- **Cost.** Right after parsing, each literal container of constants is
+  replaced by `None` unless a string in it holds either class's or
+  module's name in any case, a probe name, or a name a read of a trusted
+  place spells, or the folder could read it. No check can report or bind
+  anything from such a container. The generated data modules of
+  18.5, 11.1 and 1.6 MB are almost all such containers: pruning leaves
+  178, 78 and 7 of their 706,994, 251,826 and 85,417 syntax-tree nodes, and
+  934,099 of the 2,007,887 in all 302 modules.
+  `test_pruning_leaves_every_invented_scan_unchanged` and
+  `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
+  literals, each placed in fourteen positions, folded ones among them)
+  check that pruning changes no result. On the host, at a one-minute load near
+  100, the real-tree test took 15.0 s and the census test
+  4.8 s. A process that parses the tree peaks near
+  1.2 GB, mostly while parsing the largest data module.
 - **Its own tests.**
-  - `test_scan_catches_every_spelling_of_a_registry_type_check` covers 58
-    invented spellings. Each gives exactly the hits its markers ask for:
-    one of its kind on its check line, plus one on each line that binds
-    the class or holds its name. All twelve of review inject-r1's misses
-    are among them.
-  - `test_every_spelling_tells_the_two_classes_apart` runs 56 of them and
-    checks that each answers differently for the two classes. The other
-    two cannot run: a relative import, and an alias chain written in
-    reverse order.
+  - `test_scan_catches_every_spelling_of_a_registry_type_check` covers
+    121 invented spellings. Each gives exactly the hits its
+    markers ask for: one of its kind on its check line, plus one on each
+    line that binds a class or holds its name. All twelve of review
+    inject-r1's misses and all nineteen of review inject-r2's are among
+    them.
+  - `test_every_spelling_tells_the_two_classes_apart` runs
+    119 of them and checks that each answers differently for the
+    two classes. The other two cannot run: a relative import, and an alias
+    chain written in reverse order.
+  - `test_every_kind_has_a_spelling` checks that each of the 24 kinds, 19
+    specific and 5 catch-all, has at least one spelling.
   - `test_scan_follows_re_exports_across_modules` is unchanged: aliases one
     and two modules away, a star import, a module alias, and a same-named
     local class that is not caught.
-  - `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` has 16
-    negatives. They include `__all__` listings, docstrings, annotations, a
-    keyword-only hint on a dispatch registration, a module function that
-    shares a probe's name, another use of the registry's module and pruned
-    literal tables.
+  - `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` has
+    20 negatives. They include `__all__` listings, docstrings,
+    annotations, a keyword-only hint on a dispatch registration, a module
+    function that shares a probe's name, another use of the registry's
+    module, pruned literal tables, trusted decorators and a class whose
+    only base is `object`, the plain uses of an instance, and expressions
+    the folder refuses.
+  - `test_reads_count_only_where_something_is_tracked` gives two modules
+    that track nothing; their reads of namespaces, docstrings, annotations
+    and signatures give no hit.
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
   hits, their `repr` and the assertion message, and from the refusal raised
   for unparsable source, whose original exception is suppressed.
-- **Limits.** The scan does not see:
-  - names built at run time: concatenation with computed values, `chr`,
-    decoding, formatting, or `getattr` with a computed string;
-  - part of the class's or module's name, such as a prefix test or a
-    regular expression;
-  - the type of another value: `type(a) is type(b)`,
-    `isinstance(x, type(y))`, and the dataclass-generated `==` between a
-    registry and a direct instance, which is false across the two classes;
-  - annotations read at run time by anything but a `register` decorator.
-    Searching `src/` outside the excluded modules and `baselines/asfr.py`,
-    `typing.get_type_hints` appears only in `track_b/_provenance.py`, whose
-    schemas read the hints of the Track B classes and calls it decorates.
-    The one registry hint in Track B, on `track_b/replay.py`'s private
-    `_rng_signature`, carries no decorator;
-  - code it does not read: the excluded modules, OP1's own package,
-    scripts, tests and third-party code.
+  `test_every_hit_names_only_a_path_a_line_and_a_kind` checks that every
+  spelling's hits print as exactly `path:line: kind`.
+- **Limits.** The scan is a heuristic. It reads source as written,
+  before it runs, and what it cannot see falls into four classes:
+  1. **Values made at run time.** Text built from anything but literals
+     (a parameter, a call's result, input, `chr` of a computed code
+     point), a module or class reached through a computed `getattr` name
+     or `sys.modules` key, and part of a name, such as
+     `type(x).__name__.startswith("Projection")` or a regular expression.
+     So are objects that reach a check through parameters, return values,
+     attributes of objects built elsewhere, run-time containers, closures
+     or frames: `type(a) is type(b)`, `isinstance(x, type(y))` with `y`
+     passed in, and the dataclass-generated `==` between a registry and a
+     direct instance built elsewhere.
+  2. **Introspection of run-time values.** The annotations, docstring,
+     source or members of an object that arrives at run time, such as a
+     function passed in. Among the readers of run-time annotations in
+     `src/`, outside the excluded modules and `baselines/asfr.py`,
+     `typing.get_type_hints` appears only in `track_b/_provenance.py`,
+     whose schemas read the hints of the Track B classes and calls it
+     decorates. The one registry hint in Track B, on
+     `track_b/replay.py`'s private `_rng_signature`, carries no decorator.
+  3. **Files read as data**, a module's own source among them, as with
+     `open(__file__)` or `importlib.resources`.
+  4. **Code it does not read**: the excluded modules, OP1's own package,
+     scripts, tests and third-party code.
 
+  So a clean scan is evidence, not proof. Behaviour is checked
+  separately, at run time: on the paths the reader runs and §4's identity
+  take, no sealed code gives different output for the two classes.
   Over-approximation can also give false hits. Any hit, false or not,
   fails the pin and comes back for a decision.
 
@@ -1035,6 +1157,52 @@ size.
 These are single runs on a loaded host, so the ratios are indicative, not
 bounds. The full-size measurement is still due before OP10a.
 
+**4, by reader.** `test_every_stream_reader_is_run_or_named` takes a census
+of sealed code: each function, class or module that uses `rng_registry`,
+`person_generator` or `composition_rngs_from_registry` as an attribute, a
+name, a keyword or a string. At `9cced8ff` it finds 23 places and pins each
+with the run that checks it or the reason none does:
+- ten run with both classes, below;
+- six build their own `ProjectionRNGRegistry` and read only that one:
+  `ProjectionEngine.project`, `resume_p2_projection`,
+  `simulate_candidate9_internal_reference`,
+  `run_candidate9_recertification`, `project_earnings_on_realized_support`
+  and Track B's `replay_earnings_on_realized_support`;
+- three closures in `assemble_period_modules` need certified fitted inputs.
+  Their stream reads are `generator`, `child_generator`, `n_periods` and
+  `composition_rngs_from_registry`; `test_streams.py` checks those methods
+  at every address, and the helper runs below;
+- `observe_mortality` holds the pinned check and refuses the direct class;
+- three are not reads: the field's declaration on `PeriodContext`, the
+  helper's name in `engine/__init__.py`'s `__all__`, and
+  `graph/runtime.py`'s `_GraphPeriodContext`, which binds itself as its
+  registry.
+
+A new place, a moved one or a removed one fails the census. Like the scan,
+the census is a heuristic: a function handed the registry under another
+name is found only through the call that hands it over.
+
+`test_each_stream_reader_gives_the_same_output_from_either_class` runs the
+ten readers, and `composition_rngs_from_registry` at period 0 and at the
+context's period, with each class from the same draw index, period and
+generator seed. Twelve Hypothesis examples per reader vary the invented
+roster (0 to 12 people, with women of childbearing age, people past fifty,
+DI entitlement and conversions), the draw index, the period (1 to 3) and
+the seed. Outputs are compared exactly: frames by exact value and dtype,
+arrays element by element with their dtype, and the fertility capture's
+JSON as text.
+- The earnings step runs three invented models: a plain generator, one
+  with frame updates and one with an earnings domain.
+- The SES mortality step takes an invented model in place of a fitted one;
+  the step's own stream code is what runs.
+- The fertility capture runs through `capture_fertility`, every period from
+  the first, as a projection runs it.
+- `di_aware_claiming` runs with entitled and converted rows.
+
+`test_each_stream_reader_draws_from_the_streams` checks that draw indices 0
+and 1 give different output for every reader, so no run passes the streams
+by.
+
 **5. Seal bookkeeping.** No module was added, so the exclusion tuple and its
 pin are unchanged. `tests/track_u2/test_u2_isolation.py` was not run, and CI
 gives its result. `tests/tier_counts.json` and `tests/README-tiers.md` are
@@ -1042,8 +1210,8 @@ untouched, for the main session's recount.
 
 **Tier.** Every new test is in `tests/open_population/test_streams.py` or
 `test_stream_injection.py`, and `_classify_test_module` classifies both
-modules as `unit`. The stream differential and the hash identity therefore
-run on every CI push.
+modules as `unit`. The stream differential, the reader runs and the hash
+identity therefore run on every CI push.
 
 ### Review inject-r1
 
@@ -1074,6 +1242,45 @@ sealed-path and file checks, the evidence audit and the six mutants below.
    the two generator helpers separately, the entrant years are given per
    horizon, and this section's source line references match the current
    files.
+
+### Review inject-r2
+
+Review inject-r2, a hard-tier Subfleet review on a Codex lane, read the
+branch at `33e383b4` and returned REVISE, with one major finding, one minor
+finding and a nit. It found r1's twelve misses caught and r1's other three
+findings fixed. In its sandbox, the required command plus the two Track B
+holdout-registry modules gave 756 passed, 2 skipped and 1 strict xfail,
+with the real-tree scan giving exactly the pinned hit, and it reproduced
+and killed each of the author's thirteen mutants.
+
+1. **Major: static type checks still escaped the scan.** Of 38 more
+   invented checks, each true for one class and false for the other,
+   thirteen gave no hit outside the stated limits:
+   - six that reuse `__all__`: appended or extended and then searched,
+     held as a mapping, counted, holding the check itself, and unpacked
+     into `operator.eq`;
+   - two that read a docstring back, through `__doc__` and through
+     `__code__.co_consts`;
+   - three `singledispatch` registrations: through a `register` alias, a
+     hint in nested quotes and `typing.ForwardRef`;
+   - the module's name compared through `operator.eq` and the module's
+     `__name__`;
+   - `isinstance` against the direct class.
+
+   Six more misses it set down to the stated limits: an annotation
+   evaluated as a check, and five names built from literals by `format`,
+   `%` and `join`.
+
+   **Fix:** the scan tracks both classes and checks each read of a place
+   the catch-all trusts, and the catch-all also reports instances, module
+   objects and folded literal text (condition 2). All nineteen misses are
+   among the invented spellings, and all 38 of the review's checks now give
+   hits. The scan still finds exactly the one pinned check in sealed code.
+2. **Minor: no regression held a full name as bytes,** so a mutant that
+   stopped decoding bytes survived. **Fix:** spellings hold a class's
+   name, the registry module's name and a probe name as bytes, one of them
+   inside a nested tuple, and the pruning property samples those bytes.
+3. **Nit:** the slot-binding range is `:393–406`. **Fix:** cited.
 
 ### Commands and results
 
@@ -1165,6 +1372,49 @@ pruning's check for tracked strings, `+` folding, parsing of quoted hints,
 module-name comparisons, the benign `__all__` listing, private-attribute
 reads and loop bindings. None ran against the real tree.
 
+After the fixes for review inject-r2 and the coordinator's steer, the main
+session ran the same commands on the host from 17:12 to 17:19 UTC on 26
+October. Each test process ran under the load-check audit hook and started
+only at a one-minute load under 100:
+- `tests/open_population`: **614 passed and 1 strict xfail** in 68.59 s.
+  These are OP1's 238 and the 377 tests this follow-up adds: 352 in
+  `test_stream_injection.py` and 25 in `test_streams.py`.
+- The other four modules: 104 passed in 5.34 s.
+- The required command plus the two Track B holdout-registry modules:
+  933 passed, 2 skipped and 1 strict xfail. The two Track B modules alone
+  gave 215 passed and 2 skipped.
+- Peak RSS was 1.33 GB, most of it while the real-tree scan and the
+  census parse the largest data module.
+- The slowest tests took 15.0 s (the real-tree scan), 4.8 s (the census),
+  4.6 s (the fresh-interpreter import check) and up to 2.5 s for a 2100
+  hash pair.
+- No file under a bar was opened, the pattern line named only
+  `baselines/asfr.py` (read by the scan and the census, never displayed),
+  and neither barred function was called.
+- `--collect-only -m unit tests/open_population` collects all 615. Black,
+  Ruff and `git diff --check` are clean. `git diff --stat 9cced8ff` still
+  lists the seven files, and the sealed-path `git diff --quiet` exits 0.
+- All 38 of review inject-r2's checks, run through the current scan, give
+  hits. On the real tree the scan still gives exactly the pinned hit.
+
+Thirty-two mutants of the scan and its folder each fail the tests aimed at
+them. Each disables one part: export reads of `__all__`, as a name and as an
+attribute; `register` aliases; hint-string parsing; tracking the direct
+class; instance uses; module-object uses; the docstring and annotation
+holds; pruning's keep-list and fold contexts; the folder's tuple weight,
+template field, formatter bound, field size, field spec, f-string size,
+integer, item, repetition, replacement and join limits; namespace and
+source reads; dynamic code; class and decorator trust; an instance's
+`__class__`; embedded literal code; member introspection; folded method
+calls; and case-folded names. None ran against the real tree.
+
+Three stream mutants of the direct class each fail the reader runs. Shifting
+the person ordinal by one changes the output of the nine readers that use
+person streams; shifting a tagged child's tag changes `_person_uniforms`,
+`draw_asfr_births` and the composition streams; shifting a tagged
+generator's tag changes the composition streams. Unmutated, no reader's
+output differs.
+
 ### Restricted-files statement
 
 The build read `RESTRICTED-FILES.md` at its pinned hash and the
@@ -1190,3 +1440,12 @@ The fixes for review inject-r1 followed the same rules. The main session's
 measurement scripts read the scanned modules only through the test
 module's own walk, and printed module paths, line numbers, node kinds and
 counts. Its searches over `src/` took their file lists from the helper.
+
+The fixes for review inject-r2 and the reader runs followed the same rules.
+The census reads the scanned modules only through the test module's own
+walk and reports paths and qualified names. The reader runs use invented
+rosters, rates, schedules and models, and import `cola_track_a.adapters`
+only to run `di_aware_claiming`; no test calls a barred function. The main
+session's searches over `src/` and `tests/` took their file lists from the
+helper, and its measurement scripts printed paths, line numbers, node
+kinds, qualified names and counts.
