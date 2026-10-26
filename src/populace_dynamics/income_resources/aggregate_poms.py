@@ -27,21 +27,54 @@ rule, is read from its own text. So a State heading in a block left open
 still names its State, and a list item, section or blockquote reads the same
 after a closed heading as inside one left open. A block is read whole and
 also line by line, a line being its text between ``br`` tags and the blocks
-HTML keeps inside it, without zero-width characters, so a block or ``br``
-after a heading's words does not hide its State, claimant or date. Every
-line passes the same State guards: a line that dates another State refuses,
-a claimant line that names a State other than its section's refuses, since
-the heading of the State it names was not read, and a block whose lines head
-two States refuses. A heading whose first line names a State other than its
-section's, as "New York (NJ)" does in Nevada's section, refuses too. Before
-any State heading, the chart refuses instead. A postal code after a State's
-name must be that State's, and "Washington, D.C." names the District.
+HTML keeps inside it, so a block or ``br`` after a heading's words does not
+hide its State, claimant or date. Each whole text and line is read three
+ways: joined, as HTML renders inline elements; bare, the joined reading
+without footnote markers (a ``sup`` or a link to a footnote), as table cells
+are read; and spaced, with a space at every element's edge. Every reading
+drops Unicode format characters (category Cf), such as zero-width spaces,
+joiners and soft hyphens. The joined and bare readings name a block's State
+heading and claimant, so ``U<span>tah</span>`` and ``Utah<sup>1</sup>`` head
+Utah; the joined reading alone gives the date sentence. Every State net runs
+over all three readings of the whole text and of every line, and refuses if
+any of them names a State other than the section's:
+
+- a line that dates another State, or an effective-date sentence that names
+  one, refuses, since that State's section heading was not read;
+- a claimant line that names another State refuses, and so does a claimant
+  line that only the spaced reading shows;
+- a line shaped as another State's heading that heads no section refuses:
+  one in a block whose whole text is a State date line, one only the spaced
+  reading shows, and one whose postal code is not its State's, as "New York
+  (NJ)" in Nevada's section;
+- any line of an h1-h6 heading that names another State refuses, so a
+  heading names no State but the one it heads or its section's;
+- a block whose lines head two States, or name two claimant types,
+  refuses.
+
+Paragraph prose may name another State. Before any State heading, the chart
+refuses instead. A postal code after a State's name must be that State's,
+and "Washington, D.C.", "Washington,DC" and "Washington DC" name the
+District. The spellings "Hawaiʻi", "Hawai‘i", "Hawai’i" and "Hawai'i" name
+Hawaii and may head its section. To the nets, a postal code in parentheses,
+as in "(UT)" or "(ut)", an upper-case postal code standing as a word, as in
+"for UT", and a State's abbreviation, as in "N.J." or "Nev.", also name their
+States; they never head a section. Each chart needs its own claimant line
+after the chart before it.
+
 Every definition table of a section precedes its first chart; a definition
 table after a chart refuses, because the source does not say which earlier
 chart it serves. A jointly published code
 ("C/H" in a definition table, "A or B" in a chart) names each single code it
 lists. A chart code that no definition table defines stays undefined and is
 recorded in ``poms_open_questions.json``; no definition is inferred for it.
+
+Not modelled: an abbreviation without its period, such as "Calif", or not
+in ``_ABBREVIATIONS``, such as "Ia.", and a lower-case postal code outside
+parentheses, which name no State to the nets; and text that HTML or CSS
+hides, such as the ``hidden`` attribute, which is read as text, so
+``Utah<span hidden>x</span> Effective January 1, 2031`` is read as prose, as
+"Utahx Effective January 1, 2031" would be.
 """
 
 from __future__ import annotations
@@ -61,6 +94,7 @@ from .aggregate_tables import (
     TableSpec,
     TableStructureError,
     _cell_token,
+    _is_footnote_marker,
     expand_html_table,
     normalized_text,
     parse_html,
@@ -94,8 +128,29 @@ _POSTAL_CODES = dict(
         strict=True,
     )
 )
-# "Washington, D.C." and "Washington DC" name the District, not the State.
-_DISTRICT_ALIAS = r"Washington,?\s+D\.?\s?C\b\.?"
+# "Washington, D.C.", "Washington,DC" and "Washington DC" name the District,
+# not the State.
+_DISTRICT_ALIAS = r"Washington,?\s*D\.?\s?C\b\.?"
+# Other spellings of a State's name, which may head its section.
+_SPELLINGS = {"Hawaii": "Hawai[ʻ‘’']?i"}
+# Abbreviations that name a State in prose; they never head its section.
+# Hawaii, Iowa and Utah have none here.
+_ABBREVIATIONS = {
+    "California": r"(?:Calif|Cal)\.",
+    "Delaware": r"Del\.",
+    "District of Columbia": r"D\.\s?C\.",
+    "Massachusetts": r"Mass\.",
+    "Michigan": r"Mich\.",
+    "Montana": r"Mont\.",
+    "Nevada": r"Nev\.",
+    "New Jersey": r"N\.\s?J\.",
+    "New York": r"N\.\s?Y\.",
+    "Pennsylvania": r"(?:Penna|Penn|Pa)\.",
+    "Rhode Island": r"R\.\s?I\.",
+    "Vermont": r"Vt\.",
+    "Washington": r"Wash\.",
+    "Wisconsin": r"Wisc?\.",
+}
 _MONTHS = (
     "January February March April May June July August September October "
     "November December"
@@ -124,45 +179,71 @@ _TEXT_STOPS = {block: PARAGRAPH_CLOSERS for block in _BLOCKS} | {
 _LINE_BREAKS = PARAGRAPH_CLOSERS | {"br"}
 
 
-def _lines(element: ET.Element) -> list[str]:
-    """A block's own text, split at a ``br`` and where a block nested in it
-    starts or ends, without zero-width characters.
+def _line_renderings(element: ET.Element) -> list[tuple[str, str, str]]:
+    """A block's own lines, each read three ways: joined, bare and spaced.
 
-    Within a line, the text of inline elements joins without a separator,
-    as HTML renders it, so ``U<span>tah</span>`` reads "Utah"; whitespace in
-    the source is collapsed. The text stops at the first block that ends the
-    element (``_TEXT_STOPS``). Before that only a heading can hold a nested
-    block, so a block other than a heading splits only at a ``br``. The walk
-    does not recurse, so deep nesting cannot exhaust the interpreter stack.
+    A line is the block's text between ``br`` tags and where a block nested
+    in it starts or ends. In the joined reading the text of inline elements
+    joins without a separator, as HTML renders it, so ``U<span>tah</span>``
+    reads "Utah". The bare reading is the joined one without footnote
+    markers (a ``sup``, or a link to a footnote), as a table cell is read,
+    so ``Utah<sup>1</sup>`` reads "Utah". The spaced reading puts a space at
+    every element's edges, so a name that touches the text of the element
+    next to it, as in ``Utah<sup>1</sup>``, still stands as a word. Every
+    reading collapses whitespace and drops Unicode format characters, such
+    as zero-width spaces and soft hyphens. A line is kept when its joined
+    reading holds any text.
+
+    The text stops at the first block that ends the element
+    (``_TEXT_STOPS``). Before that only a heading can hold a nested block,
+    so a block other than a heading splits only at a ``br``. The walk does
+    not recurse, so deep nesting cannot exhaust the interpreter stack.
     """
     stops = _TEXT_STOPS[element.tag]
-    lines: list[list[str]] = [[element.text or ""]]
-    walk = [(element, iter(element))]
+    # Each part is a text and whether a footnote marker holds it.
+    lines: list[list[tuple[str, bool]]] = [[(element.text or "", False)]]
+    walk = [(element, iter(element), False)]
     while walk:
-        node, children = walk[-1]
+        node, children, _ = walk[-1]
         child = next(children, None)
         if child is None:
             walk.pop()
             if walk:
                 if node.tag in _LINE_BREAKS:
                     lines.append([])
-                lines[-1].append(node.tail or "")
+                lines[-1].append((node.tail or "", walk[-1][2]))
             continue
         if child.tag in stops:
             break
         if child.tag in _LINE_BREAKS:
             lines.append([])
-        lines[-1].append(child.text or "")
-        walk.append((child, iter(child)))
-    texts = (" ".join(_blank("".join(line)).split()) for line in lines)
-    return [text for text in texts if text]
+        marked = walk[-1][2] or _is_footnote_marker(child)
+        lines[-1].append((child.text or "", marked))
+        walk.append((child, iter(child), marked))
+    readings = []
+    for parts in lines:
+        joined = _collapse("".join(text for text, _ in parts))
+        if joined:
+            bare = "".join(text for text, marked in parts if not marked)
+            spaced = " ".join(text for text, _ in parts)
+            readings.append((joined, _collapse(bare), _collapse(spaced)))
+    return readings
+
+
+def _collapse(text: str) -> str:
+    return " ".join(_blank(text).split())
+
+
+def _lines(element: ET.Element) -> list[str]:
+    """A block's own lines in their joined reading (``_line_renderings``)."""
+    return [joined for joined, _, _ in _line_renderings(element)]
 
 
 def _own_text(element: ET.Element) -> str:
     """Normalize a block's own text, up to the first block that ends it.
 
     When no block or ``br`` nests inside the element, this is its text
-    content with whitespace collapsed and zero-width characters removed.
+    content with whitespace collapsed and format characters removed.
     Unlike ``normalized_text``, which separates every text node, inline
     elements join without a separator. A heading left open is read without
     the next heading or the table the tree nests under it.
@@ -170,19 +251,32 @@ def _own_text(element: ET.Element) -> str:
     return " ".join(_lines(element))
 
 
-# What may come before a State's name in its section heading.
+def _renderings(element: ET.Element) -> list[tuple[str, str, str]]:
+    """A block's whole text, then each of its lines, in the joined, bare
+    and spaced readings of ``_line_renderings``."""
+    lines = _line_renderings(element)
+    whole = tuple(
+        " ".join(line[k] for line in lines if line[k]) for k in range(3)
+    )
+    return [whole, *lines]
+
+
+# What may come before a State's name in its section heading. A dash may be
+# a hyphen, an en or em dash, or a minus sign.
+_DASH = r"\s*[-‐-―−]\s*"
 _HEADING_PREFIX = (
     r"(?:[A-Z]\.\s*)?"
-    r"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|\s*-\s*)"
-    r"|Procedure\s*-\s*)?"
+    rf"(?:Description of supplements(?:\s+for\s+(?:the\s+)?|{_DASH})"
+    rf"|Procedure{_DASH})?"
 )
 
 
 def _state_name(name: str) -> str:
-    """A pattern for a State's name, or for the District, an alias."""
+    """A pattern for a State's name or another spelling of it, or for the
+    District, an alias."""
     if name == "District of Columbia":
         return rf"(?:{re.escape(name)}|{_DISTRICT_ALIAS})"
-    return re.escape(name)
+    return _SPELLINGS.get(name, re.escape(name))
 
 
 def _state_reference(name: str) -> str:
@@ -247,19 +341,56 @@ def _claimant_line(text: str) -> re.Match[str] | None:
     )
 
 
-def _named_states(text: str) -> list[str]:
+def _claimant_type(match: re.Match[str]) -> str:
+    return "couple" if match[1].lower() == "couple" else "individual"
+
+
+_STATE_OF_CODE = {code: name for name, code in _POSTAL_CODES.items()}
+
+
+def _named_states(text: str) -> set[str]:
+    """The States a text names: by name, spelling or alias, by an
+    abbreviation such as "N.J.", by a postal code in parentheses, in either
+    case, as in "(UT)", or by an upper-case postal code standing as a word,
+    as in "for UT"."""
     text = re.sub(
         r"\b" + _DISTRICT_ALIAS, "District of Columbia", text, flags=re.I
     )
-    return [
+    named = {
         name
         for name in _STATES
-        if re.search(rf"\b{re.escape(name)}\b", text, re.I)
-    ]
+        if re.search(rf"\b{_state_name(name)}\b", text, re.I)
+        or name in _ABBREVIATIONS
+        and re.search(rf"\b{_ABBREVIATIONS[name]}", text)
+    }
+    for match in re.finditer(r"\(\s*([A-Za-z]{2})\s*\)", text):
+        if match[1].upper() in _STATE_OF_CODE:
+            named.add(_STATE_OF_CODE[match[1].upper()])
+    for match in re.finditer(r"\b([A-Z]{2})\b", text):
+        if match[1] in _STATE_OF_CODE:
+            named.add(_STATE_OF_CODE[match[1]])
+    return named
+
+
+def _view_states(view: tuple[str, ...]) -> set[str]:
+    """The States any reading of a whole text or line names."""
+    return set().union(*map(_named_states, view))
+
+
+# Unicode's format characters (category Cf, Unicode 16.0), such as the
+# zero-width space, joiners, the byte order mark and the soft hyphen. They
+# are invisible, so they neither separate nor join words.
+_FORMAT_CHARACTERS = re.compile(
+    "[\u00ad\u0600-\u0605\u061c\u06dd\u070f\u0890\u0891\u08e2\u180e"
+    "\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u206f\ufeff"
+    "\ufff9-\ufffb\U000110bd\U000110cd\U00013430-\U0001343f"
+    "\U0001bca0-\U0001bca3\U0001d173-\U0001d17a\U000e0001"
+    "\U000e0020-\U000e007f]"
+)
 
 
 def _blank(text: str) -> str:
-    return text.replace("\u200b", "").replace("\ufeff", "").strip()
+    return _FORMAT_CHARACTERS.sub("", text).strip()
 
 
 def _date_string(text: str) -> str:
@@ -375,23 +506,31 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                     }
                 )
                 charted = True
+                # Every chart needs its own claimant line.
+                claimant = None
             return False
         if element.tag in _BLOCKS:
             # Only the block's own text: a table or heading nested under a
-            # heading left open is read in turn, not as part of it.
-            text = _own_text(element)
-            # HTML keeps other blocks inside a heading left open, after its
-            # words or around them, and a br breaks a line, so a block is
-            # also read line by line. Its whole text comes first. Every line
-            # passes the State guards, but a whole-text State date line stays
-            # a date line: its lines do not head a section.
-            lines = _lines(element)
-            candidates = [text, *lines]
-            heading_lines = [text] if _state_date_line(text) else candidates
+            # heading left open is read in turn, not as part of it. HTML
+            # keeps other blocks inside a heading left open, after its words
+            # or around them, and a br breaks a line, so a block is read
+            # whole and line by line, each in three readings. The joined and
+            # bare readings name the block's State heading and claimant, the
+            # joined reading its date; every reading passes the State guards.
+            views = _renderings(element)
+            readings = [view[:2] for view in views]
+            # A whole-text State date line stays a date line: its lines do
+            # not head a section.
+            date_block = any(map(_state_date_line, readings[0]))
             headed = [
                 name
                 for name in _STATES
-                if any(_state_heading(name, line) for line in heading_lines)
+                if not date_block
+                and any(
+                    _state_heading(name, text)
+                    for reading in readings
+                    for text in reading
+                )
             ]
             if len(headed) > 1:
                 raise TableStructureError("POMS heading names two States")
@@ -402,21 +541,41 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 dates = ()
                 definitions = []
                 charted = False
-            if any(_misnamed_heading(line) for line in candidates):
+            if any(
+                _state_heading(name, text)
+                for name in _STATES
+                if name != state
+                for view in views
+                for text in view
+            ):
+                # A line shaped as another State's heading that heads no
+                # section here, as a line of a whole-text date line or a
+                # heading only the spaced reading shows, means that State's
+                # section was not read.
+                raise TableStructureError(
+                    "POMS State changes without a section heading"
+                    if date_block
+                    else "POMS heading names a State it does not head"
+                )
+            if any(_misnamed_heading(text) for view in views for text in view):
                 # A line shaped as a State heading whose postal code is not
                 # its State's heads no section, so its section was not read.
                 raise TableStructureError(
                     "POMS heading names a State it does not head"
                 )
-            # Every line is checked, so a date line nested in a heading
-            # cannot carry another State's date into this section, and an
-            # effective-date sentence may name no State but this section's.
+            # Every line is checked in every reading, so a date line nested
+            # in a heading cannot carry another State's date into this
+            # section, and an effective-date sentence may name no State but
+            # this section's.
             if any(
-                _state_date_line(line) not in {None, state}
+                any(
+                    _state_date_line(text) not in {None, state}
+                    for text in view
+                )
                 or state is not None
-                and _effective_line(line)
-                and set(_named_states(line)) - {state}
-                for line in candidates
+                and any(map(_effective_line, view))
+                and _view_states(view) - {state}
+                for view in views
             ):
                 # Definitions are collected per section heading; a State
                 # named only in a date line has none of its own, so the
@@ -424,45 +583,52 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 raise TableStructureError(
                     "POMS State changes without a section heading"
                 )
-            for line in candidates:
-                if _effective_line(line):
-                    effective_text = line
-                    dates = tuple(
-                        dict.fromkeys(
-                            _date_string(m[0]) for m in _DATE.finditer(line)
-                        )
+            # The date sentence is read as it renders, footnote markers and
+            # all; a footnote marker glued to "Effective" makes no sentence.
+            effective = next(
+                (view[0] for view in views if _effective_line(view[0])), None
+            )
+            if effective is not None:
+                effective_text = effective
+                dates = tuple(
+                    dict.fromkeys(
+                        _date_string(m[0]) for m in _DATE.finditer(effective)
                     )
-                    break
-            matches = []
-            for line in candidates:
-                match = _claimant_line(line)
-                if not match:
+                )
+            # Before any State heading a claimant line names nothing: the
+            # heading resets the claimant, and a chart before it refuses.
+            types = set()
+            for view in views if state is not None else ():
+                matches = [_claimant_line(text) for text in view]
+                if not any(matches):
                     continue
                 # Every claimant line is guarded, not only the first, so a
                 # block's whole text cannot cover a line nested in it, and a
                 # line may name no State but this section's.
-                if state is not None and set(_named_states(line)) - {state}:
+                if _view_states(view) - {state}:
                     # The section heading that should have named this State
                     # was not read, so refuse rather than chart it under the
                     # State before it.
                     raise TableStructureError(
                         "POMS claimant line names another State"
                     )
-                matches.append(match)
-            if matches:
-                claimant = (
-                    "couple"
-                    if matches[0][1].lower() == "couple"
-                    else "individual"
-                )
+                if not any(matches[:2]):
+                    raise TableStructureError(
+                        "POMS claimant line reads only with its inline "
+                        "elements spaced"
+                    )
+                types |= {_claimant_type(m) for m in matches if m}
+            if len(types) > 1:
+                raise TableStructureError("POMS block names two claimants")
+            if types:
+                (claimant,) = types
             if (
                 element.tag in _HEADINGS
                 and state is not None
-                and lines
-                and set(_named_states(lines[0])) - {state}
+                and any(_view_states(view) - {state} for view in views)
             ):
-                # A heading's own first words name a State in a form no
-                # section heading takes, so its section was not read.
+                # Any line of a heading that names another State, in any
+                # reading, means that State's section was not read.
                 raise TableStructureError(
                     "POMS heading names a State it does not head"
                 )

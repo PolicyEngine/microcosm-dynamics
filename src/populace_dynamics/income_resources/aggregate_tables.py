@@ -181,6 +181,19 @@ PARAGRAPH_CLOSERS = frozenset(
 class _HTMLTree(HTMLParser):
     """Build a tolerant stdlib tree; publishers' void tags never nest.
 
+    The tree is the same under every supported Python. Python 3.13 reads
+    only script and style as raw text and 3.14 also xmp, iframe, noembed
+    and noframes, so the set is pinned here to HTML's raw text elements
+    (noscript is markup, as in HTML with scripting off). Python 3.14 reads
+    everything after a ``plaintext`` start tag as text, as HTML does, and
+    3.13 reads it as markup, so a page with one is refused. So is a page
+    holding "<!-->" or "<!--->", an empty comment that HTML closes at that
+    ``>``: 3.14 closes it there, and 3.13 runs on to a later "-->".
+
+    An ``html`` start tag builds the html element only as the document's
+    first content. HTML ignores any later one, apart from adding the
+    attributes it lacks to that element, and so does this tree.
+
     Paragraphs, headings, buttons, cells, rows, table sections, captions
     and colgroups end where the WHATWG parsing rules end them, even when the
     source omits the end tag, so a paragraph never holds the headings and
@@ -204,10 +217,12 @@ class _HTMLTree(HTMLParser):
     one, as HTML does), ``</li>`` a list item in list item scope, and
     another special element's end tag (WHATWG's "special" category) that
     element in scope; other end tags are ignored. ``</br>`` is a ``br``,
-    and ``</body>`` and ``</html>`` close nothing. Any other
-    end tag, such as ``</span>`` or ``</b>``, closes the innermost element
-    it names unless a special element is open inside that one, in which
-    case it is ignored.
+    and ``</body>`` and ``</html>`` close nothing. Any other end tag, such
+    as ``</span>``, ``</b>`` or ``</noscript>``, closes the innermost
+    element it names unless a special element is open inside that one, in
+    which case it is ignored. A table part's start tag (caption, colgroup,
+    col, a table section, row or cell) outside any table is ignored, as in
+    HTML.
 
     Not modelled: HTML's adoption agency rules, which also move a
     formatting element such as ``b`` across the block that ends it (the
@@ -217,10 +232,23 @@ class _HTMLTree(HTMLParser):
     starts a form that ends the open paragraph (in
     ``<form><p>w0<form>w1</form><p>w2``, HTML's first paragraph reads
     "w0w1" and this tree's "w0"; no pinned capture opens a form inside
-    another); and a self-closing slash on a non-void element, which HTML
-    ignores and which closes the element here.
+    another); a self-closing slash on a non-void element, which HTML
+    ignores and which closes the element here; a head or body start tag
+    after the page's head, which HTML ignores and which here starts an
+    element (no pinned capture has more than one of either); and a CDATA
+    section in HTML content, which HTML reads as a comment ending at the
+    first ``>`` and which here holds no text.
     """
 
+    # HTML's raw text elements; Python versions differ (see above).
+    CDATA_CONTENT_ELEMENTS = (
+        "script",
+        "style",
+        "xmp",
+        "iframe",
+        "noembed",
+        "noframes",
+    )
     _VOID = frozenset(
         "area base br col embed hr img input link meta param source track wbr".split()
     )
@@ -273,6 +301,22 @@ class _HTMLTree(HTMLParser):
                 return
 
     def handle_starttag(self, tag, attrs):
+        if tag == "plaintext":
+            raise TableStructureError("HTML plaintext element is not read")
+        if tag == "html" and (
+            len(self.root) or (self.root.text or "").strip("\t\n\f\r ")
+        ):
+            # Only the document's first content builds the html element.
+            first = self.root.find("html")
+            if first is not None:
+                for key, value in attrs:
+                    first.attrib.setdefault(key, value or "")
+            return
+        if tag in self._TABLE_PARTS | {"col"} and all(
+            node.tag != "table" for node in self.stack
+        ):
+            # HTML ignores a table part's start tag outside any table.
+            return
         if tag in PARAGRAPH_CLOSERS:
             self._close_paragraph()
         if tag in self._HEADINGS and self.stack[-1].tag in self._HEADINGS:
@@ -352,9 +396,11 @@ class _HTMLTree(HTMLParser):
                 ET.SubElement(self.stack[-1], "p")
         elif tag == "li":
             self._close_open({"li"}, self._SCOPE | {"ol", "ul"})
-        elif tag in self._SPECIAL:
+        elif tag in self._SPECIAL - {"noscript"}:
             self._close_open({tag}, self._SCOPE)
         else:
+            # Any other end tag, noscript's included (HTML with scripting
+            # off gives it no rule of its own).
             for i in range(len(self.stack) - 1, 0, -1):
                 if self.stack[i].tag == tag:
                     del self.stack[i:]
@@ -371,14 +417,30 @@ class _HTMLTree(HTMLParser):
 
 
 def parse_html(payload: bytes | str) -> ET.Element:
-    """Build a tolerant HTML tree without fetching external resources."""
-    parser = _HTMLTree()
-    parser.feed(
+    """Build a tolerant HTML tree without fetching external resources.
+
+    The end of the page ends any element left open, as in HTML, so the text
+    of a raw text element without its end tag is kept.
+    """
+    text = (
         payload.decode("utf-8", errors="replace")
         if isinstance(payload, bytes)
         else payload
     )
+    if re.search("<!---?>", text):
+        raise TableStructureError("HTML comment closes abruptly")
+    parser = _HTMLTree()
+    parser.feed(text)
+    parser.close()
     return parser.root
+
+
+def _is_footnote_marker(element: ET.Element) -> bool:
+    """Whether an element is a footnote marker: a ``sup``, or a link to a
+    footnote."""
+    return element.tag == "sup" or (
+        element.tag == "a" and "fn" in element.get("href", "").lower()
+    )
 
 
 def normalized_text(element: ET.Element) -> str:
@@ -415,9 +477,7 @@ def _cell_token(element: ET.Element) -> CellToken:
             parts.append(item.text or "")
             for child in list(item)[::-1]:
                 pending.append(child.tail or "")
-                footnote = child.tag == "sup" or (
-                    child.tag == "a" and "fn" in child.get("href", "").lower()
-                )
+                footnote = _is_footnote_marker(child)
                 pending.append((child,) if footnote else child)
     text = " ".join(" ".join(parts).split())
     return CellToken(text, tuple(flags), element.tag == "th")
