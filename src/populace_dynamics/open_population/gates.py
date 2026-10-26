@@ -62,7 +62,10 @@ def run_gate(
     """Run the fixed gate horizon through the OP1 accounting harness.
 
     ``rng_streams="registry"`` is for differential checks; both classes give
-    the same projection (design §§2.1, 5.4).
+    the same projection (design §§2.1, 5.4). A run that composes
+    ``observe_mortality`` must pass ``rng_streams="registry"``: the observer
+    refuses any other registry class (``mortality_observer.py:381``), and
+    under the default that refusal is re-raised as ``IdOrStreamCollision``.
     """
     if type(request) is not GateRunRequest:
         raise TypeError("run_gate requires a GateRunRequest")

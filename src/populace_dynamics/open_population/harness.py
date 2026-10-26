@@ -14,6 +14,12 @@ that context with ``DirectRNGStreams`` in its place, so the adapters' person
 and tagged draws avoid the registry's horizon-proportional spawn
 (``engine/rng.py:61–67``) and stay identical (design §§2.1, 5.4). The module
 generators the loop passes positionally stay on its registry.
+
+One sealed step checks the registry's type: ``observe_mortality`` refuses any
+registry that is not exactly a ``ProjectionRNGRegistry``
+(``mortality_observer.py:381``) before it draws. A run that composes it must
+pass ``rng_streams="registry"``; under the default its refusal is re-raised as
+an OP1 refusal that says so.
 """
 
 from __future__ import annotations
@@ -71,6 +77,9 @@ REGISTERED_PRODUCTION_HORIZONS = MappingProxyType(
 )
 RNG_STREAM_MODES = ("registry", "direct")
 RNGStreamMode = Literal["registry", "direct"]
+# observe_mortality's refusal of any other registry class
+# (mortality_observer.py:381–382), raised before it draws.
+SEALED_REGISTRY_REFUSAL = "existing RNG registry required"
 
 
 def _registered_horizon(scenario: str) -> int:
@@ -225,11 +234,31 @@ class _AdapterStreams:
         return self._bound[1]
 
     def wrap(self, step: Callable) -> Callable:
-        """Call ``step`` with this period's bound context, other args as-is."""
+        """Call ``step`` with this period's bound context, other args as-is.
+
+        Under ``"direct"``, the sealed observer's refusal of the direct class
+        is re-raised as ``IdOrStreamCollision`` naming the fix, chained from
+        the original. Every other error passes through unchanged.
+        """
 
         @wraps(step)
         def bound(frame, context, *args):
-            return step(frame, self.bind(context), *args)
+            served = self.bind(context)
+            try:
+                return step(frame, served, *args)
+            except ValueError as error:
+                if (
+                    self.mode == "direct"
+                    and type(error) is ValueError
+                    and error.args == (SEALED_REGISTRY_REFUSAL,)
+                ):
+                    raise IdOrStreamCollision(
+                        "a composed step requires the projection's own "
+                        "ProjectionRNGRegistry (observe_mortality does, "
+                        "mortality_observer.py:381); pass "
+                        'rng_streams="registry"'
+                    ) from error
+                raise
 
         return bound
 
@@ -260,6 +289,7 @@ def _project(
 
     ``rng_streams`` picks the class behind every slot's
     ``context.rng_registry``; the projection is identical either way.
+    Composing ``observe_mortality`` needs ``rng_streams="registry"``.
     """
     adapter_streams = _AdapterStreams(rng_streams)
     require_emigration_compatible(modules.marital_core, emigration_hazard)
@@ -413,6 +443,10 @@ def run_production(
 
     ``rng_streams="registry"`` serves the adapters from the loop's own
     registry, for differential checks; the default is identical and faster.
+    A run that composes ``observe_mortality`` must pass
+    ``rng_streams="registry"``: the observer refuses any other registry class
+    (``mortality_observer.py:381``), and under the default that refusal is
+    re-raised as ``IdOrStreamCollision``.
     """
     if type(request) is not ProductionRequest:
         raise TypeError("run_production requires a ProductionRequest")

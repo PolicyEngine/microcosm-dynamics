@@ -8,16 +8,19 @@ while the two classes share a public surface and no sealed code checks the
 registry's type, so this module pins both, then checks the projection itself.
 
 The AST scan reads ``src/populace_dynamics/`` outside ``open_population/``.
-The project's data-access record keeps two modules out of automated reads, so
-the scan skips them by path before anything opens them; a fresh-process run
-shows a projection imports neither. Every message names a module path, line
-number and node kind only, never source text or literal values.
+The project's data-access record keeps two modules out of automated reads,
+and the scan also skips the depletion-cut modules, so that what it reads does
+not depend on who runs it. It drops all of them by path before anything opens
+them; a fresh-process run shows a projection imports none of them. Every
+message names a module path, line number and node kind only, never source
+text or literal values.
 """
 
 from __future__ import annotations
 
 import ast
 import dataclasses
+import fnmatch
 import hashlib
 import inspect
 import json
@@ -29,6 +32,7 @@ import textwrap
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from functools import partial
+from itertools import product
 from pathlib import Path
 
 import numpy as np
@@ -57,6 +61,7 @@ from populace_dynamics.open_population.exits import no_marital_transitions
 from populace_dynamics.open_population.gates import GateRunRequest, run_gate
 from populace_dynamics.open_population.harness import (
     RNG_STREAM_MODES,
+    SEALED_REGISTRY_REFUSAL,
     ProductionRequest,
     _AdapterStreams,
     run_production,
@@ -185,6 +190,15 @@ OWN_PACKAGE = Path("src/populace_dynamics/open_population")
 CLOSED_MODULES = (
     Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
     Path("src/populace_dynamics/uniform_cut_track_u/rows.py"),
+)
+# The scan also skips the depletion-cut modules by path, so that its input
+# does not depend on who runs it. The pattern decides; the list pins what it
+# matches today, so a new match comes back for a decision.
+EXCLUDED_PATTERNS = ("src/populace_dynamics/bridge/depletion_cut*.py",)
+PATTERN_EXCLUDED_MODULES = (
+    Path("src/populace_dynamics/bridge/depletion_cut.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut_population.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut_population_child.py"),
 )
 # Private names that exist on only one class: probing for one tells the
 # classes apart without a type check.
@@ -551,16 +565,22 @@ def _read(path: Path, relative: Path) -> str:
         raise ScanError(f"{relative.as_posix()}: not UTF-8") from None
 
 
-def repository_sources(root: Path = ROOT) -> tuple[ScanSource, ...]:
-    """Collect ``src/populace_dynamics/`` outside OP1's own package.
+def _excluded(relative: Path) -> bool:
+    """Decide from the path alone whether the scan skips a module."""
+    return relative in CLOSED_MODULES or any(
+        fnmatch.fnmatchcase(relative.as_posix(), pattern)
+        for pattern in EXCLUDED_PATTERNS
+    )
 
-    ``__pycache__`` folders are pruned, and each closed module is dropped by
-    its path before anything opens, reads, parses, hashes or stats it.
+
+def _walk(root: Path) -> Iterable[tuple[Path, Path, bool]]:
+    """List ``.py`` paths under ``src/populace_dynamics/`` by name only.
+
+    ``__pycache__`` folders and OP1's own package are pruned. Each path comes
+    with whether ``_excluded`` drops it; nothing here opens or stats a file.
     """
     package = root / "src" / "populace_dynamics"
     own = root / OWN_PACKAGE
-    closed = {root / path for path in CLOSED_MODULES}
-    sources = []
     for directory, subdirectories, files in os.walk(package):
         current = Path(directory)
         subdirectories[:] = sorted(
@@ -569,26 +589,49 @@ def repository_sources(root: Path = ROOT) -> tuple[ScanSource, ...]:
             if name != "__pycache__" and current / name != own
         )
         for name in sorted(files):
-            path = current / name
-            if not name.endswith(".py") or path in closed:
-                continue
-            relative = path.relative_to(root)
-            parts = path.relative_to(root / "src").with_suffix("").parts
-            is_package = name == "__init__.py"
-            sources.append(
-                ScanSource(
-                    module=".".join(parts[:-1] if is_package else parts),
-                    path=relative.as_posix(),
-                    text=_read(path, relative),
-                    is_package=is_package,
-                )
+            if name.endswith(".py"):
+                path = current / name
+                relative = path.relative_to(root)
+                yield path, relative, _excluded(relative)
+
+
+def excluded_paths(root: Path = ROOT) -> tuple[str, ...]:
+    """Name the modules the scan skips, from directory listings alone."""
+    return tuple(
+        sorted(
+            relative.as_posix() for _, relative, skip in _walk(root) if skip
+        )
+    )
+
+
+def repository_sources(root: Path = ROOT) -> tuple[ScanSource, ...]:
+    """Collect ``src/populace_dynamics/`` outside OP1's own package.
+
+    ``__pycache__`` folders are pruned, and each excluded module is dropped
+    by its path before anything opens, reads, parses, hashes or stats it.
+    """
+    sources = []
+    for path, relative, skip in _walk(root):
+        if skip:
+            continue
+        parts = path.relative_to(root / "src").with_suffix("").parts
+        is_package = path.name == "__init__.py"
+        sources.append(
+            ScanSource(
+                module=".".join(parts[:-1] if is_package else parts),
+                path=relative.as_posix(),
+                text=_read(path, relative),
+                is_package=is_package,
             )
+        )
     return tuple(sources)
 
 
-# The one type check the scan finds in master's sealed code. It refuses the
-# direct class loudly instead of diverging (pinned by the behaviour tests
-# below), so an OP1 run that composes it must pass rng_streams="registry".
+# The exact set of type checks the scan finds in master's sealed code: one.
+# It refuses the direct class loudly instead of diverging (pinned by the
+# behaviour tests below), so an OP1 run that composes it must pass
+# rng_streams="registry". A new hit, a moved line or a removed hit fails the
+# scan test, so any such change to sealed code comes back for a decision.
 KNOWN_SEALED_TYPE_CHECKS = frozenset(
     {
         ScanHit(
@@ -603,7 +646,35 @@ def test_closed_module_exclusions_are_pinned_exactly():
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
         Path("src/populace_dynamics/uniform_cut_track_u/rows.py"),
     )
+    assert EXCLUDED_PATTERNS == (
+        "src/populace_dynamics/bridge/depletion_cut*.py",
+    )
+    assert PATTERN_EXCLUDED_MODULES == (
+        Path("src/populace_dynamics/bridge/depletion_cut.py"),
+        Path("src/populace_dynamics/bridge/depletion_cut_population.py"),
+        Path("src/populace_dynamics/bridge/depletion_cut_population_child.py"),
+    )
     assert OWN_PACKAGE == Path("src/populace_dynamics/open_population")
+    assert all(_excluded(path) for path in CLOSED_MODULES)
+    assert all(_excluded(path) for path in PATTERN_EXCLUDED_MODULES)
+    for neighbour in (
+        "src/populace_dynamics/bridge/__init__.py",
+        "src/populace_dynamics/bridge/depletion.py",
+        "src/populace_dynamics/bridge/depletion_cut.pyc",
+        "src/populace_dynamics/engine/depletion_cut.py",
+        "src/populace_dynamics/estimates/adjusted_poverty_other.py",
+    ):
+        assert not _excluded(Path(neighbour)), neighbour
+
+
+def test_the_tree_excludes_exactly_the_pinned_modules():
+    """The pattern matches exactly the pinned list, by directory listing."""
+    assert excluded_paths() == tuple(
+        sorted(
+            path.as_posix()
+            for path in (*CLOSED_MODULES, *PATTERN_EXCLUDED_MODULES)
+        )
+    )
 
 
 def test_sealed_code_holds_only_the_known_registry_type_check():
@@ -614,12 +685,16 @@ def test_sealed_code_holds_only_the_known_registry_type_check():
     """
     sources = repository_sources()
     paths = {source.path for source in sources}
-    assert not paths & {path.as_posix() for path in CLOSED_MODULES}
+    assert not paths & set(excluded_paths())
+    assert not paths & {
+        path.as_posix()
+        for path in (*CLOSED_MODULES, *PATTERN_EXCLUDED_MODULES)
+    }
     assert not any(path.startswith(f"{OWN_PACKAGE}/") for path in paths)
     assert "src/populace_dynamics/engine/rng.py" in paths
     assert "src/populace_dynamics/baselines/asfr.py" in paths
     hits = scan_sources(sources)
-    assert set(hits) == KNOWN_SEALED_TYPE_CHECKS, describe(hits)
+    assert sorted(hits) == sorted(KNOWN_SEALED_TYPE_CHECKS), describe(hits)
 
 
 _REGISTRY_IMPORT = (
@@ -955,13 +1030,15 @@ def test_scan_messages_never_show_source_text():
         assert refused.value.__suppress_context__
 
 
-def test_scan_walk_skips_closed_modules_without_opening_them(
+def test_scan_walk_skips_excluded_modules_without_opening_them(
     tmp_path, monkeypatch
 ):
-    """The walk drops closed paths before any read of them.
+    """The walk drops excluded paths before any read of them.
 
-    Every read is recorded, and the decoys are also made unreadable where
-    the process is not the superuser, so a read would fail either way.
+    Decoys sit at the closed paths, at the pinned depletion-cut paths and at
+    one more name the pattern matches. Every read is recorded, and the
+    decoys are also made unreadable where the process is not the superuser,
+    so a read would fail either way.
     """
     package = tmp_path / "src" / "populace_dynamics"
     check = (
@@ -973,12 +1050,17 @@ def test_scan_walk_skips_closed_modules_without_opening_them(
         "engine/checks.py": check,
         "open_population/own.py": check,
         "engine/__pycache__/cached.py": check,
+        "bridge/depletion.py": "",
     }
     for relative, text in files.items():
         path = package / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
-    decoys = [tmp_path / relative for relative in CLOSED_MODULES]
+    unpinned = Path("src/populace_dynamics/bridge/depletion_cut_invented.py")
+    decoys = [
+        tmp_path / relative
+        for relative in (*CLOSED_MODULES, *PATTERN_EXCLUDED_MODULES, unpinned)
+    ]
     for decoy in decoys:
         decoy.parent.mkdir(parents=True, exist_ok=True)
         decoy.write_text(check)
@@ -1000,17 +1082,23 @@ def test_scan_walk_skips_closed_modules_without_opening_them(
             decoy.chmod(0o600)
     assert not set(read) & set(decoys)
     assert {path.relative_to(tmp_path).as_posix() for path in read} == {
+        "src/populace_dynamics/bridge/depletion.py",
         "src/populace_dynamics/engine/__init__.py",
         "src/populace_dynamics/engine/checks.py",
     }
     assert [source.path for source in sources] == [
+        "src/populace_dynamics/bridge/depletion.py",
         "src/populace_dynamics/engine/__init__.py",
         "src/populace_dynamics/engine/checks.py",
     ]
     assert [source.module for source in sources] == [
+        "populace_dynamics.bridge.depletion",
         "populace_dynamics.engine",
         "populace_dynamics.engine.checks",
     ]
+    assert excluded_paths(tmp_path) == tuple(
+        sorted(decoy.relative_to(tmp_path).as_posix() for decoy in decoys)
+    )
     hits = scan_sources(sources)
     assert [str(hit) for hit in hits] == [
         "src/populace_dynamics/engine/checks.py:3: isinstance"
@@ -1065,12 +1153,27 @@ def test_pinned_sealed_check_refuses_direct_streams_loudly():
         observe_mortality(frame, direct, rng, **keywords)
 
 
+def _assert_observer_refusal(refused):
+    """The OP1 refusal names the fix and chains the sealed refusal."""
+    assert str(refused.value) == (
+        "ID_OR_STREAM_COLLISION: a composed step requires the projection's "
+        "own ProjectionRNGRegistry (observe_mortality does, "
+        'mortality_observer.py:381); pass rng_streams="registry"'
+    )
+    cause = refused.value.__cause__
+    assert type(cause) is ValueError
+    assert cause.args == (SEALED_REGISTRY_REFUSAL,)
+
+
 def test_pinned_sealed_check_refuses_a_direct_op1_run_loudly():
     """Composed into OP1, the observer runs on the registry and refuses
-    the direct default before any draw, rather than diverging."""
+    the direct default before any draw, rather than diverging. The harness
+    re-raises the refusal as its own, naming ``rng_streams="registry"``."""
     frame, keywords = _observer_inputs()
+    draws = []
 
     def observed(frame, context, rng):
+        draws.append(context.year)
         return observe_mortality(frame, context, rng, **keywords)[0]
 
     modules = replace(_modules(), mortality=observed, fertility=_unchanged)
@@ -1078,8 +1181,52 @@ def test_pinned_sealed_check_refuses_a_direct_op1_run_loudly():
     result = run_gate(frame, modules, request, rng_streams="registry")
     assert result.rng_stream_class == REGISTRY_CLASS
     assert len(result.accounting.periods) == 2
-    with pytest.raises(ValueError, match="existing RNG registry required"):
+    assert draws == [START + 1, START + 2]
+    draws.clear()
+    with pytest.raises(IdOrStreamCollision) as refused:
         run_gate(frame, modules, request)
+    _assert_observer_refusal(refused)
+    assert draws == [START + 1]
+    with pytest.raises(IdOrStreamCollision) as refused:
+        run_production(
+            frame, modules, ProductionRequest("tr2026_intermediate")
+        )
+    _assert_observer_refusal(refused)
+    assert draws == [START + 1, START + 1]
+
+
+def test_only_the_sealed_refusal_under_direct_streams_is_re_raised():
+    """Other errors, the same text from a subclass, and the same refusal
+    under the registry all pass through as the very object raised."""
+
+    class Subclass(ValueError):
+        pass
+
+    def raising(error):
+        def step(frame, context, rng):
+            raise error
+
+        return step
+
+    registry = ProjectionRNGRegistry(0, 2)
+    rng = np.random.default_rng(0)
+    for mode, error in (
+        ("direct", ValueError("another refusal")),
+        ("direct", ValueError(SEALED_REGISTRY_REFUSAL, "extra")),
+        ("direct", Subclass(SEALED_REGISTRY_REFUSAL)),
+        ("direct", TypeError(SEALED_REGISTRY_REFUSAL)),
+        ("registry", ValueError(SEALED_REGISTRY_REFUSAL)),
+    ):
+        step = _AdapterStreams(mode).wrap(raising(error))
+        with pytest.raises(type(error)) as passed:
+            step(None, _context(registry), rng)
+        assert passed.value is error, (mode, error)
+    step = _AdapterStreams("direct").wrap(
+        raising(ValueError(SEALED_REGISTRY_REFUSAL))
+    )
+    with pytest.raises(IdOrStreamCollision) as refused:
+        step(None, _context(registry), rng)
+    _assert_observer_refusal(refused)
 
 
 # ---------------------------------------------------------------------------
@@ -1158,17 +1305,20 @@ _FRESH_PROCESS_RUN = textwrap.dedent("""
     )
     print(json.dumps({
         "loaded": {name: name in sys.modules for name in closed},
+        "depletion_cut": sorted(
+            name for name in sys.modules if "depletion_cut" in name
+        ),
         "classes": classes,
     }))
 """)
 
 
-def test_projection_runs_import_neither_closed_module():
+def test_projection_runs_import_no_excluded_module():
     """A fresh process runs OP1 to 2100 and both ways to 2027, then
-    checks ``sys.modules``.
+    checks ``sys.modules`` for the closed and depletion-cut modules.
 
     Code a projection never imports cannot check its registry's type, so
-    this closes the gap the path exclusion leaves in the scan.
+    this closes the gap the path exclusions leave in the scan.
     """
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(ROOT / "src")
@@ -1188,6 +1338,7 @@ def test_projection_runs_import_neither_closed_module():
         "populace_dynamics.estimates.adjusted_poverty": False,
         "populace_dynamics.uniform_cut_track_u.rows": False,
     }
+    assert report["depletion_cut"] == []
     assert report["classes"] == [DIRECT_CLASS, REGISTRY_CLASS, DIRECT_CLASS]
 
 
@@ -1415,15 +1566,11 @@ SIZES = (1, 3, 6)
 DRAWS = (0, 3, 17)
 SHORT_HORIZON = START + 2
 LONG_HORIZON = 2100
-# Every size with every draw at the short horizon. At 2100 each size runs
-# with its own draw, so all three sizes and all three draws reach the
-# registered horizon: one 2100 run costs about as much as 35 short ones.
-IDENTITY_GRID = (
-    *((size, draw, SHORT_HORIZON) for size in SIZES for draw in DRAWS),
-    *(
-        (size, draw, LONG_HORIZON)
-        for size, draw in zip(SIZES, DRAWS, strict=True)
-    ),
+# Every size with every draw, at the short horizon and at the registered one.
+IDENTITY_GRID = tuple(
+    (size, draw, horizon)
+    for horizon in (SHORT_HORIZON, LONG_HORIZON)
+    for size, draw in product(SIZES, DRAWS)
 )
 
 

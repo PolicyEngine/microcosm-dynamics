@@ -663,7 +663,12 @@ dispatched it, at revision 3 of its brief, on 26 October. Base: master
 `0f69bbb2`; branch `openpop-op1-rng-inject-20261026`. `4431486d` adds the
 injection and `tests/open_population/test_stream_injection.py`; `be6843f7`
 extends `tests/open_population/test_streams.py`; later commits extend
-`op1_run_size.py` and add this section.
+`op1_run_size.py` and add this section. On 26 October the coordinator ruled
+on the build's four open questions. The branch then merged master
+`9cced8ff`, a docs-only ledger update, and applied the rulings: the
+observer's refusal stays, with a clearer OP1 refusal under the default; the
+2100 identity grid is the full product; and the scan skips the depletion-cut
+modules by path.
 
 ### Mechanism
 
@@ -692,6 +697,12 @@ extends `tests/open_population/test_streams.py`; later commits extend
   are the loop's 600 module generators per 75-year run.
 - `rng_streams="registry"` passes the loop's context through unchanged,
   which is OP1's behavior before this follow-up.
+- Under `"direct"`, each slot's wrapper re-raises one error as an OP1
+  refusal: a plain `ValueError` whose only argument is the sealed
+  observer's refusal text, `"existing RNG registry required"`
+  (`mortality_observer.py:382`). It becomes `IdOrStreamCollision` naming
+  `rng_streams="registry"`, chained from the original (see the observer
+  below). Every other error passes through as the object raised.
 - Emigration draws from `DirectRNGStreams` in both modes. `_ExitAdapter`
   builds its own from the context's draw and horizon
   (`open_population/exits.py:149–152`, unchanged), and
@@ -755,22 +766,36 @@ pinned, so a member added to the registry fails the test until the direct
 class matches it.
 
 `test_sealed_code_holds_only_the_known_registry_type_check` runs an AST scan
-of `src/populace_dynamics/` outside `open_population/`: 305 modules at
-`0f69bbb2`, once the two closed modules below are dropped.
+of `src/populace_dynamics/` outside `open_population/`: 302 modules at
+`9cced8ff`, once the five excluded modules below are dropped.
 - **What it reads.** The project's data-access record keeps two modules out
   of automated reads: `estimates/adjusted_poverty.py` and
-  `uniform_cut_track_u/rows.py`. The walk drops both by path before anything
-  opens, reads, parses, hashes or stats them.
-  `test_closed_module_exclusions_are_pinned_exactly` pins that list, and
-  `test_scan_walk_skips_closed_modules_without_opening_them` records every
-  read on an invented tree whose decoys sit at those paths. Every other
-  module is read, `baselines/asfr.py` included.
+  `uniform_cut_track_u/rows.py`. The scan also skips the depletion-cut
+  modules, every path matching `src/populace_dynamics/bridge/depletion_cut*.py`,
+  so that what it reads does not depend on who runs it. At `9cced8ff` the
+  pattern matches three: `bridge/depletion_cut.py`,
+  `bridge/depletion_cut_population.py` and
+  `bridge/depletion_cut_population_child.py`. The walk decides from each
+  path alone and drops all five before anything opens, reads, parses,
+  hashes or stats them.
+  - `test_closed_module_exclusions_are_pinned_exactly` pins the two closed
+    paths, the pattern and the three paths it matches, and checks five
+    neighbouring paths the rule must not drop.
+  - `test_the_tree_excludes_exactly_the_pinned_modules` lists the tree by
+    directory listing alone and checks that the excluded set is exactly
+    those five, so a new match fails it and comes back for a decision.
+  - `test_scan_walk_skips_excluded_modules_without_opening_them` records
+    every read on an invented tree with decoys at all five paths and at one
+    more name the pattern matches.
+
+  Every other module is read, `baselines/asfr.py` included.
 - **Closing the gap at run time.** In a fresh interpreter,
-  `test_projection_runs_import_neither_closed_module` runs a 2100 production
+  `test_projection_runs_import_no_excluded_module` runs a 2100 production
   projection and two 2027 gate runs, one in each mode, with person-stream,
   tagged-stream and emigration draws. It then checks that neither closed
-  module is in `sys.modules`. Code a projection never imports can't check
-  its registry's type.
+  module and no module whose name contains `depletion_cut` is in
+  `sys.modules`. Code a projection never imports can't check its
+  registry's type.
 - **What it catches.** `isinstance` and `issubclass` (with tuples and
   unions); `type(x)` and `x.__class__` compared by `is`, `is not`, `==`,
   `!=`, `in` or `not in`, alone or in a chain; any other comparison against
@@ -817,12 +842,35 @@ where the coordinator's search for `isinstance` found none). It raises
   the registry, giving `apply_mortality`'s survivors, and refuses the direct
   class.
 - `test_pinned_sealed_check_refuses_a_direct_op1_run_loudly` composes it
-  into OP1: the registry mode completes and the direct default refuses.
-- An OP1 run that composes this observer must pass
-  `rng_streams="registry"`. The scan test pins exactly this hit, by path,
-  line and kind, so any other check, or any move of this one, fails it.
-- Whether to keep this disposition is the coordinator's call. Condition 2,
-  as written, asks for no check at all.
+  into OP1. The registry mode completes, with the observer called in both
+  years. Under the direct default, `run_gate` and `run_production` both
+  refuse in the first projected year, before the observer draws, with
+  `IdOrStreamCollision`: "a composed step requires the projection's own
+  ProjectionRNGRegistry (observe_mortality does, mortality_observer.py:381);
+  pass rng_streams="registry"". The sealed `ValueError` is its cause.
+- `test_only_the_sealed_refusal_under_direct_streams_is_re_raised` checks
+  that only that error is re-raised. Four errors pass through unchanged
+  under the default: another `ValueError`, the refusal text with a second
+  argument, a `ValueError` subclass with the same text and a `TypeError`.
+  So does the refusal itself under the registry.
+
+The coordinator's ruling of 26 October keeps this disposition. An OP1 run
+that composes `observe_mortality` must pass `rng_streams="registry"`, and
+the harness does not switch modes for it. The docstrings of `run_production`
+and `run_gate` say so. No entry point on this branch composes the observer.
+Searching `src/`, the excluded modules aside, no module imports or calls
+`observe_mortality` outside its own module; OP1's harness and gates name it
+only in docstrings and in the refusal. The harness can't tell at setup that a
+slot wraps the observer, since a slot is any callable. It therefore
+re-raises the sealed refusal at the observer's first call, which comes
+before any draw.
+
+Condition 2, as the coordinator amended it, requires the scan's set of
+registry type checks in scanned sealed code to equal an exact pinned set.
+Today that set is one entry: `mortality_observer.py`, line 381,
+`type-compare`. The scan test compares the sorted hits with the sorted pin,
+so a new hit, a moved line or a removed hit fails it, and any such change to
+sealed code comes back for a decision.
 
 **3. Stream identity.**
 - `test_every_method_matches_registry_at_every_period` covers every period
@@ -846,15 +894,11 @@ configuration in both modes and compares:
 - every slice, frame by frame;
 - the declared flows and the accounting history.
 
-The grid is:
-- sizes 1, 3 and 6 with draws 0, 3 and 17, in full, at 2027 (gate runs);
-- at 2100, sizes 1, 3 and 6 with draws 0, 3 and 17 respectively
-  (production runs at the registered horizon).
-
-So every size and every draw reaches both horizons. The full product at 2100
-is a one-line change (`zip` to `product` in `IDENTITY_GRID`); it was left
-out for the unit tier's time, since one 2100 run costs about as much as 35
-two-year runs.
+The grid is sizes 1, 3 and 6 by draws 0, 3 and 17, in full, at both 2027
+(gate runs) and 2100 (production runs at the registered horizon): 18
+configurations. The build had zipped the 2100 runs to three; the
+coordinator's ruling asked for the full product. The nine 2100 pairs took
+0.76 to 0.97 s each on the host.
 
 Each run draws:
 - a mortality person stream for everyone;
@@ -933,9 +977,9 @@ run on every CI push.
 .venv/bin/python -m pytest --collect-only -q -p no:cacheprovider -m unit tests/open_population
 .venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
 .venv/bin/ruff check src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
-git diff --check 0f69bbb2
-git diff --stat 0f69bbb2
-git diff --quiet 0f69bbb2 -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b scripts tests/estimates tests/tier_counts.json tests/README-tiers.md
+git diff --check 9cced8ff
+git diff --stat 9cced8ff
+git diff --quiet 9cced8ff -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b scripts tests/estimates tests/tier_counts.json tests/README-tiers.md
 ```
 
 The build ran the required command in its sandbox in five chunks of named
@@ -946,9 +990,9 @@ and the 101 tests this follow-up adds (76 in the new module and 25 in
 `test_streams.py`), and 104 in the other four modules. After the new
 module's last change (`d49d0813`: the binding-cycle fix and the chained
 comparison), all 76 of its tests ran again and passed. `--collect-only -m
-unit` collects all 339, none deselected. Black, Ruff and `git diff --check`
-are clean, `git diff --stat` lists only this branch's six files, and the
-sealed-path `git diff --quiet` exits 0.
+unit` collected all 339, none deselected. Black, Ruff and `git diff --check`
+were clean, `git diff --stat` listed only the build's six files, and the
+sealed-path `git diff --quiet` exited 0.
 
 The sandbox's wall times are not usable, so the build timed the new tests
 by process CPU time. In the sandbox, the existing 2100 production test took
@@ -957,19 +1001,36 @@ new tests took 12.7 (the hash grid), 6.8 (the every-period differential) and
 2.3 (the scan) sandbox CPU seconds. The main session's host rerun gives the
 times that count.
 
-On the host, at `441b9f77`, the main session ran the required command in two
-named-module processes. The first started at a one-minute load of 114.
-- `tests/open_population`: 337 passed and 1 strict xfail in 16.38 s, with
-  `test_sealed_code_holds_only_the_known_registry_type_check` deselected.
-  That test reads the source tree; it waits for the coordinator's ruling on
-  which modules the scan reads, and CI runs it.
-- The other four modules: 104 passed in 1.63 s.
-- Peak RSS was 223 MB.
+On the host, at `441b9f77`, the main session first ran the required
+command with the real-tree scan test deselected, pending the ruling on
+which modules the scan reads: 337 passed and 1 strict xfail in
+`tests/open_population`, and 104 passed in the other four modules.
 
-A timed run of the two stream modules, with the same test deselected, gave
-245 passed in 12.23 s. The slowest tests took 1.38 s (the fresh-interpreter
-import check), 1.0 to 1.2 s for each 2100 hash pair, and about 0.8 s (the
-every-period differential).
+After the rulings were applied, it ran the required command again, in two
+named-module processes at one-minute loads under 8:
+- `tests/open_population`: **346 passed and 1 strict xfail** in 18.15 s,
+  the real-tree scan test included. These are OP1's 238 and the 109 tests
+  this follow-up adds: 84 in `test_stream_injection.py` and 25 in
+  `test_streams.py`.
+- The other four modules: 104 passed in 0.86 s.
+- Peak RSS was 340 MB.
+- `--collect-only -m unit tests/open_population` collects all 347, none
+  deselected.
+- Black, Ruff and `git diff --check` are clean. `git diff --stat 9cced8ff`
+  lists this branch's seven files: the build's six and
+  `op1_run_size_injection.json`. The sealed-path `git diff --quiet` exits 0.
+
+The slowest tests took 1.16 s (the fresh-interpreter import check), 0.99 s
+(the real-tree scan) and 0.76 to 0.97 s for each 2100 hash pair.
+
+Six mutants of the new code each fail the tests aimed at them:
+- re-raising under both modes;
+- accepting `ValueError` subclasses;
+- matching the refusal text as a substring;
+- never re-raising;
+- re-raising without the chain;
+- ignoring the depletion-cut pattern. This mutant ran only against the
+  pin and decoy tests, never against the real tree.
 
 ### Restricted-files statement
 
@@ -983,6 +1044,11 @@ wrote or ran imports the two closed modules, loads either by path, or reads
 the committed MINT8 guide. Twice, a shell search or byte count over `src/`
 in the build's own session did not apply its exclusions, because of how the
 shell expanded them. Neither printed a line from any excluded file, and the
-build's report to the main session lists both. Every test, probe and
-measurement uses invented inputs. No microdata or external statistical table
-was read, and no real-data statistic was computed.
+build's report to the main session lists both. Since then, every scripted
+search by the main session takes an explicit file list from `git ls-files`,
+minus the excluded files, never a shell glob with exclusions. The main
+session ran the real-tree scan test only after the depletion-cut exclusion
+was in. With an audit hook on file opens, that run opened no excluded file,
+and no projection run imported a closed or depletion-cut module. Every
+test, probe and measurement uses invented inputs. No microdata or external
+statistical table was read, and no real-data statistic was computed.
