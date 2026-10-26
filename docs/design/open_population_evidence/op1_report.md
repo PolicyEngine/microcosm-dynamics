@@ -669,8 +669,9 @@ on the build's four open questions. The branch then merged master
 observer's refusal stays, with a clearer OP1 refusal under the default; the
 2100 identity grid is the full product; and the scan skips the depletion-cut
 modules by path. Review inject-r1 asked for revisions at `8634858c`, and
-review inject-r2 for more at `33e383b4`; their subsections, below, give
-the findings and the fixes.
+review inject-r2 for more at `33e383b4`. Review inject-r3 approved
+`5a4fc14c` with one minor finding and two nits, since fixed. Their
+subsections, below, give the findings and the fixes.
 
 ### Mechanism
 
@@ -848,7 +849,14 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
 
   A decorator is trusted only by the path it resolves to, such as
   `functools.lru_cache` or `dataclasses.dataclass`; a local function
-  named `property` is not. A class is trusted only with trusted
+  named `property` is not. There are two exceptions. A property's
+  `setter`, `getter` or `deleter` is trusted only where its receiver is a
+  property defined above it in the same class body: a function whose
+  outermost decorator is `property` or another such accessor, not bound
+  again since. And any `register`, as an attribute or as a name bound
+  from one, is taken for a dispatcher's by its spelling alone: the hint
+  it dispatches on has its own check, and its other hints are trusted.
+  A class is trusted only with trusted
   decorators, no keywords and no base but `object`. A specific check is
   reported at the outermost node that makes it, and nothing under that
   node is reported again. So a spelling the specific checks miss still
@@ -897,7 +905,9 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   - `dynamic-code`: `eval`, `exec` or `typing.ForwardRef` on text the
     folder cannot read, in a module that binds anything tracked. Literal
     code passed to `eval`, `exec`, `compile` or `ForwardRef` is parsed and
-    scanned with the module, and so is literal code nested in it.
+    scanned with the module, and so is literal code nested in it, down to
+    five levels. A call whose literal code would be a sixth level is
+    reported as `dynamic-code` whatever the module binds.
   - `member-introspection`: a dunder read on, or an introspection call
     such as `inspect.getmodule` or `getattr` on, a member of a module
     through which a class can be reached.
@@ -935,19 +945,53 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   the other pure `str` and `bytes` methods it lists, such as `lower`,
   `strip`, `split`, `encode` and `decode`; and `str`, `bytes`, `repr`,
   `ascii`, `format`, `chr`, `tuple`, `list`, `sorted` and `reversed`. It
-  does not follow names. It holds no text over 64 KiB, no integer larger
-  than 4096 in magnitude and no tuple over 256 items, and it formats no
-  template over 4096 characters or with a four-digit width or precision.
-  It runs `str.format` one field at a time, so a template that reads one
-  argument in many fields stops at the limit.
+  does not follow names. Each value it computes holds no text over 64 KiB,
+  no integer larger than 4096 in magnitude and no tuple over 256 items,
+  and it formats no template over 4096 characters or with a four-digit
+  width or precision. It runs `str.format` one field at a time, so a
+  template that reads one argument in many fields stops at the limit.
+  These limits apply to what the folder builds, not to what the source
+  holds. A source literal is kept as written, at any length, since the
+  parser already holds it, and one operation on a long literal can build
+  text as long as that literal before the folder refuses the result.
+  Across a module, the values the folder keeps weigh at most 1 MiB in
+  characters and items, the weight of 16 texts at the limit; past that the
+  scan stops with an error naming the module, so it never skips one.
   - `test_folder_refuses_results_past_its_limits` checks
     19 expressions past those limits: the folder gives
     no value, and holds under 1 MiB while refusing.
+  - `test_folder_limits_hold_at_their_edges` checks nine pairs: each
+    limit's edge, which folds to Python's value, and one step past it,
+    which gives none.
+  - `test_folder_keeps_a_source_literal_of_any_length` folds a
+    70,000-character literal to itself, and the scan finds the check in
+    code passed to `exec` in such a literal.
+  - `test_folder_budget_bounds_what_one_expression_keeps` folds review
+    inject-r3's tuple of 512 texts of 60 KiB, which kept about 33.8 MB
+    before the item limit refused it. It now stops at the budget, with a
+    peak under 2 MiB. In
+    `test_scan_stops_at_the_folder_budget_naming_only_the_path`, a module
+    of twelve built 64 KiB texts scans clean, one of twenty stops with the
+    error, and one of twenty 64 KiB literals scans clean.
+  - `test_folder_runs_each_listed_method_and_builtin` calls each of the
+    26 methods and 10 builtins the folder runs (`format` both ways) and
+    compares the result with Python's.
+    `test_every_listed_method_and_builtin_has_a_call` fails if one is
+    listed without a call.
   - `test_folder_agrees_with_python_on_literal_expressions` checks 300
-    Hypothesis expressions against Python itself, by value and type. Where
+    Hypothesis expressions against Python itself, by value and type. The
+    grammar includes the methods that take another expression, such as
+    `partition` and `removeprefix`, and those that take a width. Where
     Python fails or passes a limit, the folder must give no value. The one
     exception it allows is the four-digit width rule; with that rule off,
     the folder must agree.
+- **Deep expressions.** The walks that follow class info, instances and
+  module paths keep their own stacks, as the folder and the catch-all do.
+  `test_scan_reads_long_chains_without_exhausting_recursion` gives seven
+  working checks inside or beside chains 3000 links long: a sum of
+  literals, a union, slices, conditionals, attributes, calls and
+  negations. At `5a4fc14c`, the sum, the union, the slices and the
+  attributes raised `RecursionError` at 1000 links.
 - **Cost.** Right after parsing, each literal container of constants is
   replaced by `None` unless a string in it holds either class's or
   module's name in any case, a probe name, or a name a read of a trusted
@@ -965,13 +1009,15 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   1.2 GB, mostly while parsing the largest data module.
 - **Its own tests.**
   - `test_scan_catches_every_spelling_of_a_registry_type_check` covers
-    121 invented spellings. Each gives exactly the hits its
+    125 invented spellings. Each gives exactly the hits its
     markers ask for: one of its kind on its check line, plus one on each
     line that binds a class or holds its name. All twelve of review
     inject-r1's misses and all nineteen of review inject-r2's are among
-    them.
+    them, and so are four that a mutant sweep found unpinned: class info
+    read by `KINDS.get(...)` and rebuilt by `tuple(KINDS)`, and an
+    instance bound through a conditional and through `and`.
   - `test_every_spelling_tells_the_two_classes_apart` runs
-    119 of them and checks that each answers differently for the
+    123 of them and checks that each answers differently for the
     two classes. The other two cannot run: a relative import, and an alias
     chain written in reverse order.
   - `test_every_kind_has_a_spelling` checks that each of the 24 kinds, 19
@@ -989,13 +1035,24 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   - `test_reads_count_only_where_something_is_tracked` gives two modules
     that track nothing; their reads of namespaces, docstrings, annotations
     and signatures give no hit.
+  - `test_scan_trusts_an_accessor_only_of_a_property_above_it` gives
+    seven class bodies. A property's own `setter`, `deleter` and `getter`
+    give no hit; an accessor of a receiver bound nowhere, of a plain
+    method, of a property bound again, of a property under another
+    decorator, outside a class, or of a local `property` leaves the
+    function's hint to the catch-all.
+  - `test_scan_parses_five_levels_of_literal_code_and_flags_deeper` nests
+    a working `isinstance` check in one to seven literal `exec` calls. It
+    is reported as `isinstance` down to five levels and as `dynamic-code`
+    at six and seven.
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
   hits, their `repr` and the assertion message, and from the refusal raised
   for unparsable source, whose original exception is suppressed.
   `test_every_hit_names_only_a_path_a_line_and_a_kind` checks that every
-  spelling's hits print as exactly `path:line: kind`.
+  spelling's hits print as exactly `path:line: kind`. The budget error's
+  text is checked exactly: the module's path and a fixed phrase.
 - **Limits.** The scan is a heuristic. It reads source as written,
   before it runs, and what it cannot see falls into four classes:
   1. **Values made at run time.** Text built from anything but literals
@@ -1281,6 +1338,40 @@ and killed each of the author's thirteen mutants.
    name, the registry module's name and a probe name as bytes, one of them
    inside a nested tuple, and the pruning property samples those bytes.
 3. **Nit:** the slot-binding range is `:393–406`. **Fix:** cited.
+
+### Review inject-r3
+
+Review inject-r3, a hard-tier Subfleet review on a Codex lane, read the
+branch at `5a4fc14c` and returned APPROVE. It found no blocking or major
+finding under the behavioural claim, and r2's three findings fixed: all 38
+of r2's checks give hits, and the real-tree scan gives exactly the pinned
+hit. Its one minor finding and two nits concern how the scan's limits were
+stated:
+
+1. **Minor: the folder's 64 KiB limit was stated without its scope.** It
+   bounds each value the folder computes. A source literal of any length
+   is kept as written, and nothing bounded what many values add up to: a
+   tuple of 512 texts of 60 KiB each kept about 33.8 MB before the item
+   limit refused it. **Fix:** the folder's description states the scope.
+   A module's folded values now share a 1 MiB budget, past which the scan
+   stops with an error naming the module. Edge, literal and budget tests
+   pin each limit (condition 2, the folder).
+2. **Nit: two kinds of decorator were trusted by spelling.** Any
+   `setter`, `getter` or `deleter` was trusted whatever its receiver, and
+   any `register` still is. **Fix:** an accessor is trusted only on a
+   property defined above it in the same class body, with seven tests,
+   and the `register` rule is stated.
+3. **Nit: nested literal code was parsed five levels deep, unstated.** At
+   six levels a working check gave no hit. **Fix:** a call whose code
+   would be a sixth level is reported as `dynamic-code`, and a test pins
+   the boundary from one to seven levels.
+
+It also noted that no test failed when `partition` was dropped from the
+folder's list, and that a literal `+` chain of 500 terms raised
+`RecursionError` in the scan, as at `33e383b4`. **Fix:** a test calls each
+of the folder's 26 methods and 10 builtins, the Hypothesis grammar takes
+the methods with an argument or a width, and the walks that recursed keep
+their own stacks.
 
 ### Commands and results
 

@@ -375,10 +375,14 @@ _BENIGN_DECORATORS = frozenset(
         "dataclasses.dataclass",
     }
 )
-# A property's own decorators, whatever the property is called.
+# A property's own decorators; one is trusted only on a property defined
+# above it in the same class body (find_accessors).
 _PROPERTY_METHODS = frozenset({"setter", "getter", "deleter"})
 # Calls whose literal first argument is code; the scan parses and checks it.
 _CODE_CALLS = frozenset({"eval", "exec", "compile", "ForwardRef"})
+# Literal code is parsed this many levels deep: code in a module's literal,
+# code in that code's literal, and so on.
+_EMBED_DEPTH = 5
 
 
 def _code_call(func: ast.expr) -> bool:
@@ -521,13 +525,19 @@ def _names_probe(text: str) -> bool:
 # The folder: the text an expression holds before run time.
 # ---------------------------------------------------------------------------
 
-# The folder builds no text longer than this, takes no larger integer, and
-# formats no template longer than the template limit or with a four-digit
-# field width, so no literal expression can make it allocate much.
+# Each value the folder computes holds no text longer than this, no larger
+# integer and no more items, and it formats no template longer than the
+# template limit or with a four-digit field width. A source literal is kept
+# as written, at any length: the parser already holds it.
 _FOLD_TEXT_LIMIT = 1 << 16
 _FOLD_INT_LIMIT = 4096
 _FOLD_TEMPLATE_LIMIT = 4096
 _FOLD_ITEMS_LIMIT = 256
+# The values one memo (a module's, or one expression's) keeps may weigh
+# this much in all, in characters and items; past it, the scan stops with
+# an error rather than hold more, so many values within the limits cannot
+# add up to much either.
+_FOLD_BUDGET = 16 * _FOLD_TEXT_LIMIT
 # A field width or precision of 1000 or more, in each kind of template.
 _WIDE_FIELDS = {
     "percent": re.compile(r"%[^a-zA-Z%]*\d{4}"),
@@ -830,6 +840,7 @@ def _fold_value(node: ast.AST, value):
     """Fold one node, given ``value`` for each child it reads."""
     if isinstance(node, ast.Constant):
         if isinstance(node.value, str | bytes):
+            # The source's own text, kept as is: folding allocates nothing.
             return node.value
         if node.value is None or _is_int(node.value):
             return _sized(node.value)
@@ -925,7 +936,19 @@ def _fold_call(node: ast.Call, value):
     return _fold_function(func.id, args, keywords)
 
 
-def _fold(node: ast.AST, memo: dict):
+class _FoldMemo(dict):
+    """Each folded node's value, by node id, and the weight kept so far.
+
+    ``path`` names the module in the error raised past the budget.
+    """
+
+    def __init__(self, path: str = "<expression>"):
+        super().__init__()
+        self.path = path
+        self.held = 0
+
+
+def _fold(node: ast.AST, memo: _FoldMemo):
     """Return the value an expression holds before run time, or unknown.
 
     Literals fold, and so do the pure operations a module might build
@@ -933,7 +956,8 @@ def _fold(node: ast.AST, memo: dict):
     format specs, indexing and slicing, the ``str`` and ``bytes`` methods
     in ``_FOLD_METHODS`` and the builtins in ``_FOLD_FUNCTIONS``. Names
     are not followed. The walk keeps its own stack, so a deep expression
-    cannot exhaust recursion, and ``memo`` keeps each node's value.
+    cannot exhaust recursion, and ``memo`` keeps each node's value. Every
+    value but a source literal counts against ``_FOLD_BUDGET``.
     """
 
     def known(item):
@@ -949,24 +973,29 @@ def _fold(node: ast.AST, memo: dict):
             child for child in _fold_children(item) if not known(child)
         ]
         if ready or not children:
-            memo[id(item)] = (
-                item,
-                _fold_value(item, lambda child: memo[id(child)][1]),
-            )
+            value = _fold_value(item, lambda child: memo[id(child)][1])
+            if not isinstance(item, ast.Constant):
+                memo.held += _weight(value)
+                if memo.held > _FOLD_BUDGET:
+                    raise ScanError(
+                        f"{memo.path}: literal expressions past the "
+                        "folder's budget"
+                    )
+            memo[id(item)] = (item, value)
         else:
             stack.append((item, True))
             stack.extend((child, False) for child in children)
     return memo[id(node)][1]
 
 
-def _static_text(node: ast.expr, memo: dict | None = None) -> str | None:
+def _static_text(node: ast.expr, memo: _FoldMemo | None = None) -> str | None:
     """Return the text a string expression holds before run time, if any.
 
     The parser already joins adjacent literals and decodes escapes; the
     folder does the rest. Bytes are read as Latin-1, so an ASCII name
     matches in either.
     """
-    value = _fold(node, {} if memo is None else memo)
+    value = _fold(node, _FoldMemo() if memo is None else memo)
     if isinstance(value, str):
         return value
     if isinstance(value, bytes):
@@ -1068,6 +1097,31 @@ def _statements(body: list[ast.stmt]) -> Iterable[ast.stmt]:
         stack.extend(reversed(inner))
 
 
+def _bound_names(statement: ast.stmt) -> set[str]:
+    """Name everything a statement may bind, in nested scopes too."""
+    names = set()
+    for node in ast.walk(statement):
+        if isinstance(node, ast.Name) and isinstance(
+            node.ctx, ast.Store | ast.Del
+        ):
+            names.add(node.id)
+        elif isinstance(
+            node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+        ):
+            names.add(node.name)
+        elif isinstance(node, ast.Import | ast.ImportFrom):
+            names.update(
+                (alias.asname or alias.name).split(".")[0]
+                for alias in node.names
+            )
+        elif isinstance(node, ast.ExceptHandler | ast.MatchAs | ast.MatchStar):
+            if node.name:
+                names.add(node.name)
+        elif isinstance(node, ast.MatchMapping) and node.rest:
+            names.add(node.rest)
+    return names
+
+
 def _hints(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[ast.expr]:
     """List a function's hints in the order Python stores them.
 
@@ -1094,6 +1148,21 @@ def _class_annotations(node: ast.ClassDef) -> list[ast.expr]:
         for statement in _statements(node.body)
         if isinstance(statement, ast.AnnAssign)
     ]
+
+
+def _parts(node: ast.expr) -> list[ast.expr]:
+    """List the parts an expression holds or picks one of."""
+    if isinstance(node, ast.Tuple | ast.List | ast.Set):
+        return list(node.elts)
+    if isinstance(node, ast.Dict):
+        return [item for item in (*node.keys, *node.values) if item]
+    if isinstance(node, ast.Starred | ast.NamedExpr | ast.Subscript):
+        return [node.value]
+    if isinstance(node, ast.IfExp):
+        return [node.body, node.orelse]
+    if isinstance(node, ast.BoolOp):
+        return list(node.values)
+    return []
 
 
 def _binds_by_name(target: ast.expr) -> bool:
@@ -1127,13 +1196,17 @@ def _annotation_nodes(tree: ast.AST) -> set[int]:
     return {id(item) for hint in hints for item in ast.walk(hint)}
 
 
-def _embedded(tree: ast.AST, depth: int = 0) -> list[ast.Module]:
+def _embedded(
+    tree: ast.AST, memo: _FoldMemo, unexpanded: set[int], depth: int = 1
+) -> list[ast.Module]:
     """Parse the literal code a module evaluates, nested code too.
 
     A literal passed to ``eval``, ``exec``, ``compile`` or ``ForwardRef``
     is code the module runs, so the scan checks it as part of the module;
     each parsed tree takes its call's location. Inside an annotation the
     hint checks parse such literals instead, so they are skipped here.
+    Code nested more than ``_EMBED_DEPTH`` deep is not parsed: its call
+    goes in ``unexpanded``, and the scan reports it as dynamic code.
     """
     found = []
     hinted = _annotation_nodes(tree)
@@ -1145,17 +1218,19 @@ def _embedded(tree: ast.AST, depth: int = 0) -> list[ast.Module]:
             and id(node) not in hinted
         ):
             continue
-        text = _static_text(node.args[0])
+        text = _static_text(node.args[0], memo)
         if text is None:
             continue
         try:
             parsed = ast.parse(text)
         except (SyntaxError, ValueError):
             continue
+        if depth > _EMBED_DEPTH:
+            unexpanded.add(id(node))
+            continue
         _relocate(parsed, node)
         found.append(parsed)
-        if depth < 4:
-            found += _embedded(parsed, depth + 1)
+        found += _embedded(parsed, memo, unexpanded, depth + 1)
     return found
 
 
@@ -1211,9 +1286,13 @@ class _ModuleBindings:
         self.listing_calls: set[int] = set()
         self.listing_loads: set[int] = set()
         # Set by scan_sources: the modules whose objects and members count,
-        # and the modules the scan reads.
+        # the modules the scan reads, and the code calls nested too deep to
+        # parse.
         self.introspected: frozenset[str] = frozenset()
         self.known_modules: frozenset[str] = frozenset()
+        self.unexpanded: set[int] = set()
+        # Set by find_accessors: the decorators that are a property's own.
+        self.accessors: set[int] = set()
         self.parents: dict[int, ast.AST] = {}
         # Each hint's parsed parts, kept so that their nodes stay alive and
         # their parents stay known.
@@ -1251,8 +1330,17 @@ class _ModuleBindings:
             path = self.modules.get(node.id)
             return None if path is None else self._resolve(path)
         if isinstance(node, ast.Attribute):
-            base = self.module_path(node.value)
-            return self._resolve(f"{base}.{node.attr}") if base else None
+            # Unwound in a loop, so a long chain cannot exhaust recursion.
+            attributes = []
+            while isinstance(node, ast.Attribute):
+                attributes.append(node.attr)
+                node = node.value
+            path = self.module_path(node)
+            for attribute in reversed(attributes):
+                if not path:
+                    return None
+                path = self._resolve(f"{path}.{attribute}")
+            return path
         if isinstance(node, ast.Call):
             return self._imported(node)
         if (
@@ -1315,45 +1403,51 @@ class _ModuleBindings:
         return False
 
     def instance_valued(self, node: ast.expr) -> bool:
-        """Return whether ``node`` may be an instance of a tracked class."""
-        if isinstance(node, ast.Call):
-            return self.is_tracked(node.func)
-        if isinstance(node, ast.Name):
-            return node.id in self.instances
-        if isinstance(node, ast.Attribute):
-            if node.attr in self.instances:
-                return True
-            base = self.module_path(node.value)
-            return base is not None and (base, node.attr) in (
-                self.instance_exports
-            )
-        if isinstance(node, ast.NamedExpr):
-            return self.instance_valued(node.value)
-        if isinstance(node, ast.IfExp):
-            return self.instance_valued(node.body) or self.instance_valued(
-                node.orelse
-            )
-        if isinstance(node, ast.BoolOp):
-            return any(map(self.instance_valued, node.values))
+        """Return whether ``node`` may be an instance of a tracked class.
+
+        The walk keeps its own stack, so a long chain of conditionals
+        cannot exhaust recursion.
+        """
+        stack = [node]
+        while stack:
+            item = stack.pop()
+            if isinstance(item, ast.Call):
+                if self.is_tracked(item.func):
+                    return True
+            elif isinstance(item, ast.Name):
+                if item.id in self.instances:
+                    return True
+            elif isinstance(item, ast.Attribute):
+                if item.attr in self.instances:
+                    return True
+                base = self.module_path(item.value)
+                if base is not None and (base, item.attr) in (
+                    self.instance_exports
+                ):
+                    return True
+            elif isinstance(item, ast.NamedExpr):
+                stack.append(item.value)
+            elif isinstance(item, ast.IfExp):
+                stack += [item.body, item.orelse]
+            elif isinstance(item, ast.BoolOp):
+                stack += item.values
         return False
 
-    def _any_part(self, node: ast.expr, test) -> bool:
-        """Apply ``test`` to ``node`` and to each part it holds or picks."""
-        if test(node):
-            return True
-        if isinstance(node, ast.Tuple | ast.List | ast.Set):
-            parts = node.elts
-        elif isinstance(node, ast.Dict):
-            parts = [item for item in (*node.keys, *node.values) if item]
-        elif isinstance(node, ast.Starred | ast.NamedExpr | ast.Subscript):
-            parts = [node.value]
-        elif isinstance(node, ast.IfExp):
-            parts = [node.body, node.orelse]
-        elif isinstance(node, ast.BoolOp):
-            parts = node.values
-        else:
-            return False
-        return any(self._any_part(part, test) for part in parts)
+    def _any_part(self, node: ast.expr, test, more=None) -> bool:
+        """Apply ``test`` to ``node`` and to each part it holds or picks.
+
+        ``more``, if given, lists further parts of a node to test. The walk
+        keeps its own stack, so a deep expression cannot exhaust recursion.
+        """
+        stack = [node]
+        while stack:
+            item = stack.pop()
+            if test(item):
+                return True
+            stack += _parts(item)
+            if more is not None:
+                stack += more(item)
+        return False
 
     def _class_part(self, node: ast.expr) -> bool:
         if self.is_tracked(node):
@@ -1362,30 +1456,32 @@ class _ModuleBindings:
             return node.id in self.containers
         if isinstance(node, ast.Attribute):
             return node.attr in self.containers
+        return False
+
+    @staticmethod
+    def _class_info_parts(node: ast.expr) -> list[ast.expr]:
+        """List the class info a node builds from or reads."""
         if isinstance(node, ast.BinOp) and isinstance(
             node.op, ast.BitOr | ast.Add
         ):
             # A union, or class-info tuples joined with "+".
-            return self.contains_tracked(node.left) or self.contains_tracked(
-                node.right
-            )
+            return [node.left, node.right]
         if isinstance(node, ast.Subscript):
             # Union[int, cls] holds the class in its subscript.
-            return self.contains_tracked(node.slice)
+            return [node.slice]
         if isinstance(node, ast.Call):
             # Class info read or rebuilt: KINDS.get(key), tuple(KINDS).
-            if isinstance(node.func, ast.Attribute) and self.contains_tracked(
-                node.func.value
-            ):
-                return True
-            return _call_name(node.func) in _CONTAINER_CALLS and any(
-                self.contains_tracked(item) for item in node.args
-            )
-        return False
+            parts = []
+            if isinstance(node.func, ast.Attribute):
+                parts.append(node.func.value)
+            if _call_name(node.func) in _CONTAINER_CALLS:
+                parts += node.args
+            return parts
+        return []
 
     def contains_tracked(self, node: ast.expr) -> bool:
         """Return whether a class-info expression may include either class."""
-        return self._any_part(node, self._class_part)
+        return self._any_part(node, self._class_part, self._class_info_parts)
 
     def _name_part(self, node: ast.expr) -> bool:
         texts = self.texts(node)
@@ -1654,31 +1750,76 @@ class _ModuleBindings:
             if before == self._state():
                 return
 
+    def _decorator_path(self, target: ast.expr) -> str | None:
+        """Return the path a decorator resolves to, if it can be trusted.
+
+        A name the module binds other than by import resolves to nothing,
+        and a bare name it does not import is a builtin.
+        """
+        root = target
+        while isinstance(root, ast.Attribute):
+            root = root.value
+        if not isinstance(root, ast.Name) or root.id in self.assigned:
+            return None
+        if isinstance(target, ast.Name) and target.id not in self.modules:
+            return f"builtins.{target.id}"
+        return self.module_path(target)
+
+    def _accessor_of(self, node: ast.expr, properties: set[str]) -> bool:
+        return (
+            isinstance(node, ast.Attribute)
+            and node.attr in _PROPERTY_METHODS
+            and isinstance(node.value, ast.Name)
+            and node.value.id in properties
+        )
+
+    def find_accessors(self, roots: Iterable[ast.AST]) -> None:
+        """Record the decorators that are a property's own accessors.
+
+        ``@name.setter``, ``.getter`` or ``.deleter`` counts only in a
+        class body where ``name`` is, at that point, a function whose
+        outermost decorator is ``property`` or such an accessor. Any other
+        binding of the name in that body ends it.
+        """
+        for root in roots:
+            for node in ast.walk(root):
+                if not isinstance(node, ast.ClassDef):
+                    continue
+                properties: set[str] = set()
+                for statement in _statements(node.body):
+                    if not isinstance(
+                        statement, ast.FunctionDef | ast.AsyncFunctionDef
+                    ):
+                        properties -= _bound_names(statement)
+                        continue
+                    decorators = statement.decorator_list
+                    for decorator in decorators:
+                        if self._accessor_of(decorator, properties):
+                            self.accessors.add(id(decorator))
+                    if decorators and (
+                        id(decorators[0]) in self.accessors
+                        or self._decorator_path(decorators[0])
+                        == "builtins.property"
+                    ):
+                        properties.add(statement.name)
+                    else:
+                        properties.discard(statement.name)
+
     def _benign_decorator(self, node: ast.expr) -> bool:
         """Return whether a decorator leaves annotations unread.
 
         A dispatcher's ``register`` reads only the hint it dispatches on,
         which is checked on its own; called with a class, it reads none.
+        Any ``register`` is taken for a dispatcher's, by its spelling.
         """
         if self.registrar(node) or (
             isinstance(node, ast.Call) and self.registrar(node.func)
         ):
             return True
-        target = node.func if isinstance(node, ast.Call) else node
-        if isinstance(target, ast.Attribute) and (
-            target.attr in _PROPERTY_METHODS
-        ):
+        if id(node) in self.accessors:
             return True
-        root = target
-        while isinstance(root, ast.Attribute):
-            root = root.value
-        if not isinstance(root, ast.Name) or root.id in self.assigned:
-            return False
-        if isinstance(target, ast.Name) and target.id not in self.modules:
-            path = f"builtins.{target.id}"
-        else:
-            path = self.module_path(target)
-        return path in _BENIGN_DECORATORS
+        target = node.func if isinstance(node, ast.Call) else node
+        return self._decorator_path(target) in _BENIGN_DECORATORS
 
     def trusts_class(self, node: ast.ClassDef) -> bool:
         """Return whether a class leaves its annotations unread.
@@ -2013,10 +2154,14 @@ class _ModuleBindings:
         if (
             _code_call(node.func)
             and node.args
-            and self.text(node.args[0]) is None
-            and self.binds_tracked()
+            and (
+                id(node) in self.unexpanded
+                or (self.text(node.args[0]) is None and self.binds_tracked())
+            )
         ):
-            # Code the folder cannot read may name what the module binds.
+            # Code the folder cannot read may name what the module binds,
+            # and code nested past the depth the scan parses may name
+            # anything.
             return "dynamic-code"
         if (
             name in _INTROSPECTION_CALLS
@@ -2345,10 +2490,16 @@ def scan_sources(
     sources = tuple(sources)
     trees = {}
     embedded = {}
+    memos = {source.path: _FoldMemo(source.path) for source in sources}
+    unexpanded: dict[str, set[int]] = {}
     for source in sources:
         tree = _parse(source)
         trees[source.path] = _prune(tree) if prune else tree
-        embedded[source.path] = _embedded(trees[source.path])
+        embedded[source.path] = _embedded(
+            trees[source.path],
+            memos[source.path],
+            unexpanded.setdefault(source.path, set()),
+        )
     binders = {
         path: [
             node
@@ -2358,7 +2509,6 @@ def scan_sources(
         ]
         for path, tree in trees.items()
     }
-    memos = {path: {} for path in trees}
     exports = set(TRACKED_CLASSES)
     instance_exports: set[tuple[str, str]] = set()
     # What each module's import statements bind: fixed before the loop, so
@@ -2398,6 +2548,8 @@ def scan_sources(
     known = frozenset(source.module for source in sources) | TRACKED_MODULES
     for path, scope in scopes.items():
         scope.known_modules = known
+        scope.unexpanded = unexpanded[path]
+        scope.find_accessors((trees[path], *embedded[path]))
         scope.facts(trees[path])
     introspected = frozenset(
         {module for module, _ in exports}
@@ -2643,6 +2795,21 @@ SPELLINGS = {
         _check(
             "isinstance(x, KINDS)",
             f"{_IMPORT}\nKINDS = int | ProjectionRNGRegistry  # alias",
+        ),
+        "isinstance",
+    ),
+    "class info read by a method": (
+        _check(
+            "isinstance(x, KINDS.get('registry', int))",
+            f"{_IMPORT}\nKINDS = {{'registry': ProjectionRNGRegistry}}"
+            "  # alias",
+        ),
+        "isinstance",
+    ),
+    "class info rebuilt": (
+        _check(
+            "isinstance(x, tuple(KINDS))",
+            f"{_IMPORT}\nKINDS = [int, ProjectionRNGRegistry]  # alias",
         ),
         "isinstance",
     ),
@@ -3124,6 +3291,20 @@ SPELLINGS = {
         _check("type(x) is type(REFERENCE)", _INSTANCE_IMPORT),
         "type-compare",
     ),
+    "type of an instance bound in a conditional": (
+        _check(
+            "type(x) is type(REFERENCE)",
+            f"{_IMPORT}\nREFERENCE = ProjectionRNGRegistry(0, 2) if 1 else 0",
+        ),
+        "type-compare",
+    ),
+    "type of an instance bound in a boolean": (
+        _check(
+            "type(x) is type(REFERENCE)",
+            f"{_IMPORT}\nREFERENCE = 1 and ProjectionRNGRegistry(0, 2)",
+        ),
+        "type-compare",
+    ),
     "class of an instance bound to a name": (
         _check("isinstance(x, REFERENCE.__class__)", _INSTANCE_IMPORT),
         "isinstance",
@@ -3593,6 +3774,199 @@ def test_scan_ignores_unrelated_checks_and_ordinary_registry_use(body):
     assert hits == (), describe(hits)
 
 
+# A property's accessor is trusted only where its receiver is a property
+# defined above it in the same class body. Each body follows the registry
+# import and lists the lines of its hits: a distrusted accessor leaves the
+# function's hints to the catch-all.
+ACCESSOR_CASES = {
+    "a property's own accessors": (
+        "class C:\n"
+        "    @property\n"
+        "    def p(self) -> ProjectionRNGRegistry:\n"
+        "        return ProjectionRNGRegistry(0, 1)\n"
+        "    @p.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n"
+        "    @p.deleter\n"
+        "    def p(self) -> None:\n"
+        "        pass\n"
+        "    @p.getter\n"
+        "    def p(self) -> ProjectionRNGRegistry:\n"
+        "        return ProjectionRNGRegistry(0, 1)\n",
+        [],
+    ),
+    "an accessor of a receiver bound nowhere": (
+        "class C:\n"
+        "    @unrelated.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n",
+        [4],
+    ),
+    "an accessor of a plain method": (
+        "class C:\n"
+        "    def p(self):\n"
+        "        return 0\n"
+        "    @p.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n",
+        [6],
+    ),
+    "an accessor of a property rebound": (
+        "class C:\n"
+        "    @property\n"
+        "    def p(self):\n"
+        "        return 0\n"
+        "    p = staticmethod(len)\n"
+        "    @p.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n",
+        [8],
+    ),
+    "an accessor of a property under another decorator": (
+        "class C:\n"
+        "    @wrap\n"
+        "    @property\n"
+        "    def p(self):\n"
+        "        return 0\n"
+        "    @p.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n",
+        [8],
+    ),
+    "an accessor outside a class": (
+        "@property\n"
+        "def p(self):\n"
+        "    return 0\n"
+        "@p.setter\n"
+        "def q(self, value: ProjectionRNGRegistry) -> None:\n"
+        "    pass\n",
+        [6],
+    ),
+    "an accessor of a local property": (
+        "def property(function):\n"
+        "    return function\n"
+        "class C:\n"
+        "    @property\n"
+        "    def p(self):\n"
+        "        return 0\n"
+        "    @p.setter\n"
+        "    def p(self, value: ProjectionRNGRegistry) -> None:\n"
+        "        pass\n",
+        [9],
+    ),
+}
+
+
+@pytest.mark.parametrize("case", tuple(ACCESSOR_CASES))
+def test_scan_trusts_an_accessor_only_of_a_property_above_it(case):
+    body, lines = ACCESSOR_CASES[case]
+    hits = scan_sources([_invented(_REGISTRY_IMPORT + body)])
+    assert [(hit.line, hit.kind) for hit in hits] == [
+        (line, "class-reference") for line in lines
+    ], describe(hits)
+
+
+def _nested_code(depth):
+    """Invent a module whose check sits in ``depth`` nested literal execs."""
+    code = "def f(x):\n    return isinstance(x, R)"
+    for _ in range(depth):
+        code = f"exec({code!r})"
+    return f"{_IMPORT} as R\n{code}\n"
+
+
+def _answers(text):
+    """Run an invented module's ``f`` on the registry and the direct class."""
+    namespace = {"__name__": "invented_case"}
+    exec(
+        compile(text, "invented_case.py", "exec", dont_inherit=True), namespace
+    )
+    return [
+        bool(namespace["f"](cls(0, 2)))
+        for cls in (ProjectionRNGRegistry, DirectRNGStreams)
+    ]
+
+
+@pytest.mark.parametrize("depth", range(1, 8))
+def test_scan_parses_five_levels_of_literal_code_and_flags_deeper(depth):
+    """Code nested past five levels is reported as dynamic code.
+
+    At every depth the module is a working check, so the scan must report
+    it either way: as the check while it parses the code, and as dynamic
+    code where it stops.
+    """
+    text = _nested_code(depth)
+    assert _answers(text) == [True, False]
+    hits = scan_sources([_invented(text)])
+    kind = "isinstance" if depth <= 5 else "dynamic-code"
+    assert [(hit.line, hit.kind) for hit in hits] == [(2, kind)], describe(
+        hits
+    )
+
+
+_CHAIN = 3000
+_RUN_ANY = "isinstance(x, ProjectionRNGRegistry) if x else x"
+# Checks inside, or next to, chains 3000 links long. The recursive walks
+# r3 found stopped at about 500 links; the scan walks these with its own
+# stacks. Markers are those of SPELLINGS.
+LONG_CHAINS = {
+    "a sum of literals": (
+        f"{_IMPORT}\nNAME = 'ProjectionRNG' + 'Registry'"
+        + " + ''" * _CHAIN
+        + "  # label\ndef f(x):\n    return type(x).__name__ == NAME  # check\n",
+        "name-compare",
+    ),
+    "a union": (
+        f"{_IMPORT}\nKINDS = int"
+        + " | int" * _CHAIN
+        + " | ProjectionRNGRegistry  # alias\n"
+        "def f(x):\n    return isinstance(x, KINDS)  # check\n",
+        "isinstance",
+    ),
+    "a chain of slices": (
+        f"{_IMPORT}\nKINDS = (ProjectionRNGRegistry,)  # alias\n"
+        "def f(x):\n    return isinstance(x, KINDS"
+        + "[:]" * _CHAIN
+        + ")  # check\n",
+        "isinstance",
+    ),
+    "a chain of conditionals": (
+        f"{_IMPORT}\ndef f(x):\n    return isinstance(x, "
+        + "ProjectionRNGRegistry if x else " * _CHAIN
+        + "ProjectionRNGRegistry)  # check\n",
+        "isinstance",
+    ),
+    "a chain of attributes": (
+        f"{_IMPORT}\ndef f(x):\n    return {_RUN_ANY}"
+        + ".real" * _CHAIN
+        + "  # check\n",
+        "isinstance",
+    ),
+    "a chain of calls": (
+        f"{_IMPORT}\ndef f(x):\n    return {_RUN_ANY[:-1]}(lambda: x)"
+        + "()" * _CHAIN
+        + "  # check\n",
+        "isinstance",
+    ),
+    "a chain of negations": (
+        f"{_IMPORT}\ndef f(x):\n    return "
+        + "not " * _CHAIN
+        + "isinstance(x, ProjectionRNGRegistry)  # check\n",
+        "isinstance",
+    ),
+}
+
+
+@pytest.mark.parametrize("shape", tuple(LONG_CHAINS))
+def test_scan_reads_long_chains_without_exhausting_recursion(shape):
+    """Each chain is a working check, and the scan finds it."""
+    text, kind = LONG_CHAINS[shape]
+    assert _answers(text) == [True, False]
+    hits = scan_sources([_invented(text)])
+    assert [(hit.line, hit.kind) for hit in hits] == _expected(
+        text, kind
+    ), describe(hits)
+
+
 # Inert-literal pruning must not change any result. The leaves include the
 # class's name, its module's name and a probe name, so some generated
 # literals are inert and some are not.
@@ -3790,7 +4164,7 @@ def test_folder_refuses_results_past_its_limits(expression):
     try:
         tracemalloc.reset_peak()
         start = tracemalloc.get_traced_memory()[0]
-        folded = _fold(node, {})
+        folded = _fold(node, _FoldMemo())
         peak = tracemalloc.get_traced_memory()[1] - start
     finally:
         if not tracing:
@@ -3815,13 +4189,31 @@ _FOLD_METHOD_NAMES = (
     "lower",
     "upper",
     "casefold",
+    "capitalize",
     "strip",
+    "lstrip",
+    "rstrip",
     "title",
     "swapcase",
     "split",
+    "rsplit",
+    "splitlines",
     "encode",
     "decode",
 )
+# Methods taking one argument: another expression, or a width.
+_FOLD_ARGUMENT_METHODS = (
+    "partition",
+    "rpartition",
+    "removeprefix",
+    "removesuffix",
+    "split",
+    "rsplit",
+    "strip",
+    "lstrip",
+    "rstrip",
+)
+_FOLD_WIDTH_METHODS = ("center", "ljust", "rjust", "zfill")
 
 
 def _fold_operations(inner):
@@ -3841,6 +4233,12 @@ def _fold_operations(inner):
         st.tuples(inner, st.sampled_from(_FOLD_METHOD_NAMES)).map(
             lambda p: f"({p[0]}).{p[1]}()"
         ),
+        st.tuples(inner, st.sampled_from(_FOLD_ARGUMENT_METHODS), inner).map(
+            lambda p: f"({p[0]}).{p[1]}({p[2]})"
+        ),
+        st.tuples(
+            inner, st.sampled_from(_FOLD_WIDTH_METHODS), st.integers(-2, 8)
+        ).map(lambda p: f"({p[0]}).{p[1]}({p[2]})"),
         st.tuples(inner, inner, inner).map(
             lambda p: f"({p[0]}).replace({p[1]}, {p[2]})"
         ),
@@ -3867,7 +4265,7 @@ _FOLD_EXPRESSIONS = st.recursive(_FOLD_LEAVES, _fold_operations, max_leaves=6)
 @settings(max_examples=300, deadline=None)
 @given(expression=_FOLD_EXPRESSIONS)
 def test_folder_agrees_with_python_on_literal_expressions(expression):
-    folded = _fold(ast.parse(expression, mode="eval").body, {})
+    folded = _fold(ast.parse(expression, mode="eval").body, _FoldMemo())
     with warnings.catch_warnings():
         # Python warns of subscripting an integer literal; it then fails.
         warnings.simplefilter("ignore", SyntaxWarning)
@@ -3887,7 +4285,157 @@ def test_folder_agrees_with_python_on_literal_expressions(expression):
         with pytest.MonkeyPatch.context() as patch:
             for kind in _WIDE_FIELDS:
                 patch.setitem(_WIDE_FIELDS, kind, re.compile(r"(?!)"))
-            folded = _fold(ast.parse(expression, mode="eval").body, {})
+            folded = _fold(
+                ast.parse(expression, mode="eval").body, _FoldMemo()
+            )
+    assert type(folded) is type(expected)
+    assert folded == expected
+
+
+# Each limit at its edge: the first expression of a pair is within it and
+# folds to Python's value; the second is one step past it and gives none.
+FOLD_EDGE_CASES = (
+    ("'x' * 4096 * 16", "'x' * 4096 * 16 + 'y'"),
+    ("tuple('ab' * 128)", "tuple('ab' * 128 + 'c')"),
+    ("4096", "4097"),
+    ("-4096", "-4097"),
+    ("2048 * 2", "2049 * 2"),
+    ("('{}' + 'x' * 4094).format(1)", "('{}' + 'x' * 4095).format(1)"),
+    ("'{:999}'.format(1)", "'{:1000}'.format(1)"),
+    ("'%999s' % 'x'", "'%1000s' % 'x'"),
+    ("f'{1:999}'", "f'{1:1000}'"),
+)
+
+
+@pytest.mark.parametrize(("within", "past"), FOLD_EDGE_CASES)
+def test_folder_limits_hold_at_their_edges(within, past):
+    folded = _fold(ast.parse(within, mode="eval").body, _FoldMemo())
+    expected = eval(compile(within, "<edge>", "eval", dont_inherit=True), {})
+    assert type(folded) is type(expected)
+    assert folded == expected
+    assert _fold(ast.parse(past, mode="eval").body, _FoldMemo()) is _UNKNOWN
+
+
+def test_folder_keeps_a_source_literal_of_any_length():
+    """A literal past the text limit is the parser's own text, kept as is.
+
+    The limits bound what the folder builds, not what the source holds,
+    so the scan still reads code in a long literal.
+    """
+    code = "def f(x):\n    return isinstance(x, R)\n#" + "x" * 70000
+    node = ast.parse(repr(code), mode="eval").body
+    assert _fold(node, _FoldMemo()) is node.value
+    hits = scan_sources([_invented(f"{_IMPORT} as R\nexec({code!r})\n")])
+    assert [(hit.line, hit.kind) for hit in hits] == [
+        (2, "isinstance")
+    ], describe(hits)
+
+
+def test_folder_budget_bounds_what_one_expression_keeps():
+    """Values each within the limits stop at the budget, loudly.
+
+    r3's tuple of 512 texts of 60 KiB each kept about 34 MB before the
+    item limit refused it; now the fold stops near 1 MiB.
+    """
+    node = ast.parse("(" + "'x' * 4096 * 15, " * 512 + ")", mode="eval").body
+    tracing = tracemalloc.is_tracing()
+    if not tracing:
+        tracemalloc.start()
+    try:
+        tracemalloc.reset_peak()
+        start = tracemalloc.get_traced_memory()[0]
+        with pytest.raises(ScanError) as raised:
+            _fold(node, _FoldMemo())
+        peak = tracemalloc.get_traced_memory()[1] - start
+    finally:
+        if not tracing:
+            tracemalloc.stop()
+    assert str(raised.value) == (
+        "<expression>: literal expressions past the folder's budget"
+    )
+    assert peak < _FOLD_BUDGET + 16 * _FOLD_TEXT_LIMIT
+
+
+# Each built text is 64 KiB, so 16 fill the budget; a literal costs none.
+_BUDGET_TEXTS = {"built": "'x' * 4096 * 16", "literal": repr("x" * 65536)}
+
+
+@pytest.mark.parametrize(
+    ("form", "count", "fits"),
+    (("built", 12, True), ("built", 20, False), ("literal", 20, True)),
+)
+def test_scan_stops_at_the_folder_budget_naming_only_the_path(
+    form, count, fits
+):
+    """A module's values share one budget; past it the scan stops.
+
+    The error names the module's path and nothing of its text.
+    """
+    text = f"{_IMPORT}\n" + "".join(
+        f"TEXT_{index} = {_BUDGET_TEXTS[form]}\n" for index in range(count)
+    )
+    if fits:
+        assert scan_sources([_invented(text)]) == ()
+        return
+    with pytest.raises(ScanError) as raised:
+        scan_sources([_invented(text)])
+    assert str(raised.value) == (
+        "invented/invented_case.py: literal expressions past the folder's "
+        "budget"
+    )
+
+
+# One call to each method and builtin the folder runs; a name dropped from
+# its lists stops folding here.
+FOLD_CALLS = (
+    ("capitalize", "'ab'.capitalize()"),
+    ("casefold", "'Aß'.casefold()"),
+    ("center", "'ab'.center(6, '*')"),
+    ("decode", "b'ab'.decode()"),
+    ("encode", "'ab'.encode()"),
+    ("format", "'{}-{!r}'.format(1, 'a')"),
+    ("format", "format(5, '03')"),
+    ("fromhex", "bytes.fromhex('6162')"),
+    ("join", "'-'.join(('a', 'b'))"),
+    ("ljust", "'ab'.ljust(4)"),
+    ("lower", "'AB'.lower()"),
+    ("lstrip", "'  ab'.lstrip()"),
+    ("partition", "'a-b-c'.partition('-')"),
+    ("removeprefix", "'abc'.removeprefix('a')"),
+    ("removesuffix", "'abc'.removesuffix('c')"),
+    ("replace", "'abc'.replace('b', 'x')"),
+    ("rjust", "'ab'.rjust(4)"),
+    ("rpartition", "'a-b-c'.rpartition('-')"),
+    ("rsplit", "'a b c'.rsplit(' ', 1)"),
+    ("rstrip", "'ab  '.rstrip()"),
+    ("split", "'a b'.split()"),
+    ("splitlines", "'a\\nb'.splitlines()"),
+    ("strip", "' ab '.strip()"),
+    ("swapcase", "'aB'.swapcase()"),
+    ("title", "'ab cd'.title()"),
+    ("upper", "'ab'.upper()"),
+    ("zfill", "'7'.zfill(3)"),
+    ("ascii", "ascii('ß')"),
+    ("bytes", "bytes('ab', 'ascii')"),
+    ("chr", "chr(97)"),
+    ("list", "list('ab')"),
+    ("repr", "repr('a')"),
+    ("reversed", "tuple(reversed('ab'))"),
+    ("sorted", "sorted('ba')"),
+    ("str", "str(12)"),
+    ("tuple", "tuple('ab')"),
+)
+
+
+def test_every_listed_method_and_builtin_has_a_call():
+    assert {name for name, _ in FOLD_CALLS} == _FOLD_METHODS | _FOLD_FUNCTIONS
+
+
+@pytest.mark.parametrize(("name", "expression"), FOLD_CALLS)
+def test_folder_runs_each_listed_method_and_builtin(name, expression):
+    folded = _fold(ast.parse(expression, mode="eval").body, _FoldMemo())
+    code = compile(expression, "<call>", "eval", dont_inherit=True)
+    expected = eval(code, {})
     assert type(folded) is type(expected)
     assert folded == expected
 
