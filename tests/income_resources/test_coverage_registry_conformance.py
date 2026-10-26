@@ -136,6 +136,7 @@ PAGE_EXTRACTS = {
     "govinfo_statute86_pg1329_extract.pdf",
     "govinfo_statute97_pg65_extract.pdf",
     "govinfo_statute101_pg1330_extract.pdf",
+    "govinfo_statute102_pg3342_extract.pdf",
 }
 
 
@@ -173,6 +174,7 @@ def test_page_extracts_record_their_originals():
         "federal_register_1975_07_10_extract.pdf.txt",
         "govinfo_statute79_pg286_extract.pdf.txt",
         "govinfo_statute101_pg1330_extract.pdf.txt",
+        "govinfo_statute102_pg3342_extract.pdf.txt",
     }
     for row in derived:
         extract = next(
@@ -436,6 +438,166 @@ def test_date_axis_descriptions_quote_a_cited_capture(registry):
             assert any(span in text for text in texts), (rule.rule_id, span)
         checked += 1
     assert checked == 11
+
+
+OPTION_RECORDS = re.compile(r"(^|_)(named_options|named_alternatives)$")
+
+
+def test_open_readings_are_named_once_and_described_in_prose(registry):
+    """Review r2 lows 8 and 9: one name per reading, each a legal reading.
+
+    A parameter record of options on an open row uses exactly the names in
+    open_alternatives, and no description is a serialized record.
+    """
+    described = 0
+    for rule in registry.rules:
+        groups = [rule.open_alternatives] + [
+            case.get("open_alternatives", ()) for case in rule.cases
+        ]
+        for alternatives in groups:
+            for option in alternatives:
+                text = option["description"]
+                assert "{" not in text, (rule.rule_id, option["name"])
+                for phrase in ("Unselected source reading", "locator"):
+                    assert phrase not in text, (rule.rule_id, option["name"])
+                described += 1
+        names = {o["name"] for o in rule.open_alternatives}
+        for key, value in rule.parameters.items():
+            if OPTION_RECORDS.search(key) and rule.open_reason is not None:
+                assert option_names(value) == names, (rule.rule_id, key)
+    assert described == 36
+
+
+def option_names(records):
+    """Option records are keyed by name or listed with a name field."""
+    if isinstance(records, (list, tuple)):
+        return {record["name"] for record in records}
+    return set(records)
+
+
+def test_closed_rows_name_their_operative_reading(registry):
+    """Review r2 low 14: a closed row's recorded options say which governs.
+
+    Listed options carry a status, one operational entry per group; keyed
+    options carry a resolution naming the operative option or parameter.
+    """
+    resolved = []
+    for rule in registry.rules:
+        if rule.open_reason is not None:
+            continue
+        options = rule.parameters.get("named_options")
+        if options is None:
+            continue
+        if isinstance(options, (list, tuple)):
+            groups = {}
+            for option in options:
+                status = option["status"]
+                assert status.startswith("operational") or status.endswith(
+                    "not_operational"
+                ), (rule.rule_id, status)
+                groups.setdefault(option["group"], []).append(
+                    status.startswith("operational")
+                )
+            assert all(sum(flags) == 1 for flags in groups.values())
+        else:
+            resolution = rule.parameters["source_disagreement_resolution"]
+            operative = resolution["operative_current_text"]
+            assert operative in {*options, *rule.parameters} - {
+                "source_disagreement_resolution"
+            }, rule.rule_id
+            assert resolution["basis"].strip()
+        resolved.append(rule.rule_id)
+    assert "fishing_crew_share_service_1989" in resolved
+    assert len(resolved) == 8
+
+
+FUSED_PROSE = re.compile(
+    r"\b(?:[a-z]{2,}|[A-Z][a-z]+|Stat\.|pp\.?|GAO|IRS|IRC|TY|OSI|GGD|HEHS)"
+    r"\d"
+)
+FUSED_IDENTIFIER = re.compile(
+    r"(?:^|_)(?:section|under|of|or|for|the|and|in|to|by|Law)\d"
+)
+FUSED_WORDS = re.compile(r"\bnotwith\b")
+LINKS = re.compile(r"https?://\S+|#\S+|\S+\.(?:pdf|html?|txt|json|xml)\b")
+VERBATIM = {
+    "quote",
+    "source_passage",
+    "supporting_passages",
+    "query",
+    "sha256",
+    "capture",
+    "url",
+    "file",
+}
+
+
+def published_strings(value):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield key
+            if key not in VERBATIM:
+                yield from published_strings(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from published_strings(child)
+    elif isinstance(value, str):
+        yield value
+
+
+def test_published_prose_has_no_fused_tokens():
+    """Review r2 low 10: no word or citation runs into a number.
+
+    Quotations, search strings, links and anchors are verbatim and skipped.
+    """
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    found = []
+    for text in published_strings(raw):
+        if " " in text.strip():
+            plain = LINKS.sub(" ", text)
+            found += FUSED_PROSE.findall(plain) + FUSED_WORDS.findall(plain)
+        else:
+            found += FUSED_IDENTIFIER.findall(text)
+    assert found == []
+
+
+VOCATIONAL = "nonresident_alien_vocational_service"
+
+
+def test_vocational_readings_agree_before_1987_and_refuse_between(registry):
+    """Review r2 low 9: both legal readings settle the years they share.
+
+    Pub. L. 100-647 section 1001(d) names Reform Act section 123, so the
+    M-class exclusion reaches no service before taxable years beginning
+    after 1986; its later start remains a named question.
+    """
+    rows = {r.rule_id: r for r in registry.rules if r.family == VOCATIONAL}
+    early = rows["nonresident_alien_vocational_service_1968"]
+    unsettled = rows["nonresident_alien_vocational_service_1987"]
+    agree = date.fromisoformat(early.parameters["readings_agree_before"])
+    assert "M-1" in early.parameters["visa_classes"]
+    assert "M" not in early.parameters["excluded_visa_classes"]
+    for year in range(1968, agree.year):
+        (rule,) = registry.lookup(VOCATIONAL, year)
+        assert rule.resolve(())["consequence"] == "covered"
+    starts = {
+        name: date.fromisoformat(option["m1_service_excluded_from"])
+        for name, option in unsettled.parameters["named_options"].items()
+    }
+    assert set(starts) == {o["name"] for o in unsettled.open_alternatives}
+    assert min(starts.values()) == agree == unsettled.effective_start
+    assert max(starts.values()) <= unsettled.effective_end
+    for year in range(agree.year, unsettled.effective_end.year + 1):
+        with pytest.raises(OpenRuleError, match="VOCATIONAL_M_CLASS"):
+            registry.lookup(VOCATIONAL, year)
+    (later,) = registry.lookup(VOCATIONAL, unsettled.effective_end.year + 1)
+    assert later.resolve({"m1_admission_purpose_service"})["consequence"] == (
+        "noncovered"
+    )
+    assert any(
+        c.quote and "SECTION 123 OF THE REFORM ACT" in c.quote
+        for c in unsettled.citations
+    )
 
 
 CONSEQUENCE_VALUES = {
@@ -880,6 +1042,55 @@ def test_published_examples_conform_to_legal_lookup(
         assert (
             outcome["annual_cash_wages_dollars"] == example["expected_amount"]
         )
+
+
+def money_forms(cents):
+    dollars, rest = divmod(cents, 100)
+    whole = f"${dollars:,}"
+    if rest:
+        return {f"{whole}.{rest:02d}"}
+    return {whole, f"{whole}.00"}
+
+
+def rendered_amounts(facts):
+    """Each published amount as the passage would print it."""
+    for key, value in facts.items():
+        if isinstance(value, bool) or not isinstance(value, int):
+            continue
+        if key.endswith("_cents"):
+            yield key, money_forms(value)
+        elif key.endswith("_dollars") or key == "weekly_cash_wages":
+            yield key, money_forms(value * 100)
+        elif key == "weeks":
+            yield key, {f"{value} weeks"}
+        else:
+            raise AssertionError(f"no rendering for published amount {key}")
+
+
+@pytest.mark.parametrize(
+    ("rule_id", "example_id"),
+    PUBLISHED_CASES,
+    ids=[example_id for _, example_id in PUBLISHED_CASES],
+)
+def test_published_amounts_sit_in_their_cited_passages(
+    registry, rule_id, example_id
+):
+    """Review r2 low 11: the passage holds every input and outcome amount."""
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    example = next(
+        e for e in rule.worked_examples if e["example_id"] == example_id
+    )
+    text = source_text(CAPTURE_DIRECTORY / example["citation"]["capture"])
+    passages = [
+        example["source_passage"],
+        *example.get("supporting_passages", ()),
+    ]
+    for passage in passages:
+        assert " ".join(passage.split()) in text
+    joined = " ".join(" ".join(p.split()) for p in passages)
+    facts = {**example["published_inputs"], **example["published_outputs"]}
+    for key, forms in rendered_amounts(facts):
+        assert any(form in joined for form in forms), (example_id, key)
 
 
 def published_outcome(registry, rule, example):

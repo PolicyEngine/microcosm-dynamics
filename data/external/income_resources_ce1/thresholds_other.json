@@ -1072,7 +1072,7 @@
       }
     ],
     "indexing": null,
-    "description": "This is an upper bound, not a minimum earnings exemption. For1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
+    "description": "This is an upper bound, not a minimum earnings exemption. For 1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
     "monotone": false,
     "unit": "dollars"
   }

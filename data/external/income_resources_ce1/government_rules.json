@@ -412,7 +412,7 @@
           "domains": [
             "tigta.gov"
           ],
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
           "searched_utc": "2026-10-25"
         },
         {
@@ -935,7 +935,7 @@
           "domains": [
             "tigta.gov"
           ],
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
           "searched_utc": "2026-10-25"
         },
         {
@@ -1615,7 +1615,7 @@
           "domains": [
             "tigta.gov"
           ],
-          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+          "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
           "searched_utc": "2026-10-25"
         },
         {
@@ -3488,7 +3488,7 @@
       "waiver_effective_date_options": [
         "quarter of filing",
         "quarter following filing",
-        "any of20 preceding quarters (for waivers filed after 1965)"
+        "any of 20 preceding quarters (for waivers filed after 1965)"
       ],
       "waiver_history": [
         {
@@ -3641,7 +3641,7 @@
       "waiver_effective_date_options": [
         "quarter of filing",
         "quarter following filing",
-        "any of20 preceding quarters (for waivers filed after 1965)"
+        "any of 20 preceding quarters (for waivers filed after 1965)"
       ],
       "waiver_history": [
         {
@@ -4596,7 +4596,7 @@
           "authority": "IRS Publication 517 (2025)",
           "location": "Members of Religious Orders; Example Pat Brown and Chris Green"
         },
-        "source_passage": "Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA.",
+        "source_passage": "Pat Brown and Chris Green are members of a religious order and have taken vows of poverty. They renounce all claims to their earnings. The earnings belong to the order. Pat is a licensed attorney. The superiors of the order instructed Pat to get a job with a law firm. Pat joined a law firm as an employee and, as requested, the firm made the salary payments directly to the order. Chris is a secretary. The superiors of the order instructed Chris to accept a job with the business office of the church that supervises the order. Chris took the job and gave all earnings to the order. Pat's services aren't duties required by the order. Pat\u2019s earnings are subject to social security and Medicare tax under FICA and to federal income tax. Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA.",
         "expected_rule_id": "religious_order_1984_2026",
         "calculation": "order_service",
         "published_inputs": {
@@ -4618,7 +4618,7 @@
           "authority": "IRS Publication 517 (2025)",
           "location": "Members of Religious Orders; Pat Brown and Chris Green example, Pat third-party employment"
         },
-        "source_passage": "Pat's services aren't duties required by the order.",
+        "source_passage": "Pat Brown and Chris Green are members of a religious order and have taken vows of poverty. They renounce all claims to their earnings. The earnings belong to the order. Pat is a licensed attorney. The superiors of the order instructed Pat to get a job with a law firm. Pat joined a law firm as an employee and, as requested, the firm made the salary payments directly to the order. Chris is a secretary. The superiors of the order instructed Chris to accept a job with the business office of the church that supervises the order. Chris took the job and gave all earnings to the order. Pat's services aren't duties required by the order. Pat\u2019s earnings are subject to social security and Medicare tax under FICA and to federal income tax.",
         "expected_rule_id": "religious_order_1984_2026",
         "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {
@@ -5193,7 +5193,7 @@
           "authority": "SSA State and Local Coverage Handbook, POMS SL 30001.334, revision January 29, 2020",
           "location": "F.1, Examples 1-2, returning MERS members"
         },
-        "source_passage": "A is not a new member for purposes of coverage.",
+        "source_passage": "A referendum was held among all the eligible members of the Municipal Employees Retirement System (MERS), a statewide system covering all municipal employees. A was an employee of City X and voted against Social Security coverage. After the coverage was extended to the retirement system coverage group, A terminated his employment with City X and entered private employment. Under the rules of MERS, A retained his membership in MERS. Two years later, City X reemployed A. The State holds that he is not a new member of MERS. A is not a new member for purposes of coverage. He retains his initial choice of \"No\" coverage.",
         "expected_rule_id": "state_local_1991_2026",
         "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {
@@ -5215,7 +5215,7 @@
           "authority": "SSA State and Local Coverage Handbook, POMS SL 30001.334, revision January 29, 2020",
           "location": "F.1, Examples 1-2, returning MERS members"
         },
-        "source_passage": "A is a new member for purposes of coverage and is covered compulsorily.",
+        "source_passage": "A referendum was held among all the eligible members of MERS, a statewide system covering all municipal employees. A was an employee of City X and voted against coverage. After coverage was extended to the retirement system coverage group, A terminated his employment with City X and entered private employment. A withdrew his contributions from the retirement system. Two years later, City X reemployed A. The State holds that he is a new member of MERS. A is a new member for purposes of coverage and is covered compulsorily.",
         "expected_rule_id": "state_local_1991_2026",
         "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_inputs": {

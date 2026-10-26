@@ -89,7 +89,7 @@
       "capital_asset_gains_and_losses": "Exclude gains/losses treated as capital under applicable Subtitle A provisions.",
       "specified_natural_resource_dispositions": "Exclude timber, coal, iron-ore gains/losses when 631 applies.",
       "other_property_dispositions": "Exclude unless stock-in-trade/inventory or held primarily for sale to customers in the ordinary course of business.",
-      "nol_rule": "The172 net-operating-loss deduction is not allowed; this does not prevent current ordinary business losses from entering the NESE base.",
+      "nol_rule": "The section 172 net-operating-loss deduction is not allowed; this does not prevent current ordinary business losses from entering the NESE base.",
       "cross_reference_history": "1984 technical amendments replace obsolete 1939 Code references by 1954 Code/Subtitle A and 172; no new economic inclusion rule is inferred from the reference correction.",
       "code_edition_evidence": [
         {
@@ -306,7 +306,7 @@
           ],
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": [],
-          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing"
+          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         }
       ]
     },
@@ -399,7 +399,7 @@
             "1986",
             "1988"
           ],
-          "effective_date_note_support": "section1882a_initial_annual_boundary_remains_unverified"
+          "effective_date_note_support": "section_1882a_initial_annual_boundary_remains_unverified"
         },
         {
           "title": 42,
@@ -425,7 +425,7 @@
           ],
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": [],
-          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing"
+          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         }
       ]
     },
@@ -569,7 +569,7 @@
           ],
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": [],
-          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing"
+          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         },
         {
           "title": 42,
@@ -588,7 +588,7 @@
           ],
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": [],
-          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing"
+          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         },
         {
           "title": 42,
@@ -607,7 +607,7 @@
           ],
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": [],
-          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing"
+          "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         }
       ]
     },
@@ -1036,7 +1036,7 @@
           "salary_cents": 3500000,
           "income_tax_foreign_exclusion_cents": 3500000
         },
-        "source_passage": "must include $35,000 when figuring net earnings from self-employment.",
+        "source_passage": "You were the minister of a U.S. church in Mexico. You earned $35,000 in that position and were able to exclude it all for income tax purposes under the foreign earned income exclusion. The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment.",
         "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
         "published_outputs": {
           "included_se_gross_concept_cents": 3500000
@@ -1618,10 +1618,6 @@
         "self_employment_base_definition",
         "self_employment_rental_income"
       ],
-      "named_alternatives": {
-        "excluded_rental_income": "Apply se_rental_income if a payment is established to fall within the rental-income exclusion.",
-        "trade_or_business_income": "Apply se_base_definition if a payment is established to derive from a trade or business."
-      },
       "effective_basis": "payment_date",
       "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\"."
     },
@@ -1668,7 +1664,7 @@
     "parameters": {
       "effective_basis": "payment_date",
       "effective_basis_description": "Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
-      "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or423 benefits",
+      "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or 423 benefits",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -2166,7 +2162,7 @@
         "Small-boat fishing under 410(a)(20) from the applicable 1976 law",
         "Electing church under 410(a)(8)(B) from 1984"
       ],
-      "general_rule": "employee_service_excluded_under411(c)(2)",
+      "general_rule": "employee_service_excluded_under_411(c)(2)",
       "scope_note": "This row supplies general rule; it does not backcast any enumerated exception into years before its own effective law.",
       "code_edition_evidence": [
         {
@@ -3354,7 +3350,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "Public Law 92-603, 86 Stat.1329(1972)",
+        "authority": "Public Law 92-603, 86 Stat. 1329 (1972)",
         "capture": "govinfo_statute86_pg1329_extract.pdf",
         "location": "section 121, printed pp. 1353-1354",
         "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
@@ -3402,7 +3398,7 @@
           ],
           "primary_history_citations": [
             {
-              "authority": "Public Law 92-603, 86 Stat.1329(1972)",
+              "authority": "Public Law 92-603, 86 Stat. 1329 (1972)",
               "capture": "govinfo_statute86_pg1329_extract.pdf",
               "location": "section 121, printed pp. 1353-1354",
               "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
@@ -4687,9 +4683,9 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "Public Law 90-248, 81 Stat.821 (1968)",
+        "authority": "Public Law 90-248, 81 Stat. 821 (1968)",
         "capture": "govinfo_statute81_pg821_extract.pdf",
-        "location": "section 118, printed pp841-842",
+        "location": "section 118, printed pp. 841-842",
         "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
       }
     ],
@@ -4725,9 +4721,9 @@
           ],
           "primary_history_citations": [
             {
-              "authority": "Public Law 90-248, 81 Stat.821 (1968)",
+              "authority": "Public Law 90-248, 81 Stat. 821 (1968)",
               "capture": "govinfo_statute81_pg821_extract.pdf",
-              "location": "section 118, printed pp841-842",
+              "location": "section 118, printed pp. 841-842",
               "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
             }
           ],

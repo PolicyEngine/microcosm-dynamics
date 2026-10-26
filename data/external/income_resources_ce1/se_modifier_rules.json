@@ -970,7 +970,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "A Puerto Rico resident computes NESE in the same manner as a U.S. citizen without the income exclusion in IRC933.",
+    "description": "A Puerto Rico resident computes NESE in the same manner as a U.S. citizen without the income exclusion in section 933 of the Internal Revenue Code.",
     "parameters": {
       "resident_jurisdiction": "Puerto Rico",
       "income_tax_exclusion_disregarded": "26 USC 933",
@@ -1703,7 +1703,7 @@
           "amendment_year_entries_verified_present": [
             "1987"
           ],
-          "effective_date_note_support": "not_established_for_Public_Law100_203_section9023b"
+          "effective_date_note_support": "not_established_for_Public_Law_100_203_section_9023b"
         }
       ]
     },
@@ -2412,7 +2412,7 @@
     "identification_class": "awaiting_ce2",
     "description": "When death closes the partner taxable year within rather than with the partnership year, include the statutorily allocated ordinary share through the death month.",
     "parameters": {
-      "trigger": "Death closes individual taxable year within, notwith, the partnership taxable year.",
+      "trigger": "Death ends the partner's individual taxable year within, and not with, the partnership taxable year.",
       "excluded_partnership_period_begin": "First day of the calendar month following the month of death",
       "allocation": "Allocate the partnership ordinary income/loss ratably over its taxable year under 411(f).",
       "deceased_partner_share_includes": "Estate or successor-in-interest share as specified in 411(f).",

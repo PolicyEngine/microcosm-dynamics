@@ -301,7 +301,7 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 
 ## Page-range extracts
 
-Six whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's URL, size and SHA-256 identify the authentic bytes and allow retrieval independently of this pull request's commit history. Extraction preserves the original signature fields, but changes the signed bytes: the GPO digital signatures in all six extracts are invalidated by extraction. The captures' integrity is checked with the recorded SHA-256 hashes; the extracts do not have valid original signatures.
+Seven whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's URL, size and SHA-256 identify the authentic bytes and allow retrieval independently of this pull request's commit history. Extraction preserves the original signature fields, but changes the signed bytes: the GPO digital signatures in all seven extracts are invalidated by extraction. The captures' integrity is checked with the recorded SHA-256 hashes; the extracts do not have valid original signatures.
 
 | Extract | Original | Original bytes | Original SHA-256 | Original PDF pages kept | Kept for |
 |---|---|---:|---|---|---|
@@ -311,6 +311,7 @@ Six whole-act and whole-issue PDFs are kept as page-range extracts. Each extract
 | govinfo_statute79_pg286_extract.pdf | govinfo_statute79_pg286.pdf (138 pages) | 24847693 | `37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14` | 1,114,115,138 | first page; section 325 (79 Stat. 399-400); approval date (79 Stat. 423) |
 | federal_register_1975_07_10_extract.pdf | federal_register_1975_07_10.pdf (172 pages) | 29449191 | `ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84` | 1,13,14 | cover; FR Doc. 75-17887, 40 FR 29071-29072, from its heading to its filing line |
 | govinfo_statute101_pg1330_extract.pdf | govinfo_statute101_pg1330.pdf (473 pages) | 76350791 | `d6db9b3e2cf96a864a10ac36a816ad3cdfcf2322a72452b19cef86c94563f759` | 1,284,295,296,297,473 | first page; title IX table of contents (101 Stat. 1330-283); Part 2 of subtitle A of title IX, sections 9021-9023 (101 Stat. 1330-294 to 1330-296); approval date (101 Stat. 1330-472) |
+| govinfo_statute102_pg3342_extract.pdf | govinfo_statute102_pg3342.pdf (471 pages) | 75705438 | `e8a5ee6e337e668f3eaec1389f54616f7a112eed0521a1d2d1f02a373f586d5a` | 1,8,9,10,11,252,471 | first page; section 1001, amendments related to title I of the Reform Act, including subsection (d) on section 123 (102 Stat. 3349-3352); section 1019, effective date of title I (102 Stat. 3593); approval date (102 Stat. 3812) |
 
 Command: `qpdf --deterministic-id --empty --pages <original> <pages> -- <extract>` (qpdf version 12.4.2).
 
@@ -363,11 +364,15 @@ The round-1 plain request to https://www.ssa.gov/OP_Home/rulings/oasi/33/SSR95-0
 
 ## Review-round 2 source records
 
-`sources_r2_se.json` and `capture_manifest_r2_se.txt` record the round-2 captures; `source_inventory.json` repeats them.
+`sources_r2_se.json`, `capture_manifest_r2_se.txt`, `sources_r2_other.json` and `capture_manifest_r2_other.txt` record the round-2 captures; `source_inventory.json` repeats them.
 
 | Capture | URL | Retrieval UTC | Bytes | SHA-256 |
 |---|---|---|---:|---|
 | govinfo_statute101_pg1330_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf | 2026-10-26T07:22:15Z | 968516 | `b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1` |
 | govinfo_statute101_pg1330_extract.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf | 2026-10-26T07:22:15Z | 7368 | `1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3` |
+| govinfo_statute102_pg3342_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102-Pg3342.pdf | 2026-10-26T13:18:26Z | 1115690 | `ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd` |
+| govinfo_statute102_pg3342_extract.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102-Pg3342.pdf | 2026-10-26T13:18:26Z | 17922 | `87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6` |
 
 The derivative is `pdftotext -f 4 -l 5 -layout` of the extract (original PDF pages 296-297, printed 101 Stat. 1330-295 to 1330-296).
+
+The Pub. L. 100-647 derivative is `pdftotext -f 2 -l 6 -layout` of its extract (original PDF pages 8-11 and 252, printed 102 Stat. 3349-3352 and 3593).

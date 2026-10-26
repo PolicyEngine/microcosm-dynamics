@@ -1521,6 +1521,40 @@ def test_examples_test_outcomes_not_repeated_parameters(with_field, payload):
     assert CoverageRule.from_dict(row).worked_examples
 
 
+def nonempty_passages(value):
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(isinstance(part, str) and bool(part.strip()) for part in value)
+    )
+
+
+@given(
+    st.one_of(
+        st.lists(st.one_of(st.text(max_size=5), st.integers()), max_size=3),
+        st.text(max_size=5),
+        st.none(),
+    )
+)
+@example(["INVENTED second column line"])
+@example([])
+@example([" "])
+@example("INVENTED not a list")
+@settings(deadline=None)
+def test_supporting_passages_are_nonempty_text(passages):
+    """Review r2 low 11: an interleaved example keeps its other lines."""
+    row = invented_row()
+    row["worked_examples"] = [invented_example(supporting_passages=passages)]
+    if not nonempty_passages(passages):
+        with pytest.raises(RegistryValidationError, match="supporting"):
+            CoverageRule.from_dict(row)
+        return
+    (parsed,) = CoverageRule.from_dict(row).worked_examples
+    assert list(parsed["supporting_passages"]) == passages
+    row["worked_examples"] = [invented_example()]
+    assert CoverageRule.from_dict(row).worked_examples
+
+
 def recorded_search(search):
     if isinstance(search, str):
         return bool(search.strip())

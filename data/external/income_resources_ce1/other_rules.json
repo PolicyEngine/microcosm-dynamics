@@ -258,7 +258,7 @@
           "authority": "IRS Publication 15 (2026)",
           "location": "Social Security and Medicare Taxes; employee portion paid by employer; Gavrielle/Dan example, explicit 2026 transaction"
         },
-        "source_passage": "For 2026, Gavrielle paid Dan $1,000 during the year.",
+        "source_passage": "Gavrielle operates a small family fruit farm. Gavrielle employs day laborers in the picking season to allow Gavrielle time to get the crops to market. Gavrielle doesn\u2019t deduct the employees\u2019 share of social security and Medicare taxes from their pay; instead, Gavrielle pays it on their behalf. When Gavrielle prepares the employees\u2019 Forms W-2, Gavrielle adds each employee\u2019s share of social security and Medicare taxes that Gavrielle paid to the employee\u2019s wage income (box 1 of Form W-2), but doesn\u2019t include it in box 3 (social security wages) or box 5 (Medicare wages and tips). For 2026, Gavrielle paid Dan $1,000 during the year. Gavrielle enters $1,076.50 in box 1 of Dan\u2018s Form W-2 ($1,000 wages plus $76.50 social security and Medicare taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3 and 5 of Dan\u2019s Form W-2.",
         "expected_rule_id": "agricultural_service_1988",
         "expected_thresholds": {
           "agricultural_employee_cash": 150,
@@ -299,7 +299,16 @@
           "social_security_wages_cents": 100000,
           "federal_income_tax_wages_cents": 107650
         },
-        "calculation": "agricultural_cash_wages"
+        "calculation": "agricultural_cash_wages",
+        "supporting_passages": [
+          "Example. Gavrielle operates a small family fruit farm.",
+          "doesn't deduct the employees' share of social security",
+          "and Medicare taxes from their pay; instead, Gavrielle pays",
+          "Gavrielle enters $1,076.50 in box 1 of Dan's Form W-2",
+          "($1,000 wages plus $76.50 social security and Medicare",
+          "taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3",
+          "and 5 of Dan's Form W-2."
+        ]
       },
       {
         "example_id": "poms_2024_agricultural_cattle_dominion_control",
@@ -312,7 +321,7 @@
           "authority": "SSA POMS RS 01402.020, revision June 12, 2024",
           "location": "F, Example 2, genuine commodity remuneration"
         },
-        "source_passage": "the commodity payments are not wages because",
+        "source_passage": "A farm operator pays an employee $50 a month plus 10 head of cattle per month for services performed on the farm. The employee pays the farmer rent to maintain the cattle on the farm property in an area separate from the farm operator's livestock. The employee assumes the costs of feeding, maintaining, and transferring the cattle to the market for sale. The employee is paid directly by the commodity purchaser for the cattle. These facts indicate that the commodity payments are not wages because the employee exercises dominion and control over the cattle subsequent to receipt and bears the cost incident to ownership of the cattle.",
         "expected_rule_id": "agricultural_service_1988",
         "published_inputs": {
           "employee_exercises_dominion_and_control": true
@@ -333,7 +342,7 @@
           "authority": "SSA POMS RS 01402.020, revision June 12, 2024",
           "location": "F, Example 1, employer sale with direct checks for employee share"
         },
-        "source_passage": "the cash proceeds from the sale are wages because the employee did not exercise dominion and control over the cattle.",
+        "source_passage": "A farm operator agrees to give an employee 30 head of cattle for services performed on the farm. The farm operator sells 100 head of cattle to a commodity purchaser. The commodity purchaser gives the farm operator a check for 70 head of cattle and the employee a check for 30 head of cattle. These facts indicate that the cash proceeds from the sale are wages because the employee did not exercise dominion and control over the cattle.",
         "expected_rule_id": "agricultural_service_1988",
         "published_inputs": {
           "employee_exercises_dominion_and_control": false
@@ -1427,7 +1436,10 @@
           "text": "2024 CFR 404.1035 still prints the former organization-registration exclusion"
         }
       },
-      "source_disagreement_resolution": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+      "source_disagreement_resolution": {
+        "basis": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+        "operative_current_text": "enacted_2014_repeal"
+      },
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1658,7 +1670,10 @@
           "text": "2024 CFR 404.1035 still prints the former organization-registration exclusion"
         }
       },
-      "source_disagreement_resolution": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+      "source_disagreement_resolution": {
+        "basis": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+        "operative_current_text": "enacted_2014_repeal"
+      },
       "code_edition_evidence": [
         {
           "title": 42,
@@ -2105,7 +2120,7 @@
           "authority": "IRS Publication 926 (2026)",
           "location": "Social Security and Medicare Taxes; withholding example, Mary Brown and Jane A. Oak"
         },
-        "source_passage": "Jane worked for the remainder of the year (a total of 48 weeks).",
+        "source_passage": "On January 31, 2026, Mary Brown hired Jane A. Oak (who is an unrelated individual over age 18) to care for Mary\u2019s child and agreed to pay cash wages of $70 every Friday. Jane worked for the remainder of the year (a total of 48 weeks). Jane didn\u2019t give Mary a Form W-4 to request federal income tax withholding. The following is the information Mary will need to complete Schedule H (Form 1040), Form W-2, and Form W-3. Total cash wages paid to Jane $3,360.00 ($70 x 48 weeks) Jane\u2019s share of: Social security tax $208.32 ($3,360 x 6.2% (0.062)) Medicare tax $48.72 ($3,360 x 1.45% (0.0145))",
         "expected_rule_id": "domestic_service_1995",
         "expected_thresholds": {
           "domestic_cash_annual": 3000
@@ -2132,7 +2147,7 @@
           "authority": "IRS Publication 926 (2026)",
           "location": "Social Security and Medicare Taxes; Not withholding the employee share; employer pays taxes on explicit 2026 $100 weekly cash pay example"
         },
-        "source_passage": "For social security and Medicare tax purposes, your employee\u2019s wages each payday are $100.",
+        "source_passage": "In 2026, you hire a household employee (who is an unrelated individual over age 18) to care for your child and agree to pay cash wages of $100 every Friday. You expect to pay your employee $3,000 or more for the year. You decide to pay your employee\u2019s share of social security and Medicare taxes from your own funds. You pay your employee $100 every Friday without withholding any social security or Medicare taxes. For social security and Medicare tax purposes, your employee\u2019s wages each payday are $100. For each wage payment, you will pay $15.30 when you pay the taxes. This is $7.65 ($6.20 for social security tax plus $1.45 for Medicare tax) to cover your employee\u2019s share plus $7.65 ($6.20 for social security tax plus $1.45 for Medicare tax) for your share. For income tax purposes, your employee\u2019s wages each payday are $107.65 ($100 + the $7.65 you will pay to cover your employee\u2019s share of social security and Medicare taxes).",
         "expected_rule_id": "domestic_service_1995",
         "expected_thresholds": {
           "domestic_cash_annual": 3000
@@ -3424,7 +3439,7 @@
           "authority": "SSA POMS RS 02101.125, revision May 5, 2011",
           "location": "B, Example A, Sawyer employed as carpenter by contractor son"
         },
-        "source_passage": "Sawyer\u2019s wages are covered for Social Security.",
+        "source_passage": "Sawyer has been employed as a carpenter all of his adult life. For the past nine years, he worked part-time for his son, a building contractor. The union sets his pay rate. His son decides how his dad should do the work as well as the results of the work. Sawyer\u2019s wages are covered for Social Security.",
         "expected_rule_id": "family_service_1988",
         "published_inputs": {
           "parent_works_for_child": true,
@@ -4200,7 +4215,11 @@
           ]
         }
       ],
-      "historical_default_cash_rule": "No compensation apart from catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies."
+      "historical_default_cash_rule": "No compensation apart from catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies.",
+      "source_disagreement_resolution": {
+        "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition, dated only from 1995) is recorded as poms_crew_test and is not operative.",
+        "operative_current_text": "conditional_1996_clarification"
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6184,7 +6203,10 @@
           "source": "POMS RS 01901.500A describes all newspaper/shopping-news distributors as self-employed"
         }
       },
-      "source_disagreement_resolution": "Public Law 104-188 section 1118 adds only clause 3508(b)(2)(A)(iii); conditions in (B) and (C) remain. POMS RS 01802.232B.2-B.3 also requires them. Preserve the broad RS 01901.500 summary as a named wording alternative rather than applying it without those facts.",
+      "source_disagreement_resolution": {
+        "basis": "Public Law 104-188 section 1118 adds only clause 3508(b)(2)(A)(iii); conditions in (B) and (C) remain. POMS RS 01802.232B.2-B.3 also requires them. Preserve the broad RS 01901.500 summary as a named wording alternative rather than applying it without those facts.",
+        "operative_current_text": "conditional_direct_seller_statute"
+      },
       "code_edition_evidence": [
         {
           "title": 42,
@@ -6786,7 +6808,7 @@
     "rule_id": "nonresident_alien_vocational_service_1968",
     "family": "nonresident_alien_vocational_service",
     "effective_start": "1968-01-01",
-    "effective_end": "1988-12-31",
+    "effective_end": "1986-12-31",
     "citations": [
       {
         "capture": "poms_rs_01901740.html",
@@ -6811,6 +6833,33 @@
         "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
         "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
         "location": "Tax Reform Act of 1986 section 151(d);Public Law 100-647 section 1019(a) effective-date notes"
+      },
+      {
+        "authority": "Public Law 100-647, Technical and Miscellaneous Revenue Act of 1988, sections 1001(d) and 1019, 102 Stat. 3350-3351 and 3593",
+        "capture": "govinfo_statute102_pg3342_extract.pdf",
+        "location": "extract pages 2-5: section 1001, with subsection (d), amendments related to section 123 of the Reform Act, on extract pages 3-4; extract page 6: section 1019(a); approval date November 10, 1988 on extract page 7",
+        "sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d) heading",
+        "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+        "quote": "Section 210(aX19) of the Social Security Act is amended by",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1019(a), general effective-date rule for title I",
+        "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
       }
     ],
     "trigger_facts": [
@@ -6820,26 +6869,10 @@
       "statutory_student_service",
       "services_performed_date"
     ],
-    "consequence": null,
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "The original applicability of the M-1 vocational-student service exclusion remains open. The 1988 correction adds M as if included in a related 1986 provision, whose reproduced applicability note carries a scholarship/fellowship qualification. The named options are retained without selecting an unconditional service-effective date.",
+    "description": "Before 1987, 42 U.S.C. 410(a)(19) excluded service by F and J students only. Pub. L. 100-647 section 1001(d)(2)(E) later substituted \"(F), (J), or (M)\", and under each reading of its effective date it reaches no service before taxable years beginning after December 31, 1986, the earliest of which begins January 1, 1987. M-1 service in this window is therefore not excluded by 410(a)(19).",
     "parameters": {
-      "visa_classes": [
-        "M-1"
-      ],
-      "requires_admission_purpose_service": true,
-      "named_options": {
-        "as_if_tra1986_section123_applicability": {
-          "basis": "Public Law 100-647 sections 1001(d)(2)(E),1019(a)",
-          "related_original_provision": "Tax Reform Act of 1986 section 123",
-          "original_applicability_note": "section 151(d): taxable years beginning after 1986; scholarship/fellowship grant-date qualification"
-        },
-        "1988_enactment_only_pending_applicability_resolution": {
-          "latest_enactment_date": "1988-11-10",
-          "qualification": "Retained locator alternative; not selected as the legal original effective date."
-        }
-      },
-      "unverified_dependency": "How the 1986 scholarship/fellowship applicability qualification operates for the added M-class service exclusion; no unconditional January 1, 1987 service date is inferred.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -6880,6 +6913,151 @@
             "1988"
           ]
         }
+      ],
+      "excluded_visa_classes": [
+        "F",
+        "J"
+      ],
+      "readings_agree_before": "1987-01-01",
+      "visa_classes": [
+        "M-1"
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "alternative": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J students only, so it does not exclude M-1 service; apply the other families."
+    }
+  },
+  {
+    "rule_id": "nonresident_alien_vocational_service_1987",
+    "family": "nonresident_alien_vocational_service",
+    "effective_start": "1987-01-01",
+    "effective_end": "1988-12-31",
+    "citations": [
+      {
+        "capture": "poms_rs_01901740.html",
+        "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1",
+        "authority": "SSA POMS RS 01901.740",
+        "location": "B.5; C.1.b"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(19); 1988 amendment/effective-date notes"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
+        "location": "410(a)(19);1988 amendment note for Public Law 100-647 section 1001(d)(2)(E);1019(a) applicability note"
+      },
+      {
+        "capture": "ce1c_usc2024_26_1.html",
+        "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
+        "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
+        "location": "Tax Reform Act of 1986 section 151(d);Public Law 100-647 section 1019(a) effective-date notes"
+      },
+      {
+        "authority": "Public Law 100-647, Technical and Miscellaneous Revenue Act of 1988, sections 1001(d) and 1019, 102 Stat. 3350-3351 and 3593",
+        "capture": "govinfo_statute102_pg3342_extract.pdf",
+        "location": "extract pages 2-5: section 1001, with subsection (d), amendments related to section 123 of the Reform Act, on extract pages 3-4; extract page 6: section 1019(a); approval date November 10, 1988 on extract page 7",
+        "sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d) heading",
+        "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+        "quote": "Section 210(aX19) of the Social Security Act is amended by",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1019(a), general effective-date rule for title I",
+        "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      }
+    ],
+    "trigger_facts": [
+      "enrollment",
+      "nonresident_alien_status",
+      "visa_status",
+      "statutory_student_service",
+      "services_performed_date"
+    ],
+    "consequence": null,
+    "identification_class": "awaiting_ce2",
+    "description": "From 1987 through 1988 the start of the M-1 vocational-student service exclusion is unsettled: the readings differ from January 1, 1987 to November 9, 1988, and both exclude M-1 admission-purpose service from November 10, 1988.",
+    "parameters": {
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 410,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "poms_rs_01901740.html",
+              "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1",
+              "authority": "SSA POMS RS 01901.740",
+              "location": "B.5; C.1.b"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_410.html",
+            "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+            "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 410(a)(19); Amendments entries: 1988; Effective Date of 1988 Amendment"
+          },
+          "section_references_verified_present": [
+            "410(a)(19)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988"
+          ]
+        }
+      ],
+      "named_options": {
+        "as_if_included_in_tra1986_section_123": {
+          "m1_service_excluded_from": "1987-01-01",
+          "basis": "Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a); Tax Reform Act of 1986 section 151(d)"
+        },
+        "from_enactment_1988_11_10": {
+          "m1_service_excluded_from": "1988-11-10",
+          "basis": "Pub. L. 100-647, approved November 10, 1988"
+        }
+      },
+      "requires_admission_purpose_service": true,
+      "unverified_dependency": "How section 151(d)'s limit to scholarships and fellowships granted after August 16, 1986 operates for the added M-class service exclusion.",
+      "visa_classes": [
+        "M-1"
       ]
     },
     "worked_examples": [],
@@ -6914,16 +7092,16 @@
       ]
     },
     "alternative": null,
-    "open_reason": "The exact original and retroactive M-class applicability boundary remains unverified after reviewing the 1988 correction and the related 1986 applicability notes. Named options remain unselected; earlier income years are refused.",
+    "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
     "cases": [],
     "open_alternatives": [
       {
-        "description": "Unselected source reading: {\"latest_enactment_date\": \"1988-11-10\", \"qualification\": \"Retained locator alternative; not selected as the legal original effective date.\"}",
-        "name": "1988_enactment_only_pending_applicability_resolution"
+        "name": "as_if_included_in_tra1986_section_123",
+        "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986."
       },
       {
-        "description": "Unselected source reading: {\"basis\": \"Public Law 100-647 sections 1001(d)(2)(E),1019(a)\", \"original_applicability_note\": \"section 151(d): taxable years beginning after 1986; scholarship/fellowship grant-date qualification\", \"related_original_provision\": \"Tax Reform Act of 1986 section 123\"}",
-        "name": "as_if_tra1986_section123_applicability"
+        "name": "from_enactment_1988_11_10",
+        "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered."
       }
     ],
     "residual_default": {
@@ -6960,6 +7138,27 @@
         "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
         "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
         "location": "Tax Reform Act of 1986 section 151(d);Public Law 100-647 section 1019(a) effective-date notes"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d) heading",
+        "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+        "quote": "Section 210(aX19) of the Social Security Act is amended by",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+      },
+      {
+        "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+        "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+        "location": "section 1019(a), general effective-date rule for title I",
+        "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+        "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
       }
     ],
     "trigger_facts": [
@@ -6980,7 +7179,7 @@
       "requires_nonresident_alien_status": true,
       "verification_window_start": "1989-01-01",
       "verification_window_explanation": "Current M-class exclusion is established after the 1988 adding act; this does not resolve its earlier retroactive effective date.",
-      "before_this_window": "nonresident_alien_vocational_service_1968 remains open with named applicability options",
+      "before_this_window": "nonresident_alien_vocational_service_1987 refuses 1987-1988 with two named readings; nonresident_alien_vocational_service_1968 returns the pre-amendment rule",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -7460,7 +7659,7 @@
             "crsreports.congress.gov"
           ],
           "query": "\"student nurse\" \"social security\" exemption (statistics OR prevalence)",
-          "result": "IRS2004-10 and Publication 15 describe student-nurse eligibility; no prevalence bound located."
+          "result": "IRS 2004-10 and Publication 15 describe student-nurse eligibility; no prevalence bound located."
         },
         {
           "date": "2026-10-25",
@@ -7581,7 +7780,7 @@
             "tigta.gov"
           ],
           "query": "\"student\" \"FICA exemption\" statistics audit",
-          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
+          "result": "IRS 2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
         },
         {
           "date": "2026-10-25",
@@ -7591,7 +7790,7 @@
             "crsreports.congress.gov"
           ],
           "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
-          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
+          "result": "GAO-10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
         },
         {
           "date": "2026-10-25",
@@ -7620,7 +7819,7 @@
             "crsreports.congress.gov"
           ],
           "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
-          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
+          "result": "GAO/HEHS/GGD-00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI-99-8 provides qualitative student guidance. Neither bounds all student exclusions."
         }
       ]
     },
@@ -7814,7 +8013,7 @@
             "tigta.gov"
           ],
           "query": "\"student\" \"FICA exemption\" statistics audit",
-          "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
+          "result": "IRS 2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
         },
         {
           "date": "2026-10-25",
@@ -7824,7 +8023,7 @@
             "crsreports.congress.gov"
           ],
           "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
-          "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
+          "result": "GAO-10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
         },
         {
           "date": "2026-10-25",
@@ -7853,7 +8052,7 @@
             "crsreports.congress.gov"
           ],
           "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
-          "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
+          "result": "GAO/HEHS/GGD-00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI-99-8 provides qualitative student guidance. Neither bounds all student exclusions."
         }
       ]
     },

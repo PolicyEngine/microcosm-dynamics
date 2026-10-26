@@ -82,6 +82,9 @@ Invariants (property tests in ``tests/income_resources``):
   future computation requires named index inputs, never an extrapolation.
 * Row order does not affect validation, lookup or canonical JSON round trips.
 * Worked examples carry an oracle label and nonempty inputs and outcomes.
+  ``source_passage`` quotes the whole published example; when a
+  capture's columns interleave, ``supporting_passages`` adds its other
+  lines, each nonempty text.
   Conformance tests consume every published field and check the outcome.
 * Errors separate three causes. Bad registry data raises
   ``RegistryValidationError`` or ``CaptureIntegrityError``. A legal refusal
@@ -832,6 +835,17 @@ class CoverageRule:
                 "expected_parameters" not in example,
                 "examples must test outcomes rather than repeated parameters",
             )
+            if "supporting_passages" in example:
+                passages = example["supporting_passages"]
+                _require(
+                    isinstance(passages, (list, tuple))
+                    and bool(passages)
+                    and all(
+                        isinstance(part, str) and bool(part.strip())
+                        for part in passages
+                    ),
+                    "example.supporting_passages must be nonempty text",
+                )
             examples.append(_freeze(example))
         rare = raw["rare_exclusion"]
         if rare is not None:

@@ -642,7 +642,7 @@
           "411(c)(4)",
           "411(c)(5)"
         ],
-        "religious_sect_411_c_6_exclusion": "not among exceptions waived by403(f)(5)(B)(i); establish underlying facts"
+        "religious_sect_411_c_6_exclusion": "not among exceptions waived by 403(f)(5)(B)(i); establish underlying facts"
       },
       "reference_years": "income/taxable years, never interview years",
       "rounding": {
@@ -723,8 +723,8 @@
       "rule_id": "fishing_crew_share_service_1968"
     },
     {
-      "reason": "The exact original and retroactive M-class applicability boundary remains unverified after reviewing the 1988 correction and the related 1986 applicability notes. Named options remain unselected; earlier income years are refused.",
-      "rule_id": "nonresident_alien_vocational_service_1968"
+      "reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
+      "rule_id": "nonresident_alien_vocational_service_1987"
     },
     {
       "reason": "COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED: current RS 01802.400 states that section 425 replaced the Edwards court-order procedure and obsolete RS 01802.410 through .470; their pre-amendment allocation procedure is not captured.",
@@ -1153,7 +1153,7 @@
             "social_security_wages_cents": 100000
           },
           "source_edition_year": 2026,
-          "source_passage": "For 2026, Gavrielle paid Dan $1,000 during the year."
+          "source_passage": "Gavrielle operates a small family fruit farm. Gavrielle employs day laborers in the picking season to allow Gavrielle time to get the crops to market. Gavrielle doesn\u2019t deduct the employees\u2019 share of social security and Medicare taxes from their pay; instead, Gavrielle pays it on their behalf. When Gavrielle prepares the employees\u2019 Forms W-2, Gavrielle adds each employee\u2019s share of social security and Medicare taxes that Gavrielle paid to the employee\u2019s wage income (box 1 of Form W-2), but doesn\u2019t include it in box 3 (social security wages) or box 5 (Medicare wages and tips). For 2026, Gavrielle paid Dan $1,000 during the year. Gavrielle enters $1,076.50 in box 1 of Dan\u2018s Form W-2 ($1,000 wages plus $76.50 social security and Medicare taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3 and 5 of Dan\u2019s Form W-2."
         },
         {
           "calculation": "agricultural_cash_wages",
@@ -1180,7 +1180,16 @@
             "social_security_wages_cents": 100000
           },
           "source_edition_year": 2023,
-          "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year."
+          "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year.",
+          "supporting_passages": [
+            "Example. Gavrielle operates a small family fruit farm.",
+            "doesn't deduct the employees' share of social security",
+            "and Medicare taxes from their pay; instead, Gavrielle pays",
+            "Gavrielle enters $1,076.50 in box 1 of Dan's Form W-2",
+            "($1,000 wages plus $76.50 social security and Medicare",
+            "taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3",
+            "and 5 of Dan's Form W-2."
+          ]
         },
         {
           "calculation": "agricultural_commodity",
@@ -1201,7 +1210,7 @@
             "commodity_remuneration": "wages"
           },
           "source_edition_year": 2024,
-          "source_passage": "the cash proceeds from the sale are wages because the employee did not exercise dominion and control over the cattle."
+          "source_passage": "A farm operator agrees to give an employee 30 head of cattle for services performed on the farm. The farm operator sells 100 head of cattle to a commodity purchaser. The commodity purchaser gives the farm operator a check for 70 head of cattle and the employee a check for 30 head of cattle. These facts indicate that the cash proceeds from the sale are wages because the employee did not exercise dominion and control over the cattle."
         },
         {
           "calculation": "agricultural_commodity",
@@ -1222,7 +1231,7 @@
             "commodity_remuneration": "not_wages"
           },
           "source_edition_year": 2024,
-          "source_passage": "the commodity payments are not wages because"
+          "source_passage": "A farm operator pays an employee $50 a month plus 10 head of cattle per month for services performed on the farm. The employee pays the farmer rent to maintain the cattle on the farm property in an area separate from the farm operator's livestock. The employee assumes the costs of feeding, maintaining, and transferring the cattle to the market for sale. The employee is paid directly by the commodity purchaser for the cattle. These facts indicate that the commodity payments are not wages because the employee exercises dominion and control over the cattle subsequent to receipt and bears the cost incident to ownership of the cattle."
         }
       ]
     },
@@ -2346,7 +2355,7 @@
               "tigta.gov"
             ],
             "query": "\"4361\" OR \"4029\" \"exemption\"",
-            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
             "searched_utc": "2026-10-25"
           },
           {
@@ -2869,7 +2878,7 @@
               "tigta.gov"
             ],
             "query": "\"4361\" OR \"4029\" \"exemption\"",
-            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
             "searched_utc": "2026-10-25"
           },
           {
@@ -3529,7 +3538,7 @@
               "tigta.gov"
             ],
             "query": "\"4361\" OR \"4029\" \"exemption\"",
-            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
+            "result": "Located and read TIGTA report 2013-40-131, Appendix IV, printed page 17: 32,020 approved Form 4361 or Form 4029 taxpayers within 179,362 TY 2012 MeF filers processed January 27-June 29, 2013 with Schedule C income at least $434 and no self-employment tax. The count combines two exemptions in a restricted filing subset; it does not bound all section 1402(e) exemptions. No candidate established. URL: https://www.tigta.gov/sites/default/files/reports/2024-11/201340131fr.pdf",
             "searched_utc": "2026-10-25"
           },
           {
@@ -4001,7 +4010,10 @@
         "original_service_after": "1956-06-30",
         "repeal_date": "2014-12-19",
         "repeal_savings": "Public Law 113-295 section 221(b)(2) preserves treatment of qualifying pre-enactment transactions, property and items for later tax liability",
-        "source_disagreement_resolution": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion."
+        "source_disagreement_resolution": {
+          "basis": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+          "operative_current_text": "enacted_2014_repeal"
+        }
       },
       "rare_exclusion": {
         "negligible_candidate": null,
@@ -4188,7 +4200,10 @@
         },
         "other_employment_rules_continue": true,
         "repeal_savings_requires_pre_enactment_item_and_effect_on_later_tax_liability": true,
-        "source_disagreement_resolution": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+        "source_disagreement_resolution": {
+          "basis": "Public Law 113-295 expressly strikes section 410(a)(17), effective December 19, 2014 subject to section 221(b)(2); preserve the CFR wording as a source discrepancy, not an operative continuation of the repealed exclusion.",
+          "operative_current_text": "enacted_2014_repeal"
+        },
         "specific_exclusion_repealed": true
       },
       "rare_exclusion": {
@@ -4646,7 +4661,7 @@
             "social_security_wages_per_payday_cents": 10000
           },
           "source_edition_year": 2026,
-          "source_passage": "For social security and Medicare tax purposes, your employee\u2019s wages each payday are $100."
+          "source_passage": "In 2026, you hire a household employee (who is an unrelated individual over age 18) to care for your child and agree to pay cash wages of $100 every Friday. You expect to pay your employee $3,000 or more for the year. You decide to pay your employee\u2019s share of social security and Medicare taxes from your own funds. You pay your employee $100 every Friday without withholding any social security or Medicare taxes. For social security and Medicare tax purposes, your employee\u2019s wages each payday are $100. For each wage payment, you will pay $15.30 when you pay the taxes. This is $7.65 ($6.20 for social security tax plus $1.45 for Medicare tax) to cover your employee\u2019s share plus $7.65 ($6.20 for social security tax plus $1.45 for Medicare tax) for your share. For income tax purposes, your employee\u2019s wages each payday are $107.65 ($100 + the $7.65 you will pay to cover your employee\u2019s share of social security and Medicare taxes)."
         },
         {
           "calculation": "domestic_threshold",
@@ -4673,7 +4688,7 @@
             "annual_cash_wages_dollars": 3360,
             "social_security_coverage": "covered"
           },
-          "source_passage": "Jane worked for the remainder of the year (a total of 48 weeks)."
+          "source_passage": "On January 31, 2026, Mary Brown hired Jane A. Oak (who is an unrelated individual over age 18) to care for Mary\u2019s child and agreed to pay cash wages of $70 every Friday. Jane worked for the remainder of the year (a total of 48 weeks). Jane didn\u2019t give Mary a Form W-4 to request federal income tax withholding. The following is the information Mary will need to complete Schedule H (Form 1040), Form W-2, and Form W-3. Total cash wages paid to Jane $3,360.00 ($70 x 48 weeks) Jane\u2019s share of: Social security tax $208.32 ($3,360 x 6.2% (0.062)) Medicare tax $48.72 ($3,360 x 1.45% (0.0145))"
         }
       ]
     },
@@ -6620,7 +6635,7 @@
             "social_security_coverage": "covered"
           },
           "source_edition_year": 2011,
-          "source_passage": "Sawyer\u2019s wages are covered for Social Security."
+          "source_passage": "Sawyer has been employed as a carpenter all of his adult life. For the past nine years, he worked part-time for his son, a building contractor. The union sets his pay rate. His son decides how his dad should do the work as well as the results of the work. Sawyer\u2019s wages are covered for Social Security."
         }
       ]
     },
@@ -8415,6 +8430,10 @@
           }
         },
         "self_employment_treatment": "other_net_earnings_from_self_employment_under_411c2F",
+        "source_disagreement_resolution": {
+          "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition, dated only from 1995) is recorded as poms_crew_test and is not operative.",
+          "operative_current_text": "conditional_1996_clarification"
+        },
         "verification_window_explanation": "This is the first complete calendar-year window after the 1988 correcting act, not an asserted original effective date for the family-service amendment.",
         "verification_window_start": "1989-01-01",
         "wage_employment_excluded_when_arrangement_qualifies": true
@@ -10504,7 +10523,10 @@
         },
         "newspaper_specific_3508_direct_seller_clause_in_force": true,
         "other_service": "ordinary_employee_or_trade_business_rules_and_other_exclusions",
-        "source_disagreement_resolution": "Public Law 104-188 section 1118 adds only clause 3508(b)(2)(A)(iii); conditions in (B) and (C) remain. POMS RS 01802.232B.2-B.3 also requires them. Preserve the broad RS 01901.500 summary as a named wording alternative rather than applying it without those facts.",
+        "source_disagreement_resolution": {
+          "basis": "Public Law 104-188 section 1118 adds only clause 3508(b)(2)(A)(iii); conditions in (B) and (C) remain. POMS RS 01802.232B.2-B.3 also requires them. Preserve the broad RS 01901.500 summary as a named wording alternative rather than applying it without those facts.",
+          "operative_current_text": "conditional_direct_seller_statute"
+        },
         "statutory_history_basis": "Section 410(a)(14) and section 411(c)(2)(A), with the captured Code amendment history; not a backcast of the 2024 CFR.",
         "under_18_delivery_distribution": {
           "not_included": "delivery_to_a_point_for_further_delivery_or_distribution_by_others",
@@ -10672,7 +10694,7 @@
         "waiver_effective_date_options": [
           "quarter of filing",
           "quarter following filing",
-          "any of20 preceding quarters (for waivers filed after 1965)"
+          "any of 20 preceding quarters (for waivers filed after 1965)"
         ],
         "waiver_history": [
           {
@@ -10859,7 +10881,7 @@
         "waiver_effective_date_options": [
           "quarter of filing",
           "quarter following filing",
-          "any of20 preceding quarters (for waivers filed after 1965)"
+          "any of 20 preceding quarters (for waivers filed after 1965)"
         ],
         "waiver_history": [
           {
@@ -11517,6 +11539,163 @@
           "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a"
         },
         {
+          "authority": "Public Law 100-647, Technical and Miscellaneous Revenue Act of 1988, sections 1001(d) and 1019, 102 Stat. 3350-3351 and 3593",
+          "capture": "govinfo_statute102_pg3342_extract.pdf",
+          "location": "extract pages 2-5: section 1001, with subsection (d), amendments related to section 123 of the Reform Act, on extract pages 3-4; extract page 6: section 1019(a); approval date November 10, 1988 on extract page 7",
+          "sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd"
+        },
+        {
+          "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d) heading",
+          "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+          "quote": "Section 210(aX19) of the Social Security Act is amended by",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1019(a), general effective-date rule for title I",
+          "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(19); 1988 amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "SSA POMS RS 01901.740",
+          "capture": "poms_rs_01901740.html",
+          "location": "B.5; C.1.b",
+          "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
+        }
+      ],
+      "consequence": "covered",
+      "description": "Before 1987, 42 U.S.C. 410(a)(19) excluded service by F and J students only. Pub. L. 100-647 section 1001(d)(2)(E) later substituted \"(F), (J), or (M)\", and under each reading of its effective date it reaches no service before taxable years beginning after December 31, 1986, the earliest of which begins January 1, 1987. M-1 service in this window is therefore not excluded by 410(a)(19).",
+      "effective_end": "1986-12-31",
+      "effective_start": "1968-01-01",
+      "family": "nonresident_alien_vocational_service",
+      "identification_class": "awaiting_ce2",
+      "open_alternatives": [],
+      "open_reason": null,
+      "parameters": {
+        "code_edition_evidence": [
+          {
+            "amendment_year_entries_verified_present": [
+              "1988"
+            ],
+            "citation": {
+              "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+              "capture": "uscode_1994_42_410.html",
+              "location": "Historical comparison only, related to 410(a)(19); Amendments entries: 1988; Effective Date of 1988 Amendment",
+              "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b"
+            },
+            "contemporaneous_code_status": "unavailable",
+            "edition_year": 1994,
+            "historical_note_headings_verified_present": [
+              "Effective Date of 1988 Amendment"
+            ],
+            "primary_history_citation_status": "existing_row_specific_primary_references",
+            "primary_history_citations": [
+              {
+                "authority": "SSA POMS RS 01901.740",
+                "capture": "poms_rs_01901740.html",
+                "location": "B.5; C.1.b",
+                "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
+              }
+            ],
+            "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+            "section": 410,
+            "section_references_verified_present": [
+              "410(a)(19)"
+            ],
+            "support_kind": "historical_amendment_notes",
+            "title": 42,
+            "unavailable_contemporaneous_edition_labels": [
+              1964,
+              1970,
+              1976,
+              1982,
+              1988
+            ]
+          }
+        ],
+        "excluded_visa_classes": [
+          "F",
+          "J"
+        ],
+        "readings_agree_before": "1987-01-01",
+        "visa_classes": [
+          "M-1"
+        ]
+      },
+      "rare_exclusion": null,
+      "residual_default": {
+        "consequence": "covered",
+        "description": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J students only, so it does not exclude M-1 service; apply the other families."
+      },
+      "rule_id": "nonresident_alien_vocational_service_1968",
+      "trigger_facts": [
+        "enrollment",
+        "nonresident_alien_status",
+        "services_performed_date",
+        "statutory_student_service",
+        "visa_status"
+      ],
+      "worked_examples": []
+    },
+    {
+      "alternative": null,
+      "cases": [],
+      "citations": [
+        {
+          "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
+          "capture": "ce1c_usc2023_42_410.html",
+          "location": "410(a)(19);1988 amendment note for Public Law 100-647 section 1001(d)(2)(E);1019(a) applicability note",
+          "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2"
+        },
+        {
+          "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
+          "capture": "ce1c_usc2024_26_1.html",
+          "location": "Tax Reform Act of 1986 section 151(d);Public Law 100-647 section 1019(a) effective-date notes",
+          "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a"
+        },
+        {
+          "authority": "Public Law 100-647, Technical and Miscellaneous Revenue Act of 1988, sections 1001(d) and 1019, 102 Stat. 3350-3351 and 3593",
+          "capture": "govinfo_statute102_pg3342_extract.pdf",
+          "location": "extract pages 2-5: section 1001, with subsection (d), amendments related to section 123 of the Reform Act, on extract pages 3-4; extract page 6: section 1019(a); approval date November 10, 1988 on extract page 7",
+          "sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd"
+        },
+        {
+          "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d) heading",
+          "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+          "quote": "Section 210(aX19) of the Social Security Act is amended by",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1019(a), general effective-date rule for title I",
+          "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(19); 1988 amendment/effective-date notes",
@@ -11530,22 +11709,22 @@
         }
       ],
       "consequence": null,
-      "description": "The original applicability of the M-1 vocational-student service exclusion remains open. The 1988 correction adds M as if included in a related 1986 provision, whose reproduced applicability note carries a scholarship/fellowship qualification. The named options are retained without selecting an unconditional service-effective date.",
+      "description": "From 1987 through 1988 the start of the M-1 vocational-student service exclusion is unsettled: the readings differ from January 1, 1987 to November 9, 1988, and both exclude M-1 admission-purpose service from November 10, 1988.",
       "effective_end": "1988-12-31",
-      "effective_start": "1968-01-01",
+      "effective_start": "1987-01-01",
       "family": "nonresident_alien_vocational_service",
       "identification_class": "awaiting_ce2",
       "open_alternatives": [
         {
-          "description": "Unselected source reading: {\"latest_enactment_date\": \"1988-11-10\", \"qualification\": \"Retained locator alternative; not selected as the legal original effective date.\"}",
-          "name": "1988_enactment_only_pending_applicability_resolution"
+          "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986.",
+          "name": "as_if_included_in_tra1986_section_123"
         },
         {
-          "description": "Unselected source reading: {\"basis\": \"Public Law 100-647 sections 1001(d)(2)(E),1019(a)\", \"original_applicability_note\": \"section 151(d): taxable years beginning after 1986; scholarship/fellowship grant-date qualification\", \"related_original_provision\": \"Tax Reform Act of 1986 section 123\"}",
-          "name": "as_if_tra1986_section123_applicability"
+          "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered.",
+          "name": "from_enactment_1988_11_10"
         }
       ],
-      "open_reason": "The exact original and retroactive M-class applicability boundary remains unverified after reviewing the 1988 correction and the related 1986 applicability notes. Named options remain unselected; earlier income years are refused.",
+      "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
       "parameters": {
         "code_edition_evidence": [
           {
@@ -11589,18 +11768,17 @@
           }
         ],
         "named_options": {
-          "1988_enactment_only_pending_applicability_resolution": {
-            "latest_enactment_date": "1988-11-10",
-            "qualification": "Retained locator alternative; not selected as the legal original effective date."
+          "as_if_included_in_tra1986_section_123": {
+            "basis": "Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a); Tax Reform Act of 1986 section 151(d)",
+            "m1_service_excluded_from": "1987-01-01"
           },
-          "as_if_tra1986_section123_applicability": {
-            "basis": "Public Law 100-647 sections 1001(d)(2)(E),1019(a)",
-            "original_applicability_note": "section 151(d): taxable years beginning after 1986; scholarship/fellowship grant-date qualification",
-            "related_original_provision": "Tax Reform Act of 1986 section 123"
+          "from_enactment_1988_11_10": {
+            "basis": "Pub. L. 100-647, approved November 10, 1988",
+            "m1_service_excluded_from": "1988-11-10"
           }
         },
         "requires_admission_purpose_service": true,
-        "unverified_dependency": "How the 1986 scholarship/fellowship applicability qualification operates for the added M-class service exclusion; no unconditional January 1, 1987 service date is inferred.",
+        "unverified_dependency": "How section 151(d)'s limit to scholarships and fellowships granted after August 16, 1986 operates for the added M-class service exclusion.",
         "visa_classes": [
           "M-1"
         ]
@@ -11639,7 +11817,7 @@
         "consequence": null,
         "description": "No residual legal consequence is selected while this question remains open."
       },
-      "rule_id": "nonresident_alien_vocational_service_1968",
+      "rule_id": "nonresident_alien_vocational_service_1987",
       "trigger_facts": [
         "enrollment",
         "nonresident_alien_status",
@@ -11678,6 +11856,27 @@
           "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a"
         },
         {
+          "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d) heading",
+          "quote": "AMENDMENTS RELATED TO SECTION 123 OF THE REFORM ACT",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1001(d)(2)(E), 102 Stat. 3351",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1001(d)(2)(E), which amends 42 U.S.C. 410(a)(19) by substituting \"(F), (J), or (M)\" for \"(F) or (J)\"; the text derivative prints \"(a)(19)\" as \"(aX19)\"",
+          "quote": "Section 210(aX19) of the Social Security Act is amended by",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
+          "authority": "Public Law 100-647, section 1019(a), 102 Stat. 3593",
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "location": "section 1019(a), general effective-date rule for title I",
+          "quote": "any amendment made by this title shall take effect as if included in the provision of the Reform Act to which such amendment relates",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+        },
+        {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "410(a)(19); 1988 amendment/effective-date notes",
@@ -11699,7 +11898,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
-        "before_this_window": "nonresident_alien_vocational_service_1968 remains open with named applicability options",
+        "before_this_window": "nonresident_alien_vocational_service_1987 refuses 1987-1988 with two named readings; nonresident_alien_vocational_service_1968 returns the pre-amendment rule",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -12557,7 +12756,7 @@
             "social_security_and_medicare_treatment": "subject_to_FICA"
           },
           "source_edition_year": 2025,
-          "source_passage": "Pat's services aren't duties required by the order."
+          "source_passage": "Pat Brown and Chris Green are members of a religious order and have taken vows of poverty. They renounce all claims to their earnings. The earnings belong to the order. Pat is a licensed attorney. The superiors of the order instructed Pat to get a job with a law firm. Pat joined a law firm as an employee and, as requested, the firm made the salary payments directly to the order. Chris is a secretary. The superiors of the order instructed Chris to accept a job with the business office of the church that supervises the order. Chris took the job and gave all earnings to the order. Pat's services aren't duties required by the order. Pat\u2019s earnings are subject to social security and Medicare tax under FICA and to federal income tax."
         },
         {
           "calculation": "order_service",
@@ -12579,7 +12778,7 @@
             "self_employment_coverage": "noncovered"
           },
           "source_edition_year": 2025,
-          "source_passage": "Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA."
+          "source_passage": "Pat Brown and Chris Green are members of a religious order and have taken vows of poverty. They renounce all claims to their earnings. The earnings belong to the order. Pat is a licensed attorney. The superiors of the order instructed Pat to get a job with a law firm. Pat joined a law firm as an employee and, as requested, the firm made the salary payments directly to the order. Chris is a secretary. The superiors of the order instructed Chris to accept a job with the business office of the church that supervises the order. Chris took the job and gave all earnings to the order. Pat's services aren't duties required by the order. Pat\u2019s earnings are subject to social security and Medicare tax under FICA and to federal income tax. Chris' services are duties required by the order. Chris is acting as an agent of the order and not as an employee of a third party. Chris doesn't include the earnings in gross income, and they aren't subject to income tax withholding or to social security and Medicare tax under FICA or SECA."
         }
       ]
     },
@@ -13152,7 +13351,7 @@
             "agreement_coverage": "noncovered"
           },
           "source_edition_year": 2020,
-          "source_passage": "A is not a new member for purposes of coverage."
+          "source_passage": "A referendum was held among all the eligible members of the Municipal Employees Retirement System (MERS), a statewide system covering all municipal employees. A was an employee of City X and voted against Social Security coverage. After the coverage was extended to the retirement system coverage group, A terminated his employment with City X and entered private employment. Under the rules of MERS, A retained his membership in MERS. Two years later, City X reemployed A. The State holds that he is not a new member of MERS. A is not a new member for purposes of coverage. He retains his initial choice of \"No\" coverage."
         },
         {
           "calculation": "section_218_reentry",
@@ -13174,7 +13373,7 @@
             "agreement_coverage": "covered"
           },
           "source_edition_year": 2020,
-          "source_passage": "A is a new member for purposes of coverage and is covered compulsorily."
+          "source_passage": "A referendum was held among all the eligible members of MERS, a statewide system covering all municipal employees. A was an employee of City X and voted against coverage. After coverage was extended to the retirement system coverage group, A terminated his employment with City X and entered private employment. A withdrew his contributions from the retirement system. Two years later, City X reemployed A. The State holds that he is a new member of MERS. A is a new member for purposes of coverage and is covered compulsorily."
         },
         {
           "calculation": "state_local_mandatory",
@@ -13406,7 +13605,7 @@
           "IRC 631 timber/coal/iron-ore gains/losses",
           "Other property gains/losses unless inventory or held for sale to customers"
         ],
-        "nol_rule": "The172 net-operating-loss deduction is not allowed; this does not prevent current ordinary business losses from entering the NESE base.",
+        "nol_rule": "The section 172 net-operating-loss deduction is not allowed; this does not prevent current ordinary business losses from entering the NESE base.",
         "other_property_dispositions": "Exclude unless stock-in-trade/inventory or held primarily for sale to customers in the ordinary course of business.",
         "override_family": "self_employment_options_dealers",
         "specified_natural_resource_dispositions": "Exclude timber, coal, iron-ore gains/losses when 631 applies."
@@ -13501,7 +13700,7 @@
             },
             "contemporaneous_code_status": "unavailable",
             "edition_year": 1994,
-            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing",
+            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing",
             "historical_note_headings_verified_present": [],
             "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
             "primary_history_citations": [],
@@ -13585,7 +13784,7 @@
             },
             "contemporaneous_code_status": "unavailable",
             "edition_year": 1994,
-            "effective_date_note_support": "section1882a_initial_annual_boundary_remains_unverified",
+            "effective_date_note_support": "section_1882a_initial_annual_boundary_remains_unverified",
             "historical_note_headings_verified_present": [
               "Effective Date of 1988 Amendment"
             ],
@@ -13613,7 +13812,7 @@
             },
             "contemporaneous_code_status": "unavailable",
             "edition_year": 1994,
-            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing",
+            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing",
             "historical_note_headings_verified_present": [],
             "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
             "primary_history_citations": [],
@@ -13768,7 +13967,7 @@
             },
             "contemporaneous_code_status": "unavailable",
             "edition_year": 1994,
-            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing",
+            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing",
             "historical_note_headings_verified_present": [],
             "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
             "primary_history_citations": [],
@@ -13792,7 +13991,7 @@
               "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
             },
             "edition_year": 1994,
-            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing",
+            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing",
             "historical_note_headings_verified_present": [],
             "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
             "section": 411,
@@ -13811,7 +14010,7 @@
               "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
             },
             "edition_year": 2024,
-            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section1882a_timing",
+            "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing",
             "historical_note_headings_verified_present": [],
             "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
             "section": 411,
@@ -14271,7 +14470,7 @@
             "included_se_gross_concept_cents": 3500000
           },
           "source_edition_year": 2025,
-          "source_passage": "must include $35,000 when figuring net earnings from self-employment."
+          "source_passage": "You were the minister of a U.S. church in Mexico. You earned $35,000 in that position and were able to exclude it all for income tax purposes under the foreign earned income exclusion. The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment."
         }
       ]
     },
@@ -14831,10 +15030,6 @@
         ],
         "effective_basis": "payment_date",
         "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
-        "named_alternatives": {
-          "excluded_rental_income": "Apply se_rental_income if a payment is established to fall within the rental-income exclusion.",
-          "trade_or_business_income": "Apply se_base_definition if a payment is established to derive from a trade or business."
-        },
         "special_2008_crp_exclusion": false
       },
       "rare_exclusion": null,
@@ -14928,7 +15123,7 @@
         ],
         "effective_basis": "payment_date",
         "effective_basis_description": "Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
-        "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or423 benefits"
+        "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or 423 benefits"
       },
       "rare_exclusion": null,
       "residual_default": {
@@ -15577,7 +15772,7 @@
           "Small-boat fishing under 410(a)(20) from the applicable 1976 law",
           "Electing church under 410(a)(8)(B) from 1984"
         ],
-        "general_rule": "employee_service_excluded_under411(c)(2)",
+        "general_rule": "employee_service_excluded_under_411(c)(2)",
         "scope_note": "This row supplies general rule; it does not backcast any enumerated exception into years before its own effective law."
       },
       "rare_exclusion": null,
@@ -17397,7 +17592,7 @@
       "cases": [],
       "citations": [
         {
-          "authority": "Public Law 92-603, 86 Stat.1329(1972)",
+          "authority": "Public Law 92-603, 86 Stat. 1329 (1972)",
           "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section 121, printed pp. 1353-1354",
           "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
@@ -17439,7 +17634,7 @@
             "primary_history_citation_status": "existing_row_specific_primary_references",
             "primary_history_citations": [
               {
-                "authority": "Public Law 92-603, 86 Stat.1329(1972)",
+                "authority": "Public Law 92-603, 86 Stat. 1329 (1972)",
                 "capture": "govinfo_statute86_pg1329_extract.pdf",
                 "location": "section 121, printed pp. 1353-1354",
                 "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
@@ -18313,7 +18508,7 @@
         "deceased_partner_share_includes": "Estate or successor-in-interest share as specified in 411(f).",
         "excluded_partnership_period_begin": "First day of the calendar month following the month of death",
         "scope": "Timing/allocation rule; does not characterize a capital item as ordinary income.",
-        "trigger": "Death closes individual taxable year within, notwith, the partnership taxable year."
+        "trigger": "Death ends the partner's individual taxable year within, and not with, the partnership taxable year."
       },
       "rare_exclusion": null,
       "residual_default": {
@@ -18968,7 +19163,7 @@
             },
             "contemporaneous_code_status": "unavailable",
             "edition_year": 1994,
-            "effective_date_note_support": "not_established_for_Public_Law100_203_section9023b",
+            "effective_date_note_support": "not_established_for_Public_Law_100_203_section_9023b",
             "historical_note_headings_verified_present": [],
             "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
             "primary_history_citations": [],
@@ -19253,7 +19448,7 @@
         }
       ],
       "consequence": "covered",
-      "description": "A Puerto Rico resident computes NESE in the same manner as a U.S. citizen without the income exclusion in IRC933.",
+      "description": "A Puerto Rico resident computes NESE in the same manner as a U.S. citizen without the income exclusion in section 933 of the Internal Revenue Code.",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_puerto_rico_income",
@@ -20111,9 +20306,9 @@
       ],
       "citations": [
         {
-          "authority": "Public Law 90-248, 81 Stat.821 (1968)",
+          "authority": "Public Law 90-248, 81 Stat. 821 (1968)",
           "capture": "govinfo_statute81_pg821_extract.pdf",
-          "location": "section 118, printed pp841-842",
+          "location": "section 118, printed pp. 841-842",
           "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
         },
         {
@@ -20151,9 +20346,9 @@
             "primary_history_citation_status": "existing_row_specific_primary_references",
             "primary_history_citations": [
               {
-                "authority": "Public Law 90-248, 81 Stat.821 (1968)",
+                "authority": "Public Law 90-248, 81 Stat. 821 (1968)",
                 "capture": "govinfo_statute81_pg821_extract.pdf",
-                "location": "section 118, printed pp841-842",
+                "location": "section 118, printed pp. 841-842",
                 "sha256": "f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f"
               }
             ],
@@ -21708,7 +21903,7 @@
               "crsreports.congress.gov"
             ],
             "query": "\"student nurse\" \"social security\" exemption (statistics OR prevalence)",
-            "result": "IRS2004-10 and Publication 15 describe student-nurse eligibility; no prevalence bound located."
+            "result": "IRS 2004-10 and Publication 15 describe student-nurse eligibility; no prevalence bound located."
           },
           {
             "date": "2026-10-25",
@@ -21840,7 +22035,7 @@
               "tigta.gov"
             ],
             "query": "\"student\" \"FICA exemption\" statistics audit",
-            "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
+            "result": "IRS 2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
           },
           {
             "date": "2026-10-25",
@@ -21850,7 +22045,7 @@
               "crsreports.congress.gov"
             ],
             "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
-            "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
+            "result": "GAO-10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
           },
           {
             "date": "2026-10-25",
@@ -21879,7 +22074,7 @@
               "crsreports.congress.gov"
             ],
             "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
-            "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
+            "result": "GAO/HEHS/GGD-00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI-99-8 provides qualitative student guidance. Neither bounds all student exclusions."
           }
         ],
         "strict": "unresolved"
@@ -22073,7 +22268,7 @@
               "tigta.gov"
             ],
             "query": "\"student\" \"FICA exemption\" statistics audit",
-            "result": "IRS2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
+            "result": "IRS 2004-10 discusses possible future medical-resident coverage only, a subset of the student exclusion. No bound for the full exclusion."
           },
           {
             "date": "2026-10-25",
@@ -22083,7 +22278,7 @@
               "crsreports.congress.gov"
             ],
             "query": "\"student\" \"Social Security\" \"noncovered\" employment exemption statistics -MINT -DYNASIM",
-            "result": "GAO10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
+            "result": "GAO-10-938 concerns broader state/local noncoverage; no student-exclusion bound located."
           },
           {
             "date": "2026-10-25",
@@ -22112,7 +22307,7 @@
               "crsreports.congress.gov"
             ],
             "query": "\"student\" \"FICA\" exemption (statistics OR number) \"GAO\"",
-            "result": "GAO/HEHS/GGD00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI99-8 provides qualitative student guidance. Neither bounds all student exclusions."
+            "result": "GAO/HEHS/GGD-00-184R says IRS had not developed data on number or share of medical residents paying FICA; GAO/OSI-99-8 provides qualitative student guidance. Neither bounds all student exclusions."
           }
         ],
         "strict": "unresolved"
@@ -23689,7 +23884,7 @@
         }
       ],
       "comparison": "at_most",
-      "description": "This is an upper bound, not a minimum earnings exemption. For1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
+      "description": "This is an upper bound, not a minimum earnings exemption. For 1985-1994 the amended treatment does not apply if the payor treated the remuneration as FICA-taxed when paid. All other catch-share and additional-cash conditions must also hold.",
       "eligible_concept": "Additional cash remuneration to a qualifying catch-share crew member per trip, when the statutory cash conditions and conditional retrospective applicability are established.",
       "indexing": null,
       "monotone": false,
