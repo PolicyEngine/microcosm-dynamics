@@ -56,7 +56,10 @@ rates and tagged person streams (`baselines/fertility.py:114–126`).
 `advance_age` draws nothing (`engine/steps.py:142–148`). The marital step is
 `no_marital_transitions`, required for nonzero emigration
 (`open_population/exits.py:64–67`). The sealed loop retains its original
-registry for every module and adapter draw.
+registry for every module and adapter draw. (This section measures OP1 as
+merged in #566. Since the injection follow-up, §6, the adapters' person and
+tagged draws come from `DirectRNGStreams` by default; the script now
+compares three stream modes.)
 
 All six runs reconciled 75 periods with zero count and weight residuals and
 zero revaluations. For each roster size, the direct and registry runs give
@@ -650,3 +653,284 @@ master, so runs of those tests load it without displaying it (review r10).
 All tests, probes, mutation checks and measurements use invented inputs;
 no microdata or external statistical table was read and no real-data
 statistic was computed. Every delegated agent reports the same boundary.
+
+## 6. Injection follow-up: direct streams for the adapters' draws
+
+The coordinator approved this follow-up as option 2 on 24 October 2026 and
+dispatched it, at revision 3 of its brief, on 26 October. Base: master
+`0f69bbb2`; branch `openpop-op1-rng-inject-20261026`. `4431486d` adds the
+injection and `tests/open_population/test_stream_injection.py`; `be6843f7`
+extends `tests/open_population/test_streams.py`; later commits extend
+`op1_run_size.py` and add this section.
+
+### Mechanism
+
+`ProjectionEngine.project()` takes no registry. The loop builds one,
+`streams = ProjectionRNGRegistry(draw_index, n_periods)`
+(`engine/loop.py:216–217`), puts it on each period's `PeriodContext`
+(`:287–294`) and passes each slot a module generator positionally
+(`:297–350`). So the substitution lives in OP1's wrapper,
+`_AdapterStreams` (`open_population/harness.py:171–234`):
+
+- At the first period it keeps the loop's registry and builds one
+  `DirectRNGStreams(registry.draw_index, registry.n_periods)` (`:205–212`).
+  Every later period must carry the same registry object, or the run is
+  refused with `ID_OR_STREAM_COLLISION` (`:213–216`). A context without a
+  registry is refused the same way (`:202–206`).
+- Every slot of a period receives one
+  `dataclasses.replace(context, rng_registry=<direct>)`, built once per
+  period (`:217–225`), just as the loop gives its eight slots one context.
+  Metadata, the person ordinals and every other field are the loop's own
+  objects.
+- All eight slots are bound (`:361–377`): the mortality wrapper, and through
+  it `_ExitAdapter` and the mortality adapter; aging; the marital core; the
+  birth-entry adapter, and through it fertility; disability; earnings;
+  claiming; and `close_period`, and through it household composition.
+- The positional generator each slot receives is the loop's, unchanged. So
+  are the loop's 600 module generators per 75-year run.
+- `rng_streams="registry"` passes the loop's context through unchanged,
+  which is OP1's behavior before this follow-up.
+- Emigration draws from `DirectRNGStreams` in both modes. `_ExitAdapter`
+  builds its own from the context's draw and horizon
+  (`open_population/exits.py:149–152`, unchanged), and
+  `test_exact_emigration_stream` still checks it against the sealed registry
+  itself.
+
+`_project`, `run_production` and `run_gate` take
+`rng_streams: Literal["registry", "direct"] = "direct"`
+(`open_population/harness.py:257`, `:409`; `open_population/gates.py:60`).
+Any other value is refused before the initializer or any adapter runs
+(`harness.py:181–185`, `:264`). `OpenPopulationResult` records
+`rng_streams` and `rng_stream_class`, the qualified name of the class that
+served the slots (`:120–121`, `:191–197`, `:399–400`). No module was added,
+so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
+
+### Invariants
+
+1. **OP1's projection is identical whichever stream class serves the
+   adapters' person and tagged draws**: every slice, every declared flow and
+   the accounting history.
+2. At every valid stream address the direct stream equals the registry's
+   (seed identity, `bit_generator.state` and draws), and at every bad
+   address both refuse with the same exception type and message (§2 states
+   the user-defined-type limit).
+3. Within a run there is one direct instance and one context per period;
+   the generator each slot receives equals the loop's module generator for
+   its period and module.
+4. The two classes share the registry's public surface, and no sealed code
+   checks the registry's type except the one check recorded below, which
+   refuses rather than diverges.
+
+### The coordinator's conditions and their evidence
+
+**1. No sealed code changes.** Against master `0f69bbb2` the branch changes
+only `open_population/harness.py` and `gates.py`, OP1's tests and the two
+`op1_*` evidence files (§3's commands, with `0f69bbb2` as the base). No
+engine or baselines attribute is patched, and `DirectRNGStreams` is not a
+registry subclass:
+- `test_a_direct_run_patches_no_sealed_module_attribute` compares every
+  attribute of `engine/rng.py`, `engine/loop.py`, `ProjectionRNGRegistry`
+  and `PeriodContext`, by identity, before and after a direct run;
+- `test_direct_streams_are_not_a_registry_subclass`;
+- `test_each_period_gives_every_slot_one_context_and_the_loop_generators`,
+  in both modes, checks the state of the generator each of the eight slots
+  receives against the loop's module generator, and that one context, one
+  stream instance, one metadata mapping and one ordinal map serve the run.
+
+`op1_run_size.py` patches registry methods, as it did at OP1's merge, but
+only inside its measurement worker, to time them. The harness patches
+nothing.
+
+**2. Interface parity, and no type check on the registry.**
+`test_direct_streams_share_the_registry_public_surface` derives the
+registry's surface by introspection: its dataclass fields (name, annotation,
+default, `init`, `kw_only`); every public member by kind and full signature
+(`draw_seed` as a read-only property; `seed_sequence`, `generator`,
+`child_generator`, `tagged_generator`, `tagged_child_generator` and
+`person_generator` as methods); the constructor signature; and the dataclass
+parameters. The direct class must match each. The expected names are also
+pinned, so a member added to the registry fails the test until the direct
+class matches it.
+
+`test_sealed_code_holds_only_the_known_registry_type_check` runs an AST scan
+of `src/populace_dynamics/` outside `open_population/`: 305 modules at
+`0f69bbb2`, once the two closed modules below are dropped.
+- **What it reads.** The project's data-access record keeps two modules out
+  of automated reads: `estimates/adjusted_poverty.py` and
+  `uniform_cut_track_u/rows.py`. The walk drops both by path before anything
+  opens, reads, parses, hashes or stats them.
+  `test_closed_module_exclusions_are_pinned_exactly` pins that list, and
+  `test_scan_walk_skips_closed_modules_without_opening_them` records every
+  read on an invented tree whose decoys sit at those paths. Every other
+  module is read, `baselines/asfr.py` included.
+- **Closing the gap at run time.** In a fresh interpreter,
+  `test_projection_runs_import_neither_closed_module` runs a 2100 production
+  projection and two 2027 gate runs, one in each mode, with person-stream,
+  tagged-stream and emigration draws. It then checks that neither closed
+  module is in `sys.modules`. Code a projection never imports can't check
+  its registry's type.
+- **What it catches.** `isinstance` and `issubclass` (with tuples and
+  unions); `type(x)` and `x.__class__` compared by `is`, `is not`, `==`,
+  `!=`, `in` or `not in`; any other comparison against the class; `match`
+  class patterns; class-name string comparisons; `__instancecheck__` and
+  `__subclasscheck__`; `singledispatch` registration by argument or by
+  annotation; and `hasattr` or `getattr` probes of a private name found on
+  only one class.
+- **How it names the class.** Directly; through an import alias; as a
+  module attribute (`rng.ProjectionRNGRegistry`, the dotted path, or an
+  aliased module); through relative imports, local assignment chains,
+  default arguments, `type(ProjectionRNGRegistry(...))` and `getattr` on the
+  module; and through re-exports across modules, followed to a fixed point.
+- **Speed.** A module is parsed only if its text holds a tracked identifier
+  as a word: the class name, a name some module re-exports it under, or a
+  probe name. Every static spelling holds one, so the filter skips only
+  modules that cannot name the class. It keeps the scan away from two
+  generated data modules of 11 and 18.5 MB.
+- **Its own tests.** `test_scan_catches_every_spelling_of_a_registry_type_check`
+  (31 invented snippets, each with exactly one hit of its kind on its
+  marked line), `test_scan_follows_re_exports_across_modules` (aliases one
+  and two modules away, a star import, a module alias, and a same-named
+  local class that is not caught) and
+  `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` (eight
+  negatives, each importing the class so that it is parsed).
+- **Its messages.** A hit carries only a module path, line number and node
+  kind. `test_scan_messages_never_show_source_text` plants a distinctive
+  literal in an invented snippet and checks that it is absent from the
+  hits, their `repr` and the assertion message, and from the refusal raised
+  for unparsable source, whose original exception is suppressed.
+- **Limits.** It does not resolve names built at run time (`getattr` with a
+  computed string, `importlib`, `eval`), or comparisons with a type taken
+  from another object at run time (`type(a) is type(b)`).
+
+**The scan finds one check in sealed code.**
+`src/populace_dynamics/mortality_observer.py:381` is a `type-compare`: the
+opt-in mortality observer refuses any context whose registry is not exactly
+a `ProjectionRNGRegistry` (present since `e4e512e1`, before `3d69b1fc`,
+where the coordinator's search for `isinstance` found none). It raises
+`ValueError` before drawing, so it fails loudly rather than diverging.
+- `test_pinned_sealed_check_refuses_direct_streams_loudly` shows it accepts
+  the registry, giving `apply_mortality`'s survivors, and refuses the direct
+  class.
+- `test_pinned_sealed_check_refuses_a_direct_op1_run_loudly` composes it
+  into OP1: the registry mode completes and the direct default refuses.
+- An OP1 run that composes this observer must pass
+  `rng_streams="registry"`. The scan test pins exactly this hit, by path,
+  line and kind, so any other check, or any move of this one, fails it.
+- Whether to keep this disposition is the coordinator's call. Condition 2,
+  as written, asks for no check at all.
+
+**3. Stream identity.**
+- `test_every_method_matches_registry_at_every_period` covers every period
+  from 0 to the horizon, all eight modules and all six methods, at
+  horizons 0, 1, 7 and 75 and draws 0, 1 and 9.
+- Both generator comparisons in `test_streams.py` now also check
+  `bit_generator.state`, before and after four draws, so the existing
+  exhaustive grid, its Hypothesis test and every refusal-grid comparison
+  check state too.
+- `test_bad_addresses_on_injection_horizons_match_registry` crosses periods
+  just outside each horizon, an unknown module and negative children and
+  tags with valid values, on the same horizons and draws, and compares
+  exception type and message.
+- `test_generated_addresses_on_injection_horizons_match_registry` adds 60
+  Hypothesis examples, valid or not.
+
+**4. End-to-end identity.**
+`test_projection_hash_is_identical_for_both_stream_classes` runs each
+configuration in both modes and compares:
+- the SHA-256 over every slice, computed as `op1_run_size.py` does;
+- every slice, frame by frame;
+- the declared flows and the accounting history.
+
+The grid is:
+- sizes 1, 3 and 6 with draws 0, 3 and 17, in full, at 2027 (gate runs);
+- at 2100, sizes 1, 3 and 6 with draws 0, 3 and 17 respectively
+  (production runs at the registered horizon).
+
+So every size and every draw reaches both horizons. The full product at 2100
+is a one-line change (`zip` to `product` in `IDENTITY_GRID`); it was left
+out for the unit tier's time, since one 2100 run costs about as much as 35
+two-year runs.
+
+Each run draws:
+- a mortality person stream for everyone;
+- an ASFR tagged child for women of childbearing age;
+- an emigration tagged child for each survivor;
+- scheduled entrants in three years;
+- through an invented probe in the earnings slot, every method the context
+  exposes, from `context.rng_registry` and `context.person_generator`, kept
+  as a column.
+
+The test also checks that the adapters received `DirectRNGStreams` in
+direct mode and `ProjectionRNGRegistry` in registry mode.
+`test_projection_identity_holds_on_generated_runs` adds 10 Hypothesis
+examples: rosters of 0 to 8, death, birth and emigration rates of 0 to 1,
+and horizons of one to four years.
+
+`op1_run_size.py` compares three modes:
+- `registry`: everything on the registry;
+- `direct_emigration`: OP1's behavior before this follow-up;
+- `direct`: the default.
+
+Each record names the stream classes the adapters and the exit adapter were
+observed to receive, the SHA-256 of `open_population/streams.py`, `harness.py`
+and `exits.py`, and the process CPU time. The script stops if a mode runs
+another class, or if the three modes' projection hashes differ for any
+size. In this build's sandbox one 10-person worker per mode completed, with
+identical projection hashes across the three. `op1_run_size.json` still
+holds OP1's two-mode measurement. The main session reruns the script on the
+host, with §2's command, and replaces the JSON.
+
+**5. Seal bookkeeping.** No module was added, so the exclusion tuple and its
+pin are unchanged. `tests/track_u2/test_u2_isolation.py` was not run, and CI
+gives its result. `tests/tier_counts.json` and `tests/README-tiers.md` are
+untouched, for the main session's recount.
+
+**Tier.** Every new test is in `tests/open_population/test_streams.py` or
+`test_stream_injection.py`, and `_classify_test_module` classifies both
+modules as `unit`. The stream differential and the hash identity therefore
+run on every CI push.
+
+### Commands and results
+
+```sh
+.venv/bin/python -m pytest -q -p no:cacheprovider tests/open_population tests/estimates/test_birth_evidence_artifact.py tests/test_entrant_schedule.py tests/test_entrant_domains.py tests/test_entrant_id_allocation.py
+.venv/bin/python -m pytest --collect-only -q -p no:cacheprovider -m unit tests/open_population
+.venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
+.venv/bin/ruff check src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
+git diff --check 0f69bbb2
+git diff --stat 0f69bbb2
+git diff --quiet 0f69bbb2 -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b scripts tests/estimates tests/tier_counts.json tests/README-tiers.md
+```
+
+The build ran the required command in its sandbox in five chunks of named
+modules, one process each, because the sandbox could not finish it within
+one tool call. Together they gave **440 passed and 1 strict xfail, with the
+2 existing warnings**: 337 in `tests/open_population`, which are OP1's 238
+and the 99 tests this follow-up adds (74 in the new module and 25 in
+`test_streams.py`), and 104 in the other four modules. `--collect-only -m
+unit` collects all 337, none deselected. Black, Ruff and `git diff --check`
+are clean, `git diff --stat` lists only this branch's six files, and the
+sealed-path `git diff --quiet` exits 0.
+
+The sandbox's wall times are not usable, so the build timed the new tests
+by process CPU time. In the sandbox, the existing 2100 production test took
+1.67 CPU seconds, against the 0.59 s §3 reports for this host. The slowest
+new tests took 12.7 (the hash grid), 6.8 (the every-period differential) and
+2.3 (the scan) sandbox CPU seconds. The main session's host rerun gives the
+times that count.
+
+### Restricted-files statement
+
+The build read `RESTRICTED-FILES.md` at its pinned hash and the
+coordinator's three pending entries in full before any source work. It
+opened no file they list, no other session's transcript or scratchpad and
+no other Subfleet job folder. It displayed no line of any file under a
+display bar. Its code reads the scanned modules without displaying them,
+`baselines/asfr.py` included, as the ruling on the scan allows. No code it
+wrote or ran imports the two closed modules, loads either by path, or reads
+the committed MINT8 guide. Twice, a shell search or byte count over `src/`
+in the build's own session did not apply its exclusions, because of how the
+shell expanded them. Neither printed a line from any excluded file, and the
+build's report to the main session lists both. Every test, probe and
+measurement uses invented inputs. No microdata or external statistical table
+was read, and no real-data statistic was computed.
