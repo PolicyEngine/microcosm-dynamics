@@ -842,7 +842,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       },
       {
-        "authority": "IRS Publication 517(2025)",
+        "authority": "IRS Publication 517 (2025)",
         "capture": "irs_p517_2025.html",
         "location": "Regular Method; Amounts Included in Gross Income; Pastor Leslie Adams example",
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
@@ -4951,16 +4951,44 @@
         "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373"
       },
       {
+        "authority": "IRS Schedule SE (Form 1040), 1984, OCR text",
+        "capture": "irs_schedule_se_1984.pdf.txt",
+        "location": "OCR text of page 1, Part I line 2",
+        "quote": "Form W-2 wages of $100 or more from an electing church or church-controlled organization",
+        "sha256": "b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb"
+      },
+      {
         "authority": "IRS Schedule SE (Form 1040), 1985",
         "capture": "irs_schedule_se_1985.pdf",
         "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13",
         "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8"
       },
       {
+        "authority": "IRS Schedule SE (Form 1040), 1985, OCR text",
+        "capture": "irs_schedule_se_1985.pdf.txt",
+        "location": "OCR text of page 1, Part I line 2",
+        "quote": "Form W-2 wages of $100 or more from an electing church or church-controlled organization",
+        "sha256": "3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa"
+      },
+      {
         "authority": "IRS Form 1040 instructions, 1985",
-        "capture": "irs_form1040_instructions_1985.pdf",
-        "location": "printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13",
-        "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5"
+        "capture": "irs_form1040_instructions_1985_extract.pdf",
+        "location": "extract page 2 (original PDF page 31), printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13",
+        "sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35"
+      },
+      {
+        "authority": "IRS Form 1040 instructions, 1985, OCR text",
+        "capture": "irs_form1040_instructions_1985_extract.pdf.txt",
+        "location": "OCR text of extract page 2 (original PDF page 31, printed page 31), Lines 9 and 13",
+        "quote": "Lines 9 and 13.\u2014You may be subject to self-employment tax even if line 9 is less than $400.",
+        "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68"
+      },
+      {
+        "authority": "IRS Form 1040 instructions, 1985, OCR text",
+        "capture": "irs_form1040_instructions_1985_extract.pdf.txt",
+        "location": "OCR text of extract page 2 (original PDF page 31, printed page 31), Lines 9 and 13",
+        "quote": "enter on line 13 the smaller of line 12a or line 12c. In all other cases you will enter on line 13 the smaller of line 9 or line 12a",
+        "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68"
       },
       {
         "authority": "42 USC 411, official 1994 United States Code edition",
@@ -5064,10 +5092,10 @@
               "location": "Part I line 2; Part III lines 7-9, 12a, 12c, 13"
             },
             {
-              "capture": "irs_form1040_instructions_1985.pdf",
-              "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
+              "capture": "irs_form1040_instructions_1985_extract.pdf",
+              "sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
               "authority": "IRS Form 1040 instructions, 1985",
-              "location": "printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13"
+              "location": "extract page 2 (original PDF page 31), printed page 31, Employees of Churches and Qualified Church-Controlled Organizations; Lines 9 and 13"
             }
           ],
           "primary_history_citation_status": "existing_row_specific_primary_references",

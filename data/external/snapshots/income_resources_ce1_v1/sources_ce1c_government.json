@@ -54,12 +54,29 @@
     "status": "captured"
   },
   {
-    "file": "irs_form1040_instructions_1985.pdf",
+    "file": "irs_form1040_instructions_1985_extract.pdf",
     "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf",
     "retrieved_at": "2026-10-25T02:04:37Z",
-    "bytes": 4293993,
-    "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
-    "provenance": "IRS Form 1040 instructions for 1985, printed page 31; Schedule SE church-employee instructions for lines 9 and 13.",
+    "bytes": 128765,
+    "sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_form1040_instructions_1985.pdf",
+        "bytes": 4293993,
+        "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
+        "pages": 52,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_form1040_instructions_1985.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        31
+      ],
+      "kept": "cover page; printed page 31, the first page of the Schedule SE instructions, with Employees of Churches and Qualified Church-Controlled Organizations and Lines 9 and 13",
+      "method": "qpdf --deterministic-id --empty --pages irs_form1040_instructions_1985.pdf 1,31 -- irs_form1040_instructions_1985_extract.pdf (qpdf version 12.4.2)",
+      "note": "IRS Form 1040 instructions for 1985, printed page 31; Schedule SE church-employee instructions for lines 9 and 13.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
     "status": "captured"
   },
   {
@@ -98,16 +115,18 @@
     "provenance": {
       "derived_from": "irs_schedule_se_1984.pdf",
       "source_sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
-      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1984.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
       "pdf_pages": [
         1
       ],
       "printed_pages": [
         1
-      ]
+      ],
+      "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "regenerated": "2026-10-26: this command reproduces these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
     },
-    "status": "captured",
-    "retention_status": "removed_uncited_no_derivative_dependency"
+    "status": "captured"
   },
   {
     "file": "irs_schedule_se_1985.pdf.txt",
@@ -118,36 +137,43 @@
     "provenance": {
       "derived_from": "irs_schedule_se_1985.pdf",
       "source_sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
-      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1985.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
       "pdf_pages": [
         1
       ],
       "printed_pages": [
         1
-      ]
+      ],
+      "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "regenerated": "2026-10-26: this command reproduces these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
     },
-    "status": "captured",
-    "retention_status": "removed_uncited_no_derivative_dependency"
+    "status": "captured"
   },
   {
-    "file": "irs_form1040_instructions_1985.pdf.txt",
+    "file": "irs_form1040_instructions_1985_extract.pdf.txt",
     "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf",
     "retrieved_at": "2026-10-25T02:04:37Z",
     "bytes": 8190,
     "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
     "provenance": {
-      "derived_from": "irs_form1040_instructions_1985.pdf",
-      "source_sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
-      "method": "pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "derived_from": "irs_form1040_instructions_1985_extract.pdf",
+      "source_sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
+      "method": "pdftoppm -r 140 -f 2 -l 2 -png irs_form1040_instructions_1985_extract.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
       "pdf_pages": [
+        2
+      ],
+      "original_pdf_pages": [
         31
       ],
       "printed_pages": [
         31
-      ]
+      ],
+      "first_derived": "2026-10-25 from original PDF page 31 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout, named irs_form1040_instructions_1985.pdf.txt",
+      "regenerated": "2026-10-26: this command, and the same command on original PDF page 31, reproduce these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
     },
-    "status": "captured",
-    "retention_status": "removed_uncited_no_derivative_dependency"
+    "status": "captured"
   },
   {
     "file": "govinfo_statute88_pg420.pdf.txt",

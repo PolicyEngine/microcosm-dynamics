@@ -1082,10 +1082,10 @@
         "location": "Operating policy"
       },
       {
-        "capture": "irs_p517_2025.pdf",
-        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025)",
-        "location": "printed pages 4-7"
+        "location": "Coverage of Members of the Clergy: Ministers; Ministerial Services: Ministers; Exemption From Self-Employment (SE) Tax: Members of the Clergy and Requesting Exemption-Form 4361 (the text of the PDF edition's printed pages 4-7)"
       }
     ],
     "trigger_facts": [
@@ -4124,10 +4124,10 @@
         "location": "A-B"
       },
       {
-        "capture": "irs_p517_2025.pdf",
-        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
-        "location": "printed pages 4-7"
+        "location": "Coverage of Members of the Clergy: Members of Religious Orders; Ministerial Services: Members of Religious Orders; Exemption From Self-Employment (SE) Tax (the text of the PDF edition's printed pages 4-7)"
       }
     ],
     "trigger_facts": [
@@ -4367,10 +4367,10 @@
         "location": "A-B"
       },
       {
-        "capture": "irs_p517_2025.pdf",
-        "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025)",
-        "location": "printed pages 4-7"
+        "location": "Coverage of Members of the Clergy: Members of Religious Orders; Ministerial Services: Members of Religious Orders; Exemption From Self-Employment (SE) Tax (the text of the PDF edition's printed pages 4-7)"
       },
       {
         "capture": "irs_p517_2025.html",

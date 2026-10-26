@@ -1,0 +1,69 @@
+Table 1. Do You Need To Pay Employment Taxes?
+IF you ...                                                                 THEN you need to ...
+A–       Pay cash wages of $2,100 or more in 2018 to any one               Withhold and pay social security and Medicare taxes.
+         household employee.                                                   The taxes are 15.3%1 of cash wages.
+         Don't count wages you pay to—                                         Your employee's share is 7.65%1. (You can choose to pay it
+             Your spouse,                                                      yourself and not withhold it.)
+             Your child under the age of 21,                                   Your share is 7.65%.
+             Your parent (see Wages not counted, later, for an
+             exception), or
+             Any employee under the age of 18 at any time in 2018 (see
+             Wages not counted, later, for an exception).
+B–       Pay total cash wages of $1,000 or more in any calendar quarter    Pay federal unemployment tax.
+         of 2017 or 2018 to household employees.                               The tax is 6% of cash wages.
+         Don't count wages you pay to—                                         Wages over $7,000 a year per employee aren't taxed.
+             Your spouse,                                                      You also may owe state unemployment tax.
+             Your child under the age of 21, or
+             Your parent.
+1
+  In addition to withholding Medicare tax at 1.45%, you must withhold a 0.9% Additional Medicare Tax from wages you pay to an employee in
+excess of $200,000 in a calendar year. You’re required to begin withholding Additional Medicare Tax in the pay period in which you pay
+wages in excess of $200,000 to an employee and continue to withhold it each pay period until the end of the calendar year. Additional
+Medicare Tax is only imposed on the employee. There is no employer share of Additional Medicare Tax. All wages that are subject to
+Medicare tax are subject to Additional Medicare Tax withholding if paid in excess of the $200,000 withholding threshold.
+Note. If neither A nor B above applies, you don't need to pay any federal employment taxes. But you may still need to pay state employment
+taxes.
+
+Don't submit it to the IRS, the USCIS, or any other govern-                       If you don't need to pay social security, Medicare,
+ment or other entity. The form must be kept available for                  TIP or federal unemployment tax and don't choose to
+review upon notice by an authorized U.S. Government of-                           withhold federal income tax, read State employ-
+ficial.                                                                   ment taxes next. The rest of this publication doesn't apply
+                                                                          to you.
+  For more information on completing Form I-9, see
+M-274, Handbook for Employers, published by USCIS.
+                                                                          State employment taxes. You should contact your state
+         You can get Form I-9 and the USCIS Handbook                      unemployment tax agency to find out whether you need to
+         for Employers by visiting the USCIS website at                   pay state unemployment tax for your household em-
+         USCIS.gov/I-9-Central.                                           ployee. For a list of state unemployment tax agencies,
+                                                                          visit the U.S. Department of Labor's website at
+        You can also call the USCIS at 1-800-870-3676 to
+                                                                          oui.doleta.gov/unemploy/agencies.asp. You should also
+        order the Handbook for Employers. If you have
+                                                                          determine if you need to pay or collect other state employ-
+        questions about the employment eligibility verifi-
+                                                                          ment taxes or carry workers' compensation insurance.
+cation process or other immigration-related employment
+matters, contact the USCIS Office of Business Liaison at                  Consequences of not paying employment taxes. If
+1-800-357-2099.                                                           you have a household employee and you're required to
+                                                                          withhold and pay employment taxes and you don't, you
+                                                                          will generally be liable for the employment taxes that you
+Do You Need To Pay                                                        should've withheld and paid. See section 2 in Pub. 15 for
+                                                                          additional information. Interest and penalties may also be
+Employment Taxes?                                                         charged. You may have to pay a penalty if you don't give
+                                                                          Forms W-2 to your employees or file Copy A of the forms
+If you have a household employee, you may need to with-                   with the SSA by the due dates. You may also have to pay
+hold and pay social security and Medicare taxes, pay fed-                 a penalty if you don't show your employee's SSN on Form
+eral unemployment tax, or both. To find out, read Table 1.                W-2 or don't provide correct information on the form.
+
+  You don't need to withhold federal income tax from
+your household employee's wages. But if your employee                     Social Security and Medicare Taxes
+asks you to withhold it, you can. See Do You Need To
+Withhold Federal Income Tax, later.                                       The social security tax pays for old-age, survivors, and
+                                                                          disability benefits for workers and their families. The Medi-
+   If you need to pay social security, Medicare, or federal               care tax pays for hospital insurance.
+unemployment tax or choose to withhold federal income
+tax, read Table 2 for an overview of what you may need to                    Both you and your household employee may owe so-
+do.                                                                       cial security and Medicare taxes. Your share is 7.65%
+
+Page 4                                                                                                          Publication 926 (2018)
+

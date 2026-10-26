@@ -9,25 +9,43 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | govinfo_statute86_pg1329_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf | 2026-10-24T21:00:53Z | 1899665 | `5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0` |
 | govinfo_statute97_pg65_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:53Z | 3445893 | `82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad` |
 | irs_p517_2025.html | https://www.irs.gov/publications/p517 | 2026-10-24T20:59:37Z | 361352 | `2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82` |
-| irs_p517_2025.pdf | https://www.irs.gov/pub/irs-pdf/p517.pdf | 2026-10-24T20:58:53Z | 1363199 | `42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451` |
-| irs_pub15_1999.pdf | https://www.irs.gov/pub/irs-prior/p15--1999.pdf | 2026-10-24T21:10:23Z | 330756 | `4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a` |
-| irs_pub15_2000.pdf | https://www.irs.gov/pub/irs-prior/p15--2000.pdf | 2026-10-24T21:10:24Z | 268671 | `0b260e568bb67a518416ba6bed5cdc9009b98f3ddcd9cbbbecf0fe8cf471c1cf` |
-| irs_pub15_2001.pdf | https://www.irs.gov/pub/irs-prior/p15--2001.pdf | 2026-10-24T21:10:23Z | 306074 | `bcca2c54a7b9add4e07a50db85886117d2628439068bc21c30d34e1fead6065e` |
-| irs_pub15_2002.pdf | https://www.irs.gov/pub/irs-prior/p15--2002.pdf | 2026-10-24T21:10:24Z | 347242 | `de232610a85d471a8a6a8bc36ddb763cd8f4308a0b6a14ee19637867a1ef3cf8` |
-| irs_pub15_2003.pdf | https://www.irs.gov/pub/irs-prior/p15--2003.pdf | 2026-10-24T21:10:25Z | 352386 | `dc10b5026ca0f8cdf677ebcc4078fd9de608585fb4792c57124cbecd622e04aa` |
-| irs_pub15_2004.pdf | https://www.irs.gov/pub/irs-prior/p15--2004.pdf | 2026-10-24T21:10:24Z | 345783 | `885d1e0ea9ca9057266067c148db6ea065dfc1591de3a3b22cfaa92bf8231161` |
-| irs_pub15_2005.pdf | https://www.irs.gov/pub/irs-prior/p15--2005.pdf | 2026-10-24T21:10:24Z | 382065 | `6f3867d20acd1c0fff2323026c66c47e0e13c8815460eb0f71bd5a169fc67401` |
-| irs_pub15_2006.pdf | https://www.irs.gov/pub/irs-prior/p15--2006.pdf | 2026-10-24T21:10:24Z | 501972 | `7b807cecffec8425c49b297a205236f69a927ca4041b986572c9d2dde5743c66` |
-| irs_pub15_2007.pdf | https://www.irs.gov/pub/irs-prior/p15--2007.pdf | 2026-10-24T21:10:25Z | 393386 | `d56262a59664f59649c5ea28db568d4e9a14706adae0923aa7bcb14ae364c670` |
-| irs_pub15_2017.pdf | https://www.irs.gov/pub/irs-prior/p15--2017.pdf | 2026-10-24T20:59:54Z | 2591703 | `5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742` |
-| irs_pub15_2018.pdf | https://www.irs.gov/pub/irs-prior/p15--2018.pdf | 2026-10-24T20:59:54Z | 2564310 | `4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524` |
-| irs_pub15_2019.pdf | https://www.irs.gov/pub/irs-prior/p15--2019.pdf | 2026-10-24T20:59:54Z | 2556525 | `897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d` |
-| irs_pub15_2020.pdf | https://www.irs.gov/pub/irs-prior/p15--2020.pdf | 2026-10-24T20:59:54Z | 1703409 | `1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03` |
-| irs_pub15_2021.pdf | https://www.irs.gov/pub/irs-prior/p15--2021.pdf | 2026-10-24T20:59:55Z | 1723694 | `4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577` |
-| irs_pub15_2022.pdf | https://www.irs.gov/pub/irs-prior/p15--2022.pdf | 2026-10-24T20:59:55Z | 1533264 | `da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929` |
-| irs_pub15_2023.pdf | https://www.irs.gov/pub/irs-prior/p15--2023.pdf | 2026-10-24T20:59:55Z | 1568745 | `8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3` |
-| irs_pub15_2024.pdf | https://www.irs.gov/pub/irs-prior/p15--2024.pdf | 2026-10-24T20:59:55Z | 1638730 | `3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0` |
-| irs_pub15_2025.pdf | https://www.irs.gov/pub/irs-prior/p15--2025.pdf | 2026-10-24T20:59:55Z | 1638723 | `168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0` |
+| irs_p517_2025.pdf (not retained: duplicates irs_p517_2025.html) | https://www.irs.gov/pub/irs-pdf/p517.pdf | 2026-10-24T20:58:53Z | 1363199 | `42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451` |
+| irs_pub15_1999_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--1999.pdf | 2026-10-24T21:10:23Z | 27133 | `9fa2d996f048e61de369a3aaf5b6680406150dab1c316de430b271fc3b3e1f9a` |
+| irs_pub15_1999_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--1999.pdf | 2026-10-24T21:10:23Z | 6613 | `567db43f5217318c5c2e0f77e9f254d0080d43015a49feb18ce5e17f72b25b9f` |
+| irs_pub15_2000_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2000.pdf | 2026-10-24T21:10:24Z | 24257 | `c115fe012ceece908670269d510cf8e8c0dddd3e55b99bade0b2da378db6ad0b` |
+| irs_pub15_2000_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2000.pdf | 2026-10-24T21:10:24Z | 6613 | `853d76f90de609eb6cb21995999679947a0b67d8967aeeff09df66a57554c320` |
+| irs_pub15_2001_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2001.pdf | 2026-10-24T21:10:23Z | 57935 | `0338771c78f8cfb69dbd78c42d0171540d5175500998e0ea15434d8ce48c03e2` |
+| irs_pub15_2001_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2001.pdf | 2026-10-24T21:10:23Z | 6613 | `6c36301769b19ad611103de9cb0efa4421be603b46ae4a8b5395e8e15374cabb` |
+| irs_pub15_2002_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2002.pdf | 2026-10-24T21:10:24Z | 70380 | `a93c4130173a9cde2e19f65ae00295a763e24c40428f72ea7cd9eb091f82f3cc` |
+| irs_pub15_2002_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2002.pdf | 2026-10-24T21:10:24Z | 7059 | `9b05424522465970312b013c26cb32c1d7493567a254b579a07f5d5ef23fcd9b` |
+| irs_pub15_2003_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2003.pdf | 2026-10-24T21:10:25Z | 74347 | `5688e10f4059a6e74c02d1d3076b72ede2f083ef45a50d33d994dce4f08aac64` |
+| irs_pub15_2003_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2003.pdf | 2026-10-24T21:10:25Z | 6999 | `2cd9202cdd1e8b95b69dc4a0048dd7f967e3d940b5ecad9de61757eff1b58103` |
+| irs_pub15_2004_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2004.pdf | 2026-10-24T21:10:24Z | 67623 | `dc31e090705615ece54f77dff632fa9959503fcb585bdf04a45a88c3bfd90f8c` |
+| irs_pub15_2004_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2004.pdf | 2026-10-24T21:10:24Z | 6920 | `7e83b1e9a1244fa825ee64f2ef4669411387173e5728be2300ca7b6efd2d26c1` |
+| irs_pub15_2005_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2005.pdf | 2026-10-24T21:10:24Z | 71169 | `be4e7cc3dfdddef9549194b758e66ca5c57d29ef51df4eac89f2666cddee6ca1` |
+| irs_pub15_2005_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2005.pdf | 2026-10-24T21:10:24Z | 6999 | `bfaeab881289b93ef9f491c42434a6afa461bd3545b9c1d9cf080c6ade985b39` |
+| irs_pub15_2006_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2006.pdf | 2026-10-24T21:10:24Z | 187426 | `30286226480459c07473f40acf4fef87186c155484ac9e6046568c793221f1e2` |
+| irs_pub15_2006_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2006.pdf | 2026-10-24T21:10:24Z | 6922 | `23dbc413d17fafba7b21e6f82bd7eaecba0747e9e14ffd5fd544d8c1e17e007e` |
+| irs_pub15_2007_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2007.pdf | 2026-10-24T21:10:25Z | 75159 | `525e5194ee1afbc5657064425cd27f23ea8763cc57b40aec69d2633f8dad393d` |
+| irs_pub15_2007_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2007.pdf | 2026-10-24T21:10:25Z | 6883 | `7218adc4f2472810feca385128528c95498eb5b8f666bc5c90b29305b1fc64cb` |
+| irs_pub15_2017_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2017.pdf | 2026-10-24T20:59:54Z | 1248988 | `43dbef6b5741579d5a3cd58dcf86457c2f087a958f53eeb4fa13417cf113cec6` |
+| irs_pub15_2017_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2017.pdf | 2026-10-24T20:59:54Z | 6216 | `40c9905c49b0da385931c14464daa5c4cc9ca998e8d02bfd303f220c1d27ff6c` |
+| irs_pub15_2018_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2018.pdf | 2026-10-24T20:59:54Z | 1237588 | `7f7de38dac33ba6685da866ff8ee2f479bc6aeb665f264add8572885e99a28d8` |
+| irs_pub15_2018_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2018.pdf | 2026-10-24T20:59:54Z | 6099 | `1afa0c925954355b420c45ffac8d30b19d0d21cc311e533299a847757d45b098` |
+| irs_pub15_2019_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2019.pdf | 2026-10-24T20:59:54Z | 1243806 | `fc2844370adcd013364c17cb36480c3f58785a4a496fecfa0551fc57fc48e598` |
+| irs_pub15_2019_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2019.pdf | 2026-10-24T20:59:54Z | 6408 | `22db5346ad55ebadaef97f8250560f07122da90f9bab6cae488bda3052fe3674` |
+| irs_pub15_2020_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2020.pdf | 2026-10-24T20:59:54Z | 1243565 | `a956aab992b3d06b52ad7fb15444768553616d8f68c81f5dbffa74cab3e271ec` |
+| irs_pub15_2020_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2020.pdf | 2026-10-24T20:59:54Z | 6241 | `25d27289d03c930e0acc6d38fb011db8b56960df781deff957a7c0164ecd23b3` |
+| irs_pub15_2021_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2021.pdf | 2026-10-24T20:59:55Z | 1260109 | `f9532f0541e8b5e820db32422cf78512ac4fcefb586d3fa35668ce2ae95af141` |
+| irs_pub15_2021_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2021.pdf | 2026-10-24T20:59:55Z | 6187 | `6e5cbbb41362764a0aed080a231531f4db49fb787a09344d454a81a6d0caaad5` |
+| irs_pub15_2022_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2022.pdf | 2026-10-24T20:59:55Z | 1038360 | `d4bd47782e806334022de6bc730b4888204f3f4580b53233faf0e762834443cf` |
+| irs_pub15_2022_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2022.pdf | 2026-10-24T20:59:55Z | 6364 | `c0c185c92d80bfb73c0e738f06a528a5653f461ba04f0b4313c481e47c013647` |
+| irs_pub15_2023_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2023.pdf | 2026-10-24T20:59:55Z | 1038786 | `37e7c6050dc84640d36064a4d9c64bcf4a6dcc87620a9e3bd90233e730856411` |
+| irs_pub15_2023_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2023.pdf | 2026-10-24T20:59:55Z | 6269 | `c784207895ad6d764cedc76827dbe8f39dfcc9d1b7e9d0a88e0338434696eedc` |
+| irs_pub15_2024_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2024.pdf | 2026-10-24T20:59:55Z | 1037790 | `ba48561867c860023042531088ecc01e4b6cca6b3dd05dcb43d770b8f719901e` |
+| irs_pub15_2024_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2024.pdf | 2026-10-24T20:59:55Z | 6259 | `0443885a8c71d0cf2e003f746fec4c73dac969970d77bbf52f3a1baf2665519c` |
+| irs_pub15_2025_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--2025.pdf | 2026-10-24T20:59:55Z | 1042238 | `075a8cabaeaa953ad7e397a7367c1363ea518686cce4f0c39c4b3f583c25c68d` |
+| irs_pub15_2025_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p15--2025.pdf | 2026-10-24T20:59:55Z | 6305 | `9e0a0e350dd4db5757e8ce84c55364c15de0ce6ee913addf53bb150a317cbbee` |
 | irs_pub15_2026.html | https://www.irs.gov/publications/p15 | 2026-10-24T20:59:23Z | 624774 | `38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4` |
 | irs_pub17_1999.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--1999.pdf | 2026-10-24T21:04:06Z | 1717364 | `97c3c88b3c4ac364af3cc444b25edb2e85b9f80a9832899c46dd35fa34ffc85c` |
 | irs_pub17_2000.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2000.pdf | 2026-10-24T21:04:06Z | 1594840 | `91d65a8f01563c361c7a9a98e3882a2aad70ef44d9b3663c2cc8b073031b6d60` |
@@ -38,24 +56,42 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | irs_pub17_2005.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2005.pdf | 2026-10-24T21:04:07Z | 1970709 | `f15d227d97cc428e5f12cb54e4208303342a537274b2459da9e88215b9c162e2` |
 | irs_pub17_2006.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2006.pdf | 2026-10-24T21:04:07Z | 4596673 | `861caefae0ac145bc073a996c8b387e9374bd2b8cbcb8a49c04b4f41f5307258` |
 | irs_pub17_2007.pdf (not retained: uncited) | https://www.irs.gov/pub/irs-prior/p17--2007.pdf | 2026-10-24T21:04:08Z | 2661214 | `56dee95488e8746da3e0b33d643f80d452f37f8d2458d1bdeca5e85d11c55f88` |
-| irs_pub926_2008.pdf | https://www.irs.gov/pub/irs-prior/p926--2008.pdf | 2026-10-24T20:59:53Z | 1027949 | `2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc` |
-| irs_pub926_2009.pdf | https://www.irs.gov/pub/irs-prior/p926--2009.pdf | 2026-10-24T20:59:52Z | 1209711 | `aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab` |
-| irs_pub926_2010.pdf | https://www.irs.gov/pub/irs-prior/p926--2010.pdf | 2026-10-24T20:59:52Z | 1215096 | `19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350` |
-| irs_pub926_2011.pdf | https://www.irs.gov/pub/irs-prior/p926--2011.pdf | 2026-10-24T20:59:53Z | 1233471 | `efe71fab0cebfd45a79fef68771ab7fde1d2678b6d1cf8251ea36c66ab523a06` |
-| irs_pub926_2012.pdf | https://www.irs.gov/pub/irs-prior/p926--2012.pdf | 2026-10-24T20:59:53Z | 1200587 | `bb0104e3c3f822ee6edefebf3b6f440436765d24bfc4c39b9ea663e379500216` |
-| irs_pub926_2013.pdf | https://www.irs.gov/pub/irs-prior/p926--2013.pdf | 2026-10-24T20:59:53Z | 1239147 | `5685f2c266a49727afa1453a9c14caa380582c3a4c1c71318abbc6eb9fa4ef7b` |
-| irs_pub926_2014.pdf | https://www.irs.gov/pub/irs-prior/p926--2014.pdf | 2026-10-24T20:59:53Z | 1237031 | `6e68e5d1f89440eba31bb0ad76a93ec039edec40c0a76758f93c7440d67e1395` |
-| irs_pub926_2015.pdf | https://www.irs.gov/pub/irs-prior/p926--2015.pdf | 2026-10-24T20:59:53Z | 2242868 | `ab8009488d7b7385b5db87d612a230e35b8a90127d891321e7c0dba80837ebaf` |
-| irs_pub926_2016.pdf | https://www.irs.gov/pub/irs-prior/p926--2016.pdf | 2026-10-24T20:59:53Z | 2243964 | `d2bfd05cee0aff3cf0d9f04a23fd1acc5c096cd584a7b6d57c88adae6dd4b051` |
-| irs_pub926_2017.pdf | https://www.irs.gov/pub/irs-prior/p926--2017.pdf | 2026-10-24T20:59:53Z | 1458960 | `51c8acee1cf1e68c5293b105ee4dd7e8e91fbe2f5b584c5d530e3e91d7883ba5` |
-| irs_pub926_2018.pdf | https://www.irs.gov/pub/irs-prior/p926--2018.pdf | 2026-10-24T20:59:53Z | 1447977 | `0ec94bf3be3a2c42ecfe1bd317b06ca7b9eff42aa884f9dd8264b2f1a9175893` |
-| irs_pub926_2019.pdf | https://www.irs.gov/pub/irs-prior/p926--2019.pdf | 2026-10-24T20:59:54Z | 1453978 | `10edd57ad64b445187548b8ba5fb46ff5d4fd28854e64c229d854df07c721eae` |
-| irs_pub926_2020.pdf | https://www.irs.gov/pub/irs-prior/p926--2020.pdf | 2026-10-24T20:59:54Z | 1460561 | `de29f1f1566d7c111fb134985468fb1c2578bcad4cfee10f2b28d02ee3779d2d` |
-| irs_pub926_2021.pdf | https://www.irs.gov/pub/irs-prior/p926--2021.pdf | 2026-10-24T20:59:54Z | 1461397 | `c3a83427f9ee43469fef5037ca508dd2a8feabe903a5a4ad3e81c0cafbdaa164` |
-| irs_pub926_2022.pdf | https://www.irs.gov/pub/irs-prior/p926--2022.pdf | 2026-10-24T20:59:54Z | 1238442 | `f4a28adbfb8e9d64d341cc85995f90f850976b280167a4dfaaef0209d4ca52f0` |
-| irs_pub926_2023.pdf | https://www.irs.gov/pub/irs-prior/p926--2023.pdf | 2026-10-24T20:59:54Z | 1232757 | `d90591781aff2490149f001f4a9a9856001c8b2b793a00ba8688eeaed3872235` |
-| irs_pub926_2024.pdf | https://www.irs.gov/pub/irs-prior/p926--2024.pdf | 2026-10-24T20:59:54Z | 1244666 | `e0f2397a2d34d661c82e2e3a19012a42ad00387b2bec58aac0b8be8838def2b4` |
-| irs_pub926_2025.pdf | https://www.irs.gov/pub/irs-prior/p926--2025.pdf | 2026-10-24T20:59:54Z | 1250568 | `1e25a16919cb96ef49aa6fef40cd3aa99b5009427bf5cc7067c5127c97ddf2b7` |
+| irs_pub926_2008_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2008.pdf | 2026-10-24T20:59:53Z | 914802 | `61ac4e3c525879a884c77ac6a38ce26b44385acb7c9dab613264b4fbc29d351c` |
+| irs_pub926_2008_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2008.pdf | 2026-10-24T20:59:53Z | 5784 | `add271906fceb2e9670bfcba833b8385e483c22c34935ea714878230faa2eb29` |
+| irs_pub926_2009_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2009.pdf | 2026-10-24T20:59:52Z | 1002916 | `441f00bdeb4be06c7cf673cc8f60a0140ad933ba4b4c86586bff5a102e709ad2` |
+| irs_pub926_2009_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2009.pdf | 2026-10-24T20:59:52Z | 5566 | `41cab3b38db222c01fc2174da86e04fc37bb9fc947d383e0243c9d1b0410925a` |
+| irs_pub926_2010_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2010.pdf | 2026-10-24T20:59:52Z | 1003395 | `ebb1fff843026da1c599187fa2b8a0063eada16346480cce445374ab8753a43c` |
+| irs_pub926_2010_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2010.pdf | 2026-10-24T20:59:52Z | 5533 | `ce14adb1a923227cc7c71c959cf341c3e8cbb72a235a9b1377c07f6b55804162` |
+| irs_pub926_2011_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2011.pdf | 2026-10-24T20:59:53Z | 1013918 | `72d1a15468326ab3fcc58011b3f6a1b27268ccdb80e00baf18ad10b936f1f685` |
+| irs_pub926_2011_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2011.pdf | 2026-10-24T20:59:53Z | 5766 | `1a58542821457eeaf423efc5647e3a928ff758374067279eb4dd366f5eea14ca` |
+| irs_pub926_2012_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2012.pdf | 2026-10-24T20:59:53Z | 1015424 | `6a48da4cd405754adc49b3bb31f4bc36924cab7ade807483a1fe56aaa8920523` |
+| irs_pub926_2012_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2012.pdf | 2026-10-24T20:59:53Z | 5428 | `2036593956f386fd1706c86ee23e9b7b7a81b11d024802293ac2f9f159426d25` |
+| irs_pub926_2013_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2013.pdf | 2026-10-24T20:59:53Z | 1004570 | `ea28ac51e07267387d8bb25a8eacb437a950e826f4252c3d21ac9304856caf4a` |
+| irs_pub926_2013_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2013.pdf | 2026-10-24T20:59:53Z | 4503 | `6d2ee134e424c65bd2b8cbb455212ed755c7e55826a8900c74fbe6fdebbabc33` |
+| irs_pub926_2014_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2014.pdf | 2026-10-24T20:59:53Z | 1003848 | `e46ddaee8b52cdc40092a9a5c9e18d4e62a6b4d9b30c92b5e98ac53730093dd6` |
+| irs_pub926_2014_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2014.pdf | 2026-10-24T20:59:53Z | 4582 | `cb50bd5901691533e54e4091548bdf3317d0ba7cd0596da47d7a03c619deabac` |
+| irs_pub926_2015_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2015.pdf | 2026-10-24T20:59:53Z | 2034147 | `cb8361535cfdbf30c3fb9cee67319917c596628fa08859c421e08e34e4db1f01` |
+| irs_pub926_2015_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2015.pdf | 2026-10-24T20:59:53Z | 4132 | `fd87212fd691926382b003cee8a59b535e1905d9fc76857a3dd8c9a8ab9dc095` |
+| irs_pub926_2016_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2016.pdf | 2026-10-24T20:59:53Z | 2036982 | `7d2491c98ec61d5089d5b59ae4a961d240eb0d6506714e35bfb745b48dc490ec` |
+| irs_pub926_2016_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2016.pdf | 2026-10-24T20:59:53Z | 5147 | `dc062abf4eab7a7949e08d208d1b358ed5f9cca0cb0cd3d878422571082c2d52` |
+| irs_pub926_2017_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2017.pdf | 2026-10-24T20:59:53Z | 1245431 | `108630700092d1d88c52b8f507bdc69520f2e677252986aa726e9643936371ed` |
+| irs_pub926_2017_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2017.pdf | 2026-10-24T20:59:53Z | 5815 | `31417a0848035b3f8d6d5943487bf9678149b3e26873c3c4aa53fd4907a8a150` |
+| irs_pub926_2018_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2018.pdf | 2026-10-24T20:59:53Z | 1237329 | `1dcd525e7f53488388fbc616a51fe26862fc1ec22d33ee70c46203079ec6f6e3` |
+| irs_pub926_2018_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2018.pdf | 2026-10-24T20:59:53Z | 6728 | `a1345c1466820f7f50796271da75d62ba5f7b954fac6baa7c1b358c10f481a6d` |
+| irs_pub926_2019_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2019.pdf | 2026-10-24T20:59:54Z | 1239191 | `3d314bffdf2147374a4abc47e29ef43546405ccecfafc40af4bbe80dfc6e4146` |
+| irs_pub926_2019_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2019.pdf | 2026-10-24T20:59:54Z | 6955 | `83c11bc7e020e1fe213ae7c481460c27276e74fd8d2a7743b8e3fb34c283ee42` |
+| irs_pub926_2020_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2020.pdf | 2026-10-24T20:59:54Z | 1237432 | `b47321f4832b407d24fa1598fe20682cfbfd7d4eed57d6a079cb67391decdd59` |
+| irs_pub926_2020_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2020.pdf | 2026-10-24T20:59:54Z | 6463 | `b7433258fe6c41a15035d69e4ec588af959f0ab3d224d4edc7048e4e11f4aa9f` |
+| irs_pub926_2021_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2021.pdf | 2026-10-24T20:59:54Z | 1239052 | `8b0e07440deb3536cd9746e89056ffd5810733ce8da46b82fc7440f1a384c26f` |
+| irs_pub926_2021_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2021.pdf | 2026-10-24T20:59:54Z | 6205 | `546896c37061452c66ea02be0c6c5e8dee75996e9d70b0307f5dbf66ef36ccfb` |
+| irs_pub926_2022_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2022.pdf | 2026-10-24T20:59:54Z | 1032651 | `b860c424104edc0dcc90e64c46afa15100604a6978ee7cc254c0c3cbeeabd08b` |
+| irs_pub926_2022_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2022.pdf | 2026-10-24T20:59:54Z | 6467 | `8272c60b64aff7338bddf85e92fe7f635b9dcda4114d5d2c4ae78185a31d10f6` |
+| irs_pub926_2023_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2023.pdf | 2026-10-24T20:59:54Z | 1035760 | `fd8280ef75bd9dc142ca20f923b6b9f101b78386e8e19410fb62d892af40b0b9` |
+| irs_pub926_2023_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2023.pdf | 2026-10-24T20:59:54Z | 6328 | `9adc87ce34136d63edd5ad00613738b07bc92bd418726d5e82d1d07c4f497009` |
+| irs_pub926_2024_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2024.pdf | 2026-10-24T20:59:54Z | 1032146 | `295a4fff78cf4c444faadeccbf7523dcb10c10c5f616bed878047b7fd23edbfe` |
+| irs_pub926_2024_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2024.pdf | 2026-10-24T20:59:54Z | 6509 | `4b771998ebe13efea40b6b3f74b7bae2cacf26c37c4c82a855d494ec7e2cadb7` |
+| irs_pub926_2025_extract.pdf | https://www.irs.gov/pub/irs-prior/p926--2025.pdf | 2026-10-24T20:59:54Z | 1043992 | `aad183ad60df510afe8baa20cfc2cdd4c5a479c7502ded0d8f48acafd89fc9c0` |
+| irs_pub926_2025_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p926--2025.pdf | 2026-10-24T20:59:54Z | 6276 | `56d8c0f44521c2a84fcca0ec90a043d919c77a3911b30e9b10ca69945f257699` |
 | irs_pub926_2026.html | https://www.irs.gov/publications/p926 | 2026-10-24T20:59:15Z | 287215 | `d52a3a6b5a481a13668586196522e9113f0252fabc61df1d003c95b128d4bd38` |
 | irs_schedule_se_2008.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--2008.pdf | 2026-10-24T21:07:12Z | 304592 | `94ed7b76529ed8270fc7132aa2c68119c9977b29a76049e8c258c02ebea8a9ed` |
 | irs_schedule_se_2009.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--2009.pdf | 2026-10-24T21:07:12Z | 68343 | `6644ed97cb30866b052ecb11b55701f33736130bc6826ebd32a95230b967edf9` |
@@ -213,13 +249,13 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 | poms_rs_01901320.html | https://secure.ssa.gov/apps10/poms.nsf/lnx/0301901320 | 2026-10-25T02:04:36Z | 22059 | 7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b |
 | irs_schedule_se_1984.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf | 2026-10-25T02:04:37Z | 128616 | e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373 |
 | irs_schedule_se_1985.pdf | https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf | 2026-10-25T02:04:37Z | 127742 | db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8 |
-| irs_form1040_instructions_1985.pdf | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 4293993 | 84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5 |
+| irs_form1040_instructions_1985_extract.pdf | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 128765 | ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35 |
 | uscode_1994_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec411.htm | 2026-10-25T02:04:37Z | 69072 | 40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1 |
 | uscode_1994_42_409.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec409.htm | 2026-10-25T02:04:38Z | 83953 | 260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27 |
 | uscode_2013_42_411.html | https://www.govinfo.gov/content/pkg/USCODE-2013-title42/html/USCODE-2013-title42-chap7-subchapII-sec411.htm | 2026-10-25T02:04:38Z | 77847 | ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8 |
 | irs_schedule_se_1984.pdf.txt | https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf | 2026-10-25T02:04:37Z | 4593 | b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb |
 | irs_schedule_se_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf | 2026-10-25T02:04:37Z | 4603 | 3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa |
-| irs_form1040_instructions_1985.pdf.txt | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 8190 | 55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68 |
+| irs_form1040_instructions_1985_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/i1040--1985.pdf | 2026-10-25T02:04:37Z | 8190 | 55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68 |
 | govinfo_statute88_pg420.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf | 2026-10-25T02:04:36Z | 16242 | 7f2ef40b0c26fafdf8909000a6fea0161651828d5620203b31720315c5f2844d |
 | federal_register_1975_07_10_extract.pdf | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 630595 | 8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b |
 | federal_register_1975_07_10_extract.pdf.txt | https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf | 2026-10-25T02:16:45Z | 16197 | 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 |
@@ -315,6 +351,52 @@ Seven whole-act and whole-issue PDFs are kept as page-range extracts. Each extra
 
 Command: `qpdf --deterministic-id --empty --pages <original> <pages> -- <extract>` (qpdf version 12.4.2).
 
+## IRS publication page extracts
+
+Review round 2 replaced 37 whole IRS PDFs with page extracts. Each is cited for one passage: Publication 926 for 2008-2025, Publication 15 for 1999-2007 and 2017-2025, and the 1985 Form 1040 instructions. Each extract keeps the cover page and every page from the cited table's or section's heading to the cited entry, built with the qpdf command above from the original committed at `c0ea2b24`. The original's URL, size and SHA-256 identify the authentic bytes. No original has a signature byte range or signature field, so each extract records `signature_status` `original_unsigned`. pdftotext gives the same text for every kept page of an extract as for that page of its original.
+
+| Extract | Original | Original bytes | Original SHA-256 | Original PDF pages kept | Kept for |
+|---|---|---:|---|---|---|
+| irs_pub926_2008_extract.pdf | irs_pub926_2008.pdf (19 pages) | 1027949 | `2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc` | 1,3 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2009_extract.pdf | irs_pub926_2009.pdf (23 pages) | 1209711 | `aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab` | 1,3 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2010_extract.pdf | irs_pub926_2010.pdf (22 pages) | 1215096 | `19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350` | 1,3 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2011_extract.pdf | irs_pub926_2011.pdf (22 pages) | 1233471 | `efe71fab0cebfd45a79fef68771ab7fde1d2678b6d1cf8251ea36c66ab523a06` | 1,3 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2012_extract.pdf | irs_pub926_2012.pdf (20 pages) | 1200587 | `bb0104e3c3f822ee6edefebf3b6f440436765d24bfc4c39b9ea663e379500216` | 1,3 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2013_extract.pdf | irs_pub926_2013.pdf (16 pages) | 1239147 | `5685f2c266a49727afa1453a9c14caa380582c3a4c1c71318abbc6eb9fa4ef7b` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2014_extract.pdf | irs_pub926_2014.pdf (17 pages) | 1237031 | `6e68e5d1f89440eba31bb0ad76a93ec039edec40c0a76758f93c7440d67e1395` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2015_extract.pdf | irs_pub926_2015.pdf (17 pages) | 2242868 | `ab8009488d7b7385b5db87d612a230e35b8a90127d891321e7c0dba80837ebaf` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2016_extract.pdf | irs_pub926_2016.pdf (17 pages) | 2243964 | `d2bfd05cee0aff3cf0d9f04a23fd1acc5c096cd584a7b6d57c88adae6dd4b051` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2017_extract.pdf | irs_pub926_2017.pdf (17 pages) | 1458960 | `51c8acee1cf1e68c5293b105ee4dd7e8e91fbe2f5b584c5d530e3e91d7883ba5` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2018_extract.pdf | irs_pub926_2018.pdf (17 pages) | 1447977 | `0ec94bf3be3a2c42ecfe1bd317b06ca7b9eff42aa884f9dd8264b2f1a9175893` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2019_extract.pdf | irs_pub926_2019.pdf (17 pages) | 1453978 | `10edd57ad64b445187548b8ba5fb46ff5d4fd28854e64c229d854df07c721eae` | 1,4 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2020_extract.pdf | irs_pub926_2020.pdf (18 pages) | 1460561 | `de29f1f1566d7c111fb134985468fb1c2578bcad4cfee10f2b28d02ee3779d2d` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2021_extract.pdf | irs_pub926_2021.pdf (19 pages) | 1461397 | `c3a83427f9ee43469fef5037ca508dd2a8feabe903a5a4ad3e81c0cafbdaa164` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2022_extract.pdf | irs_pub926_2022.pdf (18 pages) | 1238442 | `f4a28adbfb8e9d64d341cc85995f90f850976b280167a4dfaaef0209d4ca52f0` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2023_extract.pdf | irs_pub926_2023.pdf (18 pages) | 1232757 | `d90591781aff2490149f001f4a9a9856001c8b2b793a00ba8688eeaed3872235` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2024_extract.pdf | irs_pub926_2024.pdf (18 pages) | 1244666 | `e0f2397a2d34d661c82e2e3a19012a42ad00387b2bec58aac0b8be8838def2b4` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub926_2025_extract.pdf | irs_pub926_2025.pdf (18 pages) | 1250568 | `1e25a16919cb96ef49aa6fef40cd3aa99b5009427bf5cc7067c5127c97ddf2b7` | 1,5 | cover page; Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note |
+| irs_pub15_1999_extract.pdf | irs_pub15_1999.pdf (64 pages) | 330756 | `4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a` | 1,28,29 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2000_extract.pdf | irs_pub15_2000.pdf (64 pages) | 268671 | `0b260e568bb67a518416ba6bed5cdc9009b98f3ddcd9cbbbecf0fe8cf471c1cf` | 1,28,29 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2001_extract.pdf | irs_pub15_2001.pdf (64 pages) | 306074 | `bcca2c54a7b9add4e07a50db85886117d2628439068bc21c30d34e1fead6065e` | 1,28,29 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2002_extract.pdf | irs_pub15_2002.pdf (64 pages) | 347242 | `de232610a85d471a8a6a8bc36ddb763cd8f4308a0b6a14ee19637867a1ef3cf8` | 1,28,29 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2003_extract.pdf | irs_pub15_2003.pdf (66 pages) | 352386 | `dc10b5026ca0f8cdf677ebcc4078fd9de608585fb4792c57124cbecd622e04aa` | 1,28,29 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2004_extract.pdf | irs_pub15_2004.pdf (68 pages) | 345783 | `885d1e0ea9ca9057266067c148db6ea065dfc1591de3a3b22cfaa92bf8231161` | 1,29,30 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2005_extract.pdf | irs_pub15_2005.pdf (68 pages) | 382065 | `6f3867d20acd1c0fff2323026c66c47e0e13c8815460eb0f71bd5a169fc67401` | 1,30,31 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2006_extract.pdf | irs_pub15_2006.pdf (68 pages) | 501972 | `7b807cecffec8425c49b297a205236f69a927ca4041b986572c9d2dde5743c66` | 1,30,31 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2007_extract.pdf | irs_pub15_2007.pdf (68 pages) | 393386 | `d56262a59664f59649c5ea28db568d4e9a14706adae0923aa7bcb14ae364c670` | 1,30,31,32 | cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes |
+| irs_pub15_2017_extract.pdf | irs_pub15_2017.pdf (69 pages) | 2591703 | `5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2018_extract.pdf | irs_pub15_2018.pdf (70 pages) | 2564310 | `4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2019_extract.pdf | irs_pub15_2019.pdf (70 pages) | 2556525 | `897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2020_extract.pdf | irs_pub15_2020.pdf (48 pages) | 1703409 | `1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2021_extract.pdf | irs_pub15_2021.pdf (50 pages) | 1723694 | `4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577` | 1,2,3 | cover page; What's New from its heading on page 2 through its election-workers paragraph |
+| irs_pub15_2022_extract.pdf | irs_pub15_2022.pdf (49 pages) | 1533264 | `da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2023_extract.pdf | irs_pub15_2023.pdf (49 pages) | 1568745 | `8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2024_extract.pdf | irs_pub15_2024.pdf (57 pages) | 1638730 | `3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_pub15_2025_extract.pdf | irs_pub15_2025.pdf (58 pages) | 1638723 | `168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0` | 1,2 | cover page, where What's New begins, through its election-workers paragraph |
+| irs_form1040_instructions_1985_extract.pdf | irs_form1040_instructions_1985.pdf (52 pages) | 4293993 | `84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5` | 1,31 | cover page; printed page 31, the first page of the Schedule SE instructions, with Employees of Churches and Qualified Church-Controlled Organizations and Lines 9 and 13 |
+
+Each Publication 926 and Publication 15 extract has a text derivative of its last kept page, the page that states the threshold: `pdftotext -layout` for the Publication 926 Table 1 and the 1999-2007 Special Rules table, and `pdftotext -raw` for the 2017-2025 What's New paragraph. The registry quotes each edition's threshold from its derivative.
+
 ## Removed uncited captures
 
 These general publications were removed as redundant research captures. The inventory rows above keep each PDF's URL, size and SHA-256. Retention is based on a registry citation or a recorded source/derivative relationship, including the archived transport bytes. Uncited section captures without such a relationship are removed under the same criterion.
@@ -332,9 +414,9 @@ The round-1 retention check also removed these 29 uncited captures with no retai
 
 - `cfr_2024_20_4041081.xml`
 - `govinfo_statute88_pg420.pdf.txt`
-- `irs_form1040_instructions_1985.pdf.txt`
-- `irs_schedule_se_1984.pdf.txt`
-- `irs_schedule_se_1985.pdf.txt`
+- `irs_form1040_instructions_1985.pdf.txt` (restored in review round 2 as `irs_form1040_instructions_1985_extract.pdf.txt`)
+- `irs_schedule_se_1984.pdf.txt` (restored in review round 2)
+- `irs_schedule_se_1985.pdf.txt` (restored in review round 2)
 - `irs_schedule_se_instructions_2025.pdf`
 - `poms_rm_04907001.html`
 - `poms_rs_01505_toc.html`
@@ -376,3 +458,11 @@ The round-1 plain request to https://www.ssa.gov/OP_Home/rulings/oasi/33/SSR95-0
 The derivative is `pdftotext -f 4 -l 5 -layout` of the extract (original PDF pages 296-297, printed 101 Stat. 1330-295 to 1330-296).
 
 The Pub. L. 100-647 derivative is `pdftotext -f 2 -l 6 -layout` of its extract (original PDF pages 8-11 and 252, printed 102 Stat. 3349-3352 and 3593).
+
+The two manifest provenance lines that recorded `-f2 -l3` and `-f2 -l2` now record `pdftotext -f 2 -l 3 -raw` and `pdftotext -f 2 -l 2 -layout`; each command regenerates its derivative byte for byte.
+
+`sources_government.json` now marks `poms_rm_04907001.html` `removed_uncited_no_derivative_dependency`, as `source_inventory.json` does.
+
+Three OCR derivatives that the round-1 retention check removed are restored, because they are the only text of scanned pages that se_units_1984_1985 cites: `irs_schedule_se_1984.pdf.txt` and `irs_schedule_se_1985.pdf.txt` (from commit `08b898e0`), and `irs_form1040_instructions_1985_extract.pdf.txt`, page 2 of the Form 1040 extract (original PDF page 31). The command `pdftoppm -r 140 -f <page> -l <page> -png <pdf> | tesseract stdin stdout` (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0) reproduces each one byte for byte.
+
+`irs_p517_2025.pdf` is not retained: it duplicates `irs_p517_2025.html`, which the registry now cites in its place. Check: 4,706 of the 4,835 six-word sequences in pdftotext -raw of printed pages 4-7 occur in the HTML capture's text after normalizing quotes, dashes, bullets, spacing before punctuation and list markers; the rest straddle page footers, headings, list markers or the HTML text's doubled periods.

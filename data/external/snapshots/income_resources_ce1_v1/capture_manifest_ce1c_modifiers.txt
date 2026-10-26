@@ -29,4 +29,4 @@
 
 2026-10-25T02:37:55Z 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 3620 govinfo_statute79_pg286_extract.pdf.txt
 # URL: https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf
-# Provenance: {"derived_from": "govinfo_statute79_pg286_extract.pdf", "source_sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129", "method": "pdftotext -f2 -l2 -layout", "pdf_pages": [2], "printed_pages": [399], "original_pdf_pages": [114]}
+# Provenance: {"derived_from": "govinfo_statute79_pg286_extract.pdf", "source_sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129", "method": "pdftotext -f 2 -l 2 -layout", "pdf_pages": [2], "printed_pages": [399], "original_pdf_pages": [114]}

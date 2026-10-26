@@ -1,0 +1,118 @@
+implement the 2018 withholding tables as soon as possi-
+ble, but not later than February 15, 2018. Continue to use
+the 2017 withholding tables until you implement the 2018
+withholding tables. The new withholding tables are de-
+signed to work with the Forms W-4, Employee's Withhold-
+ing Allowance Certificate, that your employees previously
+gave you.
+To help employees determine their withholding, the IRS
+is revising the withholding tax calculator available at
+IRS.gov/W4App. The IRS anticipates that this calculator
+will be available by the end of February. Encourage your
+employees to use the withholding calculator to determine
+if they should give you a new Form W-4 for 2018. The IRS
+is also working on revising Form W-4 for 2018. The calcu-
+lator and revised Form W-4 can be used by employees
+who wish to update their withholding in response to the
+new law or changes in their personal circumstances in
+2018, and by workers starting a new job. Until a new Form
+W-4 is issued, employees and employers should continue
+to use the 2017 Form W-4. For more information, go to
+IRS.gov/NR1036.
+An employee who experiences a change of status that
+causes a reduction in the number of withholding allowan-
+ces isn't required to give his or her employer a new Form
+W-4 until 30 days after the 2018 Form W-4 is released. An
+employee that has a reduction in the number of withhold-
+ing allowances solely due to changes from P.L. 115-97
+isn't required to give his or her employer a new Form W-4
+during 2018 but may do so at any time. Employees may
+use the 2017 Form W-4 to report changes to withholding
+allowances until 30 days after the 2018 Form W-4 is re-
+leased. New employees may continue to claim allowan-
+ces on the 2017 Form W-4 until 30 days after the 2018
+Form W-4 is released. Employees who submit new Forms
+W-4 for 2018 using the 2017 Form W-4 don't need to re-
+submit a 2018 Form W-4 when the 2018 Form W-4 is re-
+leased.
+Exempt Form W-4. Generally, an employee may claim
+exemption from federal income tax withholding because
+he or she had no federal income tax liability last year and
+expects none this year. To continue to be exempt from
+withholding in 2018, an employee must give you a new
+Form W-4 by February 28, 2018. However, the 2018 Form
+W-4 may not be available before February 28, 2018. Em-
+ployees may claim exemption from withholding for 2018
+using the 2017 Form W-4 until 30 days after the 2018
+Form W-4 is released. The 2017 Form W-4 must be (1)
+edited by striking "2017" in the text on line 7 and entering
+"2018" in its place, (2) completed by entering "Exempt
+2018" on line 7, or (3) not edited but signed in 2018 and
+submitted under procedures established by the employer
+for the employee to certify entitlement to exempt status for
+2018 by using the 2017 Form W-4 to claim exemption
+from withholding for 2018. In addition to 1–3 above, the
+employee can use any substantially similar method to 1–3
+that clearly conveys in writing the employee's intent to cer-
+tify his or her exemption from withholding for 2018. Em-
+ployers that have established electronic systems for fur-
+nishing withholding allowance certificates may change
+their electronic systems to substantially conform with the
+options discussed above.
+If the employee doesn't give you Form W-4 by February
+28, 2018, follow the withholding rules discussed in section
+9 under Exemption from federal income tax withholding.
+Employees who claimed exemption from withholding for
+2018 using the 2017 Form W-4, as discussed above,
+don't need to resubmit a 2018 Form W-4 when the 2018
+Form W-4 is released.
+Withholding allowance. The 2018 amount for one with-
+holding allowance on an annual basis is $4,150.
+Withholding on supplemental wages. P.L. 115-97
+lowered the withholding rates on supplemental wages.
+See section 7 for the new rates.
+Backup withholding. P.L. 115-97 lowered the backup
+withholding rate to 24%. For more information on backup
+withholding, see Backup withholding, later.
+Moving expense reimbursement. P.L. 115-97 sus-
+pends the exclusion for qualified moving expense reim-
+bursements from your employee's income beginning after
+December 31, 2017, and before January 1, 2026. How-
+ever, the exclusion is still available in the case of a mem-
+ber of the U.S. Armed Forces on active duty who moves
+because of a permanent change of station. The exclusion
+applies only to reimbursement of moving expenses that
+the member could deduct if he or she had paid or incurred
+them without reimbursement. See Moving Expenses in
+Pub. 3, Armed Forces' Tax Guide, for the definition of
+what constitutes a permanent change of station and to
+learn which moving expenses are deductible.
+Social security and Medicare tax for 2018. The social
+security tax rate is 6.2% each for the employee and em-
+ployer, unchanged from 2017. The social security wage
+base limit is $128,400.
+The Medicare tax rate is 1.45% each for the employee
+and employer, unchanged from 2017. There is no wage
+base limit for Medicare tax.
+Social security and Medicare taxes apply to the wages
+of household workers you pay $2,100 or more in cash wa-
+ges for 2018. Social security and Medicare taxes apply to
+election workers who are paid $1,800 or more in cash or
+an equivalent form of compensation in 2018.
+Disaster tax relief. Disaster tax relief was enacted for
+those impacted by Hurricane Harvey, Irma, or Maria. Ad-
+ditionally, the IRS has provided special relief designed to
+support employer leave-based donation programs to aid
+the victims of these hurricanes and to aid the victims of
+the California wildfires that began October 8, 2017. For
+more information about disaster relief, including the treat-
+ment of amounts paid to qualified tax-exempt organiza-
+tions under employer leave-based donation programs,
+see Pub. 976.
+Reminders
+Qualified small business payroll tax credit for in-
+creasing research activities. For tax years beginning
+after December 31, 2015, a qualified small business may
+elect to claim up to $250,000 of its credit for increasing re-
+search activities as a payroll tax credit against the
+Page 2 Publication 15 (2018)

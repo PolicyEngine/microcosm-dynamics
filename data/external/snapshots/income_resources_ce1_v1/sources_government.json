@@ -49,7 +49,8 @@
     "retrieved_at": "2026-10-24T20:58:53Z",
     "bytes": 34340,
     "sha256": "9cbf2033b11f5231386869536083e56c7624eac88c1f066926d46a2845d1da06",
-    "status": 200
+    "status": 200,
+    "retention_status": "removed_uncited_no_derivative_dependency"
   },
   {
     "capture": "irs_p517_2025.pdf",
@@ -57,7 +58,10 @@
     "retrieved_at": "2026-10-24T20:58:53Z",
     "bytes": 1363199,
     "sha256": "42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451",
-    "status": 200
+    "status": 200,
+    "retention_status": "removed_duplicate_of_cited_capture",
+    "duplicate_of": "irs_p517_2025.html",
+    "duplicate_check": "4,706 of the 4,835 six-word sequences in pdftotext -raw of printed pages 4-7 occur in the HTML capture's text after normalizing quotes, dashes, bullets, spacing before punctuation and list markers; the rest straddle page footers, headings, list markers or the HTML text's doubled periods"
   },
   {
     "capture": "uscode_2026_42_410.html",

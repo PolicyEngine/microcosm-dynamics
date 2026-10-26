@@ -129,7 +129,7 @@ def structured_provenance(row):
     return value if isinstance(value, dict) else {}
 
 
-PAGE_EXTRACTS = {
+STATUTE_EXTRACTS = {
     "federal_register_1975_07_10_extract.pdf",
     "govinfo_statute79_pg286_extract.pdf",
     "govinfo_statute81_pg821_extract.pdf",
@@ -138,12 +138,28 @@ PAGE_EXTRACTS = {
     "govinfo_statute101_pg1330_extract.pdf",
     "govinfo_statute102_pg3342_extract.pdf",
 }
+PUB15_EDITIONS = (*range(1999, 2008), *range(2017, 2026))
+# Review r2 low 13: one extract per IRS edition cited for a threshold, and
+# the scanned 1985 Form 1040 instructions cited for page 31.
+IRS_EXTRACTS = (
+    {f"irs_pub926_{year}_extract.pdf" for year in range(2008, 2026)}
+    | {f"irs_pub15_{year}_extract.pdf" for year in PUB15_EDITIONS}
+    | {"irs_form1040_instructions_1985_extract.pdf"}
+)
+PAGE_EXTRACTS = STATUTE_EXTRACTS | IRS_EXTRACTS
+QPDF_PAGES = re.compile(
+    r"^qpdf --deterministic-id --empty --pages (\S+) ([\d,]+) -- (\S+) "
+)
+
+
+def read_inventory():
+    return json.loads(
+        (CAPTURE_DIRECTORY / "source_inventory.json").read_text()
+    )
 
 
 def test_page_extracts_record_their_originals():
-    inventory = json.loads(
-        (CAPTURE_DIRECTORY / "source_inventory.json").read_text()
-    )
+    inventory = read_inventory()
     extracts = [
         row
         for row in inventory
@@ -155,8 +171,14 @@ def test_page_extracts_record_their_originals():
         data = (CAPTURE_DIRECTORY / row["file"]).read_bytes()
         assert hashlib.sha256(data).hexdigest() == row["sha256"]
         original = row["provenance"]["extracted_from"]
+        # qpdf keeps a signed original's signature dictionary, which no
+        # longer covers the extract's bytes. The IRS originals carry none.
+        signed = b"/ByteRange" in data
+        assert signed == (row["file"] in STATUTE_EXTRACTS)
         assert row["provenance"]["signature_status"] == (
             "original_signature_invalidated_by_page_extraction"
+            if signed
+            else "original_unsigned"
         )
         assert "recorded URL" in row["provenance"]["original_retrieval"]
         assert not (CAPTURE_DIRECTORY / original["file"]).exists()
@@ -165,6 +187,9 @@ def test_page_extracts_record_their_originals():
         pages = row["provenance"]["original_pdf_pages"]
         assert pages == sorted(set(pages))
         assert pages[0] == 1 and pages[-1] <= original["pages"]
+        method = QPDF_PAGES.match(row["provenance"]["method"])
+        assert (method[1], method[3]) == (original["file"], row["file"])
+        assert [int(page) for page in method[2].split(",")] == pages
     derived = [
         row
         for row in inventory
@@ -175,7 +200,7 @@ def test_page_extracts_record_their_originals():
         "govinfo_statute79_pg286_extract.pdf.txt",
         "govinfo_statute101_pg1330_extract.pdf.txt",
         "govinfo_statute102_pg3342_extract.pdf.txt",
-    }
+    } | {name + ".txt" for name in IRS_EXTRACTS}
     for row in derived:
         extract = next(
             r
@@ -183,6 +208,416 @@ def test_page_extracts_record_their_originals():
             if r["file"] == row["provenance"]["derived_from"]
         )
         assert row["provenance"]["source_sha256"] == extract["sha256"]
+        kept = extract["provenance"]["original_pdf_pages"]
+        assert row["provenance"]["original_pdf_pages"] == [
+            kept[page - 1] for page in row["provenance"]["pdf_pages"]
+        ]
+
+
+# pdftotext 26.09.0's options, from `pdftotext -h`. Each value is its own
+# argument: pdftotext 26.09.0 exits 99 on `-f2 -l2 -layout` and 0 on
+# `-f 2 -l 2 -layout` (both run on 2026-10-26 against
+# govinfo_statute79_pg286_extract.pdf).
+PDFTOTEXT_VALUES = {
+    **dict.fromkeys(["-f", "-l", "-x", "-y", "-W", "-H"], int),
+    **dict.fromkeys(["-r", "-fixed", "-colspacing"], float),
+    **dict.fromkeys(["-remove-hyphens", "-enc", "-eol", "-opw", "-upw"], str),
+}
+PDFTOTEXT_FLAGS = {
+    "-layout",
+    "-raw",
+    "-nodiag",
+    "-htmlmeta",
+    "-tsv",
+    "-listenc",
+    "-nopgbrk",
+    "-urls",
+    "-bbox",
+    "-bbox-layout",
+    "-cropbox",
+    "-q",
+    "-v",
+    "-h",
+    "-help",
+    "--help",
+    "-?",
+}
+# A recorded call ends at a closing quote or code span, a pipe, a
+# semicolon, a parenthesis or the end of the line.
+PDFTOTEXT_CALL = re.compile(r"\bpdftotext\b([^`\"|;()\n]*)")
+
+
+def parse_pdftotext(arguments):
+    """The options of one recorded pdftotext call, as pdftotext 26.09 reads
+    them, up to its first argument that is not an option (a file or prose).
+
+    Raises ValueError for an argument pdftotext would reject.
+    """
+    tokens = arguments.split()
+    options = {}
+    while tokens and tokens[0].startswith("-"):
+        token = tokens.pop(0)
+        if token in PDFTOTEXT_FLAGS:
+            options[token] = True
+        elif token in PDFTOTEXT_VALUES:
+            if not tokens:
+                raise ValueError(f"{token} needs a value")
+            options[token] = PDFTOTEXT_VALUES[token](tokens.pop(0))
+        else:
+            raise ValueError(f"pdftotext has no option {token}")
+    if options.get("-f", 1) > options.get("-l", float("inf")):
+        raise ValueError("first page after last page")
+    return options
+
+
+def capture_metadata_files():
+    return sorted(
+        path
+        for path in CAPTURE_DIRECTORY.iterdir()
+        if CAPTURE_METADATA.match(path.name)
+    )
+
+
+def test_recorded_pdftotext_commands_parse():
+    """Review r2 low 5: every recorded pdftotext call runs as written, and
+    a derivative's page range is the one it records."""
+    errors = []
+    calls = 0
+    for path in [*capture_metadata_files(), REGISTRY_ARTIFACT]:
+        for call in PDFTOTEXT_CALL.finditer(path.read_text()):
+            calls += 1
+            try:
+                parse_pdftotext(call[1])
+            except ValueError as error:
+                errors.append((path.name, call[0], str(error)))
+    assert errors == []
+    assert calls > len(IRS_EXTRACTS)
+    for row in read_inventory():
+        provenance = structured_provenance(row)
+        method = str(provenance.get("method", ""))
+        if method.startswith("pdftotext ") and "pdf_pages" in provenance:
+            options = parse_pdftotext(PDFTOTEXT_CALL.match(method)[1])
+            pages = list(range(options["-f"], options["-l"] + 1))
+            assert pages == provenance["pdf_pages"], row["file"]
+
+
+@settings(deadline=None)
+@given(
+    st.integers(1, 999),
+    st.integers(0, 40),
+    st.sampled_from(["-layout", "-raw"]),
+    st.sampled_from(["-f", "-l"]),
+)
+@example(2, 1, "-raw", "-f")
+def test_pdftotext_parser_rejects_fused_values(first, span, mode, fused):
+    last = first + span
+    spaced = f"-f {first} -l {last}"
+    assert parse_pdftotext(f" {spaced} {mode} INVENTED.pdf out.txt") == {
+        "-f": first,
+        "-l": last,
+        mode: True,
+    }
+    joined = spaced.replace(f"{fused} ", fused, 1)
+    with pytest.raises(ValueError):
+        parse_pdftotext(f" {joined} {mode} INVENTED.pdf")
+    if span:
+        with pytest.raises(ValueError):
+            parse_pdftotext(f" -f {last} -l {first} {mode}")
+    for recorded in ("-f2 -l3 -raw", "-f2 -l2 -layout"):
+        with pytest.raises(ValueError):
+            parse_pdftotext(recorded)
+
+
+RETENTION_REASONS = {
+    "removed_uncited_no_derivative_dependency",
+    "removed_duplicate_of_cited_capture",
+}
+
+
+def recorded_captures():
+    """(table, file, row) for every metadata row that records captured
+    bytes: a file name and its SHA-256."""
+    for path in capture_metadata_files():
+        if path.suffix == ".json":
+            for row in json.loads(path.read_text()):
+                name = row.get("file", row.get("capture"))
+                if name and "sha256" in row:
+                    yield path.name, name, row
+
+
+def retention_state(row):
+    if row.get("status") == "not_retained":
+        return "not_retained"
+    return row.get("retention_status")
+
+
+def unexplained_capture_records(records, present):
+    """Rows whose recorded file is missing without a stated reason, present
+    though marked removed, or described differently by another row.
+
+    records holds (table, file, row) triples; present maps each file in the
+    capture folder to its SHA-256.
+    """
+    problems = []
+    states = {}
+    for table, name, row in records:
+        state = retention_state(row)
+        states.setdefault(name, set()).add(state)
+        if state is None:
+            if present.get(name) != row["sha256"]:
+                problems.append((table, name, "missing or changed"))
+            continue
+        if name in present:
+            problems.append((table, name, "present but marked removed"))
+        if state == "not_retained" and not row.get("reason"):
+            problems.append((table, name, "not_retained without reason"))
+        if state not in RETENTION_REASONS | {"not_retained"}:
+            problems.append((table, name, f"unknown retention {state}"))
+        if state == "removed_duplicate_of_cited_capture" and (
+            row.get("duplicate_of") not in present
+        ):
+            problems.append((table, name, "duplicate_of names no capture"))
+    for name, found in states.items():
+        if len(found) > 1:
+            problems.append(("rows disagree", name, sorted(map(str, found))))
+    return problems
+
+
+def test_recorded_captures_are_present_or_say_why():
+    """Review r2 low 6: every recorded capture is in the folder with its
+    recorded bytes, or every row naming it says why it is not."""
+    records = list(recorded_captures())
+    present = {
+        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in CAPTURE_DIRECTORY.iterdir()
+        if path.is_file()
+    }
+    assert unexplained_capture_records(records, present) == []
+    poms = [row for _, name, row in records if name == "poms_rm_04907001.html"]
+    assert len(poms) == 2
+    assert {retention_state(row) for row in poms} == {
+        "removed_uncited_no_derivative_dependency"
+    }
+    p517 = [row for _, name, row in records if name == "irs_p517_2025.pdf"]
+    assert p517 and all(
+        row["duplicate_of"] == "irs_p517_2025.html" for row in p517
+    )
+
+
+RETENTION_CHOICES = [None, "not_retained", *sorted(RETENTION_REASONS)]
+
+
+@settings(deadline=None)
+@given(
+    st.booleans(),
+    st.sampled_from(RETENTION_CHOICES),
+    st.sampled_from(RETENTION_CHOICES),
+    st.booleans(),
+)
+@example(False, None, "removed_uncited_no_derivative_dependency", True)
+def test_retention_checker_flags_unexplained_absences(
+    present, first, second, explained
+):
+    """The low 6 checker is the test's oracle; @example is the poms case."""
+
+    def row(state):
+        out = {"file": "INVENTED.pdf", "sha256": "0" * 64}
+        if state == "not_retained":
+            out["status"] = state
+            if explained:
+                out["reason"] = "INVENTED reason"
+        elif state:
+            out["retention_status"] = state
+            if explained:
+                out["duplicate_of"] = "INVENTED.html"
+        return out
+
+    records = [
+        ("a.json", "INVENTED.pdf", row(first)),
+        ("b.json", "INVENTED.pdf", row(second)),
+    ]
+    folder = {"INVENTED.html": "1" * 64}
+    if present:
+        folder["INVENTED.pdf"] = "0" * 64
+    needs_reason = {"not_retained", "removed_duplicate_of_cited_capture"}
+    consistent = first == second and (
+        present
+        if first is None
+        else not present and (explained or first not in needs_reason)
+    )
+    assert (unexplained_capture_records(records, folder) == []) == consistent
+
+
+def scanned_sources(inventory):
+    """Each scanned PDF and its OCR text, from rows whose method is OCR."""
+    return {
+        row["provenance"]["derived_from"]: row["file"]
+        for row in inventory
+        if str(structured_provenance(row).get("method", "")).startswith(
+            "pdftoppm "
+        )
+    }
+
+
+def entries_citing_scans_without_text(entries, scans):
+    """Entries that cite a scanned PDF but quote none of its OCR text."""
+    missing = {}
+    for entry_id, entry in entries:
+        found = list(citations(entry))
+        quoted = {c["capture"] for c in found if c.get("quote")}
+        satisfied = {scan for scan, text in scans.items() if text in quoted}
+        cited = {c["capture"] for c in found} & scans.keys()
+        lacking = sorted(cited - satisfied)
+        if lacking:
+            missing[entry_id] = lacking
+    return missing
+
+
+def test_scanned_pages_keep_cited_ocr_text():
+    """Review r2 low 7: pdftotext finds no text on these scanned pages, so
+    each row citing one also quotes its OCR text, which the citation test
+    then finds in that text."""
+    inventory = read_inventory()
+    scans = scanned_sources(inventory)
+    assert scans == {
+        name: name + ".txt"
+        for name in (
+            "irs_schedule_se_1984.pdf",
+            "irs_schedule_se_1985.pdf",
+            "irs_form1040_instructions_1985_extract.pdf",
+        )
+    }
+    rows = {row["file"]: row for row in inventory if "file" in row}
+    for scan, text in scans.items():
+        data = (CAPTURE_DIRECTORY / text).read_bytes()
+        assert hashlib.sha256(data).hexdigest() == rows[text]["sha256"]
+        provenance = rows[text]["provenance"]
+        assert provenance["source_sha256"] == rows[scan]["sha256"]
+        page = provenance["pdf_pages"][0]
+        assert provenance["method"].startswith(
+            f"pdftoppm -r 140 -f {page} -l {page} -png {scan} | tesseract "
+        )
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    entries = [(row["rule_id"], row) for row in raw["rules"]] + [
+        (row["threshold_id"], row) for row in raw["thresholds"]
+    ]
+    assert entries_citing_scans_without_text(entries, scans) == {}
+    quoted = {c["capture"] for c in citations(raw) if c.get("quote")}
+    assert set(scans.values()) <= quoted
+
+
+@settings(deadline=None)
+@given(st.booleans(), st.booleans(), st.booleans(), st.booleans())
+def test_scan_checker_requires_quoted_ocr_text(cited, text, quote, nested):
+    """The low 7 checker is the test's oracle."""
+    scans = {"INVENTED.pdf": "INVENTED.pdf.txt"}
+    found = []
+    if cited:
+        found.append({"capture": "INVENTED.pdf", "sha256": "0" * 64})
+    if text:
+        ocr = {"capture": "INVENTED.pdf.txt", "sha256": "1" * 64}
+        if quote:
+            ocr["quote"] = "INVENTED words"
+        found.append(ocr)
+    entry = {"parameters": {"evidence": found}} if nested else {}
+    entry["citations"] = [] if nested else found
+    flagged = entries_citing_scans_without_text([("INVENTED", entry)], scans)
+    assert bool(flagged) == (cited and not (text and quote))
+
+
+IRS_EDITION = re.compile(r"^irs_pub(926|15)_(\d{4})_extract\.pdf$")
+EXTRACT_PAGE = re.compile(r"extract page (\d+) \(original PDF page (\d+)\)$")
+
+
+def irs_quote_problems(threshold):
+    """IRS edition extracts not followed by a text citation that quotes the
+    edition's published value (and its year, where the passage states one).
+    """
+    problems = []
+    cited = threshold["citations"]
+    for index, citation in enumerate(cited):
+        edition = IRS_EDITION.match(citation["capture"])
+        if not edition:
+            continue
+        year = int(edition[2])
+        following = cited[index + 1] if index + 1 < len(cited) else {}
+        quote = following.get("quote", "")
+        if following.get("capture") != citation["capture"] + ".txt":
+            problems.append((citation["capture"], "no text citation"))
+            continue
+        amount = threshold["published_values"].get(str(year))
+        if amount is None or f"${amount:,} or more" not in quote:
+            problems.append((citation["capture"], "amount"))
+        # The 1999-2007 Publication 15 table row states no year; the
+        # edition supplies it.
+        dated = edition[1] == "926" or year >= 2017
+        if dated and f"in {year}" not in quote:
+            problems.append((citation["capture"], "year"))
+    return problems
+
+
+def test_irs_extracts_quote_each_published_threshold(registry):
+    """Review r2 low 13: each IRS extract is cited for its edition's
+    threshold beside the text of the extract page that states it."""
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    inventory = {row["file"]: row for row in read_inventory() if "file" in row}
+    seen = set()
+    for threshold in raw["thresholds"]:
+        assert irs_quote_problems(threshold) == []
+        cited = threshold["citations"]
+        for index, citation in enumerate(cited):
+            edition = IRS_EDITION.match(citation["capture"])
+            if not edition:
+                continue
+            seen.add(citation["capture"])
+            year = int(edition[2])
+            assert registry.threshold(threshold["threshold_id"], year) == (
+                threshold["published_values"][str(year)]
+            )
+            text = cited[index + 1]
+            pages = EXTRACT_PAGE.search(citation["location"]).groups()
+            assert EXTRACT_PAGE.search(text["location"]).groups() == pages
+            provenance = inventory[text["capture"]]["provenance"]
+            assert [str(provenance["pdf_pages"][0])] == [pages[0]]
+            assert [str(provenance["original_pdf_pages"][0])] == [pages[1]]
+            kept = inventory[citation["capture"]]["provenance"]
+            assert kept["original_pdf_pages"][-1] == int(pages[1])
+    assert seen == {name for name in IRS_EXTRACTS if IRS_EDITION.match(name)}
+    assert len(seen) == 36
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["926", "15"]),
+    st.sampled_from(PUB15_EDITIONS),
+    st.integers(100, 99_999),
+    st.integers(-2, 2),
+    st.integers(-1, 1),
+    st.booleans(),
+)
+def test_irs_quote_checker_flags_wrong_or_missing_values(
+    publication, year, amount, amount_shift, year_shift, drop_text
+):
+    """The low 13 checker is the test's oracle."""
+    name = f"irs_pub{publication}_{year}_extract.pdf"
+    quoted_amount = amount + amount_shift * 100
+    quoted_year = year + year_shift
+    threshold = {
+        "published_values": {str(year): amount},
+        "citations": [
+            {"capture": name},
+            {
+                "capture": name + ".txt",
+                "quote": f"INVENTED ${quoted_amount:,} or more in "
+                f"{quoted_year} to any one",
+            },
+        ],
+    }
+    if drop_text:
+        threshold["citations"].pop()
+    dated = publication == "926" or year >= 2017
+    expected = drop_text or bool(amount_shift) or (dated and year_shift != 0)
+    assert bool(irs_quote_problems(threshold)) == expected
 
 
 def test_archived_threshold_table_matches_every_published_year(registry):
@@ -519,6 +954,8 @@ FUSED_IDENTIFIER = re.compile(
     r"(?:^|_)(?:section|under|of|or|for|the|and|in|to|by|Law)\d"
 )
 FUSED_WORDS = re.compile(r"\bnotwith\b")
+# A word or number run into a parenthesized year: "517(2025)".
+FUSED_PAREN_YEAR = re.compile(r"\w\((?:1[89]|20)\d\d\)")
 LINKS = re.compile(r"https?://\S+|#\S+|\S+\.(?:pdf|html?|txt|json|xml)\b")
 VERBATIM = {
     "quote",
@@ -545,6 +982,19 @@ def published_strings(value):
         yield value
 
 
+def fused_tokens(text):
+    """Words or citations run into a number, in prose (text with a space)
+    or in an identifier. Links and anchors are skipped."""
+    if " " in text.strip():
+        plain = LINKS.sub(" ", text)
+        return (
+            FUSED_PROSE.findall(plain)
+            + FUSED_WORDS.findall(plain)
+            + FUSED_PAREN_YEAR.findall(plain)
+        )
+    return FUSED_IDENTIFIER.findall(text) + FUSED_PAREN_YEAR.findall(text)
+
+
 def test_published_prose_has_no_fused_tokens():
     """Review r2 low 10: no word or citation runs into a number.
 
@@ -553,12 +1003,24 @@ def test_published_prose_has_no_fused_tokens():
     raw = json.loads(REGISTRY_ARTIFACT.read_text())
     found = []
     for text in published_strings(raw):
-        if " " in text.strip():
-            plain = LINKS.sub(" ", text)
-            found += FUSED_PROSE.findall(plain) + FUSED_WORDS.findall(plain)
-        else:
-            found += FUSED_IDENTIFIER.findall(text)
+        found += fused_tokens(text)
     assert found == []
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["section", "under", "Stat.", "pp.", "IRC", "GAO"]),
+    st.integers(1, 9999),
+    st.integers(1800, 2099),
+)
+def test_fused_token_detector_flags_only_fused_forms(word, number, year):
+    """The low 10 detector is the test's oracle."""
+    assert fused_tokens(f"INVENTED {word}{number} text")
+    assert not fused_tokens(f"INVENTED {word} {number} text")
+    assert fused_tokens(f"INVENTED Publication {number}({year}) text")
+    assert not fused_tokens(f"INVENTED Publication {number} ({year}) text")
+    assert fused_tokens(f"INVENTED_section{number}")
+    assert not fused_tokens(f"INVENTED_section_{number}")
 
 
 VOCATIONAL = "nonresident_alien_vocational_service"
