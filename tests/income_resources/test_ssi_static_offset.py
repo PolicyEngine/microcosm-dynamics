@@ -5,7 +5,7 @@ tier substring, as in test_ssi_engine.py. The check moved here from that
 module, so that the engine checks there import nothing from the estimates
 package.
 
-Every value is invented here or comes from ``ssi_invented``: the policy is
+Every literal is invented here or comes from ``ssi_invented``: the policy is
 its ``INVENTED_POLICY``, the Social Security levels straddle the $20 monthly
 general exclusion and run well above it, and the cut share is arbitrary.
 The expected offsets are the pinned engine's own results.

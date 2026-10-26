@@ -9,7 +9,11 @@ from __future__ import annotations
 import ast
 import builtins
 import enum
+import importlib.machinery
 import importlib.util
+import os
+import py_compile
+import subprocess
 import symtable
 import sys
 import types
@@ -1279,18 +1283,29 @@ def test_source_is_decoded_as_python_decodes_it(tmp_path):
 
 
 def spelling_binding(form, name):
-    """A module-level binding of ``name`` that the module rules admit.
+    """A module-level binding of ``name``, and the refusal it meets first.
 
-    Names come from a policyengine_core module, and a class subclasses
-    Enum; a plain import is refused before any spelling is read.
+    An aliased import takes the one policyengine_core name the module rules
+    admit, and a class subclasses Enum. A plain import, an import of any
+    other name and an augmented assignment are refused before any spelling
+    is read; the message is None when the spelling rule refuses first.
     """
-    text = form.format(n=name).replace(
-        "from m import", "from policyengine_core.invented import"
+    text = (
+        form.format(n=name)
+        .replace(
+            "from m import x as",
+            "from policyengine_core.simulations import Simulation as",
+        )
+        .replace("from m import", "from policyengine_core.simulations import")
     )
     if text.startswith("class "):
         text = text.replace(":", "(Enum):", 1)
-    message = "Unread module code" if text.startswith("import ") else None
-    return text, message
+    module_rule = (
+        text.startswith("import ")
+        or (text.startswith("from ") and " as " not in text)
+        or "+=" in text
+    )
+    return text, "Unread module code" if module_rule else None
 
 
 @pytest.mark.parametrize("form", BINDING_FORMS)
@@ -1414,9 +1429,11 @@ ATTRIBUTE_ROUTES = {
         "Unread variable invented_age",
         True,
     ),
+    # A class body runs as its module is imported, so the import-time rule
+    # refuses the in-place assignment before the attribute rules read it.
     "augmented_default": (
         [("body_tail", "default_value += 1")],
-        "Unread variable invented_age",
+        "Unread module code in variables/input/invented_age.py",
         True,
     ),
     "second_default": (
@@ -1524,13 +1541,13 @@ def python_attributes(source):
     module = types.ModuleType(inventory.MODEL_API)
     vars(module).update(INVENTED_MODEL_API)
 
-    tools = types.ModuleType("policyengine_core.invented")
-    tools.invented_tool = lambda *args: 0
+    simulations = types.ModuleType("policyengine_core.simulations")
+    simulations.Simulation = type("Simulation", (), {})
 
     def stand_in_import(name, *args, **kwargs):
         stand_ins = {
             inventory.MODEL_API: module,
-            "policyengine_core.invented": tools,
+            "policyengine_core.simulations": simulations,
         }
         if name in stand_ins:
             return stand_ins[name]
@@ -1683,10 +1700,32 @@ ADMITTED_AGE_FORMS = {
     "private_helper": ("tail", "def _invented_helper():\n    return float"),
     "core_import": (
         "head",
-        "from policyengine_core.invented import invented_tool",
+        "from policyengine_core.simulations import Simulation",
     ),
-    "item_store": ("tail", 'INVENTED_TABLE = {}\nINVENTED_TABLE["int"] = 1'),
+    "aliased_core_import": (
+        "head",
+        "from policyengine_core.simulations import Simulation as InventedSim",
+    ),
     "reading": ("tail", "INVENTED_READ = (entities[3], TaxUnit, MONTH)"),
+    # Function and lambda bodies run only when called, so calls, item
+    # stores and in-place assignments there are admitted.
+    "helper_call": ("tail", "def invented_caller():\n    return max_(1, 2)"),
+    "lambda_body_call": ("tail", "INVENTED_LATER = lambda: max_(1, 2)"),
+    "function_body_store": (
+        "tail",
+        "def invented_store(table):\n"
+        '    table["int"] = 1\n'
+        '    table |= {"float": 1}\n'
+        '    del table["int"]',
+    ),
+    "nested_decorator": (
+        "tail",
+        "def invented_outer():\n"
+        "    @invented_decorator\n"
+        "    def invented_inner():\n"
+        "        return 1\n"
+        "    return invented_inner",
+    ),
     "enum_class": (
         "head",
         'class InventedStatus(Enum):\n    INVENTED_FIRST = "first"',
@@ -1735,6 +1774,14 @@ def test_static_attributes_agree_with_python(admitted, route, position):
         ("float", "-0.5", -0.5),
         ("float", "False", None),
         ("float", '"41"', None),
+        # The engine's float() of an int must give back the same number.
+        ("float", str(2**53), 2**53),
+        ("float", str(2**53 + 1), None),
+        ("float", str(-(2**53) - 1), None),
+        pytest.param("float", "1" + "0" * 400, None, id="float-overflow"),
+        pytest.param(
+            "float", "-1" + "0" * 400, None, id="float-negative-overflow"
+        ),
         ("bool", "True", True),
         ("bool", "1", None),
         ("bool", "not False", None),
@@ -1763,6 +1810,39 @@ def test_primitive_default_is_a_literal_of_its_type(
         assert type(read["default"]) is type(expected)
 
 
+@settings(deadline=None, max_examples=200)
+@given(
+    st.one_of(
+        st.integers(-(2**60), 2**60),
+        st.integers(2**53 - 8, 2**53 + 8),
+        st.integers(2**1023, 2**1025),
+    ),
+    st.booleans(),
+)
+def test_int_default_of_a_float_is_read_only_when_it_converts_exactly(
+    value, negative
+):
+    """The engine holds float(value) for an int default of a float
+    variable, or raises OverflowError; the reader admits the int only when
+    that float equals it, so the record and the engine agree."""
+    value = -value if negative else value
+    source = invented_age_module(
+        [
+            ("value_type = int", "value_type = float"),
+            ("default_value = 41", f"default_value = {value}"),
+        ]
+    )
+    read = read_attributes(source)
+    try:
+        engine = float(value)
+    except OverflowError:
+        engine = None
+    if engine is not None and engine == value:
+        assert read["default"] == value == engine
+    else:
+        assert read is None
+
+
 @pytest.mark.parametrize(
     "attribute", ["value_type", "entity", "definition_period"]
 )
@@ -1785,8 +1865,41 @@ def test_required_attribute_absent_refuses_inventory(tmp_path, attribute):
 # (place, text) as in ATTRIBUTE_ROUTES.
 REFUSED_MODULE_FORMS = {
     "plain_import": ("head", "import invented_module"),
+    "plain_core_import": ("head", "import policyengine_core.variables.config"),
     "other_star_import": ("head", "from invented_module import *"),
-    "core_star_import": ("head", "from policyengine_core.invented import *"),
+    "core_star_import": (
+        "head",
+        "from policyengine_core.simulations import *",
+    ),
+    # policyengine_core names other than the one the closure imports.
+    "core_package_import": (
+        "head",
+        "from policyengine_core import invented_tool",
+    ),
+    "core_prefix_import": (
+        "head",
+        "from policyengine_coreinvented import invented_tool",
+    ),
+    "core_defaults_import": (
+        "head",
+        "from policyengine_core.variables.config import VALUE_TYPES",
+    ),
+    "core_other_name": (
+        "head",
+        "from policyengine_core.simulations import invented_tool",
+    ),
+    "core_extra_name": (
+        "head",
+        "from policyengine_core.simulations import Simulation, invented_tool",
+    ),
+    "core_module_prefix": (
+        "head",
+        "from policyengine_core.simulationsinvented import Simulation",
+    ),
+    "core_submodule": (
+        "head",
+        "from policyengine_core.simulations.invented import Simulation",
+    ),
     "relative_import": ("head", "from .invented_module import invented_tool"),
     # Relative imports whose module is spelled like an admitted one.
     "relative_variables_import": (
@@ -1802,12 +1915,12 @@ REFUSED_MODULE_FORMS = {
     "nested_import": (
         "body_tail",
         "def formula(person, period, parameters):\n"
-        "    from policyengine_core.invented import invented_tool\n"
-        "    return invented_tool(person)",
+        "    from policyengine_core.simulations import Simulation\n"
+        "    return Simulation",
     ),
     "guarded_import": (
         "head",
-        "if True:\n    from policyengine_core.invented import invented_tool",
+        "if True:\n    from policyengine_core.simulations import Simulation",
     ),
     "dunder_name": ("tail", "INVENTED_NAME = __name__"),
     "dunder_attribute": ("tail", "INVENTED_NAMES = Variable.__dict__"),
@@ -1848,6 +1961,61 @@ REFUSED_MODULE_FORMS = {
         "        value_type = float",
     ),
     "variable_bound": ("tail", "Variable = None"),
+    # Code that runs as the module is imported and can change what another
+    # module holds: calls, decorators, item stores and deletes, and
+    # augmented assignments, at module level, in class bodies, and in the
+    # decorators, defaults and annotations of functions and lambdas.
+    "item_store": ("tail", 'INVENTED_TABLE = {}\nINVENTED_TABLE["int"] = 1'),
+    "item_delete": (
+        "tail",
+        'INVENTED_TABLE = {"int": 1}\ndel INVENTED_TABLE["int"]',
+    ),
+    "item_store_target": (
+        "tail",
+        'INVENTED_TABLE = {}\nfor INVENTED_TABLE["int"] in (1,):\n    pass',
+    ),
+    "augmented_assignment": (
+        "tail",
+        'INVENTED_TABLE = {}\nINVENTED_TABLE |= {"int": 1}',
+    ),
+    "module_call": ("tail", "INVENTED_SPARE = max_(1, 2)"),
+    "method_call": (
+        "tail",
+        "INVENTED_TABLE = {}\nINVENTED_TABLE.update(int=1)",
+    ),
+    "class_body_call": ("body_tail", 'label = str("Invented age")'),
+    "enum_body_call": (
+        "tail",
+        'class InventedStatus(Enum):\n    INVENTED = str("x")',
+    ),
+    "comprehension_call": (
+        "tail",
+        "INVENTED_SPARE = [max_(1, 2) for invented_item in (1,)]",
+    ),
+    "decorated_function": (
+        "tail",
+        "@invented_decorator\ndef invented_helper():\n    return 1",
+    ),
+    "default_argument_call": (
+        "tail",
+        "def invented_helper(value=max_(1, 2)):\n    return value",
+    ),
+    "keyword_default_call": (
+        "tail",
+        "def invented_helper(*, value=max_(1, 2)):\n    return value",
+    ),
+    "annotation_call": (
+        "tail",
+        "def invented_helper(value: max_(1, 2)):\n    return value",
+    ),
+    "return_annotation_call": (
+        "tail",
+        "def invented_helper() -> max_(1, 2):\n    return 1",
+    ),
+    "lambda_default_call": (
+        "tail",
+        "INVENTED_SPARE = lambda value=max_(1, 2): value",
+    ),
 }
 
 
@@ -1993,6 +2161,227 @@ def test_unresolved_variables_import_refuses_inventory(tmp_path):
         inventory.inventory_release(package)
 
 
+def python_finds(root, module):
+    """The loader and file Python's own import system finds for ``module``,
+    in a fresh interpreter with ``root`` first on its path and no site
+    packages. Finding runs only the parent packages, here invented
+    namespace folders or empty inits."""
+    code = (
+        "import importlib.util, sys\n"
+        "sys.path.insert(0, sys.argv[1])\n"
+        "spec = importlib.util.find_spec(sys.argv[2])\n"
+        "print(type(spec.loader).__name__, spec.origin)\n"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-I", "-S", "-B", "-c", code, str(root), module],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=120,
+    )
+    loader, origin = completed.stdout.strip().split(" ", 1)
+    return loader, Path(origin)
+
+
+# Round 8's frame-walking init, which rebinds int in the module importing
+# it, from the review's repro of a package that shadows a module.
+INVENTED_SHADOW_INIT = """import sys
+
+frame = sys._getframe()
+while frame is not None and not frame.f_globals.get("__file__", "").endswith(
+    "invented_age.py"
+):
+    frame = frame.f_back
+frame.f_globals["int"] = float
+
+
+def invented_tool():
+    return 1
+"""
+
+
+@pytest.mark.parametrize(
+    "init",
+    [INVENTED_SHADOW_INIT, f"{INVENTED_TOOLS}\nINVENTED_NAME = __name__\n"],
+    ids=["frame_walk", "dunder_name"],
+)
+def test_package_that_shadows_a_module_is_read_as_python_finds_it(
+    tmp_path, init
+):
+    """With both invented_tools/__init__.py and invented_tools.py, Python
+    imports the package; the reader reads its init, not the module."""
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+    assert inventory.inventory_release(package)
+    shadow = package / "variables/invented/invented_tools"
+    shadow.mkdir()
+    (shadow / "__init__.py").write_text(init)
+    module = "policyengine_us.variables.invented.invented_tools"
+    assert python_finds(tmp_path, module) == (
+        "SourceFileLoader",
+        shadow / "__init__.py",
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unread module code in "
+        "variables/invented/invented_tools/__init__.py",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_import_caches_do_not_outlive_a_folder_change(tmp_path):
+    """The import system's finder keeps a folder's listing until the
+    folder's modification time changes, which a copy that keeps times can
+    prevent. The reader clears those caches before each read, so a second
+    read in one process finds what a fresh interpreter finds."""
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+    folder = package / "variables/invented"
+    before = folder.stat()
+    assert inventory.inventory_release(package)
+    shadow = folder / "invented_tools"
+    shadow.mkdir()
+    (shadow / "__init__.py").write_text(INVENTED_SHADOW_INIT)
+    os.utime(folder, ns=(before.st_atime_ns, before.st_mtime_ns))
+    assert folder.stat().st_mtime_ns == before.st_mtime_ns
+    module = "policyengine_us.variables.invented.invented_tools"
+    assert python_finds(tmp_path, module) == (
+        "SourceFileLoader",
+        shadow / "__init__.py",
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unread module code in "
+        "variables/invented/invented_tools/__init__.py",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_sourceless_package_init_refuses_inventory(tmp_path):
+    """Python runs a package's __init__.pyc when no __init__.py is there;
+    the reader has no source to read, so it refuses."""
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+    folder = package / "variables/invented"
+    source = tmp_path / "invented_init_source.py"
+    source.write_text("INVENTED_MARK = 1\n")
+    py_compile.compile(
+        str(source), cfile=str(folder / "__init__.pyc"), doraise=True
+    )
+    source.unlink()
+    assert python_finds(tmp_path, "policyengine_us.variables.invented") == (
+        "SourcelessFileLoader",
+        folder / "__init__.pyc",
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unread non-source module variables/invented/__init__.pyc",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_extension_module_beside_the_source_refuses_inventory(tmp_path):
+    """Python's finder takes an extension module before source of the same
+    name; the reader refuses rather than read the source."""
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+    suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
+    (package / f"variables/invented/invented_tools{suffix}").write_bytes(b"")
+    with pytest.raises(
+        ValueError,
+        match=f"Unread non-source module variables/invented/invented_tools"
+        f"{suffix}",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("init", [None, ""], ids=["namespace", "package"])
+def test_name_a_submodule_supplies_refuses_inventory(tmp_path, init):
+    """``from <package> import invented_tools`` runs invented_tools.py when
+    the package's own code does not bind the name."""
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS, init)
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module(
+            [
+                (
+                    "head",
+                    "from policyengine_us.variables.invented import "
+                    "invented_tools",
+                )
+            ]
+        )
+    )
+    module = "policyengine_us.variables.invented.invented_tools"
+    assert python_finds(tmp_path, module) == (
+        "SourceFileLoader",
+        package / "variables/invented/invented_tools.py",
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unread submodule import of "
+        "policyengine_us.variables.invented.invented_tools",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize(
+    ("layout", "module"),
+    [
+        # A step past a module, which is not a package.
+        ("invented_more", "invented.invented_tools.invented_more"),
+        # The import system matches names by case, as the folder lists them.
+        ("Invented_Tools", "invented.invented_tools"),
+    ],
+)
+def test_import_python_cannot_resolve_refuses_inventory(
+    tmp_path, layout, module
+):
+    package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+    folder = package / "variables/invented"
+    if layout == "Invented_Tools":
+        (folder / "invented_tools.py").rename(folder / "Invented_Tools.py")
+    else:
+        (folder / "invented_more.py").write_text(INVENTED_TOOLS)
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module(
+            [
+                (
+                    "head",
+                    f"from policyengine_us.variables.{module} import "
+                    "invented_tool",
+                )
+            ]
+        )
+    )
+    with pytest.raises(
+        ValueError,
+        match=f"Unresolved import of policyengine_us.variables.{module}",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("position", ["tools", "init"])
+def test_followed_modules_are_decoded_as_python_decodes_them(
+    tmp_path, position
+):
+    """Under this cookie "+AAo-" is a newline, so Python runs a statement
+    where a UTF-8 read sees a comment, in a followed module or in the
+    package init its import runs."""
+    code = (
+        b"# coding: utf-7\n"
+        + INVENTED_TOOLS.encode("ascii")
+        + b'# +AAo-globals()["int"] = float\n'
+    )
+    assert len(ast.parse(code).body) == 2
+    assert len(ast.parse(code.decode("utf-8")).body) == 1
+    if position == "tools":
+        package = package_importing_tools(tmp_path, INVENTED_TOOLS)
+        path = package / "variables/invented/invented_tools.py"
+    else:
+        package = package_importing_tools(tmp_path, INVENTED_TOOLS, "")
+        path = package / "variables/invented/__init__.py"
+    path.write_bytes(code)
+    relative = path.relative_to(package).as_posix()
+    with pytest.raises(ValueError, match=f"Unread module code in {relative}"):
+        inventory.inventory_release(package)
+
+
 def test_enum_variable_with_a_formula_needs_readable_members(tmp_path):
     """Members are read for every enum variable, not only inputs."""
     for possible, refused in (
@@ -2127,3 +2516,246 @@ def test_core_defaults_compare_by_type(tmp_path, old, new):
     config.write_text(INVENTED_CORE_DEFAULTS.replace(old, new))
     with pytest.raises(ValueError, match="Core primitive defaults differ"):
         inventory.validate_core_defaults(package)
+
+
+# Round 8's repros: a variable module that changes policyengine_core's
+# table of type defaults as it is imported. The engine then gives every
+# variable of that type without a default of its own the changed value,
+# while a reader that admitted the module would record the table's.
+CORE_DEFAULT_BINDINGS = {
+    # The review's spelling, which the import rules also refuse.
+    "core_import": (
+        "from policyengine_core.variables.config import VALUE_TYPES"
+    ),
+    # A spelling the import rules admit: the model API exports warnings,
+    # whose module holds sys.
+    "model_api": (
+        "VALUE_TYPES = warnings.sys.modules[\n"
+        '    "policyengine_core.variables.config"\n'
+        "].VALUE_TYPES"
+    ),
+}
+# (value_type, the change, the default it gives the engine's variable)
+CORE_DEFAULT_CHANGES = {
+    "item_store": ("float", 'VALUE_TYPES[float]["default"] = 7', 7),
+    "method_call": ("int", "VALUE_TYPES[int].update(default=7)", 7),
+    "bool_default": ("bool", 'VALUE_TYPES[bool]["default"] = True', True),
+    "augmented_assignment": (
+        "float",
+        "INVENTED_DEFAULTS = VALUE_TYPES[float]\n"
+        'INVENTED_DEFAULTS |= {"default": 7}',
+        7,
+    ),
+}
+
+
+def core_default_module(value_type, binding, change=None):
+    """The invented age module as a ``value_type`` variable with no default
+    of its own, after ``binding`` and, if given, ``change``."""
+    forms = [
+        ("value_type = int", f"value_type = {value_type}"),
+        ("    default_value = 41\n", ""),
+        ("head", binding),
+    ]
+    if change is not None:
+        forms.append(("head", change))
+    return invented_age_module(forms)
+
+
+@pytest.mark.parametrize("binding", sorted(CORE_DEFAULT_BINDINGS))
+@pytest.mark.parametrize("change", sorted(CORE_DEFAULT_CHANGES))
+def test_core_default_changes_refuse_inventory(tmp_path, change, binding):
+    """Each change refuses, unit and end to end, whichever way the module
+    reaches the table; see test_ssi_engine for what the engine loads."""
+    value_type, text, _ = CORE_DEFAULT_CHANGES[change]
+    source = core_default_module(
+        value_type, CORE_DEFAULT_BINDINGS[binding], text
+    )
+    assert read_attributes(source) is None
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(
+        ValueError,
+        match="Unread module code in variables/input/invented_age.py",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("value_type", ["bool", "float", "int"])
+def test_core_default_table_read_without_a_change_is_admitted(
+    tmp_path, value_type
+):
+    """Reaching the table through the model API, with no change, is read,
+    so the import-time rule, not the import rules, refuses the changes."""
+    source = core_default_module(
+        value_type, CORE_DEFAULT_BINDINGS["model_api"]
+    )
+    expected = INVENTED_AGE_RECORD | {
+        "value_type": value_type,
+        "default": inventory.TYPE_DEFAULTS[value_type],
+    }
+    assert read_attributes(source) == expected
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    record = next(
+        v
+        for v in inventory.inventory_release(package)["inputs"]
+        if v["name"] == "invented_age"
+    )
+    assert record["default_origin"] == "core type"
+    assert record["default"] == expected["default"]
+    assert type(record["default"]) is type(expected["default"])
+
+
+INVENTED_HIDDEN_AGE = (
+    "class invented_age(Variable):\n"
+    "    value_type = float\n"
+    "    entity = Person\n"
+    "    definition_period = MONTH\n"
+    "    default_value = 7\n"
+)
+
+
+def test_hidden_folders_are_outside_the_file_index(tmp_path):
+    """The engine's walk skips names with a leading dot, so a same-stem
+    file in a hidden folder is never the one the engine loads."""
+    package = invented_package(tmp_path)
+    hidden = package / "variables/.invented_old"
+    hidden.mkdir()
+    (hidden / "invented_age.py").write_text(INVENTED_HIDDEN_AGE)
+    hidden_root = package / "variables/gov/ssa/ssi/.invented_old"
+    hidden_root.mkdir()
+    (hidden_root / "invented_hidden_ssi.py").write_text(
+        INVENTED_HIDDEN_AGE.replace("invented_age", "invented_hidden_ssi")
+    )
+    (package / "variables/gov/ssa/ssi/.invented_hidden_file.py").write_text(
+        INVENTED_HIDDEN_AGE.replace("invented_age", "invented_hidden_file")
+    )
+    result = inventory.inventory_release(package)
+    assert result["federal_ssi_variable_count"] == 2
+    assert not {"invented_hidden_ssi", "invented_hidden_file"} & {
+        v["name"] for v in result["variables"]
+    }
+    record = next(v for v in result["inputs"] if v["name"] == "invented_age")
+    assert record["path"] == "variables/input/invented_age.py"
+    assert {key: record[key] for key in ("value_type", "period")} | {
+        "default": record["default"]
+    } == {"value_type": "int", "period": "YEAR", "default": 41}
+    # Without the visible file, the hidden one is not read in its place.
+    (package / "variables/input/invented_age.py").unlink()
+    with pytest.raises(
+        ValueError,
+        match="Unresolved dependency: invented_intermediate: invented_age",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_package_init_in_the_ssi_tree_is_not_a_root(tmp_path):
+    """The engine's walk reads a folder's __init__.py as metadata only, so
+    a variable defined there is not loaded and is not an SSI root."""
+    package = invented_package(tmp_path)
+    (package / "variables/gov/ssa/ssi/__init__.py").write_text(
+        "class invented_init_ssi(Variable):\n"
+        "    value_type = float\n"
+        "    entity = Person\n"
+        "    definition_period = YEAR\n"
+    )
+    result = inventory.inventory_release(package)
+    assert result["federal_ssi_variable_count"] == 2
+    assert "invented_init_ssi" not in {v["name"] for v in result["variables"]}
+    assert result == inventory.inventory_release(
+        invented_package(tmp_path / "plain")
+    )
+
+
+@pytest.mark.parametrize("root", ["invented_aa_dup", "invented_zz_dup"])
+def test_dependency_whose_stem_names_two_files_refuses_inventory(
+    tmp_path, root
+):
+    """Two files of one stem refuse a dependency on it, whether or not the
+    reader has already read one of them: which file the engine's variable
+    comes from is not settled by the stem."""
+    package = invented_package(tmp_path)
+    other = package / "variables/invented_other"
+    other.mkdir()
+    (other / "invented_age.py").write_text(INVENTED_HIDDEN_AGE)
+    with pytest.raises(
+        ValueError,
+        match="Dependency invented_age of invented_intermediate names more "
+        "than one file",
+    ):
+        inventory.inventory_release(package)
+    # A duplicate stem that is also an SSI root, read before or after the
+    # variable that depends on it, as the roots' order puts it.
+    package = invented_package(tmp_path / "root")
+    for folder in ("gov/ssa/ssi", "input"):
+        (package / f"variables/{folder}/{root}.py").write_text(
+            INVENTED_HIDDEN_AGE.replace("invented_age", root)
+        )
+    path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+    path.write_text(
+        path.read_text().replace(
+            'person("invented_age", period)',
+            f'person("invented_age", period) + person("{root}", period)',
+        )
+    )
+    with pytest.raises(
+        ValueError,
+        match=f"Dependency {root} of invented_intermediate names more than "
+        "one file",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_stem_no_dependency_names_may_repeat(tmp_path):
+    """As puf.py does in the pinned release, outside the closure."""
+    package = invented_package(tmp_path)
+    for folder in ("input", "gov/states/ca"):
+        (package / f"variables/{folder}/invented_unused.py").write_text(
+            INVENTED_HIDDEN_AGE.replace("invented_age", "invented_unused")
+        )
+    assert inventory.inventory_release(package) == inventory.inventory_release(
+        invented_package(tmp_path / "plain")
+    )
+
+
+def test_state_supplement_files_are_those_the_walk_loads(tmp_path):
+    package = invented_package(tmp_path)
+    states = package / "variables/gov/states"
+    (states / "ca/ca_state_supplement.py").write_text("")
+    (states / ".invented_old").mkdir()
+    (states / ".invented_old/ny_state_supplement.py").write_text("")
+    result = inventory.inventory_release(package)
+    assert result["state_supplement_paths"] == [
+        "variables/gov/states/ca/ca_state_supplement.py"
+    ]
+    assert result["states_with_named_ssi_supplement_files"] == ["CA"]
+
+
+@pytest.mark.parametrize("attribute", ["adds", "subtracts", "possible_values"])
+def test_list_attribute_bound_twice_refuses_inventory(tmp_path, attribute):
+    """Python keeps the second binding, which the reader would not read;
+    the inventory refuses rather than read the first."""
+    package = invented_package(tmp_path)
+    path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+    line = '    adds = "gov.ssa.ssi.income.sources.earned"\n'
+    text = path.read_text()
+    assert text.count(line) == 1
+    path.write_text(
+        text.replace(
+            line,
+            line
+            + f'    {attribute} = ["pension_income"]\n'
+            + f'    {attribute} = ["bank_account_assets"]\n',
+        )
+    )
+    namespace = {"Variable": object, "Person": None}
+    namespace |= {"MONTH": None, "YEAR": None}
+    exec(path.read_text(), namespace)  # noqa: S102 - invented source only
+    assert getattr(namespace["invented_ssi"], attribute) == [
+        "bank_account_assets"
+    ]
+    with pytest.raises(
+        ValueError, match=f"Unresolved {attribute} for invented_ssi"
+    ):
+        inventory.inventory_release(package)

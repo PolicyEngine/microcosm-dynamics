@@ -31,8 +31,11 @@ from .ssi_invented import invented_case
 from .test_ssi_inventory import (
     ADMITTED_FORMS,
     ATTRIBUTE_ROUTES,
+    CORE_DEFAULT_BINDINGS,
+    CORE_DEFAULT_CHANGES,
     INVENTED_AGE_RECORD,
     REFUSED_FORMS,
+    core_default_module,
     invented_age_module,
     invented_enum_module,
     read_attributes,
@@ -225,7 +228,7 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
 # with its entity and period in every spelling the model API binds them to,
 # as the inventory records them.
 ATTRIBUTE_CHILD = """
-import json, sys
+import enum, json, sys
 import policyengine_us.model_api as model_api
 from policyengine_core.entities import Entity
 from policyengine_us import CountryTaxBenefitSystem
@@ -246,6 +249,11 @@ for name in json.load(sys.stdin):
         "name": name,
         "value_type": variable.value_type.__name__,
         "default": getattr(default, "name", default),
+        "default_type": (
+            "member"
+            if isinstance(default, enum.Enum)
+            else type(default).__name__
+        ),
         "entity": spellings.get(("entity", variable.entity.key)),
         "period": spellings.get(("period", variable.definition_period)),
     })
@@ -253,11 +261,29 @@ json.dump(observed, sys.stdout)
 """
 
 
+def engine_default_type(record):
+    """The type of the default the engine holds for an inventory record.
+
+    The engine applies float() to an explicit int default of a float
+    variable, so a recorded 40 is its 40.0; it keeps a core type default,
+    and every other explicit default, as the record has it; and an enum
+    default is a member of its class."""
+    if record["value_type"] == "Enum":
+        return "member"
+    if (
+        record["value_type"] == "float"
+        and record["default_origin"] == "explicit"
+    ):
+        return "float"
+    return type(record["default"]).__name__
+
+
 def test_inventory_attributes_match_the_pinned_engine():
     """Differential: each inventoried variable's value_type, default, entity
     and period against what the pinned engine gives it. The static read
     names them by spelling, which reflection could change. Defaults compare
-    by bool-ness too, since False == 0."""
+    by value and by type, as ``engine_default_type`` gives it: False == 0
+    and 40 == 40.0, but the engine keeps each type."""
     python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
     if not python.is_file():
         pytest.skip(f"SSI0 interpreter absent: {python}")
@@ -280,13 +306,18 @@ def test_inventory_attributes_match_the_pinned_engine():
         "int",
         "Enum",
     }
+    # The release has an int default that the engine converts: age's 40.
+    assert any(
+        r["value_type"] == "float"
+        and r["default_origin"] == "explicit"
+        and type(r["default"]) is int
+        for r in records
+    )
     for record, pinned in zip(records, observed, strict=True):
         assert pinned["name"] == record["name"]
         assert pinned["value_type"] == record["value_type"]
         assert pinned["default"] == record["default"]
-        assert isinstance(pinned["default"], bool) is isinstance(
-            record["default"], bool
-        )
+        assert pinned["default_type"] == engine_default_type(record)
         # The model API binds each entity and period under one spelling,
         # the one the source names.
         assert pinned["entity"] == [record["entity"]]
@@ -525,3 +556,187 @@ def test_engine_attributes_are_those_the_pinned_variable_reads():
             assert isinstance(argument, ast.Constant)
             read.add(argument.value)
     assert read == inventory_script.ENGINE_ATTRIBUTES
+
+
+# Runs in the pinned interpreter. It loads each invented module through the
+# engine's own loader and reports the default the engine gives its one new
+# variable. policyengine_core's type defaults and the builtins are restored
+# after each module, so no change reaches the next.
+CORE_DEFAULT_CHILD = """
+import builtins, json, sys, tempfile
+from pathlib import Path
+from policyengine_core.variables import config
+from policyengine_us import CountryTaxBenefitSystem
+
+namespace = vars(builtins)
+saved = dict(namespace)
+saved_types = {key: dict(value) for key, value in config.VALUE_TYPES.items()}
+system = CountryTaxBenefitSystem()
+observed = []
+with tempfile.TemporaryDirectory() as folder:
+    for index, source in enumerate(json.load(sys.stdin)):
+        path = Path(folder) / f"invented_core_default_{index}.py"
+        path.write_text(source)
+        before = set(system.variables)
+        try:
+            system.add_variables_from_file(str(path))
+            (name,) = set(system.variables) - before
+            variable = system.variables[name]
+            observed.append({
+                "value_type": variable.value_type.__name__,
+                "default": variable.default_value,
+                "default_type": type(variable.default_value).__name__,
+            })
+        except Exception as error:
+            observed.append({"error": type(error).__name__})
+        finally:
+            for key in [key for key in namespace if key not in saved]:
+                del namespace[key]
+            namespace.update(saved)
+            for key, value in saved_types.items():
+                config.VALUE_TYPES[key].clear()
+                config.VALUE_TYPES[key].update(value)
+json.dump(observed, sys.stdout)
+"""
+
+
+def test_core_default_changes_change_what_the_engine_loads():
+    """Differential: a module that reaches policyengine_core's type
+    defaults, without changing them, loads in the pinned engine as the
+    reader records it; each change the reader refuses, through the core
+    import or through the model API, gives the engine's variable another
+    default."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    controls = {
+        value_type: core_default_module(
+            value_type, CORE_DEFAULT_BINDINGS["model_api"]
+        )
+        for value_type in ("bool", "float", "int")
+    }
+    changes = [
+        (change, binding)
+        for change in sorted(CORE_DEFAULT_CHANGES)
+        for binding in sorted(CORE_DEFAULT_BINDINGS)
+    ]
+    sources = list(controls.values()) + [
+        core_default_module(
+            CORE_DEFAULT_CHANGES[change][0],
+            CORE_DEFAULT_BINDINGS[binding],
+            CORE_DEFAULT_CHANGES[change][1],
+        )
+        for change, binding in changes
+    ]
+    completed = subprocess.run(
+        [str(python), "-I", "-c", CORE_DEFAULT_CHILD],
+        input=json.dumps(
+            [
+                source.replace("invented_age", f"invented_age_{index}")
+                for index, source in enumerate(sources)
+            ]
+        ),
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    observed = json.loads(completed.stdout)
+    for (value_type, source), engine in zip(
+        controls.items(), observed, strict=False
+    ):
+        read = read_attributes(source)
+        assert read["default"] == inventory_script.TYPE_DEFAULTS[value_type]
+        assert engine == {
+            "value_type": value_type,
+            "default": read["default"],
+            "default_type": type(read["default"]).__name__,
+        }
+    for (change, binding), engine in zip(
+        changes, observed[len(controls) :], strict=True
+    ):
+        value_type, text, value = CORE_DEFAULT_CHANGES[change]
+        source = core_default_module(
+            value_type, CORE_DEFAULT_BINDINGS[binding], text
+        )
+        assert read_attributes(source) is None
+        assert "error" not in engine, (change, binding)
+        assert engine["default"] == value, (change, binding)
+        assert engine["default"] != inventory_script.TYPE_DEFAULTS[value_type]
+
+
+# Runs in the pinned interpreter: the files the engine's own directory walk
+# loads from an invented variables folder, and the variables it defines.
+WALK_CHILD = """
+import json, sys
+from policyengine_core.taxbenefitsystems import TaxBenefitSystem
+from policyengine_us.entities import entities
+
+loaded = []
+load = TaxBenefitSystem.add_variables_from_file
+
+
+def recording(self, file_path):
+    loaded.append(str(file_path))
+    return load(self, file_path)
+
+
+TaxBenefitSystem.add_variables_from_file = recording
+
+
+class InventedSystem(TaxBenefitSystem):
+    variables_dir = sys.argv[1]
+
+
+system = InventedSystem(entities)
+json.dump({"files": loaded, "variables": sorted(system.variables)}, sys.stdout)
+"""
+INVENTED_WALK_FILES = {
+    "input/invented_walk_one.py": "invented_walk_one",
+    ".invented_hidden/invented_walk_two.py": "invented_walk_two",
+    "input/.invented_walk_three.py": "invented_walk_three",
+    "gov/__init__.py": "invented_walk_four",
+    "gov/invented_walk_five.py": "invented_walk_five",
+    "gov/deeper/_invented_walk_six.py": "invented_walk_six",
+    "gov/deeper/.invented_hidden/invented_walk_seven.py": (
+        "invented_walk_seven"
+    ),
+}
+
+
+def test_variable_files_are_those_the_engine_walk_loads(tmp_path):
+    """Differential: the reader's file index against the pinned engine's
+    directory walk, on an invented folder with hidden names, a package init
+    that defines a variable, and a helper-named module."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    tree = tmp_path / "variables"
+    for relative, name in INVENTED_WALK_FILES.items():
+        path = tree / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "# Invented label\n"
+            "from policyengine_us.model_api import *\n\n\n"
+            f"class {name}(Variable):\n"
+            "    value_type = float\n"
+            "    entity = Person\n"
+            "    definition_period = YEAR\n"
+            '    label = "Invented walk"\n'
+        )
+    completed = subprocess.run(
+        [str(python), "-I", "-c", WALK_CHILD, str(tree)],
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    engine = json.loads(completed.stdout)
+    read = inventory_script.variable_files(tree)
+    assert len(read) == len(set(read))
+    assert sorted(Path(file) for file in engine["files"]) == sorted(read)
+    assert engine["variables"] == [
+        "invented_walk_five",
+        "invented_walk_one",
+        "invented_walk_six",
+    ]
