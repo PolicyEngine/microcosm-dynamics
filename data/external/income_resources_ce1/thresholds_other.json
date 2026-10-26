@@ -351,7 +351,7 @@
       }
     ],
     "indexing": null,
-    "description": "",
+    "description": "From 1978, cash pay of $100 or more in a calendar year makes nonbusiness work wages (POMS RS 01901.520 C.1, describing the 1977 amendments).",
     "monotone": false,
     "unit": "dollars"
   },
@@ -387,7 +387,7 @@
       }
     ],
     "indexing": null,
-    "description": "",
+    "description": "Through 1977, the $50 cash-pay test in a calendar quarter decides whether nonbusiness work is wages (POMS RS 01901.520 C.2); the 1977 amendments replace it with the $100 annual test from 1978.",
     "monotone": false,
     "unit": "dollars"
   },

@@ -18,6 +18,7 @@ from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
     CAPTURE_DIRECTORY,
+    EFFECTIVE_BASES,
     REGISTRY_PATH,
     TRIGGER_FACTS,
     AlternativeRequiredError,
@@ -26,6 +27,7 @@ from populace_dynamics.income_resources.coverage_rules import (
     NoRuleError,
     OpenRuleError,
     ThresholdUnavailableError,
+    UnknownIdentifierError,
     load_registry,
     source_text,
 )
@@ -382,6 +384,58 @@ def test_open_cases_separate_legal_questions_from_missing_facts(registry):
                 assert rule.resolve({case["case_id"]}) == case
     assert ("federal_1987_2026", "fepca_waiver_reemployed_annuitant") in legal
     assert {rule_id.split("_")[0] for rule_id, _ in awaiting} == {"clergy"}
+
+
+def test_real_date_axes_name_their_effective_date_clause(registry):
+    """Review r2 low 4: every axis is an enum value with its clause."""
+    axes = {}
+    for rule in registry.rules:
+        basis = rule.parameters.get("effective_basis")
+        assert basis is None or basis in EFFECTIVE_BASES
+        if basis not in (None, "service_date"):
+            assert rule.parameters["effective_basis_description"].strip()
+        axes.setdefault(rule.family, set()).add(rule.date_axis)
+    assert all(len(found) == 1 for found in axes.values())
+    assert axes["self_employment_director_income_timing"] == {
+        "taxable_year_start"
+    }
+    assert axes["self_employment_conservation_reserve"] == {"payment_date"}
+    assert axes["self_employment_public_office"] == {"payment_date"}
+    assert axes["self_employment_options_dealers"] == {"taxable_year_start"}
+    # The notes give calendar dates (Oct. 4, 1976; Oct. 1, 2008), so both
+    # wordings govern part of each boundary year.
+    assert axes[PASSIVE] == {"payment_date"}
+    for year in (1976, 2008):
+        assert len(registry.lookup(PASSIVE, year)) == 2
+    with pytest.raises(UnknownIdentifierError):
+        registry.lookup("self_employment_public_ofice", 2000)
+
+
+QUOTED_CLAUSE = re.compile(r'"([^"]+)"')
+
+
+def test_date_axis_descriptions_quote_a_cited_capture(registry):
+    """Each non-default axis quotes its effective-date clause verbatim.
+
+    The quoted spans sit between straight double quotes and must appear in
+    the normalized text of a capture the row itself cites.
+    """
+    checked = 0
+    for rule in registry.rules:
+        description = rule.parameters.get("effective_basis_description")
+        if description is None:
+            continue
+        spans = QUOTED_CLAUSE.findall(description)
+        assert spans, rule.rule_id
+        texts = [
+            source_text(CAPTURE_DIRECTORY / capture)
+            for capture in sorted({c.capture for c in rule.citations})
+            if not capture.endswith(".pdf")
+        ]
+        for span in spans:
+            assert any(span in text for text in texts), (rule.rule_id, span)
+        checked += 1
+    assert checked == 11
 
 
 CONSEQUENCE_VALUES = {

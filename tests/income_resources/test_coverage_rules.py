@@ -17,6 +17,7 @@ from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
     CONSEQUENCES,
+    EFFECTIVE_BASES,
     SCHEMA_VERSION,
     AlternativeRequiredError,
     CaptureIntegrityError,
@@ -36,6 +37,7 @@ from populace_dynamics.income_resources.coverage_rules import (
 )
 
 INVENTED_BYTES = b"<p>Invented source passage for schema tests only.</p>"
+INVENTED_AXIS = "INVENTED effective-date clause for schema tests only."
 INVENTED_CITATION = {
     "capture": "invented.html",
     "sha256": hashlib.sha256(INVENTED_BYTES).hexdigest(),
@@ -150,13 +152,17 @@ INVENTED_INDEX = {
 def test_every_lookup_is_nonempty_or_typed_refusal(tmp_path, year, present):
     registry = invented_registry(tmp_path, [invented_row(1980, 2000)])
     family = "INVENTED_family" if present else "INVENTED_missing"
+    if not present:
+        with pytest.raises(UnknownIdentifierError):
+            registry.lookup(family, year)
+        return
     try:
         rules = registry.lookup(family, year)
     except CoverageRegistryError:
-        assert not present or not 1980 <= year <= 2000
+        assert not 1980 <= year <= 2000
     else:
         assert rules
-        assert present and 1980 <= year <= 2000
+        assert 1980 <= year <= 2000
 
 
 @given(st.integers(1969, 2026), st.integers(1968, 2026))
@@ -408,14 +414,40 @@ def test_selected_alternative_never_borrows_a_different_reading(tmp_path):
     ].rule_id == ("INVENTED_a")
 
 
-def test_verified_table_membership_requires_quoted_evidence(tmp_path):
+@given(st.lists(st.booleans(), min_size=1, max_size=3))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+@example([False])
+@example([False, True])
+def test_verified_table_membership_requires_quoted_evidence(tmp_path, quoted):
+    """Review r2 low 1: the fixture is complete except for the quote."""
     invented_registry(tmp_path)
     raw = invented_payload()
+    citations = []
+    for has_quote in quoted:
+        citation = copy.deepcopy(INVENTED_CITATION)
+        if has_quote:
+            citation["quote"] = "Invented source passage"
+        citations.append(citation)
     raw["table_definitions"] = [
-        {"definition_id": "INVENTED_table", "status": "verified"}
+        {
+            "definition_id": "INVENTED_table",
+            "status": "verified",
+            "source_definition": "INVENTED membership definition",
+            "citations": citations,
+        }
     ]
-    with pytest.raises(RegistryValidationError):
-        CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+    if any(quoted):
+        registry = CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+        assert registry.table_definition("INVENTED_table")["status"] == (
+            "verified"
+        )
+    else:
+        with pytest.raises(
+            RegistryValidationError, match="quoted source passage"
+        ):
+            CoverageRegistry.from_dict(raw, capture_root=tmp_path)
     raw["table_definitions"] = [
         {
             "definition_id": "INVENTED_table",
@@ -1257,7 +1289,8 @@ def test_bad_caller_index_raises_argument_error(tmp_path, value, error):
 def test_source_text_omits_script_and_style_content(tmp_path):
     path = tmp_path / "INVENTED_source.html"
     path.write_text(
-        "<script>INVENTED hidden script</script><p>INVENTED passage</p><style>INVENTED hidden style</style>"
+        "<script>INVENTED hidden script</script><p>INVENTED passage</p>"
+        "<style>INVENTED hidden style</style>"
     )
     assert source_text(path) == "INVENTED passage"
 
@@ -1278,6 +1311,7 @@ def test_taxable_year_boundary_uses_actual_start_not_every_calendar_day(
     after["effective_start"] = boundary.isoformat()
     for row in (before, after):
         row["parameters"]["effective_basis"] = "taxable_year_start"
+        row["parameters"]["effective_basis_description"] = INVENTED_AXIS
         row["trigger_facts"].append("taxable_year_start")
     registry = invented_registry(tmp_path, [before, after])
     assert [r.rule_id for r in registry.lookup("INVENTED_family", year)] == [
@@ -1292,8 +1326,10 @@ def test_taxable_year_boundary_uses_actual_start_not_every_calendar_day(
         == "INVENTED_after"
     )
     del after["parameters"]["effective_basis"]
-    with pytest.raises(RegistryValidationError, match="mixes service"):
+    del after["parameters"]["effective_basis_description"]
+    with pytest.raises(RegistryValidationError, match="mixes date axes"):
         invented_registry(tmp_path, [before, after])
+    after["parameters"]["effective_basis_description"] = INVENTED_AXIS
     after["parameters"]["effective_basis"] = "taxable_year_start"
     before["trigger_facts"].remove("taxable_year_start")
     with pytest.raises(RegistryValidationError, match="taxable-year axis"):
@@ -1353,3 +1389,509 @@ def test_capture_symlink_within_root_is_accepted(tmp_path, data):
         CoverageRegistry.from_dict(raw, capture_root=tmp_path).rules
         == registry.rules
     )
+
+
+# Review r2 low 1: each v2 guard has a property that fails without it.
+
+
+@given(
+    st.booleans(),
+    st.sampled_from([None, *sorted(CONSEQUENCES)]),
+    st.integers(0, 3),
+    st.booleans(),
+)
+@example(True, "open", 1, False)
+@example(True, None, 2, False)
+@example(True, None, 2, True)
+@example(False, "covered", 2, False)
+@example(False, "covered", 0, False)
+@example(False, None, 0, False)
+@settings(deadline=None)
+def test_open_and_closed_rows_follow_the_alternative_rules(
+    is_open, consequence, count, duplicate
+):
+    """Open rows name two or more distinct readings; closed rows none."""
+    row = invented_row()
+    row["consequence"] = consequence
+    row["residual_default"]["consequence"] = consequence
+    if consequence == "deferred":
+        row["residual_default"]["defers_to"] = [INVENTED_TARGET_FAMILY]
+    row["open_reason"] = "INVENTED open legal question" if is_open else None
+    names = [f"INVENTED_reading_{i}" for i in range(count)]
+    if duplicate and count >= 2:
+        names[1] = names[0]
+    row["open_alternatives"] = [
+        {"name": name, "description": f"INVENTED {name}"} for name in names
+    ]
+    distinct = len(set(names)) == len(names)
+    if is_open:
+        valid = distinct and consequence in {None, "open"} and count >= 2
+    else:
+        valid = distinct and consequence is not None and count == 0
+    if not valid:
+        with pytest.raises(RegistryValidationError):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    assert [o["name"] for o in rule.open_alternatives] == names
+
+
+@given(
+    st.dictionaries(
+        st.sampled_from(["cases", "case_list", "notes", "invented_value"]),
+        st.integers(0, 3),
+        max_size=4,
+    )
+)
+@example({"cases": 1})
+@settings(deadline=None)
+def test_cases_live_in_the_schema_not_in_parameters(parameters):
+    row = invented_row()
+    row["parameters"] = parameters
+    if "cases" in parameters:
+        with pytest.raises(RegistryValidationError, match="cases belong"):
+            CoverageRule.from_dict(row)
+        return
+    assert dict(CoverageRule.from_dict(row).parameters) == parameters
+
+
+@given(
+    st.one_of(
+        st.booleans(),
+        st.text(max_size=4),
+        st.integers(),
+        st.none(),
+        st.floats(allow_nan=False),
+        st.lists(st.booleans(), max_size=2),
+    )
+)
+@example(0)
+@example(None)
+@example("  ")
+@example(True)
+@example("INVENTED condition")
+@settings(deadline=None)
+def test_case_conditions_are_nonempty_text_or_boolean(condition):
+    row = invented_row()
+    row["cases"] = [invented_case("invented_a", 1, when={"amount": condition})]
+    valid = isinstance(condition, bool) or (
+        isinstance(condition, str) and bool(condition.strip())
+    )
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="case condition"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    assert rule.cases[0]["when"]["amount"] == condition
+
+
+def invented_example(**extra):
+    example = {
+        "example_id": "INVENTED_example",
+        "income_year": 2024,
+        "citation": copy.deepcopy(INVENTED_CITATION),
+        "source_passage": "INVENTED passage; no published legal example.",
+        "expected_rule_id": "INVENTED_rule",
+        "calculation": "INVENTED_calculation",
+        "published_inputs": {"INVENTED_input": 1},
+        "published_outputs": {"INVENTED_output": 1},
+    }
+    example.update(extra)
+    return example
+
+
+@given(
+    st.booleans(),
+    st.dictionaries(
+        st.text(min_size=1, max_size=4), st.integers(), max_size=2
+    ),
+)
+@example(True, {})
+@settings(deadline=None)
+def test_examples_test_outcomes_not_repeated_parameters(with_field, payload):
+    row = invented_row()
+    example = invented_example()
+    if with_field:
+        example["expected_parameters"] = payload
+    row["worked_examples"] = [example]
+    if with_field:
+        with pytest.raises(RegistryValidationError, match="outcomes"):
+            CoverageRule.from_dict(row)
+        return
+    assert CoverageRule.from_dict(row).worked_examples
+
+
+def recorded_search(search):
+    if isinstance(search, str):
+        return bool(search.strip())
+    return (
+        isinstance(search, dict)
+        and isinstance(search.get("query"), str)
+        and bool(search["query"].strip())
+    )
+
+
+@given(
+    st.lists(
+        st.one_of(
+            st.text(max_size=5),
+            st.fixed_dictionaries({"query": st.text(max_size=5)}),
+            st.integers(),
+        ),
+        max_size=3,
+    )
+)
+@example([])
+@example([" "])
+@example([{"query": ""}])
+@example(["INVENTED search"])
+@settings(deadline=None)
+def test_null_prevalence_bound_requires_recorded_searches(searches):
+    row = invented_row()
+    row["rare_exclusion"] = {
+        "strict": "unresolved",
+        "negligible_candidate": None,
+        "searches": searches,
+    }
+    if not (searches and all(recorded_search(s) for s in searches)):
+        with pytest.raises(RegistryValidationError, match="recorded searches"):
+            CoverageRule.from_dict(row)
+        return
+    assert CoverageRule.from_dict(row).rare_exclusion["searches"]
+
+
+# Review r2 low 2: a year recorded in the registry is data.
+
+REGISTRY_YEARS = st.one_of(
+    st.integers(1900, 2100),
+    st.text(max_size=4),
+    st.none(),
+    st.booleans(),
+    st.floats(allow_nan=False),
+)
+
+
+def valid_registry_year(year):
+    return type(year) is int and 1968 <= year <= 2026
+
+
+@given(REGISTRY_YEARS)
+@example("1999")
+@example(1950)
+@example(1999)
+@settings(deadline=None)
+def test_example_income_year_errors_are_registry_data_errors(year):
+    row = invented_row()
+    row["worked_examples"] = [invented_example(income_year=year)]
+    if not valid_registry_year(year):
+        with pytest.raises(RegistryValidationError, match="income_year"):
+            CoverageRule.from_dict(row)
+        return
+    assert CoverageRule.from_dict(row).worked_examples[0]["income_year"] == (
+        year
+    )
+
+
+@given(REGISTRY_YEARS)
+@example("2026")
+@example(1950)
+@example(2026)
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_ret_verified_years_errors_are_registry_data_errors(tmp_path, year):
+    invented_registry(tmp_path)
+    raw = invented_payload()
+    raw["earnings_test"] = {
+        "status": "verified",
+        "citations": [INVENTED_CITATION],
+        "verified_income_years": [year],
+    }
+    if not valid_registry_year(year):
+        with pytest.raises(RegistryValidationError, match="RET"):
+            CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+        return
+    registry = CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+    assert registry.earnings_test_concept(year)["status"] == "verified"
+
+
+@given(st.one_of(st.integers(1900, 2100), st.text(max_size=4)))
+@example("1950")
+@example("02024")
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_threshold_year_errors_are_registry_data_errors(tmp_path, year):
+    key = str(year)
+    threshold = invented_threshold(values={key: 100})
+    canonical = key.isascii() and key.isdigit() and str(int(key)) == key
+    if not (canonical and 1968 <= int(key) <= 2026):
+        with pytest.raises(RegistryValidationError, match="threshold year"):
+            invented_registry(tmp_path, thresholds=[threshold])
+        return
+    registry = invented_registry(tmp_path, thresholds=[threshold])
+    assert registry.threshold("INVENTED_threshold", int(key)) == 100
+
+
+# Review r2 low 3: a typo is a caller error, never a legal refusal.
+
+
+def test_refusals_and_caller_errors_have_disjoint_types():
+    assert not issubclass(CoverageRegistryError, (ValueError, LookupError))
+    assert issubclass(UnknownIdentifierError, LookupError)
+    assert not issubclass(UnknownIdentifierError, CoverageRegistryError)
+    for refusal in (
+        NoRuleError,
+        RuleGapError,
+        OpenRuleError,
+        AlternativeRequiredError,
+        ThresholdUnavailableError,
+        TableDefinitionUnverifiedError,
+        RegistryValidationError,
+        CaptureIntegrityError,
+    ):
+        assert issubclass(refusal, CoverageRegistryError)
+        assert not issubclass(refusal, (ValueError, LookupError))
+
+
+@given(st.text(min_size=1, max_size=8))
+@example("INVENTED_famliy")
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_unknown_identifiers_raise_a_caller_error(tmp_path, name):
+    invented_registry(tmp_path)
+    raw = invented_payload(thresholds=[invented_threshold()])
+    raw["table_definitions"] = [
+        {
+            "definition_id": "INVENTED_table",
+            "status": "TABLE_DEFINITION_UNVERIFIED",
+            "reason": "INVENTED missing operational definition",
+        }
+    ]
+    registry = CoverageRegistry.from_dict(raw, capture_root=tmp_path)
+    calls = []
+    if name != "INVENTED_family":
+        calls += [
+            lambda: registry.lookup(name, 2000),
+            lambda: registry.lookup_date(name, date(2000, 1, 1)),
+        ]
+    if name != "INVENTED_table":
+        calls.append(lambda: registry.table_definition(name))
+    if name != "INVENTED_threshold":
+        calls.append(lambda: registry.threshold(name, 2024))
+    for call in calls:
+        with pytest.raises(UnknownIdentifierError) as caught:
+            call()
+        assert not isinstance(caught.value, CoverageRegistryError)
+    with pytest.raises(TableDefinitionUnverifiedError):
+        registry.table_definition("INVENTED_table")
+
+
+# Review r2 low 4: the date axis is an enum the loader checks.
+
+
+@given(
+    st.sampled_from(
+        [None, *sorted(EFFECTIVE_BASES), "INVENTED prose basis", ""]
+    ),
+    st.booleans(),
+)
+@example("INVENTED prose basis", True)
+@example("payment_date", False)
+@example(None, True)
+@example("service_date", False)
+@settings(deadline=None)
+def test_effective_basis_is_an_enum_with_its_clause(basis, described):
+    row = invented_row()
+    row["trigger_facts"].append("taxable_year_start")
+    if basis is not None:
+        row["parameters"]["effective_basis"] = basis
+    if described:
+        row["parameters"]["effective_basis_description"] = INVENTED_AXIS
+    if basis is None:
+        valid = not described
+    else:
+        valid = basis in EFFECTIVE_BASES and (
+            described or basis == "service_date"
+        )
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="effective_basis"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    assert rule.date_axis == (basis or "service_date")
+
+
+@given(
+    st.sampled_from(sorted(EFFECTIVE_BASES)),
+    st.sampled_from(sorted(EFFECTIVE_BASES)),
+    st.dates(date(1969, 1, 2), date(2025, 12, 31)),
+)
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_one_family_keeps_one_date_axis(tmp_path, first, second, boundary):
+    before = invented_row(rule_id="INVENTED_before")
+    after = invented_row(rule_id="INVENTED_after")
+    before["effective_end"] = (boundary - timedelta(days=1)).isoformat()
+    after["effective_start"] = boundary.isoformat()
+    for row, basis in ((before, first), (after, second)):
+        row["parameters"]["effective_basis"] = basis
+        row["parameters"]["effective_basis_description"] = INVENTED_AXIS
+        row["trigger_facts"].append("taxable_year_start")
+    if first != second:
+        with pytest.raises(RegistryValidationError, match="mixes date axes"):
+            invented_registry(tmp_path, [before, after])
+        return
+    registry = invented_registry(tmp_path, [before, after])
+    found = [
+        r.rule_id for r in registry.lookup("INVENTED_family", boundary.year)
+    ]
+    if first == "taxable_year_start" or boundary == date(boundary.year, 1, 1):
+        expected = (
+            ["INVENTED_after"]
+            if boundary == date(boundary.year, 1, 1)
+            else ["INVENTED_before"]
+        )
+    else:
+        expected = ["INVENTED_before", "INVENTED_after"]
+    assert found == expected
+    assert [
+        r.rule_id for r in registry.lookup_date("INVENTED_family", boundary)
+    ] == ["INVENTED_after"]
+
+
+# Review r2 low 14: supplied inputs and alternatives are never ignored.
+
+
+def exact_nonnegative(value):
+    if isinstance(value, (bool, float)) or value is None:
+        return False
+    try:
+        return Fraction(value) >= 0
+    except (ValueError, TypeError, ZeroDivisionError):
+        return False
+
+
+@given(
+    st.one_of(
+        st.integers(-5, 5),
+        st.text(max_size=3),
+        st.none(),
+        st.booleans(),
+        st.floats(allow_nan=False),
+    ),
+    st.booleans(),
+)
+@example(-1, True)
+@example("1/2", False)
+@example(True, False)
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_index_inputs_are_checked_when_a_published_value_decides(
+    tmp_path, value, as_list
+):
+    """Review r2 low 14: [-1, 1, 1, 1] once returned the 2025 value."""
+    registry = invented_registry(
+        tmp_path,
+        thresholds=[
+            invented_threshold(
+                values={"2024": 100, "2025": 110}, indexing=INVENTED_INDEX
+            )
+        ],
+    )
+    supplied = {
+        "national_average_wage_index_2023": (
+            [value, 1, 1, 1] if as_list else value
+        )
+    }
+    if not exact_nonnegative(value):
+        with pytest.raises((TypeError, ValueError)) as caught:
+            registry.threshold(
+                "INVENTED_threshold", 2025, index_inputs=supplied
+            )
+        assert not isinstance(caught.value, CoverageRegistryError)
+        return
+    assert (
+        registry.threshold("INVENTED_threshold", 2025, index_inputs=supplied)
+        == 110
+    )
+
+
+@given(st.text(min_size=1, max_size=6), st.booleans())
+@example("b", True)
+@example("a", False)
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_alternative_must_name_a_reading_of_the_family(
+    tmp_path, name, with_alternatives
+):
+    """Review r2 low 14: an alternative was ignored without readings.
+
+    A reading of an open question is not selectable either: the open row
+    still refuses, and a settled year would ignore the name.
+    """
+    rows = [invented_row(start=2001, rule_id="INVENTED_a")]
+    open_row = invented_row(end=2000, rule_id="INVENTED_open")
+    open_row["open_reason"] = "INVENTED unresolved legal question"
+    open_row["consequence"] = None
+    open_row["residual_default"]["consequence"] = None
+    open_row["open_alternatives"] = [
+        {"name": "INVENTED_open_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_open_b", "description": "INVENTED second reading"},
+    ]
+    sub = invented_case("invented_sub_question", 1, "open")
+    sub["open_reason"] = "INVENTED_SUB_QUESTION: no capture settles it"
+    sub["open_alternatives"] = [
+        {"name": "INVENTED_case_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_case_b", "description": "INVENTED second reading"},
+    ]
+    rows[0]["cases"] = [sub]
+    for year in (2000, 2010):
+        for reading in ("INVENTED_open_a", "INVENTED_case_b"):
+            with pytest.raises(UnknownIdentifierError, match="open question"):
+                invented_registry(tmp_path, [open_row, *rows]).lookup(
+                    "INVENTED_family", year, alternative=reading
+                )
+    rows[0]["cases"] = []
+    if with_alternatives:
+        rows.append(invented_row(rule_id="INVENTED_b"))
+        for row, label in zip(rows, ("a", "b"), strict=True):
+            row["alternative"] = {
+                "group": "INVENTED_group",
+                "name": label,
+                "explanation": "INVENTED overlapping readings",
+            }
+    registry = invented_registry(tmp_path, rows)
+    known = {"a", "b"} if with_alternatives else set()
+    if name not in known:
+        with pytest.raises(UnknownIdentifierError, match="no alternative"):
+            registry.lookup("INVENTED_family", 2010, alternative=name)
+        return
+    (rule,) = registry.lookup("INVENTED_family", 2010, alternative=name)
+    assert rule.alternative["name"] == name
+
+
+@given(st.one_of(st.none(), st.text(max_size=4)))
+@example("")
+@example(" ")
+@example("INVENTED")
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_recorded_threshold_description_is_nonempty(tmp_path, description):
+    """Review r2 low 14: casual_cash_quarterly had an empty description."""
+    threshold = invented_threshold()
+    if description is not None:
+        threshold["description"] = description
+    if description is not None and not description.strip():
+        with pytest.raises(
+            RegistryValidationError, match="threshold description"
+        ):
+            invented_registry(tmp_path, thresholds=[threshold])
+        return
+    registry = invented_registry(tmp_path, thresholds=[threshold])
+    assert registry.threshold("INVENTED_threshold", 2024) == 100

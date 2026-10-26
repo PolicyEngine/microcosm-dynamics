@@ -14829,6 +14829,8 @@
           "self_employment_base_definition",
           "self_employment_rental_income"
         ],
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
         "named_alternatives": {
           "excluded_rental_income": "Apply se_rental_income if a payment is established to fall within the rental-income exclusion.",
           "trade_or_business_income": "Apply se_base_definition if a payment is established to derive from a trade or business."
@@ -14924,7 +14926,8 @@
             "title": 42
           }
         ],
-        "effective_basis": "payments_made_after_2007_12_31",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
         "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or423 benefits"
       },
       "rare_exclusion": null,
@@ -15032,6 +15035,8 @@
           }
         ],
         "director_specific_service_year_deeming": false,
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Taxable years beginning before January 1, 1988. Pub. L. 100-203 section 9022(c), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to services performed in taxable years beginning on or after January 1, 1988\".",
         "timing_rule": "ordinary applicable 411 income computation"
       },
       "rare_exclusion": null,
@@ -15045,7 +15050,8 @@
         "employee_self_or_mixed",
         "industry",
         "occupation",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -15131,7 +15137,8 @@
           }
         ],
         "director_specific_service_year_deeming": true,
-        "effective_basis": "Services performed in taxable years beginning on or after 1988-01-01",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 100-203 section 9022(c), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to services performed in taxable years beginning on or after January 1, 1988\". The row ends before taxable years beginning after December 31, 1990, to which Pub. L. 101-508 section 5123(b) applies the 1990 amendment.",
         "exception": "actual_payment_and_receipt_before_service_year",
         "timing_rule": "taxable_year_services_performed"
       },
@@ -15146,7 +15153,8 @@
         "employee_self_or_mixed",
         "industry",
         "occupation",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -15312,7 +15320,8 @@
           }
         ],
         "director_specific_service_year_deeming": false,
-        "effective_basis": "Income received for services performed in taxable years beginning after 1990-12-31",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 101-508 section 5123(b), as the 42 U.S.C. 411 Effective Date of 1990 Amendment note summarizes it: the amendment is \"applicable with respect to income received for services performed in taxable years beginning after Dec. 31, 1990\".",
         "timing_rule": "ordinary applicable 411 income computation"
       },
       "rare_exclusion": null,
@@ -15326,7 +15335,8 @@
         "employee_self_or_mixed",
         "industry",
         "occupation",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -18061,7 +18071,7 @@
           }
         ],
         "effective_basis": "taxable_year_start",
-        "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+        "effective_basis_description": "Taxable years beginning on or before July 18, 1984. Pub. L. 98-369 section 102(c)(2), which added 411(h), is \"applicable to taxable years beginning after July 18, 1984\" (42 U.S.C. 411 Effective Date of 1984 Amendment note). Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
         "historical_effective_date_wording": "Taxable years beginning after 1984-07-18"
       },
       "rare_exclusion": null,
@@ -18177,7 +18187,7 @@
         ],
         "dealer_definitions": "Options dealer under 1256(g)(8); commodities dealer actively trading 1256 contracts, registered with a domestic board of trade designated as a CFTC contract market",
         "effective_basis": "taxable_year_start",
-        "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+        "effective_basis_description": "Pub. L. 98-369 section 102(c)(2), which added 411(h), is \"applicable to taxable years beginning after July 18, 1984\" (42 U.S.C. 411 Effective Date of 1984 Amendment note). Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
         "historical_effective_date_wording": "Taxable years beginning after 1984-07-18; calendar-year first 1985; fiscal year may begin in 1984",
         "included_concept": "Normal-course 1256 contract/related-property gains/losses"
       },
@@ -18467,8 +18477,8 @@
             "title": 42
           }
         ],
-        "effective_basis": "taxable_year_start",
-        "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
         "stock_dividends_excluded": true
       },
@@ -18481,7 +18491,6 @@
       "trigger_facts": [
         "dividend_or_interest_income",
         "securities_dealer_status",
-        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -18642,8 +18651,8 @@
             "title": 42
           }
         ],
-        "effective_basis": "taxable_year_start",
-        "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "obsolete_interest_exception_removed": "1976-10-04",
         "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
         "stock_dividends_excluded": true,
@@ -18658,7 +18667,6 @@
       "trigger_facts": [
         "dividend_or_interest_income",
         "securities_dealer_status",
-        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -18854,8 +18862,8 @@
             "title": 42
           }
         ],
-        "effective_basis": "taxable_year_start",
-        "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "named_wordings": [
           {
             "authority": "42 USC 411(a)(2)",
@@ -18881,7 +18889,6 @@
       "trigger_facts": [
         "dividend_or_interest_income",
         "securities_dealer_status",
-        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -19208,7 +19215,8 @@
           "Position not covered by Section 218 for the relevant period"
         ],
         "default": "public_office_not_trade_or_business",
-        "effective_basis": "Fees received after 1967",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 90-248 section 122(c)(1), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to fees received after 1967\".",
         "eligible_exception_unit": "other_net_earnings"
       },
       "rare_exclusion": null,
@@ -22969,7 +22977,7 @@
         }
       ],
       "comparison": "at_least",
-      "description": "",
+      "description": "From 1978, cash pay of $100 or more in a calendar year makes nonbusiness work wages (POMS RS 01901.520 C.1, describing the 1977 amendments).",
       "eligible_concept": "Cash remuneration from one employer for nonbusiness nondomestic services in one calendar year.",
       "indexing": null,
       "monotone": false,
@@ -23044,7 +23052,7 @@
         }
       ],
       "comparison": "at_least",
-      "description": "",
+      "description": "Through 1977, the $50 cash-pay test in a calendar quarter decides whether nonbusiness work is wages (POMS RS 01901.520 C.2); the 1977 amendments replace it with the $100 annual test from 1978.",
       "eligible_concept": "Cash remuneration from one employer for nonbusiness nondomestic services in one calendar quarter.",
       "indexing": null,
       "monotone": false,

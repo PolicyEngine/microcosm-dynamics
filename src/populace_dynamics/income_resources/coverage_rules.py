@@ -10,9 +10,14 @@ Invariants (property tests in ``tests/income_resources``):
 
 * Every family/year lookup returns rules or raises a typed refusal, never an
   empty result. A service-year lookup checks every day, preserving midyear
-  changes. A family whose rows set ``parameters.effective_basis`` to
-  ``taxable_year_start`` uses the beginning of the taxable year: year-only
-  lookup assumes January 1, while ``lookup_date`` accepts the actual start.
+  changes. ``parameters.effective_basis`` names a row's date axis, one of
+  ``service_date`` (the default), ``taxable_year_start`` or
+  ``payment_date``; any other axis than the default carries an
+  ``effective_basis_description`` quoting the effective-date clause. A
+  ``taxable_year_start`` family uses the beginning of the taxable year:
+  year-only lookup assumes January 1, while ``lookup_date`` accepts the
+  actual start. A ``payment_date`` family is looked up by the date paid or
+  received, which a year lookup sweeps day by day as for service dates.
   Every row of one family must use the same date axis.
 * Effective ranges partition each family's support. Unexplained overlaps
   are invalid; named alternatives require an explicit selection at lookup.
@@ -48,7 +53,10 @@ Invariants (property tests in ``tests/income_resources``):
   negation of every higher-ranked condition in free text that no loader can
   check; ranks and override references are checked here.
 * Open legal rows have null/``open`` consequences, named alternatives and
-  no chosen reading. They refuse even if a caller selects an alternative.
+  no chosen reading. Their readings are not selectable: naming one as
+  ``alternative`` raises ``UnknownIdentifierError`` instead of being
+  ignored, and the row refuses until the law is settled. Only a closed
+  row's ``alternative`` record can be selected.
   A closed row keeps a verified rule and opens only the sub-question no
   capture settles: a case with an ``open`` consequence, an ``open_reason``
   and at least two named ``open_alternatives``. ``resolve`` refuses with
@@ -57,9 +65,9 @@ Invariants (property tests in ``tests/income_resources``):
 * ``parameters.evidence_only_boundaries`` marks a row boundary that an
   edition date (such as a CFR or Code edition) sets, not a change in the
   law. Each entry names its side, date and kind, and cites (hash-checked)
-  a capture the row itself cites;
-  the date must be the row's start or the day after its end, and the
-  adjacent row of the family must record the same boundary.
+  a capture the row itself cites; the date must be the row's start or the
+  day after its end, and the adjacent row of the family must record the
+  same boundary.
 * Each rule cites a capture; loading checks every citation's SHA-256 against
   a file inside the capture directory, including nested example/bound cites.
 * Trigger facts belong to FIELD_PURPOSES or the listed CE1 extensions.
@@ -75,6 +83,13 @@ Invariants (property tests in ``tests/income_resources``):
 * Row order does not affect validation, lookup or canonical JSON round trips.
 * Worked examples carry an oracle label and nonempty inputs and outcomes.
   Conformance tests consume every published field and check the outcome.
+* Errors separate three causes. Bad registry data raises
+  ``RegistryValidationError`` or ``CaptureIntegrityError``. A legal refusal
+  raises another ``CoverageRegistryError``. A caller error raises
+  ``TypeError``, ``ValueError`` or, for a family, case, threshold, table or
+  alternative name the registry does not define, ``UnknownIdentifierError``.
+  ``CoverageRegistryError`` derives from neither ``ValueError`` nor
+  ``LookupError``, so catching a caller error never swallows a refusal.
 
 Threshold amounts use the record's unit (dollars unless stated as days).
 Aggregation scopes identify the statutory unit: ``component`` is one payment;
@@ -231,10 +246,17 @@ CASE_FIELDS = frozenset(
 REQUIRED_CASE_FIELDS = frozenset(
     {"case_id", "precedence", "when", "consequence"}
 )
+EFFECTIVE_BASES = frozenset(
+    {"service_date", "taxable_year_start", "payment_date"}
+)
 
 
-class CoverageRegistryError(ValueError):
-    """Base for malformed evidence or a refused legal lookup."""
+class CoverageRegistryError(Exception):
+    """Base for malformed evidence or a refused legal lookup.
+
+    It derives from ``Exception`` alone, so ``except ValueError`` or
+    ``except LookupError`` catches caller errors and never a refusal.
+    """
 
 
 class RegistryValidationError(CoverageRegistryError):
@@ -343,6 +365,16 @@ def _year(value: Any) -> int:
     if not FIRST_INCOME_YEAR <= value <= LAST_INCOME_YEAR:
         raise NoRuleError(f"income year outside 1968–2026: {value!r}")
     return value
+
+
+def _data_year(value: Any, name: str) -> int:
+    """A registry-recorded year: bad data, never a caller error."""
+    try:
+        return _year(value)
+    except (TypeError, NoRuleError) as exc:
+        raise RegistryValidationError(
+            f"{name} must be an integer income year in 1968–2026: {value!r}"
+        ) from exc
 
 
 def _check_deferral(outcome: Mapping[str, Any], family: str) -> None:
@@ -664,6 +696,11 @@ class CoverageRule:
         """Only CE2's explicit identified value can establish this class."""
         return self.identification_class == "identified"
 
+    @property
+    def date_axis(self) -> str:
+        """The row's ``effective_basis``; ``service_date`` when unset."""
+        return self.parameters.get("effective_basis", "service_date")
+
     @classmethod
     def from_dict(cls, raw: Mapping[str, Any]) -> CoverageRule:
         _require(isinstance(raw, Mapping), "rule must be an object")
@@ -743,7 +780,23 @@ class CoverageRule:
         _evidence_boundaries(
             raw, start, end, {citation.capture for citation in citations}
         )
-        if raw["parameters"].get("effective_basis") == "taxable_year_start":
+        basis = raw["parameters"].get("effective_basis")
+        _require(
+            basis is None or basis in EFFECTIVE_BASES,
+            f"effective_basis must be one of {sorted(EFFECTIVE_BASES)}",
+        )
+        if "effective_basis_description" in raw["parameters"]:
+            _require(
+                basis is not None,
+                "effective_basis_description needs an effective_basis",
+            )
+            _text(
+                raw["parameters"]["effective_basis_description"],
+                "effective_basis_description",
+            )
+        elif basis not in {None, "service_date"}:
+            _require(False, "effective_basis needs a description")
+        if basis == "taxable_year_start":
             _require(
                 "taxable_year_start" in facts,
                 "taxable-year axis needs taxable_year_start trigger fact",
@@ -767,7 +820,7 @@ class CoverageRule:
                 "calculation",
             ):
                 _text(example.get(name), f"example.{name}")
-            _year(example.get("income_year"))
+            _data_year(example.get("income_year"), "example.income_year")
             Citation.from_dict(example.get("citation"))
             for name in ("published_inputs", "published_outputs"):
                 _require(
@@ -979,6 +1032,18 @@ def _fraction(value: Any, *, caller: bool = False) -> Fraction:
         raise RegistryValidationError("invalid exact threshold/index") from exc
 
 
+def _check_index_inputs(supplied: Mapping[str, Any]) -> None:
+    """Every named index input is an exact nonnegative amount or a list."""
+    for name, value in supplied.items():
+        if not isinstance(name, str):
+            raise TypeError("index input names must be strings")
+        if isinstance(value, (list, tuple)):
+            for item in value:
+                _fraction(item, caller=True)
+        else:
+            _fraction(value, caller=True)
+
+
 @dataclass(frozen=True)
 class CoverageRegistry:
     """Validated rules plus cited thresholds and downstream definitions."""
@@ -1010,14 +1075,8 @@ class CoverageRegistry:
         )
         _require(len({r.rule_id for r in rules}) == len(rules), "duplicate ID")
         for family in {r.family for r in rules}:
-            axes = {
-                r.parameters.get("effective_basis") == "taxable_year_start"
-                for r in rules
-                if r.family == family
-            }
-            _require(
-                len(axes) == 1, "family mixes service and taxable-year axes"
-            )
+            axes = {r.date_axis for r in rules if r.family == family}
+            _require(len(axes) == 1, f"family {family} mixes date axes")
         _check_deferral_graph(rules)
         _check_evidence_boundary_pairs(rules)
         for i, left in enumerate(rules):
@@ -1060,6 +1119,8 @@ class CoverageRegistry:
                 "threshold aggregation scope",
             )
             _text(threshold.get("eligible_concept"), "eligible concept")
+            if "description" in threshold:
+                _text(threshold["description"], "threshold description")
             _require(
                 threshold.get("comparison")
                 in {"at_least", "greater_than", "at_most"},
@@ -1073,11 +1134,12 @@ class CoverageRegistry:
             previous = None
             for year, amount in sorted(values.items()):
                 try:
-                    canonical_year = str(_year(int(year)))
+                    number = int(year)
                 except (ValueError, TypeError) as exc:
                     raise RegistryValidationError(
                         "invalid threshold year"
                     ) from exc
+                canonical_year = str(_data_year(number, "threshold year"))
                 _require(canonical_year == year, "threshold year")
                 amount = _fraction(amount)
                 if threshold.get("monotone") and previous is not None:
@@ -1186,7 +1248,7 @@ class CoverageRegistry:
                     "verified RET income years required",
                 )
                 for year in support:
-                    _year(year)
+                    _data_year(year, "RET verified_income_years")
         _verify_citations(raw, capture_root)
         return cls(
             rules=rules,
@@ -1216,6 +1278,41 @@ class CoverageRegistry:
     def _lookup_interval(
         self, family: str, start: date, end: date, alternative: str | None
     ) -> tuple[CoverageRule, ...]:
+        family_rules = [r for r in self.rules if r.family == family]
+        if not family_rules:
+            raise UnknownIdentifierError(f"unknown family: {family!r}")
+        if alternative is not None:
+            if not isinstance(alternative, str):
+                raise TypeError("alternative must be a string name")
+            names = {
+                r.alternative["name"] for r in family_rules if r.alternative
+            }
+            open_readings = {
+                o["name"]
+                for r in family_rules
+                for o in (
+                    *r.open_alternatives,
+                    *(
+                        o
+                        for case in r.cases
+                        for o in case.get("open_alternatives", ())
+                    ),
+                )
+            }
+            if alternative in open_readings - names:
+                # Naming a reading of an open question selects nothing: the
+                # open row or case still refuses, and settled years would
+                # silently ignore the name.
+                raise UnknownIdentifierError(
+                    f"{family}: {alternative!r} is a reading of an open "
+                    "question, which refuses until the law is settled; "
+                    f"selectable alternatives: {sorted(names)}"
+                )
+            if alternative not in names:
+                raise UnknownIdentifierError(
+                    f"{family}: {alternative!r} names no alternative of this "
+                    f"family; it has {sorted(names)}"
+                )
         candidates = [
             r
             for r in self.rules
@@ -1224,8 +1321,7 @@ class CoverageRegistry:
             and r.effective_end >= start
         ]
         if not candidates:
-            family_rules = [r for r in self.rules if r.family == family]
-            if family_rules and (
+            if (
                 min(r.effective_start for r in family_rules)
                 <= start
                 <= max(r.effective_end for r in family_rules)
@@ -1257,7 +1353,8 @@ class CoverageRegistry:
                 ]
                 if not active:
                     raise RuleGapError(
-                        f"{family}, {point}: no rule for selected alternative {alternative}"
+                        f"{family}, {point}: no rule for selected "
+                        f"alternative {alternative}"
                     )
             for r in active:
                 if r.open_reason:
@@ -1284,8 +1381,7 @@ class CoverageRegistry:
         year = _year(income_year)
         start = date(year, 1, 1)
         taxable_year_axis = any(
-            r.family == family
-            and r.parameters.get("effective_basis") == "taxable_year_start"
+            r.family == family and r.date_axis == "taxable_year_start"
             for r in self.rules
         )
         end = start if taxable_year_axis else date(year, 12, 31)
@@ -1298,10 +1394,12 @@ class CoverageRegistry:
         *,
         alternative: str | None = None,
     ) -> tuple[CoverageRule, ...]:
-        """Resolve a service date or an actual taxable-year start.
+        """Resolve one date on the family's axis.
 
-        ``parameters.effective_basis == "taxable_year_start"`` makes the
-        date the beginning of that taxable year, including fiscal years.
+        The date is a service date by default, the beginning of the taxable
+        year (fiscal years included) when ``effective_basis`` is
+        ``taxable_year_start``, and the date paid or received when it is
+        ``payment_date``.
         """
         if type(service_date) is not date:
             raise TypeError("service_date must be a date")
@@ -1322,16 +1420,22 @@ class CoverageRegistry:
         Inputs use ``national_average_wage_index_YYYY`` and, when a floor's
         preceding value is unpublished, ``prior_year_threshold_YYYY``.
         A supplied base index must be positive. Ties round up for ``nearest``.
+        Every supplied input is checked even when a published value
+        decides, so a malformed input never passes silently.
         """
         year = _year(income_year)
         matches = [
             t for t in self.thresholds if t["threshold_id"] == threshold_id
         ]
         if not matches:
-            raise ThresholdUnavailableError(
-                f"unknown threshold: {threshold_id}"
+            raise UnknownIdentifierError(
+                f"unknown threshold: {threshold_id!r}"
             )
         threshold = matches[0]
+        if index_inputs is not None and not isinstance(index_inputs, Mapping):
+            raise TypeError("index_inputs must be a mapping")
+        supplied = index_inputs or {}
+        _check_index_inputs(supplied)
         values = threshold["published_values"]
         if str(year) in values:
             return _fraction(values[str(year)])
@@ -1340,9 +1444,6 @@ class CoverageRegistry:
             raise ThresholdUnavailableError(
                 f"unpublished: {threshold_id}, {year}"
             )
-        if index_inputs is not None and not isinstance(index_inputs, Mapping):
-            raise TypeError("index_inputs must be a mapping")
-        supplied = index_inputs or {}
 
         def need(name: str) -> Fraction:
             if name not in supplied:
@@ -1398,7 +1499,10 @@ class CoverageRegistry:
         return rounded
 
     def table_definition(self, definition_id: str) -> Mapping[str, Any]:
-        """Return verified membership law; otherwise preserve CE5 absence."""
+        """Return verified membership law; otherwise preserve CE5 absence.
+
+        An ID the registry does not define is a caller error.
+        """
         for definition in self.metadata.get("table_definitions", ()):
             if definition["definition_id"] == definition_id:
                 if definition["status"] != "verified":
@@ -1407,8 +1511,8 @@ class CoverageRegistry:
                         f"{definition['reason']}"
                     )
                 return definition
-        raise TableDefinitionUnverifiedError(
-            f"TABLE_DEFINITION_UNVERIFIED: {definition_id}: no definition"
+        raise UnknownIdentifierError(
+            f"unknown table definition: {definition_id!r}"
         )
 
     def earnings_test_concept(self, income_year: int) -> Mapping[str, Any]:

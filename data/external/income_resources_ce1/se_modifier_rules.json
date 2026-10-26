@@ -402,8 +402,7 @@
     "trigger_facts": [
       "trade_or_business",
       "dividend_or_interest_income",
-      "securities_dealer_status",
-      "taxable_year_start"
+      "securities_dealer_status"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -469,8 +468,8 @@
           ]
         }
       ],
-      "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start."
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -569,8 +568,7 @@
     "trigger_facts": [
       "trade_or_business",
       "dividend_or_interest_income",
-      "securities_dealer_status",
-      "taxable_year_start"
+      "securities_dealer_status"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -658,8 +656,8 @@
           ]
         }
       ],
-      "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start."
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -753,8 +751,7 @@
     "trigger_facts": [
       "trade_or_business",
       "dividend_or_interest_income",
-      "securities_dealer_status",
-      "taxable_year_start"
+      "securities_dealer_status"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -861,8 +858,8 @@
           ]
         }
       ],
-      "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start."
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
     },
     "worked_examples": [],
     "rare_exclusion": null,
