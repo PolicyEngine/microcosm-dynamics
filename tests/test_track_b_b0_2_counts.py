@@ -1341,6 +1341,28 @@ def test_a_withheld_release_publishes_status_and_no_counts(monkeypatch):
     assert private["audit"]["class_sizes"] == {"persons": [3]}
 
 
+def test_the_class_sizes_are_this_releases_classes_alone():
+    """Nested sets of 30, 20 and 10 make three classes of 10, which
+    partition the 30 units. Their outer difference (30 less 10) is a
+    target of its own, as no class holds exactly its units, but it is not
+    a class: the local copy's class sizes leave it out and sum to 30."""
+    counts, registry = _table_registry(
+        {
+            "outer": set(range(30)),
+            "middle": set(range(20)),
+            "inner": set(range(10)),
+        }
+    )
+    audit = script.audit_counts(counts, registry, 10)
+    assert any(
+        target["kind"] == "difference" and target["true_size"] == 20
+        for target in audit["targets"]
+    )
+    class_sizes = script.local_audit(audit)["class_sizes"]
+    assert class_sizes == {"persons": [10, 10, 10]}
+    assert sum(class_sizes["persons"]) == len(registry.sets[("outer",)][1])
+
+
 @settings(max_examples=100, deadline=None)
 @given(_atom_tables())
 @example(([(0, 1), (0,), (1,)], [9, 7]))
@@ -3392,6 +3414,15 @@ def test_the_b0_1_record_must_be_the_one_these_inputs_give():
     )
     with pytest.raises(AssertionError, match="publishes no count"):
         script.check_b0_1_record(record, counts, extra)
+
+    # A set B0.1 never published, though its size is a published count:
+    # its terms all pass, so only the check of the sets' own paths stops it.
+    alias = dict(sets)
+    alias[("level_cells", "prime", "alias")] = sets[
+        ("level_cells", "prime", "households")
+    ]
+    with pytest.raises(AssertionError, match=r"publishes no count for \["):
+        script.check_b0_1_record(record, counts, alias)
 
 
 def _prior_table(current, prior, sizes):
