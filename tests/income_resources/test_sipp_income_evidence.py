@@ -905,9 +905,25 @@ INVENTED_RECORD_PAGES = {
     "five_digits_after_identifier": "<p>SSUID invented 20221</p>",
     "year_straight_after_identifier": "<p>SSUID 2022</p>",
     # Only href and src values are removed from the source, and only inside
-    # tags.
+    # tags, which open with a letter, "!" or "/".
     "identifier_in_data_src": '<p data-src="ssuid-7">Invented</p>',
     "script_assigning_src": '<script>var src = "PNUM=101";</script>',
+    "script_comparison_around_src": (
+        '<script>var a = 1 < 2; img.src = "PNUM=101"; var b = 3 > 2;'
+        "</script>"
+    ),
+    # Round 6: a header cell after the first row, and a first-row cell that
+    # is not a header cell, each naming an identifier after other words.
+    "identifier_inside_later_header_cell": (
+        "<table><tr><td>Invented</td></tr>"
+        "<tr><th>Invented person number (PNUM).</th></tr>"
+        "<tr><td>101</td></tr></table>"
+    ),
+    "identifier_inside_first_row_cell": (
+        "<table><tr><td>Person number (PNUM)</td>"
+        "<td>Invented monthly earnings amount in dollars</td></tr>"
+        "<tr><td>101</td><td>-25</td></tr></table>"
+    ),
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -979,6 +995,13 @@ INVENTED_DEFINITION_PAGES = {
         "</tr></table>"
     ),
     "pre_two_numbers_per_line": "<pre>101 -250\n40</pre>",
+    # Round 6: a body cell names an identifier after other words, which only
+    # first-row and header cells may do.
+    "identifier_named_in_body_cell": (
+        "<table><tr><th>Item</th><th>Note</th></tr>"
+        "<tr><td>Invented PNUM note</td><td>x</td></tr>"
+        "<tr><td>7</td><td>x</td></tr></table>"
+    ),
 }
 
 # Each refused page and a twin that differs only in the structure one rule
@@ -1059,6 +1082,46 @@ INVENTED_RULE_TWINS = {
     "text_window_crosses_decoded_brackets": (
         "<p>SSUID &lt;x&gt; 101</p>",
         "<p>SSUID &lt;x&gt; 10</p>",
+    ),
+    # Round 6: each mark that stops the source window, alone; each form of
+    # link target the source reading removes; adjacency read in the text
+    # alone; and both heading-cell rules.
+    "source_window_stops_at_equals": (
+        "<img alt=SSUID width 640>",
+        "<img alt=SSUID width=640>",
+    ),
+    "source_window_stops_at_single_quote": (
+        "<script>f('SSUID x 640')</script>",
+        "<script>f('SSUID', '640')</script>",
+    ),
+    "source_window_stops_at_double_quote": (
+        '<script>f("SSUID x 640")</script>',
+        '<script>f("SSUID", "640")</script>',
+    ),
+    "unquoted_link_targets_removed": (
+        "<a title=ssuid-2024-x>Invented</a>",
+        "<a href=/ssuid-2024-x.html>Invented</a>",
+    ),
+    "src_values_removed": (
+        '<img title="ssuid-2024-x">',
+        '<img src="/ssuid-2024-x.png">',
+    ),
+    "text_adjacency": ("<p>PNUM<b>:</b> 7</p>", "<p>PNUM<b>:</b> x 7</p>"),
+    "heading_names_identifier_above_digits": (
+        "<table><tr><th>Person number (PNUM)</th>"
+        "<th>Invented monthly earnings amount in dollars</th></tr>"
+        "<tr><td>101</td><td>-25</td></tr></table>",
+        "<table><tr><th>Person number (PNUM)</th>"
+        "<th>Invented monthly earnings amount in dollars</th></tr>"
+        "<tr><td>x</td><td>-25</td></tr></table>",
+    ),
+    "heading_names_identifier_beside_value": (
+        "<table><tr><th>Person number (PNUM)</th>"
+        "<td>Invented note about the invented value for this case</td>"
+        "<td>101</td></tr></table>",
+        "<table><tr><th>Person number (PNUM)</th>"
+        "<td>Invented note about the invented value for this case</td>"
+        "<td>2022</td></tr></table>",
     ),
 }
 

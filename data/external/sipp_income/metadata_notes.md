@@ -39,8 +39,9 @@ to store any new page that holds a case record in any of the forms
 - an identifier name followed by a digit with only spaces or simple marks
   between, or by a run of three or more digits that is not a year, with at
   most 40 characters and no period between;
-- a table row with a cell that begins with an identifier name and, in
-  another cell, a run of three or more digits that is not a year;
+- a table row with a cell that begins with an identifier name, or in a
+  first-row or header cell names one anywhere, and, in another cell, a run
+  of three or more digits that is not a year;
 - a table row, or a preformatted line, of three or more numbers;
 - a run of nine or more digits in the text a reader sees, or of 14 or
   more, an SSUID's length, anywhere in the page;
@@ -49,12 +50,23 @@ to store any new page that holds a case record in any of the forms
 The two rules that follow an identifier name read the visible text, HTML
 comments and the page source with its tags, attributes and scripts. In the
 text and comments a tag counts as a space. In the source, the 40 characters
-also hold no tag, quote or equals sign, so they stay inside one attribute
-value or string, and both rules skip href and src
-values, whose slugs name identifiers without values. The table and
-preformatted rules read each table's or block's text, without its tags and
-attributes. The nine-digit rule skips comments and noscript blocks, whose
-tracking numbers are not page content.
+also hold no tag, quote or equals sign, and both rules skip href and src
+values, whose slugs name identifiers without values. A tag opens with a
+letter, `!` or `/`. The table and preformatted rules read each cell's or
+block's text without its tags; the row-header exemption also reads a
+header cell's `scope` attribute. The nine-digit rule skips comments and
+noscript blocks, whose tracking numbers are not page content.
+
+These forms are out of scope: a value before its identifier name;
+`<br>`-separated CSV text without an identifier; div grids; an identifier
+name and its value in different attribute values or script strings, or
+split by a quote or equals sign within one; a value in an href or src
+value, unless it is a run of 14 or more digits; and a cell outside a
+table's first row and header cells that names an identifier after other
+words. The table rules in turn refuse some definition and index tables
+that name an identifier in a heading cell with digits below; such a page
+stops the capture loudly.
+
 Excluded notes remain attached to relevant registry entries by URL and
 title only.
 

@@ -118,7 +118,7 @@ def _identifier_column(table: str) -> bool:
                 continue
             # An identifier beside a value of three or more digits, even in
             # a definition table.
-            if begins and any(
+            if (begins or names) and any(
                 re.search(VALUE_RUN, other)
                 for index, other in enumerate(texts)
                 if index != column_index
@@ -149,9 +149,11 @@ def _identifier_column(table: str) -> bool:
 
 def _without_link_targets(body: str) -> str:
     """The page source with each tag's href and src values removed, since
-    link slugs such as ``ssuid-2024`` name identifiers without values."""
+    link slugs such as ``ssuid-2024`` name identifiers without values. A tag
+    opens with a letter, ``!`` or ``/``, so a comparison such as ``1 < 2``
+    in a script starts none."""
     return re.sub(
-        r"<[^>]*>",
+        r"<[A-Za-z!/][^>]*>",
         lambda tag: re.sub(
             r"(?i)(?<![\w-])(?:href|src)\s*=\s*"
             r"(?:\"[^\"]*\"|'[^']*'|[^\s>]*)",
@@ -172,7 +174,8 @@ def record_bearing_note(body: str) -> bool:
       variable-definition table, or a cell that has a cell of digits alone
       below it and begins with an identifier name or, in a table's first
       row or a header cell, names one anywhere;
-    - a table row with a cell that begins with an identifier name and, in
+    - a table row with a cell that begins with an identifier name, or in a
+      table's first row or a header cell names one anywhere, and, in
       another cell, a run of three or more digits that is not a year, even
       in a variable-definition table;
     - a table row of three or more numeric cells;
@@ -183,9 +186,8 @@ def record_bearing_note(body: str) -> bool:
       stored though not shown, and the page source with its tags,
       attributes and scripts, all with entities decoded. In the text and
       comments a tag counts as a space. In the source the 40 characters
-      hold no tag, quote or equals sign either, so they stay inside one
-      attribute value or string, and href and src values are removed
-      first;
+      hold no tag, quote or equals sign either, and href and src values
+      are removed first;
     - a run of nine or more digits in the text a reader sees, without
       comments, noscript blocks, scripts, styles and tags, since tracking
       numbers sit there and are not page content;
@@ -196,6 +198,17 @@ def record_bearing_note(body: str) -> bool:
     A table row's cells are read whole, so numbers stacked with ``<br>`` in
     one cell are not separate numeric cells. Variable-definition rows may
     name an identifier without a value.
+
+    These forms are out of scope, so a page that holds only them is
+    stored: a value before its identifier name; ``<br>``-separated CSV text
+    without an identifier; div grids; an identifier name and its value in
+    different attribute values or script strings, or split by a quote or
+    equals sign within one; a value in an href or src value, unless it is a
+    run of 14 or more digits; and a cell outside a table's first row and
+    header cells that names an identifier after other words. The table
+    rules in turn refuse some definition and index tables that name an
+    identifier in a heading cell with digits below; such a page stops the
+    capture loudly.
     """
     adjacent = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
     for table in re.findall(r"(?is)<table\b[^>]*>.*?(?:</table\s*>|$)", body):
