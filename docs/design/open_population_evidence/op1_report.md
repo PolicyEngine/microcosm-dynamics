@@ -771,8 +771,8 @@ of `src/populace_dynamics/` outside `open_population/`: 305 modules at
   its registry's type.
 - **What it catches.** `isinstance` and `issubclass` (with tuples and
   unions); `type(x)` and `x.__class__` compared by `is`, `is not`, `==`,
-  `!=`, `in` or `not in`; any other comparison against the class; `match`
-  class patterns; class-name string comparisons; `__instancecheck__` and
+  `!=`, `in` or `not in`, alone or in a chain; any other comparison against
+  the class; `match` class patterns; class-name string comparisons; `__instancecheck__` and
   `__subclasscheck__`; `singledispatch` registration by argument or by
   annotation; and `hasattr` or `getattr` probes of a private name found on
   only one class.
@@ -781,18 +781,21 @@ of `src/populace_dynamics/` outside `open_population/`: 305 modules at
   aliased module); through relative imports, local assignment chains,
   default arguments, `type(ProjectionRNGRegistry(...))` and `getattr` on the
   module; and through re-exports across modules, followed to a fixed point.
+  Bindings only accumulate, so the fixed point ends even on a binding
+  cycle such as `a = b.c; b = a`.
 - **Speed.** A module is parsed only if its text holds a tracked identifier
   as a word: the class name, a name some module re-exports it under, or a
   probe name. Every static spelling holds one, so the filter skips only
   modules that cannot name the class. It keeps the scan away from two
   generated data modules of 11 and 18.5 MB.
 - **Its own tests.** `test_scan_catches_every_spelling_of_a_registry_type_check`
-  (31 invented snippets, each with exactly one hit of its kind on its
+  (32 invented snippets, each with exactly one hit of its kind on its
   marked line), `test_scan_follows_re_exports_across_modules` (aliases one
   and two modules away, a star import, a module alias, and a same-named
   local class that is not caught) and
-  `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` (eight
-  negatives, each importing the class so that it is parsed).
+  `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` (nine
+  negatives, each importing the class so that it is parsed, one of them a
+  binding cycle).
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
@@ -904,11 +907,13 @@ git diff --quiet 0f69bbb2 -- src/populace_dynamics/engine src/populace_dynamics/
 
 The build ran the required command in its sandbox in five chunks of named
 modules, one process each, because the sandbox could not finish it within
-one tool call. Together they gave **440 passed and 1 strict xfail, with the
-2 existing warnings**: 337 in `tests/open_population`, which are OP1's 238
-and the 99 tests this follow-up adds (74 in the new module and 25 in
-`test_streams.py`), and 104 in the other four modules. `--collect-only -m
-unit` collects all 337, none deselected. Black, Ruff and `git diff --check`
+one tool call. Together they gave **442 passed and 1 strict xfail, with the
+2 existing warnings**: 339 in `tests/open_population`, which are OP1's 238
+and the 101 tests this follow-up adds (76 in the new module and 25 in
+`test_streams.py`), and 104 in the other four modules. After the new
+module's last change (`d49d0813`: the binding-cycle fix and the chained
+comparison), all 76 of its tests ran again and passed. `--collect-only -m
+unit` collects all 339, none deselected. Black, Ruff and `git diff --check`
 are clean, `git diff --stat` lists only this branch's six files, and the
 sealed-path `git diff --quiet` exits 0.
 
