@@ -13,7 +13,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.coverage_rules import (
@@ -477,6 +477,73 @@ def test_real_deferral_targets_cover_the_deferring_years(registry):
     assert absent == []
 
 
+def service_date_condition_holds(condition, service_day):
+    """Evaluate a case's ``services_performed_date`` text on one date.
+
+    Only the two forms CE1 writes are accepted, so a new phrasing fails
+    loudly instead of matching by accident.
+    """
+    match = re.fullmatch(
+        r"(on or after|before) (\d{4}-\d{2}-\d{2})", condition
+    )
+    assert match, condition
+    boundary = date.fromisoformat(match[2])
+    if match[1] == "before":
+        return service_day < boundary
+    return service_day >= boundary
+
+
+def cash_equivalent_transfer_cases(rule, service_day):
+    """Cases matching a cash-equivalent transfer without dominion, by date."""
+    return {
+        c["case_id"]
+        for c in rule.cases
+        if c["when"].get("noncash_transfer_cash_equivalence") is True
+        and service_date_condition_holds(
+            c["when"]["services_performed_date"], service_day
+        )
+    }
+
+
+SSR_95_3P_PUBLISHED = date(1995, 8, 7)
+
+
+@example(date(1990, 6, 15))
+@example(SSR_95_3P_PUBLISHED - timedelta(days=1))
+@example(SSR_95_3P_PUBLISHED)
+@given(st.dates(date(1988, 1, 1), date(2026, 12, 31)))
+@settings(deadline=None)
+def test_cash_equivalent_agricultural_transfer_follows_ssr_95_3p(
+    registry, service_day
+):
+    """INVENTED transfer: cattle the employee must sell back at once.
+
+    POMS RS 01402.020 A: before SSR 95-3P (published 1995-08-07) SSA
+    excluded noncash transfers from wages; from that date a cash-equivalent
+    transfer is tested as cash wages. The 1990 example is the review's
+    repro: it used to fall through to the residual.
+    """
+    (rule,) = registry.lookup("agricultural_service", service_day.year)
+    matched = cash_equivalent_transfer_cases(rule, service_day)
+    assert len(matched) == 1
+    expected = (
+        "noncovered"
+        if service_day < SSR_95_3P_PUBLISHED
+        else "covered_above_threshold"
+    )
+    resolved = rule.resolve(matched)
+    assert resolved["consequence"] == expected
+    assert resolved is not rule.residual_default
+    # A bona fide commodity transfer with dominion stays outside wages.
+    genuine = {
+        c["case_id"]
+        for c in rule.cases
+        if "dominion and control" in c["when"].get("cash_remuneration", "")
+    }
+    assert len(genuine) == 1
+    assert rule.resolve(genuine)["consequence"] == "noncovered"
+
+
 def test_tribal_council_cases_and_uncaptured_crp_history(registry):
     tribal = registry.lookup("tribal_council_service", 2019)[0]
     council = {"no_section_418a_inclusion"}
@@ -777,17 +844,9 @@ def published_outcome(registry, rule, example):
             assert matched
             consequence = rule.resolve(matched)["consequence"]
         else:
-            case = next(
-                c
-                for c in rule.cases
-                if c["when"].get("noncash_transfer_cash_equivalence") is True
-            )
-            assert date(year, 1, 1) >= date.fromisoformat(
-                case["when"]["services_performed_date"].removeprefix(
-                    "on or after "
-                )
-            )
-            consequence = case["consequence"]
+            matched = cash_equivalent_transfer_cases(rule, date(year, 1, 1))
+            assert len(matched) == 1
+            consequence = rule.resolve(matched)["consequence"]
         result = {
             "commodity_remuneration": {
                 "noncovered": "not_wages",

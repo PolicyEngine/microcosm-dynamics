@@ -215,7 +215,7 @@
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. From August 7, 1995, an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
+    "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. Before August 7, 1995, SSA excluded noncash transfers from wages; from that date an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
     "parameters": {
       "threshold_ids": [
         "agricultural_employee_cash",
@@ -236,6 +236,14 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "ruling_effective_date_axis": {
+        "used": "services_performed_date",
+        "named_alternatives": [
+          "payment_date",
+          "determination_date"
+        ],
+        "basis": "POMS RS 01402.020 A says certain noncash transfers are wages 'Effective August 7, 1995' without naming the date that test keys to. Both date cases key to the service date, as the existing from-1995-08-07 case already did."
       }
     },
     "worked_examples": [
@@ -428,8 +436,19 @@
         "description": "A bona fide commodity transfer remains outside agricultural cash wages."
       },
       {
-        "case_id": "cash_equivalent_transfer_from_1995_08_07",
+        "case_id": "cash_equivalent_transfer_before_1995_08_07",
         "precedence": 2,
+        "when": {
+          "services_performed_date": "before 1995-08-07",
+          "noncash_transfer_cash_equivalence": true,
+          "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment"
+        },
+        "consequence": "noncovered",
+        "description": "POMS RS 01402.020 A: before SSA Ruling 95-3P, published August 7, 1995, SSA excluded noncash transfers from wages."
+      },
+      {
+        "case_id": "cash_equivalent_transfer_from_1995_08_07",
+        "precedence": 3,
         "when": {
           "services_performed_date": "on or after 1995-08-07",
           "noncash_transfer_cash_equivalence": true,
@@ -442,7 +461,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Agricultural cash pay is wages once the $150 one-employer test or the $2,500 employer-expenditure test is met, subject to the seasonal hand-harvest exception; apply the other families."
     }
   },
   {

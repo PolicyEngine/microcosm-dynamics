@@ -945,10 +945,21 @@
           }
         },
         {
+          "case_id": "cash_equivalent_transfer_before_1995_08_07",
+          "consequence": "noncovered",
+          "description": "POMS RS 01402.020 A: before SSA Ruling 95-3P, published August 7, 1995, SSA excluded noncash transfers from wages.",
+          "precedence": 2,
+          "when": {
+            "noncash_transfer_cash_equivalence": true,
+            "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
+            "services_performed_date": "before 1995-08-07"
+          }
+        },
+        {
           "case_id": "cash_equivalent_transfer_from_1995_08_07",
           "consequence": "covered_above_threshold",
           "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "noncash_transfer_cash_equivalence": true,
             "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
@@ -1001,7 +1012,7 @@
         }
       ],
       "consequence": "covered_above_threshold",
-      "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. From August 7, 1995, an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
+      "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. Before August 7, 1995, SSA excluded noncash transfers from wages; from that date an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
       "effective_end": "2026-12-31",
       "effective_start": "1988-01-01",
       "family": "agricultural_service",
@@ -1018,6 +1029,14 @@
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
+        },
+        "ruling_effective_date_axis": {
+          "basis": "POMS RS 01402.020 A says certain noncash transfers are wages 'Effective August 7, 1995' without naming the date that test keys to. Both date cases key to the service date, as the existing from-1995-08-07 case already did.",
+          "named_alternatives": [
+            "payment_date",
+            "determination_date"
+          ],
+          "used": "services_performed_date"
         },
         "seasonal_exception_facts": [
           "hand_harvest_laborer",
@@ -1111,7 +1130,7 @@
       },
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Agricultural cash pay is wages once the $150 one-employer test or the $2,500 employer-expenditure test is met, subject to the seasonal hand-harvest exception; apply the other families."
       },
       "rule_id": "agricultural_service_1988",
       "trigger_facts": [
