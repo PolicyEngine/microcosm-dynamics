@@ -1,0 +1,129 @@
+Which published sets pin the target that withholds B0.2's release on an
+invented panel (INVENTED DATA ONLY; no PSID file read).
+Script: docs/design/track_b_b0_2_evidence/singleton.py (SHA-256 06623013...),
+loading scripts/track_b_b0_2_counts.py (7ec6ee28...) as committed at e79f41b5;
+neither has changed since. Run 2026-10-26 from a clean clone at e79f41b5, one
+job at a time on a shared host, each at nice 10 on one core, with
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:. Each program's limit is 300 s.
+The first line of each run prints both scripts' SHA-256.
+
+$ python docs/design/track_b_b0_2_evidence/singleton.py 800 1
+singleton.py sha256 06623013c0fb45e929c0d41a098fb5baae8c61711f6aaf1d950d9bc280f507d0; count script sha256 7ec6ee2856e767c36626d3513f3abd1763de948de7d41c0cfe3219b374fe0518
+households=800 seed=1 b0_1_sets=71 status=withheld audit=281.5s
+narrow target: atom persons, true size 1, round 1, proof optima, range [0, 3], 1 atoms, earlier False
+  this release's sets holding it (12):
+    rosters/R_FULL/overall/persons
+    rosters/R_FULL/by_age_band/1_24/persons
+    rosters/R_B2/overall/persons
+    rosters/R_B2/by_age_band/1_24/persons
+    b3l/rosters/R2006_FULL/overall/persons
+    b3l/rosters/R2006_FULL/by_age_band/1_24/persons
+    b3l/rosters/D2006/overall/persons
+    b3l/rosters/D2006/by_age_band/1_24/persons
+    b3l/later_support/2013/25_44/persons
+    b3l/later_support/2017/25_44/persons
+    b3l/later_support/2019/25_44/persons
+    b3l/later_support/2021/25_44/persons
+  B0.1 sets holding any of its atoms (12):
+    b0_1/full_anchor_persons: persons, size 1239, published 1239
+    b0_1/domain_persons: persons, size 844, published 844
+    b0_1/domain_weights/persons: persons, size 844, published 844
+    b0_1/domain_by_anchor_wave_age/under_25: persons, size 29, published 29
+    b0_1/domain_by_role/head: persons, size 624, published 624
+    b0_1/scored_support/2010/valid_domain_rows_outside_age_support: persons, size 307, published 307
+    b0_1/scored_support/2012/scored_rows: persons, size 454, published 454
+    b0_1/domain_dispositions/2012/scored: persons, size 454, published 454
+    b0_1/scored_support/2012/rows_by_cohort/prime: persons, size 247, published 247
+    b0_1/level_cells/prime/persons: persons, size 270, published 270
+    b0_1/level_cells/pooled/persons: persons, size 509, published 509
+    b0_1/domain_dispositions/2014/present_nonpositive_weight: persons, size 20, published 20
+  without every B0.1 set: wide (proof pool, range None, true size 1, 1 atoms, pool 9, 24.4s)
+  with only the B0.1 sets holding it: wide (proof search, range None, true size 1, 1 atoms, pool 9, 42.8s)
+  with every B0.1 set but those holding it: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 52.6s)
+  without b0_1/full_anchor_persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 66.8s)
+  without b0_1/domain_persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 56.4s)
+  without b0_1/domain_weights/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 54.4s)
+  without b0_1/domain_by_anchor_wave_age/under_25: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 47.0s)
+  without b0_1/domain_by_role/head: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 58.0s)
+  without b0_1/scored_support/2010/valid_domain_rows_outside_age_support: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 64.0s)
+  without b0_1/scored_support/2012/scored_rows: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 67.0s)
+  without b0_1/domain_dispositions/2012/scored: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 67.0s)
+  without b0_1/scored_support/2012/rows_by_cohort/prime: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 48.4s)
+  without b0_1/level_cells/prime/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 75.0s)
+  without b0_1/level_cells/pooled/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 75.1s)
+  without b0_1/domain_dispositions/2014/present_nonpositive_weight: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 65.3s)
+
+$ python docs/design/track_b_b0_2_evidence/singleton.py 3000 2
+singleton.py sha256 06623013c0fb45e929c0d41a098fb5baae8c61711f6aaf1d950d9bc280f507d0; count script sha256 7ec6ee2856e767c36626d3513f3abd1763de948de7d41c0cfe3219b374fe0518
+households=3000 seed=2 b0_1_sets=71 status=withheld audit=1157.8s
+narrow target: atom persons, true size 1, round 1, proof optima, range [0, 3], 1 atoms, earlier False
+  this release's sets holding it (30):
+    rosters/R_FULL/overall/persons
+    rosters/R_FULL/unknown_age/persons
+    rosters/R_B2/overall/persons
+    rosters/R_B2/unknown_age/persons
+    b3/by_wave/2015/62_64/persons
+    b3/by_wave/2015/62_64/valid_rows
+    b3/by_wave/2015/62_64/accuracy_positive_rows
+    b3/by_wave/2017/65_66/persons
+    b3/by_wave/2017/65_66/valid_rows
+    b3/by_wave/2019/67_69/persons
+    b3/by_wave/2019/67_69/valid_rows
+    b3/by_wave/2019/67_69/accuracy_positive_rows
+    b3/distinct_persons_by_band/62_64
+    b3/distinct_persons_by_band/65_66
+    b3/distinct_persons_by_band/67_69
+    b3/lag_pairs/2/2013_2015/62_64
+    b3/lag_pairs/2/2015_2017/65_66
+    b3/lag_pairs/2/2017_2019/67_69
+    b3/lag_pairs/4/2011_2015/62_64
+    b3/lag_pairs/4/2013_2017/65_66
+    b3/lag_pairs/4/2015_2019/67_69
+    b3l/rosters/R2006_FULL/overall/persons
+    b3l/rosters/R2006_FULL/by_age_band/45_61/persons
+    b3l/rosters/D2006/overall/persons
+    b3l/rosters/D2006/by_age_band/45_61/persons
+    b3l/later_support/2009/45_61/persons
+    b3l/later_support/2013/45_61/persons
+    b3l/later_support/2015/62_64/persons
+    b3l/later_support/2017/65_66/persons
+    b3l/later_support/2019/67_69/persons
+  B0.1 sets holding any of its atoms (17):
+    b0_1/full_anchor_persons: persons, size 4757, published 4757
+    b0_1/domain_persons: persons, size 3138, published 3138
+    b0_1/domain_weights/persons: persons, size 3138, published 3138
+    b0_1/domain_by_role/head: persons, size 2269, published 2269
+    b0_1/domain_by_anchor_wave_age/65_plus: persons, size 974, published 974
+    b0_1/scored_support/2010/valid_domain_rows_outside_age_support: persons, size 1105, published 1105
+    b0_1/scored_support/2012/scored_rows: persons, size 1770, published 1770
+    b0_1/domain_dispositions/2012/scored: persons, size 1770, published 1770
+    b0_1/scored_support/2012/rows_by_cohort/older: persons, size 765, published 765
+    b0_1/scored_support/2014/scored_rows: persons, size 1677, published 1677
+    b0_1/domain_dispositions/2014/scored: persons, size 1677, published 1677
+    b0_1/scored_support/2014/rows_by_cohort/older: persons, size 745, published 745
+    b0_1/scored_support/2014/assigned_or_edited_rows: persons, size 165, published 165
+    b0_1/level_cells/older/persons: persons, size 907, published 907
+    b0_1/level_cells/pooled/persons: persons, size 1945, published 1945
+    b0_1/change_pairs/older/persons: persons, size 755, published 755
+    b0_1/change_pairs/pooled_one_step/persons: persons, size 1764, published 1764
+  without every B0.1 set: wide (proof search, range None, true size 1, 1 atoms, pool 9, 106.3s)
+  with only the B0.1 sets holding it: wide (proof pool, range None, true size 1, 1 atoms, pool 9, 103.2s)
+  with every B0.1 set but those holding it: wide (proof search, range None, true size 1, 1 atoms, pool 9, 133.9s)
+  without b0_1/full_anchor_persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 140.8s)
+  without b0_1/domain_persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 121.2s)
+  without b0_1/domain_weights/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 122.1s)
+  without b0_1/domain_by_role/head: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 138.3s)
+  without b0_1/domain_by_anchor_wave_age/65_plus: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 139.2s)
+  without b0_1/scored_support/2010/valid_domain_rows_outside_age_support: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 128.5s)
+  without b0_1/scored_support/2012/scored_rows: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 185.9s)
+  without b0_1/domain_dispositions/2012/scored: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 143.8s)
+  without b0_1/scored_support/2012/rows_by_cohort/older: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 171.0s)
+  without b0_1/scored_support/2014/scored_rows: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 173.8s)
+  without b0_1/domain_dispositions/2014/scored: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 150.6s)
+  without b0_1/scored_support/2014/rows_by_cohort/older: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 276.4s)
+  without b0_1/scored_support/2014/assigned_or_edited_rows: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 164.0s)
+  without b0_1/level_cells/older/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 165.8s)
+  without b0_1/level_cells/pooled/persons: wide (proof search, range None, true size 1, 1 atoms, pool 9, 198.1s)
+  without b0_1/change_pairs/older/persons: narrow (proof optima, range [0, 3], true size 1, 1 atoms, pool 9, 154.1s)
+  without b0_1/change_pairs/pooled_one_step/persons: wide (proof pool, range None, true size 1, 1 atoms, pool 9, 139.2s)

@@ -78,6 +78,16 @@
         },
         {
             "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/singleton.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_evidence/singleton.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
             "path": "docs/design/track_b_b0_2_exposure_inventory.json",
             "scope": "whole_file"
         },

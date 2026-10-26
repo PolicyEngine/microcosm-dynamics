@@ -53,6 +53,8 @@ B0_2_FILES = NOT_YET_COMMITTED | {
     "docs/design/track_b_b0_2_evidence/ranges.txt",
     "docs/design/track_b_b0_2_evidence/search.py",
     "docs/design/track_b_b0_2_evidence/search.txt",
+    "docs/design/track_b_b0_2_evidence/singleton.py",
+    "docs/design/track_b_b0_2_evidence/singleton.txt",
     "docs/design/track_b_b0_2_landscape.md",
     "docs/design/track_b_b0_2_plan.md",
     "docs/design/track_b_b0_2_protocol.md",
