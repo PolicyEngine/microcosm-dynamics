@@ -8,6 +8,10 @@ while the two classes share a public surface and no sealed code checks the
 registry's type, so this module pins both, then checks the projection itself.
 
 The AST scan reads ``src/populace_dynamics/`` outside ``open_population/``.
+Specific checks name each type check they find; under them a catch-all
+reports every other mention of the class, or of its name or module as text,
+outside imports, docstrings, ``__all__``, annotations and construction. The
+evidence report's §6 lists what it cannot see.
 The project's data-access record keeps two modules out of automated reads,
 and the scan also skips the depletion-cut modules, so that what it reads does
 not depend on who runs it. It drops all of them by path before anything opens
@@ -25,7 +29,6 @@ import hashlib
 import inspect
 import json
 import os
-import re
 import subprocess
 import sys
 import textwrap
@@ -209,7 +212,24 @@ PROBE_NAMES = frozenset(
 ) | {"_root"}
 _TYPE_CHECK_CALLS = frozenset({"isinstance", "issubclass"})
 _DUNDER_CHECKS = frozenset({"__instancecheck__", "__subclasscheck__"})
-_COMPARISONS = (ast.Is, ast.IsNot, ast.Eq, ast.NotEq, ast.In, ast.NotIn)
+_NAME_ATTRIBUTES = frozenset({"__name__", "__qualname__"})
+_CONTAINER_CALLS = frozenset({"tuple", "list", "set", "frozenset", "dict"})
+_LISTING_CALLS = frozenset({"append", "extend"})
+# The nodes that can bind a name; binding revisits only these.
+_BINDING_NODES = (
+    ast.Import,
+    ast.ImportFrom,
+    ast.Assign,
+    ast.AnnAssign,
+    ast.AugAssign,
+    ast.NamedExpr,
+    ast.For,
+    ast.AsyncFor,
+    ast.comprehension,
+    ast.FunctionDef,
+    ast.AsyncFunctionDef,
+    ast.Lambda,
+)
 
 
 class ScanError(AssertionError):
@@ -260,12 +280,71 @@ def _is_type_call(node: ast.expr) -> bool:
     )
 
 
-class _ModuleBindings:
-    """Resolve, flow-insensitively, the names a module binds to the registry.
+def _static_text(node: ast.expr) -> str | None:
+    """Return the text a string expression holds before run time, if any.
 
-    Over-approximation is deliberate: any binding anywhere in the module
-    counts everywhere in it, and any name or attribute spelled exactly
-    ``ProjectionRNGRegistry`` counts, whatever it was imported from.
+    The parser already joins adjacent literals and decodes escapes; this
+    also folds ``+`` and f-strings whose parts are all literals. Bytes are
+    read as Latin-1, so an ASCII name matches in either.
+    """
+    if isinstance(node, ast.Constant):
+        if isinstance(node.value, str):
+            return node.value
+        if isinstance(node.value, bytes):
+            return node.value.decode("latin-1")
+        return None
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = _static_text(node.left)
+        right = _static_text(node.right)
+        return None if left is None or right is None else left + right
+    if isinstance(node, ast.JoinedStr):
+        parts = []
+        for value in node.values:
+            if isinstance(value, ast.FormattedValue):
+                if value.conversion != -1 or value.format_spec is not None:
+                    return None
+                value = value.value
+            text = _static_text(value)
+            if text is None:
+                return None
+            parts.append(text)
+        return "".join(parts)
+    return None
+
+
+def _is_all(target: ast.expr) -> bool:
+    return isinstance(target, ast.Name) and target.id == "__all__"
+
+
+def _lists_names(node: ast.Call) -> bool:
+    """Return whether a call is ``__all__.append`` or ``__all__.extend``."""
+    return (
+        isinstance(node.func, ast.Attribute)
+        and node.func.attr in _LISTING_CALLS
+        and _is_all(node.func.value)
+    )
+
+
+def _registers(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    """Return whether a bare ``register`` decorator dispatches on a hint."""
+    return any(
+        (isinstance(decorator, ast.Attribute) and decorator.attr == "register")
+        or (isinstance(decorator, ast.Name) and decorator.id == "register")
+        for decorator in node.decorator_list
+    )
+
+
+class _ModuleBindings:
+    """Resolve, flow-insensitively, what a module binds to the registry.
+
+    Five kinds of binding are tracked: modules; the class itself;
+    containers that may hold it (tuples, unions, mappings and anything read
+    or rebuilt from them); strings that hold its name; and aliases of
+    ``isinstance`` and ``issubclass``. Over-approximation is deliberate: a
+    binding anywhere in the module counts everywhere in it, an attribute
+    counts wherever a name spelled like it is bound, a loop over class info
+    binds its variable to the class, and any name or attribute spelled
+    exactly ``ProjectionRNGRegistry`` counts, whatever it came from.
     """
 
     def __init__(self, source: ScanSource, exports: set[tuple[str, str]]):
@@ -278,6 +357,9 @@ class _ModuleBindings:
         )
         self.modules: dict[str, str] = {}
         self.classes: set[str] = set()
+        self.containers: set[str] = set()
+        self.names: set[str] = set()
+        self.checkers: dict[str, str] = {}
 
     def _from_base(self, node: ast.ImportFrom) -> str:
         if not node.level:
@@ -302,7 +384,7 @@ class _ModuleBindings:
         if isinstance(node, ast.Name):
             return node.id in self.classes or node.id == REGISTRY_NAME
         if isinstance(node, ast.Attribute):
-            if node.attr == REGISTRY_NAME:
+            if node.attr == REGISTRY_NAME or node.attr in self.classes:
                 return True
             if (
                 node.attr == "__class__"
@@ -312,6 +394,8 @@ class _ModuleBindings:
                 return True
             base = self.module_path(node.value)
             return base is not None and (base, node.attr) in self.exports
+        if isinstance(node, ast.NamedExpr):
+            return self.is_registry(node.value)
         if isinstance(node, ast.Call):
             if _is_type_call(node) and isinstance(node.args[0], ast.Call):
                 return self.is_registry(node.args[0].func)
@@ -328,26 +412,104 @@ class _ModuleBindings:
                 )
         return False
 
-    def contains_registry(self, node: ast.expr) -> bool:
-        """Return whether a class-info expression includes the registry."""
-        if self.is_registry(node):
+    def _any_part(self, node: ast.expr, test) -> bool:
+        """Apply ``test`` to ``node`` and to each part it holds or picks."""
+        if test(node):
             return True
         if isinstance(node, ast.Tuple | ast.List | ast.Set):
-            return any(self.contains_registry(item) for item in node.elts)
-        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+            parts = node.elts
+        elif isinstance(node, ast.Dict):
+            parts = [item for item in (*node.keys, *node.values) if item]
+        elif isinstance(node, ast.Starred | ast.NamedExpr | ast.Subscript):
+            parts = [node.value]
+        elif isinstance(node, ast.IfExp):
+            parts = [node.body, node.orelse]
+        elif isinstance(node, ast.BoolOp):
+            parts = node.values
+        else:
+            return False
+        return any(self._any_part(part, test) for part in parts)
+
+    def _class_part(self, node: ast.expr) -> bool:
+        if self.is_registry(node):
+            return True
+        if isinstance(node, ast.Name):
+            return node.id in self.containers
+        if isinstance(node, ast.Attribute):
+            return node.attr in self.containers
+        if isinstance(node, ast.BinOp) and isinstance(
+            node.op, ast.BitOr | ast.Add
+        ):
+            # A union, or class-info tuples joined with "+".
             return self.contains_registry(node.left) or self.contains_registry(
                 node.right
             )
-        if isinstance(node, ast.Starred):
-            return self.contains_registry(node.value)
+        if isinstance(node, ast.Subscript):
+            # Union[int, cls] holds the class in its subscript.
+            return self.contains_registry(node.slice)
+        if isinstance(node, ast.Call):
+            # Class info read or rebuilt: KINDS.get(key), tuple(KINDS).
+            if isinstance(node.func, ast.Attribute) and self.contains_registry(
+                node.func.value
+            ):
+                return True
+            return _call_name(node.func) in _CONTAINER_CALLS and any(
+                self.contains_registry(item) for item in node.args
+            )
         return False
 
-    def _bind(self, name: str, value: ast.expr) -> None:
+    def contains_registry(self, node: ast.expr) -> bool:
+        """Return whether a class-info expression may include the registry."""
+        return self._any_part(node, self._class_part)
+
+    def _name_part(self, node: ast.expr) -> bool:
+        text = _static_text(node)
+        if text is not None:
+            return REGISTRY_NAME in text
+        if isinstance(node, ast.Name):
+            return node.id in self.names
+        if isinstance(node, ast.Attribute):
+            return node.attr in self.names or (
+                node.attr in _NAME_ATTRIBUTES and self.is_registry(node.value)
+            )
+        return False
+
+    def names_registry(self, node: ast.expr) -> bool:
+        """Return whether ``node`` may hold the class's name as text."""
+        return self._any_part(node, self._name_part)
+
+    def _module_part(self, node: ast.expr) -> bool:
+        text = _static_text(node)
+        if text is not None:
+            return REGISTRY_MODULE in text
+        if isinstance(node, ast.Attribute) and node.attr == "__name__":
+            node = node.value
+        return self.module_path(node) == REGISTRY_MODULE
+
+    def names_module(self, node: ast.expr) -> bool:
+        """Return whether ``node`` may denote the registry's module."""
+        return self._any_part(node, self._module_part)
+
+    def checker(self, node: ast.expr) -> str | None:
+        """Name the type check a callee denotes, through any alias."""
+        if isinstance(node, ast.Name):
+            name = node.id
+        elif isinstance(node, ast.Attribute):
+            name = node.attr
+        else:
+            return None
+        return name if name in _TYPE_CHECK_CALLS else self.checkers.get(name)
+
+    def _bind(self, name: str, value: ast.expr, module: bool = True) -> None:
         if self.is_registry(value):
             self.classes.add(name)
-            return
-        path = self.module_path(value)
-        if path is not None:
+        elif self.contains_registry(value):
+            self.containers.add(name)
+        elif self.names_registry(value):
+            self.names.add(name)
+        elif (checker := self.checker(value)) is not None:
+            self.checkers.setdefault(name, checker)
+        elif module and (path := self.module_path(value)) is not None:
             # First binding wins, so a cycle such as ``a = b.c; b = a``
             # cannot grow a path forever: each pass only adds names.
             self.modules.setdefault(name, path)
@@ -355,13 +517,48 @@ class _ModuleBindings:
     def _bind_targets(self, target: ast.expr, value: ast.expr) -> None:
         if isinstance(target, ast.Name):
             self._bind(target.id, value)
-        elif (
-            isinstance(target, ast.Tuple | ast.List)
-            and isinstance(value, ast.Tuple | ast.List)
-            and len(target.elts) == len(value.elts)
-        ):
-            for item, item_value in zip(target.elts, value.elts, strict=True):
-                self._bind_targets(item, item_value)
+        elif isinstance(target, ast.Attribute):
+            self._bind(target.attr, value, module=False)
+        elif isinstance(target, ast.Subscript):
+            # TABLE[key] = cls puts class info in TABLE.
+            base = target.value
+            if isinstance(base, ast.Name | ast.Attribute):
+                name = base.id if isinstance(base, ast.Name) else base.attr
+                if self.contains_registry(value):
+                    self.containers.add(name)
+                elif self.names_registry(value):
+                    self.names.add(name)
+        elif isinstance(target, ast.Tuple | ast.List):
+            items = (*target.elts, *getattr(value, "elts", ()))
+            if (
+                isinstance(value, ast.Tuple | ast.List)
+                and len(target.elts) == len(value.elts)
+                and not any(isinstance(item, ast.Starred) for item in items)
+            ):
+                for item, item_value in zip(
+                    target.elts, value.elts, strict=True
+                ):
+                    self._bind_targets(item, item_value)
+            else:
+                # Any other unpacking: each target may take any part.
+                for item in target.elts:
+                    if isinstance(item, ast.Starred):
+                        item = item.value
+                    self._bind_targets(item, value)
+        elif isinstance(target, ast.Starred):
+            self._bind_targets(target.value, value)
+
+    def _bind_loop(self, target: ast.expr) -> None:
+        """Bind a loop variable that iterates over class info to the class."""
+        if isinstance(target, ast.Name):
+            self.classes.add(target.id)
+        elif isinstance(target, ast.Attribute):
+            self.classes.add(target.attr)
+        elif isinstance(target, ast.Starred):
+            self._bind_loop(target.value)
+        elif isinstance(target, ast.Tuple | ast.List):
+            for item in target.elts:
+                self._bind_loop(item)
 
     def _visit(self, node: ast.AST) -> None:
         if isinstance(node, ast.Import):
@@ -385,14 +582,19 @@ class _ModuleBindings:
                     or (base, alias.name) in self.exports
                 ):
                     self.classes.add(local)
+                elif alias.name in _TYPE_CHECK_CALLS:
+                    self.checkers.setdefault(local, alias.name)
                 else:
                     self.modules.setdefault(local, f"{base}.{alias.name}")
         elif isinstance(node, ast.Assign):
             for target in node.targets:
                 self._bind_targets(target, node.value)
-        elif isinstance(node, ast.AnnAssign | ast.NamedExpr):
+        elif isinstance(node, ast.AnnAssign | ast.NamedExpr | ast.AugAssign):
             if node.value is not None:
                 self._bind_targets(node.target, node.value)
+        elif isinstance(node, ast.For | ast.AsyncFor | ast.comprehension):
+            if self.contains_registry(node.iter):
+                self._bind_loop(node.target)
         elif isinstance(
             node, ast.FunctionDef | ast.AsyncFunctionDef | ast.Lambda
         ):
@@ -414,35 +616,75 @@ class _ModuleBindings:
                 if default is not None
             ]
             for argument, default in pairs:
-                if self.is_registry(default):
-                    self.classes.add(argument.arg)
+                self._bind(argument.arg, default, module=False)
 
-    def bind(self, tree: ast.Module) -> None:
+    def _state(self) -> tuple:
+        return (
+            dict(self.modules),
+            set(self.classes),
+            set(self.containers),
+            set(self.names),
+            dict(self.checkers),
+        )
+
+    def bind(self, nodes: list[ast.AST]) -> None:
         """Bind to a fixed point, so chained aliases resolve in any order.
 
-        Bindings only accumulate, over the module's finitely many names, so
-        the loop ends.
+        ``nodes`` are the module's binding nodes. Bindings only accumulate,
+        over the module's finitely many names, so the loop ends.
         """
         while True:
-            before = (dict(self.modules), set(self.classes))
-            for node in ast.walk(tree):
+            before = self._state()
+            for node in nodes:
                 self._visit(node)
-            if before == (self.modules, self.classes):
+            if before == self._state():
                 return
 
+    def dispatch_annotations(
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef
+    ) -> list[ast.expr]:
+        """Return the hints a ``register`` decorator may dispatch on.
+
+        A string hint is parsed as the expression it names, so an alias in
+        quotes counts too.
+        """
+        if not _registers(node):
+            return []
+        found = []
+        for argument in (*node.args.posonlyargs, *node.args.args):
+            hint = argument.annotation
+            if hint is None:
+                continue
+            text = _static_text(hint)
+            if text is not None:
+                try:
+                    hint_value = ast.parse(text, mode="eval").body
+                except (SyntaxError, ValueError):
+                    hint_value = hint
+            else:
+                hint_value = hint
+            if self.contains_registry(hint_value) or self.names_registry(hint):
+                found.append(hint)
+        return found
+
     def _kind(self, node: ast.AST) -> str | None:
+        """Name the specific check ``node`` makes, if it makes one."""
         if isinstance(node, ast.Call):
-            name = _call_name(node.func)
+            checker = self.checker(node.func)
             if (
-                name in _TYPE_CHECK_CALLS
+                checker is not None
                 and len(node.args) >= 2
                 and self.contains_registry(node.args[1])
             ):
-                return name
+                return checker
+            name = _call_name(node.func)
             if (
                 name in _DUNDER_CHECKS
                 and isinstance(node.func, ast.Attribute)
-                and self.is_registry(node.func.value)
+                and (
+                    self.is_registry(node.func.value)
+                    or any(map(self.contains_registry, node.args[:1]))
+                )
             ):
                 return "dunder-check"
             if (
@@ -451,16 +693,7 @@ class _ModuleBindings:
                 and self.contains_registry(node.args[0])
             ):
                 return "dispatch-register"
-            if (
-                name in {"hasattr", "getattr"}
-                and len(node.args) >= 2
-                and isinstance(node.args[1], ast.Constant)
-                and node.args[1].value in PROBE_NAMES
-            ):
-                return "private-member-probe"
-        elif isinstance(node, ast.Compare) and any(
-            isinstance(op, _COMPARISONS) for op in node.ops
-        ):
+        elif isinstance(node, ast.Compare):
             operands = [node.left, *node.comparators]
             if any(self.contains_registry(item) for item in operands):
                 if any(_is_type_call(item) for item in operands):
@@ -472,39 +705,151 @@ class _ModuleBindings:
                 ):
                     return "__class__-compare"
                 return "class-compare"
-            if any(
-                isinstance(item, ast.Constant)
-                and isinstance(item.value, str)
-                and REGISTRY_NAME in item.value
-                for item in operands
-            ):
+            if any(self.names_registry(item) for item in operands):
                 return "name-compare"
+            if any(self.names_module(item) for item in operands):
+                return "module-compare"
+        elif isinstance(node, ast.MatchValue):
+            # case rng.ProjectionRNGRegistry: compares the subject by ==.
+            if self.contains_registry(node.value):
+                return "class-compare"
+            if self.names_registry(node.value):
+                return "name-compare"
+            if self.names_module(node.value):
+                return "module-compare"
         elif isinstance(node, ast.MatchClass):
-            if self.is_registry(node.cls):
+            if self.contains_registry(node.cls):
                 return "match-class"
         elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
-            registers = any(
-                isinstance(decorator, ast.Attribute)
-                and decorator.attr == "register"
-                for decorator in node.decorator_list
-            )
-            positional = [*node.args.posonlyargs, *node.args.args]
-            if (
-                registers
-                and positional
-                and positional[0].annotation is not None
-                and self.contains_registry(positional[0].annotation)
-            ):
+            if self.dispatch_annotations(node):
                 return "dispatch-annotation"
+        elif isinstance(node, ast.Attribute):
+            if node.attr in PROBE_NAMES and self.source.module != (
+                REGISTRY_MODULE
+            ):
+                return "private-member-probe"
+        elif isinstance(node, ast.Constant):
+            if isinstance(node.value, str) and node.value in PROBE_NAMES:
+                return "private-member-probe"
         return None
 
-    def hits(self, tree: ast.Module) -> list[ScanHit]:
-        found = []
+    def _mention(self, node: ast.expr, listing: bool) -> str | None:
+        """Name what a node outside every specific check says of the class.
+
+        A reference to the class or to class info, a string holding the
+        class's name and a string holding its module's name each count.
+        """
+        if self.is_registry(node) or (
+            isinstance(node, ast.Name | ast.Attribute)
+            and self._class_part(node)
+        ):
+            return "class-reference"
+        text = None if listing else _static_text(node)
+        if text is not None and REGISTRY_NAME in text:
+            return "class-name-string"
+        if text is not None and REGISTRY_MODULE in text:
+            return "module-name-string"
+        return None
+
+    def _children(self, node: ast.AST) -> Iterable[tuple[ast.AST, bool]]:
+        """Yield the children a mention can hide in, and which list names.
+
+        Annotations are skipped, except the hints a ``register`` decorator
+        dispatches on; so is the callee of a construction. Strings inside
+        an ``__all__`` listing are flagged as listing names.
+        """
+        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            arguments = node.args
+            yield from ((item, False) for item in node.decorator_list)
+            yield from ((item, False) for item in arguments.defaults)
+            yield from (
+                (item, False) for item in arguments.kw_defaults if item
+            )
+            if _registers(node):
+                yield from (
+                    (argument.annotation, False)
+                    for argument in (*arguments.posonlyargs, *arguments.args)
+                    if argument.annotation is not None
+                )
+            yield from ((item, False) for item in node.body)
+        elif isinstance(node, ast.Lambda):
+            yield from ((item, False) for item in node.args.defaults)
+            yield from (
+                (item, False) for item in node.args.kw_defaults if item
+            )
+            yield node.body, False
+        elif isinstance(node, ast.AnnAssign):
+            yield node.target, False
+            if node.value is not None:
+                yield node.value, _is_all(node.target)
+        elif isinstance(node, ast.Assign | ast.AugAssign):
+            targets = (
+                node.targets if isinstance(node, ast.Assign) else [node.target]
+            )
+            yield from ((item, False) for item in targets)
+            yield node.value, any(map(_is_all, targets))
+        elif isinstance(node, ast.Call) and (
+            self.is_registry(node.func) or _lists_names(node)
+        ):
+            listing = _lists_names(node)
+            if listing:
+                yield node.func, False
+            yield from ((item, listing) for item in node.args)
+            yield from ((item.value, listing) for item in node.keywords)
+        else:
+            yield from ((item, False) for item in ast.iter_child_nodes(node))
+
+    def references(self, tree: ast.Module, claimed: set[int]) -> set[ScanHit]:
+        """Report every other mention of the class outside a benign place.
+
+        This is the catch-all under the specific checks: a reference to the
+        class, or a string holding its name, counts wherever it is not
+        benign. Benign places are imports, string statements (docstrings
+        among them), ``__all__`` listings, annotations other than dispatch
+        hints, and the callee of a construction. A node a specific check
+        reported is skipped with everything under it. The walk keeps its
+        own stack, so deep expressions cannot exhaust recursion.
+        """
+        found = set()
+        stack: list[tuple[ast.AST, bool]] = [(tree, False)]
+        while stack:
+            node, listing = stack.pop()
+            if id(node) in claimed or isinstance(
+                node, ast.Import | ast.ImportFrom
+            ):
+                continue
+            if (
+                isinstance(node, ast.Expr)
+                and _static_text(node.value) is not None
+            ):
+                continue
+            if isinstance(node, ast.expr) and not isinstance(
+                getattr(node, "ctx", None), ast.Store | ast.Del
+            ):
+                kind = self._mention(node, listing)
+                if kind is not None:
+                    found.add(ScanHit(self.source.path, node.lineno, kind))
+                    continue
+            stack.extend(
+                (child, listing or listed)
+                for child, listed in self._children(node)
+            )
+        return found
+
+    def hits(self, tree: ast.Module) -> set[ScanHit]:
+        """Report the specific checks, then every other mention."""
+        found = set()
+        claimed: set[int] = set()
         for node in ast.walk(tree):
             kind = self._kind(node)
-            if kind is not None:
-                found.append(ScanHit(self.source.path, node.lineno, kind))
-        return found
+            if kind is None:
+                continue
+            found.add(ScanHit(self.source.path, node.lineno, kind))
+            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+                claimed.update(map(id, self.dispatch_annotations(node)))
+            else:
+                claimed.add(id(node))
+        return found | self.references(tree, claimed)
 
 
 def _parse(source: ScanSource) -> ast.Module:
@@ -515,31 +860,94 @@ def _parse(source: ScanSource) -> ast.Module:
         raise ScanError(f"{source.path}:{line}: unparsable source") from None
 
 
-def scan_sources(sources: Iterable[ScanSource]) -> tuple[ScanHit, ...]:
+def _inert(node: ast.AST) -> bool:
+    """Return whether a literal container can matter to no check.
+
+    A container of constants (tuples, lists, sets, dicts and signed
+    numbers, nested) refers to nothing, so only its strings could matter;
+    it is inert when none holds the class's name or its module's, and none
+    is a probe name.
+    """
+    if not isinstance(node, ast.Tuple | ast.List | ast.Set | ast.Dict):
+        return False
+    stack = [node]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, ast.Constant):
+            text = _static_text(item)
+            if text is not None and (
+                REGISTRY_NAME in text
+                or REGISTRY_MODULE in text
+                or text in PROBE_NAMES
+            ):
+                return False
+        elif isinstance(item, ast.Tuple | ast.List | ast.Set):
+            stack.extend(item.elts)
+        elif isinstance(item, ast.Dict):
+            if any(key is None for key in item.keys):
+                return False
+            stack.extend((*item.keys, *item.values))
+        elif isinstance(item, ast.UnaryOp):
+            stack.append(item.operand)
+        else:
+            return False
+    return True
+
+
+def _prune(tree: ast.Module) -> ast.Module:
+    """Replace each inert literal container with ``None``, in place.
+
+    No check reports or binds anything from an inert container, so the
+    hits are unchanged (a differential test pins that); the data modules'
+    large tables stop costing time and memory.
+    """
+    stack: list[ast.AST] = [tree]
+    while stack:
+        node = stack.pop()
+        for field, value in ast.iter_fields(node):
+            items = value if isinstance(value, list) else [value]
+            for index, item in enumerate(items):
+                if not isinstance(item, ast.AST):
+                    continue
+                if _inert(item):
+                    stub = ast.copy_location(ast.Constant(None), item)
+                    if isinstance(value, list):
+                        value[index] = stub
+                    else:
+                        setattr(node, field, stub)
+                else:
+                    stack.append(item)
+    return tree
+
+
+def scan_sources(
+    sources: Iterable[ScanSource], prune: bool = True
+) -> tuple[ScanHit, ...]:
     """Find type checks on the registry across ``sources`` (condition 2).
 
-    A module is parsed only if its text holds a tracked identifier as a
-    word: the registry's name, a name some scanned module re-exports it
-    under, or a probe name. Every static spelling of the class holds one, so
-    the filter skips only modules that cannot name it. Re-exports are
-    followed to a fixed point across modules.
+    Every module is parsed. No text filter runs first, because the parser
+    joins adjacent literals, decodes escapes and normalizes identifiers, so
+    a module can spell the class without its text holding the name. Inert
+    literal containers are pruned unless ``prune`` is false. Re-exports of
+    the class are followed to a fixed point across modules.
     """
     sources = tuple(sources)
+    trees = {
+        source.path: _prune(_parse(source)) if prune else _parse(source)
+        for source in sources
+    }
+    binders = {
+        path: [
+            node for node in ast.walk(tree) if isinstance(node, _BINDING_NODES)
+        ]
+        for path, tree in trees.items()
+    }
     exports = {(REGISTRY_MODULE, REGISTRY_NAME)}
-    parsed: dict[str, ast.Module] = {}
     while True:
-        tokens = sorted({name for _, name in exports} | PROBE_NAMES)
-        pattern = re.compile(
-            r"(?<![\w])(?:" + "|".join(map(re.escape, tokens)) + r")(?![\w])"
-        )
         scopes = {}
         for source in sources:
-            if source.path not in parsed:
-                if not pattern.search(source.text):
-                    continue
-                parsed[source.path] = _parse(source)
             scope = _ModuleBindings(source, exports)
-            scope.bind(parsed[source.path])
+            scope.bind(binders[source.path])
             scopes[source.path] = scope
         found = {
             (scope.source.module, name)
@@ -553,7 +961,7 @@ def scan_sources(sources: Iterable[ScanSource]) -> tuple[ScanHit, ...]:
         sorted(
             hit
             for path, scope in scopes.items()
-            for hit in scope.hits(parsed[path])
+            for hit in scope.hits(trees[path])
         )
     )
 
@@ -708,7 +1116,20 @@ def _check(expression, imports=_IMPORT):
     return f"{imports}\ndef f(x):\n    return {expression}  # check\n"
 
 
-# Each invented module marks the line the scan must report with "# check".
+def _dispatch(hint, imports=_IMPORT):
+    """Invent a single-dispatch registration whose hint is ``hint``."""
+    return (
+        f"from functools import singledispatch\n{imports}\n"
+        "@singledispatch\ndef f(x):\n    return 0\n"
+        f"@f.register\ndef _(x: {hint}):  # check\n    return 1\n"
+    )
+
+
+# Each invented module marks the line of its check with "# check". A line
+# that binds the class or class info to a name ends "# alias" and adds a
+# class-reference hit; a line that holds the class's name as text ends
+# "# label" and adds a class-name-string hit.
+MARKERS = {"# alias": "class-reference", "# label": "class-name-string"}
 SPELLINGS = {
     "isinstance": (
         _check("isinstance(x, ProjectionRNGRegistry)"),
@@ -726,6 +1147,13 @@ SPELLINGS = {
         _check("isinstance(x, int | ProjectionRNGRegistry)"),
         "isinstance",
     ),
+    "isinstance with typing.Union": (
+        _check(
+            "isinstance(x, typing.Union[int, ProjectionRNGRegistry])",
+            f"{_IMPORT}\nimport typing",
+        ),
+        "isinstance",
+    ),
     "builtins.isinstance": (
         _check(
             "builtins.isinstance(x, ProjectionRNGRegistry)",
@@ -733,9 +1161,74 @@ SPELLINGS = {
         ),
         "isinstance",
     ),
+    "isinstance bound to a name": (
+        _check(
+            "check(x, ProjectionRNGRegistry)", f"{_IMPORT}\ncheck = isinstance"
+        ),
+        "isinstance",
+    ),
     "issubclass": (
         _check("issubclass(type(x), ProjectionRNGRegistry)"),
         "issubclass",
+    ),
+    "issubclass imported under another name": (
+        _check(
+            "check(type(x), ProjectionRNGRegistry)",
+            f"{_IMPORT}\nfrom builtins import issubclass as check",
+        ),
+        "issubclass",
+    ),
+    "class-info tuple bound to a name": (
+        _check(
+            "isinstance(x, KINDS)",
+            f"{_IMPORT}\nKINDS = (int, ProjectionRNGRegistry)  # alias",
+        ),
+        "isinstance",
+    ),
+    "union bound to a name": (
+        _check(
+            "isinstance(x, KINDS)",
+            f"{_IMPORT}\nKINDS = int | ProjectionRNGRegistry  # alias",
+        ),
+        "isinstance",
+    ),
+    "class-info tuples joined with +": (
+        _check("isinstance(x, (int,) + (ProjectionRNGRegistry,))"),
+        "isinstance",
+    ),
+    "subscript of a literal": (
+        _check("isinstance(x, (ProjectionRNGRegistry,)[0])"),
+        "isinstance",
+    ),
+    "named expression": (
+        _check("isinstance(x, kind := ProjectionRNGRegistry)"),
+        "isinstance",
+    ),
+    "class attribute": (
+        textwrap.dedent("""
+            from populace_dynamics.engine.rng import ProjectionRNGRegistry
+            class Holder:
+                kind = ProjectionRNGRegistry  # alias
+            def f(x):
+                return isinstance(x, Holder.kind)  # check
+        """),
+        "isinstance",
+    ),
+    "loop over class info": (
+        textwrap.dedent("""
+            from populace_dynamics.engine.rng import ProjectionRNGRegistry
+            def f(x):
+                for kind in (int, ProjectionRNGRegistry):  # alias
+                    if isinstance(x, kind):  # check
+                        return True
+                return False
+        """),
+        "isinstance",
+    ),
+    "identifier the parser normalizes": (
+        # A fullwidth first letter, which the parser folds to "P" (NFKC).
+        _check("isinstance(x, ＰrojectionRNGRegistry)"),
+        "isinstance",
     ),
     "type is": (_check("type(x) is ProjectionRNGRegistry"), "type-compare"),
     "type is not": (
@@ -808,14 +1301,15 @@ SPELLINGS = {
     ),
     "chained local alias": (
         _check(
-            "isinstance(x, S)", f"{_IMPORT}\nS = R\nR = ProjectionRNGRegistry"
+            "isinstance(x, S)",
+            f"{_IMPORT}\nS = R  # alias\nR = ProjectionRNGRegistry  # alias",
         ),
         "isinstance",
     ),
     "type of an instance": (
         _check(
             "isinstance(x, T)",
-            f"{_IMPORT}\nT = type(ProjectionRNGRegistry(0, 0))",
+            f"{_IMPORT}\nT = type(ProjectionRNGRegistry(0, 0))  # alias",
         ),
         "isinstance",
     ),
@@ -830,18 +1324,67 @@ SPELLINGS = {
         _check("type(x).__name__ == 'ProjectionRNGRegistry'", ""),
         "name-compare",
     ),
+    "class name in a tuple": (
+        _check("type(x).__name__ in ('ProjectionRNGRegistry',)", ""),
+        "name-compare",
+    ),
+    "class name attribute": (
+        _check("type(x).__name__ == ProjectionRNGRegistry.__name__"),
+        "name-compare",
+    ),
+    "escaped class name": (
+        _check("type(x).__name__ == '\\x50rojectionRNGRegistry'", ""),
+        "name-compare",
+    ),
+    "adjacent literals": (
+        _check("type(x).__name__ == 'Projection' 'RNGRegistry'", ""),
+        "name-compare",
+    ),
+    "concatenated literals": (
+        _check("type(x).__qualname__ == 'Projection' + 'RNGRegistry'", ""),
+        "name-compare",
+    ),
+    "class name bound to a name": (
+        _check(
+            "type(x).__name__ == LABEL",
+            "LABEL = 'ProjectionRNGRegistry'  # label",
+        ),
+        "name-compare",
+    ),
+    "module name comparison": (
+        _check("type(x).__module__ == 'populace_dynamics.engine.rng'", ""),
+        "module-compare",
+    ),
     "private-member probe": (
         _check("hasattr(x, '_period_sequence')", ""),
+        "private-member-probe",
+    ),
+    "private member read": (
+        textwrap.dedent("""
+            def f(x):
+                try:
+                    return x._period_sequence is not None  # check
+                except AttributeError:
+                    return False
+        """),
+        "private-member-probe",
+    ),
+    "private member in a listing": (
+        _check("'_period_sequence' in dir(x)", ""),
         "private-member-probe",
     ),
     "instance-check dunder": (
         _check("ProjectionRNGRegistry.__instancecheck__(x)"),
         "dunder-check",
     ),
+    "subclass-check dunder through type": (
+        _check("type.__subclasscheck__(ProjectionRNGRegistry, type(x))"),
+        "dunder-check",
+    ),
     "default argument": (
         textwrap.dedent("""
             from populace_dynamics.engine.rng import ProjectionRNGRegistry
-            def f(x, cls=ProjectionRNGRegistry):
+            def f(x, cls=ProjectionRNGRegistry):  # alias
                 return isinstance(x, cls)  # check
         """),
         "isinstance",
@@ -855,6 +1398,10 @@ SPELLINGS = {
         """),
         "class-compare",
     ),
+    "dictionary dispatch": (
+        _check("{ProjectionRNGRegistry: True}.get(type(x), False)"),
+        "class-reference",
+    ),
     "match class pattern": (
         textwrap.dedent("""
             from populace_dynamics.engine.rng import ProjectionRNGRegistry
@@ -864,6 +1411,25 @@ SPELLINGS = {
                         return 1
         """),
         "match-class",
+    ),
+    "match value pattern": (
+        textwrap.dedent("""
+            from populace_dynamics.engine import rng
+            def f(x):
+                match type(x):
+                    case rng.ProjectionRNGRegistry:  # check
+                        return 1
+        """),
+        "class-compare",
+    ),
+    "match on the class name": (
+        textwrap.dedent("""
+            def f(x):
+                match type(x).__name__:
+                    case "ProjectionRNGRegistry":  # check
+                        return 1
+        """),
+        "name-compare",
     ),
     "single-dispatch registration": (
         textwrap.dedent("""
@@ -879,16 +1445,15 @@ SPELLINGS = {
         "dispatch-register",
     ),
     "single-dispatch annotation": (
-        textwrap.dedent("""
-            from functools import singledispatch
-            from populace_dynamics.engine.rng import ProjectionRNGRegistry
-            @singledispatch
-            def f(x):
-                return 0
-            @f.register
-            def _(x: ProjectionRNGRegistry):  # check
-                return 1
-        """),
+        _dispatch("ProjectionRNGRegistry"),
+        "dispatch-annotation",
+    ),
+    "single-dispatch string annotation": (
+        _dispatch("'ProjectionRNGRegistry'"),
+        "dispatch-annotation",
+    ),
+    "single-dispatch string annotation through an alias": (
+        _dispatch("'int | R'", f"{_IMPORT} as R"),
         "dispatch-annotation",
     ),
 }
@@ -898,19 +1463,57 @@ def _invented(text, module="populace_dynamics.engine.invented_case"):
     return ScanSource(module, f"invented/{module.rpartition('.')[2]}.py", text)
 
 
+def _expected(text, kind):
+    """The (line, kind) pairs an invented module's markers ask for."""
+    expected = []
+    for number, line in enumerate(text.splitlines(), start=1):
+        if line.endswith("# check"):
+            expected.append((number, kind))
+        expected += [
+            (number, marked)
+            for marker, marked in MARKERS.items()
+            if line.endswith(marker)
+        ]
+    return sorted(expected)
+
+
 @pytest.mark.parametrize("spelling", tuple(SPELLINGS))
 def test_scan_catches_every_spelling_of_a_registry_type_check(spelling):
-    """Each spelling gives exactly one hit, of its kind, on its line."""
+    """Each spelling gives exactly the hits its markers ask for.
+
+    That is one hit of its kind on its check line, plus one on each line
+    that binds the class or holds its name.
+    """
     text, kind = SPELLINGS[spelling]
-    marked = [
-        number
-        for number, line in enumerate(text.splitlines(), start=1)
-        if line.endswith("# check")
-    ]
+    assert sum(line.endswith("# check") for line in text.splitlines()) == 1
     hits = scan_sources([_invented(text)])
-    assert [(hit.line, hit.kind) for hit in hits] == [
-        (marked[0], kind)
-    ], describe(hits)
+    assert [(hit.line, hit.kind) for hit in hits] == _expected(
+        text, kind
+    ), describe(hits)
+
+
+# Two spellings cannot run: a relative import needs a package, and the
+# chained alias binds a name before the name it copies, to show the scan's
+# bindings do not depend on order.
+_NOT_RUN = frozenset({"relative import", "chained local alias"})
+
+
+@pytest.mark.parametrize("spelling", sorted(set(SPELLINGS) - _NOT_RUN))
+def test_every_spelling_tells_the_two_classes_apart(spelling):
+    """Each invented check answers differently for the two classes.
+
+    So every spelling is a working type check that the scan must catch,
+    not a pattern that only looks like one. (Negated spellings answer
+    false for the registry and true for the direct class.)
+    """
+    text, _ = SPELLINGS[spelling]
+    namespace = {"__name__": "invented_case"}
+    exec(compile(text, "invented_case.py", "exec"), namespace)
+    outcomes = [
+        bool(namespace["f"](cls(0, 2)))
+        for cls in (ProjectionRNGRegistry, DirectRNGStreams)
+    ]
+    assert outcomes[0] != outcomes[1]
 
 
 def test_scan_follows_re_exports_across_modules():
@@ -969,31 +1572,112 @@ def test_scan_follows_re_exports_across_modules():
     ], describe(hits)
 
 
-@pytest.mark.parametrize(
-    "body",
-    (
-        "def f(x):\n    return isinstance(x, int)\n",
-        "from populace_dynamics.engine.rng import ProjectionModule\n"
-        "def f(x):\n    return isinstance(x, ProjectionModule)\n",
-        "def f(x):\n    return type(x) is dict or x.__class__ == list\n",
-        "def f(n):\n    return ProjectionRNGRegistry(0, n)\n",
-        "def f(registry: ProjectionRNGRegistry | None = None):\n"
-        "    return registry is None or registry.n_periods == 3\n",
-        "def f(context):\n"
-        "    if context.rng_registry is None:\n        return None\n"
-        "    return context.rng_registry.person_generator(1, 'aging', 0)\n",
-        "def f(x):\n    return hasattr(x, 'person_generator')\n",
-        "class Streams:\n    pass\n"
-        "def f(x):\n    return isinstance(x, Streams) or x == 'Registry'\n",
-        # A binding cycle that would grow a module path on every pass.
-        "import os as b\na = b.path\nb = a\n"
-        "def f(x):\n    return isinstance(x, a.sep)\n",
-    ),
+NEGATIVE_BODIES = (
+    "def f(x):\n    return isinstance(x, int)\n",
+    "from populace_dynamics.engine.rng import ProjectionModule\n"
+    "def f(x):\n    return isinstance(x, ProjectionModule)\n",
+    "def f(x):\n    return type(x) is dict or x.__class__ == list\n",
+    "def f(n):\n    return ProjectionRNGRegistry(0, n)\n",
+    "def f(registry: ProjectionRNGRegistry | None = None):\n"
+    "    return registry is None or registry.n_periods == 3\n",
+    "def f(context):\n"
+    "    if context.rng_registry is None:\n        return None\n"
+    "    return context.rng_registry.person_generator(1, 'aging', 0)\n",
+    "def f(x):\n    return hasattr(x, 'person_generator')\n",
+    "class Streams:\n    pass\n"
+    "def f(x):\n    return isinstance(x, Streams) or x == 'Registry'\n",
+    # A binding cycle that would grow a module path on every pass.
+    "import os as b\na = b.path\nb = a\n"
+    "def f(x):\n    return isinstance(x, a.sep)\n",
+    # Listings, docstrings and annotations name the class harmlessly.
+    "__all__ = ['ProjectionRNGRegistry']\n"
+    "__all__ += ['ProjectionRNGRegistry']\n"
+    "__all__.extend(['ProjectionRNGRegistry'])\n",
+    'def f(x):\n    """Draw from a ProjectionRNGRegistry."""\n    return x\n',
+    "class Holder:\n    registry: ProjectionRNGRegistry | None = None\n"
+    "def f() -> 'ProjectionRNGRegistry':\n"
+    "    return ProjectionRNGRegistry(draw_index=0, n_periods=1)\n",
+    # A dispatch hint on a keyword-only parameter is never dispatched on.
+    "from functools import singledispatch\n"
+    "@singledispatch\ndef f(x):\n    return 0\n"
+    "@f.register\ndef _(x: int, *, registry: ProjectionRNGRegistry):\n"
+    "    return 1\n",
+    # A module function that shares a probe's name, called by name.
+    "def _sequence(n):\n    return list(range(n))\n"
+    "def f(x):\n    return _sequence(x)\n",
+    # The registry's module, used for something else.
+    "from populace_dynamics.engine import rng\n"
+    "def f(x):\n    return x is rng.ProjectionModule.EARNINGS\n",
+    # Literal tables that name nothing the scan tracks; pruning drops them.
+    "TABLE = {'a': (1, -2.5, None), 'b': [b'x', {3}]}\n"
+    "def f(x):\n    return isinstance(x, (int, str)) and x in TABLE\n",
 )
+
+
+@pytest.mark.parametrize("body", NEGATIVE_BODIES)
 def test_scan_ignores_unrelated_checks_and_ordinary_registry_use(body):
     """Each negative names the registry, so the scan parses it."""
     hits = scan_sources([_invented(_REGISTRY_IMPORT + body)])
     assert hits == (), describe(hits)
+
+
+# Inert-literal pruning must not change any result. The leaves include the
+# class's name, its module's name and a probe name, so some generated
+# literals are inert and some are not.
+_LITERAL_LEAVES = st.one_of(
+    st.integers(-3, 3),
+    st.none(),
+    st.binary(max_size=2),
+    st.sampled_from(
+        ["a", REGISTRY_NAME, REGISTRY_MODULE, "_period_sequence", "RNG"]
+    ),
+)
+_LITERALS = st.recursive(
+    _LITERAL_LEAVES,
+    lambda inner: st.one_of(
+        st.lists(inner, max_size=3),
+        st.tuples(inner, inner),
+        st.dictionaries(st.text("ab", max_size=2), inner, max_size=3),
+    ),
+    max_leaves=8,
+)
+_LITERAL_PLACES = (
+    _REGISTRY_IMPORT
+    + "TABLE = {0}\n"
+    + "KINDS = ({0}, ProjectionRNGRegistry)\n"
+    + "__all__ = {0}\n"
+    + "def f(x, default={0}):\n"
+    + "    for item in {0}:\n"
+    + "        pass\n"
+    + "    return type(x).__name__ in {0} or isinstance(x, {0}) or g({0})\n"
+)
+
+
+def test_pruning_leaves_every_invented_scan_unchanged():
+    """Pruned and unpruned scans agree on every invented module here."""
+    texts = [text for text, _ in SPELLINGS.values()]
+    texts += [_REGISTRY_IMPORT + body for body in NEGATIVE_BODIES]
+    for text in texts:
+        assert scan_sources([_invented(text)]) == scan_sources(
+            [_invented(text)], prune=False
+        )
+
+
+@settings(max_examples=200, deadline=None)
+@given(literal=_LITERALS)
+def test_pruning_leaves_scans_unchanged_for_any_literal(literal):
+    """Inert literals contribute nothing, wherever they sit.
+
+    Each generated literal is placed in every position a check could read
+    it from: a binding, a container beside the class, a listing, a
+    default, a loop, a comparison, a type check and a call.
+    """
+    text = _LITERAL_PLACES.format(repr(literal))
+    pruned = scan_sources([_invented(text)])
+    assert pruned == scan_sources([_invented(text)], prune=False)
+    assert ScanHit("invented/invented_case.py", 3, "class-reference") in (
+        pruned
+    )
 
 
 def test_scan_messages_never_show_source_text():
@@ -1427,11 +2111,24 @@ def _recording(modules, calls):
 
 @pytest.mark.parametrize("mode", RNG_STREAM_MODES)
 def test_each_period_gives_every_slot_one_context_and_the_loop_generators(
-    mode,
+    mode, monkeypatch
 ):
     """Condition 1: only ``context.rng_registry`` changes, and only in
-    direct mode; the loop's positional module generators pass unchanged."""
+    direct mode; the loop's positional module generators pass unchanged.
+
+    The loop's own context is recorded where the harness receives it, and
+    every other field of each slot's context is compared with it.
+    """
     calls = []
+    originals = {}
+    bind = _AdapterStreams.bind
+
+    def recorded_bind(self, context):
+        served = bind(self, context)
+        originals[id(served)] = context
+        return served
+
+    monkeypatch.setattr(_AdapterStreams, "bind", recorded_bind)
     modules = _recording(_modules(), calls)
     draw, end = 2, START + 3
     result = run_gate(
@@ -1450,6 +2147,21 @@ def test_each_period_gives_every_slot_one_context_and_the_loop_generators(
         )
         assert state == expected.bit_generator.state, (slot, context.year)
     assert all(len(ids) == 1 for ids in contexts.values())
+    for _, context, _ in calls:
+        original = originals[id(context)]
+        for item in dataclasses.fields(PeriodContext):
+            if item.name != "rng_registry":
+                assert getattr(context, item.name) == getattr(
+                    original, item.name
+                ), item.name
+        assert context.metadata is original.metadata
+        assert context.person_ordinals is original.person_ordinals
+        assert context.draw_index == original.draw_index == draw
+        assert type(original.rng_registry) is ProjectionRNGRegistry
+        assert (context is original) is (mode == "registry")
+        assert (context.rng_registry is original.rng_registry) is (
+            mode == "registry"
+        )
     streams = {id(context.rng_registry) for _, context, _ in calls}
     assert len(streams) == 1
     served = calls[0][1].rng_registry

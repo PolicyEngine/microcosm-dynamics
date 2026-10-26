@@ -668,7 +668,8 @@ on the build's four open questions. The branch then merged master
 `9cced8ff`, a docs-only ledger update, and applied the rulings: the
 observer's refusal stays, with a clearer OP1 refusal under the default; the
 2100 identity grid is the full product; and the scan skips the depletion-cut
-modules by path.
+modules by path. Review inject-r1 then asked for revisions at `8634858c`;
+its subsection, below, gives the findings and the fixes.
 
 ### Mechanism
 
@@ -677,19 +678,19 @@ modules by path.
 (`engine/loop.py:216–217`), puts it on each period's `PeriodContext`
 (`:287–294`) and passes each slot a module generator positionally
 (`:297–350`). So the substitution lives in OP1's wrapper,
-`_AdapterStreams` (`open_population/harness.py:171–234`):
+`_AdapterStreams` (`open_population/harness.py:180–264`):
 
 - At the first period it keeps the loop's registry and builds one
-  `DirectRNGStreams(registry.draw_index, registry.n_periods)` (`:205–212`).
+  `DirectRNGStreams(registry.draw_index, registry.n_periods)` (`:215–221`).
   Every later period must carry the same registry object, or the run is
-  refused with `ID_OR_STREAM_COLLISION` (`:213–216`). A context without a
-  registry is refused the same way (`:202–206`).
+  refused with `ID_OR_STREAM_COLLISION` (`:222–225`). A context without a
+  registry is refused the same way (`:211–214`).
 - Every slot of a period receives one
   `dataclasses.replace(context, rng_registry=<direct>)`, built once per
-  period (`:217–225`), just as the loop gives its eight slots one context.
+  period (`:228–234`), just as the loop gives its eight slots one context.
   Metadata, the person ordinals and every other field are the loop's own
   objects.
-- All eight slots are bound (`:361–377`): the mortality wrapper, and through
+- All eight slots are bound (`:393–405`): the mortality wrapper, and through
   it `_ExitAdapter` and the mortality adapter; aging; the marital core; the
   birth-entry adapter, and through it fertility; disability; earnings;
   claiming; and `close_period`, and through it household composition.
@@ -711,11 +712,11 @@ modules by path.
 
 `_project`, `run_production` and `run_gate` take
 `rng_streams: Literal["registry", "direct"] = "direct"`
-(`open_population/harness.py:257`, `:409`; `open_population/gates.py:60`).
+(`open_population/harness.py:286`, `:439`; `open_population/gates.py:60`).
 Any other value is refused before the initializer or any adapter runs
-(`harness.py:181–185`, `:264`). `OpenPopulationResult` records
+(`harness.py:191–194`, `:294`). `OpenPopulationResult` records
 `rng_streams` and `rng_stream_class`, the qualified name of the class that
-served the slots (`:120–121`, `:191–197`, `:399–400`). No module was added,
+served the slots (`:129–130`, `:200–206`, `:429–430`). No module was added,
 so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
 
 ### Invariants
@@ -736,11 +737,12 @@ so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
 
 ### The coordinator's conditions and their evidence
 
-**1. No sealed code changes.** Against master `0f69bbb2` the branch changes
-only `open_population/harness.py` and `gates.py`, OP1's tests and the two
-`op1_*` evidence files (§3's commands, with `0f69bbb2` as the base). No
-engine or baselines attribute is patched, and `DirectRNGStreams` is not a
-registry subclass:
+**1. No sealed code changes.** Against master `9cced8ff`, the master it
+merged, the branch changes only `open_population/harness.py` and `gates.py`,
+OP1's two stream test modules and three files in this folder: this report,
+`op1_run_size.py` and `op1_run_size_injection.json` (§3's commands, with
+`9cced8ff` as the base). No engine or baselines attribute is patched, and
+`DirectRNGStreams` is not a registry subclass:
 - `test_a_direct_run_patches_no_sealed_module_attribute` compares every
   attribute of `engine/rng.py`, `engine/loop.py`, `ProjectionRNGRegistry`
   and `PeriodContext`, by identity, before and after a direct run;
@@ -749,6 +751,12 @@ registry subclass:
   in both modes, checks the state of the generator each of the eight slots
   receives against the loop's module generator, and that one context, one
   stream instance, one metadata mapping and one ordinal map serve the run.
+  It also records the loop's own context where the harness receives it and
+  compares every other `PeriodContext` field of each slot's context with
+  it: equal values, the requested draw index, and the loop's own metadata
+  and ordinal objects. Only `rng_registry` differs, and only in direct mode.
+  A replacement context with a changed draw index, or with copied metadata
+  or ordinals, fails it.
 
 `op1_run_size.py` patches registry methods, as it did at OP1's merge, but
 only inside its measurement worker, to time them. The harness patches
@@ -796,41 +804,106 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   module and no module whose name contains `depletion_cut` is in
   `sys.modules`. Code a projection never imports can't check its
   registry's type.
-- **What it catches.** `isinstance` and `issubclass` (with tuples and
-  unions); `type(x)` and `x.__class__` compared by `is`, `is not`, `==`,
-  `!=`, `in` or `not in`, alone or in a chain; any other comparison against
-  the class; `match` class patterns; class-name string comparisons; `__instancecheck__` and
-  `__subclasscheck__`; `singledispatch` registration by argument or by
-  annotation; and `hasattr` or `getattr` probes of a private name found on
-  only one class.
-- **How it names the class.** Directly; through an import alias; as a
+- **Two layers.** Specific checks name the kind of each type check they
+  find. Under them, a catch-all reports every other mention of the class,
+  or of its name or its module's name as text, outside a benign place.
+  Benign places are imports, string statements (docstrings among them),
+  `__all__` listings, annotations other than dispatch hints, and the callee
+  of a construction such as `ProjectionRNGRegistry(draw_index, n_periods)`.
+  So a static spelling the specific checks miss still fails the pin, as a
+  `class-reference`, `class-name-string` or `module-name-string` hit on its
+  line.
+- **What the specific checks catch.**
+  - `isinstance` and `issubclass`, also through aliases such as
+    `check = isinstance` or `from builtins import issubclass as check`.
+  - `type(x)` or `x.__class__` compared with the class, by any comparison
+    operator, alone or in a chain; and any other comparison against the
+    class or class info.
+  - Comparisons with the class's name as text: `__name__` or
+    `__qualname__` against a string, a string held in a name or a
+    container, or `ProjectionRNGRegistry.__name__`. Comparisons with its
+    module's name count the same way.
+  - `match` class and value patterns.
+  - `__instancecheck__` and `__subclasscheck__`.
+  - `singledispatch` registration by argument or by hint, quoted hints
+    included.
+  - Private names found on only one class, whether read as an attribute,
+    probed with `hasattr` or `getattr`, or held as a string.
+- **How it follows the class.** Directly; through an import alias; as a
   module attribute (`rng.ProjectionRNGRegistry`, the dotted path, or an
-  aliased module); through relative imports, local assignment chains,
-  default arguments, `type(ProjectionRNGRegistry(...))` and `getattr` on the
-  module; and through re-exports across modules, followed to a fixed point.
-  Bindings only accumulate, so the fixed point ends even on a binding
-  cycle such as `a = b.c; b = a`.
-- **Speed.** A module is parsed only if its text holds a tracked identifier
-  as a word: the class name, a name some module re-exports it under, or a
-  probe name. Every static spelling holds one, so the filter skips only
-  modules that cannot name the class. It keeps the scan away from two
-  generated data modules of 11 and 18.5 MB.
-- **Its own tests.** `test_scan_catches_every_spelling_of_a_registry_type_check`
-  (32 invented snippets, each with exactly one hit of its kind on its
-  marked line), `test_scan_follows_re_exports_across_modules` (aliases one
-  and two modules away, a star import, a module alias, and a same-named
-  local class that is not caught) and
-  `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` (nine
-  negatives, each importing the class so that it is parsed, one of them a
-  binding cycle).
+  aliased module); and through relative imports, local assignment chains,
+  class and instance attributes, default arguments, loop variables, named
+  expressions, `type(ProjectionRNGRegistry(...))` and `getattr` on the
+  module. It also follows the class inside class info: tuples, lists,
+  sets, unions written with `|` or `typing.Union`, tuples joined with `+`,
+  mappings, subscripts of any of these, and anything rebuilt or read from
+  them, such as `tuple(KINDS)` or `KINDS.get(key)`. Re-exports are followed
+  across modules to a fixed point. Bindings only accumulate, so the fixed
+  point ends even on a binding cycle such as `a = b.c; b = a`. The scan
+  over-approximates on purpose: a binding anywhere in a module counts
+  everywhere in it, and an attribute counts wherever a name spelled like it
+  is bound.
+- **Text as the parser sees it.** Every module is parsed, with no text
+  filter first. The build's filter parsed a module only if its text held a
+  tracked name, and an escaped literal such as `"\x50rojectionRNGRegistry"`
+  passed it, though the parser decodes it to the class's name. The scan
+  reads strings after the parser has joined adjacent literals and decoded
+  escapes, and it folds `+` and f-strings made only of literals. It sees
+  identifiers after the parser's NFKC normalization, so a fullwidth first
+  letter still names the class.
+- **Cost.** Right after parsing, each literal container of constants whose
+  strings hold none of the class's name, its module's name or a probe name
+  is replaced by `None`. No check can report or bind anything from such a
+  container. The generated data modules of 18.5, 11.1 and 1.6 MB are almost
+  all such containers: pruning leaves 178, 78 and 7 of their 706,994,
+  251,826 and 85,417 syntax-tree nodes, and 930,518 of the 2,007,887 in all
+  302 modules. `test_pruning_leaves_every_invented_scan_unchanged`
+  and `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
+  literals, each placed in eight positions) check that pruning changes no
+  result. On the host the real-tree test takes 6.5 s, and its process peaks
+  near 1.3 GB, mostly while parsing the largest data module.
+- **Its own tests.**
+  - `test_scan_catches_every_spelling_of_a_registry_type_check` covers 58
+    invented spellings. Each gives exactly the hits its markers ask for:
+    one of its kind on its check line, plus one on each line that binds
+    the class or holds its name. All twelve of review inject-r1's misses
+    are among them.
+  - `test_every_spelling_tells_the_two_classes_apart` runs 56 of them and
+    checks that each answers differently for the two classes. The other
+    two cannot run: a relative import, and an alias chain written in
+    reverse order.
+  - `test_scan_follows_re_exports_across_modules` is unchanged: aliases one
+    and two modules away, a star import, a module alias, and a same-named
+    local class that is not caught.
+  - `test_scan_ignores_unrelated_checks_and_ordinary_registry_use` has 16
+    negatives. They include `__all__` listings, docstrings, annotations, a
+    keyword-only hint on a dispatch registration, a module function that
+    shares a probe's name, another use of the registry's module and pruned
+    literal tables.
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
   hits, their `repr` and the assertion message, and from the refusal raised
   for unparsable source, whose original exception is suppressed.
-- **Limits.** It does not resolve names built at run time (`getattr` with a
-  computed string, `importlib`, `eval`), or comparisons with a type taken
-  from another object at run time (`type(a) is type(b)`).
+- **Limits.** The scan does not see:
+  - names built at run time: concatenation with computed values, `chr`,
+    decoding, formatting, or `getattr` with a computed string;
+  - part of the class's or module's name, such as a prefix test or a
+    regular expression;
+  - the type of another value: `type(a) is type(b)`,
+    `isinstance(x, type(y))`, and the dataclass-generated `==` between a
+    registry and a direct instance, which is false across the two classes;
+  - annotations read at run time by anything but a `register` decorator.
+    Searching `src/` outside the excluded modules and `baselines/asfr.py`,
+    `typing.get_type_hints` appears only in `track_b/_provenance.py`, whose
+    schemas read the hints of the Track B classes and calls it decorates.
+    The one registry hint in Track B, on `track_b/replay.py`'s private
+    `_rng_signature`, carries no decorator;
+  - code it does not read: the excluded modules, OP1's own package,
+    scripts, tests and third-party code.
+
+  Over-approximation can also give false hits. Any hit, false or not,
+  fails the pin and comes back for a decision.
 
 **The scan finds one check in sealed code.**
 `src/populace_dynamics/mortality_observer.py:381` is a `type-compare`: the
@@ -877,9 +950,10 @@ sealed code comes back for a decision.
   from 0 to the horizon, all eight modules and all six methods, at
   horizons 0, 1, 7 and 75 and draws 0, 1 and 9.
 - Both generator comparisons in `test_streams.py` now also check
-  `bit_generator.state`, before and after four draws, so the existing
-  exhaustive grid, its Hypothesis test and every refusal-grid comparison
-  check state too.
+  `bit_generator.state`. `_assert_generators_equal`, which the exhaustive
+  grid and its Hypothesis test use, checks it before and after four draws.
+  `_generator_identity`, which the refusal-grid comparisons use, records it
+  before two draws.
 - `test_bad_addresses_on_injection_horizons_match_registry` crosses periods
   just outside each horizon, an unknown module and negative children and
   tags with valid values, on the same horizons and draws, and compares
@@ -904,7 +978,8 @@ Each run draws:
 - a mortality person stream for everyone;
 - an ASFR tagged child for women of childbearing age;
 - an emigration tagged child for each survivor;
-- scheduled entrants in three years;
+- scheduled entrants in two distinct years for the 2027 runs (2026 and
+  2027) and in three for the 2100 runs (2026, 2063 and 2100);
 - through an invented probe in the earnings slot, every method the context
   exposes, from `context.rng_registry` and `context.person_generator`, kept
   as a column.
@@ -952,7 +1027,7 @@ size.
 - At 400 people the direct default takes 12% of the `registry` mode's time
   and 18% of the time OP1 took before this follow-up (`direct_emigration`).
 - Peak RSS over the nine workers ranges from 192.3 to 203.0 MB. At each size
-  the direct mode is within 1.3 MB of the `registry` mode.
+  the direct mode is within 1.4 MB of the `registry` mode.
 - The microbenchmark's median cost per address (one tagged-child generator
   and one draw) is 6.7 µs at horizon 7 and 7.4 µs at horizon 75 on the
   direct class, against 52.3 and 216.7 µs on the registry.
@@ -969,6 +1044,36 @@ untouched, for the main session's recount.
 `test_stream_injection.py`, and `_classify_test_module` classifies both
 modules as `unit`. The stream differential and the hash identity therefore
 run on every CI push.
+
+### Review inject-r1
+
+Review inject-r1, a hard-tier Subfleet review on a Codex lane, read the
+branch at `8634858c` and returned REVISE, with one major and three minor
+findings. It confirmed the harness, the re-raise, the coordinator's
+sealed-path and file checks, the evidence audit and the six mutants below.
+
+1. **Major: static type checks escaped the scan.** Twelve invented checks,
+   each true for the registry and false for the direct class, gave no hit:
+   class info bound to a name (a tuple and a union), aliases of
+   `isinstance` and `issubclass`, the class's name in a tuple,
+   `ProjectionRNGRegistry.__name__`, an escaped name literal (which also
+   passed the text filter), a class attribute, a subscript of a literal, a
+   named expression, dictionary dispatch and a quoted dispatch hint.
+   **Fix:** the two-layer scan under condition 2, with the text filter
+   removed. All twelve are among the invented spellings, and the scan still
+   finds exactly the one pinned check in sealed code.
+2. **Minor: the binding test did not show that only `rng_registry`
+   changes.** A replacement context with `draw_index + 1` survived it.
+   **Fix:** the test now compares every other field with the loop's own
+   context (condition 1). That mutant fails it, and so do copies of the
+   metadata or the ordinals.
+3. **Minor: the RSS gap at 25 people is 1,359,872 bytes,** so "within
+   1.3 MB" understated it. **Fix:** "within 1.4 MB".
+4. **Minor: evidence wording.** **Fix:** condition 1 names base `9cced8ff`
+   and the three files in this folder. The stream-identity text describes
+   the two generator helpers separately, the entrant years are given per
+   horizon, and this section's source line references match the current
+   files.
 
 ### Commands and results
 
@@ -1032,6 +1137,34 @@ Six mutants of the new code each fail the tests aimed at them:
 - ignoring the depletion-cut pattern. This mutant ran only against the
   pin and decoy tests, never against the real tree.
 
+After the fixes for review inject-r1, the main session ran the same
+commands on the host from 10:53 to 10:58 UTC on 26 October, at one-minute
+loads of 18 to 25, each process under the load-check plugin:
+- `tests/open_population`: **437 passed and 1 strict xfail** in 34.13 s.
+  These are OP1's 238 and the 200 tests this follow-up adds: 175 in
+  `test_stream_injection.py` and 25 in `test_streams.py`.
+- The other four modules: 104 passed in 1.00 s.
+- The required command plus the two Track B holdout-registry modules: 756
+  passed, 2 skipped and 1 strict xfail.
+- Peak RSS was 1.33 GB, against 340 MB before; the real-tree scan's parse
+  of the largest data module accounts for most of the rise.
+- The slowest tests took 6.54 s (the real-tree scan), 2.04 s (the
+  fresh-interpreter import check) and 1.45 to 1.55 s for each 2100 hash
+  pair.
+- No file under a bar was opened, the pattern line named only
+  `baselines/asfr.py` (read by the scan, never displayed), and neither
+  barred function was called.
+- `--collect-only -m unit tests/open_population` collects all 438. Black,
+  Ruff and `git diff --check` are clean. `git diff --stat 9cced8ff` still
+  lists the seven files, and the sealed-path `git diff --quiet` exits 0.
+
+Thirteen more mutants each fail the tests aimed at them. Three change the
+replacement context's draw index, metadata or ordinals. Ten disable a part
+of the scan: the catch-all, checking-function aliases, container names,
+pruning's check for tracked strings, `+` folding, parsing of quoted hints,
+module-name comparisons, the benign `__all__` listing, private-attribute
+reads and loop bindings. None ran against the real tree.
+
 ### Restricted-files statement
 
 The build read `RESTRICTED-FILES.md` at its pinned hash and the
@@ -1052,3 +1185,8 @@ was in. With an audit hook on file opens, that run opened no excluded file,
 and no projection run imported a closed or depletion-cut module. Every
 test, probe and measurement uses invented inputs. No microdata or external
 statistical table was read, and no real-data statistic was computed.
+
+The fixes for review inject-r1 followed the same rules. The main session's
+measurement scripts read the scanned modules only through the test
+module's own walk, and printed module paths, line numbers, node kinds and
+counts. Its searches over `src/` took their file lists from the helper.
