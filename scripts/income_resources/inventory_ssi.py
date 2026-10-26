@@ -29,7 +29,12 @@ the implicit calls that operators, iteration and attribute or item reads
 make on them. The engine's directory walk also runs every module under
 ``policyengine_us/variables`` outside the closure, and such a module can
 change what the engine loads; the reader does not read those modules, and
-only the pinned-engine oracle covers them. The oracle tests cover what the
+only the pinned-engine oracle covers them. Python's source loader can also
+run a module's cached bytecode in ``__pycache__`` instead of its source: a
+timestamp file that records the source's modification time and size, or
+an unchecked hash-based file, is never compared with the source. The reader
+reads only source, so only the pinned-engine oracle covers cached bytecode
+too. The oracle tests cover what the
 read leaves out only for the pinned release: they check each inventoried
 variable's value_type, default (its value and type), entity and period,
 and each enum variable's members, against what the engine loads.
