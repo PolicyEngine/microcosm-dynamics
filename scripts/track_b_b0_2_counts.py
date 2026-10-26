@@ -66,7 +66,7 @@ EVIDENCE_DIR = (
 )
 PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
 PROTOCOL_SHA256 = (
-    "66cadfa488103f24dbda7ff84ef0e1051ba3a3e0e95e23198b81fdadcfbb0b0e"
+    "b1ac4bc03b8dda41e88b42fadbdd5e9fb0fb09a3e7b78c0e9613af7a3af1b7c9"
 )
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
@@ -85,9 +85,11 @@ PROTECTION_RULE = (
     "every atom and published-set difference of true size 1-9 has an "
     "integer range of width >= 4, shown by two exactly verified integer "
     "points, under the published values, the guaranteed cross-type "
-    "relations and every target the release discloses to lie outside 1-9; "
-    "every program is set from the publication alone, and a target not "
-    "shown wide within 300 seconds per program is narrow"
+    "relations and every target the release discloses to lie outside 1-9, "
+    "or is exempt: its proven least and greatest sizes under those are "
+    "the ones B0.1's published counts alone give it; every program is set "
+    "from the publications alone, and a target not shown wide or exempt "
+    "within 300 seconds per program is narrow"
 )
 CellPath = tuple[str, ...]
 WAVES = tuple(range(1999, 2024, 2))
@@ -902,6 +904,79 @@ def seed_pool(system: AuditSystem, pool: WitnessPool, *, seconds) -> None:
             pool.add(point)
 
 
+def earlier_counts_system(
+    registry: SetRegistry,
+    model: dict,
+    before_program: Callable[[], None] | None = None,
+) -> tuple[AuditSystem, np.ndarray] | None:
+    """The earlier release's published counts alone, over the same atoms:
+    each of its rows fixed at its exact value, and nothing of this
+    release's, no relation and no disclosure. One more row fixes at 0 every
+    atom none of those rows holds, and those atoms are flagged: the earlier
+    counts leave their sizes unbounded, so a target holding one is never
+    exempt, and fixing the rest changes no exempt target's range. None when
+    no earlier release is registered."""
+    if not registry.prior:
+        return None
+    values = {
+        model["path_rows"][path]: value
+        for path, (_, _, value) in registry.prior.items()
+    }
+    rows = sorted(values)
+    matrix = model["matrix"][rows]
+    uncounted = np.asarray(matrix.sum(axis=0)).ravel() == 0
+    bounds = np.array([values[row] for row in rows] + [0], dtype=np.int64)
+    system = AuditSystem(
+        {
+            "matrix": vstack(
+                [matrix, csr_matrix(uncounted.astype(np.int64)[None, :])]
+            ).tocsr()
+        },
+        bounds,
+        bounds.copy(),
+        [],
+        [],
+        before_program,
+    )
+    return system, uncounted
+
+
+def exempt(
+    earlier: tuple[AuditSystem, np.ndarray] | None,
+    target: dict,
+    outcome: dict,
+    *,
+    seconds,
+) -> bool:
+    """Whether a narrow target is exempt: this release narrows it no
+    further than the earlier release's published counts already do
+    (protocol, "Exempt targets"). Its range under everything the round
+    holds must be proven, and two more programs must prove the same least
+    and greatest size under the earlier counts alone. Those counts are
+    among the round's constraints, so the round's range lies within
+    theirs, and equal ranges mean this release narrows the target no
+    further.
+
+    Like every program, these are set from the publications alone, never
+    from a true size, so the test runs on every narrow target and a reader
+    can rerun it. Anything unproven is not exempt."""
+    if earlier is None or outcome.get("proof") != "optima":
+        return False
+    system, uncounted = earlier
+    columns = list(target["columns"])
+    if uncounted[columns].any():
+        return False
+    extremes = [
+        system.extreme(columns, sense, None, None, seconds=seconds)
+        for sense in (1, -1)
+    ]
+    outcome["programs"].extend(["earlier maximum", "earlier minimum"])
+    if any(extreme is None for extreme in extremes):
+        return False
+    (maximum, _), (minimum, _) = extremes
+    return [minimum, maximum] == outcome["range"]
+
+
 def classify(system: AuditSystem, target: dict, pool: WitnessPool, *, seconds):
     """Whether one target's integer range under ``system`` is at least the
     protection width ("wide"), cannot reach 1 to 9 ("irrelevant"), or is
@@ -971,17 +1046,21 @@ def audit_counts(
     """Decide whether the counts may be released at ``base``.
 
     Every program, its window and the order of targets depend only on the
-    publication, the registry's structure and the targets disclosed so
-    far. True sizes enter only the test that withholds: a target of true
-    size 1 to 9 found narrow. So each round's narrow targets are the same
-    for every table with this publication, and a release tells a reader
-    exactly that every narrow target lies outside 1 to 9. Each narrow
-    target is therefore added to the constraints as disclosed, and every
-    target not yet disclosed is classified again, until a round adds none.
-    Every target of true size 1 to 9 is then wide under everything a
-    release discloses. A round whose disclosures rule out every pool
-    point seeds the pool again under them; if no seed program then finds
-    a point, nothing can be shown wide and the release is withheld.
+    publications (this release's and the earlier release's counts), the
+    registry's structure and the targets disclosed so far. True sizes
+    enter only the test
+    that withholds: a target of true size 1 to 9 found narrow and not
+    exempt (``exempt``). So each round's narrow and exempt targets are the
+    same for every table with this publication, and a release tells a
+    reader exactly that every narrow target that is not exempt lies
+    outside 1 to 9. Each such target is therefore added to the constraints
+    as disclosed, and every target not yet disclosed is classified again,
+    until a round adds none. Every target of true size 1 to 9 is then wide
+    under everything a release discloses, or exempt: the earlier counts
+    alone give it the same proven range. A round whose disclosures rule
+    out every pool point seeds the pool again under them; if no seed
+    program then finds a point, nothing can be shown wide and the release
+    is withheld.
 
     Each target's final decision is its classification in the round that
     ended the audit, or in the round that disclosed it or proved it
@@ -994,6 +1073,7 @@ def audit_counts(
     model = build_model(registry)
     lower, upper = published_bounds(counts, registry, model, base)
     relations = model_relations(registry, model)
+    earlier = earlier_counts_system(registry, model, before_program)
     targets = model["targets"]
     truth = model["sizes"]
     disclosed: list[int] = []
@@ -1048,9 +1128,15 @@ def audit_counts(
             outcome, witness = classify(
                 system, targets[index], pool, seconds=seconds
             )
-            settled[index] = {**outcome, "round": len(rounds) + 1}
             if witness is not None:
                 pool.add(witness)
+            if outcome["result"] == "narrow" and exempt(
+                earlier, targets[index], outcome, seconds=seconds
+            ):
+                # Neither withheld nor disclosed; every later round tests
+                # it again under that round's constraints.
+                outcome = {**outcome, "result": "exempt"}
+            settled[index] = {**outcome, "round": len(rounds) + 1}
             if outcome["result"] != "narrow":
                 continue
             if 1 <= targets[index]["true_size"] < DISCLOSURE_THRESHOLD:

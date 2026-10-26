@@ -220,6 +220,36 @@ now caught: a properties dictionary the assertion check copies and does
 not give back, and a design stratum the identifier check does not
 require. The test confinement also refuses name lookups.
 
+The invented-panel calibrations at `e79f41b5` then withheld at 800 and
+3,000 households, each on one class of persons of true size 1 that the
+audit left 0 to 3, and released with B0.1's sets left out
+(`docs/design/track_b_b0_2_evidence/calibration.txt` and
+`singleton.txt`). Max ruled on 2026-10-26 that a target is exempt when
+this release's counts narrow it no further than B0.1's published counts
+already do, and the block was revised before any freeze (Disclosure
+rule, "Exempt targets"):
+- **The test.** For each narrow target with a proven range, two more
+  programs find its least and greatest size under B0.1's published
+  counts alone. They are set from the publications, like every other
+  program. If they prove the same range, the target is exempt: it
+  neither withholds the release nor is disclosed. A target holding an
+  atom no B0.1 set counts is never exempt, and anything unproven fails
+  closed.
+- **Later rounds** test an exempt target again, so a disclosure that
+  narrows it further ends its exemption.
+- **Tests:**
+  - the exhaustive reader with earlier counts also enumerates B0.1's
+    counts alone, and the script's exemptions must match it;
+  - the exemption programs are the same for every table with the same
+    publications, and each fail-closed case has its own test;
+  - through `main()`, a panel whose small classes B0.1 already fixes
+    releases. That panel had been the relabeling test's withholding
+    case, which now uses one this release narrows, and the test of a
+    small B0.1 cell now names the target that still withholds it.
+- **The program bound** grows to 9(T + 2) + 7T(T + 1)/2.
+
+The mutation record and the calibrations run again on the final source.
+
 <!-- protocol:begin -->
 ## Structural-audit protocol, version 1 (frozen before any count)
 
@@ -297,9 +327,10 @@ joint state, recipient or payment value is computed.
    (`scripts/track_b_b0_1_counts.py`), which is imported unchanged.
 
 6. **B0.1's committed counts,** `docs/design/track_b_b0_1_counts.json`.
-   They are public and exact, so they constrain the audit (Disclosure
-   rule). Before any of B0.1's sets enters the audit, the script reruns
-   B0.1's `structural_counts` (`scripts/track_b_b0_1_counts.py`) on its
+   They are public and exact, so they constrain the audit, and they
+   decide which narrow targets are exempt (Disclosure rule). Before any
+   of B0.1's sets enters the audit, the script reruns B0.1's
+   `structural_counts` (`scripts/track_b_b0_1_counts.py`) on its
    own inputs and stops unless the result equals the committed counts
    exactly and each rebuilt set's size is the count B0.1 published for
    it. Each ledger count B0.1 copied must equal the B0.1 count it
@@ -527,9 +558,11 @@ rules.
     from 1 to 9.
   - Any other target is **narrow**, including one whose programs reach
     no answer in time.
+  - A narrow target is **exempt** when this release narrows it no further
+    than B0.1's published counts already do (Exempt targets, below).
 - **No program sees a true size.** Every program, its window and the
-  order of targets are set from the publication, the atoms, the
-  relations and the targets disclosed so far:
+  order of targets are set from the publications (this release's and
+  B0.1's), the atoms, the relations and the targets disclosed so far:
   - **A pool of points.** The script first solves one program for any
     feasible vector, and eight more pushed along fixed directions of
     ±1 per atom, drawn from a seeded generator (seed 20261024). Each
@@ -546,26 +579,57 @@ rules.
     at least 4 above the pool's least value, and one at least 4 below
     its greatest. A point found makes it wide. If both searches are
     proven infeasible, the target's exact minimum and maximum, within
-    the window that holds every pool value, decide it.
-  - **The truth enters once:** a narrow target of true size 1 to 9
-    withholds the release. If no pool program finds a point in time,
-    nothing can be shown wide, and the release is withheld.
+    the window that holds every pool value, decide it. A narrow target
+    whose minimum and maximum were found is then tested for exemption.
+  - **The truth enters once:** a narrow target of true size 1 to 9 that
+    is not exempt withholds the release. If no pool program finds a
+    point in time, nothing can be shown wide, and the release is
+    withheld.
   - A release with no atom has no target, and runs no program.
+- **Exempt targets.** Max ruled on 2026-10-26 to exempt a target only
+  when this release's counts narrow it no further than B0.1's published
+  counts already do.
+  - The test runs on every narrow target whose exact minimum and maximum
+    were found, whatever its true size. Two more programs find its exact
+    minimum and maximum under B0.1's published counts alone: each B0.1
+    set's count fixed at its published value, over the same nonnegative
+    integer atom sizes, with none of this release's counts, effective
+    sizes or relations, and no disclosure.
+  - An atom in no B0.1 set is fixed at 0, unless the target holds one.
+    Then B0.1's counts leave the target's size unbounded, and it is not
+    exempt.
+  - The target is exempt when both programs prove their optimum and give
+    the same least and greatest size as its range under the round's
+    constraints. B0.1's counts are among those constraints, so that range
+    lies within theirs, and equal ranges mean this release narrows the
+    target no further.
+  - Anything unproven fails closed. A narrow target without proven
+    optima, or one whose two programs prove no optimum in 300 seconds, is
+    not exempt.
+  - An exempt target neither withholds the release nor is disclosed.
+    Every later round tests it again under that round's constraints, so a
+    disclosure that narrows it further ends its exemption.
+  - These programs are set from the publications alone too, so a reader
+    can rerun the test. They add at most two programs per narrow target
+    per round.
 - **Disclosure rounds.** Since no program sees a true size, each round's
-  narrow targets are the same for every atom-size vector with this
-  publication, and a reader who knows this rule can rerun it for any of
-  them. A release tells that reader exactly that every narrow target
-  lies outside 1 to 9. So each narrow target of true size 10 or more
-  becomes **disclosed**: the constraints gain that its size is 0 or at
-  least 10, and the pool drops any point this rules out. Every target
-  not yet disclosed is then classified again, and so on, until a round
+  narrow and exempt targets are the same for every atom-size vector with
+  these publications, and a reader who knows this rule can rerun it for
+  any of them. A release tells that reader exactly that every narrow
+  target that is not exempt lies outside 1 to 9. So each such target,
+  whose true size is then 10 or more, becomes **disclosed**: the
+  constraints gain that its size is 0 or at least 10, and the pool drops
+  any point this rules out. Every target not yet disclosed is then
+  classified again, exempt targets included, and so on, until a round
   discloses no new target.
 - **What a release guarantees.** The release passes when no sensitive
-  target is ever narrow. The vectors a reader holding the release cannot
-  rule out are then exactly those satisfying every constraint and every
-  disclosure, and the sizes each sensitive target takes among them span
-  at least 4. If a sensitive target is narrow, the audit stops and the
-  counts are withheld.
+  target is ever narrow and not exempt. The vectors a reader holding the
+  release cannot rule out are then exactly those satisfying every
+  constraint and every disclosure. The sizes each sensitive target takes
+  among them span at least 4, unless it is exempt: then their least and
+  greatest are those B0.1's published counts alone allow. If a sensitive
+  target is narrow and not exempt, the audit stops and the counts are
+  withheld.
 - **What the audit assumes, and its limits.**
   - The reader is assumed to know the atoms, how they nest and the
     registered relations, which is more than the committed file shows,
@@ -584,6 +648,10 @@ rules.
     unknown-age cells, are published sets.
   - Relations across unit types are those listed. Others a reader might
     know, such as how many clusters each stratum has, are not modeled.
+  - An exempt target keeps only the protection B0.1's published counts
+    left it: this release adds none, and narrows its least and greatest
+    size no further. The test compares those two sizes, not which sizes
+    between them stay possible.
   - The one earlier release modeled is B0.1's counts. Under B0.1 §15.4
     this audit may not open the other committed files that count the same
     persons, so their counts enter only through the copies B0.1 made of
@@ -675,7 +743,8 @@ rules.
      - the base and the status;
      - for each target of this release (a class of its units, or a
        difference of two of its sets): its kind, unit type and sets, its
-       true size and its final classification;
+       true size and its final classification (`wide`, `narrow`,
+       `irrelevant`, `exempt` or `unreached`);
        - a class's sets are the paths of this release's sets that hold it,
          in the release's order, so they depend on this release's sets
          alone; a difference's are its superset and subset;
@@ -691,9 +760,9 @@ rules.
      the one channel the decisions open, and a rerun of the frozen code
      on the frozen inputs gives them again.
   4. **The stated limit.** The decisions depend on atom sizes, which
-     B0.1's sets refine. So which targets are narrow, whether the release
-     is withheld, and whether the run stops inside the release can depend
-     on dispositions.
+     B0.1's sets refine. So which targets are narrow or exempt, whether
+     the release is withheld, and whether the run stops inside the release
+     can depend on dispositions.
      - So can which of the script's own checks stops it. The stop report
        names that check, by its fixed message and the path or run
        condition the message names. A stop in the release from any other
@@ -714,8 +783,8 @@ rules.
 - **The disclosure block.** It records B, the coarsening rule, the
   protection rule and the status, `released` or `withheld`. Nothing else
   about the audit is committed, since every other figure (targets,
-  narrow or disclosed targets, rounds, programs, times) depends on true
-  sizes.
+  narrow, exempt or disclosed targets, rounds, programs, times) depends on
+  true sizes.
 - **A withheld release.** The committed file then holds the provenance
   record and the disclosure block, and no counts. The counts stay in the
   local copy. A later attempt is a new protocol version, ruled on before
@@ -766,10 +835,30 @@ rules.
     - the exhaustive reader with earlier exact counts;
     - review round 3's executed attacks (97 and 5 heads), which now
       withhold through `main()` with identical committed files;
-    - a small B0.1 cell that is a B0.2 set withholds;
+    - a small B0.1 cell that is a B0.2 set withholds, at the band's
+      clusters, which B0.1 does not count;
     - programs that depend only on the publications;
     - a local copy that is the same for every split of a B0.2 class by a
       B0.1 set of the same count;
+  - **exempt targets:**
+    - the exhaustive reader with earlier exact counts also enumerates
+      every vector meeting B0.1's counts alone, and the script's
+      exemptions, decision and disclosures must match it; among the
+      final candidates each sensitive target spans 4 or more or is
+      exempt with B0.1's least and greatest sizes;
+    - the exemption programs too are the same for two tables with the
+      same publications;
+    - it fails closed: a range narrower than B0.1's counts alone give, a
+      target holding an atom no B0.1 set counts, a narrow target without
+      proven optima, and one whose B0.1 programs prove no optimum, are
+      not exempt;
+    - through `main()`, a panel whose small classes this release narrows
+      no further than B0.1's counts do releases, and withholds with the
+      exemption switched off; review round 3's attacks, where this
+      release narrows a band B0.1 left open, still withhold;
+    - an exempt target whose true size is 10 or more is not disclosed,
+      and a disclosure that narrows an exempt target further ends its
+      exemption;
   - **an emptied pool:** disclosures that empty it reseed it, and an empty
     reseeding withholds while `main()` still writes both files;
   - **the conditions on B0.1's sets:**
@@ -831,8 +920,9 @@ rules.
       three phases with the release alone in the second;
     - the invariant: swapping a death and a move-out on invented panels,
       where the atoms change and the decisions do not, in one panel that
-      withholds and one that releases and again in property-based
-      examples of both, leaves every byte `main()` writes or prints
+      withholds, one that releases and one that releases with exempt
+      targets, and again in property-based examples of both statuses,
+      leaves every byte `main()` writes or prints
       unchanged, with the run's directory as its working directory. A
       mutant that writes or prints an atom size must fail these tests.
 
@@ -877,11 +967,12 @@ new version.
     ends, since a count of programs solved depends on sizes, so its
     liveness is checked by its process ID alone.
   - Each program has a limit of 300 seconds. The audit runs at most
-    9(T + 2) + 5T(T + 1)/2 programs for T targets: nine seed programs at
-    the start and at most nine more in each round, at most five for each
-    target in each round, and at most T + 1 rounds.
+    9(T + 2) + 7T(T + 1)/2 programs for T targets: nine seed programs at
+    the start and at most nine more in each round, at most seven for each
+    target in each round (five to classify it and two to test an
+    exemption), and at most T + 1 rounds.
     - That bound is finite but says nothing useful about the run's
-      length. At about 3,000 targets it allows about 2×10^7 programs,
+      length. At about 3,000 targets it allows about 3×10^7 programs,
       centuries at 300 seconds each.
     - So running without a wall limit rests on the calibrations' timings
       (below), not on the bound. None is set: a wall limit could only

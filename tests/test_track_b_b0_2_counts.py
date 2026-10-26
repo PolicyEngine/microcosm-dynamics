@@ -32,7 +32,7 @@ from scripts import track_b_b0_1_counts as b01  # noqa: E402
 #: The script's own host calls, kept before any test replaces them.
 REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "66cadfa488103f24dbda7ff84ef0e1051ba3a3e0e95e23198b81fdadcfbb0b0e"
+    "b1ac4bc03b8dda41e88b42fadbdd5e9fb0fb09a3e7b78c0e9613af7a3af1b7c9"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -772,11 +772,12 @@ def _oracle_class(values):
 
 def _verdict_holds(verdict, oracle, values):
     """Whether the script's final verdict on one target agrees with the
-    oracle's. Narrow, a disclosure, must match exactly. A target whose
-    final candidates ``values`` span 4 or more and stay out of 1 to 9 is
-    wide and irrelevant at once, and the script may prove either, so a
-    wide or irrelevant verdict must hold of those candidates."""
-    if "narrow" in (verdict, oracle):
+    oracle's. Narrow, a disclosure, and exempt must match exactly. A
+    target whose final candidates ``values`` span 4 or more and stay out
+    of 1 to 9 is wide and irrelevant at once, and the script may prove
+    either, so a wide or irrelevant verdict must hold of those
+    candidates."""
+    if {"narrow", "exempt"} & {verdict, oracle}:
         return verdict == oracle
     if verdict == "wide":
         return values.max() - values.min() >= 4
@@ -785,9 +786,12 @@ def _verdict_holds(verdict, oracle, values):
     )
 
 
-def _oracle_release(rows, sizes, grid, targets):
+def _oracle_release(rows, sizes, grid, targets, earlier=None):
     """The rule by enumeration: status, disclosed targets, the final
-    candidate mask and each target's final classification."""
+    candidate mask and each target's final classification. ``earlier``
+    maps a target to its least and greatest size under an earlier
+    release's exact counts alone; a narrow target whose candidates give
+    the same two is exempt, neither withholding nor disclosed."""
     values = {t: grid[:, list(t)].sum(axis=1) for t in targets}
     mask = np.ones(len(grid), dtype=bool)
     disclosed = []
@@ -797,6 +801,13 @@ def _oracle_release(rows, sizes, grid, targets):
             for t in targets
             if t not in disclosed
         }
+        for t, result in classes.items():
+            here = values[t][mask]
+            if result == "narrow" and (earlier or {}).get(t) == (
+                int(here.min()),
+                int(here.max()),
+            ):
+                classes[t] = "exempt"
         narrow = [t for t, result in classes.items() if result == "narrow"]
         if any(1 <= sum(sizes[a] for a in t) <= 9 for t in narrow):
             return "withheld", disclosed, mask, classes
@@ -1417,7 +1428,12 @@ def test_audit_agrees_with_an_exhaustive_reader(table):
 
 def _program_transcript(rows, sizes):
     """Every program the audit hands the solver, in order."""
-    counts, registry = _atom_table(rows, sizes)
+    return _audit_transcript(*_atom_table(rows, sizes))
+
+
+def _audit_transcript(counts, registry):
+    """Every program the audit hands the solver for these counts, in order,
+    the exemption's included, with the audit's record."""
     transcript = []
     original = script.AuditSystem._program
 
@@ -2197,14 +2213,33 @@ def test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts():
 def test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds(tmp_path, monkeypatch):
     """B0.1 counts the plain release panel's domain persons under 25
     exactly, as five, and that set is also B0.2's 1-24 band of R_FULL.
-    Through main() the release is withheld; the same panel releases when
-    B0.1's counts are left out of the audit."""
+    The band's classes of persons are then exempt, since B0.1's counts
+    already fix them. Its strata and clusters, five of each, are not:
+    B0.1 counts neither, and this release's counts, B0.1's and the
+    relations across unit types leave each 2 to 5. Through main() the
+    release is withheld at the band's clusters; the same panel releases
+    when B0.1's counts are left out of the audit."""
     inputs = _release_panel()
     _main_environment(tmp_path, monkeypatch, inputs)
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"
     assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
     assert json.loads(out.read_text())["disclosure"]["status"] == "withheld"
+    (narrow,) = [
+        t
+        for t in json.loads(local.read_text())["disclosure_audit"]["audit"][
+            "targets"
+        ]
+        if t["result"] == "narrow"
+    ]
+    assert (narrow["unit_type"], narrow["true_size"]) == ("clusters", 5)
+    assert (
+        "rosters",
+        "R_FULL",
+        "by_age_band",
+        "1_24",
+        "design_clusters",
+    ) in [tuple(path) for path in narrow["sets"]]
     people, labor, anchor, design = inputs
     validity = _validity(labor)
     earlier = b01.structural_counts(people, validity)
@@ -3602,6 +3637,35 @@ def _oracle_prior_targets(rows, kinds, atoms):
     return sorted(found)
 
 
+def _oracle_earlier_ranges(rows, kinds, sizes, targets):
+    """Each target's least and greatest size under the earlier release's
+    exact counts alone, by enumeration: every vector of the atoms those
+    counts hold that meets each of them exactly. A target holding an atom
+    none of them holds is left out, since they leave its size unbounded,
+    and so is never exempt."""
+    from itertools import product
+
+    prior = [
+        (row, sum(sizes[a] for a in row))
+        for row, kind in zip(rows, kinds, strict=True)
+        if kind != "current"
+    ]
+    counted = sorted({a for row, _ in prior for a in row})
+    position = {a: i for i, a in enumerate(counted)}
+    caps = [min(total for row, total in prior if a in row) for a in counted]
+    grid = np.array(list(product(*(range(cap + 1) for cap in caps))))
+    keep = np.ones(len(grid), dtype=bool)
+    for row, total in prior:
+        keep &= grid[:, [position[a] for a in row]].sum(axis=1) == total
+    grid = grid[keep]
+    ranges = {}
+    for target in targets:
+        if all(a in position for a in target):
+            values = grid[:, [position[a] for a in target]].sum(axis=1)
+            ranges[target] = (int(values.min()), int(values.max()))
+    return ranges
+
+
 @settings(max_examples=150, deadline=None)
 @given(_prior_atom_tables())
 @example(([(0, 1), (0,), (1,)], ["prior", "current", "current"], [12, 2]))
@@ -3614,13 +3678,28 @@ def _oracle_prior_targets(rows, kinds, atoms):
         [1, 10, 14],
     )
 )
+# A class the earlier release published exactly: exempt, and released.
+@example(([(0, 1), (0,)], ["current", "both"], [3, 12]))
+# An exempt target of true size 10, which is not disclosed.
+@example(
+    ([(0, 1, 2), (0, 1), (1, 2)], ["current", "prior", "prior"], [10, 1, 1])
+)
+# A disclosure that narrows an exempt target ends its exemption.
+@example(
+    (
+        [(0, 3, 5), (0, 4, 6), (0, 1), (1, 2), (3, 4), (5,), (6,)],
+        ["current"] * 2 + ["prior"] * 5,
+        [9, 1, 1, 1, 1, 3, 3],
+    )
+)
 def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
     """With an earlier release's exact counts among the constraints, the
-    audit and the enumeration oracle reach the same targets, decision and
-    disclosures, and every other verdict the audit gives holds of the final
-    candidates. A reader who reruns the rule on
-    every vector with both publications keeps exactly the final
-    candidates, and every sensitive target spans 4 or more among them."""
+    audit and the enumeration oracle reach the same targets, decision,
+    disclosures and exemptions, and every other verdict the audit gives
+    holds of the final candidates. A reader who reruns the rule on every
+    vector with both publications keeps exactly the final candidates.
+    Among them every sensitive target spans 4 or more, or is exempt: its
+    least and greatest sizes are those the earlier counts alone allow."""
     rows, kinds, sizes = table
     counts, registry = _prior_registry(rows, kinds, sizes)
     audit = script.audit_counts(counts, registry, 10)
@@ -3645,11 +3724,14 @@ def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
         for t in audit["targets"]
     }
     assert set(script_targets) == set(targets)
+    earlier = _oracle_earlier_ranges(rows, kinds, sizes, targets)
     status, disclosed, mask, classes = _oracle_release(
-        rows, sizes, grid, targets
+        rows, sizes, grid, targets, earlier
     )
     assert audit["status"] == status
     event(f"{status} after {len(audit['rounds'])} round(s)")
+    if "exempt" in classes.values():
+        event(f"{status} with an exempt target")
     if status != "released":
         return
     assert {
@@ -3664,7 +3746,8 @@ def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
         ), target
     kept = np.array(
         [
-            _oracle_release(rows, list(point), grid, targets)[0] == "released"
+            _oracle_release(rows, list(point), grid, targets, earlier)[0]
+            == "released"
             for point in grid
         ]
     )
@@ -3672,7 +3755,10 @@ def test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader(table):
     for target in targets:
         if 1 <= sum(sizes[a] for a in target) <= 9:
             values = grid[kept][:, list(target)].sum(axis=1)
-            assert values.max() - values.min() >= 4, target
+            if script_targets[target]["result"] == "exempt":
+                assert earlier[target] == (values.min(), values.max())
+            else:
+                assert values.max() - values.min() >= 4, target
 
 
 @settings(max_examples=60, deadline=None)
@@ -3686,41 +3772,151 @@ def test_programs_with_earlier_counts_depend_only_on_the_publications(
     grid = _oracle_prior_candidates(rows, kinds, sizes)
     grid = grid[np.all(grid > 0, axis=1)]
     other = [int(v) for v in grid[data.draw(st.integers(0, len(grid) - 1))]]
-    transcripts = []
-    for vector in (sizes, other):
-        counts, registry = _prior_registry(rows, kinds, vector)
-        transcript = []
-        original = script.AuditSystem._program
+    _assert_same_programs(
+        [
+            _audit_transcript(*_prior_registry(rows, kinds, vector))
+            for vector in (sizes, other)
+        ]
+    )
 
-        def recording(
-            self,
-            objective,
-            extra,
-            seconds,
-            integral=True,
-            gap=0.0,
-            transcript=transcript,
-            original=original,
+
+def _assert_same_programs(transcripts):
+    """The same programs, up to the point where one table withholds, and
+    all of them when every table releases."""
+    (first, first_audit), *others = transcripts
+    for second, second_audit in others:
+        shorter = min(len(first), len(second))
+        assert first[:shorter] == second[:shorter]
+        if first_audit["status"] == second_audit["status"] == "released":
+            assert first == second
+
+
+@pytest.mark.parametrize(
+    "table",
+    [
+        ([(0, 1), (0,)], ["current", "both"], [3, 12]),
+        (
+            [(0, 1, 2), (0, 1), (1, 2)],
+            ["current", "prior", "prior"],
+            [10, 1, 2],
+        ),
+    ],
+)
+def test_the_exemption_programs_depend_only_on_the_publications(table):
+    """Every table with both publications and the same atoms, the truth's
+    included, has an exempt target and hands the solver the same
+    programs, the two that test each exemption among them."""
+    rows, kinds, sizes = table
+    grid = _oracle_prior_candidates(rows, kinds, sizes)
+    vectors = [
+        [int(v) for v in point] for point in grid[np.all(grid > 0, axis=1)]
+    ]
+    assert sizes in vectors and len(vectors) >= 2
+    transcripts = [
+        _audit_transcript(*_prior_registry(rows, kinds, vector))
+        for vector in vectors
+    ]
+    for _, audit in transcripts:
+        assert any(t["result"] == "exempt" for t in audit["targets"])
+    _assert_same_programs(transcripts)
+
+
+def test_the_exemption_fails_closed(monkeypatch):
+    """B0.1 publishes a0 + a1 = 3 exactly, so its counts alone leave a0 0
+    to 3, and count no set holding a2. A target is exempt only when its
+    range under the round is proven and is the same as theirs: a range
+    this release narrowed further, an unproven one, a target holding a2
+    and a program that proves no optimum are not exempt, and nothing is
+    without an earlier release."""
+    counts, registry = _prior_table(
+        {"all": (0, 1, 2), "left": (0,)}, {"pair": (0, 1)}, [1, 2, 5]
+    )
+    model = script.build_model(registry)
+    column = {int(model["sizes"][c]): c for c in range(3)}
+    earlier = script.earlier_counts_system(registry, model)
+    assert earlier[1].tolist() == [c == column[5] for c in range(3)]
+    alone = _prior_table({"all": (0,)}, {}, [3])[1]
+    assert script.earlier_counts_system(alone, script.build_model(alone)) is (
+        None
+    )
+
+    def outcome(proof="optima", low=0, high=3):
+        return {"programs": [], "proof": proof, "range": [low, high]}
+
+    a0 = {"columns": [column[1]]}
+    found = outcome()
+    assert script.exempt(earlier, a0, found, seconds=30)
+    assert found["programs"] == ["earlier maximum", "earlier minimum"]
+    for narrower in (outcome(low=1), outcome(high=2)):
+        assert not script.exempt(earlier, a0, narrower, seconds=30)
+    assert not script.exempt(None, a0, outcome(), seconds=30)
+    for proof in ("pool", "search", "undetermined"):
+        assert not script.exempt(earlier, a0, outcome(proof), seconds=30)
+    # The programs fix a2 at 0, so a0 + a2 would match; B0.1 leaves a2,
+    # and so the target, unbounded.
+    holding = {"columns": [column[1], column[5]]}
+    assert not script.exempt(earlier, holding, outcome(), seconds=30)
+    original = script.AuditSystem.extreme
+    for unproven in (1, -1):
+
+        def extreme(
+            self, columns, sense, low, high, *, seconds, skip=unproven
         ):
-            parts = [np.asarray(objective, dtype=float).tobytes()]
-            for constraint in (self.constraint, *extra):
-                matrix = constraint.A
-                if hasattr(matrix, "toarray"):
-                    matrix = matrix.toarray()
-                for array in (matrix, constraint.lb, constraint.ub):
-                    parts.append(np.asarray(array, dtype=float).tobytes())
-            transcript.append(hashlib.sha256(b"|".join(parts)).hexdigest())
-            return original(self, objective, extra, seconds, integral, gap)
+            if sense == skip:
+                return None
+            return original(self, columns, sense, low, high, seconds=seconds)
 
-        with pytest.MonkeyPatch.context() as patch:
-            patch.setattr(script.AuditSystem, "_program", recording)
-            audit = script.audit_counts(counts, registry, 10)
-        transcripts.append((transcript, audit["status"]))
-    (first, first_status), (second, second_status) = transcripts
-    shorter = min(len(first), len(second))
-    assert first[:shorter] == second[:shorter]
-    if first_status == second_status == "released":
-        assert first == second
+        monkeypatch.setattr(script.AuditSystem, "extreme", extreme)
+        assert not script.exempt(earlier, a0, outcome(), seconds=30)
+
+
+def test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption(
+    monkeypatch,
+):
+    """Seven invented atoms. B0.1 publishes a0 + a1 = 10, a1 + a2 = 2,
+    b0 + b1 = 2, c = 3 and d = 3 exactly; this release publishes
+    a0 + b0 + c and a0 + b1 + d, 13 each, so 10 to 14. In round 1 the
+    class {b0, c}, of 4, can be 3 to 5, as under B0.1's counts alone, so
+    it is exempt. The differences a0 + b0 and a0 + b1, 10 each, can be 8
+    to 11, where B0.1's counts alone allow 8 to 12: they are narrow, not
+    exempt, and disclosed. Under those disclosures {b0, c} can only be 4,
+    so round 2 tests it again, finds it narrower than B0.1 leaves it, and
+    the release is withheld."""
+    counts, registry = _prior_registry(
+        [(0, 3, 5), (0, 4, 6), (0, 1), (1, 2), (3, 4), (5,), (6,)],
+        ["current"] * 2 + ["prior"] * 5,
+        [9, 1, 1, 1, 1, 3, 3],
+    )
+    calls = {}
+    original = script.exempt
+
+    def recording(earlier, target, outcome, *, seconds):
+        result = original(earlier, target, outcome, seconds=seconds)
+        calls.setdefault(tuple(target["columns"]), []).append(result)
+        return result
+
+    monkeypatch.setattr(script, "exempt", recording)
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["status"] == "withheld"
+    assert len(audit["rounds"]) == 2
+    assert (
+        sorted(
+            (audit["targets"][i]["kind"], audit["targets"][i]["true_size"])
+            for i in audit["disclosed"]
+        )
+        == [("difference", 10)] * 2
+    )
+    (ended,) = [
+        t
+        for i, t in enumerate(audit["targets"])
+        if t["result"] == "narrow" and i not in audit["disclosed"]
+    ]
+    assert (ended["kind"], ended["true_size"], ended["range"]) == (
+        "atom",
+        4,
+        [4, 4],
+    )
+    assert calls[tuple(ended["columns"])] == [True, False]
 
 
 def _b2_heads(persons, older):
@@ -4423,14 +4619,23 @@ def _swap(states, died, moved):
     return swapped
 
 
+#: Twelve invented heads whose small classes B0.1's published counts
+#: already fix: the release withholds without the exemption and releases
+#: with it.
+EXEMPT_PANEL = (
+    [62] * 6 + [60] * 6,
+    ["died", "moved"] + ["present"] * 4 + ["moved"] + ["present"] * 5,
+)
+
+
 @pytest.mark.parametrize(
     ("ages", "before", "died", "moved", "status"),
     [
         (
-            [62] * 6 + [60] * 6,
-            ["died", "moved"] + ["present"] * 4 + ["moved"] + ["present"] * 5,
-            0,
-            6,
+            [62, 62, 60, 62, 60, 60],
+            ["moved", "present", "present", "moved", "died", "died"],
+            4,
+            3,
             "withheld",
         ),
         (
@@ -4440,6 +4645,7 @@ def _swap(states, died, moved):
             7,
             "released",
         ),
+        (*EXEMPT_PANEL, 0, 6, "released"),
     ],
 )
 def test_relabeling_a_death_and_a_move_changes_no_written_byte(
@@ -4450,8 +4656,10 @@ def test_relabeling_a_death_and_a_move_changes_no_written_byte(
     release's class sizes and the audit's decisions stay the same, while
     the atoms that B0.1's sets refine change. Every byte main() writes or
     prints, to either file, the attempt record, standard output or
-    standard error, is then the same. One panel withholds and one
-    releases, so the committed file carries counts in the second."""
+    standard error, is then the same. One panel withholds and two
+    release, so the committed file carries counts; the third releases
+    only because B0.1's counts already fix its small classes, so its
+    decisions include exempt targets."""
     after = _swap(before, died, moved)
     assert (before[died], before[moved]) == ("died", "moved")
     assert ages[died] != ages[moved]
@@ -4485,6 +4693,55 @@ def test_relabeling_a_death_and_a_move_changes_no_written_byte(
     assert json.loads(first["counts.json"])["disclosure"]["status"] == status
     assert first == second
     assert printed_first == printed_second
+
+
+def test_classes_b0_1_already_fixes_are_exempt_and_release(
+    tmp_path, monkeypatch
+):
+    """Max's ruling of 2026-10-26, through main(). In this panel B0.1's
+    published counts alone leave two classes of persons only 0 to 2 and
+    1 to 3, and fix a difference of this release's sets at 3: they hold
+    1, 2 and 3. This release narrows none of them further, so they are
+    exempt and the counts are released. A difference against a B0.1 set,
+    of true size 10, is exempt too, and so is not disclosed. With the
+    exemption switched off the same panel withholds."""
+    ages, states = EXEMPT_PANEL
+    inputs = _disposition_panel(ages, states)
+    _main_environment(tmp_path, monkeypatch, inputs)
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    assert json.loads(out.read_text())["disclosure"]["status"] == "released"
+    targets = json.loads(local.read_text())["disclosure_audit"]["audit"][
+        "targets"
+    ]
+    assert sorted(
+        (t["kind"], t["true_size"]) for t in targets if t["result"] == "exempt"
+    ) == [("atom", 1), ("atom", 2), ("difference", 3)]
+    assert all(t["result"] != "narrow" for t in targets)
+    people, labor, anchor, design = inputs
+    validity = _validity(labor)
+    counts = script.structural_counts(people, validity, anchor, design)
+
+    def registry():
+        built = script.disclosure_registry(people, validity, anchor, design)
+        script.register_b0_1(
+            built,
+            script.b0_1_sets(people, validity),
+            b01.structural_counts(people, validity),
+        )
+        return built
+
+    audit = script.audit_counts(counts, registry())
+    (large,) = [
+        index
+        for index, t in enumerate(audit["targets"])
+        if t["result"] == "exempt" and t["true_size"] >= 10
+    ]
+    assert audit["targets"][large]["earlier"]
+    assert large not in audit["disclosed"]
+    monkeypatch.setattr(script, "exempt", lambda *_, **__: False)
+    assert script.audit_counts(counts, registry())["status"] == "withheld"
 
 
 def _draining(out, err):

@@ -1163,5 +1163,115 @@
     "occurrence": 1
    }
   ]
+ },
+ {
+  "mutation": "the exemption is never applied",
+  "replacements": [
+   {
+    "old": "                outcome = {**outcome, \"result\": \"exempt\"}\n",
+    "new": "                pass\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the exemption compares against the round's own programs",
+  "replacements": [
+   {
+    "old": "            if outcome[\"result\"] == \"narrow\" and exempt(\n                earlier, targets[index], outcome, seconds=seconds\n            ):",
+    "new": "            if outcome[\"result\"] == \"narrow\" and exempt(\n                earlier and (system, earlier[1]),\n                targets[index],\n                outcome,\n                seconds=seconds,\n            ):",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "only a target of true size 1 to 9 can be exempt",
+  "replacements": [
+   {
+    "old": "    if earlier is None or outcome.get(\"proof\") != \"optima\":\n        return False\n",
+    "new": "    if earlier is None or outcome.get(\"proof\") != \"optima\":\n        return False\n    if target[\"true_size\"] >= DISCLOSURE_THRESHOLD:\n        return False\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a target holding an atom no B0.1 set counts can be exempt",
+  "replacements": [
+   {
+    "old": "    if uncounted[columns].any():\n        return False\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an unproven exemption program counts as exempt",
+  "replacements": [
+   {
+    "old": "        return False\n    (maximum, _), (minimum, _) = extremes\n",
+    "new": "        return True\n    (maximum, _), (minimum, _) = extremes\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "a range within B0.1's, not equal to it, is exempt",
+  "replacements": [
+   {
+    "old": "    return [minimum, maximum] == outcome[\"range\"]\n",
+    "new": "    low, high = outcome[\"range\"]\n    return minimum <= low and high <= maximum\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the exemption programs both maximize",
+  "replacements": [
+   {
+    "old": "        for sense in (1, -1)\n",
+    "new": "        for sense in (1, 1)\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the exemption reads its least and greatest sizes swapped",
+  "replacements": [
+   {
+    "old": "    (maximum, _), (minimum, _) = extremes\n    return",
+    "new": "    (minimum, _), (maximum, _) = extremes\n    return",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "the exemption programs are not recorded",
+  "replacements": [
+   {
+    "old": "    outcome[\"programs\"].extend([\"earlier maximum\", \"earlier minimum\"])\n",
+    "new": "",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an exempt target is disclosed",
+  "replacements": [
+   {
+    "old": "            settled[index] = {**outcome, \"round\": len(rounds) + 1}\n            if outcome[\"result\"] != \"narrow\":\n",
+    "new": "            settled[index] = {**outcome, \"round\": len(rounds) + 1}\n            if outcome[\"result\"] == \"exempt\":\n                added.append(index)\n                continue\n            if outcome[\"result\"] != \"narrow\":\n",
+    "occurrence": 1
+   }
+  ]
+ },
+ {
+  "mutation": "an exempt target is not tested again",
+  "replacements": [
+   {
+    "old": "            if settled.get(index, {}).get(\"result\") == \"irrelevant\":\n",
+    "new": "            if settled.get(index, {}).get(\"result\") in (\n                \"irrelevant\",\n                \"exempt\",\n            ):\n",
+    "occurrence": 1
+   }
+  ]
  }
 ]
