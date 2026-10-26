@@ -192,7 +192,11 @@ class _HTMLTree(HTMLParser):
 
     An ``html`` start tag builds the html element only as the document's
     first content. HTML ignores any later one, apart from adding the
-    attributes it lacks to that element, and so does this tree.
+    attributes it lacks to that element, and so does this tree. On a page
+    that opens with other content, HTML implies the html element; the
+    document root stands for it here and takes those attributes. A newline
+    that comes right after a pre, listing or textarea start tag is dropped,
+    as HTML drops it.
 
     Paragraphs, headings, buttons, cells, rows, table sections, captions
     and colgroups end where the WHATWG parsing rules end them, even when the
@@ -226,8 +230,15 @@ class _HTMLTree(HTMLParser):
 
     Not modelled: HTML's adoption agency rules, which also move a
     formatting element such as ``b`` across the block that ends it (the
-    block's text is the same here); content that HTML moves out of a table
-    to just before it (foster parenting), which stays in the table here;
+    block's text is the same here), and HTML's reopening of a formatting
+    element left open, so that a heading that starts while one is reopened
+    nests in the open heading, which here it ends (in
+    ``<h3>w0<b><i>w1</b>w2<h4>w3``, HTML's h3 reads "w0w1w2w3" and this
+    tree's "w0w1w2"); leading content that HTML moves into a head it
+    implies, such as a noscript first on a page with no html start tag,
+    which stays in place here (no reader reads a head); content that HTML
+    moves out of a table to just before it (foster parenting), which stays
+    in the table here;
     a form start tag inside an open form, which HTML ignores and which here
     starts a form that ends the open paragraph (in
     ``<form><p>w0<form>w1</form><p>w2``, HTML's first paragraph reads
@@ -278,10 +289,15 @@ class _HTMLTree(HTMLParser):
         track ul wbr xmp""".split()
     )
 
+    # Start tags after which HTML drops a newline that comes next.
+    _NEWLINE_DROPPING = frozenset({"pre", "listing", "textarea"})
+
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.root = ET.Element("document")
         self.stack = [self.root]
+        # Whether the last token built one of _NEWLINE_DROPPING.
+        self._drop_newline = False
 
     def _close_paragraph(self) -> None:
         for i in range(len(self.stack) - 1, 0, -1):
@@ -301,16 +317,20 @@ class _HTMLTree(HTMLParser):
                 return
 
     def handle_starttag(self, tag, attrs):
+        self._drop_newline = False
         if tag == "plaintext":
             raise TableStructureError("HTML plaintext element is not read")
         if tag == "html" and (
             len(self.root) or (self.root.text or "").strip("\t\n\f\r ")
         ):
-            # Only the document's first content builds the html element.
+            # Only the document's first content builds the html element. A
+            # page that opens with other content implies it, and the root
+            # stands for it.
             first = self.root.find("html")
-            if first is not None:
-                for key, value in attrs:
-                    first.attrib.setdefault(key, value or "")
+            if first is None:
+                first = self.root
+            for key, value in attrs:
+                first.attrib.setdefault(key, value or "")
             return
         if tag in self._TABLE_PARTS | {"col"} and all(
             node.tag != "table" for node in self.stack
@@ -370,6 +390,7 @@ class _HTMLTree(HTMLParser):
         el = ET.SubElement(self.stack[-1], tag, {k: v or "" for k, v in attrs})
         if tag not in self._VOID:
             self.stack.append(el)
+        self._drop_newline = tag in self._NEWLINE_DROPPING
 
     def handle_startendtag(self, tag, attrs):
         self.handle_starttag(tag, attrs)
@@ -377,6 +398,7 @@ class _HTMLTree(HTMLParser):
             self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
+        self._drop_newline = False
         if tag in self._HEADINGS:
             # Any h1-h6 end tag ends the open heading in scope.
             self._close_open(self._HEADINGS, self._SCOPE)
@@ -409,18 +431,31 @@ class _HTMLTree(HTMLParser):
                     return
 
     def handle_data(self, data):
+        if self._drop_newline:
+            self._drop_newline = False
+            data = data.removeprefix("\n")
+            if not data:
+                return
         parent = self.stack[-1]
         if len(parent):
             parent[-1].tail = (parent[-1].tail or "") + data
         else:
             parent.text = (parent.text or "") + data
 
+    def handle_comment(self, data):
+        # A comment, declaration or processing instruction is a token, so
+        # a newline after it is text.
+        self._drop_newline = False
+
+    handle_decl = handle_pi = unknown_decl = handle_comment
+
 
 def parse_html(payload: bytes | str) -> ET.Element:
     """Build a tolerant HTML tree without fetching external resources.
 
     The end of the page ends any element left open, as in HTML, so the text
-    of a raw text element without its end tag is kept.
+    of a raw text element without its end tag is kept. As in HTML, CR LF
+    and a lone CR read as one newline.
     """
     text = (
         payload.decode("utf-8", errors="replace")
@@ -429,6 +464,8 @@ def parse_html(payload: bytes | str) -> ET.Element:
     )
     if re.search("<!---?>", text):
         raise TableStructureError("HTML comment closes abruptly")
+    # HTML reads CR LF, and a lone CR, as one newline.
+    text = re.sub(r"\r\n?", "\n", text)
     parser = _HTMLTree()
     parser.feed(text)
     parser.close()

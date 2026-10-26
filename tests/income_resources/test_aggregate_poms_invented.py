@@ -13,8 +13,10 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.income_resources.aggregate_poms import (
+    _POSTAL_CODES,
     _STATES,
     _blank,
+    _line_renderings,
     _own_text,
     _payment_rows,
     describe_poms_tables,
@@ -1078,18 +1080,32 @@ def test_invented_claimant_line_before_any_state_heading_is_not_refused():
     ]
 
 
-def test_invented_washington_dc_names_the_district():
+@pytest.mark.parametrize(
+    ("line", "claimant"),
+    [
+        ("Individual payment levels for Washington, D.C.", "individual"),
+        ("Couple for Washington, D.C.", "couple"),
+        # Round 9 pinned this line as individual, its first word. It names
+        # two claimant types and is no claimant line, so it names neither,
+        # and the chart, with no claimant line of its own, refuses.
+        ("Individual or couple for Washington, D.C.", None),
+    ],
+)
+def test_invented_washington_dc_names_the_district(line, claimant):
     payload = invented_payload(
         invented_section(
             "District of Columbia", [[("A", "Invented first")]]
         ).replace(
-            "a. Individual payment levels for District of Columbia",
-            "Individual or couple for Washington, D.C.",
+            "a. Individual payment levels for District of Columbia", line
         )
     )
+    if claimant is None:
+        with pytest.raises(TableStructureError, match="lacks state or claim"):
+            describe_poms_tables(payload)
+        return
     (context,) = describe_poms_tables(payload)
     assert context["state"] == "District of Columbia"
-    assert context["claimant_type"] == "individual"
+    assert context["claimant_type"] == claimant
 
 
 def invented_grid(html: str) -> list[list[str]]:
@@ -1594,6 +1610,8 @@ def test_invented_whole_text_state_date_lines_do_not_head_a_section():
         ("Couple for Utah (see Nevada)", True),
         ("Couple for Nevada and Utah", True),
         ("Couple for Nevada", False),
+        # A claimant line with no space before its claimant word.
+        ("1)Couple for Utah", True),
     ],
 )
 def test_invented_claimant_line_may_name_only_its_own_state(line, refused):
@@ -2457,3 +2475,576 @@ def test_invented_end_br_is_a_line_break():
     """HTML reads ``</br>`` as ``<br>``."""
     root = parse_html("<p>w0</br>w1</p>")
     assert [child.tag for child in root.find(".//p")] == ["br"]
+
+
+# Round 9's review: prose, footnote markers and paragraph captions.
+
+
+def invented_nevada_after(claimant: str, fragment: str) -> bytes:
+    """``invented_nevada_with`` with ``claimant`` as its claimant heading."""
+    return invented_nevada_with(fragment).replace(
+        b"<h4>Individual</h4>", f"<h4>{claimant}</h4>".encode(), 1
+    )
+
+
+@pytest.mark.parametrize(
+    ("claimant", "fragment"),
+    [
+        # The review's A1, A2, A3 and A6, each read as its first claimant
+        # word before.
+        (
+            "Couple",
+            "<p>A recipient or couple qualifies if invented conditions"
+            " hold</p>",
+        ),
+        ("Couple", "<p>Invented payments go to an eligible individual</p>"),
+        ("Individual", "<p>Invented payments go to each eligible couple</p>"),
+        ("Couple", "<p>Individual or couple</p>"),
+        # Its list item and "eligibility rules" forms.
+        ("Couple", "<ul><li>Invented supplement for the recipient</li></ul>"),
+        ("Couple", "<p>Invented eligibility rules: Individual</p>"),
+        ("Couple", "<div>Invented note<br>Couple or individual notes</div>"),
+        # A claimant word after a date sentence that ends with neither a
+        # date nor a State, or after other text that ends with a State.
+        (
+            "Individual",
+            "<p>Payment levels effective January 1, 2030 for each eligible"
+            " Couple</p>",
+        ),
+        ("Individual", "<p>Invented eligibility rules for Nevada Couple</p>"),
+    ],
+)
+def test_invented_prose_mentioning_a_claimant_names_none(claimant, fragment):
+    """Only a claimant line names a chart's claimant: a heading form, or a
+    caption after a date. Prose that mentions a claimant word names none,
+    so the claimant heading before it stands."""
+    assert invented_selector(invented_nevada_after(claimant, fragment)) == (
+        "Nevada",
+        claimant.lower(),
+        "2030-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    ("fragment", "date"),
+    [
+        ("<p>Couple</p>", "2030-01-01"),
+        ("<p>b. Couple payment levels for Nevada</p>", "2030-01-01"),
+        ("<p>2) Couple Payment Levels for the Nevada (NV)</p>", "2030-01-01"),
+        ("<p>Couple payment level or Nevada</p>", "2030-01-01"),
+        ("<p>Couple<sup>1</sup></p>", "2030-01-01"),
+        ("<p>1)Couple</p>", "2030-01-01"),
+        ("<p>Nevada Effective 1/1/2031 Couple</p>", "2031-01-01"),
+        (
+            "<p>Monthly payment levels effective January 1, 2031 Nevada"
+            " Couple</p>",
+            "2031-01-01",
+        ),
+        ("<p>Effective January 1, 2031 Couple</p>", "2031-01-01"),
+    ],
+)
+def test_invented_claimant_line_forms_name_their_claimant(fragment, date):
+    """The heading forms, the source's "or" for "for" among them, and the
+    date captions name their claimant word."""
+    assert invented_selector(invented_nevada_with(fragment)) == (
+        "Nevada",
+        "couple",
+        date,
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # Within one claimant line: a caption whose date sentence names the
+        # other claimant.
+        "<p>Couple payment levels effective January 1, 2030 Individual</p>",
+        "<p>Nevada Effective for a couple 1/1/2030 Individual</p>",
+        # Across lines, as the review's O3 witness reads now that it is
+        # prose.
+        "<p>Individual<br>Couple</p>",
+        "<p>Couple<br>Recipient for Nevada</p>",
+        # A claimant word that only the spaced reading shows.
+        "<p>Payment levels effective for<b>couple</b>s January 1, 2030"
+        " Individual</p>",
+    ],
+)
+def test_invented_claimant_lines_naming_two_types_are_refused(fragment):
+    """A block names at most one claimant type: every claimant word of a
+    claimant line counts, in every reading, across the block's lines."""
+    with pytest.raises(TableStructureError, match="two claimants"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        "<p>A recipient or couple in Utah qualifies</p>",
+        "<p>Invented payments go to an individual or couple in UT</p>",
+    ],
+)
+def test_invented_prose_mentioning_a_claimant_is_still_guarded(fragment):
+    """Prose that mentions a claimant names none, but may name no State
+    other than the section's."""
+    with pytest.raises(TableStructureError, match="names another State"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    ("date", "message"),
+    [
+        # The review's B1 and B2: the marker joins the day.
+        ("January 1<sup>2</sup>, 2031", "reads differently"),
+        ("January 1<a href='#fn5'>5</a>, 2031", "reads differently"),
+        # A date range and markers after the year or between month and day.
+        (
+            "from January 1<sup>3</sup>, 2031 to June 30, 2031",
+            "reads differently",
+        ),
+        ("January 1, 2031<sup>1</sup>", "reads differently"),
+        ("1/1/2031<sup>2</sup>", "reads differently"),
+        ("January<sup>1</sup> 2, 2031", "reads differently"),
+        # A marker inside "from" hides the range the bare reading states.
+        (
+            "fr<sup>1</sup>om March 1, 2031 to June 30, 2031",
+            "reads differently",
+        ),
+    ],
+)
+def test_invented_footnote_marker_inside_a_date_is_refused(date, message):
+    """Regression: the date sentence was read joined only, so a marker
+    inside it changed or hid its date silently."""
+    payload = invented_nevada_with("").replace(
+        b"effective January 1, 2030", f"effective {date}".encode(), 1
+    )
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # The review's B3 and B4: only the bare reading is a sentence.
+        "Effective<sup>1</sup> January 1, 2031",
+        "Nevada<sup>1</sup> Effective January 1, 2031",
+        "Payment levels effec<sup>2</sup>tive January 1, 2031",
+        # And a State date line with a marker on its day.
+        "Nevada Effective January 1<sup>4</sup>, 2031",
+    ],
+)
+def test_invented_footnote_marker_inside_a_date_sentence_is_refused(line):
+    """Regression: a marker inside "Effective" or after a State's name hid
+    the sentence, and the section's earlier date stood."""
+    with pytest.raises(TableStructureError, match="footnote markers"):
+        describe_poms_tables(invented_nevada_with(f"<p>{line}</p>"))
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        # The review's N1, and its link-marker form.
+        "<p><sup>1</sup>Effective February 1, 2031.</p>",
+        "<p><a href='#fn1'>1</a>Effective February 1, 2031.</p>",
+        "<p><sup>2</sup> Effective 2/2031, as the invented note says.</p>",
+    ],
+)
+def test_invented_footnote_body_between_charts_keeps_the_date(body):
+    """A footnote body that opens with its marker is no date sentence, as in
+    one pinned page between two charts, so the section's date stands."""
+    payload = invented_nevada_with("") + (
+        f"{body}<h4>Couple</h4><table>{INVENTED_HEADER}</table>".encode()
+    )
+    *_, last = describe_poms_tables(payload)
+    assert (last["state"], last["claimant_type"], last["effective_from"]) == (
+        "Nevada",
+        "couple",
+        "2030-01-01",
+    )
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    st.sampled_from(
+        [
+            ("Monthly payment levels effective January 1, 2031", "2031-01-01"),
+            ("Payment levels effective 3/1/2031", "2031-03-01"),
+            (
+                "Payment levels effective from March 1, 2031 to June 30, 2031",
+                "2031-03-01",
+            ),
+            ("Nevada Effective 7/1/31", "2031-07-01"),
+        ]
+    ),
+    st.sampled_from(["<sup>{w}</sup>", "<a href='#fn{w}'>{w}</a>"]),
+    st.text("0123456789x*", min_size=1, max_size=3),
+    st.data(),
+)
+def test_invented_footnote_marker_never_changes_a_date(
+    sentence, marker, w, data
+):
+    """Property: a footnote marker anywhere in an effective-date sentence
+    leaves its date as it is or refuses. Only a marker that leads the line
+    makes it a footnote body, which dates nothing, so the section's earlier
+    date stands."""
+    text, expected = sentence
+    at = data.draw(st.integers(0, len(text)))
+    line = text[:at] + marker.format(w=w) + text[at:]
+    try:
+        selector = invented_selector(invented_nevada_with(f"<p>{line}</p>"))
+    except TableStructureError:
+        return
+    if at == 0 and text.startswith("Nevada"):
+        assert selector[2] == "2030-01-01"
+    else:
+        assert selector[2] == expected
+
+
+@pytest.mark.parametrize(
+    ("fragment", "expected"),
+    [
+        # The review's C1 and C3: a link elsewhere is text, so the bare
+        # reading keeps it and names no State heading or claimant.
+        (
+            "<p><a href='https://www.fns.usda.gov/invented'>Invented note"
+            " on</a> Utah</p><h4>Individual</h4>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        (
+            "<h4>Couple</h4><p>Individual <a"
+            " href='https://www.fns.usda.gov/invented'>invented note</a></p>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+        # The control.
+        (
+            "<p>Invented note on Utah</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        # C2 and C2b: a long sup and a link elsewhere no longer vanish, so
+        # the paragraph heads nothing; it opens as Utah's caption, so the
+        # caption net refuses it.
+        (
+            "<p>Utah<sup> invented note</sup></p><h4>Individual</h4>",
+            "another State's caption",
+        ),
+        (
+            "<p>Utah <a href='/x/fn-guide'>see guide</a></p><h4>Couple</h4>",
+            "another State's caption",
+        ),
+    ],
+    ids=["C1", "C3", "control", "C2", "C2b"],
+)
+def test_invented_only_short_markers_leave_the_bare_reading(
+    fragment, expected
+):
+    """Regression: any sup, and any link whose href held "fn", was dropped
+    from the bare reading, so prose became Utah's heading or a claimant
+    line, and Nevada's chart read as Utah's."""
+    payload = invented_nevada_with(fragment)
+    if isinstance(expected, str):
+        with pytest.raises(TableStructureError, match=expected):
+            describe_poms_tables(payload)
+    else:
+        assert invented_selector(payload) == expected
+
+
+@pytest.mark.parametrize(
+    ("block", "bare"),
+    [
+        ("<p>Utah<sup>1</sup></p>", "Utah"),
+        ("<p>Utah<a href='#fn2'>2</a></p>", "Utah"),
+        ("<p>Utah<a href='#note'>&#8224;</a></p>", "Utah"),
+        ("<p>Utah<sup>*</sup></p>", "Utah"),
+        ("<p>Utah<sup><b>1</b></sup></p>", "Utah"),
+        ("<p>Utah<sup>1&#8203;</sup></p>", "Utah"),
+        ("<p>Utah<sup>1234</sup></p>", "Utah1234"),
+        ("<p>Utah<sup>1<b>2345</b></sup></p>", "Utah12345"),
+        ("<p>Utah<sup>1 2</sup></p>", "Utah1 2"),
+        ("<p>Utah<sup> invented note</sup></p>", "Utah invented note"),
+        ("<p>Utah <a href='/x/fn-guide'>see guide</a></p>", "Utah see guide"),
+        ("<p>Utah<a href='https://example.invalid/#fn1'>1</a></p>", "Utah1"),
+    ],
+)
+def test_invented_bare_reading_drops_only_footnote_markers(block, bare):
+    """A footnote marker in a block's line is a sup, or a link to an anchor
+    on the page, holding one to three word characters or footnote signs;
+    the bare reading drops only that."""
+    element = next(iter(parse_html(block).iter("p")))
+    ((_, reading, _),) = _line_renderings(element)
+    assert reading == bare
+
+
+def test_invented_deeply_nested_markers_read_without_recursion():
+    depth = 1500
+    for inner, heads in (("1", True), ("1234", False)):
+        heading = (
+            "<h3>Description of supplements for Utah"
+            + "<sup>" * depth
+            + inner
+            + "</sup>" * depth
+            + "</h3><h4>Individual</h4>"
+        )
+        outcome = invented_nevada_outcome(heading)
+        assert outcome == ("Utah" if heads else None)
+
+
+@pytest.mark.parametrize(
+    ("fragment", "message"),
+    [
+        # The review's O1 witness, and one whose marker the bare reading
+        # drops: only the spaced reading shows the code.
+        ("<p>Couple for Nevada<sup>Utah</sup></p>", "names another State"),
+        ("<p>Couple for Nevada<sup>UT</sup></p>", "names another State"),
+        # O2: only the whole text, read bare, names Utah.
+        ("<p>Couple for<br>Utah<sup>1</sup> residents</p>", "names another"),
+        # O4: only the bare whole text is a State date line, a footnote
+        # body that opens with its marker; its next line, shaped as Utah's
+        # heading, heads nothing.
+        (
+            "<p><sup>1</sup>Utah Effective January 1, 2031<br>Utah</p>"
+            "<h4>Couple</h4>",
+            "section heading",
+        ),
+    ],
+    ids=["O1", "O1_marker", "O2", "O4"],
+)
+def test_invented_round_9_mutant_witnesses_are_refused(fragment, message):
+    """The round-9 review's O1, O2 and O4 mutants each read one of these
+    pages silently; each now fails this test."""
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    "word", sorted(code.lower() for code in _POSTAL_CODES.values())
+)
+def test_invented_lower_case_two_letter_word_names_no_state(word):
+    """The review's O6: a lower-case word that spells a postal code, as in
+    "de facto", names no State, in prose that mentions a claimant or in a
+    date sentence; the upper-case code does."""
+    prose = f"<p>Couple payment levels for Nevada {word} facto</p>"
+    assert invented_selector(invented_nevada_with(prose))[:2] == (
+        "Nevada",
+        "individual",
+    )
+    sentence = f"<p>Payment levels effective January 1, 2031 {word} facto</p>"
+    assert invented_selector(invented_nevada_with(sentence))[2] == "2031-01-01"
+    if word != "nv":
+        with pytest.raises(TableStructureError, match="names another"):
+            describe_poms_tables(invented_nevada_with(prose.upper()))
+
+
+CAPTION_FORMS = [
+    "{name} (continued)",
+    "State of {name}",
+    "{name} <small>(Invented)</small>",
+    "Description of supplements - {name} (invented)",
+    "B. {name}: invented note",
+]
+
+
+@pytest.mark.parametrize("form", CAPTION_FORMS)
+@pytest.mark.parametrize(
+    "block", ["<p>{}</p>", "<div>{}</div>", "<ul><li>{}</ul>", "<h5>{}</h5>"]
+)
+def test_invented_short_caption_of_another_state_is_refused(form, block):
+    """Regression (the review's E1): a paragraph caption naming another
+    State, which only the h1-h6 net read, charted Nevada's selector. A
+    heading keeps the heading net's message."""
+    caption = block.format(form.format(name="Utah"))
+    message = (
+        "heading names a State it does not head"
+        if "<h5>" in block
+        else "another State's caption"
+    )
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_with(caption + "<p>Couple</p>"))
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    st.sampled_from(GLUED_NAMES + [("utah", "Utah"), ("NEW JERSEY", "")]),
+    st.sampled_from(CAPTION_FORMS),
+    st.sampled_from(INVENTED_BLOCK_KINDS),
+)
+def test_invented_short_caption_never_charts_nevada(named, form, kind):
+    """Property: a short line that opens as another State's caption, in a
+    block of any kind, never charts under Nevada's selector."""
+    text, _ = named
+    caption = invented_block("p", form.format(name=text), kind, False)
+    assert invented_nevada_outcome(caption + "<p>Couple</p>") is None
+
+
+@pytest.mark.parametrize(
+    "caption",
+    [
+        "<p>N.J. (continued)</p>",
+        "<p>UT (continued)</p>",
+        "<p>Calif. notes</p>",
+        "<p>Hawai&#699;i (continued)</p>",
+        "<p>utah (continued)</p>",
+        "<p>Washington, D.C. (continued)</p>",
+        # A block HTML keeps inside a heading left open, after its chart,
+        # is no heading text, and the net reads it.
+        "<h4>Individual<table><tr><td>Invented</td></tr></table>"
+        "<p>Utah (continued)</p>",
+    ],
+)
+def test_invented_caption_name_forms_are_netted(caption):
+    with pytest.raises(TableStructureError, match="another State's caption"):
+        describe_poms_tables(invented_nevada_with(caption + "<p>Couple</p>"))
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The section's own State.
+        "<p>Nevada (continued)</p>",
+        "<p>State of Nevada</p>",
+        # Another State, not at the line's start, or in a line of 80
+        # characters or more.
+        "<p>Invented note on Utah</p>",
+        "<p>Utah " + "invented " * 9 + "note</p>",
+        # A lower-case word that spells a postal code.
+        "<p>ut infra, invented note</p>",
+    ],
+)
+def test_invented_caption_net_admits_other_lines(fragment):
+    assert invented_selector(
+        invented_nevada_with(fragment + "<p>Couple</p>")
+    ) == ("Nevada", "couple", "2030-01-01", [0])
+
+
+def test_invented_caption_net_reads_the_district_alias_first():
+    """ "Washington, D.C." opens as the District's caption, so it passes in
+    the District's section and refuses in Washington State's."""
+    district = invented_payload(
+        "<h3>District of Columbia</h3>"
+        + invented_definitions([("A", "Invented District definition")])
+        + "<p>Monthly payment levels effective January 1, 2030</p>"
+        + "<p>Washington, D.C. (continued)</p><p>Couple</p>"
+        + f"<table>{INVENTED_HEADER}</table>"
+    )
+    assert invented_selector(district)[:2] == (
+        "District of Columbia",
+        "couple",
+    )
+    with pytest.raises(TableStructureError, match="another State's caption"):
+        describe_poms_tables(
+            invented_washington_with(
+                "<p>Washington, D.C. (continued)</p><p>Couple</p>"
+            )
+        )
+    washington = invented_washington_with(
+        "<p>Washington (continued)</p><p>Couple</p>"
+    )
+    assert invented_selector(washington)[:2] == ("Washington", "couple")
+
+
+def test_invented_caption_before_any_state_heading_is_not_refused():
+    """Before the first State heading no section is open; the heading that
+    opens one is read as before."""
+    payload = invented_nevada_with("", before="<p>Utah (continued)</p>")
+    assert invented_selector(payload) == (
+        "Nevada",
+        "individual",
+        "2030-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    ("fragment", "expected"),
+    [
+        (
+            "<h3>Ut<style>.x{}</style>ah</h3><h4>Individual</h4>",
+            ("Utah", "individual", None, []),
+        ),
+        (
+            "<h4>Cou<script>invented()</script>ple</h4>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+        (
+            "<p>Couple for Nevada<script>'Utah'</script></p>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+        (
+            "<p>Utah<script>invented()</script> Effective January 1, 2031</p>",
+            "section heading",
+        ),
+    ],
+)
+def test_invented_script_and_style_text_is_not_read(fragment, expected):
+    """HTML renders no script or style text, so no reading holds it: the
+    text around it joins, as HTML renders it."""
+    payload = invented_nevada_with(fragment)
+    if isinstance(expected, str):
+        with pytest.raises(TableStructureError, match=expected):
+            describe_poms_tables(payload)
+    else:
+        assert invented_selector(payload) == expected
+
+
+# The round-10 differential's tree gaps. Expected values are html5lib 1.1's.
+
+
+@pytest.mark.parametrize(
+    ("page", "expected"),
+    [
+        (
+            'w0<p>w1<html lang="w2" dir="w3"><html lang="w4">',
+            {"lang": "w2", "dir": "w3"},
+        ),
+        ('<p>w0</p><div><html lang="w2"></div>', {"lang": "w2"}),
+        ("<p>w0<html>", {}),
+    ],
+)
+def test_invented_later_html_start_tag_on_an_implied_html_element(
+    page, expected
+):
+    """A page that opens with other content implies its html element, and a
+    later html start tag gives it the attributes it lacks; the document
+    root stands for it, as no html element is built."""
+    root = parse_html(page)
+    assert root.find("html") is None
+    assert root.attrib == expected
+
+
+@pytest.mark.parametrize(
+    ("page", "tag", "text"),
+    [
+        ("<pre>\nw0</pre>", "pre", "w0"),
+        ("<listing>\nw0</listing>", "listing", "w0"),
+        ("<textarea>\nw0</textarea>", "textarea", "w0"),
+        ("<pre>\n\nw0</pre>", "pre", "\nw0"),
+        ("<pre>w0\n</pre>", "pre", "w0\n"),
+        ("<pre>\r\nw0</pre>", "pre", "w0"),
+        ("<TEXTAREA>\n<b>w0</b></TEXTAREA>", "textarea", "<b>w0</b>"),
+        ("<p>w0<textarea>\nw1</textarea>w2", "textarea", "w1"),
+    ],
+)
+def test_invented_newline_after_pre_listing_or_textarea_is_dropped(
+    page, tag, text
+):
+    """HTML drops a newline that comes right after a pre, listing or
+    textarea start tag, so a word before a textarea joins its text."""
+    assert parse_html(page).find(f".//{tag}").text == text
+
+
+def test_invented_newline_after_another_token_is_kept():
+    """Only a newline that is the very next token goes: after a comment, a
+    start tag or an end tag, it is text. html5lib 1.1 keeps it in each case
+    but one: after a start tag it ignores, such as a later html start tag,
+    it drops the newline, though the start tag came first."""
+    pre = parse_html("<pre><!-- w0 -->\nw1</pre>").find(".//pre")
+    assert pre.text == "\nw1"
+    assert parse_html("<pre><b>\nw0</b></pre>").find(".//b").text == "\nw0"
+    assert parse_html("<pre><html>\nw0</pre>").find(".//pre").text == "\nw0"
+    assert parse_html("<p><pre></pre>\nw0").find(".//pre").tail == "\nw0"
+
+
+def test_invented_carriage_returns_read_as_newlines():
+    root = parse_html("<pre>w0\r\nw1\rw2</pre><script>w3\r\nw4</script>")
+    assert root.find(".//pre").text == "w0\nw1\nw2"
+    assert root.find(".//script").text == "w3\nw4"

@@ -30,37 +30,59 @@ also line by line, a line being its text between ``br`` tags and the blocks
 HTML keeps inside it, so a block or ``br`` after a heading's words does not
 hide its State, claimant or date. Each whole text and line is read three
 ways: joined, as HTML renders inline elements; bare, the joined reading
-without footnote markers (a ``sup`` or a link to a footnote), as table cells
-are read; and spaced, with a space at every element's edge. Every reading
+without footnote markers (a ``sup``, or a link to an anchor on the page,
+whose text is one to three word characters or footnote signs, as
+``<sup>1</sup>``); and spaced, with a space at every element's edge. A
+longer ``sup`` and a link elsewhere are text in every reading. Every reading
 drops Unicode format characters (category Cf), such as zero-width spaces,
-joiners and soft hyphens. The joined and bare readings name a block's State
-heading and claimant, so ``U<span>tah</span>`` and ``Utah<sup>1</sup>`` head
-Utah; the joined reading alone gives the date sentence. Every State net runs
-over all three readings of the whole text and of every line, and refuses if
-any of them names a State other than the section's:
+joiners and soft hyphens, and the text of ``script`` and ``style``
+elements, which HTML does not render. The joined and bare readings name a
+block's State heading and claimant, so ``U<span>tah</span>`` and
+``Utah<sup>1</sup>`` head Utah. The date sentence is chosen from the joined
+reading; a sentence whose bare reading states other dates, or a range where
+the joined one does not, refuses, and so does a line that is a dated
+sentence only in its bare reading, unless its markers all lead it, as a
+footnote body's does. Every State net runs over all three readings of the
+whole text and of every line, and refuses if any of them names a State
+other than the section's:
 
 - a line that dates another State, or an effective-date sentence that names
   one, refuses, since that State's section heading was not read;
-- a claimant line that names another State refuses, and so does a claimant
-  line that only the spaced reading shows;
+- a line that mentions a claimant word, prose included, that names another
+  State refuses, and so does a claimant line that only the spaced reading
+  shows;
 - a line shaped as another State's heading that heads no section refuses:
   one in a block whose whole text is a State date line, one only the spaced
   reading shows, and one whose postal code is not its State's, as "New York
   (NJ)" in Nevada's section;
 - any line of an h1-h6 heading that names another State refuses, so a
   heading names no State but the one it heads or its section's;
+- a line under 80 characters, in a block of any kind, that opens as another
+  State's caption refuses: after an optional heading prefix and "State of",
+  that State's name, spelling or alias, abbreviation or upper-case postal
+  code, as "Utah (continued)", "State of Utah", "N.J. notes" or "UT
+  (continued)". The District's alias is read first, so "Washington, D.C."
+  opens with the District. This net runs last, so the others keep their
+  messages;
 - a block whose lines head two States, or name two claimant types,
   refuses.
 
-Paragraph prose may name another State. Before any State heading, the chart
-refuses instead. A postal code after a State's name must be that State's,
-and "Washington, D.C.", "Washington,DC" and "Washington DC" name the
-District. The spellings "Hawaiʻi", "Hawai‘i", "Hawai’i" and "Hawai'i" name
-Hawaii and may head its section. To the nets, a postal code in parentheses,
-as in "(UT)" or "(ut)", an upper-case postal code standing as a word, as in
-"for UT", and a State's abbreviation, as in "N.J." or "Nev.", also name their
-States; they never head a section. Each chart needs its own claimant line
-after the chart before it.
+Only a claimant line names a chart's claimant: a heading form ("a.
+Individual payment levels for Nevada", "Couple") or a caption that ends
+with its claimant word after a State date line or effective-date sentence
+that ends with a date or a State ("Utah Effective 1/1/03 Individual").
+Prose that mentions a claimant word, such as "A recipient or couple
+qualifies", names none. A claimant line names every claimant word it holds,
+in every reading. Paragraph prose may name another State, apart from a
+caption as above. Before any State heading, the chart refuses instead. A
+postal code after a State's name must be that State's, and "Washington,
+D.C.", "Washington,DC" and "Washington DC" name the District. The spellings
+"Hawaiʻi", "Hawai‘i", "Hawai’i" and "Hawai'i" name Hawaii and may head its
+section. To the nets, a postal code in parentheses, as in "(UT)" or "(ut)",
+an upper-case postal code standing as a word, as in "for UT", and a State's
+abbreviation, as in "N.J." or "Nev.", also name their States; they never
+head a section. Each chart needs its own claimant line after the chart
+before it.
 
 Every definition table of a section precedes its first chart; a definition
 table after a chart refuses, because the source does not say which earlier
@@ -71,10 +93,16 @@ recorded in ``poms_open_questions.json``; no definition is inferred for it.
 
 Not modelled: an abbreviation without its period, such as "Calif", or not
 in ``_ABBREVIATIONS``, such as "Ia.", and a lower-case postal code outside
-parentheses, which name no State to the nets; and text that HTML or CSS
-hides, such as the ``hidden`` attribute, which is read as text, so
+parentheses, which name no State to the nets; a caption in a table cell,
+which no block holds; and text that HTML or CSS hides, other than script
+and style, such as the ``hidden`` attribute, which is read as text, so
 ``Utah<span hidden>x</span> Effective January 1, 2031`` is read as prose, as
 "Utahx Effective January 1, 2031" would be.
+
+Limits: the nets over-refuse where an acronym spells a postal code. In
+Pennsylvania's section, "(MA recipients)" or "for IA cases" names
+Massachusetts or Iowa, and so does a short line that opens "MA", so the page
+refuses. No pinned page does.
 """
 
 from __future__ import annotations
@@ -83,7 +111,7 @@ import re
 from dataclasses import replace
 from datetime import date, datetime
 from decimal import Decimal
-from functools import lru_cache
+from functools import cache, lru_cache
 from typing import Any
 from xml.etree import ElementTree as ET
 
@@ -94,7 +122,6 @@ from .aggregate_tables import (
     TableSpec,
     TableStructureError,
     _cell_token,
-    _is_footnote_marker,
     expand_html_table,
     normalized_text,
     parse_html,
@@ -177,6 +204,55 @@ _TEXT_STOPS = {block: PARAGRAPH_CLOSERS for block in _BLOCKS} | {
 
 # A br ends a line as a block nested in a heading does.
 _LINE_BREAKS = PARAGRAPH_CLOSERS | {"br"}
+# Elements whose text HTML never renders; no reading holds it.
+_UNRENDERED = frozenset({"script", "style"})
+# A footnote marker's text: one to three word characters or footnote signs.
+_MARKER_LENGTH = 3
+_MARKER_TEXT = re.compile(rf"[\w*†‡§]{{1,{_MARKER_LENGTH}}}")
+
+
+def _short_texts(element: ET.Element, short: dict[int, str | None]) -> None:
+    """Record in ``short``, by id, the text of ``element`` and of each
+    element under it when it is no longer than a marker's, else None.
+
+    The text is ``normalized_text``'s, its text nodes joined by spaces and
+    whitespace collapsed, without format characters, as every reading drops
+    them. An element's text holds each child's, so a child too long makes
+    its parent too long. The walk keeps its own stack and reads each element
+    once, so nested candidates cost no more than one.
+    """
+    pending = [(element, False)]
+    while pending:
+        node, read = pending.pop()
+        if not read:
+            pending.append((node, True))
+            pending.extend((child, False) for child in node)
+            continue
+        parts = [node.text or ""]
+        for child in node:
+            parts += [short[id(child)], child.tail or ""]
+        text = None if None in parts else _collapse(" ".join(parts))
+        short[id(node)] = (
+            text if text is not None and len(text) <= _MARKER_LENGTH else None
+        )
+
+
+def _line_marker(element: ET.Element, short: dict[int, str | None]) -> bool:
+    """Whether an element of a block's line is a footnote marker: a ``sup``,
+    or a link to an anchor on the page (an href starting "#"), whose text
+    is one to three word characters or footnote signs, as ``<sup>1</sup>``
+    and ``<a href="#fn2">2</a>``. A ``sup`` with longer text, and a link
+    elsewhere, are text, so the bare reading drops no word of prose. Table
+    cells keep their own, wider rule (``aggregate_tables``'s
+    ``_is_footnote_marker``)."""
+    if element.tag != "sup" and not (
+        element.tag == "a" and element.get("href", "").startswith("#")
+    ):
+        return False
+    if id(element) not in short:
+        _short_texts(element, short)
+    text = short[id(element)]
+    return text is not None and _MARKER_TEXT.fullmatch(text) is not None
 
 
 def _line_renderings(element: ET.Element) -> list[tuple[str, str, str]]:
@@ -186,13 +262,15 @@ def _line_renderings(element: ET.Element) -> list[tuple[str, str, str]]:
     in it starts or ends. In the joined reading the text of inline elements
     joins without a separator, as HTML renders it, so ``U<span>tah</span>``
     reads "Utah". The bare reading is the joined one without footnote
-    markers (a ``sup``, or a link to a footnote), as a table cell is read,
-    so ``Utah<sup>1</sup>`` reads "Utah". The spaced reading puts a space at
+    markers (``_line_marker``: a ``sup``, or a link to an anchor on the
+    page, holding one to three word characters or footnote signs), so
+    ``Utah<sup>1</sup>`` reads "Utah". The spaced reading puts a space at
     every element's edges, so a name that touches the text of the element
     next to it, as in ``Utah<sup>1</sup>``, still stands as a word. Every
     reading collapses whitespace and drops Unicode format characters, such
-    as zero-width spaces and soft hyphens. A line is kept when its joined
-    reading holds any text.
+    as zero-width spaces and soft hyphens, and no reading holds the text of
+    a ``script`` or ``style`` element, which HTML does not render. A line
+    is kept when its joined reading holds any text.
 
     The text stops at the first block that ends the element
     (``_TEXT_STOPS``). Before that only a heading can hold a nested block,
@@ -200,6 +278,7 @@ def _line_renderings(element: ET.Element) -> list[tuple[str, str, str]]:
     not recurse, so deep nesting cannot exhaust the interpreter stack.
     """
     stops = _TEXT_STOPS[element.tag]
+    short: dict[int, str | None] = {}
     # Each part is a text and whether a footnote marker holds it.
     lines: list[list[tuple[str, bool]]] = [[(element.text or "", False)]]
     walk = [(element, iter(element), False)]
@@ -215,9 +294,12 @@ def _line_renderings(element: ET.Element) -> list[tuple[str, str, str]]:
             continue
         if child.tag in stops:
             break
+        if child.tag in _UNRENDERED:
+            lines[-1].append((child.tail or "", walk[-1][2]))
+            continue
         if child.tag in _LINE_BREAKS:
             lines.append([])
-        marked = walk[-1][2] or _is_footnote_marker(child)
+        marked = walk[-1][2] or _line_marker(child, short)
         lines[-1].append((child.text or "", marked))
         walk.append((child, iter(child), marked))
     readings = []
@@ -271,6 +353,7 @@ _HEADING_PREFIX = (
 )
 
 
+@cache
 def _state_name(name: str) -> str:
     """A pattern for a State's name or another spelling of it, or for the
     District, an alias."""
@@ -279,6 +362,7 @@ def _state_name(name: str) -> str:
     return _SPELLINGS.get(name, re.escape(name))
 
 
+@cache
 def _state_reference(name: str) -> str:
     """A pattern for a State's name with its optional postal suffix. The
     2009 and 2010 sections append the code, as in "New Jersey (NJ)"."""
@@ -329,7 +413,12 @@ def _effective_line(text: str) -> bool:
     )
 
 
-def _claimant_line(text: str) -> re.Match[str] | None:
+def _claimant_mention(text: str) -> re.Match[str] | None:
+    """Whether a line mentions a claimant: a claimant word that ends it,
+    after an optional "payment(s)" and "levels", or that "for" or "or" and
+    any text follow, anywhere in the line. Prose such as "A recipient or
+    couple qualifies" mentions one. The claimant State guard reads every
+    line that mentions a claimant; only a claimant line names one."""
     if len(text) >= 250:
         return None
     return re.search(
@@ -341,8 +430,61 @@ def _claimant_line(text: str) -> re.Match[str] | None:
     )
 
 
-def _claimant_type(match: re.Match[str]) -> str:
-    return "couple" if match[1].lower() == "couple" else "individual"
+_CLAIMANT_WORD = r"(?P<word>Individual|Recipient|Couple)"
+_CLAIMANT_WORDS = re.compile(r"\b(?:Individual|Recipient|Couple)\b", re.I)
+# Any State's name, spelling or District alias, with its optional postal
+# suffix.
+_ANY_STATE = "(?:" + "|".join(map(_state_reference, _STATES)) + ")"
+_CLAIMANT_HEADING = re.compile(
+    r"(?:(?:[A-Za-z]|\d{1,2})[.)]\s*)?"
+    + _CLAIMANT_WORD
+    + r"(?:\s+payments?)?(?:\s+levels?)?"
+    + rf"(?:\s+(?:for|or)\s+(?:the\s+)?{_ANY_STATE})?",
+    re.IGNORECASE,
+)
+_CLAIMANT_CAPTION = re.compile(
+    r"(?P<prefix>.*\S)\s+" + _CLAIMANT_WORD, re.IGNORECASE
+)
+_CAPTION_PREFIX_END = re.compile(
+    rf"(?:{_DATE.pattern}|{_ANY_STATE})$", re.IGNORECASE
+)
+
+
+def _claimant_line(text: str) -> re.Match[str] | None:
+    """A claimant line, the only kind of line that names a chart's claimant.
+
+    It is a heading form, matched as the whole line: an optional list label
+    ("a." or "2)"), the claimant word, an optional "payment(s)" and
+    "level(s)", and then optionally "for" (or the source's "or"), an
+    optional "the" and a State, as in "a. Individual payment levels for
+    the District of Columbia". Or it is a caption whose last word is the
+    claimant word, after a State date line or an effective-date line that
+    ends with a date or a State, as in "Utah Effective 1/1/03 Individual".
+    Any other line that holds a claimant word is prose and names none.
+    ``match["word"]`` is the claimant word.
+    """
+    if len(text) >= 250 or not _CLAIMANT_WORDS.search(text):
+        return None
+    heading = _CLAIMANT_HEADING.fullmatch(text)
+    if heading:
+        return heading
+    caption = _CLAIMANT_CAPTION.fullmatch(text)
+    if (
+        caption
+        and (
+            _state_date_line(caption["prefix"])
+            or _effective_line(caption["prefix"])
+        )
+        and _CAPTION_PREFIX_END.search(caption["prefix"])
+    ):
+        return caption
+    return None
+
+
+def _claimant_type(word: str) -> str:
+    """The claimant type a claimant word names, as ``match["word"]`` of a
+    claimant line; "Recipient" names an individual."""
+    return "couple" if word.lower() == "couple" else "individual"
 
 
 _STATE_OF_CODE = {code: name for name, code in _POSTAL_CODES.items()}
@@ -377,6 +519,44 @@ def _view_states(view: tuple[str, ...]) -> set[str]:
     return set().union(*map(_named_states, view))
 
 
+# What may open a State's caption before its name: a heading's prefix and
+# "State of".
+_CAPTION_OPENING = _HEADING_PREFIX + r"(?:State\s+of\s+)?"
+# For each State, a caption opening with its name, spelling or alias in any
+# case, and one opening with its upper-case postal code or abbreviation.
+_CAPTIONS = {
+    name: (
+        re.compile(_CAPTION_OPENING + _state_name(name) + r"\b", re.I),
+        re.compile(
+            _CAPTION_OPENING
+            + rf"(?:{_POSTAL_CODES[name]}\b"
+            + (rf"|{_ABBREVIATIONS[name]}" if name in _ABBREVIATIONS else "")
+            + ")"
+        ),
+    )
+    for name in _STATES
+}
+
+
+def _opening_states(text: str) -> set[str]:
+    """The States a short line, under 80 characters, opens with as a
+    caption: after an optional heading prefix and "State of", a State's
+    name, spelling or alias in any case, or its abbreviation or upper-case
+    postal code, as in "Utah (continued)", "State of Utah", "N.J. notes" or
+    "UT (continued)". The District's alias is read first, so "Washington,
+    D.C." opens with the District, not with Washington State."""
+    if len(text) >= 80:
+        return set()
+    text = re.sub(
+        r"\b" + _DISTRICT_ALIAS, "District of Columbia", text, flags=re.I
+    )
+    return {
+        name
+        for name, (spelled, coded) in _CAPTIONS.items()
+        if spelled.match(text) or coded.match(text)
+    }
+
+
 # Unicode's format characters (category Cf, Unicode 16.0), such as the
 # zero-width space, joiners, the byte order mark and the soft hyphen. They
 # are invisible, so they neither separate nor join words.
@@ -401,6 +581,17 @@ def _date_string(text: str) -> str:
         except ValueError:
             continue
     raise TableStructureError("Unrecognized POMS effective date")
+
+
+# An effective-date sentence that states a range of dates.
+_DATE_RANGE = re.compile(r"effective from .+ to ", re.IGNORECASE)
+
+
+def _date_reading(text: str) -> tuple[tuple[str, ...], bool]:
+    """The distinct dates an effective-date sentence states, in order, and
+    whether it states them as a range ("effective from ... to ...")."""
+    dates = dict.fromkeys(_date_string(m[0]) for m in _DATE.finditer(text))
+    return tuple(dates), bool(_DATE_RANGE.search(text))
 
 
 @lru_cache(maxsize=32)
@@ -476,17 +667,13 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                             dates[0]
                             if len(dates) == 1
                             or len(dates) == 2
-                            and re.search(
-                                r"effective from .+ to ", effective_text, re.I
-                            )
+                            and _DATE_RANGE.search(effective_text)
                             else None
                         ),
                         "effective_to": (
                             dates[1]
                             if len(dates) == 2
-                            and re.search(
-                                r"effective from .+ to ", effective_text, re.I
-                            )
+                            and _DATE_RANGE.search(effective_text)
                             else None
                         ),
                         "parameter_effective_date_text": effective_text,
@@ -496,9 +683,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                                 for i, value in enumerate(dates)
                             }
                             if len(dates) > 1
-                            and not re.search(
-                                r"effective from .+ to ", effective_text, re.I
-                            )
+                            and not _DATE_RANGE.search(effective_text)
                             else {"not_stated": None} if not dates else {}
                         ),
                         "section_effective_from": revision_start,
@@ -583,28 +768,47 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 raise TableStructureError(
                     "POMS State changes without a section heading"
                 )
-            # The date sentence is read as it renders, footnote markers and
-            # all; a footnote marker glued to "Effective" makes no sentence.
-            effective = next(
-                (view[0] for view in views if _effective_line(view[0])), None
+            # The date sentence is chosen as it renders, footnote markers and
+            # all, so a footnote body that opens with its marker, as
+            # "<sup>1</sup>Effective ...", is no date sentence. A marker inside
+            # a sentence, as in "January 1<sup>2</sup>, 2031", would change
+            # or hide its date, so a sentence that dates differently without
+            # its markers refuses, and so does a line that is a dated
+            # sentence only without them, unless its markers all lead it.
+            sentence = next(
+                (view for view in views if _effective_line(view[0])), None
             )
-            if effective is not None:
-                effective_text = effective
-                dates = tuple(
-                    dict.fromkeys(
-                        _date_string(m[0]) for m in _DATE.finditer(effective)
+            if sentence is not None:
+                effective_text = sentence[0]
+                reading = _date_reading(sentence[0])
+                dates = reading[0]
+                if _date_reading(sentence[1]) != reading:
+                    raise TableStructureError(
+                        "POMS effective date reads differently without its "
+                        "footnote markers"
                     )
+            if any(
+                _effective_line(view[1])
+                and _DATE.search(view[1])
+                and not _effective_line(view[0])
+                and not view[0].endswith(view[1])
+                for view in views
+            ):
+                raise TableStructureError(
+                    "POMS effective-date sentence reads only without its "
+                    "footnote markers"
                 )
             # Before any State heading a claimant line names nothing: the
             # heading resets the claimant, and a chart before it refuses.
             types = set()
             for view in views if state is not None else ():
                 matches = [_claimant_line(text) for text in view]
-                if not any(matches):
+                if not any(matches) and not any(map(_claimant_mention, view)):
                     continue
-                # Every claimant line is guarded, not only the first, so a
-                # block's whole text cannot cover a line nested in it, and a
-                # line may name no State but this section's.
+                # Every line that mentions a claimant is guarded, prose
+                # included, not only the first, so a block's whole text
+                # cannot cover a line nested in it, and a line may name no
+                # State but this section's.
                 if _view_states(view) - {state}:
                     # The section heading that should have named this State
                     # was not read, so refuse rather than chart it under the
@@ -612,12 +816,22 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                     raise TableStructureError(
                         "POMS claimant line names another State"
                     )
+                if not any(matches):
+                    # Prose that mentions a claimant names none.
+                    continue
                 if not any(matches[:2]):
                     raise TableStructureError(
                         "POMS claimant line reads only with its inline "
                         "elements spaced"
                     )
-                types |= {_claimant_type(m) for m in matches if m}
+                # A claimant line names every claimant word it holds, in
+                # any reading, so the caption "Couple payment levels
+                # effective January 1, 2030 Individual" names two.
+                types |= {
+                    _claimant_type(word)
+                    for text in view
+                    for word in _CLAIMANT_WORDS.findall(text)
+                }
             if len(types) > 1:
                 raise TableStructureError("POMS block names two claimants")
             if types:
@@ -631,6 +845,21 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 # reading, means that State's section was not read.
                 raise TableStructureError(
                     "POMS heading names a State it does not head"
+                )
+            if state is not None and any(
+                _opening_states(text) - {state}
+                for view in views
+                for text in view
+            ):
+                # A short line that opens as another State's caption, as
+                # "Utah (continued)" or "State of Utah", in a block of any
+                # kind, means that State's section was not read. This net
+                # runs last, so the nets above keep their messages; a line
+                # of an h1-h6 heading, one HTML keeps inside a heading left
+                # open included, has passed the heading net, which refuses
+                # any heading line that names another State.
+                raise TableStructureError(
+                    "POMS short line opens as another State's caption"
                 )
         return True
 
