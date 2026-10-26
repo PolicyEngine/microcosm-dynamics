@@ -2,9 +2,9 @@
   "schema_version": 1,
   "verification_class": "accounting conformance",
   "admitted_scope": "The held-out data registry's rules on invented registries, temporary git repositories and the committed registry; no population, behavioral or forecast claim.",
-  "mutation_method": "One deliberate production-line change per check; both registry test modules run in full and are expected to fail; original bytes restored before the next check. No mutated implementation is committed.",
+  "mutation_method": "One deliberate production-line change per check; both registry test modules run in full and are expected to fail; original bytes restored before the next check. Failed test ids are pytest's own report node ids, written by a reporting plugin, not parsed from summary lines. No mutated implementation is committed.",
   "restored_source_sha256": {
-    "src/populace_dynamics/track_b/holdout_registry.py": "a1fd1d999f59abecb6a8ca08801a7b2bbf7c4960cf3581f8c77e6cf2972ee354"
+    "src/populace_dynamics/track_b/holdout_registry.py": "9ca7fc52839d637f29596f369578ff255a528114fe8956c767e4fb3d84ddac5d"
   },
   "checks": [
     {
@@ -42,7 +42,8 @@
         "tests/test_track_b_holdout_registry.py::test_keys_overlap_on_source_and_intersecting_years",
         "tests/test_track_b_holdout_registry.py::test_settled_registries_are_valid",
         "tests/test_track_b_holdout_registry.py::test_shared_units_match_the_independent_rule",
-        "tests/test_track_b_holdout_registry_committed.py::test_the_committed_registry_keeps_its_rules"
+        "tests/test_track_b_holdout_registry_committed.py::test_the_committed_registry_keeps_its_rules",
+        "tests/test_track_b_holdout_registry_committed.py::test_the_committed_registry_only_appends_to_its_base"
       ]
     },
     {
@@ -302,8 +303,8 @@
     },
     {
       "mutation": "entries without ids reach diagnostics",
-      "old": "isinstance(entry, Mapping) and isinstance(entry.get(\"id\"), str)",
-      "new": "isinstance(entry, Mapping)",
+      "old": "isinstance(entry, Mapping) and isinstance(entry.get(\"id\"), str)\n            for entry in entries\n",
+      "new": "isinstance(entry, Mapping)\n            for entry in entries\n",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
@@ -575,6 +576,10 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_repeated_id_or_rule_is_reported[rule]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_in_the_pull_requests_own_order_waits_for_the_end[rules]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_keeps_each_copy_of_a_repeated_rule[drops_a_copy-inner]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_keeps_each_copy_of_a_repeated_rule[drops_a_copy-trailing]",
         "tests/test_track_b_holdout_registry.py::test_sources_rules_and_completeness_only_move_forward"
       ]
     },
@@ -605,10 +610,20 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_landed_branch_is_merged_in_the_landed_order[branch]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_failing_own_commit_unions_the_last_valid[drop]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_cannot_drop_the_pull_requests_own_entry",
+        "tests/test_track_b_holdout_registry.py::test_a_merge_of_contained_history_keeps_its_own_predecessor",
         "tests/test_track_b_holdout_registry.py::test_a_push_compares_with_its_before_commit",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-append_then_remove]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]",
+        "tests/test_track_b_holdout_registry.py::test_a_stale_landed_branch_cannot_drop_what_the_pull_request_holds",
+        "tests/test_track_b_holdout_registry.py::test_an_entry_a_landed_merge_adds_is_held_from_then_on",
+        "tests/test_track_b_holdout_registry.py::test_an_octopus_of_a_landed_and_a_contained_parent_is_one_line",
         "tests/test_track_b_holdout_registry.py::test_any_json_in_any_field_is_reported_not_raised",
+        "tests/test_track_b_holdout_registry.py::test_only_commits_that_remove_or_rewrite_entries_are_reported",
+        "tests/test_track_b_holdout_registry.py::test_own_commits_after_a_master_merge_are_checked[drop_landed]",
+        "tests/test_track_b_holdout_registry.py::test_own_commits_after_a_master_merge_are_checked[merge_drops_landed]",
         "tests/test_track_b_holdout_registry.py::test_removing_or_reordering_entries_is_refused",
         "tests/test_track_b_holdout_registry.py::test_the_base_branch_compares_with_its_parent"
       ]
@@ -620,11 +635,18 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_first_commit_that_merges_unlanded_history_starts_at_the_fork[rewrite]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_failing_own_commit_unions_the_last_valid[rewrite]",
+        "tests/test_track_b_holdout_registry.py::test_a_pull_request_cannot_hide_a_change_it_undoes[False]",
+        "tests/test_track_b_holdout_registry.py::test_a_pull_request_cannot_hide_a_change_it_undoes[True]",
+        "tests/test_track_b_holdout_registry.py::test_a_push_is_compared_from_its_before_commit[rewrite]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-edit_then_restore]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-edit_then_restore]",
         "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
         "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]",
         "tests/test_track_b_holdout_registry.py::test_changing_an_earlier_entry_is_refused",
+        "tests/test_track_b_holdout_registry.py::test_only_commits_that_remove_or_rewrite_entries_are_reported",
+        "tests/test_track_b_holdout_registry.py::test_own_commits_after_a_master_merge_are_checked[rewrite]",
         "tests/test_track_b_holdout_registry.py::test_sha256_object_ids_bound_histories"
       ]
     },
@@ -635,6 +657,7 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_keeps_the_pull_requests_own_extensions[drops]",
         "tests/test_track_b_holdout_registry.py::test_extending_lists_never_shrink"
       ]
     },
@@ -667,7 +690,7 @@
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_holdout_registry.py::test_a_push_compares_with_its_before_commit",
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]",
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"created\": true}]",
         "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
         "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]",
         "tests/test_track_b_holdout_registry.py::test_sha256_object_ids_bound_histories"
@@ -693,8 +716,11 @@
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_holdout_registry.py::test_a_clean_history_has_no_problems",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_an_own_registry_with_malformed_sources",
         "tests/test_track_b_holdout_registry.py::test_a_pull_request_compares_with_its_merge_base",
-        "tests/test_track_b_holdout_registry_committed.py::test_the_committed_registry_only_appends_to_its_base"
+        "tests/test_track_b_holdout_registry.py::test_a_pull_request_from_before_the_registry_passes[False]",
+        "tests/test_track_b_holdout_registry.py::test_a_pull_request_from_before_the_registry_passes[True]",
+        "tests/test_track_b_holdout_registry.py::test_only_commits_that_remove_or_rewrite_entries_are_reported"
       ]
     },
     {
@@ -783,14 +809,29 @@
     },
     {
       "mutation": "history checks only the endpoint",
-      "old": "previous_commit, previous = commit, current",
-      "new": "previous_commit = commit",
+      "old": "previous_label, previous = label, current",
+      "new": "previous_label = label",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_holdout_registry.py::test_a_clean_history_has_no_problems",
+        "tests/test_track_b_holdout_registry.py::test_a_conflicting_landed_merge_leaves_the_union_as_predecessor",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_failing_own_commit_unions_the_last_valid[drop]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_repeated_id_or_rule_is_reported[id]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_a_repeated_id_or_rule_is_reported[rule]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_after_an_own_registry_with_malformed_sources",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_cannot_drop_the_pull_requests_own_entry",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_cannot_reorder_the_pull_requests_own_entries",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_in_the_pull_requests_own_order_waits_for_the_end[entries]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_in_the_pull_requests_own_order_waits_for_the_end[rules]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_keeps_the_pull_requests_own_extensions[diverges]",
+        "tests/test_track_b_holdout_registry.py::test_a_landed_merge_keeps_the_pull_requests_own_extensions[drops]",
+        "tests/test_track_b_holdout_registry.py::test_a_merge_of_unlanded_history_extends_its_own_predecessor[False]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-append_then_remove]",
-        "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]"
+        "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]",
+        "tests/test_track_b_holdout_registry.py::test_a_stacked_pull_request_stays_valid_once_its_base_lands[landed]",
+        "tests/test_track_b_holdout_registry.py::test_a_stacked_pull_request_stays_valid_once_its_base_lands[own]",
+        "tests/test_track_b_holdout_registry.py::test_an_entry_a_landed_merge_adds_is_held_from_then_on"
       ]
     },
     {
@@ -800,9 +841,7 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]",
-        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[24]",
-        "tests/test_track_b_holdout_registry.py::test_a_transient_failure_at_the_push_boundary_raises[35]"
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"created\": true}]"
       ]
     },
     {
@@ -812,9 +851,8 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"HEAD\"}]",
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": null}]",
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{}]"
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": \"HEAD\", \"created\": true}]",
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[{\"before\": null, \"created\": true}]"
       ]
     },
     {
@@ -824,8 +862,8 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[[]",
-        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[[]"
+        "tests/test_track_b_holdout_registry.py::test_a_push_without_a_resolvable_before_raises[[]]",
+        "tests/test_track_b_holdout_registry.py::test_an_unreadable_pull_request_event_raises[[]]"
       ]
     },
     {
@@ -851,6 +889,30 @@
         "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure0]",
         "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure1]",
         "tests/test_track_b_holdout_registry.py::test_a_failed_object_hash_fails_closed[failure2]"
+      ]
+    },
+    {
+      "mutation": "an unset event path leaks TypeError",
+      "old": "    except (TypeError, ValueError, OSError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "new": "    except (ValueError, OSError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_an_unset_event_path_raises[pull_request]",
+        "tests/test_track_b_holdout_registry.py::test_an_unset_event_path_raises[push]"
+      ]
+    },
+    {
+      "mutation": "a zero push boundary falls back without created",
+      "old": "        if event.get(\"created\") is not True:\n            raise LookupError(\n                \"an all-zero before commit needs a push that creates its \"\n                \"branch\"\n            )\n",
+      "new": "",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[1]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[False]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[None]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[true]"
       ]
     }
   ]
