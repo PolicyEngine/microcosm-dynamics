@@ -24,8 +24,11 @@ Capture-folder invariants:
   of its page text that quotes the edition's published value.
 * Published prose runs no word or citation into a number.
 
+Registry-wide checks: an open reading has one name and a prose
+description, and a closed row's named options say which one governs.
+
 Hypothesis properties test the pdftotext parser and the retention, OCR,
-IRS-quote and fused-token checkers.
+IRS-quote, fused-token, open-reading and operative-reading checkers.
 """
 
 import gzip
@@ -902,29 +905,85 @@ def test_date_axis_descriptions_quote_a_cited_capture(registry):
 OPTION_RECORDS = re.compile(r"(^|_)(named_options|named_alternatives)$")
 
 
-def test_open_readings_are_named_once_and_described_in_prose(registry):
+def open_reading_problems(row):
+    """Readings described by a serialized record or a locator, and option
+    records on an open row whose names differ from its open_alternatives.
+    """
+    problems = []
+    groups = [row["open_alternatives"]] + [
+        case.get("open_alternatives", []) for case in row["cases"]
+    ]
+    for alternatives in groups:
+        for option in alternatives:
+            text = option["description"]
+            if "{" in text or any(
+                phrase in text
+                for phrase in ("Unselected source reading", "locator")
+            ):
+                problems.append((option["name"], "description"))
+    names = {option["name"] for option in row["open_alternatives"]}
+    if row["open_reason"] is not None:
+        for key, value in row["parameters"].items():
+            if OPTION_RECORDS.search(key) and option_names(value) != names:
+                problems.append((key, "names"))
+    return problems
+
+
+def test_open_readings_are_named_once_and_described_in_prose():
     """Review r2 lows 8 and 9: one name per reading, each a legal reading.
 
     A parameter record of options on an open row uses exactly the names in
     open_alternatives, and no description is a serialized record.
     """
-    described = 0
-    for rule in registry.rules:
-        groups = [rule.open_alternatives] + [
-            case.get("open_alternatives", ()) for case in rule.cases
-        ]
-        for alternatives in groups:
-            for option in alternatives:
-                text = option["description"]
-                assert "{" not in text, (rule.rule_id, option["name"])
-                for phrase in ("Unselected source reading", "locator"):
-                    assert phrase not in text, (rule.rule_id, option["name"])
-                described += 1
-        names = {o["name"] for o in rule.open_alternatives}
-        for key, value in rule.parameters.items():
-            if OPTION_RECORDS.search(key) and rule.open_reason is not None:
-                assert option_names(value) == names, (rule.rule_id, key)
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    problems = {row["rule_id"]: open_reading_problems(row) for row in rows}
+    assert {key: value for key, value in problems.items() if value} == {}
+    described = sum(
+        len(row["open_alternatives"])
+        + sum(len(case.get("open_alternatives", [])) for case in row["cases"])
+        for row in rows
+    )
     assert described == 36
+
+
+READING_TEXT = {
+    "prose": "INVENTED reading under the statute",
+    "dump": 'INVENTED reading: {"date": "1988-11-10"}',
+    "locator": "INVENTED retained locator alternative",
+}
+
+
+@settings(deadline=None)
+@given(
+    st.lists(st.sampled_from("abc"), min_size=2, max_size=3, unique=True),
+    st.sampled_from(sorted(READING_TEXT)),
+    st.sampled_from(["same", "renamed", "absent"]),
+    st.booleans(),
+    st.booleans(),
+)
+def test_open_reading_checker_flags_dumps_and_second_names(
+    names, description, record, keyed, in_case
+):
+    """The lows 8 and 9 checker is the test's oracle."""
+    readings = [
+        {"name": name, "description": READING_TEXT[description]}
+        for name in names
+    ]
+    row = {
+        "open_reason": None if in_case else "INVENTED_QUESTION",
+        "open_alternatives": [] if in_case else readings,
+        "cases": [{"open_alternatives": readings}] if in_case else [],
+        "parameters": {},
+    }
+    recorded = {"same": names, "renamed": [n + "_other" for n in names]}
+    if record in recorded:
+        row["parameters"]["named_alternatives"] = (
+            dict.fromkeys(recorded[record], "INVENTED")
+            if keyed
+            else [{"name": name} for name in recorded[record]]
+        )
+    expected = description != "prose" or (record == "renamed" and not in_case)
+    assert bool(open_reading_problems(row)) == expected
 
 
 def option_names(records):
@@ -934,40 +993,106 @@ def option_names(records):
     return set(records)
 
 
-def test_closed_rows_name_their_operative_reading(registry):
-    """Review r2 low 14: a closed row's recorded options say which governs.
+def operative_reading_problems(row):
+    """A closed row's named options that do not say which one governs.
 
     Listed options carry a status, one operational entry per group; keyed
     options carry a resolution naming the operative option or parameter.
     """
-    resolved = []
-    for rule in registry.rules:
-        if rule.open_reason is not None:
-            continue
-        options = rule.parameters.get("named_options")
-        if options is None:
-            continue
-        if isinstance(options, (list, tuple)):
-            groups = {}
-            for option in options:
-                status = option["status"]
-                assert status.startswith("operational") or status.endswith(
-                    "not_operational"
-                ), (rule.rule_id, status)
-                groups.setdefault(option["group"], []).append(
-                    status.startswith("operational")
-                )
-            assert all(sum(flags) == 1 for flags in groups.values())
-        else:
-            resolution = rule.parameters["source_disagreement_resolution"]
-            operative = resolution["operative_current_text"]
-            assert operative in {*options, *rule.parameters} - {
-                "source_disagreement_resolution"
-            }, rule.rule_id
-            assert resolution["basis"].strip()
-        resolved.append(rule.rule_id)
+    options = row["parameters"].get("named_options")
+    if row["open_reason"] is not None or options is None:
+        return []
+    problems = []
+    if isinstance(options, (list, tuple)):
+        groups = {}
+        for option in options:
+            status = option["status"]
+            if not (
+                status.startswith("operational")
+                or status.endswith("not_operational")
+            ):
+                problems.append((option["name"], status))
+            groups.setdefault(option["group"], []).append(
+                status.startswith("operational")
+            )
+        problems += [
+            (group, "operational entries")
+            for group, flags in groups.items()
+            if sum(flags) != 1
+        ]
+    else:
+        resolution = row["parameters"].get(
+            "source_disagreement_resolution", {}
+        )
+        allowed = {*options, *row["parameters"]} - {
+            "source_disagreement_resolution"
+        }
+        if resolution.get("operative_current_text") not in allowed:
+            problems.append(("resolution", "operative_current_text"))
+        if not str(resolution.get("basis", "")).strip():
+            problems.append(("resolution", "basis"))
+    return problems
+
+
+def test_closed_rows_name_their_operative_reading():
+    """Review r2 low 14: a closed row's recorded options say which governs."""
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    resolved = [
+        row["rule_id"]
+        for row in rows
+        if row["open_reason"] is None and "named_options" in row["parameters"]
+    ]
+    problems = {
+        row["rule_id"]: operative_reading_problems(row) for row in rows
+    }
+    assert {key: value for key, value in problems.items() if value} == {}
     assert "fishing_crew_share_service_1989" in resolved
     assert len(resolved) == 8
+
+
+@settings(deadline=None)
+@given(
+    st.lists(st.booleans(), min_size=1, max_size=4),
+    st.booleans(),
+    st.booleans(),
+    st.sampled_from(["option", "parameter", "unknown", "missing"]),
+    st.booleans(),
+)
+def test_operative_reading_checker_requires_one_governing_option(
+    flags, bad_status, keyed, operative, basis
+):
+    """The low 14 checker is the test's oracle."""
+    if keyed:
+        targets = {"option": "first", "parameter": "other_parameter"}
+        resolution = {"basis": "INVENTED basis"} if basis else {}
+        if operative != "missing":
+            resolution["operative_current_text"] = targets.get(
+                operative, "INVENTED_unknown"
+            )
+        parameters = {
+            "named_options": {"first": "INVENTED", "second": "INVENTED"},
+            "other_parameter": 1,
+            "source_disagreement_resolution": resolution,
+        }
+        expected = operative not in targets or not basis
+    else:
+        listed = [
+            {
+                "name": f"option_{index}",
+                "group": "INVENTED",
+                "status": (
+                    "operational_INVENTED" if flag else "not_operational"
+                ),
+            }
+            for index, flag in enumerate(flags)
+        ]
+        if bad_status:
+            listed[0]["status"] = "INVENTED_status"
+        parameters = {"named_options": listed}
+        operational = sum(flags) - (bad_status and flags[0])
+        expected = bad_status or operational != 1
+    row = {"open_reason": None, "parameters": parameters}
+    assert bool(operative_reading_problems(row)) == expected
 
 
 FUSED_PROSE = re.compile(
