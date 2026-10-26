@@ -2,6 +2,30 @@
 
 Published worked examples retain their cited passages. These tests use no
 survey observations and do not implement the CE3 component classifier.
+
+Capture-folder invariants:
+
+* The capture manifests list exactly the folder's captures, with their
+  sizes and SHA-256 digests. Every metadata row that records a file and a
+  SHA-256 finds that file with those bytes or says why it is absent:
+  ``not_retained`` with a reason,
+  ``removed_uncited_no_derivative_dependency``, or
+  ``removed_duplicate_of_cited_capture`` naming a present duplicate. All
+  rows for one file agree.
+* A page extract records its original's file, size, SHA-256 and page
+  count, and its kept pages (the cover first) as its qpdf command lists
+  them. Its ``signature_status`` matches whether the extract carries the
+  original's ``/ByteRange``. A text derivative of an extract records its
+  pages in both numberings.
+* Every recorded ``pdftotext`` call parses under pdftotext 26.09.0, and a
+  derivative's ``-f``/``-l`` range is its recorded ``pdf_pages``.
+* A row that cites a scanned page also quotes that page's OCR text.
+* Each IRS edition extract cited for a threshold is followed by a citation
+  of its page text that quotes the edition's published value.
+* Published prose runs no word or citation into a number.
+
+Hypothesis properties test the pdftotext parser and the retention, OCR,
+IRS-quote and fused-token checkers.
 """
 
 import gzip
