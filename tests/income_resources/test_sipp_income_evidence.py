@@ -924,6 +924,82 @@ INVENTED_RECORD_PAGES = {
         "<td>Invented monthly earnings amount in dollars</td></tr>"
         "<tr><td>101</td><td>-25</td></tr></table>"
     ),
+    # Round 7: script and style contents are read as they stand, so no "<"
+    # in code hides a src assignment, with or without an end tag.
+    "script_minified_comparison": (
+        '<script>for(i=0;i<n;i++){img.src="PNUM=101"}</script>'
+    ),
+    "script_cdata": (
+        '<script>//<![CDATA[\nimg.src = "PNUM=101";\n//]]></script>'
+    ),
+    "script_end_tag_like": (
+        '<script>var t = a</b; img.src = "PNUM=101"; c > d;</script>'
+    ),
+    "script_unquoted_src": (
+        "<script>for(i=0;i<n;i++){img.src=PNUM+101}</script>"
+    ),
+    "unclosed_script": "<script>for(i=0;i<n;i++){img.src=PNUM+101} c > d",
+    "style_contents": "<style>a<b{} x{src=PNUM+101}</style>",
+    # Round 7: each quoted attribute value and script string is also read
+    # alone, so a quote, equals sign or angle bracket inside one stops no
+    # window.
+    "attribute_value_with_apostrophe": (
+        '<img alt="PNUM (person\'s number) 101">'
+    ),
+    "single_quoted_attribute_value": "<img alt='PNUM (the \"person\") 101'>",
+    "attribute_value_with_equals": '<img alt="PNUM value=105">',
+    "attribute_value_with_quote_entity": '<img alt="PNUM &quot;x&quot; 105">',
+    "attribute_value_with_bracket_entities": (
+        '<img alt="PNUM &lt;x&gt; 101">'
+    ),
+    "attribute_value_with_markup_entities": (
+        '<img alt="&lt;b&gt;PNUM&lt;/b&gt; 101">'
+    ),
+    "script_string_with_markup": (
+        '<script>el.innerHTML = "<b>PNUM</b> 101";</script>'
+    ),
+    "script_string_with_cells": (
+        '<script>row.innerHTML = "<td>PNUM</td><td>101</td>";</script>'
+    ),
+    # Round 7: an unquoted data-src value is kept, quoted values are read
+    # with entities decoded and from tags in either case, and the strings
+    # of a script without an end tag are read too, past their backslash
+    # escapes.
+    "unquoted_data_src": "<p data-src=ssuid-7>Invented</p>",
+    "attribute_value_with_encoded_digits": (
+        '<img alt="PNUM value&#61;&#49;05">'
+    ),
+    "upper_case_tag_attribute_value": (
+        '<IMG ALT="PNUM (person\'s number) 101">'
+    ),
+    "unclosed_script_string": '<script>s = "PNUM <i 101"; t = x > y;',
+    "script_string_with_escaped_quotes": (
+        '<script>s = "PNUM \\"x\\" 101";</script>'
+    ),
+    # Round 7: outside scripts, "<" before a sign opens no tag either.
+    "text_comparison_before_src": (
+        '<p>Invented: if a <= 2 then src="PNUM=101"</p>'
+    ),
+    # Round 7: the same-row rule reads every other cell, even one that names
+    # an identifier too, and both cell conditions of the heading-names rule.
+    "heading_names_identifier_beside_identifier_cell": (
+        "<table><tr><th>Person number (PNUM)</th><td>SSUID of the invented "
+        "case, described here at some length 101</td></tr></table>"
+    ),
+    "identifier_cell_beside_identifier_cell": (
+        "<table><tr><th>Item</th><th>Note</th></tr><tr><td>PNUM</td>"
+        "<td>SSUID of the invented case, described here at some length 101"
+        "</td></tr></table>"
+    ),
+    "first_row_cell_names_identifier_beside_value": (
+        "<table><tr><td>Invented note on the PNUM.</td><td>101</td></tr>"
+        "</table>"
+    ),
+    "later_header_cell_names_identifier_beside_value": (
+        "<table><tr><td>Invented</td></tr>"
+        "<tr><th>Invented person number (PNUM).</th><td>101</td></tr>"
+        "</table>"
+    ),
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -1002,6 +1078,15 @@ INVENTED_DEFINITION_PAGES = {
         "<tr><td>Invented PNUM note</td><td>x</td></tr>"
         "<tr><td>7</td><td>x</td></tr></table>"
     ),
+    # Round 7: link targets are removed from tags in either case, from
+    # tags that open with "!" or "/", and from script opening tags.
+    "upper_case_link_target": '<A HREF="/ssuid-2024-x.html">Invented</A>',
+    "cdata_link_target": '<![CDATA[ href="/ssuid-2024-x.html" ]]>',
+    "doctype_link_target": '<!DOCTYPE x href="/ssuid-2024-x.html">',
+    "end_tag_link_target": '</a href="/ssuid-2024-x.html">',
+    "script_opening_tag_link_target": (
+        '<script src="/invented/ssuid-2024-x.js"></script>'
+    ),
 }
 
 # Each refused page and a twin that differs only in the structure one rule
@@ -1025,14 +1110,16 @@ INVENTED_RULE_TWINS = {
         "<table><tr><td>-$250</td><td>($40)</td></tr></table>",
     ),
     # Values too short for the digit-run rules, so only the identifier
-    # rules' reading of the source or of comment text can refuse them.
+    # rules' reading of the source or of comment text can refuse them. The
+    # attribute value is unquoted and the script holds no string, so the
+    # reading of quoted values cannot refuse the first two either.
     "attribute_source": (
-        '<p title="SSUID 123">Invented.</p>',
-        '<p title="SSUID">Invented.</p>',
+        "<p title=SSUID-123>Invented.</p>",
+        "<p title=SSUID>Invented.</p>",
     ),
     "script_source": (
-        '<script>var invented = "PNUM=101";</script>',
-        '<script>var invented = "PNUM";</script>',
+        "<script>var invented = PNUM + 101;</script>",
+        "<script>var invented = PNUM;</script>",
     ),
     "comment_text": (
         "<!-- SSUID <b>invented</b> 123 -->",
@@ -1122,6 +1209,41 @@ INVENTED_RULE_TWINS = {
         "<table><tr><th>Person number (PNUM)</th>"
         "<td>Invented note about the invented value for this case</td>"
         "<td>2022</td></tr></table>",
+    ),
+    # Round 7: script contents read as they stand, with no quoted string to
+    # read alone; link targets removed from a script's opening tag; each
+    # quoted value and script string read alone, joined by periods and
+    # without href and src values; and the same-row rule beside a cell that
+    # names an identifier too.
+    "script_contents_read_as_they_stand": (
+        "<script>for(i=0;i<n;i++){img.src=PNUM+101}</script>",
+        "<script>for(i=0;i<n;i++){img.src=PNUM+x}</script>",
+    ),
+    "script_opening_tag_link_target_removed": (
+        '<script title="ssuid-2024-x"></script>',
+        '<script src="/ssuid-2024-x.js"></script>',
+    ),
+    "quoted_value_read_alone": (
+        '<img alt="PNUM (person\'s number) 101">',
+        '<img alt="PNUM (person\'s number)">',
+    ),
+    "quoted_values_joined_by_periods": (
+        '<img alt="PNUM (person\'s number) 101">',
+        '<img alt="PNUM (person\'s number)" title="101">',
+    ),
+    "link_target_values_not_read_alone": (
+        '<img alt="PNUM (person\'s number) 101">',
+        '<img src="PNUM (person\'s number) 101">',
+    ),
+    "script_string_read_alone": (
+        '<script>s = "<b>PNUM</b> 101";</script>',
+        '<script>s = "<b>PNUM</b>" + 101;</script>',
+    ),
+    "same_row_value_beside_identifier_cell": (
+        "<table><tr><th>Person number (PNUM)</th><td>SSUID of the invented "
+        "case, described here at some length 101</td></tr></table>",
+        "<table><tr><th>Person number (PNUM)</th><td>SSUID of the invented "
+        "case, described here at some length 10</td></tr></table>",
     ),
 }
 

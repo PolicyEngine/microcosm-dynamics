@@ -116,13 +116,13 @@ def _identifier_column(table: str) -> bool:
             )
             if not begins and not names:
                 continue
-            # An identifier beside a value of three or more digits, even in
+            # An identifier beside a value of three or more digits in any
+            # other cell, even one that names an identifier too, and even in
             # a definition table.
-            if (begins or names) and any(
+            if any(
                 re.search(VALUE_RUN, other)
                 for index, other in enumerate(texts)
                 if index != column_index
-                and not re.match(IDENTIFIER, other, re.I)
             ):
                 return True
             row_header = bool(
@@ -147,21 +147,64 @@ def _identifier_column(table: str) -> bool:
     return False
 
 
+def _strip_link_targets(tag: str) -> str:
+    """One tag with its href and src values removed."""
+    return re.sub(
+        r"(?i)(?<![\w-])(?:href|src)\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]*)",
+        " ",
+        tag,
+    )
+
+
 def _without_link_targets(body: str) -> str:
     """The page source with each tag's href and src values removed, since
-    link slugs such as ``ssuid-2024`` name identifiers without values. A tag
-    opens with a letter, ``!`` or ``/``, so a comparison such as ``1 < 2``
-    in a script starts none."""
-    return re.sub(
-        r"<[A-Za-z!/][^>]*>",
-        lambda tag: re.sub(
-            r"(?i)(?<![\w-])(?:href|src)\s*=\s*"
-            r"(?:\"[^\"]*\"|'[^']*'|[^\s>]*)",
-            " ",
-            tag.group(),
-        ),
-        body,
-    )
+    link slugs such as ``ssuid-2024`` name identifiers without values.
+
+    A tag opens with a letter, ``!`` or ``/``. Script and style contents,
+    up to their end tag or the end of the page, are code, not tags: they
+    are kept as they stand, and only their opening tag loses its href and
+    src values. So no ``<`` in script code, such as ``i<n`` or ``a</b``,
+    hides a ``src`` assignment."""
+    parts = re.split(r"(?is)(<(script|style)\b[^>]*>.*?(?:</\2\s*>|$))", body)
+    kept = []
+    # re.split returns the text between elements, each element, and its
+    # tag name, in turn.
+    for index in range(0, len(parts), 3):
+        kept.append(
+            re.sub(
+                r"<[A-Za-z!/][^>]*>",
+                lambda tag: _strip_link_targets(tag.group()),
+                parts[index],
+            )
+        )
+        if index + 1 < len(parts):
+            element = parts[index + 1]
+            opening = re.match(r"<[^>]*>", element).group()
+            kept.append(_strip_link_targets(opening) + element[len(opening) :])
+    return "".join(kept)
+
+
+def _quoted_values(body: str) -> list[str]:
+    """Each quoted attribute value other than href and src, and each quoted
+    string in a script, read past its backslash escapes, entities decoded."""
+    values = [
+        double or single
+        for tag in re.findall(r"<[A-Za-z][^>]*>", body)
+        for name, double, single in re.findall(
+            r"([\w:.-]+)\s*=\s*(?:\"([^\"]*)\"|'([^']*)')", tag
+        )
+        if name.casefold() not in {"href", "src"}
+    ]
+    for script in re.findall(
+        r"(?is)<script\b[^>]*>(.*?)(?:</script\s*>|$)", body
+    ):
+        values += [
+            double or single
+            for double, single in re.findall(
+                r"(?s)\"((?:[^\"\\]|\\.)*)\"|'((?:[^'\\]|\\.)*)'", script
+            )
+        ]
+    return [html.unescape(value) for value in values]
 
 
 def record_bearing_note(body: str) -> bool:
@@ -175,19 +218,23 @@ def record_bearing_note(body: str) -> bool:
       below it and begins with an identifier name or, in a table's first
       row or a header cell, names one anywhere;
     - a table row with a cell that begins with an identifier name, or in a
-      table's first row or a header cell names one anywhere, and, in
-      another cell, a run of three or more digits that is not a year, even
-      in a variable-definition table;
+      table's first row or a header cell names one anywhere, and, in any
+      other cell, even one that names an identifier too, a run of three or
+      more digits that is not a year, even in a variable-definition table;
     - a table row of three or more numeric cells;
     - an identifier name followed by a digit, with only spaces and the
       marks ``: = # ' " ( [ -`` between, or by a run of three or more
       digits that is not a year, with at most 40 characters and no period
-      between. These two rules read the text, HTML comments, which are
-      stored though not shown, and the page source with its tags,
-      attributes and scripts, all with entities decoded. In the text and
-      comments a tag counts as a space. In the source the 40 characters
-      hold no tag, quote or equals sign either, and href and src values
-      are removed first;
+      between. These two rules read three things, all with entities
+      decoded: the text with HTML comments, which are stored though not
+      shown; the page source with its tags, attributes and scripts; and
+      each quoted attribute value other than href and src, and each quoted
+      string in a script, one at a time. In the text and comments a tag
+      counts as a space. In the source the 40 characters hold no angle
+      bracket (a tag, or a ``<`` or ``>`` decoded from an entity), quote
+      or equals sign either, and href and src values are removed first
+      from every tag outside scripts and styles and from their opening
+      tags, while script and style contents are read as they stand;
     - a run of nine or more digits in the text a reader sees, without
       comments, noscript blocks, scripts, styles and tags, since tracking
       numbers sit there and are not page content;
@@ -199,16 +246,20 @@ def record_bearing_note(body: str) -> bool:
     one cell are not separate numeric cells. Variable-definition rows may
     name an identifier without a value.
 
-    These forms are out of scope, so a page that holds only them is
-    stored: a value before its identifier name; ``<br>``-separated CSV text
-    without an identifier; div grids; an identifier name and its value in
-    different attribute values or script strings, or split by a quote or
-    equals sign within one; a value in an href or src value, unless it is a
-    run of 14 or more digits; and a cell outside a table's first row and
-    header cells that names an identifier after other words. The table
-    rules in turn refuse some definition and index tables that name an
-    identifier in a heading cell with digits below; such a page stops the
-    capture loudly.
+    These forms are out of scope, so a page that holds only them is stored:
+    a value before its identifier name; ``<br>``-separated CSV text without
+    an identifier; div grids; an identifier name and its value in different
+    attribute values or script strings, or one of them in a string and the
+    other in script code; a script string after an unpaired quote mark, as
+    in a comment such as ``// it's``; an identifier compared with a value
+    in script code, as in ``PNUM < 101``; an attribute value that holds a
+    raw ``>``, which ends its tag; a value in an href or src value, unless
+    it is a run of 14 or more digits; and a cell outside a table's first
+    row and header cells that names an identifier after other words. The
+    table rules in turn refuse some definition and index tables that name
+    an identifier in a heading cell with digits below it, or beside a run
+    of three or more digits that is not a year in its row; such a page
+    stops the capture loudly.
     """
     adjacent = r"\b(?:SSUID|PNUM)(?=\W|[0-9]|$)"
     for table in re.findall(r"(?is)<table\b[^>]*>.*?(?:</table\s*>|$)", body):
@@ -229,10 +280,12 @@ def record_bearing_note(body: str) -> bool:
             return True
     # Each reading with the characters the 40-character window may span.
     # The text has no tags left, so an angle bracket there is a decoded
-    # entity, which ends no sentence.
+    # entity, which ends no sentence. Quoted values are read one at a time,
+    # joined by periods so that the window never spans two.
     readings = (
         (note_text(re.sub(r"<!--|-->", " ", body)), r"[^.]"),
         (html.unescape(_without_link_targets(body)), r"[^.<>\"'=]"),
+        (". ".join(_quoted_values(body)), r"[^.]"),
     )
     return bool(
         any(

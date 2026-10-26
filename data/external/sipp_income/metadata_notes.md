@@ -40,32 +40,42 @@ to store any new page that holds a case record in any of the forms
   between, or by a run of three or more digits that is not a year, with at
   most 40 characters and no period between;
 - a table row with a cell that begins with an identifier name, or in a
-  first-row or header cell names one anywhere, and, in another cell, a run
-  of three or more digits that is not a year;
+  first-row or header cell names one anywhere, and, in any other cell, even
+  one that names an identifier too, a run of three or more digits that is
+  not a year, even in a variable-definition table;
 - a table row, or a preformatted line, of three or more numbers;
 - a run of nine or more digits in the text a reader sees, or of 14 or
   more, an SSUID's length, anywhere in the page;
 - a preformatted block with an identifier and a digit.
 
-The two rules that follow an identifier name read the visible text, HTML
-comments and the page source with its tags, attributes and scripts. In the
-text and comments a tag counts as a space. In the source, the 40 characters
-also hold no tag, quote or equals sign, and both rules skip href and src
-values, whose slugs name identifiers without values. A tag opens with a
-letter, `!` or `/`. The table and preformatted rules read each cell's or
-block's text without its tags; the row-header exemption also reads a
-header cell's `scope` attribute. The nine-digit rule skips comments and
-noscript blocks, whose tracking numbers are not page content.
+The two rules that follow an identifier name read three things, all with
+entities decoded: the visible text with HTML comments; the page source with
+its tags, attributes and scripts; and each quoted attribute value other
+than href and src, and each quoted string in a script, one at a time. In
+the text and comments a tag counts as a space. In the source, the 40
+characters also hold no angle bracket, quote or equals sign, and href and
+src values, whose slugs name identifiers without values, are removed from
+every tag outside scripts and styles and from their opening tags. A tag
+opens with a letter, `!` or `/`. Script and style contents, up to their end
+tag or the end of the page, are read as they stand, so no `<` in script
+code hides a `src` assignment. The table and preformatted rules read each
+cell's or block's text without its tags; the row-header exemption also
+reads a header cell's `scope` attribute. The nine-digit rule skips comments
+and noscript blocks, whose tracking numbers are not page content.
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
-name and its value in different attribute values or script strings, or
-split by a quote or equals sign within one; a value in an href or src
+name and its value in different attribute values or script strings, or one
+of them in a string and the other in script code; a script string after an
+unpaired quote mark, as in a comment such as `// it's`; an identifier
+compared with a value in script code, as in `PNUM < 101`; an attribute
+value that holds a raw `>`, which ends its tag; a value in an href or src
 value, unless it is a run of 14 or more digits; and a cell outside a
 table's first row and header cells that names an identifier after other
-words. The table rules in turn refuse some definition and index tables
-that name an identifier in a heading cell with digits below; such a page
-stops the capture loudly.
+words. The table rules in turn refuse some definition and index tables that
+name an identifier in a heading cell with digits below it, or beside a run
+of three or more digits that is not a year in its row; such a page stops
+the capture loudly.
 
 Excluded notes remain attached to relevant registry entries by URL and
 title only.
