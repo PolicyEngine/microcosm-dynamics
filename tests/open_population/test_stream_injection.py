@@ -334,7 +334,9 @@ class _ModuleBindings:
             return
         path = self.module_path(value)
         if path is not None:
-            self.modules[name] = path
+            # First binding wins, so a cycle such as ``a = b.c; b = a``
+            # cannot grow a path forever: each pass only adds names.
+            self.modules.setdefault(name, path)
 
     def _bind_targets(self, target: ast.expr, value: ast.expr) -> None:
         if isinstance(target, ast.Name):
@@ -351,10 +353,10 @@ class _ModuleBindings:
         if isinstance(node, ast.Import):
             for alias in node.names:
                 if alias.asname:
-                    self.modules[alias.asname] = alias.name
+                    self.modules.setdefault(alias.asname, alias.name)
                 else:
                     top = alias.name.split(".")[0]
-                    self.modules[top] = top
+                    self.modules.setdefault(top, top)
         elif isinstance(node, ast.ImportFrom):
             base = self._from_base(node)
             for alias in node.names:
@@ -370,7 +372,7 @@ class _ModuleBindings:
                 ):
                     self.classes.add(local)
                 else:
-                    self.modules[local] = f"{base}.{alias.name}"
+                    self.modules.setdefault(local, f"{base}.{alias.name}")
         elif isinstance(node, ast.Assign):
             for target in node.targets:
                 self._bind_targets(target, node.value)
@@ -402,7 +404,11 @@ class _ModuleBindings:
                     self.classes.add(argument.arg)
 
     def bind(self, tree: ast.Module) -> None:
-        """Bind to a fixed point, so chained aliases resolve in any order."""
+        """Bind to a fixed point, so chained aliases resolve in any order.
+
+        Bindings only accumulate, over the module's finitely many names, so
+        the loop ends.
+        """
         while True:
             before = (dict(self.modules), set(self.classes))
             for node in ast.walk(tree):
@@ -438,8 +444,8 @@ class _ModuleBindings:
                 and node.args[1].value in PROBE_NAMES
             ):
                 return "private-member-probe"
-        elif isinstance(node, ast.Compare) and isinstance(
-            node.ops[0], _COMPARISONS
+        elif isinstance(node, ast.Compare) and any(
+            isinstance(op, _COMPARISONS) for op in node.ops
         ):
             operands = [node.left, *node.comparators]
             if any(self.contains_registry(item) for item in operands):
@@ -671,6 +677,11 @@ SPELLINGS = {
         _check("type(x) in (ProjectionRNGRegistry, int)"),
         "type-compare",
     ),
+    "type in a chained comparison": (
+        # One comparison whose first operator is "<".
+        _check("0 < x.n_periods != type(x) is ProjectionRNGRegistry"),
+        "type-compare",
+    ),
     "__class__ is": (
         _check("x.__class__ is ProjectionRNGRegistry"),
         "__class__-compare",
@@ -899,6 +910,9 @@ def test_scan_follows_re_exports_across_modules():
         "def f(x):\n    return hasattr(x, 'person_generator')\n",
         "class Streams:\n    pass\n"
         "def f(x):\n    return isinstance(x, Streams) or x == 'Registry'\n",
+        # A binding cycle that would grow a module path on every pass.
+        "import os as b\na = b.path\nb = a\n"
+        "def f(x):\n    return isinstance(x, a.sep)\n",
     ),
 )
 def test_scan_ignores_unrelated_checks_and_ordinary_registry_use(body):
