@@ -49,6 +49,17 @@ Invariants (property tests in ``tests/income_resources``):
   check; ranks and override references are checked here.
 * Open legal rows have null/``open`` consequences, named alternatives and
   no chosen reading. They refuse even if a caller selects an alternative.
+  A closed row keeps a verified rule and opens only the sub-question no
+  capture settles: a case with an ``open`` consequence, an ``open_reason``
+  and at least two named ``open_alternatives``. ``resolve`` refuses with
+  ``OpenRuleError`` when such a case decides. An ``open`` case without an
+  ``open_reason`` records missing facts and is returned.
+* ``parameters.evidence_only_boundaries`` marks a row boundary that an
+  edition date (such as a CFR or Code edition) sets, not a change in the
+  law. Each entry names its side, date and kind, and cites (hash-checked)
+  a capture the row itself cites;
+  the date must be the row's start or the day after its end, and the
+  adjacent row of the family must record the same boundary.
 * Each rule cites a capture; loading checks every citation's SHA-256 against
   a file inside the capture directory, including nested example/bound cites.
 * Trigger facts belong to FIELD_PURPOSES or the listed CE1 extensions.
@@ -213,6 +224,8 @@ CASE_FIELDS = frozenset(
         "description",
         "overrides",
         "defers_to",
+        "open_reason",
+        "open_alternatives",
     }
 )
 REQUIRED_CASE_FIELDS = frozenset(
@@ -350,6 +363,92 @@ def _check_deferral(outcome: Mapping[str, Any], family: str) -> None:
     _require(family not in targets, "a family cannot defer to itself")
 
 
+def _check_alternatives(alternatives: Any) -> None:
+    """Named alternatives are distinct names, each with a description."""
+    _require(isinstance(alternatives, (list, tuple)), "open alternatives list")
+    for option in alternatives:
+        _require(
+            isinstance(option, Mapping)
+            and set(option) == {"name", "description"},
+            "open alternative fields",
+        )
+        _text(option["name"], "open alternative name")
+        _text(option["description"], "open alternative description")
+    _require(
+        len({o["name"] for o in alternatives}) == len(alternatives),
+        "duplicate open alternative name",
+    )
+
+
+def _check_open_case(case: Mapping[str, Any]) -> None:
+    """An open legal sub-question carries its reason and named readings."""
+    if "open_reason" not in case and "open_alternatives" not in case:
+        return
+    _require(
+        case["consequence"] == "open"
+        and "open_reason" in case
+        and "open_alternatives" in case,
+        "open case sub-question needs an open consequence, an open_reason "
+        "and open_alternatives",
+    )
+    _text(case["open_reason"], "case open_reason")
+    _check_alternatives(case["open_alternatives"])
+    _require(
+        len(case["open_alternatives"]) >= 2,
+        "open case sub-question needs named alternatives",
+    )
+
+
+EVIDENCE_BOUNDARY_FIELDS = frozenset(
+    {"side", "date", "kind", "citation", "evidence"}
+)
+EVIDENCE_BOUNDARY_KINDS = frozenset({"code_edition", "regulation_edition"})
+
+
+def _evidence_boundaries(
+    raw: Mapping[str, Any], start: date, end: date, captures: set[str]
+) -> dict[str, Mapping[str, Any]]:
+    """Validate ``parameters.evidence_only_boundaries``; key them by side."""
+    entries = raw["parameters"].get("evidence_only_boundaries")
+    if entries is None:
+        return {}
+    _require(
+        isinstance(entries, (list, tuple)) and bool(entries),
+        "evidence_only_boundaries must be a nonempty list",
+    )
+    sides: dict[str, Mapping[str, Any]] = {}
+    for entry in entries:
+        _require(
+            isinstance(entry, Mapping)
+            and set(entry) == EVIDENCE_BOUNDARY_FIELDS,
+            "evidence-only boundary fields",
+        )
+        _require(
+            entry["side"] in {"start", "end"},
+            "evidence-only boundary side",
+        )
+        _require(entry["side"] not in sides, "duplicate evidence boundary")
+        _require(
+            entry["kind"] in EVIDENCE_BOUNDARY_KINDS,
+            "evidence-only boundary kind",
+        )
+        boundary = _date(entry["date"])
+        expected = start if entry["side"] == "start" else end + timedelta(1)
+        _require(
+            boundary == expected,
+            "evidence-only boundary must be the row's start or the day "
+            "after its end",
+        )
+        _require(
+            isinstance(entry["citation"], Mapping)
+            and Citation.from_dict(entry["citation"]).capture in captures,
+            "evidence-only boundary must cite a capture the row cites",
+        )
+        _text(entry["evidence"], "evidence-only boundary evidence")
+        sides[entry["side"]] = entry
+    return sides
+
+
 def _validated_cases(
     raw: Any, facts: set[str], family: str
 ) -> tuple[Mapping[str, Any], ...]:
@@ -384,6 +483,7 @@ def _validated_cases(
             )
         _require(case["consequence"] in CONSEQUENCES, "case consequence")
         _check_deferral(case, family)
+        _check_open_case(case)
         if "description" in case:
             _text(case["description"], "case description")
         by_id[case_id] = case
@@ -450,6 +550,47 @@ def _check_deferral_graph(rules: Iterable[CoverageRule]) -> None:
     for family in sorted(families):
         if family not in state:
             visit(family)
+
+
+def _check_evidence_boundary_pairs(rules: Iterable[CoverageRule]) -> None:
+    """Adjacent rows of a family record an evidence-only boundary alike.
+
+    When one row ends the day before the next starts, the earlier row's
+    ``end`` entry and the later row's ``start`` entry must both exist or
+    both be absent, and agree on date, kind and capture.
+    """
+    by_family: dict[str, list[CoverageRule]] = {}
+    for rule in rules:
+        by_family.setdefault(rule.family, []).append(rule)
+    for family_rules in by_family.values():
+        starts = {}
+        for rule in family_rules:
+            starts.setdefault(rule.effective_start, []).append(rule)
+        for rule in family_rules:
+            entries = rule.parameters.get("evidence_only_boundaries", ())
+            end_entry = next((e for e in entries if e["side"] == "end"), None)
+            following = starts.get(rule.effective_end + timedelta(1), [])
+            for successor in following:
+                later = successor.parameters.get(
+                    "evidence_only_boundaries", ()
+                )
+                start_entry = next(
+                    (e for e in later if e["side"] == "start"), None
+                )
+                _require(
+                    (end_entry is None) == (start_entry is None),
+                    f"evidence-only boundary between {rule.rule_id} and "
+                    f"{successor.rule_id} is recorded on one side only",
+                )
+                if end_entry is not None:
+                    _require(
+                        end_entry["date"] == start_entry["date"]
+                        and end_entry["kind"] == start_entry["kind"]
+                        and end_entry["citation"]["capture"]
+                        == start_entry["citation"]["capture"],
+                        f"evidence-only boundary between {rule.rule_id} "
+                        f"and {successor.rule_id} disagrees",
+                    )
 
 
 @dataclass(frozen=True)
@@ -568,21 +709,7 @@ class CoverageRule:
         _check_deferral(residual, raw["family"])
         cases = _validated_cases(raw["cases"], set(facts), raw["family"])
         alternatives = raw["open_alternatives"]
-        _require(
-            isinstance(alternatives, (list, tuple)), "open alternatives list"
-        )
-        for option in alternatives:
-            _require(
-                isinstance(option, Mapping)
-                and set(option) == {"name", "description"},
-                "open alternative fields",
-            )
-            _text(option["name"], "open alternative name")
-            _text(option["description"], "open alternative description")
-        _require(
-            len({o["name"] for o in alternatives}) == len(alternatives),
-            "duplicate open alternative name",
-        )
+        _check_alternatives(alternatives)
         if raw["open_reason"] is not None:
             _require(
                 consequence in {None, "open"},
@@ -613,6 +740,9 @@ class CoverageRule:
                 and consequence not in {"noncovered", "deferred"},
                 "case_free_basis is only for case-free non-excluding rows",
             )
+        _evidence_boundaries(
+            raw, start, end, {citation.capture for citation in citations}
+        )
         if raw["parameters"].get("effective_basis") == "taxable_year_start":
             _require(
                 "taxable_year_start" in facts,
@@ -716,7 +846,9 @@ class CoverageRule:
         ``matching_case_ids`` names every case whose ``when`` conditions the
         caller found true. Return the matching case with the smallest
         precedence, or the residual default when none matches. An unknown
-        case ID is a caller error; an open row refuses. The residual is
+        case ID is a caller error; an open row refuses, and so does an open
+        legal sub-question (a case with an ``open_reason``) when it decides,
+        while an ``open`` case without one is returned. The residual is
         what the law gives when every case's conditions fail, so a caller
         that cannot establish a case's facts must not leave that case out
         and read the residual; it has a missing fact, not a failed
@@ -738,6 +870,11 @@ class CoverageRule:
             raise OpenRuleError(f"{self.rule_id}: {self.open_reason}")
         for case in self.cases:
             if case["case_id"] in matched:
+                if "open_reason" in case:
+                    raise OpenRuleError(
+                        f"{self.rule_id}: case {case['case_id']}: "
+                        f"{case['open_reason']}"
+                    )
                 return case
         return self.residual_default
 
@@ -882,6 +1019,7 @@ class CoverageRegistry:
                 len(axes) == 1, "family mixes service and taxable-year axes"
             )
         _check_deferral_graph(rules)
+        _check_evidence_boundary_pairs(rules)
         for i, left in enumerate(rules):
             for right in rules[i + 1 :]:
                 if left.family != right.family:

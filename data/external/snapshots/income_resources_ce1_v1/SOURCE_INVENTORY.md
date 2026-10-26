@@ -301,7 +301,7 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 
 ## Page-range extracts
 
-Five whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's URL, size and SHA-256 identify the authentic bytes and allow retrieval independently of this pull request's commit history. Extraction preserves the original signature fields, but changes the signed bytes: the GPO digital signatures in all five extracts are invalidated by extraction. The captures' integrity is checked with the recorded SHA-256 hashes; the extracts do not have valid original signatures.
+Six whole-act and whole-issue PDFs are kept as page-range extracts. Each extract holds the first page or cover, every page of each cited section from its heading to the next section's heading, and, for the acts, the page with the approval date. The original's URL, size and SHA-256 identify the authentic bytes and allow retrieval independently of this pull request's commit history. Extraction preserves the original signature fields, but changes the signed bytes: the GPO digital signatures in all six extracts are invalidated by extraction. The captures' integrity is checked with the recorded SHA-256 hashes; the extracts do not have valid original signatures.
 
 | Extract | Original | Original bytes | Original SHA-256 | Original PDF pages kept | Kept for |
 |---|---|---:|---|---|---|
@@ -310,6 +310,7 @@ Five whole-act and whole-issue PDFs are kept as page-range extracts. Each extrac
 | govinfo_statute97_pg65_extract.pdf | govinfo_statute97_pg65.pdf (108 pages) | 18999106 | `eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb` | 1,3,4,5,6,7,8,25,26,27,43,44,45,57,58,59,60,61,62,108 | first page; sections 101-103 (97 Stat. 67-72); section 124 (97 Stat. 89-91); section 201 (97 Stat. 107-109); sections 323 and 324 (97 Stat. 121-126); approval date (97 Stat. 172) |
 | govinfo_statute79_pg286_extract.pdf | govinfo_statute79_pg286.pdf (138 pages) | 24847693 | `37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14` | 1,114,115,138 | first page; section 325 (79 Stat. 399-400); approval date (79 Stat. 423) |
 | federal_register_1975_07_10_extract.pdf | federal_register_1975_07_10.pdf (172 pages) | 29449191 | `ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84` | 1,13,14 | cover; FR Doc. 75-17887, 40 FR 29071-29072, from its heading to its filing line |
+| govinfo_statute101_pg1330_extract.pdf | govinfo_statute101_pg1330.pdf (473 pages) | 76350791 | `d6db9b3e2cf96a864a10ac36a816ad3cdfcf2322a72452b19cef86c94563f759` | 1,284,295,296,297,473 | first page; title IX table of contents (101 Stat. 1330-283); Part 2 of subtitle A of title IX, sections 9021-9023 (101 Stat. 1330-294 to 1330-296); approval date (101 Stat. 1330-472) |
 
 Command: `qpdf --deterministic-id --empty --pages <original> <pages> -- <extract>` (qpdf version 12.4.2).
 
@@ -359,3 +360,14 @@ The round-1 retention check also removed these 29 uncited captures with no retai
 - `uscode_2018_42_411.html`
 
 The round-1 plain request to https://www.ssa.gov/OP_Home/rulings/oasi/33/SSR95-03-oasi-33.html returned HTTP 403 on 2026-10-25 (`SOURCE_BLOCKED`; exact attempt time was not recorded). No circumvention was attempted. The already pinned POMS RS 01402.020 provides the cited rule.
+
+## Review-round 2 source records
+
+`sources_r2_se.json` and `capture_manifest_r2_se.txt` record the round-2 captures; `source_inventory.json` repeats them.
+
+| Capture | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| govinfo_statute101_pg1330_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf | 2026-10-26T07:22:15Z | 968516 | `b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1` |
+| govinfo_statute101_pg1330_extract.pdf.txt | https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf | 2026-10-26T07:22:15Z | 7368 | `1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3` |
+
+The derivative is `pdftotext -f 4 -l 5 -layout` of the extract (original PDF pages 296-297, printed 101 Stat. 1330-295 to 1330-296).

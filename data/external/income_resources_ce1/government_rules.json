@@ -3338,6 +3338,17 @@
           "defra_2601d_requalification",
           "grandfathered_continuous_service",
           "federal_annuitant"
+        ],
+        "open_reason": "FEPCA_WAIVER_LAW_UNCAPTURED: POMS RS 01901.340 C.3.c says services of reemployed annuitants with an approved waiver of offset under the Federal Employees Pay Comparability Act are covered, but the waiver law and its effective date are not captured, so CE1 cannot say from which date in a row that begins in 1987 that guidance applies.",
+        "open_alternatives": [
+          {
+            "name": "covered_per_poms_c3c",
+            "description": "Treat the services as covered in every year of the row, following POMS RS 01901.340 C.3.c."
+          },
+          {
+            "name": "overridden_cases_until_waiver_law",
+            "description": "Give the waiver no coverage effect before the waiver law's effective date, so the cases this one overrides (defra_2601d_requalification, grandfathered_continuous_service and federal_annuitant) decide the earlier years."
+          }
         ]
       },
       {

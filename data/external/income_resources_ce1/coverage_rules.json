@@ -747,28 +747,12 @@
       "rule_id": "se_health_insurance_1968_1986"
     },
     {
-      "reason": "PASSIVE_INTEREST_FORMER_25A_UNVERIFIED: the former exception and underlying historical provision are not fully verified before 1976-10-04.",
-      "rule_id": "se_passive_income_1968_1976_open"
-    },
-    {
-      "reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: the captured section 411(a)(2) excludes specified dividends and interest but does not state whether deductions attributable to those receipts are also excluded; no supporting historical primary provision was located.",
-      "rule_id": "se_passive_income_1976_2008"
-    },
-    {
-      "reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: the captured section 411(a)(2) excludes specified dividends and interest but does not state whether deductions attributable to those receipts are also excluded; no supporting historical primary provision was located.",
-      "rule_id": "se_passive_income_2008_2026"
-    },
-    {
-      "reason": "POSSESSIONS_931_EFFECTIVE_BOUNDARY_UNVERIFIED: section 9023(b) replacement is identified but its operative boundary has not been established from the amending act; keep named prior/successor options.",
+      "reason": "POSSESSIONS_931_HISTORY_UNVERIFIED: before Pub. L. 100-203 (enacted 1987-12-22), former 411(a)(7) and (a)(8) applied the former section 931 and 932 possessions rules, whose operative text is not captured. Section 9023 states no effective date, so whether its replacement reaches days before enactment is not established.",
       "rule_id": "se_possessions_931_history_open"
     },
     {
       "reason": "CHURCH_SECT_1986_EFFECTIVE_BOUNDARY_UNVERIFIED: the captured notes identify section 1882(a) restriction and separately date subsection (b). The operative taxable-year start for subsection (a) is not established by these captures.",
       "rule_id": "se_religious_sect_1986_1989"
-    },
-    {
-      "reason": "RENTAL_REGULATION_HISTORY_UNVERIFIED: the obtained 1996 and 2024 editions contain detailed occupant-services and dealer-holdings tests; neither edition establishes their application in 1968-1995.",
-      "rule_id": "se_rental_income_1968_1995_open"
     },
     {
       "reason": "TERRITORIAL_GOVERNMENT_HISTORY_UNVERIFIED: POMS dates and selected exceptions are pinned, but the complete family still requires the historical governor-certification records under Public Law 86-778 section 103(v), federal-retirement exceptions, independent 410(a) exclusions, and CNMI pre-1987/2012 transition authorities. The verified subcases must not imply that every territorial government record is classified.",
@@ -7404,6 +7388,17 @@
           "case_id": "fepca_waiver_reemployed_annuitant",
           "consequence": "open",
           "description": "POMS RS 01901.340 C.3.c says these services are covered. The waiver law and its effective date are not captured, so CE1 does not apply that guidance across a row that begins in 1987; obtain the waiver law before classifying.",
+          "open_alternatives": [
+            {
+              "description": "Treat the services as covered in every year of the row, following POMS RS 01901.340 C.3.c.",
+              "name": "covered_per_poms_c3c"
+            },
+            {
+              "description": "Give the waiver no coverage effect before the waiver law's effective date, so the cases this one overrides (defra_2601d_requalification, grandfathered_continuous_service and federal_annuitant) decide the earlier years.",
+              "name": "overridden_cases_until_waiver_law"
+            }
+          ],
+          "open_reason": "FEPCA_WAIVER_LAW_UNCAPTURED: POMS RS 01901.340 C.3.c says services of reemployed annuitants with an approved waiver of offset under the Federal Employees Pay Comparability Act are covered, but the waiver law and its effective date are not captured, so CE1 cannot say from which date in a row that begins in 1987 that guidance applies.",
           "overrides": [
             "defra_2601d_requalification",
             "grandfathered_continuous_service",
@@ -18326,8 +18321,78 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "dealer_in_stocks_or_securities",
+          "consequence": "covered",
+          "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+          "overrides": [
+            "specified_dividends",
+            "specified_interest"
+          ],
+          "precedence": 1,
+          "when": {
+            "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+          }
+        },
+        {
+          "case_id": "deductions_attributable_to_excluded_receipts",
+          "consequence": "open",
+          "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+          "open_alternatives": [
+            {
+              "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment.",
+              "name": "exclude_attributable_deductions"
+            },
+            {
+              "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment.",
+              "name": "apply_general_deduction_definition"
+            }
+          ],
+          "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+          "precedence": 2,
+          "when": {
+            "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+          }
+        },
+        {
+          "case_id": "interest_described_in_1939_code_25a",
+          "consequence": "covered",
+          "description": "Former 411(a)(2) parenthetical '(other than interest described in section 25(a) of the Internal Revenue Code of 1939)', struck by Pub. L. 95-600 section 703(j)(14)(D) effective October 4, 1976 (1978 amendment and effective-date notes): 411(a)(2) does not exclude this interest. The text of 1939 Code section 25(a) is not captured, so a caller must establish this fact from that section.",
+          "overrides": [
+            "specified_interest"
+          ],
+          "precedence": 3,
+          "when": {
+            "dividend_or_interest_income": "interest described in section 25(a) of the Internal Revenue Code of 1939"
+          }
+        },
+        {
+          "case_id": "specified_dividends",
+          "consequence": "noncovered",
+          "description": "411(a)(2).",
+          "precedence": 4,
+          "when": {
+            "dividend_or_interest_income": "dividends on any share of stock"
+          }
+        },
+        {
+          "case_id": "specified_interest",
+          "consequence": "noncovered",
+          "description": "411(a)(2).",
+          "precedence": 5,
+          "when": {
+            "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued with interest coupons or in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+          }
+        }
+      ],
       "citations": [
+        {
+          "authority": "42 USC 411, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_411.html",
+          "location": "411(a)(2) and the 1978 amendment note on the struck section 25(a) parenthetical",
+          "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
+        },
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
           "capture": "uscode_2024_42_411.html",
@@ -18335,23 +18400,14 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": null,
-      "description": "The earlier passive-interest rule retained an exception referring to former IRC 25(a); that provision has not been obtained, so the full historical branch refuses.",
+      "consequence": "covered",
+      "description": "411(a)(2) excludes dividends on any share of stock and the specified interest, other than interest described in 1939 Code section 25(a), unless received as a dealer in stocks or securities. Only the attributable deductions stay open.",
       "effective_end": "1976-10-03",
       "effective_start": "1968-01-01",
       "family": "self_employment_passive_income",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Apply the former interest exception only if its contemporaneous text establishes applicability.",
-          "name": "former_25a_exception_applies"
-        },
-        {
-          "description": "Apply the dividend and interest exclusion if the former exception does not apply.",
-          "name": "ordinary_passive_income_exclusion"
-        }
-      ],
-      "open_reason": "PASSIVE_INTEREST_FORMER_25A_UNVERIFIED: the former exception and underlying historical provision are not fully verified before 1976-10-04.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
         "code_edition_evidence": [
           {
@@ -18411,20 +18467,17 @@
             "title": 42
           }
         ],
-        "covered_interest_category": "Interest on a bond, debenture, note, certificate or other evidence of indebtedness issued by a corporation or government, with the statutory coupon/registered-form qualification.",
-        "dealer_exception": "Amounts received in the course of a trade or business as a dealer in stocks or securities.",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
-        "historical_interest_exception": "Other than interest described in section 25(a) of the Internal Revenue Code of 1939; underlying historical provision not verified.",
         "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
         "stock_dividends_excluded": true
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
       },
-      "rule_id": "se_passive_income_1968_1976_open",
+      "rule_id": "se_passive_income_1968_1976",
       "trigger_facts": [
         "dividend_or_interest_income",
         "securities_dealer_status",
@@ -18435,7 +18488,59 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "dealer_in_stocks_or_securities",
+          "consequence": "covered",
+          "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+          "overrides": [
+            "specified_dividends",
+            "specified_interest"
+          ],
+          "precedence": 1,
+          "when": {
+            "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+          }
+        },
+        {
+          "case_id": "deductions_attributable_to_excluded_receipts",
+          "consequence": "open",
+          "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+          "open_alternatives": [
+            {
+              "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment.",
+              "name": "exclude_attributable_deductions"
+            },
+            {
+              "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment.",
+              "name": "apply_general_deduction_definition"
+            }
+          ],
+          "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+          "precedence": 2,
+          "when": {
+            "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+          }
+        },
+        {
+          "case_id": "specified_dividends",
+          "consequence": "noncovered",
+          "description": "411(a)(2).",
+          "precedence": 3,
+          "when": {
+            "dividend_or_interest_income": "dividends on any share of stock"
+          }
+        },
+        {
+          "case_id": "specified_interest",
+          "consequence": "noncovered",
+          "description": "411(a)(2).",
+          "precedence": 4,
+          "when": {
+            "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued with interest coupons or in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 USC 411, official 1994 United States Code edition",
@@ -18450,23 +18555,14 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": null,
-      "description": "The specified dividend and interest exclusion is captured, but treatment of attributable deductions is not established. No complete income-definition consequence is selected.",
+      "consequence": "covered",
+      "description": "411(a)(2) excludes dividends on any share of stock and interest on the specified obligations issued with interest coupons or in registered form, unless received as a dealer in stocks or securities. Only the attributable deductions stay open.",
       "effective_end": "2008-09-30",
       "effective_start": "1976-10-04",
       "family": "self_employment_passive_income",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment.",
-          "name": "exclude_attributable_deductions"
-        },
-        {
-          "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment.",
-          "name": "apply_general_deduction_definition"
-        }
-      ],
-      "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: the captured section 411(a)(2) excludes specified dividends and interest but does not state whether deductions attributable to those receipts are also excluded; no supporting historical primary provision was located.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
         "code_edition_evidence": [
           {
@@ -18546,8 +18642,6 @@
             "title": 42
           }
         ],
-        "covered_interest_category": "Interest on a bond, debenture, note, certificate or other evidence of indebtedness issued by a corporation or government, with the statutory coupon/registered-form qualification.",
-        "dealer_exception": "Amounts received in the course of a trade or business as a dealer in stocks or securities.",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
         "obsolete_interest_exception_removed": "1976-10-04",
@@ -18557,8 +18651,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
       },
       "rule_id": "se_passive_income_1976_2008",
       "trigger_facts": [
@@ -18571,7 +18665,79 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "dealer_in_stocks_or_securities",
+          "consequence": "covered",
+          "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+          "overrides": [
+            "specified_dividends",
+            "specified_interest_registered_form"
+          ],
+          "precedence": 1,
+          "when": {
+            "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+          }
+        },
+        {
+          "case_id": "deductions_attributable_to_excluded_receipts",
+          "consequence": "open",
+          "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+          "open_alternatives": [
+            {
+              "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment.",
+              "name": "exclude_attributable_deductions"
+            },
+            {
+              "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment.",
+              "name": "apply_general_deduction_definition"
+            }
+          ],
+          "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+          "precedence": 2,
+          "when": {
+            "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+          }
+        },
+        {
+          "case_id": "obligation_not_in_registered_form",
+          "consequence": "open",
+          "description": "Interest on a registered-form obligation is decided below; only obligations outside registered form depend on the wording.",
+          "open_alternatives": [
+            {
+              "description": "Exclude the interest only if the obligation was issued with interest coupons, as 26 U.S.C. 1402(a)(2) reads and the 2024 Code note suggests.",
+              "name": "title26_literal_coupons"
+            },
+            {
+              "description": "Apply the printed 'interest benefits' wording, which no captured source defines.",
+              "name": "title42_literal_benefits"
+            }
+          ],
+          "open_reason": "TITLE42_INTEREST_BENEFITS_WORDING: Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) substituted 'benefits' for 'coupons' in 411(a)(2). The 2024 Code prints 'interest benefits' with the note 'So in original. Probably should be \"coupons\".', while 26 U.S.C. 1402(a)(2) keeps 'with interest coupons'.",
+          "precedence": 3,
+          "when": {
+            "dividend_or_interest_income": "interest on a bond, debenture, note, or certificate, or other evidence of indebtedness, issued other than in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+          }
+        },
+        {
+          "case_id": "specified_dividends",
+          "consequence": "noncovered",
+          "description": "411(a)(2).",
+          "precedence": 4,
+          "when": {
+            "dividend_or_interest_income": "dividends on any share of stock"
+          }
+        },
+        {
+          "case_id": "specified_interest_registered_form",
+          "consequence": "noncovered",
+          "description": "411(a)(2); registered-form obligations are named in both the Title 42 and Title 26 wordings.",
+          "precedence": 5,
+          "when": {
+            "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "26 USC 1402, pinned LII republication",
@@ -18582,27 +18748,25 @@
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
           "capture": "uscode_2024_42_411.html",
+          "location": "411(a)(2), footnote 2",
+          "quote": "So in original. Probably should be \"coupons\". See 2008 Amendment note below.",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+        },
+        {
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "capture": "uscode_2024_42_411.html",
           "location": "411(a)(2); Public Law 110-246 section 4115(c)(1)(A)(i), (B)(iii) and section 4407 effective-date note",
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": null,
-      "description": "The specified dividend and interest exclusion is captured, but treatment of attributable deductions is not established. No complete income-definition consequence is selected.",
+      "consequence": "covered",
+      "description": "411(a)(2) excludes dividends on any share of stock and interest on the specified registered-form obligations, unless received as a dealer in stocks or securities. The attributable deductions and the Title 42 'interest benefits' wording for other obligations stay open.",
       "effective_end": "2026-12-31",
       "effective_start": "2008-10-01",
       "family": "self_employment_passive_income",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment.",
-          "name": "exclude_attributable_deductions"
-        },
-        {
-          "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment.",
-          "name": "apply_general_deduction_definition"
-        }
-      ],
-      "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: the captured section 411(a)(2) excludes specified dividends and interest but does not state whether deductions attributable to those receipts are also excluded; no supporting historical primary provision was located.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
         "code_edition_evidence": [
           {
@@ -18690,8 +18854,6 @@
             "title": 42
           }
         ],
-        "covered_interest_category": "Interest on a bond, debenture, note, certificate or other evidence of indebtedness issued by a corporation or government, with the statutory coupon/registered-form qualification.",
-        "dealer_exception": "Amounts received in the course of a trade or business as a dealer in stocks or securities.",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The date coordinate is the beginning of the taxable year. Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
         "named_wordings": [
@@ -18712,8 +18874,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
       },
       "rule_id": "se_passive_income_2008_2026",
       "trigger_facts": [
@@ -18728,6 +18890,19 @@
       "alternative": null,
       "cases": [],
       "citations": [
+        {
+          "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, Part 2 of subtitle A of title IX, 101 Stat. 1330-294 to 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf",
+          "location": "extract pages 3-5: sections 9021-9023, all of Part 2; nothing there dates section 9023 (section 9022(c) dates only section 9022); approval date December 22, 1987 on extract page 6",
+          "sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1"
+        },
+        {
+          "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, section 9023(b), 101 Stat. 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+          "location": "section 9023(b)(2), the new 211(a)(8) (42 U.S.C. 411(a)(8))",
+          "quote": "\"(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;\"",
+          "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+        },
         {
           "authority": "42 USC 411, official 1994 United States Code edition",
           "capture": "uscode_1994_42_411.html",
@@ -18754,8 +18929,8 @@
         }
       ],
       "consequence": null,
-      "description": "The historical notes identify a 1987 amendment replacing the former possessions definition with the section 931 override. A 1994 edition establishes printed successor text, not the effective boundary; this family refuses until that boundary is sourced.",
-      "effective_end": "2026-12-31",
+      "description": "Before Pub. L. 100-203, former 411(a)(7) and (a)(8) applied the former possessions rules. Their operative text and the reach of the 1987 replacement before its enactment are not established, so these days refuse.",
+      "effective_end": "1987-12-21",
       "effective_start": "1968-01-01",
       "family": "self_employment_possessions_931_income",
       "identification_class": "awaiting_ce2",
@@ -18769,10 +18944,10 @@
           "name": "successor_931_override"
         }
       ],
-      "open_reason": "POSSESSIONS_931_EFFECTIVE_BOUNDARY_UNVERIFIED: section 9023(b) replacement is identified but its operative boundary has not been established from the amending act; keep named prior/successor options.",
+      "open_reason": "POSSESSIONS_931_HISTORY_UNVERIFIED: before Pub. L. 100-203 (enacted 1987-12-22), former 411(a)(7) and (a)(8) applied the former section 931 and 932 possessions rules, whose operative text is not captured. Section 9023 states no effective date, so whether its replacement reaches days before enactment is not established.",
       "parameters": {
         "amending_act": "Public Law 100-203 section 9023(b)(2)",
-        "boundary_note": "The identified change is Public Law 100-203 section 9023(b)(2) in 1987. The start of available Code editions in 1994 is not a legal boundary.",
+        "boundary_note": "Pub. L. 100-203 section 9023(b), enacted December 22, 1987, replaced 411(a)(8) and states no effective date; the successor rule governs from enactment in its own row.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -18823,6 +18998,64 @@
         "description": "No residual legal consequence is selected while this question remains open."
       },
       "rule_id": "se_possessions_931_history_open",
+      "trigger_facts": [
+        "country_of_residence",
+        "possession_income_exclusion",
+        "residence_period",
+        "taxable_year"
+      ],
+      "worked_examples": []
+    },
+    {
+      "alternative": null,
+      "cases": [],
+      "citations": [
+        {
+          "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, Part 2 of subtitle A of title IX, 101 Stat. 1330-294 to 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf",
+          "location": "extract pages 3-5: sections 9021-9023, all of Part 2; nothing there dates section 9023 (section 9022(c) dates only section 9022); approval date December 22, 1987 on extract page 6",
+          "sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1"
+        },
+        {
+          "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, section 9023(b), 101 Stat. 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+          "location": "section 9023(b)(2), the new 211(a)(8) (42 U.S.C. 411(a)(8))",
+          "quote": "\"(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;\"",
+          "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+        },
+        {
+          "authority": "42 USC 411, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_411.html",
+          "location": "411(a)(8) successor text",
+          "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
+        },
+        {
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "capture": "uscode_2024_42_411.html",
+          "location": "411(a)(8); amendment history contains no later change to this paragraph",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+        }
+      ],
+      "consequence": "covered",
+      "description": "From enactment of Pub. L. 100-203 on December 22, 1987, 411(a)(8) says the section 931 exclusion from gross income does not apply in computing net earnings from self-employment.",
+      "effective_end": "2026-12-31",
+      "effective_start": "1987-12-22",
+      "family": "self_employment_possessions_931_income",
+      "identification_class": "awaiting_ce2",
+      "open_alternatives": [],
+      "open_reason": null,
+      "parameters": {
+        "amending_act": "Public Law 100-203 section 9023(b)(2)",
+        "case_free_basis": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence.",
+        "effective_date_clause": "None for section 9023: neither the section nor Part 2 of subtitle A of title IX dates it (101 Stat. 1330-294 to 1330-296).",
+        "enactment": "1987-12-22"
+      },
+      "rare_exclusion": null,
+      "residual_default": {
+        "consequence": "covered",
+        "description": "The section 931 exclusion does not apply, so this family excludes nothing; apply the other families."
+      },
+      "rule_id": "se_possessions_931_1987_2026",
       "trigger_facts": [
         "country_of_residence",
         "possession_income_exclusion",
@@ -19473,13 +19706,122 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "dealer_investment_or_speculative_holdings",
+          "consequence": "open",
+          "description": "The dealer-holdings split is regulatory detail.",
+          "open_alternatives": [
+            {
+              "description": "Keep these rentals excluded, as 20 CFR 404.1082(b)(3) (April 1, 1996 edition) does.",
+              "name": "apply_1996_holdings_rule"
+            },
+            {
+              "description": "Include them when received in the course of the dealer's trade or business, reading 411(a)(1) without the later regulatory split.",
+              "name": "statutory_dealer_text_only"
+            }
+          ],
+          "open_reason": "RENTAL_DEALER_HOLDINGS_RULE_UNVERIFIED: 411(a)(1) keeps rentals received in the course of a trade or business as a real estate dealer; the rule that a dealer's investment or speculative holdings stay excluded is captured only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3).",
+          "precedence": 1,
+          "when": {
+            "real_estate_dealer_status": "real estate dealer receiving rentals from real estate held for investment or speculation rather than for sale to customers"
+          }
+        },
+        {
+          "case_id": "real_estate_dealer_rentals",
+          "consequence": "covered",
+          "description": "411(a)(1) dealer clause; apply the other families.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 2,
+          "when": {
+            "real_estate_dealer_status": "rentals received in the course of a trade or business as a real estate dealer"
+          }
+        },
+        {
+          "case_id": "services_to_occupants_regulatory_detail",
+          "consequence": "open",
+          "description": "The occupant-services test is regulatory detail.",
+          "open_alternatives": [
+            {
+              "description": "Include the payments in net earnings, as 20 CFR 404.1082(d)(2) (April 1, 1996 edition) does.",
+              "name": "apply_1996_occupant_services_rule"
+            },
+            {
+              "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes.",
+              "name": "statutory_rental_exclusion"
+            }
+          ],
+          "open_reason": "RENTAL_OCCUPANT_SERVICES_RULE_UNVERIFIED: the rule that such payments enter net earnings is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2).",
+          "precedence": 3,
+          "when": {
+            "services_to_occupants": "living quarters rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+          }
+        },
+        {
+          "case_id": "parking_warehouse_storage_space_regulatory_detail",
+          "consequence": "open",
+          "description": "The space-payment rule is regulatory detail.",
+          "open_alternatives": [
+            {
+              "description": "Include the payments in net earnings, as 20 CFR 404.1082(d)(2)(i) (April 1, 1996 edition) does.",
+              "name": "apply_1996_space_payments_rule"
+            },
+            {
+              "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes.",
+              "name": "statutory_rental_exclusion"
+            }
+          ],
+          "open_reason": "RENTAL_SPACE_PAYMENTS_RULE_UNVERIFIED: the rule including these payments in net earnings is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2)(i).",
+          "precedence": 4,
+          "when": {
+            "rental_income": "payments for the use of space in parking lots, warehouses or storage garages"
+          }
+        },
+        {
+          "case_id": "farm_rental_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 5,
+          "when": {
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
+          "case_id": "real_estate_rentals",
+          "consequence": "noncovered",
+          "description": "411(a)(1).",
+          "precedence": 6,
+          "when": {
+            "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
+          }
+        }
+      ],
       "citations": [
+        {
+          "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+          "capture": "cfr_1996_20_4041082_r1.txt",
+          "location": "404.1082(a)-(e), dealer holdings, occupant services and attributable deductions",
+          "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26"
+        },
         {
           "authority": "20 CFR 404.1082, official 2024 edition",
           "capture": "cfr_2024_20_4041082.xml",
           "location": "(a)-(d), rental-income core, real-estate-dealer holdings, farm arrangements and occupant services",
           "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455"
+        },
+        {
+          "authority": "42 USC 411, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_411.html",
+          "location": "411(a)(1) text; 1974, 1956 and 1954 amendment notes",
+          "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
         },
         {
           "authority": "42 USC 411, official 2024 United States Code section granule",
@@ -19488,32 +19830,39 @@
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
-      "consequence": null,
-      "description": "The statutory rental exclusion is captured, but the detailed occupant-services and dealer-holdings tests have not been independently sourced for 1968-1995. Later regulatory details are not applied to this window.",
+      "consequence": "covered",
+      "description": "411(a)(1) excludes rentals from real estate and from personal property leased with it, including crop-share rentals, with their attributable deductions, unless received in the course of a trade or business as a real estate dealer; the farm-arrangement proviso defers to the farm rental participation family. Only the regulatory dealer-holdings, occupant-services and space-payment details stay open.",
       "effective_end": "1996-03-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_rental_income",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Apply an occupant-services or dealer-holdings exception only if a contemporaneous primary source establishes it.",
-          "name": "historical_regulatory_service_exception"
-        },
-        {
-          "description": "Apply the statutory rental exclusion where its requirements are established without relying on the unverified later regulatory detail.",
-          "name": "statutory_rental_exclusion"
-        }
-      ],
-      "open_reason": "RENTAL_REGULATION_HISTORY_UNVERIFIED: the obtained 1996 and 2024 editions contain detailed occupant-services and dealer-holdings tests; neither edition establishes their application in 1968-1995.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
+        "evidence_only_boundaries": [
+          {
+            "citation": {
+              "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+              "capture": "cfr_1996_20_4041082_r1.txt",
+              "location": "edition header",
+              "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition",
+              "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26"
+            },
+            "date": "1996-04-01",
+            "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law.",
+            "kind": "regulation_edition",
+            "side": "end"
+          }
+        ],
+        "farm_material_participation_family": "self_employment_farm_rental_participation",
         "scope": "Historical occupant-services and dealer-holdings detail is unverified. A plain request for the 1968 official CFR section returned no section text."
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "Not rental income from real estate, so 411(a)(1) does not exclude it; apply the other families."
       },
-      "rule_id": "se_rental_income_1968_1995_open",
+      "rule_id": "se_rental_income_1968_1996",
       "trigger_facts": [
         "material_participation",
         "real_estate_dealer_status",
@@ -19693,6 +20042,21 @@
             ],
             "support_kind": "section_text_as_printed",
             "title": 42
+          }
+        ],
+        "evidence_only_boundaries": [
+          {
+            "citation": {
+              "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+              "capture": "cfr_1996_20_4041082_r1.txt",
+              "location": "edition header",
+              "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition",
+              "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26"
+            },
+            "date": "1996-04-01",
+            "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law.",
+            "kind": "regulation_edition",
+            "side": "start"
           }
         ],
         "farm_material_participation_family": "self_employment_farm_rental_participation",

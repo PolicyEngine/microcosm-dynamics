@@ -127,6 +127,16 @@ def structured_provenance(row):
     return value if isinstance(value, dict) else {}
 
 
+PAGE_EXTRACTS = {
+    "federal_register_1975_07_10_extract.pdf",
+    "govinfo_statute79_pg286_extract.pdf",
+    "govinfo_statute81_pg821_extract.pdf",
+    "govinfo_statute86_pg1329_extract.pdf",
+    "govinfo_statute97_pg65_extract.pdf",
+    "govinfo_statute101_pg1330_extract.pdf",
+}
+
+
 def test_page_extracts_record_their_originals():
     inventory = json.loads(
         (CAPTURE_DIRECTORY / "source_inventory.json").read_text()
@@ -137,7 +147,7 @@ def test_page_extracts_record_their_originals():
         if "extracted_from" in structured_provenance(row)
     ]
     names = {row["file"] for row in extracts}
-    assert len(names) == 5
+    assert names == PAGE_EXTRACTS
     for row in extracts:
         data = (CAPTURE_DIRECTORY / row["file"]).read_bytes()
         assert hashlib.sha256(data).hexdigest() == row["sha256"]
@@ -157,7 +167,11 @@ def test_page_extracts_record_their_originals():
         for row in inventory
         if structured_provenance(row).get("derived_from") in names
     ]
-    assert len(derived) == 2
+    assert {row["file"] for row in derived} == {
+        "federal_register_1975_07_10_extract.pdf.txt",
+        "govinfo_statute79_pg286_extract.pdf.txt",
+        "govinfo_statute101_pg1330_extract.pdf.txt",
+    }
     for row in derived:
         extract = next(
             r
@@ -329,10 +343,45 @@ def test_real_cases_and_open_readings_obey_schema(registry, data):
         assert case["when"]
         assert set(case["when"]) <= set(rule.trigger_facts)
         assert case["consequence"] in CONSEQUENCE_VALUES
+        if "open_reason" in case:
+            assert case["consequence"] == "open"
+            names = [o["name"] for o in case["open_alternatives"]]
+            assert len(names) >= 2 and len(set(names)) == len(names)
     if rule.open_reason:
         assert rule.consequence in {None, "open"}
         assert len(rule.open_alternatives) >= 2
         assert rule.alternative is None
+
+
+def test_open_cases_separate_legal_questions_from_missing_facts(registry):
+    """A bare open case awaits facts; a legal sub-question refuses.
+
+    Every open case without an open_reason conditions only on facts that
+    are not established, so resolve returns it for the caller to fill in.
+    Every open case with an open_reason makes resolve refuse, naming the
+    case, whenever that case decides.
+    """
+    legal, awaiting = [], []
+    for rule in registry.rules:
+        for case in rule.cases:
+            if case["consequence"] != "open":
+                continue
+            if "open_reason" in case:
+                legal.append((rule.rule_id, case["case_id"]))
+                with pytest.raises(OpenRuleError, match=case["case_id"]):
+                    rule.resolve({case["case_id"]})
+                for other in rule.cases:
+                    pair = {case["case_id"], other["case_id"]}
+                    ranked_first = min(
+                        (case, other), key=lambda c: c["precedence"]
+                    )
+                    assert_first_match(rule, pair, ranked_first)
+            else:
+                awaiting.append((rule.rule_id, case["case_id"]))
+                assert set(case["when"].values()) == {"not established"}
+                assert rule.resolve({case["case_id"]}) == case
+    assert ("federal_1987_2026", "fepca_waiver_reemployed_annuitant") in legal
+    assert {rule_id.split("_")[0] for rule_id, _ in awaiting} == {"clergy"}
 
 
 CONSEQUENCE_VALUES = {
@@ -660,17 +709,25 @@ def test_real_case_precedence_is_first_match(registry, data):
         range(1, len(rule.cases) + 1)
     )
     matched = data.draw(st.sets(st.sampled_from(sorted(by_id))))
-    result = rule.resolve(matched)
     if matched:
         winner = min(matched, key=lambda case_id: by_id[case_id]["precedence"])
-        assert result is by_id[winner]
+        assert_first_match(rule, matched, by_id[winner])
     else:
-        assert result == rule.residual_default
+        assert rule.resolve(matched) == rule.residual_default
     for case in rule.cases:
         for target in case.get("overrides", ()):
             assert by_id[target]["precedence"] > case["precedence"]
             assert by_id[target]["consequence"] != case["consequence"]
-            assert rule.resolve({case["case_id"], target}) is case
+            assert_first_match(rule, {case["case_id"], target}, case)
+
+
+def assert_first_match(rule, matched, winner):
+    """The winner decides; a legal open sub-question decides by refusing."""
+    if "open_reason" in winner:
+        with pytest.raises(OpenRuleError, match=winner["case_id"]):
+            rule.resolve(matched)
+    else:
+        assert rule.resolve(matched) is winner
 
 
 FEDERAL_EXCEPTIONS = (
@@ -1065,6 +1122,117 @@ def test_open_source_history_refuses_instead_of_backcasting(registry):
     for rule in open_rules:
         with pytest.raises(OpenRuleError):
             registry.lookup_date(rule.family, rule.effective_start)
+
+
+PASSIVE = "self_employment_passive_income"
+
+
+@given(st.integers(1968, 2026))
+@settings(deadline=None)
+def test_passive_income_returns_the_dividend_and_interest_exclusion(
+    registry, year
+):
+    """411(a)(2) decides the receipts every year; sub-questions refuse.
+
+    Review r2 MED-2: the family refused all 59 years although the exclusion
+    of the dividends and interest themselves is captured.
+    """
+    for rule in registry.lookup(PASSIVE, year):
+        ids = {c["case_id"] for c in rule.cases}
+        interest = (
+            ids & {"specified_interest", "specified_interest_registered_form"}
+        ).pop()
+        assert rule.open_reason is None
+        assert rule.resolve({"specified_dividends"})["consequence"] == (
+            "noncovered"
+        )
+        assert rule.resolve({interest})["consequence"] == "noncovered"
+        dealer = {"dealer_in_stocks_or_securities", "specified_dividends"}
+        assert rule.resolve(dealer | {interest})["consequence"] == "covered"
+        assert rule.resolve(())["consequence"] == "covered"
+        with pytest.raises(OpenRuleError, match="DEDUCTIONS_UNVERIFIED"):
+            rule.resolve({"deductions_attributable_to_excluded_receipts"})
+
+
+def test_passive_income_keeps_its_historical_interest_wording(registry):
+    early = registry.lookup(PASSIVE, 1970)[0]
+    former = {"interest_described_in_1939_code_25a", "specified_interest"}
+    assert early.resolve(former)["consequence"] == "covered"
+    middle = registry.lookup(PASSIVE, 1990)[0]
+    assert "obligation_not_in_registered_form" not in {
+        c["case_id"] for c in middle.cases
+    }
+    assert "interest_described_in_1939_code_25a" not in {
+        c["case_id"] for c in middle.cases
+    }
+    late = registry.lookup(PASSIVE, 2010)[0]
+    with pytest.raises(OpenRuleError, match="INTEREST_BENEFITS_WORDING"):
+        late.resolve({"obligation_not_in_registered_form"})
+
+
+def test_possessions_successor_rule_applies_from_enactment(registry):
+    """Pub. L. 100-203 section 9023(b) states no effective date.
+
+    The successor 411(a)(8) governs from enactment on 1987-12-22; the
+    earlier history still refuses.
+    """
+    family = "self_employment_possessions_931_income"
+    with pytest.raises(OpenRuleError):
+        registry.lookup_date(family, date(1987, 12, 21))
+    with pytest.raises(OpenRuleError):
+        registry.lookup(family, 1987)
+    (rule,) = registry.lookup_date(family, date(1987, 12, 22))
+    assert rule.resolve(())["consequence"] == "covered"
+    assert rule.parameters["enactment"] == "1987-12-22"
+    for year in range(1988, 2027):
+        assert [r.rule_id for r in registry.lookup(family, year)] == [
+            rule.rule_id
+        ]
+
+
+@given(st.integers(1968, 1995))
+@settings(deadline=None)
+def test_rental_exclusion_returns_before_the_1996_cfr_edition(registry, year):
+    """411(a)(1) decides 1968-1996-03-31; regulatory detail refuses."""
+    (rule,) = registry.lookup("self_employment_rental_income", year)
+    rent = {"real_estate_rentals"}
+    assert rule.resolve(rent)["consequence"] == "noncovered"
+    dealer = rent | {"real_estate_dealer_rentals"}
+    assert rule.resolve(dealer)["consequence"] == "covered"
+    farm = rule.resolve(rent | {"farm_rental_arrangement"})
+    assert farm["consequence"] == "deferred"
+    assert list(farm["defers_to"]) == [
+        "self_employment_farm_rental_participation"
+    ]
+    assert rule.resolve(())["consequence"] == "covered"
+    for case_id in (
+        "dealer_investment_or_speculative_holdings",
+        "services_to_occupants_regulatory_detail",
+        "parking_warehouse_storage_space_regulatory_detail",
+    ):
+        with pytest.raises(OpenRuleError, match="RULE_UNVERIFIED"):
+            rule.resolve(rent | {case_id})
+    later = registry.lookup("self_employment_rental_income", 1997)[0]
+    space = rent | {"parking_warehouse_storage_space"}
+    assert later.resolve(space)["consequence"] == "covered"
+
+
+def test_evidence_only_boundaries_name_their_edition(registry):
+    """An edition-date split is recorded on both rows and in the capture."""
+    marked = [
+        (rule, entry)
+        for rule in registry.rules
+        for entry in rule.parameters.get("evidence_only_boundaries", ())
+    ]
+    assert {(rule.rule_id, entry["side"]) for rule, entry in marked} == {
+        ("se_rental_income_1968_1996", "end"),
+        ("se_rental_income_1996_2026", "start"),
+    }
+    for _, entry in marked:
+        text = source_text(CAPTURE_DIRECTORY / entry["citation"]["capture"])
+        edition = date.fromisoformat(entry["date"])
+        assert f"{edition:%B} {edition.day}, {edition.year}" in text
+        assert " ".join(entry["citation"]["quote"].split()) in text
 
 
 def test_ret_concept_records_disregarded_limits_and_both_deeming_conditions(

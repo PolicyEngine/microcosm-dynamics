@@ -8,7 +8,7 @@ import copy
 import graphlib
 import hashlib
 import json
-from datetime import date
+from datetime import date, timedelta
 from fractions import Fraction
 
 import pytest
@@ -860,6 +860,171 @@ def test_case_free_basis_only_explains_case_free_non_excluding_rows(
     parsed = CoverageRule.from_dict(row)
     assert parsed.parameters["case_free_basis"] == basis
     assert parsed.resolve(()) == parsed.residual_default
+
+
+@given(
+    st.sampled_from(sorted(CONSEQUENCES)),
+    st.booleans(),
+    st.none() | st.integers(0, 3),
+    st.booleans(),
+)
+@example("open", True, 2, False)
+@example("open", True, 1, False)
+@example("open", True, 2, True)
+@example("open", False, 2, False)
+@example("open", True, None, False)
+@example("covered", True, 2, False)
+@example("open", False, None, False)
+@settings(deadline=None)
+def test_open_case_sub_question_needs_reason_and_named_readings(
+    consequence, with_reason, alternatives, duplicate
+):
+    """A closed row opens a sub-question only with a reason and readings.
+
+    When the open case decides, resolve refuses; a higher-ranked case
+    still wins, and an open case without a reason (missing facts) returns.
+    """
+    row = invented_row()
+    first = invented_case("invented_first", 1, "covered")
+    sub = invented_case("invented_sub_question", 2, consequence)
+    if with_reason:
+        sub["open_reason"] = "INVENTED_SUB_QUESTION: no capture settles it"
+    if alternatives is not None:
+        names = [f"INVENTED_reading_{i}" for i in range(alternatives)]
+        if duplicate and alternatives >= 2:
+            names[1] = names[0]
+        sub["open_alternatives"] = [
+            {"name": name, "description": f"INVENTED {name}"} for name in names
+        ]
+    row["cases"] = [first, sub]
+    if not with_reason and alternatives is None:
+        rule = CoverageRule.from_dict(row)
+        assert rule.resolve({"invented_sub_question"})["consequence"] == (
+            consequence
+        )
+        return
+    valid = (
+        consequence == "open"
+        and with_reason
+        and alternatives is not None
+        and alternatives >= 2
+        and not duplicate
+    )
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="open"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    with pytest.raises(OpenRuleError, match="INVENTED_SUB_QUESTION"):
+        rule.resolve({"invented_sub_question"})
+    both = {"invented_first", "invented_sub_question"}
+    assert rule.resolve(both)["case_id"] == "invented_first"
+    assert rule.resolve(()) == rule.residual_default
+    assert CoverageRule.from_dict(rule.to_dict()) == rule
+
+
+def invented_boundary(side, when, kind="regulation_edition"):
+    return {
+        "side": side,
+        "date": when,
+        "kind": kind,
+        "citation": copy.deepcopy(INVENTED_CITATION),
+        "evidence": "INVENTED edition date, not a change in the law.",
+    }
+
+
+@given(
+    st.sampled_from(["start", "end"]),
+    st.sampled_from([-1, 0, 1]),
+    st.sampled_from(["regulation_edition", "code_edition", "INVENTED"]),
+    st.booleans(),
+    st.sampled_from([None, "extra_field", "duplicate", "empty"]),
+)
+@example("end", 0, "regulation_edition", True, None)
+@example("start", 0, "code_edition", True, None)
+@example("start", 1, "code_edition", True, None)
+@example("end", -1, "regulation_edition", True, None)
+@example("end", 0, "INVENTED", True, None)
+@example("start", 0, "code_edition", False, None)
+@example("end", 0, "regulation_edition", True, "extra_field")
+@example("end", 0, "regulation_edition", True, "duplicate")
+@example("start", 0, "regulation_edition", True, "empty")
+@settings(deadline=None)
+def test_evidence_only_boundary_sits_on_its_row_edge(
+    side, offset, kind, cited, defect
+):
+    row = invented_row(1980, 1995)
+    edge = date(1980, 1, 1) if side == "start" else date(1996, 1, 1)
+    entry = invented_boundary(
+        side, (edge + timedelta(days=offset)).isoformat(), kind
+    )
+    if not cited:
+        entry["citation"]["capture"] = "INVENTED_uncited.html"
+    entries = [entry]
+    if defect == "extra_field":
+        entry["INVENTED_extra"] = "INVENTED"
+    elif defect == "duplicate":
+        entries.append(copy.deepcopy(entry))
+    elif defect == "empty":
+        entries = []
+    row["parameters"]["evidence_only_boundaries"] = entries
+    valid = (
+        offset == 0
+        and kind in {"regulation_edition", "code_edition"}
+        and cited
+        and defect is None
+    )
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="evidence"):
+            CoverageRule.from_dict(row)
+        return
+    rule = CoverageRule.from_dict(row)
+    assert rule.parameters["evidence_only_boundaries"][0]["side"] == side
+
+
+@given(
+    st.booleans(),
+    st.booleans(),
+    st.sampled_from([None, "kind", "capture"]),
+)
+@example(True, True, None)
+@example(False, False, None)
+@example(True, False, None)
+@example(False, True, None)
+@example(True, True, "kind")
+@example(True, True, "capture")
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_adjacent_rows_record_an_evidence_boundary_alike(
+    tmp_path, on_earlier, on_later, mismatch
+):
+    (tmp_path / "invented_two.html").write_bytes(INVENTED_BYTES)
+    earlier = invented_row(1968, 1995, "INVENTED_earlier")
+    later = invented_row(1996, 2026, "INVENTED_later")
+    second = dict(INVENTED_CITATION, capture="invented_two.html")
+    earlier["citations"].append(copy.deepcopy(second))
+    later["citations"].append(copy.deepcopy(second))
+    if on_earlier:
+        earlier["parameters"]["evidence_only_boundaries"] = [
+            invented_boundary("end", "1996-01-01")
+        ]
+    if on_later:
+        entry = invented_boundary("start", "1996-01-01")
+        if mismatch == "kind":
+            entry["kind"] = "code_edition"
+        elif mismatch == "capture":
+            entry["citation"] = copy.deepcopy(second)
+        later["parameters"]["evidence_only_boundaries"] = [entry]
+    valid = on_earlier == on_later and (not on_later or mismatch is None)
+    if not valid:
+        with pytest.raises(RegistryValidationError, match="evidence-only"):
+            invented_registry(tmp_path, [earlier, later])
+        return
+    registry = invented_registry(tmp_path, [earlier, later])
+    assert [r.rule_id for r in registry.lookup("INVENTED_family", 1995)] == [
+        "INVENTED_earlier"
+    ]
 
 
 def test_resolve_separates_caller_errors_from_refusals():
