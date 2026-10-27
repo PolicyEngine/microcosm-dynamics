@@ -6,8 +6,9 @@ count script has changed since; the runs at 6cca06af, at the end, use its new by
 Run 2026-10-26 from a clean clone at e79f41b5, one job at a time on a shared host,
 each job at nice 10 on one core, with OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:. The one-minute
-load average was 63 to 97 when each job started. Times are wall clock and vary
-with host load. Each program's limit is 300 s (PROGRAM_SECONDS).
+load average was 63 to 97 when each job started. Times are elapsed seconds on
+Python's time.monotonic() clock and vary with host load. Each program's limit
+is 300 s (PROGRAM_SECONDS).
 
 The first three runs register B0.1's sets at the counts B0.1's own script gives,
 as main() does (b0_1_sets=71). The last two leave them out (--without-b0-1), on
@@ -148,20 +149,28 @@ B=10 status=withheld rounds=[0] results={'wide': 2533, 'narrow': 1, 'unreached':
 
 The host slept during this run. Its power log (pmset -g log) shows the lid
 closed at 23:49:16Z, then maintenance sleeps and dark wakes, and a wake on
-opening the lid at 00:06:22Z. The job runner's log records the run's end at
-00:06:24Z, 3,277 s after it began. The run withheld on a target whose programs
-reached no proof within 300 s of wall clock (357.6 s for the target); a
-withholding ends the audit at once. The power log does not time programs, so
-that the sleep caused this timeout is an inference, not an observation: the run
-ended two seconds after the wake, and the reruns below, with the host awake,
-release this panel, its slowest classification taking 44.7 s. calibrate.py
-holds no sleep assertion.
+opening the lid at 00:06:22Z. The job runner's log, whose times are UTC from
+the system clock, records the run's start at 23:00:19Z and its end at
+00:06:24Z, 3,965 s apart. Its elapsed field reads 3,277 s. That field comes
+from Python's time.monotonic(), as do all of calibrate.py's times, so during
+this run that clock advanced about 688 s less than the system clock, and this
+run's times, the 357.6 s for the target included, need not equal elapsed time
+on the system clock. The run withheld on a target whose programs reached no
+proof within the 300 s program limit; a withholding ends the audit at once.
+The power log does not time programs, so that the sleep caused this timeout is
+an inference, not an observation: the run ended two seconds after the wake,
+and the reruns below, with the host awake, release this panel, its slowest
+classification taking 44.7 s. calibrate.py holds no sleep assertion.
 The count script's main() holds two and checks AC power, and the protocol has
 the operator keep the lid open, which the script does not check.
 
 The same panel was run again at both heads, one after the other, with the host
 awake throughout (no sleep in its power log) and the load average sampled every
-30 s. Both release with the same decisions as the run at e79f41b5 above.
+30 s. Both release with the same decisions as the run at e79f41b5 above. By the
+author's account, a first launch of the rerun at 6cca06af, at 00:10:14Z, was
+stopped before it printed any output; its runner log records only the start.
+It produced no result. The job that ran the two reruns below started at
+00:15:51Z.
 
 At 6cca06af; one-minute load 20.6 to 188.0, median 98.9;
 five-minute load 54.4 to 163.7, median 105.4:
