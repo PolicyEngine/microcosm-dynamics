@@ -1,6 +1,6 @@
 # Track B B0.2: structural-audit protocol
 
-**Status: version 1, DRAFT, 2026-10-24. Not yet frozen. No count has run.**
+**Status: version 1, FROZEN, 2026-10-27. Block SHA-256 `6840f5fa41c897407c5896d4c3729ca5a5c0f1d166faa294e65e42309908ad23`. No count has run.**
 
 Design section 5.2 (line 286) says B0's structural-audit protocol is
 frozen before any count or power summary is computed. This file is that
