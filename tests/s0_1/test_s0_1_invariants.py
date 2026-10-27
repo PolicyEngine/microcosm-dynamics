@@ -32,8 +32,10 @@ def test_summary_counts_every_trial_once(outcomes):
 def accepted_ed_cells(draw):
     k = draw(st.integers(2, 5))
     raw = draw(st.lists(st.integers(1, 30), min_size=k, max_size=k))
+    shares = tuple(value / sum(raw) for value in raw)
+    shift = draw(st.floats(-0.9, 0.9)) * min(shares[0], shares[1])
     return power.InventedSharesCell(
-        shares=tuple(value / sum(raw) for value in raw),
+        shares=shares,
         n_model=draw(st.integers(10, 150)),
         n_target=draw(st.integers(10, 150)),
         model_cluster_size=draw(st.sampled_from([1.0, 2.0, 20.0])),
@@ -41,6 +43,7 @@ def accepted_ed_cells(draw):
         icc=draw(st.sampled_from([0.0, 0.2, 0.9])),
         weight_cv=draw(st.sampled_from([0.0, 0.6, 2.0])),
         replicates=draw(st.integers(1, 5)),
+        bias=(shift, -shift) + (0.0,) * (k - 2),
     )
 
 
@@ -186,6 +189,120 @@ def test_mixed_singleton_draws_are_counted_without_retry_or_redraw():
     assert_accounted(result, 40)
     assert 0 < result.extra["unestimable_realizations"] < 40
     assert result.inconclusive_rate == 1.0
+
+
+def test_review_failure_survives_later_unestimable_cell():
+    first = power.InventedSharesCell(
+        shares=(0.5, 0.5),
+        n_model=30,
+        n_target=30,
+        model_cluster_size=1,
+        target_cluster_size=1,
+        icc=0,
+        weight_cv=0,
+        replicates=2100,
+        bias=(0.49, -0.49),
+    )
+    later = power.InventedSharesCell(
+        shares=(0.5, 0.5),
+        n_model=10,
+        n_target=10,
+        model_cluster_size=20,
+        target_cluster_size=20,
+        icc=0,
+        weight_cv=0,
+        replicates=1,
+    )
+    result = power.simulate_ed2_family([first, later], n_sims=1, seed=1)
+    assert_accounted(result, 1)
+    assert result.fail_rate == 1.0
+    assert result.extra["unestimable_realizations"] == 1
+    assert result.extra["max_projection_mc_se"] < power.ED2_TOLERANCE / 10
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    prior=st.lists(
+        st.sampled_from([power.PASS, power.FAIL, power.INCONCLUSIVE]),
+        min_size=1,
+        max_size=4,
+    ),
+    later=st.lists(
+        st.sampled_from([power.PASS, power.FAIL, power.INCONCLUSIVE]),
+        max_size=4,
+    ),
+    stop=st.sampled_from(["model", "target", "bound", None]),
+    bias=st.floats(0.01, 0.49),
+    seed=st.integers(0, 65535),
+)
+def test_ed2_failure_preserved_for_every_later_outcome(
+    prior, later, stop, bias, seed
+):
+    """Exercise both catches and estimable continuations after a failure."""
+    outcomes = prior + [power.FAIL] + later
+    result = _controlled_ed2_outcomes(outcomes, stop, bias, seed)
+    assert_accounted(result, 1)
+    assert result.fail_rate == 1.0
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    count=st.integers(0, 4),
+    stop=st.sampled_from(["model", "target", "bound"]),
+    bias=st.floats(0.01, 0.49),
+    seed=st.integers(0, 65535),
+)
+def test_ed2_unestimable_cell_cannot_complete_a_pass(count, stop, bias, seed):
+    result = _controlled_ed2_outcomes([power.PASS] * count, stop, bias, seed)
+    assert_accounted(result, 1)
+    assert result.inconclusive_rate == 1.0
+    assert result.extra["unestimable_realizations"] == 1
+
+
+def _controlled_ed2_outcomes(outcomes, stop, bias, seed):
+    """Inject decisions and an optional later precision failure into a family."""
+    cell = power.InventedSharesCell(
+        shares=(0.5, 0.5),
+        n_model=10,
+        n_target=10,
+        model_cluster_size=1,
+        target_cluster_size=1,
+        icc=0,
+        weight_cv=0,
+        replicates=1,
+        bias=(bias, -bias),
+    )
+    calls = 0
+    decisions = iter(outcomes)
+    share_and_var = power._share_and_var
+    half_width = power.ed2_cluster_half_width
+
+    def controlled_share(*args):
+        nonlocal calls
+        index, side = divmod(calls, 2)
+        calls += 1
+        if index == len(outcomes) and stop == ("model", "target")[side]:
+            raise power.UnestimableRealization("invented later cell")
+        return share_and_var(*args)
+
+    def controlled_half(*args):
+        if calls == 2 * (len(outcomes) + 1) and stop == "bound":
+            raise power.UnestimableRealization("invented later bound")
+        return half_width(*args)
+
+    def controlled_classify(*args):
+        return np.array([next(decisions)] * 2, dtype=object)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(power, "_share_and_var", controlled_share)
+        patch.setattr(power, "ed2_cluster_half_width", controlled_half)
+        patch.setattr(power, "classify_bounds", controlled_classify)
+        return power.simulate_ed2_family(
+            [cell] * (len(outcomes) + (stop is not None)),
+            n_sims=1,
+            seed=seed,
+            tolerance=10,
+        )
 
 
 def test_sm3_minimized_unsupported_interval_is_diagnostic_only():

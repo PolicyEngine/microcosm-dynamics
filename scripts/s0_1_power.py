@@ -47,6 +47,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import numbers
 import sys
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field
@@ -298,15 +299,113 @@ def share_difference_se(
     return math.sqrt(p * (1 - p) * (1.0 / n_m + 1.0 / n_t))
 
 
+class ThresholdRefusal(ValueError):
+    """A planning-threshold helper declines to return a count.
+
+    ``min_effective_deaths_per_cell`` and ``min_effective_n_per_cell``
+    return an ``int`` or raise one of the three subclasses below, for any
+    argument values. They never return ``None``.
+    """
+
+
+class ThresholdInputError(ThresholdRefusal):
+    """An argument lies outside the helper's accepted domain."""
+
+
+class UnreachableThreshold(ThresholdRefusal):
+    """The target's own sampling variance fails the criterion.
+
+    With a finite ``n_target_eff``, no count's variance falls below the
+    target's alone. When the predicate fails at that limit, no count
+    reaches the criterion, however large.
+    """
+
+
+class UnrepresentableThreshold(ThresholdRefusal):
+    """The floating-point model cannot represent a quantity it needs.
+
+    A finite tolerance or target size does not fit in a double, a nonzero
+    argument rounds to zero, ``1 / n_target_eff`` overflows, or the
+    Bonferroni critical value is not a finite positive double. Or no
+    supported count passes the predicate and target noise does not explain
+    why: the needed count exceeds ``MAX_SUPPORTED_COUNT`` or its achieved
+    variance underflows to zero.
+    """
+
+
+#: Largest supported count. Every count up to it converts to a finite
+#: double, as the predicate's ``v / n`` requires.
+MAX_SUPPORTED_COUNT = int(sys.float_info.max)
+
+
+def _threshold_real(value, name: str, *, too_large=ThresholdInputError):
+    """``value`` as a double, or a named refusal.
+
+    ``too_large`` is raised when a finite real overflows the double range;
+    it stays ``ThresholdInputError`` where such a value lies outside the
+    domain anyway. A nonzero value that rounds to zero is unrepresentable.
+    """
+    if isinstance(value, bool) or not isinstance(value, numbers.Real):
+        raise ThresholdInputError(f"{name} must be a real number")
+    try:
+        converted = float(value)
+        overflowed = math.isinf(converted) and abs(value) != math.inf
+    except OverflowError:
+        overflowed = True
+    if overflowed:
+        raise too_large(f"{name} does not fit in a double")
+    if converted == 0 and value != 0:
+        raise UnrepresentableThreshold(f"{name} rounds to zero in a double")
+    return converted
+
+
+def _threshold_open_unit(value, name: str) -> float:
+    value = _threshold_real(value, name)
+    if not 0 < value < 1:
+        raise ThresholdInputError(f"{name} must lie in (0, 1)")
+    return value
+
+
+def _threshold_arguments(m, delta, tolerance, alpha, criterion):
+    """Validated family arguments and their critical value, or a refusal."""
+    if isinstance(m, bool) or not isinstance(m, numbers.Integral):
+        raise ThresholdInputError("family size must be an integer")
+    m = int(m)
+    if m < 1:
+        raise ThresholdInputError("family size must be at least 1")
+    alpha = _threshold_open_unit(alpha, "alpha")
+    criterion = _threshold_open_unit(criterion, "criterion")
+    tolerance = _threshold_real(
+        tolerance, "tolerance", too_large=UnrepresentableThreshold
+    )
+    if not 0 < tolerance < math.inf:
+        raise ThresholdInputError("tolerance must be finite and > 0")
+    delta = _threshold_real(delta, "delta")
+    if not abs(delta) < tolerance:
+        raise ThresholdInputError("|delta| must lie inside the tolerance")
+    # For m >= 2**53, alpha/(2m) < 2**-54, so 1 - alpha/(2m) rounds to one
+    # and the critical value is infinite. Refusing first also avoids
+    # converting an m beyond the double range.
+    if m >= 2**53:
+        raise UnrepresentableThreshold("critical value is not finite")
+    z = bonferroni_z(m, alpha)
+    if not 0 < z < math.inf:
+        raise UnrepresentableThreshold(
+            "critical value is not a finite positive double"
+        )
+    return m, delta, tolerance, alpha, criterion, z
+
+
 def _critical_se(
     m: int, delta: float, tolerance: float, alpha: float, criterion: float
 ) -> float:
-    """Largest common SE at which ``m`` equal cells reach the criterion."""
-    m = _family_size(m)
-    criterion = _probability(criterion, "criterion")
-    tolerance = _finite_positive(tolerance, "tolerance")
-    _require(abs(delta) < tolerance, "|delta| must be inside the tolerance")
-    z = bonferroni_z(m, alpha)
+    """Largest common SE at which ``m`` equal cells reach the criterion.
+
+    The threshold helpers use it only to seed their integer search.
+    """
+    m, delta, tolerance, alpha, criterion, z = _threshold_arguments(
+        m, delta, tolerance, alpha, criterion
+    )
 
     def power(se: float) -> float:
         return max(
@@ -314,14 +413,94 @@ def _critical_se(
             1.0 - m * (1.0 - cell_pass_probability(delta, se, tolerance, z)),
         )
 
-    lo, hi = 1e-9, tolerance / z
+    # Zero is the sufficient limiting SE for a strictly interior delta;
+    # never evaluate it as a positive-SE sampling experiment.
+    lo, hi = 0.0, tolerance / z
+    if not math.isfinite(hi) or hi <= 0:
+        raise UnrepresentableThreshold("SE bracket is not representable")
     for _ in range(200):
-        mid = 0.5 * (lo + hi)
+        mid = lo + (hi - lo) / 2
+        if mid == lo or mid == hi:
+            break
         if power(mid) >= criterion:
             lo = mid
         else:
             hi = mid
+    if lo <= 0 or lo * lo == 0:
+        raise UnrepresentableThreshold(
+            "positive SE variance is not representable"
+        )
     return lo
+
+
+def _equal_cells_power(
+    m: int, delta: float, se: float, tolerance: float, z: float
+) -> float:
+    """``family_power_lower_bound`` for ``m`` identical cells.
+
+    With ``z = bonferroni_z(m, alpha)`` it equals
+    ``family_power_lower_bound([delta] * m, [se] * m, tolerance, alpha)``
+    bit for bit. Below ``2**53`` the double ``m`` is exact, so
+    ``m * (1 - p)`` is the correctly rounded sum of ``m`` copies of
+    ``1 - p``, which ``math.fsum`` also returns. No list is built.
+    """
+    p = cell_pass_probability(delta, se, tolerance, z)
+    return max(0.0, 1.0 - m * (1 - p))
+
+
+def _minimal_power_count(
+    seed: float, achieved, criterion: float, plateau: float | None = None
+) -> int:
+    """Smallest supported count whose achieved power reaches the criterion.
+
+    ``achieved(n)`` is the gate's predicate at count ``n``, or ``None``
+    when the SE there is not a finite positive double. Variances do not
+    rise with ``n`` under monotone rounding, so the defined counts form an
+    initial segment, which ends only where the variance underflows, and
+    the predicate is nondecreasing wherever the normal CDF is monotone (a
+    property test checks this). Reachability is decided by the same
+    predicate at the largest defined count; ``seed``, a rounded inverse
+    variance, only starts the search. ``plateau`` is the predicate with
+    the target's variance alone, which bounds every count's power.
+    """
+    top = MAX_SUPPORTED_COUNT
+    first = achieved(1)
+    if first is not None and first >= criterion:
+        return 1
+    if first is None:
+        top = 0
+    elif achieved(top) is None:
+        defined = 1
+        while top - defined > 1:
+            mid = (defined + top) // 2
+            if achieved(mid) is None:
+                top = mid
+            else:
+                defined = mid
+        top = defined
+    if top == 0 or achieved(top) < criterion:
+        if plateau is not None and plateau < criterion:
+            raise UnreachableThreshold(
+                "the target's variance alone fails the criterion"
+            )
+        raise UnrepresentableThreshold(
+            "no supported count has a representable passing SE"
+        )
+    hi = (
+        top
+        if not math.isfinite(seed) or seed >= top
+        else max(1, math.ceil(seed))
+    )
+    while achieved(hi) < criterion:
+        hi = min(2 * hi, top)
+    lo = 0
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if achieved(mid) >= criterion:
+            hi = mid
+        else:
+            lo = mid
+    return hi
 
 
 def min_effective_deaths_per_cell(
@@ -340,11 +519,40 @@ def min_effective_deaths_per_cell(
     The returned integer is minimal for the union-bound power guarantee,
     not an exact minimum for an unknown real survey covariance. ``delta``
     bounds the absolute true error in every cell.
+
+    Sufficiency is this predicate, evaluated in double precision:
+    ``family_power_lower_bound([delta] * m, [sqrt((1 - share) / n)] * m,
+    tolerance, alpha) >= criterion``, where ``(1 - share) / n`` converts
+    the integer ``n`` to the nearest double before dividing. A probe that
+    forms ``1 / n`` from two integers rounds the exact quotient once
+    instead, and can differ in the last place for ``n`` above ``2**53``;
+    it does not define sufficiency. The result is the smallest ``n >= 1``
+    that passes, and ``n - 1`` fails unless ``n`` is 1.
+
+    Raises ``ThresholdInputError`` outside the domain and
+    ``UnrepresentableThreshold`` when no supported count passes for want
+    of double precision. With no target, the limiting SE is zero, so
+    the threshold is never unreachable.
     """
-    share = _probability(group_share, "group share", open_interval=False)
-    _require(share < 1, "group share must be below one")
-    se = _critical_se(m, delta, tolerance, alpha, criterion)
-    return int(math.ceil((1.0 - share) / se**2))
+    m, delta, tolerance, alpha, criterion, z = _threshold_arguments(
+        m, delta, tolerance, alpha, criterion
+    )
+    share = _threshold_real(group_share, "group share")
+    if not 0 <= share < 1:
+        raise ThresholdInputError("group share must lie in [0, 1)")
+    try:
+        se = _critical_se(m, delta, tolerance, alpha, criterion)
+        seed = (1 - share) / se**2
+    except (UnrepresentableThreshold, OverflowError, ZeroDivisionError):
+        seed = math.nan
+
+    def achieved(n):
+        variance = (1 - share) / n
+        if not 0 < variance < math.inf:
+            return None
+        return _equal_cells_power(m, delta, math.sqrt(variance), tolerance, z)
+
+    return _minimal_power_count(seed, achieved, criterion)
 
 
 def min_effective_n_per_cell(
@@ -356,25 +564,68 @@ def min_effective_n_per_cell(
     tolerance: float = ED2_TOLERANCE,
     alpha: float = ALPHA,
     criterion: float = POWER_CRITERION,
-) -> int | None:
-    """Smallest sufficient effective model sample; None if unreachable.
+) -> int:
+    """Smallest sufficient effective model sample per cell.
 
     ``n_target_eff`` is the target survey's effective sample in the cell
     (``inf`` for a target whose sampling error is negligible).
+
+    Sufficiency is this predicate, evaluated in double precision:
+    ``family_power_lower_bound([delta] * m, [se(n)] * m, tolerance,
+    alpha) >= criterion``, with ``se(n) = sqrt(p * (1 - p) / n)`` for an
+    infinite target and otherwise ``sqrt(p * (1 - p) * (1.0 / n +
+    1.0 / n_target_eff))``, as ``share_difference_se`` computes it. The
+    integer ``n`` converts to the nearest double before each division.
+    The result is the smallest ``n >= 1`` that passes, and ``n - 1``
+    fails unless ``n`` is 1. Reachability uses the same predicate at the
+    largest supported count, so a count is returned whenever one passes,
+    including on a floating-point plateau where ``1.0 / n`` no longer
+    changes the variance.
+
+    Raises ``ThresholdInputError`` outside the domain;
+    ``UnreachableThreshold`` when the target's variance alone fails the
+    criterion, so that no count passes however large; and
+    ``UnrepresentableThreshold`` when no supported count passes for want
+    of double precision. It never returns ``None``.
     """
-    p = _probability(share, "share")
-    se = _critical_se(m, delta, tolerance, alpha, criterion)
-    target_var = (
-        0.0
-        if n_target_eff == math.inf
-        else p
-        * (1 - p)
-        / float(_finite_positive(n_target_eff, "target effective n"))
+    m, delta, tolerance, alpha, criterion, z = _threshold_arguments(
+        m, delta, tolerance, alpha, criterion
     )
-    remaining = se**2 - target_var
-    if remaining <= 0:
-        return None
-    return int(math.ceil(p * (1 - p) / remaining))
+    p = _threshold_real(share, "share")
+    if not 0 < p < 1:
+        raise ThresholdInputError("share must lie in (0, 1)")
+    n_target = _threshold_real(
+        n_target_eff, "target effective n", too_large=UnrepresentableThreshold
+    )
+    if not n_target > 0:
+        raise ThresholdInputError("target effective n must be > 0")
+    target_inverse = 0.0 if n_target == math.inf else 1.0 / n_target
+    if target_inverse == math.inf:
+        raise UnrepresentableThreshold("1 / target effective n overflows")
+    target_var = p * (1 - p) * target_inverse
+    try:
+        se = _critical_se(m, delta, tolerance, alpha, criterion)
+        remaining = se**2 - target_var
+        seed = p * (1 - p) / remaining if remaining > 0 else math.nan
+    except (UnrepresentableThreshold, OverflowError, ZeroDivisionError):
+        seed = math.nan
+
+    def achieved(n):
+        variance = (
+            p * (1 - p) / n
+            if target_inverse == 0
+            else p * (1 - p) * (1.0 / n + target_inverse)
+        )
+        if not 0 < variance < math.inf:
+            return None
+        return _equal_cells_power(m, delta, math.sqrt(variance), tolerance, z)
+
+    plateau = (
+        _equal_cells_power(m, delta, math.sqrt(target_var), tolerance, z)
+        if 0 < target_var < math.inf
+        else None
+    )
+    return _minimal_power_count(seed, achieved, criterion, plateau)
 
 
 def bootstrap_replicates_for_mc_error(
@@ -1215,7 +1466,8 @@ def simulate_ed2_family(
                 share_m, _ = _share_and_var(ind, w_m, cl_m)
             except UnestimableRealization:
                 unestimable += 1
-                results, ok = [INCONCLUSIVE], False
+                results.append(INCONCLUSIVE)
+                ok = False
                 break
             share_m = share_m + b
             # Conditional projection noise is known on invented probabilities;
@@ -1238,7 +1490,8 @@ def simulate_ed2_family(
                 half = ed2_cluster_half_width(w_m, cl_m, w_t, cl_t, m, alpha)
             except UnestimableRealization:
                 unestimable += 1
-                results, ok = [INCONCLUSIVE], False
+                results.append(INCONCLUSIVE)
+                ok = False
                 break
             est = share_m - share_t
             cell_outcomes = classify_bounds(
@@ -1468,9 +1721,12 @@ def ed2_analytic_grid() -> list[dict]:
             ("target_n_eff_5000", 5_000.0),
         ):
             for delta in (0.0, 0.005):
-                n = min_effective_n_per_cell(
-                    m, share=p, n_target_eff=target, delta=delta
-                )
+                try:
+                    n = min_effective_n_per_cell(
+                        m, share=p, n_target_eff=target, delta=delta
+                    )
+                except UnreachableThreshold:
+                    n = None
                 rows.append(
                     {
                         "scope": scope,

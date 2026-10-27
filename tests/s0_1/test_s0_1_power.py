@@ -126,7 +126,7 @@ def test_normal_family_boundary_pass_rate_is_at_most_nominal(m):
 
 
 def test_sm3_nonsparse_boundary_matches_the_normal_reference():
-    """Check the normal boundary reference for this nonsparse fixture."""
+    """Check the diagnostic boundary reference for this nonsparse fixture."""
     stratum = power.InventedStratum(
         n_clusters=3_000,
         group_shares=(0.1, 0.9),
@@ -142,7 +142,12 @@ def test_sm3_nonsparse_boundary_matches_the_normal_reference():
     assert truth[0] == pytest.approx(TAU, abs=1e-12)
     result = power.simulate_sm3_family([boundary], n_sims=300, seed=5)
     nominal = power.ALPHA / 4
-    assert result.pass_rate <= nominal + _mc_band(nominal, 300)
+    diagnostic_pass_rate = (
+        result.extra["diagnostic_outcome_counts"][power.PASS] / result.n_sims
+    )
+    assert diagnostic_pass_rate <= nominal + _mc_band(nominal, 300)
+    assert result.inconclusive_rate == 1.0
+    assert result.extra["diagnostic_only"] is True
 
 
 # --------------------------------------------------------------------------
@@ -203,10 +208,9 @@ def test_min_effective_model_n_is_minimal(m, share):
     assert at >= power.POWER_CRITERION
 
 
-def test_unreachable_ed2_target_is_none():
-    assert (
-        power.min_effective_n_per_cell(20, share=0.3, n_target_eff=500) is None
-    )
+def test_unreachable_ed2_target_is_refused_by_name():
+    with pytest.raises(power.UnreachableThreshold):
+        power.min_effective_n_per_cell(20, share=0.3, n_target_eff=500)
 
 
 # --------------------------------------------------------------------------

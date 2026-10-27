@@ -49,6 +49,39 @@ retrospective conditional label; actual counts and unused holdout
 provenance remain open. SM2 remains calibrated, not validated. SM4 is
 report-only. ED2 waits for starting education and a dated unused target.
 
+### Repository code inputs
+
+**[frozen metadata]** Each repository path also gives the local filename.
+The SHA-256 identifies that file's committed blob, independently of the
+working tree. Verification date means this fix's blob-hash check, not a
+source retrieval date. Section 7 separately hashes S0.1's generated
+script, tests and results; section 4.1 already inventories the external
+Microcosm code snapshot. Excluded data inputs remain content-closed.
+
+| Input | Repository path / local filename | Commit | SHA-256 | Verification date | Reliance |
+|---|---|---|---|---|---|
+| Group attribute construction | `src/populace_dynamics/cohorts/group_attributes.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `0dc93848a7b0b9e8a3e959aee47c08efe0fd2b4a848729a2e765492acdfbfdf0` | 2026-10-25 | Sections 1.2 and 8 code locators |
+| Cohort construction and input ledger | `src/populace_dynamics/cohorts/psid2010.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `bc8981e1a29973d63d32ed1331f70aeab60b7efec7ecaa4fba95dbe0f7cae357` | 2026-10-25 | Sections 1.1, 1.2 and 8 code locators |
+| Survey design identifiers | `src/populace_dynamics/cohorts/age67.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `b37d5346916891f5999e44a47f10f180e2d7cc25bfc4f656bc07bc40e9cfb09e` | 2026-10-25 | Section 1.1 survey-design locator |
+| Staged product paths | `src/populace_dynamics/data/psid.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `b0983390f84833f1b1436f60a066a829700f6149193aa712808b87d53867e29f` | 2026-10-25 | Sections 1.1 and 8 input-path locators |
+| Death reader | `src/populace_dynamics/data/deaths.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `b687cea94c61bcd9c526df631b905bb8376df09d1bcbac065679025f2791c1ec` | 2026-10-25 | Section 1.1 death-variable locator |
+| Life-table conventions | `src/populace_dynamics/data/life_table.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `ab9f23bd155734b219c36f2cade0d1eb926e364ef39b0b91179b9e5ccd5dff92` | 2026-10-25 | Repository evidence in section 7 |
+| Group report and documentation readers | `src/populace_dynamics/data/group_attributes_psid.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `d51339c481640913590681ee8d59dd41efcdddad20a3193d609190d9dcb8b30f` | 2026-10-25 | Sections 1.1 and 8 reader locators |
+| Family reader | `src/populace_dynamics/data/family.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `6908023ed654f73ffcaa7892b7be81ad9a714b678f341305478dc430d09491a2` | 2026-10-25 | Section 8 family-reader locators |
+| Disability reader | `src/populace_dynamics/data/disability.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `06e71bd4411dd6856f9a9406ebdaa83385a085c65fac67000f94a4e2815dc093` | 2026-10-25 | Section 8 disability-reader input ledger |
+| Marriage reader | `src/populace_dynamics/data/marriage.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `1d445d7d06b8cef966249d979962df1ed028541d427396627131a742a0562984` | 2026-10-25 | Section 8 marriage-reader locator |
+| Social Security readers | `src/populace_dynamics/data/social_security_income.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `c156b73396756aae1c79305f9459896f8b7ac37f4f48d017e68e386aedfbde8f` | 2026-10-25 | Section 8 report-wave locators |
+| TR baseline accessor | `src/populace_dynamics/data/tr2026.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `e55558964e4748212ad4ed9a4660ee36dd87b554ed5c6ac207f8d270e793af09` | 2026-10-25 | Sections 7 and 8 accessor/anchor-input locators; excluded inputs remain closed |
+| Baseline interface | `src/populace_dynamics/baselines/base.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `52e80c94c0206adcba0b0ff6e78ff1af5d9e12f49d33c76d14051caf29de6fd6` | 2026-10-25 | Section 7 baseline code evidence |
+| TR baseline implementation | `src/populace_dynamics/baselines/tr2026_intermediate.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `4e51de33042191b46f877b16350d8a6f341fdaa8a3fabd92f17cbcba084e8337` | 2026-10-25 | Section 1.1 baseline implementation locators |
+| Existing group codings | `src/populace_dynamics/estimates/group_breakdown.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `8b1821c264be68a00e8f867fb09790ecf52dd6658a129343f4f93171ec939f72` | 2026-10-25 | Section 2.3 crosswalk locators |
+| Mortality-floor builder | `scripts/build_mortality_floors.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `e25611c659a2155e595258e91d5c19022fce6cedc9ece193d0ce07904f547e07` | 2026-10-25 | Section 1.1 candidate exposure-convention locator |
+| Gate history | `gates.yaml` | `2195258c00e67e27dbc7946cc82975678e118f11` | `ea047125954b438f1f982c4c6ca419beeda418e9c24a11c9b40d5fd90f8e6a2d` | 2026-10-25 | Section 1.3 existing locator gates.yaml:5393–5410; blob hash only in this fix |
+| SM1 input specification | `src/populace_dynamics/mortality_ses/specification.py` | `0c226e3f58944a5e7a7219ef575bca6aca1928cb` | `6a698b2a134d106becc2b34b2c5ea9b050b804d202c870333265ddb15503f84f` | 2026-10-25 | Section 2.3 interface and coefficient-path contract |
+| SM1 model at cited commit | `src/populace_dynamics/mortality_ses/model.py` | `0c226e3f58944a5e7a7219ef575bca6aca1928cb` | `43e7057dd82e44bafc3ff8bc4321a926dc59ecfcef3b18821c0b01d76c7f1fa1` | 2026-10-25 | Section 2.3 implementing fixed-DI/model-composition locator |
+| SM1 model at current head | `src/populace_dynamics/mortality_ses/model.py` | `75df561e24382bc2bae32bdecfcad78a502caa87` | `32dfd76dcd8ef6fe237123c043657289178ca150f4ceede76a92afc3ed9e4cdd` | 2026-10-25 | Section 2.3 updated implementing locator |
+| Tier classification | `tests/conftest.py` | `2195258c00e67e27dbc7946cc82975678e118f11` | `6fc5457fdce99a945685844b1e622edd95e4a4765fdd27c8898a47b77564cce6` | 2026-10-25 | Section 7 named-path tier verification |
+
 ## 1. SM3: the mortality-gradient gate
 
 ### 1.1 Sources, population and estimand
@@ -255,7 +288,10 @@ individuals per row and whole-characteristic-subgroup suppression; its
 percentage numerators must be zero or at least 10. Repository capture
 `data/external/mint8_table_user_guide.source.html:518–523`, SHA-256
 `8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100`;
-public locator https://www.ssa.gov/policy/docs/projections/user-guide.html#sample-size. This audit proposes
+public locator https://www.ssa.gov/policy/docs/projections/user-guide.html#sample-size.
+**[open: original retrieval date]** The MINT guide original's retrieval
+date remains unestablished; the existing digest does not establish it.
+This fix did not open the excluded original to fill that field. This audit proposes
 at least 100 unweighted persons and at least 10 observed deaths for an
 SM3 published cell, whole dimension × sex × band suppression when a
 category fails, and complementary suppression preventing subtraction.
@@ -560,6 +596,9 @@ deployment population; its DI configuration determines fixed DI-origin
 rows, held at baseline q before the DI adapter. This agrees with excluding
 disabled-origin persons from the fitted earnings target in direction,
 but does not prove equality of the source and model's DI definitions.
+Implementing locator: `src/populace_dynamics/mortality_ses/model.py:114–149,179–208`
+at `0c226e3f`; the corresponding locator at SM1's current head `75df561e`
+is `:124–159,189–218`. Both committed files were checked by path in this fix.
 Register `unclassified_rule="reference"` **[proposed]** if an unclassified
 person must remain in SM3's overall expected-death denominator; `refuse`
 is SM1's default. Neither rule assigns that person a reported group cell.
@@ -1228,6 +1267,40 @@ marginal probabilities is reported only as an independence approximation.
 Bonferroni coverage and a lower bound on conjunction power are distinct
 calculations.
 
+**[frozen executable output] Threshold predicate and refusals.** The two
+threshold helpers, `min_effective_deaths_per_cell` (SM3) and
+`min_effective_n_per_cell` (ED2), define sufficiency by one predicate,
+evaluated in double precision. For integer count `n`, the planning SE is
+`sqrt(v/n)`, with `v` one minus the cell's share of cohort deaths for
+SM3 and `v = p(1−p)` for
+ED2, or `sqrt(p(1−p)(1/n + 1/n_target))` with a finite ED2 target. The
+count `n` is converted to the nearest double before each division. A
+count passes when the union bound above, over the family's `m` equal
+cells, is at least 0.90. Each reported threshold passes and one fewer
+fails; because the predicate is nondecreasing in the count (a property
+test checks this), it is the smallest count that passes. A probe that
+forms `1/n` from two integers rounds the exact quotient once instead,
+and can differ in the last place above `2^53`; such a probe does not
+define sufficiency. Reachability is decided by the same predicate at the
+largest supported count whose variance does not underflow (supported
+counts are those that convert to a finite double). So a count is
+reported whenever any supported count passes, including when rounding
+first lets one pass above `2^53`. Otherwise, for any argument values,
+the helper raises a named refusal:
+
+- `ThresholdInputError` for an argument outside its domain;
+- `UnreachableThreshold` when a finite target's variance alone fails the
+  predicate, so no count passes however large;
+- `UnrepresentableThreshold` when a finite tolerance or target size does
+  not fit in a double, a nonzero argument rounds to zero, the target's
+  reciprocal overflows or the Bonferroni critical value is not a finite
+  positive double, or when the predicate fails at the largest count
+  whose variance does not underflow and target noise does not explain
+  it.
+
+The helpers never return a null count. The ED2 grid records
+`UnreachableThreshold` as a null count with `WEAK_POWER_OR_VACUITY`.
+
 For SM3, the planning variance is
 `deff × (1/D_cell − 1/D_cohort)`. The cohort-wide denominator includes
 10% invented unclassified deaths. The equal classified cell shares are
@@ -1265,7 +1338,8 @@ death tally from a codebook or earlier run is used.
 
 Smallest integer **effective deaths per cell** for the conservative 0.90
 family-power guarantee under those assumptions (not exact minima for an
-unknown real covariance):
+unknown real covariance). Sufficiency is the threshold predicate of
+section 6.1:
 
 | Dimension | Cells | True error 0 | Absolute log error ≤.05 | 52-cell sensitivity, error 0 |
 |---|---:|---:|---:|---:|
@@ -1320,8 +1394,11 @@ assumption, not an assertion about ACS.
 For the primary 100-cell family with true share error .005, the sufficient
 model denominators rise to 36,922 with negligible target error, or
 58,534 with target effective n=100,000. Full rows are in the artifact.
+Each count is sufficient under the threshold predicate of section 6.1.
 A “no finite sufficient n” entry triggers `WEAK_POWER_OR_VACUITY` for
 this conservative procedure: target noise alone prevents its guarantee.
+The helper raises `UnreachableThreshold` for each such entry, because
+the predicate fails at the target's variance alone (section 6.1).
 It is not a sharp theorem about an unspecified target covariance.
 Actual frame/target effective sizes and shares were not measured. The
 100-cell source microdata, dated unused holdout, starting education,
@@ -1352,7 +1429,10 @@ The synthetic normal grid does not substitute for those checks.
 reproducibility, sample-size and equivalence-effect monotonicity, normal
 boundary pass rates, simultaneous coverage, shared-denominator/unclassified
 handling, the conservative threshold's minimality, survey-cluster
-refusals, Monte Carlo precision and malformed-input refusal. For continuous
+refusals, Monte Carlo precision and malformed-input refusal. They also
+check the threshold helpers' total contract: for any argument values, a
+sufficient, strictly minimal count or a named refusal, with refusals
+checked against brute force and an independent doubling search. For continuous
 normal estimates with known positive standard errors, the two-sided 95%
 rule has pass probability at most `.05/(2m)` at an individual equivalence
 boundary, approaching it in precise examples; family false admissions
@@ -1467,7 +1547,7 @@ could not be created. Branch `mgf-s0-1-source-audit-20261024` remains at
 five gate sections in SM3/SM2/SM4/ED1/ED2 order, then power/tests, then
 housekeeping, using the requested co-author footer.
 
-**Round-2 fix verification (2026-10-25).** The required initial
+**Historical round-2 fix verification (2026-10-25).** The required initial
 checksum check matched all seven deliverables. The complete named suite
 passed: 99 tests (`.venv/bin/python -m pytest -p no:cacheprovider
 tests/s0_1 -x -q`, 150.76 seconds). After refining the small-sample property
@@ -1475,14 +1555,14 @@ to allow a rare statistical failure while forbidding imprecise passes,
 its focused rerun passed: 1 passed, 14 deselected. The five serial
 `tests/s0_1 --collect-only -q -m <tier>` collections give 99 unit tests and
 zero in artifact, integration_psid, reproduction_legacy and
-oracle_policyengine. Current arithmetic is base unit 18,088 + 99 = 18,187
+oracle_policyengine. Round-2 arithmetic was base unit 18,088 + 99 = 18,187
 and base total 24,619 + 99 = 24,718; other tiers remain unchanged.
 Black's 79-column check and Ruff passed on all changed Python files.
 The current fix did not run full collection, the recount helper or the
 full-collection tier assertion. The preceding full-collection results
 are historical. All pytest commands used the empty data root.
 
-**Current power artifact (2026-10-25).** The calculation completed in
+**Historical round-2 power artifact calculation (2026-10-25).** The calculation completed in
 501.314 seconds using the script's command with its default seed and
 simulation count:
 
@@ -1509,13 +1589,110 @@ metadata/locator fix matched the archived manifest. The excluded CBO
 capture retains only its historical manifest pin. This job, clone and
 scratch remain exposed. Nothing was committed, pushed or posted.
 
-**Frozen numerical environment and final artifacts (2026-10-25).** Python 3.14.7, numpy 2.5.4, scipy 1.18.1, hypothesis 6.170.9, pytest 9.1.1. SHA-256:
+**Historical round-3 fix verification (2026-10-25).** The required initial HEAD,
+status and eight-file checksum checks passed. The threshold helpers then
+bracketed from zero, refused some unrepresentable thresholds by name and
+verified sufficiency with `family_power_lower_bound` while searching for
+the first sufficient integer. Review round 4 found that this refusal
+claim was broader than the behavior: a reachable finite target could
+still return a null count, and four numerical endpoints raised unnamed
+errors. The round-4 record below states the current behavior. Tests covered sufficiency, strict one-fewer minimality
+across tolerance/margin scales, finite-target limits, malformed inputs and
+named numerical refusals. The round-2 properties remain; ED2 generators
+also include nonzero bias. New properties preserve an observed failure
+through later estimable or unestimable cells and prohibit a pass from an
+unestimable cell. Both exception catches retain accumulated outcomes.
 
-- `scripts/s0_1_power.py`: `018017fdd8e6904fbdcb423d92415effee4e488ead3faae6334bca253f221f1f`.
+The nonsparse SM3 boundary check now tests diagnostic pass counts. The
+copied review mutation passed the original test and raises `AssertionError`
+at the repaired diagnostic assertion. Inferential boundary checks remain
+in the known-SE normal experiment. All 115 named tests passed with the
+empty data root and fixed Hypothesis seed. Five serial, named-path tier
+collections give 115 unit and zero in each other tier. Arithmetic is base
+unit 18,088 + 115 = 18,203 and base total 24,619 + 115 = 24,734. Black at
+79 columns, Ruff and the diff whitespace check passed. Full collection,
+the recount helper and the full-collection tier assertion were not run.
+
+The script's default calculation completed in 1,487.840 seconds under a
+3,600-second deadline:
+
+```sh
+.venv/bin/python scripts/s0_1_power.py --no-anchors --out .fix-scratch/r3/results-no-anchors.json
+```
+
+The threshold helpers feed the analytic planning and validation counts,
+so a rerun was required. All 15 non-anchor fields reproduce exactly;
+the results JSON remains unchanged, including its byte-identical
+`tr2026_band_q` section. The guarded anchor branch was not executed.
+No excluded anchor input was opened or freshly verified. The read ledger
+is `.fix-scratch/reads-r3.md`; commands, deadlines, reproductions and logs
+remain in `.fix-scratch/r3/`. This job, clone and scratch remain exposed.
+Nothing was committed, pushed or posted.
+
+**Round-4 fix verification (2026-10-26).** The required initial HEAD,
+eight-line status and nine-file checksum checks passed, and the four
+restriction files matched their stated hashes. Review round 4 found
+that a reachable finite-target threshold could return a null count and
+that four numerical endpoints escaped the named refusals. The helpers
+now validate every argument at entry, return one when one observation
+suffices, require a finite positive critical value, and decide
+reachability with the predicate itself (section 6.1). The round-3 seed
+and bisection remain, so every count round 3 returned is unchanged. A
+copy of the round-3 script, rebuilt to its recorded digest, returned a
+count on 2,536 of 3,000 seeded invented draws, and the fixed helpers
+returned the same count on all of them. Its 464 null counts became
+`UnreachableThreshold`, each confirmed by the predicate failing at the
+largest supported count. The equal-cell union bound is now computed in
+closed form, bit-identical to `family_power_lower_bound` for families
+below `2^53` cells, so large families build no lists.
+
+Example tests pin the review's finite-target witness, the floats on
+each side of it and the first unreachable float below it, for tolerance
+1 and the default ED2 tolerance. They also pin one observation at
+tolerance `1e155`, a critical value that rounds to zero, a family size
+beyond the double range, an underflowing SE, and deaths thresholds where
+variances underflow near the top of the double range. At the SM3
+near-boundary gap, the helper's predicate passes at the returned count
+and fails one below. The archived probe's integer reciprocal differs
+from the helper's there, and that difference is the only reason it
+prints a value just below 0.90. Hypothesis properties check totality on
+arbitrary and near-domain arguments, sufficiency, strict minimality, a
+nondecreasing predicate, and the closed form against the list union
+bound. They check reachability against brute force, which enumerates
+every count where the predicate can still change, and against an
+independent doubling search. The round-2 and round-3 properties remain,
+including failure preservation and no pass from inestimability.
+
+All 160 named tests passed with the empty data root and fixed Hypothesis
+seed. Five serial, named-path tier collections give 160 unit and zero in
+each other tier. Arithmetic is base unit 18,088 + 160 = 18,248 and base
+total 24,619 + 160 = 24,779. Black at 79 columns, Ruff and the diff
+whitespace check passed. Full collection, the recount helper and the
+full-collection tier assertion were not run.
+
+The script's default calculation completed in 146.925 seconds on the
+final script, under a 570-second deadline that keeps it inside the
+tool's 600-second foreground limit:
+
+```sh
+.venv/bin/python scripts/s0_1_power.py --no-anchors --out .fix-scratch/r4/results-no-anchors.json
+```
+
+All 15 non-anchor fields reproduce exactly. The results JSON remains
+byte-identical, including its `tr2026_band_q` section. The guarded
+anchor branch was not executed. The read ledger is
+`.fix-scratch/reads-r4.md`; commands, reproductions and logs remain in
+`.fix-scratch/r4/`. This job, clone and scratch remain exposed. Nothing
+was committed, pushed or posted.
+
+**Frozen numerical environment and final artifacts (2026-10-26).** Python 3.14.7, numpy 2.5.4, scipy 1.18.1, hypothesis 6.170.9, pytest 9.1.1. SHA-256:
+
+- `scripts/s0_1_power.py`: `c891a1f8391edb593f0d86f6ac9c333e053854347179da5dbafc301b0000679e`.
 - `tests/s0_1/__init__.py`: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
-- `tests/s0_1/test_s0_1_power.py`: `0b8ec8ba6a54b62b799ac160d5ac080df78600e8a1a42a9708bad254074e99d3`.
-- `tests/s0_1/test_s0_1_invariants.py`: `76b55b98888daf3664fb8297a8ad44cd2bc6e099146cfbd172b1e410cbf37003`.
+- `tests/s0_1/test_s0_1_power.py`: `5dd760b23f3b666f24f366adf8b19bb503840e7cd3e430c5a6bc11f2c47b541c`.
+- `tests/s0_1/test_s0_1_invariants.py`: `1b5b299c5b8128de4ef0714682a09294c2b7632e45dd5c43add7d2469ed443bf`.
 - `docs/design/s0_1_power_results.json`: `58569c9667c1c1af0e5d5a2fcc0d0e4cd1ed8002fb44d5fe01370f60f1ac74f3`.
+- `tests/s0_1/test_s0_1_thresholds.py`: `96605dda9895bdd0951174a2f8b8bdb1fd411045ca53fc7b5c3165f5d3c3104c`.
 
 **Artifact metadata.** Section 1.3 records the mortality and m6 files.
 Two further previously cited artifacts were checked by digest, addition
