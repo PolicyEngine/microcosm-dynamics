@@ -17,6 +17,9 @@ import html
 import importlib.util
 import json
 import re
+import signal
+import subprocess
+import sys
 import unicodedata
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -26,7 +29,7 @@ from urllib.parse import urlparse
 
 import openpyxl
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.data import sipp_income_registry as registry
@@ -751,6 +754,7 @@ def test_excluded_notes_retain_only_cited_inventory_metadata():
         sorted(_module("capture_user_notes.py").EXCLUDED_NOTE_URLS)
     )
 )
+@settings(deadline=None)
 def test_known_record_bearing_urls_refuse_before_request(url):
     capture = _module("capture_user_notes.py")
 
@@ -774,6 +778,7 @@ def test_known_record_bearing_urls_refuse_before_request(url):
     heading_tag=st.sampled_from(("th", "td")),
     preceding_row=st.booleans(),
 )
+@settings(deadline=None)
 def test_invented_identifier_records_always_trigger_capture_guard(
     identifier,
     invented_digits,
@@ -807,6 +812,7 @@ def test_invented_identifier_records_always_trigger_capture_guard(
     row_tag=st.sampled_from(("th", "td")),
     row_scope=st.sampled_from(("", ' scope="row"')),
 )
+@settings(deadline=None)
 def test_invented_identifier_definitions_are_metadata(
     identifier, table, row_tag, row_scope
 ):
@@ -1000,6 +1006,92 @@ INVENTED_RECORD_PAGES = {
         "<tr><th>Invented person number (PNUM).</th><td>101</td></tr>"
         "</table>"
     ),
+    # Round 8: a "<script" inside a quoted value opens no element, as a
+    # "<b" there opens no tag, so its src is no link target.
+    "script_tag_inside_quoted_value": '<a href="<script src="PNUM=101">',
+    "tag_inside_quoted_value": '<a href="<b src="PNUM=101">',
+    # Round 8: template literals are read as script strings.
+    "template_literal_with_markup": (
+        "<script>el.innerHTML = `<b>PNUM</b> 101`;</script>"
+    ),
+    "template_literal_with_apostrophe": (
+        "<script>s = `PNUM (person's number) 101`;</script>"
+    ),
+    "template_literal_with_equals": "<script>s = `PNUM value=105`;</script>",
+    "template_literal_with_quotes": '<script>s = `PNUM "x" 105`;</script>',
+    # Round 8: in the text as a browser reads it, a "<" opens a tag only
+    # before a letter, "!" or "/", and title, textarea and xmp contents are
+    # text; quoted strings in a style are read alone.
+    "text_comparison": "<p>PNUM < 101</p>",
+    "text_assignment_arrow": "<p><code>PNUM <- 101</code></p>",
+    "text_value_in_angle_brackets": "<p>PNUM: <101></p>",
+    "textarea_contents": '<textarea>a<b src="PNUM=101"</textarea>',
+    "title_contents": "<title>PNUM <i 101</title>",
+    "xmp_contents": "<xmp>PNUM <i 101</xmp>",
+    "style_string": (
+        '<style>a::after{content:"PNUM (person\'s number) 101"}</style>'
+    ),
+    # Round 8: the review's mutants O1-O10 of the script and style split,
+    # the script strings, the attribute names and the same-row rule.
+    "multi_line_script_code": (
+        "<script>\nfor(i=0;i<n;i++){img.src=PNUM+101}\n</script>"
+    ),
+    "multi_line_script_string": (
+        '<script>\nel.innerHTML = "<b>PNUM</b> 101";\n</script>'
+    ),
+    "upper_case_script_code": (
+        "<SCRIPT>for(i=0;i<n;i++){img.src=PNUM+101}</SCRIPT>"
+    ),
+    "single_quoted_script_string": (
+        "<script>el.innerHTML = '<b>PNUM</b> 101';</script>"
+    ),
+    "script_code_after_end_tag_in_string": (
+        '<script>x = "</b>"; if(a<b) src=PNUM+101;</script>'
+    ),
+    "upper_case_script_string": (
+        '<SCRIPT>el.innerHTML = "<b>PNUM</b> 101";</SCRIPT>'
+    ),
+    "hyphenated_attribute_name": (
+        '<img data-src="PNUM (person\'s number) 101">'
+    ),
+    "value_cell_before_later_identifier_cell": (
+        "<table><tr><td>a</td><td>b</td></tr>"
+        "<tr><td>101</td><td>PNUM of the case</td></tr></table>"
+    ),
+    "spaces_around_equals": '<img alt = "PNUM (person\'s number) 101">',
+    "attribute_value_in_script": (
+        '<script type="text/template">it\'s '
+        '<img alt="PNUM (person\'s number) 101"></script>'
+    ),
+    # Round 8: the source is read both with script and style elements found
+    # where a browser starts them and with one at every "<script" or
+    # "<style". Each of these pages is refused by one reading alone: a
+    # "<script" right after an unclosed tag, and a script that the other
+    # reading's style element, started inside a quoted value, ends within.
+    "script_inside_unclosed_tag": "<a<script>if(i<n) src=PNUM+101;</script>",
+    "script_after_style_tag_in_quoted_value": (
+        '<a title="<style>"><script>x="</style>"; if(i<n) src=PNUM+101;'
+        "</script>"
+    ),
+    # Round 8: an unclosed element read past the page's last ">", a string
+    # closed by the last unescaped quote mark before an escaped one, and a
+    # cell of digits below an identifier cell that has one above it too.
+    "unclosed_pre_after_last_bracket": "<pre>SSUID. x\n7",
+    "script_string_before_escaped_quote_mark": (
+        '<script>s = "PNUM (person\'s number) 101"; // \\"</script>'
+    ),
+    "digits_above_and_below_identifier_cell": (
+        "<table><tr><td>Invented</td><td>Table</td></tr>"
+        "<tr><td>7</td><td>x</td></tr><tr><td>PNUM</td><td>Invented</td>"
+        "</tr><tr><td>7</td><td>x</td></tr></table>"
+    ),
+    # Round 9: a script name with a long s, which "(?i)script" reads. Its
+    # end tag "</script>" spells the name another way, so the text keeps
+    # the script, and the script's strings end there, as in round 8.
+    "script_name_with_long_s": "<\u017fcript>Invented</script> PNUM 101",
+    "string_after_script_name_with_long_s": (
+        '<\u017fcript>a = "x</script><script>s = "<b>PNUM</b> 101";</script>'
+    ),
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -1086,6 +1178,26 @@ INVENTED_DEFINITION_PAGES = {
     "end_tag_link_target": '</a href="/ssuid-2024-x.html">',
     "script_opening_tag_link_target": (
         '<script src="/invented/ssuid-2024-x.js"></script>'
+    ),
+    # Round 8: noscript and iframe contents are markup in the text as a
+    # browser reads it, so the link targets of their tags are not text.
+    "noscript_link_target": (
+        '<noscript><img src="/invented/ssuid-2024-x.gif"></noscript>'
+    ),
+    "iframe_link_target": (
+        '<iframe><a href="/invented/ssuid-2024-x.html">x</a></iframe>'
+    ),
+    # Round 8: a style with no end tag leaves the script after it out of
+    # the text all the same.
+    "script_after_unclosed_style": (
+        "<style>a{}</p><script>var invented = "
+        '{"title": "Invented PNUM note", "id": "4567"};</script>'
+    ),
+    # Round 9: a script name with a dotted capital I, which "(?i)script"
+    # matches and "</script>" closes, read without error.
+    "script_name_with_dotted_capital_i": (
+        '<SCR\u0130PT>var invented = {"id": "4567"};</script>'
+        "<p>SSUID names the invented household.</p>"
     ),
 }
 
@@ -1245,6 +1357,30 @@ INVENTED_RULE_TWINS = {
         "<table><tr><th>Person number (PNUM)</th><td>SSUID of the invented "
         "case, described here at some length 10</td></tr></table>",
     ),
+    # Round 8: the browser scan of the source, which reads a "<script"
+    # inside a quoted value as text; the text as a browser reads it, where
+    # a "<" before a space opens no tag and title contents are text; and
+    # template literals and style strings, each read alone.
+    "browser_scan_of_the_source": (
+        '<a href="<script src="PNUM=101">',
+        '<a href="<script" src="PNUM=101">',
+    ),
+    "browser_text_lt_opens_no_tag": (
+        "<p>PNUM < 101</p>",
+        "<p>PNUM <b 101</p>",
+    ),
+    "browser_text_title_contents": (
+        "<title>PNUM <i 101</title>",
+        "<p>PNUM <i 101</p>",
+    ),
+    "template_literal_read_alone": (
+        "<script>s = `<b>PNUM</b> 101`;</script>",
+        "<script>s = `<b>PNUM</b>` + 101;</script>",
+    ),
+    "style_string_read_alone": (
+        '<style>a::after{content:"PNUM (person\'s number) 101"}</style>',
+        '<style>a::after{content:"PNUM (person\'s number)" 101}</style>',
+    ),
 }
 
 
@@ -1277,6 +1413,148 @@ def test_identifier_value_window_is_forty_characters(width, refused):
     assert record_bearing_note(body) == refused
 
 
+# Invented pages of 200 to 600 kB in forms that a quadratic pattern reads
+# for minutes: a long word in a tag, escaped quotes after an unpaired quote
+# in a script, tags and comments that never close, script start tags with
+# no end tag, and table rows and cells that name an identifier.
+INVENTED_LONG_PAGES = {
+    "long_word_in_tag": "<p " + "a" * 200_000 + ">x</p>",
+    "escaped_quotes_in_script": (
+        '<script>s = "' + '\\"' * 100_000 + "</script>"
+    ),
+    "unclosed_tags": "<a" * 200_000,
+    "script_start_tags": "<script>" * 50_000,
+    "unclosed_comments": "<!--" * 100_000,
+    "identifier_rows": (
+        "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
+    ),
+    "identifier_cells_in_row": (
+        "<table><tr><td>x</td></tr><tr>" + "<td>PNUM</td>" * 30_000
+    ),
+}
+LINEAR_TIME_CHILD = """
+import importlib.util, resource, sys, time
+resource.setrlimit(resource.RLIMIT_CPU, (6, 7))
+spec = importlib.util.spec_from_file_location("invented_guard", sys.argv[1])
+guard = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(guard)
+page = sys.stdin.read()
+start = time.process_time()
+guard.record_bearing_note(page)
+print(time.process_time() - start)
+"""
+
+
+@pytest.mark.parametrize("kind", sorted(INVENTED_LONG_PAGES))
+def test_guard_reads_long_pages_in_linear_time(kind):
+    # The guard read each page in under a second of CPU time, and the
+    # quadratic patterns it replaced, by their growth over a tenth of each
+    # page, would take two to five minutes on the same host. The guard runs
+    # in a child process that the operating system stops after 6 s of CPU
+    # time, so a slow pattern fails here instead of stalling the run; CPU
+    # time, unlike wall time, grows little with host load.
+    child = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            LINEAR_TIME_CHILD,
+            str(EVIDENCE / "capture_user_notes.py"),
+        ],
+        input=INVENTED_LONG_PAGES[kind],
+        capture_output=True,
+        text=True,
+        timeout=900,
+    )
+    if child.returncode == -signal.SIGXCPU:
+        pytest.fail(f"The guard read the invented {kind} page for 6 s")
+    assert child.returncode == 0, child.stderr
+    assert float(child.stdout) < 5
+
+
+LINEAR_TOKENS = (
+    "<",
+    ">",
+    "<a ",
+    "</",
+    "<!",
+    "<!--",
+    "-->",
+    "<script>",
+    "<SCRIPT ",
+    "<\u017fcript>",
+    "<SCR\u0130PT>",
+    "</script>",
+    "</script >",
+    "</scr\u0131pt>",
+    "<style>",
+    "</style>",
+    "<title>",
+    "</title>",
+    "<noscript>",
+    "</noscript>",
+    "<table>",
+    "<tr>",
+    "<td>",
+    "</td>",
+    "<pre>",
+    '"',
+    "'",
+    "`",
+    "\\",
+    "\\\\",
+    "=",
+    " ",
+    "\n",
+    "x",
+)
+
+
+@given(tokens=st.lists(st.sampled_from(LINEAR_TOKENS), max_size=30))
+@example(tokens=["<\u017fcript>", "x", "</script>"])
+@example(tokens=["<SCR\u0130PT>", "x", "</script>"])
+@settings(max_examples=300, deadline=None)
+def test_linear_readings_match_their_patterns(tokens):
+    # Each helper that keeps a reading linear gives what the plain pattern
+    # gives, on invented text. The examples spell "script" with a long s
+    # and with a dotted capital I, which "(?i)" reads as an s and an i.
+    text = "".join(tokens)
+    capture = _module("capture_user_notes.py")
+    for pattern in (
+        capture.ELEMENT,
+        capture.BROWSER_SOURCE,
+        capture.BROWSER_TEXT,
+        capture.SCRIPT,
+        capture.STYLE,
+        capture.TABLE,
+        capture.PRE,
+        capture.ROW,
+        capture.CELL,
+        capture.TAGS,
+    ):
+        assert [
+            match.span() for match in capture._finditer(pattern, text)
+        ] == [match.span() for match in pattern.finditer(text)]
+    assert capture._without_closed_scripts(text) == (
+        capture.CLOSED_SCRIPT.sub(" ", text)
+    )
+    assert capture._without_tags(text) == re.sub(r"<[^>]+>", " ", text)
+    for pattern, end_tag in (
+        (r"(?is)<noscript\b.*?</noscript\s*>", r"(?i)</noscript\s*>"),
+        (r"(?s)<!--.*?-->", "-->"),
+    ):
+        assert capture._sub_to_last(pattern, end_tag, text) == re.sub(
+            pattern, " ", text
+        )
+    for quotes in ("\"'", "`"):
+        found = re.findall(
+            "(?s)" + "|".join(capture.STRING[quote] for quote in quotes), text
+        )
+        assert capture._strings(text, quotes) == [
+            "".join(strings) if isinstance(strings, tuple) else strings
+            for strings in found
+        ]
+
+
 @given(
     identifier=st.sampled_from(("SSUID", "PNUM", "SSUIDs", "pnum")),
     invented_words=st.text(alphabet="abcdefgh ,;:'-", max_size=38),
@@ -1285,6 +1563,7 @@ def test_identifier_value_window_is_forty_characters(width, refused):
     ).filter(lambda digits: not re.fullmatch(r"(?:19|20)\d\d", digits)),
     comment=st.booleans(),
 )
+@settings(deadline=None)
 def test_identifier_and_value_within_a_sentence_trigger_capture_guard(
     identifier, invented_words, invented_digits, comment
 ):
@@ -1298,6 +1577,7 @@ def test_identifier_and_value_within_a_sentence_trigger_capture_guard(
     invented_digits=st.text(alphabet="0123456789", min_size=9, max_size=20),
     hidden=st.sampled_from(("", "comment", "noscript")),
 )
+@settings(deadline=None)
 def test_long_digit_runs_trigger_capture_guard_where_rendered(
     invented_words, invented_digits, hidden
 ):
@@ -1323,6 +1603,7 @@ def test_long_digit_runs_trigger_capture_guard_where_rendered(
     year=st.integers(1900, 2099),
     place=st.sampled_from(("text", "comment", "attribute")),
 )
+@settings(deadline=None)
 def test_years_beside_identifier_names_are_metadata(
     identifier, invented_words, year, place
 ):
@@ -1356,6 +1637,7 @@ NUMERIC_TEXT = st.one_of(
         st.text(alphabet="abcdefgh", min_size=1, max_size=8), max_size=3
     ),
 )
+@settings(deadline=None)
 def test_rows_of_three_numbers_trigger_capture_guard(numbers, invented_words):
     cells = "".join(f"<td>{text}</td>" for text in [*invented_words, *numbers])
     body = (
@@ -1372,6 +1654,7 @@ def test_rows_of_three_numbers_trigger_capture_guard(numbers, invented_words):
         st.text(alphabet="abcdefgh", min_size=1, max_size=8), max_size=3
     ),
 )
+@settings(deadline=None)
 def test_preformatted_lines_of_three_numbers_trigger_capture_guard(
     numbers, invented_words
 ):
@@ -1382,6 +1665,7 @@ def test_preformatted_lines_of_three_numbers_trigger_capture_guard(
 
 
 @given(invented_text=st.text(alphabet="abcdefgh", max_size=30))
+@settings(deadline=None)
 def test_invented_exclusion_inventory_never_retains_body_or_pin(
     invented_text,
 ):

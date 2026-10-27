@@ -49,33 +49,79 @@ to store any new page that holds a case record in any of the forms
 - a preformatted block with an identifier and a digit.
 
 The two rules that follow an identifier name read three things, all with
-entities decoded: the visible text with HTML comments; the page source with
-its tags, attributes and scripts; and each quoted attribute value other
-than href and src, and each quoted string in a script, one at a time. In
-the text and comments a tag counts as a space. In the source, the 40
-characters also hold no angle bracket, quote or equals sign, and href and
-src values, whose slugs name identifiers without values, are removed from
-every tag outside scripts and styles and from their opening tags. A tag
-opens with a letter, `!` or `/`. Script and style contents, up to their end
-tag or the end of the page, are read as they stand, so no `<` in script
-code hides a `src` assignment. The table and preformatted rules read each
+entities decoded:
+
+- the visible text with HTML comments, read twice, each time with a tag
+  counted as a space: once with every span from a `<` to the next `>` taken
+  for a tag and each script or style element that an end tag closes left
+  out, and once as a browser reads it, where a tag opens only with a
+  letter, `!` or `/`, script and style contents are left out, and title,
+  textarea and xmp contents are text, up to their end tag or the end of the
+  page;
+- the page source with its tags, attributes and scripts, where the 40
+  characters also hold no angle bracket, quote or equals sign. href and src
+  values, whose slugs name identifiers without values, are removed first
+  from every tag outside scripts and styles and from their opening tags.
+  Script and style contents, up to their end tag or the end of the page,
+  are read as they stand, so no `<` in script code hides a `src`
+  assignment. The source is read twice: once with those elements found
+  where a browser starts them, in one scan from the start of the page, so
+  that a `<script` inside a quoted value opens none, and once with one
+  starting at every `<script` or `<style`, even inside another tag;
+- one at a time, each quoted attribute value other than href and src; each
+  double- or single-quoted string in a script, as a scan from the script's
+  start finds them, even one that an escaped quote mark opens; each
+  template literal in a script; and each quoted string in a style, all
+  read past their backslash escapes.
+
+The text and the source are each read both ways because the browser's
+way, alone, would admit some pages that the first way refuses. A tag opens
+with a letter, `!` or `/`. The table and preformatted rules read each
 cell's or block's text without its tags; the row-header exemption also
 reads a header cell's `scope` attribute. The nine-digit rule skips comments
-and noscript blocks, whose tracking numbers are not page content.
+and noscript blocks, whose tracking numbers are not page content. Each
+reading takes time linear in the page's length. The forms found to take
+quadratic time before (a long word in a tag, escaped quotes after an
+unpaired quote in a script, unclosed tags and comments, script start tags
+with no end tag, and table rows and cells that name an identifier) are
+timed by a test on invented pages of 200 to 600 kB.
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
 name and its value in different attribute values or script strings, or one
-of them in a string and the other in script code; a script string after an
-unpaired quote mark, as in a comment such as `// it's`; an identifier
-compared with a value in script code, as in `PNUM < 101`; an attribute
-value that holds a raw `>`, which ends its tag; a value in an href or src
-value, unless it is a run of 14 or more digits; and a cell outside a
-table's first row and header cells that names an identifier after other
-words. The table rules in turn refuse some definition and index tables that
-name an identifier in a heading cell with digits below it, or beside a run
-of three or more digits that is not a year in its row; such a page stops
-the capture loudly.
+of them in a string and the other in script code; a script string after a
+lone quote mark in a comment, a regular expression or a template literal,
+which the scan of double- and single-quoted strings takes to open one, as
+in a comment such as `// it's`; an identifier and its value split by a
+tag, quote or equals sign in script or style code outside a quoted string,
+as in a comparison `PNUM < 101` or markup in a `text/template` script, or
+in an unquoted attribute value, as in `alt=PNUM's-101`; a value inside a
+tag after an identifier in the text, as in `PNUM <i 101`; a quoted
+attribute value in an end tag or a `<!` declaration, or after a name with
+marks other than `_ : . -`, as in `[alt]`; an attribute value that holds a
+raw `>`, which ends its tag; a value in an href or src value, unless it is
+a run of 14 or more digits; and a cell outside a table's first row and
+header cells that names an identifier after other words.
+
+The rules in turn refuse some pages that hold no case record, and such a
+page stops the capture loudly:
+
+- definition and index tables that name an identifier in a heading cell
+  with digits below it, or beside a run of three or more digits that is not
+  a year in its row, as in a definition row whose description reads
+  `SSUID. Values start at 101.` or an index row `SSUIDs. See 112 notes.`;
+- a quoted value that names an identifier before a count across an
+  apostrophe or decoded markup, as in a page summary `The SSUID's format in
+  the 2018 panel, as 112 notes say`;
+- a link slug such as `ssuid-2024` in a script string or a `text/template`
+  script, or in an `xlink:href`, `:href` or `img.src` value: the source
+  reading removes those values as link targets, but the quoted-value
+  reading skips only values named href or src;
+- a definition that prints a comparison such as `PNUM < 101` in the
+  visible text.
+
+A decimal character reference of more than 4,300 digits makes Python's
+`html.unescape` raise, which stops the capture too.
 
 Excluded notes remain attached to relevant registry entries by URL and
 title only.
