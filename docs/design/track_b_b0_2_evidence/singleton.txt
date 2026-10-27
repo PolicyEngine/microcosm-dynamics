@@ -1,9 +1,10 @@
 Which published sets pin the target that withholds B0.2's release on an
 invented panel (INVENTED DATA ONLY; no PSID file read).
 Script: docs/design/track_b_b0_2_evidence/singleton.py (SHA-256 06623013...),
-loading scripts/track_b_b0_2_counts.py (7ec6ee28...) as committed at e79f41b5;
-neither has changed since. Run 2026-10-26 from a clean clone at e79f41b5, one
-job at a time on a shared host, each at nice 10 on one core, with
+loading scripts/track_b_b0_2_counts.py (7ec6ee28...) as committed at e79f41b5.
+singleton.py has not changed since; the count script has, at 6cca06af (the
+exemption) and 1ed6a266 (its pin). Run 2026-10-26 from a clean clone at
+e79f41b5, one job at a time on a shared host, each at nice 10 on one core, with
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:. Each program's limit is 300 s.
 The first line of each run prints both scripts' SHA-256.

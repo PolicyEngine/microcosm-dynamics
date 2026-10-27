@@ -1,7 +1,8 @@
 B0.2 disclosure audit on invented panels (INVENTED DATA ONLY; no PSID file read).
 Script: docs/design/track_b_b0_2_evidence/calibrate.py (SHA-256 c714f0d8...),
 loading scripts/track_b_b0_2_counts.py (7ec6ee28...) and invented_panel.py
-(38c17076...), each with the bytes committed at e79f41b5; none has changed since.
+(38c17076...), each with the bytes committed at e79f41b5. Of the three, only the
+count script has changed since; the runs at 6cca06af, at the end, use its new bytes.
 Run 2026-10-26 from a clean clone at e79f41b5, one job at a time on a shared host,
 each job at nice 10 on one core, with OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:. The one-minute
@@ -90,4 +91,103 @@ households=3000 seed=2 persons/wave~5108 sets=588 b0_1_sets=0 rows=456 atoms={'c
   seed program 19.8s point=True
 B=10 status=released rounds=[0] results={'wide': 3112} proofs={'search': 84, 'pool': 3028} pool=93 narrow_sensitive=0 audit=667.8s
   slowest targets: [(19.8, 'atom', 1, 'wide', 'search'), (14.6, 'atom', 1, 'wide', 'search'), (14.4, 'atom', 2, 'wide', 'search'), (13.0, 'atom', 2, 'wide', 'search'), (12.8, 'atom', 2, 'wide', 'search')]
+  narrow sensitive (kind, unit, size, earlier): []
+
+At 6cca06af, after the exemption (the coordinator's ruling of 2026-10-26).
+calibrate.py and invented_panel.py are the bytes above; the count script is
+8cee1ecf... At 1ed6a266 the count script is 647b52fd..., which differs from
+6cca06af's only in the protocol SHA-256 it checks, so its audit is the same.
+Run 2026-10-26 and 2026-10-27 from clean clones, under the settings above, with
+B0.1's sets registered. The one-minute load average was 13 to 81 when each job
+started.
+
+$ python docs/design/track_b_b0_2_evidence/calibrate.py 800 1
+households=800 seed=1 persons/wave~1341 sets=588 b0_1_sets=71 rows=512 atoms={'clusters': 156, 'households_1999': 5, 'households_2001': 6, 'households_2003': 6, 'households_2005': 6, 'households_2007': 61, 'households_2009': 5, 'households_2011': 119, 'households_2013': 10, 'households_2015': 10, 'households_2017': 6, 'households_2019': 5, 'households_2021': 6, 'households_2023': 6, 'persons': 685, 'strata': 80} targets=3081 sensitive=939 build=0.9s
+  seed program 9.3s point=True
+  seed program 3.9s point=True
+  seed program 7.0s point=True
+  seed program 3.7s point=True
+  seed program 9.8s point=True
+  seed program 9.4s point=True
+  seed program 4.5s point=True
+  seed program 4.5s point=True
+  seed program 3.9s point=True
+B=10 status=released rounds=[0] results={'wide': 3063, 'exempt': 5, 'irrelevant': 13} proofs={'pool': 2999, 'search': 64, 'optima': 5, None: 13} pool=73 narrow_sensitive=0 audit=473.6s
+  slowest targets: [(18.6, 'atom', 1, 'narrow', 'optima'), (9.5, 'atom', 3, 'wide', 'search'), (9.3, 'atom', 1, 'wide', 'search'), (9.1, 'atom', 1, 'narrow', 'optima'), (8.9, 'atom', 1, 'wide', 'search')]
+  narrow sensitive (kind, unit, size, earlier): []
+
+$ python docs/design/track_b_b0_2_evidence/calibrate.py 3000 2
+households=3000 seed=2 persons/wave~5108 sets=588 b0_1_sets=71 rows=506 atoms={'clusters': 160, 'households_1999': 6, 'households_2001': 6, 'households_2003': 6, 'households_2005': 6, 'households_2007': 88, 'households_2009': 6, 'households_2011': 197, 'households_2013': 10, 'households_2015': 10, 'households_2017': 6, 'households_2019': 6, 'households_2021': 6, 'households_2023': 6, 'persons': 1747, 'strata': 80} targets=3228 sensitive=1446 build=1.4s
+  seed program 20.6s point=True
+  seed program 14.5s point=True
+  seed program 7.4s point=True
+  seed program 20.4s point=True
+  seed program 22.0s point=True
+  seed program 7.9s point=True
+  seed program 4.4s point=True
+  seed program 11.5s point=True
+  seed program 22.4s point=True
+B=10 status=released rounds=[0] results={'wide': 3215, 'exempt': 4, 'irrelevant': 9} proofs={'search': 101, 'pool': 3114, 'optima': 4, None: 9} pool=110 narrow_sensitive=0 audit=1596.3s
+  slowest targets: [(71.3, 'atom', 2, 'wide', 'search'), (43.8, 'atom', 1, 'narrow', 'optima'), (30.2, 'atom', 1, 'wide', 'search'), (26.7, 'atom', 1, 'wide', 'search'), (26.7, 'atom', 1, 'narrow', 'optima')]
+  narrow sensitive (kind, unit, size, earlier): []
+
+$ python docs/design/track_b_b0_2_evidence/calibrate.py 9000 3
+households=9000 seed=3 persons/wave~15348 sets=588 b0_1_sets=71 rows=482 atoms={'clusters': 160, 'households_1999': 6, 'households_2001': 6, 'households_2003': 6, 'households_2005': 6, 'households_2007': 123, 'households_2009': 6, 'households_2011': 272, 'households_2013': 11, 'households_2015': 11, 'households_2017': 6, 'households_2019': 6, 'households_2021': 6, 'households_2023': 6, 'persons': 3795, 'strata': 77} targets=3838 sensitive=2245 build=3.6s
+  seed program 10.0s point=True
+  seed program 8.4s point=True
+  seed program 10.1s point=True
+  seed program 12.2s point=True
+  seed program 23.9s point=True
+  seed program 8.8s point=True
+  seed program 12.8s point=True
+  seed program 14.3s point=True
+  seed program 18.8s point=True
+B=10 status=withheld rounds=[0] results={'wide': 2533, 'narrow': 1, 'unreached': 1304} proofs={'pool': 2338, 'search': 195, 'undetermined': 1, None: 1304} pool=204 narrow_sensitive=1 audit=3270.2s
+  slowest targets: [(357.6, 'atom', 1, 'narrow', 'undetermined'), (45.0, 'atom', 1, 'wide', 'search'), (41.9, 'atom', 7, 'wide', 'search'), (41.5, 'atom', 1, 'wide', 'search'), (39.3, 'atom', 1, 'wide', 'search')]
+  narrow sensitive (kind, unit, size, earlier): [('atom', 'strata', 1, False)]
+
+The host slept during this run. Its power log (pmset -g log) shows the lid
+closed at 23:49:16Z, then maintenance sleeps and dark wakes, and a wake on
+opening the lid at 00:06:22Z. The run ended at 00:06:24Z. The program running
+across the sleep reached no proof within its 300 s of wall clock (357.6 s for
+the target), so the target withheld. calibrate.py holds no sleep assertion.
+The count script's main() holds two and checks AC power, and the protocol has
+the operator keep the lid open, which the script does not check.
+
+The same panel was run again at both heads, one after the other, with the host
+awake throughout (no sleep in its power log) and the load average sampled every
+30 s. Both release with the same decisions as the run at e79f41b5 above.
+
+At 6cca06af; one-minute load 20.6 to 188.0, median 98.9;
+five-minute load 54.4 to 163.7, median 105.4:
+$ python docs/design/track_b_b0_2_evidence/calibrate.py 9000 3
+households=9000 seed=3 persons/wave~15348 sets=588 b0_1_sets=71 rows=482 atoms={'clusters': 160, 'households_1999': 6, 'households_2001': 6, 'households_2003': 6, 'households_2005': 6, 'households_2007': 123, 'households_2009': 6, 'households_2011': 272, 'households_2013': 11, 'households_2015': 11, 'households_2017': 6, 'households_2019': 6, 'households_2021': 6, 'households_2023': 6, 'persons': 3795, 'strata': 77} targets=3838 sensitive=2245 build=2.8s
+  seed program 8.0s point=True
+  seed program 7.2s point=True
+  seed program 8.2s point=True
+  seed program 9.0s point=True
+  seed program 19.7s point=True
+  seed program 7.3s point=True
+  seed program 9.8s point=True
+  seed program 11.8s point=True
+  seed program 14.3s point=True
+B=10 status=released rounds=[0] results={'wide': 3820, 'irrelevant': 18} proofs={'pool': 3623, 'search': 197, None: 18} pool=206 narrow_sensitive=0 audit=2562.2s
+  slowest targets: [(44.7, 'atom', 7, 'wide', 'search'), (40.0, 'atom', 1, 'wide', 'search'), (39.1, 'atom', 1, 'wide', 'search'), (39.0, 'atom', 1, 'wide', 'search'), (35.4, 'atom', 1, 'wide', 'search')]
+  narrow sensitive (kind, unit, size, earlier): []
+
+At e79f41b5; one-minute load 14.6 to 115.4, median 51.2;
+five-minute load 32.8 to 90.7, median 52.3:
+$ python docs/design/track_b_b0_2_evidence/calibrate.py 9000 3
+households=9000 seed=3 persons/wave~15348 sets=588 b0_1_sets=71 rows=482 atoms={'clusters': 160, 'households_1999': 6, 'households_2001': 6, 'households_2003': 6, 'households_2005': 6, 'households_2007': 123, 'households_2009': 6, 'households_2011': 272, 'households_2013': 11, 'households_2015': 11, 'households_2017': 6, 'households_2019': 6, 'households_2021': 6, 'households_2023': 6, 'persons': 3795, 'strata': 77} targets=3838 sensitive=2245 build=2.7s
+  seed program 7.7s point=True
+  seed program 7.0s point=True
+  seed program 8.9s point=True
+  seed program 10.0s point=True
+  seed program 21.2s point=True
+  seed program 7.6s point=True
+  seed program 10.5s point=True
+  seed program 12.0s point=True
+  seed program 14.5s point=True
+B=10 status=released rounds=[0] results={'wide': 3820, 'irrelevant': 18} proofs={'pool': 3623, 'search': 197, None: 18} pool=206 narrow_sensitive=0 audit=2276.1s
+  slowest targets: [(34.0, 'atom', 1, 'wide', 'search'), (33.0, 'atom', 7, 'wide', 'search'), (31.8, 'atom', 1, 'wide', 'search'), (30.7, 'atom', 1, 'wide', 'search'), (30.1, 'atom', 3, 'wide', 'search')]
   narrow sensitive (kind, unit, size, earlier): []

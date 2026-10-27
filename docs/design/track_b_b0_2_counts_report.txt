@@ -260,3 +260,154 @@ No-data and integrity declaration
   is invented. No real-data count, power calculation, counts JSON or
   evidence-folder attempt record was created. gates.yaml, runs/ and
   existing src/ files were not edited.
+
+Final head (main session, 2026-10-27)
+  Review rounds 3 to 6 changed the block and the script. The protocol's
+  preamble and PR #584 list each change. Round 5's delta review (Sol, at
+  226d844d) approved the block and the script as they then stood. The
+  ruling of 2026-10-26 then exempted a target that B0.1's published
+  counts already confine as tightly (6cca06af). The coordinator read it
+  as covering every audited target, classes and published-set
+  differences alike, on the same test (1ed6a266). Round 6's delta review
+  (Sol, at 1ed6a266) approved the block and the script as they stand.
+  This section records the evidence at the final head. Where the
+  sections above differ, this one supersedes them: each program's limit
+  is now 300 s, B0.1's sets enter the audit as exact counts, and a
+  target they already confine as tightly is exempt.
+
+Protocol pin (status remains DRAFT)
+  6840f5fa41c897407c5896d4c3729ca5a5c0f1d166faa294e65e42309908ad23
+  Exact bytes from <!-- protocol:begin --> through <!-- protocol:end -->.
+  Count script SHA-256 at 1ed6a266:
+  647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321
+  It differs from 6cca06af's
+  (8cee1ecf58569f4034550817c405151c30e671f70611493a9ebea59f850ba08c)
+  only in the protocol SHA-256 it checks.
+
+Validation (serial, in a clean clone at 1ed6a266)
+  Each command ran with OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+  OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:. at
+  nice 10 on one core.
+  .venv/bin/python -m pytest -q -rf -p no:cacheprovider --durations=15
+  tests/test_track_b_b0_2_counts.py tests/test_track_b_b0_2_exclusions.py
+  tests/test_track_b_b2_outcome_exclusions.py
+  tests/test_track_b_b0_1_review_root.py
+    393 passed in 194.25s (0:03:14)
+  .venv/bin/python -m pytest -q -rf -p no:cacheprovider
+  tests/test_track_b_b0_1_counts.py
+    22 passed in 12.26s
+  git diff --name-only -z 172f690f HEAD -- '*.py' | xargs -0
+  .venv/bin/black -l 79 --workers 1 --check
+    13 files would be left unchanged.
+  git diff --name-only -z 172f690f HEAD -- '*.py' | xargs -0
+  .venv/bin/ruff check
+    All checks passed!
+  Tier counts: tests/tier_counts.json has unit 19,035 against 18,789 at
+  master 172f690f (+246), total 25,605. The README tier table matches.
+  The count module collects 242 unit tests.
+
+Calibration on invented panels (calibration.txt)
+  Each program's limit is 300 s, and B0.1's sets are registered as
+  main() registers them, unless stated otherwise.
+  At e79f41b5, before the exemption:
+    800 and 3,000 households withheld, each in the first round on a
+    person class of true size 1, narrow at [0, 3]. 9,000 households
+    released: 3,820 wide, 18 irrelevant (audit 2,245.4 s). Without
+    B0.1's sets the first two release, every target wide.
+  At 6cca06af, whose audit is the final head's:
+    800 households: 3,081 targets (939 sensitive), released: 3,063 wide,
+      5 exempt, 13 irrelevant. Audit 473.6 s.
+    3,000 households: 3,228 targets (1,446 sensitive), released: 3,215
+      wide, 4 exempt, 9 irrelevant. Audit 1,596.3 s.
+    9,000 households: 3,838 targets (2,245 sensitive). The first run
+      withheld on a stratum atom of true size 1 whose programs reached no
+      proof within 300 s (357.6 s for the target), with 1,304 targets
+      unreached. The host slept during it: its power log shows the lid
+      closed at 23:49:16Z and a wake on opening it at 00:06:22Z, and the
+      run ended at 00:06:24Z. calibrate.py holds no sleep assertion.
+      Rerun with the host awake throughout, the panel releases at both
+      heads with the same decisions as at e79f41b5 (3,820 wide, 18
+      irrelevant; 3,623 from the pool, 197 by search): audit 2,562.2 s
+      at 6cca06af, at a median five-minute load of 105, and 2,276.1 s at
+      e79f41b5, at a median of 52.
+  On the runs with the host awake, the slowest seed program took 22.4 s
+  and the slowest target, over all its programs, 71.3 s (3,000
+  households). The jobs ran at nice 10 on 18 CPUs with the one-minute
+  load at 13 to 81 when each started. The run itself starts only at
+  nice 0 with the five-minute load below 18, holds two sleep assertions
+  and checks AC power, and the operator keeps the lid open, which the
+  script does not check. These panels' timings are a calibration, not a
+  bound on the run's.
+
+Singleton diagnostic (singleton.py, singleton.txt)
+  singleton.py classifies a withholding target again under smaller
+  publications; a Sol review at e79f41b5 found it sound for this
+  question. Its runs are at e79f41b5, before the exemption, on the two
+  panels that withheld there. Each classification uses the first
+  round's constraints only, with a fresh pool, so a wide result does not
+  show that a whole audit of the smaller publication would release.
+  Every verdict below is a proof: two verified points for wide, two
+  proven optima for narrow. On both panels the narrow target is a person
+  class of true size 1, narrow in round 1 at [0, 3]: width 3, so narrow,
+  but not identified exactly.
+  800 households: it is in 12 of this release's sets and 12 of B0.1's.
+    Without any B0.1 set it is wide; with only those 12 B0.1 sets, wide;
+    with every B0.1 set but those 12, narrow at [0, 3]; without any one
+    of the 12, narrow at [0, 3]. The B0.1 sets that contain it are
+    neither enough nor needed: B0.1's exact counts on persons outside it,
+    with this release's own counts, make it narrow.
+  3,000 households: it is in 30 of this release's sets and 17 of B0.1's.
+    Without any B0.1 set it is wide; with only those 17, wide; with
+    every B0.1 set but those 17, wide. Without any one of the 17 it stays
+    narrow, except without b0_1/level_cells/pooled/persons or
+    b0_1/change_pairs/pooled_one_step/persons, where it is wide. Both
+    groups are needed together, and those two sets each are, given the
+    rest.
+  Even the whole publication leaves both targets at [0, 3], so neither
+  is a case of B0.1 already fixing a count exactly. Which of the B0.1
+  sets that do not contain the target matter is not tested: only the
+  containing sets are removed one at a time. A Sol review of these
+  conclusions against the output found them accurate.
+
+Mutations (docs/design/track_b_b0_2_counts_mutations.json)
+  A first run of 116 specs at e79f41b5 killed 113. Three survived, each
+  a gap in the tests, not in the script:
+    37 "relations dropped from the audit": no test checked that the
+       audit uses a relation it registers between unit types.
+    53 "a modeled set B0.1 never published accepted": in every test, an
+       earlier check fired first on a set with no published count.
+    66 "the local copy sums every target into class sizes": in every
+       test table, each difference target was also an atom class.
+  As the coordinator ruled, they are answered with tests only. abbbf793
+  and 8a30da57 add
+    test_the_audit_uses_the_relations_it_registers (two cases)
+    test_the_class_sizes_are_this_releases_classes_alone
+  and an aliased set, which only the later check catches, in
+    test_the_b0_1_record_must_be_the_one_these_inputs_give
+  Each fails on its mutant and passes on the script.
+  6cca06af adds 11 specs (117 to 127) for the exemption. Run alone at
+  6cca06af, all 11 were killed; round 6 reran them and the three former
+  survivors and found all 14 killed.
+  The record is the full rerun of all 127 specs at 1ed6a266:
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
+  PYTHONDONTWRITEBYTECODE=1 nice -n 10 .venv/bin/python
+  docs/design/track_b_b0_2_evidence/mutations.py RECORD
+    FINAL: 127/127 mutations killed; restored
+    647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321
+  Every check failed between 1 and 47 tests; 30 failed exactly one. Each
+  failed-test id in the record matches one of the 242 node ids pytest
+  collects from the module. Every check restored the script's bytes and
+  verified their SHA-256. The run took 6 h 13 min, one check at a time.
+
+Enumeration checks
+  oracle.py, exhaust_closure.py, search.py, ranges.py and their outputs
+  are unchanged since 8b92691d. As the round 2 section says, they cover
+  one unit type and no relation beyond the rows, so they do not exercise
+  B0.1's sets, the exemption or relations between unit types; the count
+  module's tests do.
+
+No-data and integrity declaration (final head)
+  No real data file or codebook was opened. Every table and panel above
+  is invented. No real-data count, power calculation, counts JSON or
+  evidence-folder attempt record was created. gates.yaml, runs/ and
+  existing src/ files were not edited.
