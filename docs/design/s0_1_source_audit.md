@@ -1282,11 +1282,12 @@ test checks this), it is the smallest count that passes. A probe that
 forms `1/n` from two integers rounds the exact quotient once instead,
 and can differ in the last place above `2^53`; such a probe does not
 define sufficiency. Reachability is decided by the same predicate at the
-largest supported count whose variance does not underflow (supported
-counts are those that convert to a finite double). So a count is
-reported whenever any supported count passes, including when rounding
-first lets one pass above `2^53`. Otherwise, for any argument values,
-the helper raises a named refusal:
+largest supported count whose variance does not underflow. The
+supported counts are the integers from 1 through
+`MAX_SUPPORTED_COUNT = int(sys.float_info.max)`, and the search
+evaluates no other count. So a count is reported whenever any supported
+count passes, including when rounding first lets one pass above `2^53`.
+Otherwise, for any argument values, the helper raises a named refusal:
 
 - `ThresholdInputError` for an argument outside its domain;
 - `UnreachableThreshold` when a finite target's variance alone fails the
@@ -1637,7 +1638,9 @@ that four numerical endpoints escaped the named refusals. The helpers
 now validate every argument at entry, return one when one observation
 suffices, require a finite positive critical value, and decide
 reachability with the predicate itself (section 6.1). The round-3 seed
-and bisection remain, so every count round 3 returned is unchanged. A
+and bisection remain. The recorded planning and validation counts are
+unchanged, as review round 5's complete non-anchor rerun confirms, but
+round 4 does not return every result round 3 returned (below). A
 copy of the round-3 script, rebuilt to its recorded digest, returned a
 count on 2,536 of 3,000 seeded invented draws, and the fixed helpers
 returned the same count on all of them. Its 464 null counts became
@@ -1645,6 +1648,30 @@ returned the same count on all of them. Its 464 null counts became
 largest supported count. The equal-cell union bound is now computed in
 closed form, bit-identical to `family_power_lower_bound` for families
 below `2^53` cells, so large families build no lists.
+
+Round 4 deliberately refuses some inputs for which round 3 returned a
+count or a null count. Each refusal is one that section 6.1 lists:
+
+- `ThresholdInputError` from `_threshold_real`, for an argument other
+  than the family size that is a `bool` or not a `numbers.Real` and
+  that round 3 converted to a double; review round 5's witness passes
+  the group share as a string;
+- `ThresholdInputError` from `_threshold_arguments`, for a `delta`
+  strictly inside the tolerance whose nearest double is not;
+- `UnrepresentableThreshold` from `_threshold_real`, for a nonzero
+  `delta` or `group_share` that rounds to zero in a double, which round
+  3 treated as zero;
+- for ED2 only, in place of a round-3 null count: the
+  `UnreachableThreshold` above, raised in `_minimal_power_count`;
+  `UnrepresentableThreshold` from `min_effective_n_per_cell` when the
+  target's reciprocal overflows; and `UnrepresentableThreshold` from
+  `_minimal_power_count` when the target's variance alone passes the
+  predicate but no supported count does.
+
+Round 4 refuses no family size that round 3 accepted. Because it also
+converts every real-valued argument to a double at entry, while round 3
+compared the power with `criterion` as passed, a NumPy half-precision
+`criterion` can change the returned count.
 
 Example tests pin the review's finite-target witness, the floats on
 each side of it and the first unreachable float below it, for tolerance
@@ -1684,6 +1711,27 @@ anchor branch was not executed. The read ledger is
 `.fix-scratch/reads-r4.md`; commands, reproductions and logs remain in
 `.fix-scratch/r4/`. This job, clone and scratch remain exposed. Nothing
 was committed, pushed or posted.
+
+**Round-5 fix verification (2026-10-27).** Subfleet job
+`20261026-203129-mgf-s01-fix-r5b` (attempt a2) made review round 5's
+two low documentation fixes. The required initial HEAD, one-line status
+and nine-file checksum checks passed, the four restriction files
+matched their stated hashes, and the round-3 script copy matched its
+recorded digest. Section 6.1 now defines the supported counts as the
+code caps them. The round-4 record above no longer says that every
+count round 3 returned is unchanged; it lists the inputs round 4
+deliberately refuses and notes one count that its argument conversion
+changed. That list comes from comparing the round-3 copy with the
+current script on invented arguments: type, edge and neighboring
+values of every argument of both helpers, family sizes on both sides of
+`2^53` at two significance levels, targeted combinations, 3,000 seeded
+random draws, and a constructed ED2 target at the critical SE. The
+script, results JSON, tests and tier files are byte-identical
+to round 4, so the digests below stand. All 160 named tests passed
+with the empty data root and fixed Hypothesis seed, and the diff
+whitespace check passed. The read ledger is `.fix-scratch/reads-r5b.md`;
+helpers and outputs are in `.fix-scratch/r5b/`. This job, clone and
+scratch remain exposed. Nothing was committed, pushed or posted.
 
 **Frozen numerical environment and final artifacts (2026-10-26).** Python 3.14.7, numpy 2.5.4, scipy 1.18.1, hypothesis 6.170.9, pytest 9.1.1. SHA-256:
 
