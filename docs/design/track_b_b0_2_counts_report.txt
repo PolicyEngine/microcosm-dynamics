@@ -324,20 +324,24 @@ Calibration on invented panels (calibration.txt)
       proof within 300 s (357.6 s for the target), with 1,304 targets
       unreached. The host slept during it: its power log shows the lid
       closed at 23:49:16Z and a wake on opening it at 00:06:22Z, and the
-      run ended at 00:06:24Z. calibrate.py holds no sleep assertion.
+      job runner's log records the run's end at 00:06:24Z. That the
+      sleep caused the timeout is an inference; the power log does not
+      time programs. calibrate.py holds no sleep assertion.
       Rerun with the host awake throughout, the panel releases at both
       heads with the same decisions as at e79f41b5 (3,820 wide, 18
       irrelevant; 3,623 from the pool, 197 by search): audit 2,562.2 s
       at 6cca06af, at a median five-minute load of 105, and 2,276.1 s at
       e79f41b5, at a median of 52.
   On the runs with the host awake, the slowest seed program took 22.4 s
-  and the slowest target, over all its programs, 71.3 s (3,000
-  households). The jobs ran at nice 10 on 18 CPUs with the one-minute
-  load at 13 to 81 when each started. The run itself starts only at
-  nice 0 with the five-minute load below 18, holds two sleep assertions
-  and checks AC power, and the operator keeps the lid open, which the
-  script does not check. These panels' timings are a calibration, not a
-  bound on the run's.
+  and the slowest classification of one target, over all its programs,
+  71.3 s (3,000 households). calibrate.py times classification only, not
+  the exemption's programs that follow it for a narrow target. The
+  post-exemption calibration jobs ran at nice 10 on 18 CPUs with the
+  one-minute load at 13 to 81 when each started. The run itself starts
+  only at nice 0 with the five-minute load below 18, holds two sleep
+  assertions and checks AC power, and the operator keeps the lid open,
+  which the script does not check. These panels' timings are a
+  calibration, not a bound on the run's.
 
 Singleton diagnostic (singleton.py, singleton.txt)
   singleton.py classifies a withholding target again under smaller

@@ -148,9 +148,14 @@ B=10 status=withheld rounds=[0] results={'wide': 2533, 'narrow': 1, 'unreached':
 
 The host slept during this run. Its power log (pmset -g log) shows the lid
 closed at 23:49:16Z, then maintenance sleeps and dark wakes, and a wake on
-opening the lid at 00:06:22Z. The run ended at 00:06:24Z. The program running
-across the sleep reached no proof within its 300 s of wall clock (357.6 s for
-the target), so the target withheld. calibrate.py holds no sleep assertion.
+opening the lid at 00:06:22Z. The job runner's log records the run's end at
+00:06:24Z, 3,277 s after it began. The run withheld on a target whose programs
+reached no proof within 300 s of wall clock (357.6 s for the target); a
+withholding ends the audit at once. The power log does not time programs, so
+that the sleep caused this timeout is an inference, not an observation: the run
+ended two seconds after the wake, and the reruns below, with the host awake,
+release this panel, its slowest classification taking 44.7 s. calibrate.py
+holds no sleep assertion.
 The count script's main() holds two and checks AC power, and the protocol has
 the operator keep the lid open, which the script does not check.
 
