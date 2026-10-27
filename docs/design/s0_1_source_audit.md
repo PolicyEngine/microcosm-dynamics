@@ -1276,9 +1276,10 @@ SM3 and `v = p(1−p)` for
 ED2, or `sqrt(p(1−p)(1/n + 1/n_target))` with a finite ED2 target. The
 count `n` is converted to the nearest double before each division. A
 count passes when the union bound above, over the family's `m` equal
-cells, is at least 0.90. Each reported threshold passes and one fewer
-fails; because the predicate is nondecreasing in the count (a property
-test checks this), it is the smallest count that passes. A probe that
+cells, is at least 0.90. Each reported threshold passes, and one fewer
+fails unless the threshold is 1; because the predicate is nondecreasing
+in the count (a property test checks this), it is the smallest
+supported count that passes. A probe that
 forms `1/n` from two integers rounds the exact quotient once instead,
 and can differ in the last place above `2^53`; such a probe does not
 define sufficiency. Reachability is decided by the same predicate at the
@@ -1432,7 +1433,8 @@ boundary pass rates, simultaneous coverage, shared-denominator/unclassified
 handling, the conservative threshold's minimality, survey-cluster
 refusals, Monte Carlo precision and malformed-input refusal. They also
 check the threshold helpers' total contract: for any argument values, a
-sufficient, strictly minimal count or a named refusal, with refusals
+sufficient, strictly minimal count (one fewer fails unless the count
+is 1) or a named refusal, with refusals
 checked against brute force and an independent doubling search. For continuous
 normal estimates with known positive standard errors, the two-sided 95%
 rule has pass probability at most `.05/(2m)` at an individual equivalence
@@ -1732,6 +1734,25 @@ with the empty data root and fixed Hypothesis seed, and the diff
 whitespace check passed. The read ledger is `.fix-scratch/reads-r5b.md`;
 helpers and outputs are in `.fix-scratch/r5b/`. This job, clone and
 scratch remain exposed. Nothing was committed, pushed or posted.
+
+**Round-6 fix verification (2026-10-27).** Subfleet job
+`20261026-220958-mgf-s01-fix-r6` (attempt a1) made review round 6's
+low documentation fix. The required initial HEAD, one-line status
+and nine-file checksum checks passed, and the four restriction files
+matched their stated hashes. Section 6.1 now says that one fewer than a
+reported threshold fails unless the threshold is 1, and calls the
+threshold the smallest supported count that passes:
+`_minimal_power_count` returns 1 when count 1 passes, and its search
+evaluates no count below 1. Section 6.4's strict-minimality sentence
+states the same exception, as the module docstring of
+`tests/s0_1/test_s0_1_thresholds.py` and the two helpers' docstrings
+already did. The round-3 and round-4 records above are unchanged. The
+script, results JSON, tests and tier files are byte-identical to round
+5, so the digests below stand. All 160 named tests passed with the
+empty data root and fixed Hypothesis seed, and the diff whitespace
+check passed. The read ledger is `.fix-scratch/reads-r6.md`; helpers
+and outputs are in `.fix-scratch/r6/`. This job, clone and scratch
+remain exposed. Nothing was committed, pushed or posted.
 
 **Frozen numerical environment and final artifacts (2026-10-26).** Python 3.14.7, numpy 2.5.4, scipy 1.18.1, hypothesis 6.170.9, pytest 9.1.1. SHA-256:
 
