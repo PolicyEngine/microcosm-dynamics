@@ -228,13 +228,13 @@ audit left 0 to 3, and released with B0.1's sets left out
 this release's counts narrow it no further than B0.1's published counts
 already do, and the block was revised before any freeze (Disclosure
 rule, "Exempt targets"):
-- **The test.** For each narrow target with a proven range, two more
-  programs find its least and greatest size under B0.1's published
-  counts alone. They are set from the publications, like every other
-  program. If they prove the same range, the target is exempt: it
-  neither withholds the release nor is disclosed. A target holding an
-  atom no B0.1 set counts is never exempt, and anything unproven fails
-  closed.
+- **The test.** For each narrow target with a proven range, a class or
+  a difference alike, two more programs find its least and greatest
+  size under B0.1's published counts alone. They are set from the
+  publications, like every other program. If they prove the same
+  range, the target is exempt: it neither withholds the release nor is
+  disclosed. A target holding an atom no B0.1 set counts is never
+  exempt, and anything unproven fails closed.
 - **Later rounds** test an exempt target again, so a disclosure that
   narrows it further ends its exemption.
 - **Tests:**
@@ -242,10 +242,12 @@ rule, "Exempt targets"):
     counts alone, and the script's exemptions must match it;
   - the exemption programs are the same for every table with the same
     publications, and each fail-closed case has its own test;
-  - through `main()`, a panel whose small classes B0.1 already fixes
-    releases. That panel had been the relabeling test's withholding
-    case, which now uses one this release narrows, and the test of a
-    small B0.1 cell now names the target that still withholds it.
+  - through `main()`, a panel whose small classes, and a small
+    difference, B0.1 already fixes releases, and switching off any one
+    of those exemptions withholds on that target alone. That panel had
+    been the relabeling test's withholding case, which now uses one this
+    release narrows, and the test of a small B0.1 cell now names the
+    target that still withholds it.
 - **The program bound** grows to 9(T + 2) + 7T(T + 1)/2.
 
 The mutation record and the calibrations run again on the final source.
@@ -589,13 +591,19 @@ rules.
 - **Exempt targets.** Max ruled on 2026-10-26 to exempt a target only
   when this release's counts narrow it no further than B0.1's published
   counts already do.
+  - The exemption covers every audited target: each class and each
+    published-set difference (Sets, atoms and targets, above), which
+    is what the protection rule protects. The ruling's question names
+    a class; it is read here as any audited target, because the test
+    that grants the exemption is the same for both kinds.
   - The test runs on every narrow target whose exact minimum and maximum
     were found, whatever its true size. Two more programs find its exact
     minimum and maximum under B0.1's published counts alone: each B0.1
     set's count fixed at its published value, over the same nonnegative
     integer atom sizes, with none of this release's counts, effective
     sizes or relations, and no disclosure.
-  - An atom in no B0.1 set is fixed at 0, unless the target holds one.
+  - An atom in no B0.1 set is fixed at 0, unless the target holds one;
+    a difference holds each atom of its superset outside its subset.
     Then B0.1's counts leave the target's size unbounded, and it is not
     exempt.
   - The target is exempt when both programs prove their optimum and give
@@ -852,10 +860,17 @@ rules.
       target holding an atom no B0.1 set counts, a narrow target without
       proven optima, and one whose B0.1 programs prove no optimum, are
       not exempt;
-    - through `main()`, a panel whose small classes this release narrows
-      no further than B0.1's counts do releases, and withholds with the
+    - through `main()`, a panel whose small classes, and a small
+      difference of this release's sets, this release narrows no
+      further than B0.1's counts do releases, and withholds with the
       exemption switched off; review round 3's attacks, where this
       release narrows a band B0.1 left open, still withhold;
+    - on that panel, switching off one exemption alone, of a class or
+      of a difference, withholds on that target, in the same round,
+      and every target that audit reaches is decided as in the
+      release; a difference against a B0.1 set, of true size 10,
+      disclosed in place of exempt, ends a class's exemption in the
+      next round;
     - an exempt target whose true size is 10 or more is not disclosed,
       and a disclosure that narrows an exempt target further ends its
       exemption;

@@ -32,7 +32,7 @@ from scripts import track_b_b0_1_counts as b01  # noqa: E402
 #: The script's own host calls, kept before any test replaces them.
 REAL_HOST = script._Host
 PROTOCOL_SHA256 = (
-    "b1ac4bc03b8dda41e88b42fadbdd5e9fb0fb09a3e7b78c0e9613af7a3af1b7c9"
+    "6840f5fa41c897407c5896d4c3729ca5a5c0f1d166faa294e65e42309908ad23"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -4705,9 +4705,7 @@ def test_classes_b0_1_already_fixes_are_exempt_and_release(
     exempt and the counts are released. A difference against a B0.1 set,
     of true size 10, is exempt too, and so is not disclosed. With the
     exemption switched off the same panel withholds."""
-    ages, states = EXEMPT_PANEL
-    inputs = _disposition_panel(ages, states)
-    _main_environment(tmp_path, monkeypatch, inputs)
+    _main_environment(tmp_path, monkeypatch, _disposition_panel(*EXEMPT_PANEL))
     out = tmp_path / "counts.json"
     local = tmp_path / "local.json"
     assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
@@ -4719,7 +4717,23 @@ def test_classes_b0_1_already_fixes_are_exempt_and_release(
         (t["kind"], t["true_size"]) for t in targets if t["result"] == "exempt"
     ) == [("atom", 1), ("atom", 2), ("difference", 3)]
     assert all(t["result"] != "narrow" for t in targets)
-    people, labor, anchor, design = inputs
+    counts, registry = _exempt_panel()
+    audit = script.audit_counts(counts, registry())
+    (large,) = [
+        index
+        for index, t in enumerate(audit["targets"])
+        if t["result"] == "exempt" and t["true_size"] >= 10
+    ]
+    assert audit["targets"][large]["earlier"]
+    assert large not in audit["disclosed"]
+    monkeypatch.setattr(script, "exempt", lambda *_, **__: False)
+    assert script.audit_counts(counts, registry())["status"] == "withheld"
+
+
+def _exempt_panel():
+    """EXEMPT_PANEL's counts, and a builder of its registry with B0.1's
+    sets registered, as ``main()`` builds them."""
+    people, labor, anchor, design = _disposition_panel(*EXEMPT_PANEL)
     validity = _validity(labor)
     counts = script.structural_counts(people, validity, anchor, design)
 
@@ -4732,16 +4746,95 @@ def test_classes_b0_1_already_fixes_are_exempt_and_release(
         )
         return built
 
-    audit = script.audit_counts(counts, registry())
-    (large,) = [
-        index
-        for index, t in enumerate(audit["targets"])
-        if t["result"] == "exempt" and t["true_size"] >= 10
+    return counts, registry
+
+
+def _exempt_except(monkeypatch, columns):
+    """Switch off the exemption of the target over ``columns`` alone."""
+    real = script.exempt
+
+    def exempt(earlier, target, outcome, *, seconds):
+        if list(target["columns"]) == columns:
+            return False
+        return real(earlier, target, outcome, seconds=seconds)
+
+    monkeypatch.setattr(script, "exempt", exempt)
+
+
+@pytest.mark.parametrize(
+    ("kind", "size"), [("atom", 1), ("atom", 2), ("difference", 3)]
+)
+def test_switching_off_one_exemption_withholds_on_that_target_alone(
+    monkeypatch, kind, size
+):
+    """Max's ruling covers classes and differences alike, on the same
+    test. On EXEMPT_PANEL, switching off the exemption of one sensitive
+    target, a class or a difference of this release's sets, withholds the
+    release on that target, in the same round. Every target that audit
+    reaches is decided exactly as in the release, and so is that target,
+    but for its result and the two B0.1 programs it no longer runs: the
+    exemption changes nothing else the audit decides."""
+    counts, registry = _exempt_panel()
+    released = script.audit_counts(counts, registry())
+    assert released["status"] == "released"
+    (index,) = [
+        i
+        for i, t in enumerate(released["targets"])
+        if t["result"] == "exempt"
+        and (t["kind"], t["true_size"]) == (kind, size)
     ]
-    assert audit["targets"][large]["earlier"]
-    assert large not in audit["disclosed"]
-    monkeypatch.setattr(script, "exempt", lambda *_, **__: False)
-    assert script.audit_counts(counts, registry())["status"] == "withheld"
+    target = released["targets"][index]
+    assert target["programs"][-2:] == ["earlier maximum", "earlier minimum"]
+    _exempt_except(monkeypatch, target["columns"])
+    alone = script.audit_counts(counts, registry())
+    assert alone["status"] == "withheld"
+    assert alone["rounds"] == released["rounds"]
+    assert alone["disclosed"] == released["disclosed"] == []
+    assert alone["targets"][index] == {
+        **target,
+        "result": "narrow",
+        "programs": target["programs"][:-2],
+    }
+    reached = [
+        i for i, t in enumerate(alone["targets"]) if t["result"] != "unreached"
+    ]
+    assert reached[-1] == index
+    for i in reached[:-1]:
+        assert alone["targets"][i] == released["targets"][i]
+    assert all(t["result"] != "narrow" for t in alone["targets"][:index])
+
+
+def test_an_exempt_difference_disclosed_instead_ends_a_class_exemption(
+    monkeypatch,
+):
+    """On EXEMPT_PANEL the difference against a B0.1 set, of true size 10,
+    is exempt, so it is not disclosed. With its exemption switched off
+    alone it is narrow and disclosed, and the next round, testing the
+    class of true size 1 again under that disclosure, finds it narrower
+    than B0.1's counts alone leave it: that exemption ends, and the
+    release withholds."""
+    counts, registry = _exempt_panel()
+    released = script.audit_counts(counts, registry())
+    exempted = {
+        (t["kind"], t["true_size"]): i
+        for i, t in enumerate(released["targets"])
+        if t["result"] == "exempt"
+    }
+    large, small = exempted[("difference", 10)], exempted[("atom", 1)]
+    assert released["targets"][large]["earlier"]
+    _exempt_except(monkeypatch, released["targets"][large]["columns"])
+    alone = script.audit_counts(counts, registry())
+    assert alone["status"] == "withheld"
+    assert [r["disclosed"] for r in alone["rounds"]] == [[large], []]
+    assert alone["disclosed"] == [large]
+    ended = alone["targets"][small]
+    assert (ended["result"], ended["round"]) == ("narrow", 2)
+    (low, high), (b0_1_low, b0_1_high) = (
+        ended["range"],
+        released["targets"][small]["range"],
+    )
+    assert b0_1_low <= low <= high <= b0_1_high
+    assert [low, high] != [b0_1_low, b0_1_high]
 
 
 def _draining(out, err):
