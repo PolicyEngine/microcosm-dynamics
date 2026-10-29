@@ -415,3 +415,62 @@ No-data and integrity declaration (final head)
   is invented. No real-data count, power calculation, counts JSON or
   evidence-folder attempt record was created. gates.yaml, runs/ and
   existing src/ files were not edited.
+
+The run (main session, 2026-10-29)
+  Version 1 ran once, from a clean clone detached at the freeze,
+  e8a9fac09b600ddfdaa586f962a49a351d9386b7, inside Fleet ops'
+  reservation for 08:00 to 11:00Z.
+  A read-only preflight passed before each launch. It checked:
+    the window; the host (lid open, AC power, five-minute load below
+    18, no scheduled restart, free disk, memory pressure); the clone
+    (head, clean, FROZEN, the block's pin, the script's SHA-256); that
+    no attempt record, local copy, run log or counts file existed; and
+    the script's six run conditions, checked by taking its sleep
+    assertions and giving them back.
+  The first launch, at 09:36:00Z, refused to start. The launcher, a zsh
+  script, started the count as a background job, and zsh runs those at
+  nice 5 unless its BG_NICE option is off. The script's nice check
+  failed in _start_conditions(), before the attempt record and before
+  any read, and its one line was
+    B0.2 refuses to start: run condition nice fails
+  A refusal there spends no version. The main session set that log
+  aside, having read only its last line, and the launcher now turns
+  BG_NICE off.
+  The second launch, at 09:38:32Z, started at nice 0, passed every start
+  check, wrote the attempt record and ran to the end. Its one line of
+  output was the published file's path. The status is released.
+  By the main session's account, the host stayed on AC power with its
+  lid open throughout, as a watch that sampled it each minute recorded,
+  and the system power log records no sleep or wake while it ran.
+  This PR commits neither log: as the protocol's stated limit says, the
+  run's total time can depend on dispositions, and both logs show it.
+  No time from the run's end is written here.
+  The main session read only the run log's last line and the published
+  file. It did not open the local copy or the attempt record.
+
+Committed release (main session, 2026-10-29)
+  docs/design/track_b_b0_2_counts.json is the run's published file,
+  byte for byte (SHA-256
+  c8415139befefc6c636e792571defe9fc021b9e96cd1438b09a12d7d7e2480eb).
+  Its counts are 0, "<10" or a multiple of 10, and its disclosure block
+  holds the base, the two rules and the status alone. The one other
+  number among the counts is b3l.origin_wave, 2007, which is geometry.
+  Four tests in tests/test_track_b_b0_2_counts.py now hold the committed
+  file to the frozen run:
+    test_the_committed_release_carries_the_frozen_runs_provenance
+    test_the_committed_release_discloses_only_base_rules_and_status
+    test_every_committed_count_is_a_coarsened_value
+    test_the_committed_counts_have_the_scripts_shape
+  The last compares every leaf's path with the counts the script builds
+  from an invented panel. The main session wrote sixteen edited versions
+  of the file in its place, one at a time: a count of 7, an unrounded
+  count, "<5", a fraction, true for a count, a withheld status, an added
+  disclosure key, an added top-level key, a dropped or added count, a
+  wrong head, script or B0.1 hash, an extra opened file, another origin
+  wave and another lag. Each failed at least one of the four. It then
+  restored the file's bytes and checked their SHA-256.
+  tests/test_track_b_b0_2_exclusions.py lists the counts file as
+  committed, with only the exposure inventory still to come. The unit
+  tier grows by these four tests, to 19,039 (total 25,609).
+  The protocol's status line now records the run. This commit leaves
+  the block, its pin and the script unchanged.

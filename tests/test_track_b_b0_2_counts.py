@@ -6112,3 +6112,122 @@ def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
     assert registry.sets[unknown][1].isdisjoint(registry.sets[old][1])
     published, disclosure, _ = script.release_counts(counts, registry)
     assert disclosure["status"] == "released" and published
+
+
+# --------------------------------------------------------------------------
+# The committed release: version 1's one run, 2026-10-29
+# --------------------------------------------------------------------------
+COMMITTED = ROOT / "docs/design/track_b_b0_2_counts.json"
+FREEZE = "e8a9fac09b600ddfdaa586f962a49a351d9386b7"
+SCRIPT_SHA256 = (
+    "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321"
+)
+PROVENANCE_KEYS = {
+    "schema",
+    "repository_head",
+    "worktree_clean",
+    "script_sha256",
+    "psid_files_opened_sha256",
+    "b0_1_counts_sha256",
+    "requested_label_allowlist",
+    "geometry",
+}
+
+
+def _committed():
+    return json.loads(COMMITTED.read_text(encoding="utf-8"))
+
+
+def _skeleton(record, prefix=()):
+    """Every leaf's path, geometry included, without its value."""
+    paths = set()
+    for key, value in record.items():
+        path = (*prefix, key)
+        if isinstance(value, dict):
+            paths |= _skeleton(value, path)
+        else:
+            paths.add(path)
+    return paths
+
+
+def test_the_committed_release_carries_the_frozen_runs_provenance():
+    record = _committed()
+    assert set(record) == PROVENANCE_KEYS | {"counts", "disclosure"}
+    assert record["schema"] == script.SCHEMA
+    assert record["repository_head"] == FREEZE
+    assert record["worktree_clean"] is True
+    # The code that wrote the file is the code in this tree.
+    script_bytes = (ROOT / "scripts/track_b_b0_2_counts.py").read_bytes()
+    assert record["script_sha256"] == SCRIPT_SHA256
+    assert hashlib.sha256(script_bytes).hexdigest() == SCRIPT_SHA256
+    assert record["b0_1_counts_sha256"] == (
+        hashlib.sha256(script.B0_1_COUNTS.read_bytes()).hexdigest()
+    )
+    assert record["geometry"] == {
+        "collection_waves": list(script.WAVES),
+        "reference_years": [wave - 1 for wave in script.WAVES],
+        "age_convention": "collection_wave",
+        "lag_years": list(script.LAGS),
+    }
+    # Hashes of inputs only: one per opened PSID file, each a SHA-256.
+    opened = record["psid_files_opened_sha256"]
+    assert list(opened) == sorted(opened)
+    family = {path for path in opened if path.startswith("family/")}
+    assert family == {
+        f"family/{wave}/FAM{wave}ER.{suffix}"
+        for wave in script.WAVES
+        for suffix in ("sps", "txt")
+    }
+    assert set(opened) - family == {
+        "ind2023er/IND2023ER.sps",
+        "ind2023er/IND2023ER.txt",
+    }
+    for digest in (*opened.values(), record["b0_1_counts_sha256"]):
+        assert len(digest) == 64 and set(digest) <= set("0123456789abcdef")
+
+
+def test_the_committed_release_discloses_only_base_rules_and_status():
+    record = _committed()
+    assert record["disclosure"] == {
+        "base": script.DISCLOSURE_BASE,
+        "coarsening_rule": script.COARSENING_RULE,
+        "protection_rule": script.PROTECTION_RULE,
+        "status": "released",
+    }
+    committed_bytes = COMMITTED.read_bytes()
+    for forbidden in (
+        b'"sets"',
+        b'"atoms"',
+        b'"atom_sizes"',
+        b'"class_sizes"',
+        b'"true_size"',
+        b'"targets"',
+        b'"rounds"',
+        b'"range"',
+        b'"disclosure_audit"',
+    ):
+        assert forbidden not in committed_bytes
+
+
+def test_every_committed_count_is_a_coarsened_value():
+    counts = _committed()["counts"]
+    base = script.DISCLOSURE_BASE
+    leaves = list(script._leaves(counts))
+    assert leaves
+    for path, value in leaves:
+        if isinstance(value, str):
+            assert value == f"<{base}", path
+        else:
+            assert type(value) is int and value >= 0, path
+            assert value % base == 0, path
+        # Each value is the coarsening of every count it stands for.
+        low, high = script.count_interval(value, base)
+        assert script.coarsen(low, base) == value, path
+        assert script.coarsen(high, base) == value, path
+    assert counts["b3l"]["origin_wave"] == script.B3L_ORIGIN_WAVE
+
+
+def test_the_committed_counts_have_the_scripts_shape():
+    assert _skeleton(_committed()["counts"]) == _skeleton(
+        _counts(_release_panel())
+    )

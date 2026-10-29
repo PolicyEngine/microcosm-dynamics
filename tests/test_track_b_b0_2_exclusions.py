@@ -7,9 +7,10 @@ master. ``docs/design/track_b_b0_2_exclusions.json`` is that inventory, a
 standing record that ``scripts/track_b_b0_1_review_root.py`` applies to
 every build, whatever inventories the build names.
 
-The record lists two files before they exist: the counts the frozen
-protocol writes, and B0.2's exposure inventory. Every other B0.2 file in
-the repository must be listed, so a new one cannot reach master unlisted:
+The record listed two files before they existed: the counts the frozen
+protocol writes, committed after its one run on 2026-10-29, and B0.2's
+exposure inventory, still to come. Every other B0.2 file in the
+repository must be listed, so a new one cannot reach master unlisted:
 a file named as B0.2's, or any file in a folder so named, such as the
 evidence folder (review round 4 found its files left in review roots).
 Both the rule and the exclusions read full paths, so a file elsewhere
@@ -33,12 +34,12 @@ import track_b_b0_1_review_root as review_root  # noqa: E402
 
 RECORD_PATH = "docs/design/track_b_b0_2_exclusions.json"
 RECORD = ROOT / RECORD_PATH
-#: Listed ahead of their arrival.
+#: Listed ahead of its arrival.
 NOT_YET_COMMITTED = {
-    "docs/design/track_b_b0_2_counts.json",
     "docs/design/track_b_b0_2_exposure_inventory.json",
 }
 B0_2_FILES = NOT_YET_COMMITTED | {
+    "docs/design/track_b_b0_2_counts.json",
     "docs/design/track_b_b0_2_counts_mutations.json",
     "docs/design/track_b_b0_2_counts_report.txt",
     "docs/design/track_b_b0_2_evidence/calibrate.py",
