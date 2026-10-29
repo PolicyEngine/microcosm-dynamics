@@ -474,3 +474,30 @@ Committed release (main session, 2026-10-29)
   tier grows by these four tests, to 19,039 (total 25,609).
   The protocol's status line now records the run. This commit leaves
   the block, its pin and the script unchanged.
+
+Review round 10 answer (main session, 2026-10-29)
+  Round 10 (Sol) approved e72aec18 and found three nonblocking gaps in
+  the four committed-release tests: they never checked the allowlist's
+  content, so a timing field there passed; the shape test recorded
+  leaves only, so an empty object passed; and another admissible value
+  in place of a count passed, since nothing tied the file to the run.
+  This commit closes all three in tests/test_track_b_b0_2_counts.py:
+    test_the_committed_file_is_the_runs_published_file pins the file's
+      SHA-256, c8415139..., and requires its bytes to be the script's
+      own serialization (sorted keys, two-space indent, final newline);
+    test_the_committed_allowlist_is_the_requested_labels_alone checks
+      the allowlist's keys, its identifiers, concept patterns, anchor
+      layout and design variables against the script, each wave's
+      roles, that every other leaf is a PSID variable name and its
+      label, and that B0.1's committed record names the same variables
+      in the waves it covers;
+    _skeleton now records containers as well as leaves.
+  The main session wrote eleven edited versions of the file in its
+  place, one at a time: the file unchanged, a count of 7, another
+  admissible value, an empty object, a timing field in the allowlist
+  and one inside an entry, a number for a variable, an empty accuracy
+  list, a dropped wave, a withheld status and a wrong head. The
+  unchanged file passed; each of the other ten failed at least one of
+  the six tests. It then restored the file's bytes and checked their
+  SHA-256.
+  The unit tier grows by these two tests, to 19,041 (total 25,611).

@@ -6122,6 +6122,10 @@ FREEZE = "e8a9fac09b600ddfdaa586f962a49a351d9386b7"
 SCRIPT_SHA256 = (
     "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321"
 )
+#: The run's published file, as the report and PR #584 record it.
+COMMITTED_SHA256 = (
+    "c8415139befefc6c636e792571defe9fc021b9e96cd1438b09a12d7d7e2480eb"
+)
 PROVENANCE_KEYS = {
     "schema",
     "repository_head",
@@ -6139,15 +6143,107 @@ def _committed():
 
 
 def _skeleton(record, prefix=()):
-    """Every leaf's path, geometry included, without its value."""
+    """Every path, containers and leaves alike and geometry included,
+    without its value."""
     paths = set()
     for key, value in record.items():
         path = (*prefix, key)
+        paths.add(path)
         if isinstance(value, dict):
             paths |= _skeleton(value, path)
-        else:
-            paths.add(path)
     return paths
+
+
+def _label_entries(value, path=()):
+    """Each variable-and-label entry under ``value``, failing on anything
+    else: a scalar, an empty container or an entry with other keys."""
+    if isinstance(value, list):
+        assert value, path
+        for index, item in enumerate(value):
+            yield from _label_entries(item, (*path, index))
+    elif isinstance(value, dict) and set(value) == {"variable", "label"}:
+        yield path, value
+    else:
+        assert isinstance(value, dict) and value, path
+        for key, item in value.items():
+            yield from _label_entries(item, (*path, key))
+
+
+def test_the_committed_file_is_the_runs_published_file():
+    """The run wrote the file once. Its bytes are the script's own
+    serialization, and any later edit, even to another admissible value,
+    changes the recorded SHA-256."""
+    committed_bytes = COMMITTED.read_bytes()
+    assert hashlib.sha256(committed_bytes).hexdigest() == COMMITTED_SHA256
+    assert committed_bytes.decode("utf-8") == (
+        json.dumps(_committed(), indent=2, sort_keys=True) + "\n"
+    )
+
+
+def test_the_committed_allowlist_is_the_requested_labels_alone():
+    allowlist = _committed()["requested_label_allowlist"]
+    identifiers = {
+        "interview_1968": {
+            "variable": "ER30001",
+            "label": "1968 INTERVIEW NUMBER",
+        },
+        "person_number": {"variable": "ER30002", "label": "PERSON NUMBER 68"},
+    }
+    waves = [str(wave) for wave in script.WAVES]
+    assert set(allowlist) == {"individual", "anchor_2011", "design", "family"}
+    individual = allowlist["individual"]
+    assert set(individual) == {"identifiers", "concepts", "by_wave"}
+    assert individual["identifiers"] == identifiers
+    assert individual["concepts"] == {
+        name: list(script.panels.DEMOGRAPHIC_CONCEPTS[name])
+        for name in script.INDIVIDUAL_CONCEPTS
+    }
+    assert list(individual["by_wave"]) == waves
+    for wave in waves:
+        assert set(individual["by_wave"][wave]) == set(
+            script.INDIVIDUAL_CONCEPTS
+        )
+    layout = script.psid2010.ANCHOR_LAYOUTS[script.ANCHOR_WAVE]
+    assert allowlist["anchor_2011"] == {
+        **identifiers,
+        **{
+            role: {"variable": variable, "label": label}
+            for role, (variable, label) in layout.variables.items()
+        },
+    }
+    assert allowlist["design"] == {
+        **identifiers,
+        "stratum": {"variable": "ER31996", "label": "SAMPLING ERROR STRATUM"},
+        "cluster": {"variable": "ER31997", "label": "SAMPLING ERROR CLUSTER"},
+    }
+    assert list(allowlist["family"]) == waves
+    for wave in waves:
+        assert set(allowlist["family"][wave]) == {
+            "interview",
+            "head_labor",
+            "spouse_labor",
+            "head_accuracy",
+            "spouse_accuracy",
+        }
+    # Outside the concept patterns, every leaf is a PSID variable name and
+    # its label, and nothing else.
+    labelled = dict(allowlist)
+    labelled["individual"] = {
+        key: value for key, value in individual.items() if key != "concepts"
+    }
+    entries = list(_label_entries(labelled))
+    assert entries
+    for path, entry in entries:
+        variable, label = entry["variable"], entry["label"]
+        assert variable.startswith("ER") and variable[2:].isdigit(), path
+        assert isinstance(label, str) and label == label.strip() != "", path
+    # B0.1's committed record names the same variables in its waves.
+    b01 = json.loads(script.B0_1_COUNTS.read_text(encoding="utf-8"))
+    assert b01["family_variables"] and b01["individual_variables"]
+    for wave, entry in b01["family_variables"].items():
+        assert allowlist["family"][wave] == entry, wave
+    for wave, entry in b01["individual_variables"].items():
+        assert individual["by_wave"][wave] == entry, wave
 
 
 def test_the_committed_release_carries_the_frozen_runs_provenance():
