@@ -1027,12 +1027,13 @@
           "status": "explicitly_labeled"
         },
         "ruling_effective_date_axis": {
-          "basis": "POMS RS 01402.020 A says certain noncash transfers are wages 'Effective August 7, 1995' without naming the date that test keys to. Both date cases key to the service date, as the existing from-1995-08-07 case already did.",
-          "named_alternatives": [
-            "payment_date",
-            "determination_date"
-          ],
-          "used": "services_performed_date"
+          "basis": "CE1's ruling: POMS RS 01402.020 A says certain noncash transfers are wages \"Effective August 7, 1995\" without naming the date that test keys to, so the date cases key to the service date, as the from-1995-08-07 case already did. The family's lookup axis is the payment date, since its 1988 boundary keys on remuneration paid after 1987.",
+          "named_options": {
+            "determination_date": "The ruling's date is tested against the date SSA determines the wages.",
+            "payment_date": "The ruling's date is tested against the payment date.",
+            "services_performed_date": "The ruling's date is tested against the date the services were performed."
+          },
+          "operative": "services_performed_date"
         },
         "seasonal_exception_facts": [
           "hand_harvest_laborer",
@@ -14737,6 +14738,26 @@
             }
           }
         },
+        "deferral_exceptions": {
+          "foreign_minister_without_qualification": [
+            {
+              "reason": "The 911 family's 1968-1972 row is open (FOREIGN_911_PRE1973_HISTORY_UNVERIFIED: the earlier 911 text is not captured), so the deferral refuses rather than backcast a later rule.",
+              "target": "self_employment_foreign_911_income",
+              "years": [
+                1968,
+                1972
+              ]
+            },
+            {
+              "reason": "The possessions family is open before 1987-12-22 (POSSESSIONS_931_HISTORY_UNVERIFIED: former 931's operative text is not captured), so the deferral refuses.",
+              "target": "self_employment_possessions_931_income",
+              "years": [
+                1968,
+                1972
+              ]
+            }
+          ]
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "foreign_exclusions_condition": {
@@ -16554,10 +16575,10 @@
           "defers_to": [
             "fishing_crew_share_service"
           ],
-          "description": "411(c)(2)(F).",
+          "description": "411(c)(2)(F). Pub. L. 94-455 section 1207(f)(4)(A) applies the 411 amendment to taxable years ending after December 31, 1954, subject to subparagraph (B); the fishing family decides the arrangement.",
           "precedence": 8,
           "when": {
-            "fishing_catch_share_arrangement": "410(a)(20) service, from the applicable 1976 law"
+            "fishing_catch_share_arrangement": "410(a)(20) catch-share service on a small boat"
           }
         },
         {
@@ -16574,6 +16595,13 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 3121 (LII capture 2026-10-24, text and notes)",
+          "capture": "lii_26_3121.html",
+          "location": "Pub. L. 94-455 section 1207(f)(4)(A) effective-date note",
+          "quote": "shall apply to taxable years ending after December 31, 1954",
+          "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304"
+        },
         {
           "authority": "42 USC 411, pinned LII republication",
           "capture": "lii_42_411.html",
@@ -16683,6 +16711,18 @@
             "title": 42
           }
         ],
+        "deferral_exceptions": {
+          "small_boat_fishing": [
+            {
+              "reason": "The fishing family's 1968-1988 row is open (the applicability of Pub. L. 99-272 section 13303(c)(2), as corrected, is unverified), so the deferral refuses there.",
+              "target": "fishing_crew_share_service",
+              "years": [
+                1968,
+                1988
+              ]
+            }
+          ]
+        },
         "exceptions_requiring_other_family": [
           "410(a)(14)(B) service at age 18 or older",
           "410(a)(16) service",
@@ -22212,6 +22252,20 @@
           "numerator": 1
         },
         "historical_statutory_basis": "former 411(a)(13)(A)-(C), quoted in the official 1994 Code; 1986 separate-unit amendment applies to remuneration paid or derived in taxable years beginning after 1985-12-31",
+        "named_options": [
+          {
+            "explanation": "The row's cases keep former 411(a)(13)'s $100 per-employer gate and add the 1985 Form 1040 instructions' combined $100 and $400 floors (lines 9 and 13). No 1984 instructions are captured, so 1984 uses the 1985 instructions with the 1984 Schedule SE, whose Part III lines match.",
+            "group": "units_1984_1985_church_floor",
+            "name": "irs_1985_instructions_with_employer_gate",
+            "status": "operational_irs_instructions_with_statutory_gate"
+          },
+          {
+            "explanation": "Former 411(a)(13), quoted in the 1994 Code, states the $100 per-employer gate without the instructions' combined floors; it is retained as the reading CE1 does not apply where they differ.",
+            "group": "units_1984_1985_church_floor",
+            "name": "former_411a13_employer_gate_only",
+            "status": "statutory_text_retained_not_operational"
+          }
+        ],
         "ordinary_losses_may_offset_church_remuneration": true,
         "ordinary_net_earnings": "admissible farm/nonfarm/partnership earnings after their own allowed deductions and ordinary losses, including applicable optional-method amounts",
         "published_form_flow": {
@@ -23413,6 +23467,7 @@
             "act_1973_service_start": "Public Law 92-603 section 129(b) applies the auxiliary-organization amendment to service after December 31, 1972.",
             "poms_1951_grouped_description": "POMS RS 01901.720 A groups school and auxiliary-organization service under its Beginning 1/1/51 statement."
           },
+          "operative": "act_1973_service_start",
           "resolution": "The enacted auxiliary-organization amendment supplies the historical start, 1973-01-01. The later POMS grouped description does not establish the earlier auxiliary-organization effective date."
         },
         "code_edition_evidence": [

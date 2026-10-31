@@ -39,8 +39,10 @@ Invariants (property tests in ``tests/income_resources``):
   cited threshold decides. ``deferred`` means this family's law gives no
   consequence for the matched facts and points to the families named in
   ``defers_to``; the registry refuses a deferral to an unknown family, to
-  the row's own family, or around a cycle, so every deferral ends at a
-  family that decides.
+  the row's own family, or around a cycle, so following deferrals always
+  reaches a family with a rule. Where that rule is an open question the
+  deferral refuses, and the deferring row records the target, years and
+  reason in ``parameters.deferral_exceptions``.
 * A closed row's residual is what the law gives when none of its cases
   holds. Every statutory condition on an exclusion is therefore a case, and
   a closed row whose description or parameters name a condition carries
@@ -1434,23 +1436,21 @@ class CoverageRegistry:
     def lookup_date(
         self,
         family: str,
-        service_date: date,
+        axis_date: date,
         *,
         alternative: str | None = None,
     ) -> tuple[CoverageRule, ...]:
         """Resolve one date on the family's axis.
 
-        The date is a service date by default, the beginning of the taxable
-        year (fiscal years included) when ``effective_basis`` is
+        ``axis_date`` is a service date by default, the beginning of the
+        taxable year (fiscal years included) when ``effective_basis`` is
         ``taxable_year_start``, and the date paid or received when it is
         ``payment_date``.
         """
-        if type(service_date) is not date:
-            raise TypeError("service_date must be a date")
-        _year(service_date.year)
-        return self._lookup_interval(
-            family, service_date, service_date, alternative
-        )
+        if type(axis_date) is not date:
+            raise TypeError("axis_date must be a date")
+        _year(axis_date.year)
+        return self._lookup_interval(family, axis_date, axis_date, alternative)
 
     def threshold(
         self,

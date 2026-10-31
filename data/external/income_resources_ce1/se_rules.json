@@ -802,7 +802,27 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+      "deferral_exceptions": {
+        "foreign_minister_without_qualification": [
+          {
+            "target": "self_employment_foreign_911_income",
+            "years": [
+              1968,
+              1972
+            ],
+            "reason": "The 911 family's 1968-1972 row is open (FOREIGN_911_PRE1973_HISTORY_UNVERIFIED: the earlier 911 text is not captured), so the deferral refuses rather than backcast a later rule."
+          },
+          {
+            "target": "self_employment_possessions_931_income",
+            "years": [
+              1968,
+              1972
+            ],
+            "reason": "The possessions family is open before 1987-12-22 (POSSESSIONS_931_HISTORY_UNVERIFIED: former 931's operative text is not captured), so the deferral refuses."
+          }
+        ]
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -2278,6 +2298,13 @@
         "capture": "lii_42_411.html",
         "location": "411(c)(2)(A)-(G); 1968, 1976, 1984, 1994 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "capture": "lii_26_3121.html",
+        "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+        "authority": "26 U.S.C. 3121 (LII capture 2026-10-24, text and notes)",
+        "location": "Pub. L. 94-455 section 1207(f)(4)(A) effective-date note",
+        "quote": "shall apply to taxable years ending after December 31, 1954"
       }
     ],
     "consequence": "noncovered",
@@ -2391,7 +2418,19 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "deferral_exceptions": {
+        "small_boat_fishing": [
+          {
+            "target": "fishing_crew_share_service",
+            "years": [
+              1968,
+              1988
+            ],
+            "reason": "The fishing family's 1968-1988 row is open (the applicability of Pub. L. 99-272 section 13303(c)(2), as corrected, is unverified), so the deferral refuses there."
+          }
+        ]
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_ordinary_employee_1968_2026",
@@ -2506,10 +2545,10 @@
         "case_id": "small_boat_fishing",
         "precedence": 8,
         "when": {
-          "fishing_catch_share_arrangement": "410(a)(20) service, from the applicable 1976 law"
+          "fishing_catch_share_arrangement": "410(a)(20) catch-share service on a small boat"
         },
         "consequence": "deferred",
-        "description": "411(c)(2)(F).",
+        "description": "411(c)(2)(F). Pub. L. 94-455 section 1207(f)(4)(A) applies the 411 amendment to taxable years ending after December 31, 1954, subject to subparagraph (B); the fishing family decides the arrangement.",
         "defers_to": [
           "fishing_crew_share_service"
         ]
@@ -5400,7 +5439,21 @@
         "church_at_least_400_without_ordinary_loss": "combined_earnings"
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
+      "named_options": [
+        {
+          "group": "units_1984_1985_church_floor",
+          "name": "irs_1985_instructions_with_employer_gate",
+          "status": "operational_irs_instructions_with_statutory_gate",
+          "explanation": "The row's cases keep former 411(a)(13)'s $100 per-employer gate and add the 1985 Form 1040 instructions' combined $100 and $400 floors (lines 9 and 13). No 1984 instructions are captured, so 1984 uses the 1985 instructions with the 1984 Schedule SE, whose Part III lines match."
+        },
+        {
+          "group": "units_1984_1985_church_floor",
+          "name": "former_411a13_employer_gate_only",
+          "status": "statutory_text_retained_not_operational",
+          "explanation": "Former 411(a)(13), quoted in the 1994 Code, states the $100 per-employer gate without the instructions' combined floors; it is retained as the reading CE1 does not apply where they differ."
+        }
+      ]
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1984_1985",

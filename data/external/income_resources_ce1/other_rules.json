@@ -247,14 +247,6 @@
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
       },
-      "ruling_effective_date_axis": {
-        "used": "services_performed_date",
-        "named_alternatives": [
-          "payment_date",
-          "determination_date"
-        ],
-        "basis": "POMS RS 01402.020 A says certain noncash transfers are wages 'Effective August 7, 1995' without naming the date that test keys to. Both date cases key to the service date, as the existing from-1995-08-07 case already did."
-      },
       "condition_cases": {
         "coverage_any_of": {
           "threshold_ids": [
@@ -264,7 +256,16 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\"."
+      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\".",
+      "ruling_effective_date_axis": {
+        "named_options": {
+          "services_performed_date": "The ruling's date is tested against the date the services were performed.",
+          "payment_date": "The ruling's date is tested against the payment date.",
+          "determination_date": "The ruling's date is tested against the date SSA determines the wages."
+        },
+        "operative": "services_performed_date",
+        "basis": "CE1's ruling: POMS RS 01402.020 A says certain noncash transfers are wages \"Effective August 7, 1995\" without naming the date that test keys to, so the date cases key to the service date, as the from-1995-08-07 case already did. The family's lookup axis is the payment date, since its 1988 boundary keys on remuneration paid after 1987."
+      }
     },
     "worked_examples": [
       {
@@ -8228,7 +8229,8 @@
           "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "printed p.1359 (original PDF p.31; extract p.7)",
           "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
-        }
+        },
+        "operative": "act_1973_service_start"
       }
     },
     "worked_examples": [],

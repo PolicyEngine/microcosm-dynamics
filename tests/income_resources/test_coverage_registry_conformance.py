@@ -48,7 +48,6 @@ from populace_dynamics.income_resources.coverage_rules import (
     EFFECTIVE_BASES,
     REGISTRY_PATH,
     TRIGGER_FACTS,
-    AlternativeRequiredError,
     CoverageRegistry,
     CoverageRegistryError,
     NoRuleError,
@@ -1248,6 +1247,73 @@ def operative_reading_problems(row):
     return problems
 
 
+NESTED_OPTION_KEYS = {"named_options", "named_alternatives"}
+
+
+def nested_option_problems(parameters):
+    """Option records below the top level that do not name an operative
+    option with a basis (review r3 low 3)."""
+    problems = []
+
+    def walk(value, path):
+        if isinstance(value, dict):
+            if path and NESTED_OPTION_KEYS & set(value):
+                key = next(k for k in value if k in NESTED_OPTION_KEYS)
+                names = option_names(value[key])
+                if value.get("operative") not in names:
+                    problems.append((".".join(path), "operative"))
+                basis = value.get("basis", value.get("resolution", ""))
+                if not str(basis).strip():
+                    problems.append((".".join(path), "basis"))
+            for child_key, child in value.items():
+                walk(child, (*path, child_key))
+        elif isinstance(value, (list, tuple)):
+            for child in value:
+                walk(child, path)
+
+    walk(parameters, ())
+    return problems
+
+
+def test_nested_option_records_name_their_operative_option():
+    """Review r3 low 3: agricultural_service_1988's SSR 95-3P date and
+    student_service_1973's auxiliary-organization start sat in nested
+    records the operative-reading check did not reach."""
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    problems = {
+        row["rule_id"]: found
+        for row in rows
+        if row["open_reason"] is None
+        and (found := nested_option_problems(row["parameters"]))
+    }
+    assert problems == {}
+    agri = next(r for r in rows if r["rule_id"] == "agricultural_service_1988")
+    ruling = agri["parameters"]["ruling_effective_date_axis"]
+    assert ruling["operative"] == "services_performed_date"
+    assert ruling["basis"].startswith("CE1's ruling")
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["named_options", "named_alternatives"]),
+    st.sampled_from(["first", "second", "missing", "INVENTED_other"]),
+    st.sampled_from(["basis", "resolution", None]),
+    st.booleans(),
+)
+def test_nested_option_checker_requires_an_operative_option(
+    key, operative, basis, nested
+):
+    """The low 3 checker is the test's oracle."""
+    record = {key: {"first": "INVENTED", "second": "INVENTED"}}
+    if operative != "missing":
+        record["operative"] = operative
+    if basis:
+        record[basis] = "INVENTED basis"
+    parameters = {"INVENTED_record": record} if nested else record
+    expected = nested and (operative not in {"first", "second"} or not basis)
+    assert bool(nested_option_problems(parameters)) == expected
+
+
 def test_closed_rows_name_their_operative_reading():
     """Review r2 low 14: a closed row's recorded options say which governs."""
     rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
@@ -1261,7 +1327,8 @@ def test_closed_rows_name_their_operative_reading():
     }
     assert {key: value for key, value in problems.items() if value} == {}
     assert "fishing_crew_share_service_1989" in resolved
-    assert len(resolved) == 8
+    assert "se_units_1984_1985" in resolved
+    assert len(resolved) == 9
 
 
 @settings(deadline=None)
@@ -1932,33 +1999,56 @@ def test_consequences_live_in_cases_not_parameters():
     assert stored == []
 
 
-def test_real_deferral_targets_cover_the_deferring_years(registry):
-    """Every deferral names a family with a rule in each deferring year.
+def deferral_refusals(registry):
+    """Deferring outcomes whose target refuses or has no rule, by year.
 
-    Exhaustive over every deferring outcome and every year of its row, so
-    no target family leaves a year where the deferral reaches no rule. An
-    open or alternative-only target refuses rather than misclassifying.
+    Returns (refused, absent): refused maps (rule, case, target) to the
+    years whose lookup raises OpenRuleError; absent lists years with no
+    rule at all.
     """
-    absent, checked = [], set()
+    refused, absent = {}, []
     for rule in registry.rules:
         for outcome in (rule.residual_default, *rule.cases):
             if outcome["consequence"] != "deferred":
                 continue
+            case_id = outcome.get("case_id", "residual_default")
             for target in outcome["defers_to"]:
                 for year in range(
                     rule.effective_start.year, rule.effective_end.year + 1
                 ):
-                    if (target, year) in checked:
-                        continue
-                    checked.add((target, year))
                     try:
                         assert registry.lookup(target, year)
-                    except (OpenRuleError, AlternativeRequiredError):
-                        continue
+                    except OpenRuleError:
+                        key = (rule.rule_id, case_id, target)
+                        refused.setdefault(key, []).append(year)
                     except NoRuleError:
                         absent.append((rule.rule_id, target, year))
-    assert checked
+    return refused, absent
+
+
+def test_real_deferral_targets_cover_the_deferring_years(registry):
+    """Every deferral reaches a family with a rule in each deferring year.
+
+    Review r3 low 2: an open target is no longer excused. Where the target
+    refuses, the deferring row records it in parameters.deferral_exceptions
+    (target, years and reason), and the deferral refuses rather than
+    misclassify. At ea599b92 three deferrals refused unrecorded.
+    """
+    refused, absent = deferral_refusals(registry)
     assert absent == []
+    recorded = {}
+    for rule in registry.rules:
+        exceptions = rule.parameters.get("deferral_exceptions", {})
+        for case_id, entries in exceptions.items():
+            assert case_id in {c["case_id"] for c in rule.cases}
+            for entry in entries:
+                assert str(entry["reason"]).strip()
+                first, last = entry["years"]
+                recorded[(rule.rule_id, case_id, entry["target"])] = list(
+                    range(first, last + 1)
+                )
+    assert refused == recorded
+    assert len(recorded) == 3
 
 
 def service_date_condition_holds(condition, service_day):
@@ -2026,6 +2116,22 @@ def test_cash_equivalent_agricultural_transfer_follows_ssr_95_3p(
     }
     assert len(genuine) == 1
     assert rule.resolve(genuine)["consequence"] == "noncovered"
+
+
+def test_small_boat_fishing_date_comes_from_section_1207f4(registry):
+    """Review r3 low 4: no 1976 effective-date note is captured; section
+    1207(f)(4)(A) applies the 411 amendment to taxable years ending after
+    December 31, 1954."""
+    (rule,) = registry.lookup("self_employment_employee_definition", 2000)
+    case = next(c for c in rule.cases if c["case_id"] == "small_boat_fishing")
+    assert "1976" not in case["when"]["fishing_catch_share_arrangement"]
+    assert "1954" in case["description"]
+    assert any(
+        c.capture == "lii_26_3121.html"
+        and c.quote
+        == ("shall apply to taxable years ending after December 31, 1954")
+        for c in rule.citations
+    )
 
 
 def test_tribal_council_cases_and_uncaptured_crp_history(registry):

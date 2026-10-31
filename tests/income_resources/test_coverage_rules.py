@@ -655,9 +655,14 @@ def test_case_precedence_runs_from_one_without_gaps(defect):
 @given(st.lists(st.sampled_from(sorted(CONSEQUENCES)), max_size=6), st.data())
 @settings(deadline=None)
 def test_first_matching_case_by_precedence_decides(consequences, data):
+    """Review r3 low 1: case IDs are drawn apart from their ranks, so a
+    resolve that ranked by case ID would fail."""
+    labels = data.draw(st.permutations("abcdef"))[: len(consequences)]
     cases = [
-        invented_case(f"invented_case_{rank}", rank, consequence)
-        for rank, consequence in enumerate(consequences, 1)
+        invented_case(f"invented_case_{label}", rank, consequence)
+        for rank, (label, consequence) in enumerate(
+            zip(labels, consequences, strict=True), 1
+        )
     ]
     rank_of = {case["case_id"]: case["precedence"] for case in cases}
     row = invented_row()
@@ -998,6 +1003,25 @@ def test_open_case_sub_question_needs_reason_and_named_readings(
     assert CoverageRule.from_dict(rule.to_dict()) == rule
 
 
+@given(st.sampled_from(["", " ", "\n", 7, None, ["INVENTED"]]))
+@example(" ")
+@settings(deadline=None)
+def test_open_case_reason_must_be_nonempty_text(reason):
+    """Review r3 low 1: a blank open_reason on a case is refused."""
+    row = invented_row()
+    sub = invented_case("invented_sub_question", 1, "open")
+    sub["open_reason"] = reason
+    sub["open_alternatives"] = [
+        {"name": "INVENTED_a", "description": "INVENTED first reading"},
+        {"name": "INVENTED_b", "description": "INVENTED second reading"},
+    ]
+    row["cases"] = [sub]
+    with pytest.raises(RegistryValidationError, match="open_reason"):
+        CoverageRule.from_dict(row)
+    sub["open_reason"] = "INVENTED_SUB_QUESTION: no capture settles it"
+    assert CoverageRule.from_dict(row).cases[0]["open_reason"]
+
+
 def invented_boundary(side, when, kind="regulation_edition"):
     return {
         "side": side,
@@ -1013,8 +1037,11 @@ def invented_boundary(side, when, kind="regulation_edition"):
     st.sampled_from([-1, 0, 1]),
     st.sampled_from(["regulation_edition", "code_edition", "INVENTED"]),
     st.booleans(),
-    st.sampled_from([None, "extra_field", "duplicate", "empty"]),
+    st.sampled_from(
+        [None, "extra_field", "duplicate", "empty", "blank_evidence"]
+    ),
 )
+@example("end", 0, "regulation_edition", True, "blank_evidence")
 @example("end", 0, "regulation_edition", True, None)
 @example("start", 0, "code_edition", True, None)
 @example("start", 1, "code_edition", True, None)
@@ -1042,6 +1069,9 @@ def test_evidence_only_boundary_sits_on_its_row_edge(
         entries.append(copy.deepcopy(entry))
     elif defect == "empty":
         entries = []
+    elif defect == "blank_evidence":
+        # Review r3 low 1: the evidence text has its own failing example.
+        entry["evidence"] = " "
     row["parameters"]["evidence_only_boundaries"] = entries
     valid = (
         offset == 0
@@ -1297,13 +1327,13 @@ def test_bad_caller_year_type_raises_type_error(tmp_path, year):
         registry.lookup("INVENTED_family", year)
 
 
-@pytest.mark.parametrize("service_date", [None, "2024-01-01", 2024])
-def test_bad_caller_service_date_type_raises_type_error(
-    tmp_path, service_date
-):
+@pytest.mark.parametrize("axis_date", [None, "2024-01-01", 2024])
+def test_bad_caller_axis_date_type_raises_type_error(tmp_path, axis_date):
     registry = invented_registry(tmp_path)
-    with pytest.raises(TypeError, match="must be a date"):
-        registry.lookup_date("INVENTED_family", service_date)
+    with pytest.raises(TypeError, match="axis_date must be a date"):
+        registry.lookup_date("INVENTED_family", axis_date)
+    # Review r3 low 10: the parameter names every axis's date.
+    assert registry.lookup_date("INVENTED_family", axis_date=date(2024, 1, 1))
 
 
 @pytest.mark.parametrize(
