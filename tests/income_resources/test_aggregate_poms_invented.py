@@ -2700,11 +2700,16 @@ def test_invented_footnote_marker_inside_a_date_sentence_is_refused(line):
         "<p><sup>1</sup>Effective February 1, 2031.</p>",
         "<p><a href='#fn1'>1</a>Effective February 1, 2031.</p>",
         "<p><sup>2</sup> Effective 2/2031, as the invented note says.</p>",
+        # Round 11's R15 witness, and its sentence form: a marker only the
+        # table cells' rule counts, a link to a footnote on another page.
+        "<p><a href='0501415010#fn1'>1</a>Revised March 1, 2031</p>",
+        "<p><a href='0501415010#fn2'>2</a>Effective February 1, 2031.</p>",
     ],
 )
 def test_invented_footnote_body_between_charts_keeps_the_date(body):
-    """A footnote body that opens with its marker is no date sentence, as in
-    one pinned page between two charts, so the section's date stands."""
+    """A footnote body that opens with its marker, by either marker rule, is
+    no date sentence, as in one pinned page between two charts, so the
+    section's date stands."""
     payload = invented_nevada_with("") + (
         f"{body}<h4>Couple</h4><table>{INVENTED_HEADER}</table>".encode()
     )
@@ -3148,13 +3153,23 @@ def invented_after_a_chart(fragment: str) -> bytes:
         "<h4>Individual or couple</h4>",
         # A plural counts, in a claimant line's block as elsewhere.
         "<h4>Individual<br>Couples</h4>",
+        # Round 11's R1 witness: the other type in a prose line of 80
+        # characters or more, after the claimant line or before it, and in
+        # a list item.
+        "<p>Couple<br>Invented payments go to each eligible individual"
+        f"{INVENTED_LONG_TAIL}</p>",
+        "<p>Invented payments go to each eligible individual"
+        f"{INVENTED_LONG_TAIL}<br>Couple</p>",
+        "<ul><li>Individual<br>Invented note on each eligible couple"
+        f"{INVENTED_LONG_TAIL}</li></ul>",
     ],
 )
 def test_invented_block_with_a_claimant_line_counts_every_view(fragment):
     """Regression (the round-10 review's Medium 1): the words of a block
     with a claimant line were counted only in its claimant lines, so a
     second type in prose across a ``br`` read as one type. Every view of
-    such a block counts, its whole text included."""
+    such a block counts, its whole text and its long prose lines
+    included."""
     with pytest.raises(TableStructureError, match="two claimants"):
         describe_poms_tables(invented_after_a_chart(fragment))
 
@@ -3341,6 +3356,28 @@ def test_invented_short_line_naming_another_state_is_refused(line):
         )
 
 
+@pytest.mark.parametrize(
+    "block",
+    [
+        # Round 11's R9 witness: the short line follows a long one.
+        "<p>" + "Invented filler " * 6 + "<br>Supplements for Utah</p>",
+        # The short line before a long one, and in a list item.
+        f"<p>Invented note on Utah<br>Invented note{INVENTED_LONG_TAIL}</p>",
+        f"<ul><li>Invented note{INVENTED_LONG_TAIL}<br>Payment levels in UT"
+        "</li></ul>",
+    ],
+)
+def test_invented_short_line_of_a_long_block_naming_another_state_is_refused(
+    block,
+):
+    """The short-line State net reads every line of a block, not only its
+    whole text, so a short line that names another State refuses even when
+    the block's whole text runs past 80 characters. Round 11's mutant R9,
+    which read the whole text only, charted these under Nevada."""
+    with pytest.raises(TableStructureError, match="short line names another"):
+        describe_poms_tables(invented_nevada_with(block + "<p>Couple</p>"))
+
+
 @settings(deadline=None, max_examples=150)
 @given(
     st.sampled_from(GLUED_NAMES),
@@ -3398,13 +3435,23 @@ def test_invented_long_line_naming_another_state_is_prose():
         "<p>Effective 1 March 2031</p>",
         "<h5>Payment levels 2031-03-01</h5>",
         "<p>Revised 3-1-2031</p>",
+        # Round 11's R17 witness: a heading of 80 characters or more.
+        f"<h5>Payment levels as of January 1, 2031{INVENTED_LONG_TAIL}</h5>",
+        # Its R18 witness: a date that only the unmarked reading shows, as a
+        # link to a footnote on another page splits it, and one that only
+        # the bare reading shows.
+        "<p>Payment levels as of Jan<a href='0501415010#fn1'>1</a>uary 1,"
+        " 2031</p>",
+        "<p>Payment levels as of Jan<sup>1</sup>uary 1, 2031</p>",
     ],
 )
 def test_invented_unread_date_line_makes_the_next_chart_refuse(fragment):
     """Regression (round 11's carry-over sweep): a later line that named a
     new date in a form the reader does not read left the section's earlier
     date standing, so the chart carried it silently. Such a line now
-    leaves the date unread, and the next chart refuses."""
+    leaves the date unread, and the next chart refuses. A heading names a
+    date whatever its length, and a line names one in its joined, bare or
+    unmarked reading."""
     with pytest.raises(TableStructureError, match="no effective-date sent"):
         describe_poms_tables(invented_nevada_with(fragment))
 
@@ -3520,6 +3567,26 @@ def test_invented_marker_by_either_rule_inside_a_date_is_refused(date):
     )
     with pytest.raises(TableStructureError, match="reads differently"):
         describe_poms_tables(payload)
+
+
+@pytest.mark.parametrize(
+    "date", ["Janu<span>ary</span> 1, 2031", "January <b>1</b>, 2031"]
+)
+def test_invented_inline_element_inside_a_date_reads_joined(date):
+    """A date sentence is read joined, as HTML renders inline elements, and
+    only its bare and unmarked readings must date it the same, so an inline
+    element inside its date, which the spaced reading splits, dates the
+    chart. Round 11's mutant R36 (the round-10 review's M22, ported)
+    compared the spaced reading instead and refused these."""
+    payload = invented_nevada_with("").replace(
+        b"effective January 1, 2030", f"effective {date}".encode(), 1
+    )
+    assert invented_selector(payload) == (
+        "Nevada",
+        "individual",
+        "2031-01-01",
+        [0],
+    )
 
 
 def test_invented_marker_text_drops_script_and_style():
@@ -3668,6 +3735,14 @@ def test_invented_repeated_date_is_one_date():
             + "Payment levels effective July 1, 2031</p>",
             ("2031-03-01", "2031-06-30", "2031-07-01"),
         ),
+        # Round 11's R32 witness: a range and a sentence that starts on the
+        # same day, two dates in all, still date differently.
+        (
+            "<p>Payment levels effective from March 1, 2031 to June 30, 2031"
+            + INVENTED_FILLER
+            + "Payment levels effective March 1, 2031</p>",
+            ("2031-03-01", "2031-06-30"),
+        ),
     ],
 )
 def test_invented_conflicting_dates_remain_named_alternatives(block, dates):
@@ -3694,4 +3769,27 @@ def test_invented_long_block_whose_sentences_agree_dates_the_chart():
     assert context["effective_from"] == "2031-01-01"
     assert context["parameter_effective_date_text"] == (
         "Monthly payment levels effective January 1, 2031"
+    )
+
+
+def test_invented_range_split_across_a_line_break_dates_from_and_to():
+    """A block's whole text is its date sentence when it is one, so a range
+    split across a ``br`` dates the chart from and to, though its first
+    line alone is a sentence with one date. Round 11's mutant R34, which
+    read the lines only, named the two dates as alternatives."""
+    block = (
+        "<p>Payment levels effective from March 1, 2031<br>"
+        "to June 30, 2031</p>"
+    )
+    (context,) = describe_poms_tables(invented_nevada_with(block))
+    assert (
+        context["effective_from"],
+        context["effective_to"],
+        context["date_options"],
+        context["parameter_effective_date_text"],
+    ) == (
+        "2031-03-01",
+        "2031-06-30",
+        {},
+        "Payment levels effective from March 1, 2031 to June 30, 2031",
     )
