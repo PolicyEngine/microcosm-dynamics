@@ -1790,7 +1790,16 @@
       "amending_act": "Public Law 100-203 section 9023(b)(2)",
       "enactment": "1987-12-22",
       "effective_date_clause": "None for section 9023: neither the section nor Part 2 of subtitle A of title IX dates it (101 Stat. 1330-294 to 1330-296).",
-      "case_free_basis": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence."
+      "case_free_basis": {
+        "explanation": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(8)",
+          "quote": "(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2190,7 +2199,17 @@
             "2004"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(15)",
+          "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2287,7 +2306,17 @@
             "2004"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(15)",
+          "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2528,7 +2557,17 @@
             "1958"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "411(f) adds a share to the deceased partner's final-year computation; its condition (a taxable year ending within, not with, the partnership year) decides which share enters that computation, not whether any income is excluded.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(f)",
+          "quote": "In computing a partner's net earnings from self-employment for his taxable year which ends as a result of his death (but only if such taxable year ends within, and not with, the taxable year of the partnership), there shall be included"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,

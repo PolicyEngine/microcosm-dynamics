@@ -6631,7 +6631,17 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "Before Pub. L. 103-296 section 320 added Q-class service to 410(a)(19), no paragraph of 410(a) excludes it, so this family excludes nothing; other_coverage_rules_required directs the caller to the other families and imposes no condition.",
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "1994 amendment note, subsec. (a)(19)",
+          "quote": "substituted \u201c(J), (M), or (Q)\u201d for \u201c(J), or (M)\u201d in two places"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {

@@ -45,7 +45,10 @@ Invariants (property tests in ``tests/income_resources``):
   holds. Every statutory condition on an exclusion is therefore a case, and
   a closed row whose description or parameters name a condition carries
   cases, unless ``parameters.case_free_basis`` explains why the condition
-  changes no consequence.
+  changes no consequence. That basis is a record of an ``explanation`` and
+  a ``citation`` quoting a capture the row itself cites, so it cannot rest
+  on wording alone. No parameter record holds a ``when`` key: conditions
+  with consequences live in the schema's cases.
 * Cases are ranked rather than required to be mutually exclusive because
   the statutes are drafted as exclusions, exceptions to them and exceptions
   to those exceptions (42 U.S.C. 410(a)(5)(B) with (C)–(H), and Pub. L.
@@ -341,6 +344,17 @@ def _has_chosen_reading(value: Any) -> bool:
         ) or any(_has_chosen_reading(child) for child in value.values())
     if isinstance(value, (list, tuple)):
         return any(_has_chosen_reading(child) for child in value)
+    return False
+
+
+def _holds_when_record(value: Any) -> bool:
+    """Whether a parameter value nests a record keyed by ``when``."""
+    if isinstance(value, Mapping):
+        return "when" in value or any(
+            _holds_when_record(child) for child in value.values()
+        )
+    if isinstance(value, (list, tuple)):
+        return any(_holds_when_record(child) for child in value)
     return False
 
 
@@ -772,15 +786,29 @@ class CoverageRule:
         )
         _require(isinstance(raw["parameters"], Mapping), "parameters object")
         _require(
-            "cases" not in raw["parameters"], "cases belong in the schema"
+            "cases" not in raw["parameters"]
+            and not _holds_when_record(raw["parameters"]),
+            "cases belong in the schema: no parameter record has a when key",
         )
         if "case_free_basis" in raw["parameters"]:
-            _text(raw["parameters"]["case_free_basis"], "case_free_basis")
             _require(
                 raw["open_reason"] is None
                 and not raw["cases"]
                 and consequence not in {"noncovered", "deferred"},
                 "case_free_basis is only for case-free non-excluding rows",
+            )
+            basis = raw["parameters"]["case_free_basis"]
+            _require(
+                isinstance(basis, Mapping)
+                and set(basis) == {"explanation", "citation"},
+                "case_free_basis needs an explanation and a citation",
+            )
+            _text(basis["explanation"], "case_free_basis explanation")
+            cited = Citation.from_dict(basis["citation"])
+            _require(
+                cited.quote is not None
+                and cited.capture in {c.capture for c in citations},
+                "case_free_basis must quote a capture the row cites",
             )
         _evidence_boundaries(
             raw, start, end, {citation.capture for citation in citations}

@@ -11454,6 +11454,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+            "capture": "lii_42_410.html",
+            "location": "1994 amendment note, subsec. (a)(19)",
+            "quote": "substituted \u201c(J), (M), or (Q)\u201d for \u201c(J), or (M)\u201d in two places",
+            "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+          },
+          "explanation": "Before Pub. L. 103-296 section 320 added Q-class service to 410(a)(19), no paragraph of 410(a) excludes it, so this family excludes nothing; other_coverage_rules_required directs the caller to the other families and imposes no condition."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -14916,7 +14926,28 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "partnership_share_of_spouse_partner",
+          "consequence": "noncovered",
+          "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
+          "precedence": 1,
+          "when": {
+            "community_property_income": "community income or loss under applicable community property laws",
+            "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+          }
+        },
+        {
+          "case_id": "business_income_treated_as_other_spouses",
+          "consequence": "noncovered",
+          "description": "Former 411(a)(5)(A), quoted in the 2004 amendment note, treated all of a community business's gross income and deductions as the husband's \"unless the wife exercises substantially all of the management and control\", in which case all of it was the wife's; the other spouse's net earnings exclude it.",
+          "precedence": 2,
+          "when": {
+            "community_property_income": "community income from a trade or business other than a partnership",
+            "substantially_all_business_management_and_control": "former 411(a)(5)(A) treats the income as the other spouse's: the person is the husband and the wife exercises substantially all of the management and control, or the person is the wife and does not"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -14947,7 +14978,6 @@
       "open_reason": null,
       "parameters": {
         "calendar_year_mapping": "1968-1979; the successor rule applies to taxable years including October 1980",
-        "case_free_basis": "The management and partnership conditions decide which spouse the community business income belongs to (the assignment parameters), not whether it is net earnings, so no condition changes the consequence.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -15005,6 +15035,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "taxable_year_condition": {
+            "not_a_coverage_condition": "States the row's window: taxable years that do not include October 1980 (POMS RS 01802.400 A), which the family's date axis applies."
+          }
+        },
         "nonpartnership_assignment": "husband unless wife exercises substantially all management/control; then wife",
         "partnership_assignment": "partner whose distributive share it is",
         "taxable_year_condition": "does not include October 1980 and precedes that operational change"
@@ -15012,7 +15047,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No case holds: the income is this person's own under former 411(a)(5) (business income treated as this spouse's, or a partner's own distributive share), so this family does not exclude it; apply the other families."
       },
       "rule_id": "se_community_income_1968_1979",
       "trigger_facts": [
@@ -15190,7 +15225,28 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "partnership_share_of_spouse_partner",
+          "consequence": "noncovered",
+          "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
+          "precedence": 1,
+          "when": {
+            "community_property_income": "community income or loss under applicable community property laws",
+            "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+          }
+        },
+        {
+          "case_id": "business_income_of_other_spouse",
+          "consequence": "noncovered",
+          "description": "411(a)(5)(A): community business income is \"treated as the gross income and deductions of the spouse carrying on such trade or business\" or, if jointly operated, of each spouse by their respective distributive shares; the other spouse's net earnings exclude the rest.",
+          "precedence": 2,
+          "when": {
+            "business_operator_spouse": "the other spouse carries on the business, or, for a jointly operated business, the part that is the other spouse's distributive share",
+            "community_property_income": "community income from a trade or business other than a partnership"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
@@ -15329,7 +15385,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No case holds: the income is this person's own under 411(a)(5) (the spouse carrying on the business, this spouse's share of a jointly operated business, or a partner's own distributive share), so this family does not exclude it; apply the other families."
       },
       "rule_id": "se_community_income_2004_2026",
       "trigger_facts": [
@@ -15747,7 +15803,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
-        "case_free_basis": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings.",
+        "case_free_basis": {
+          "citation": {
+            "authority": "26 USC 1402, pinned LII republication",
+            "capture": "lii_26_1402.html",
+            "location": "1990 amendment note quoting the former last undesignated paragraph",
+            "quote": "shall be deemed to have been derived (and received) by such individual in that year, at the time the services were performed, regardless of when the income is actually paid to or received by such individual (unless it was actually paid and received prior to that year)",
+            "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
+          },
+          "explanation": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [],
@@ -17239,6 +17304,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 USC 411, official 2024 United States Code section granule",
+            "capture": "uscode_2024_42_411.html",
+            "location": "411(a)(15)",
+            "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+          },
+          "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -17484,6 +17559,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 USC 411, official 2024 United States Code section granule",
+            "capture": "uscode_2024_42_411.html",
+            "location": "411(a)(15)",
+            "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+          },
+          "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -18149,7 +18234,16 @@
       "open_reason": null,
       "parameters": {
         "aggregation_scope": "farm gross aggregated separately to determine method; optional amounts ultimately join other_net_earnings",
-        "case_free_basis": "The nonfarm conditions decide whether the optional computation is available; when they fail the regular computation applies, and both are tested against the self-employment unit minimum.",
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+            "capture": "lii_42_411.html",
+            "location": "411(a), optional-method sentences",
+            "quote": "may, at his option, be deemed to be 66\u2154 percent of such gross income",
+            "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+          },
+          "explanation": "The nonfarm conditions decide only whether the optional computation may replace the regular one, at the individual's option; when they fail the regular computation applies, and both are tested against the self-employment unit minimum."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -18464,6 +18558,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+            "capture": "lii_42_411.html",
+            "location": "411(a), optional-method sentences",
+            "quote": "may, at his option, be deemed to be 66\u2154 percent of such gross income",
+            "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+          },
+          "explanation": "The regular-basis and other optional-method conditions decide only whether the optional computation may replace the regular one, at the individual's option; when they fail the regular computation applies, and both are tested against the self-employment unit minimum."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -18962,6 +19066,16 @@
       "open_reason": null,
       "parameters": {
         "allocation": "Allocate the partnership ordinary income/loss ratably over its taxable year under 411(f).",
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 USC 411, official 2024 United States Code section granule",
+            "capture": "uscode_2024_42_411.html",
+            "location": "411(f)",
+            "quote": "In computing a partner's net earnings from self-employment for his taxable year which ends as a result of his death (but only if such taxable year ends within, and not with, the taxable year of the partnership), there shall be included",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+          },
+          "explanation": "411(f) adds a share to the deceased partner's final-year computation; its condition (a taxable year ending within, not with, the partnership year) decides which share enters that computation, not whether any income is excluded."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -19783,7 +19897,16 @@
       "open_reason": null,
       "parameters": {
         "amending_act": "Public Law 100-203 section 9023(b)(2)",
-        "case_free_basis": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence.",
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 USC 411, official 2024 United States Code section granule",
+            "capture": "uscode_2024_42_411.html",
+            "location": "411(a)(8)",
+            "quote": "(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+          },
+          "explanation": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence."
+        },
         "effective_date_clause": "None for section 9023: neither the section nor Part 2 of subtitle A of title IX dates it (101 Stat. 1330-294 to 1330-296).",
         "enactment": "1987-12-22"
       },
@@ -21454,7 +21577,48 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "church_combined_below_100",
+          "consequence": "noncovered",
+          "description": "Below $100 of combined earnings the instructions stop.",
+          "precedence": 1,
+          "when": {
+            "amount": "combined earnings below $100",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year"
+          }
+        },
+        {
+          "case_id": "church_100_to_399_without_ordinary_loss",
+          "consequence": "covered",
+          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base.",
+          "precedence": 2,
+          "when": {
+            "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year"
+          }
+        },
+        {
+          "case_id": "church_at_least_100_with_ordinary_loss",
+          "consequence": "covered",
+          "description": "With an ordinary loss the combined earnings are the base.",
+          "precedence": 3,
+          "when": {
+            "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year"
+          }
+        },
+        {
+          "case_id": "church_at_least_400_without_ordinary_loss",
+          "consequence": "covered",
+          "description": "From $400 the combined earnings are the base.",
+          "precedence": 4,
+          "when": {
+            "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "IRS Form 1040 instructions, 1985",
@@ -21586,30 +21750,13 @@
           }
         ],
         "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
-        "coverage_base_cases": [
-          {
-            "eligible_base": "ordinary_net_earnings if threshold met",
-            "minimum_ordinary_net_earnings_cents": 40000,
-            "otherwise_base_cents": 0,
-            "when": "no qualifying church remuneration"
-          },
-          {
-            "eligible_base_cents": 0,
-            "when": "qualifying church remuneration and combined earnings below 100 dollars"
-          },
-          {
-            "eligible_base": "qualifying_church_remuneration",
-            "when": "qualifying church remuneration and 100 <= combined earnings < 400 dollars and no Schedule C, Schedule F, or partnership loss"
-          },
-          {
-            "eligible_base": "combined_earnings",
-            "when": "qualifying church remuneration and combined earnings at least 100 dollars and a Schedule C, Schedule F, or partnership loss"
-          },
-          {
-            "eligible_base": "combined_earnings",
-            "when": "qualifying church remuneration and combined earnings at least 400 dollars and no such loss"
-          }
-        ],
+        "eligible_base_by_case": {
+          "church_100_to_399_without_ordinary_loss": "qualifying_church_remuneration",
+          "church_at_least_100_with_ordinary_loss": "combined_earnings",
+          "church_at_least_400_without_ordinary_loss": "combined_earnings",
+          "church_combined_below_100": "zero",
+          "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero"
+        },
         "factor": {
           "denominator": 1,
           "numerator": 1
@@ -21629,15 +21776,15 @@
         "units": [
           {
             "aggregation_scope": "person_taxable_year_with_per_employer_church_gate",
-            "eligible_concept": "ordinary net earnings after admissible losses plus qualifying church gross remuneration; apply the declared coverage_base_cases",
+            "eligible_concept": "ordinary net earnings after admissible losses plus qualifying church gross remuneration; apply the row's cases",
             "factor": {
               "denominator": 1,
               "numerator": 1
             },
             "loss_treatment": "ordinary business losses may offset qualifying church remuneration; no self-employment loss offsets covered wages",
             "rounding": "no new intermediate monetary rounding inferred from forms",
-            "threshold_basis": "Piecewise coverage_base_cases, retaining the church employer-year 100-dollar gate and conditional aggregate 100/400-dollar rules",
-            "threshold_rule_parameters": "coverage_base_cases",
+            "threshold_basis": "The row's cases, retaining the church employer-year 100-dollar gate and conditional aggregate 100/400-dollar rules",
+            "threshold_rule_parameters": "cases and eligible_base_by_case",
             "threshold_scope": "person_taxable_year_combined_computation",
             "unit_id": "historical_combined_net_earnings"
           }
@@ -21647,11 +21794,12 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No qualifying electing-church remuneration: ordinary net earnings count once they reach $400 (former 411(b)(2)); apply the other families."
       },
       "rule_id": "se_units_1984_1985",
       "trigger_facts": [
         "amount",
+        "church_employee_service",
         "employee_self_or_mixed",
         "reporting_unit"
       ],
@@ -21677,6 +21825,16 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "case_free_basis": {
+          "citation": {
+            "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+            "capture": "lii_42_411.html",
+            "location": "411(i)(2)(A)",
+            "quote": "(A) Subsection (b)(2) shall be applied separately\u2014 (i) to church employee income",
+            "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+          },
+          "explanation": "411(i) splits the computation into two units, each with its own minimum; the units' thresholds decide the amounts, and no condition changes this family's consequence."
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [

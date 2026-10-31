@@ -850,18 +850,60 @@ def test_deferral_to_an_unknown_family_is_refused(tmp_path):
         invented_registry(tmp_path, [row])
 
 
+def invented_basis(defect=None):
+    """A case-free basis: an explanation and a quoted, cited passage."""
+    basis = {
+        "explanation": "INVENTED reason the condition decides nothing",
+        "citation": {**INVENTED_CITATION, "quote": "Invented source passage"},
+    }
+    if defect == "prose":
+        return "INVENTED reason the condition decides nothing"
+    if defect == "blank_explanation":
+        basis["explanation"] = " "
+    elif defect == "unquoted":
+        del basis["citation"]["quote"]
+    elif defect == "uncited_capture":
+        basis["citation"]["capture"] = "INVENTED_other.html"
+    elif defect == "extra_field":
+        basis["INVENTED_extra"] = "INVENTED"
+    elif defect == "not_text":
+        basis["explanation"] = 7
+    return basis
+
+
+BASIS_DEFECTS = [
+    None,
+    "prose",
+    "blank_explanation",
+    "unquoted",
+    "uncited_capture",
+    "extra_field",
+    "not_text",
+]
+
+
 @given(
     st.sampled_from(sorted(CONSEQUENCES)),
     st.booleans(),
     st.booleans(),
-    st.sampled_from(["INVENTED reason the condition decides nothing", " ", 7]),
+    st.sampled_from(BASIS_DEFECTS),
 )
+@example("covered", False, False, None)
+@example("covered", False, False, "prose")
+@example("covered", False, False, "unquoted")
+@example("covered", False, False, "uncited_capture")
+@example("noncovered", False, False, None)
 @settings(deadline=None)
 def test_case_free_basis_only_explains_case_free_non_excluding_rows(
-    consequence, with_case, is_open, basis
+    consequence, with_case, is_open, defect
 ):
-    """``case_free_basis`` cannot hide an exclusion or a conditional row."""
+    """``case_free_basis`` cannot hide an exclusion or a conditional row.
+
+    Review r3 M2: it is a record whose quoted citation names a capture the
+    row cites, so a basis cannot hold on wording alone.
+    """
     row = invented_row()
+    basis = invented_basis(defect)
     row["parameters"]["case_free_basis"] = basis
     if is_open:
         row["open_reason"] = "INVENTED unresolved legal question"
@@ -879,8 +921,7 @@ def test_case_free_basis_only_explains_case_free_non_excluding_rows(
     if with_case:
         row["cases"] = [invented_case("invented_case", 1)]
     valid = (
-        isinstance(basis, str)
-        and bool(basis.strip())
+        defect is None
         and not is_open
         and not with_case
         and consequence not in {"noncovered", "deferred"}
@@ -890,7 +931,9 @@ def test_case_free_basis_only_explains_case_free_non_excluding_rows(
             CoverageRule.from_dict(row)
         return
     parsed = CoverageRule.from_dict(row)
-    assert parsed.parameters["case_free_basis"] == basis
+    assert parsed.parameters["case_free_basis"]["explanation"] == (
+        basis["explanation"]
+    )
     assert parsed.resolve(()) == parsed.residual_default
 
 
@@ -1436,23 +1479,44 @@ def test_open_and_closed_rows_follow_the_alternative_rules(
     assert [o["name"] for o in rule.open_alternatives] == names
 
 
+NESTED_WHEN = {
+    "flat": {"when": "INVENTED condition"},
+    "listed": [{"when": "INVENTED condition", "base": "INVENTED"}],
+    "deep": {"INVENTED": [{"INVENTED": {"when": "INVENTED condition"}}]},
+    "plain": {"INVENTED": [{"base": "INVENTED"}]},
+}
+
+
 @given(
     st.dictionaries(
         st.sampled_from(["cases", "case_list", "notes", "invented_value"]),
-        st.integers(0, 3),
+        st.one_of(st.integers(0, 3), st.sampled_from(sorted(NESTED_WHEN))),
         max_size=4,
     )
 )
 @example({"cases": 1})
+@example({"notes": "listed"})
+@example({"case_list": "deep"})
+@example({"notes": "plain"})
 @settings(deadline=None)
 def test_cases_live_in_the_schema_not_in_parameters(parameters):
+    """Review r3 M2: no parameter record, at any depth, has a when key."""
     row = invented_row()
+    parameters = {
+        key: NESTED_WHEN.get(value, value) if isinstance(value, str) else value
+        for key, value in parameters.items()
+    }
     row["parameters"] = parameters
-    if "cases" in parameters:
+    nested = any(
+        value is not NESTED_WHEN["plain"]
+        for value in parameters.values()
+        if isinstance(value, (dict, list))
+    )
+    if "cases" in parameters or nested:
         with pytest.raises(RegistryValidationError, match="cases belong"):
             CoverageRule.from_dict(row)
         return
-    assert dict(CoverageRule.from_dict(row).parameters) == parameters
+    assert CoverageRule.from_dict(row).to_dict()["parameters"] == parameters
 
 
 @given(

@@ -1226,12 +1226,16 @@ PARAMETER_EVIDENCE = {
     "case_free_basis",
     "condition_cases",
 }
+# Review r3 M2: the words and keys reach "if", "when", "where" and
+# "requires", and the keys are the ones rows with cases tie.
 CONDITION_KEY = re.compile(
-    r"(^|_)(conditions?|requires_all|any_of|exceptions?)$"
+    r"(^|_)(conditions?|requires_all|requires?|required|any_of|"
+    r"exceptions?|if_applies)$"
 )
 CONDITION_WORDS = re.compile(
     r"\b(only when|only if|unless|except|excepts|excepted|is excluded|"
-    r"are excluded|excludes|remains excluded|depends on)\b",
+    r"are excluded|excludes|remains excluded|depends on|if|when|whenever|"
+    r"where|provided that|requires?)\b",
     re.IGNORECASE,
 )
 
@@ -1248,11 +1252,21 @@ def parameter_leaves(value, path=()):
         yield path, value
 
 
+def holds_when_record(value):
+    if isinstance(value, dict):
+        return "when" in value or any(map(holds_when_record, value.values()))
+    if isinstance(value, (list, tuple)):
+        return any(map(holds_when_record, value))
+    return False
+
+
 def condition_signals(row):
     """Why a closed row's text or parameters name a statutory condition."""
     signals = []
     if row["consequence"] == "noncovered":
         signals.append("noncovered residual")
+    if holds_when_record(row["parameters"]):
+        signals.append("parameter record with a when key")
     for path, value in parameter_leaves(row["parameters"]):
         if value in CONSEQUENCE_VALUES:
             signals.append(f"consequence parameter {'.'.join(path)}")
@@ -1281,23 +1295,53 @@ def rows_missing_condition_cases(rows):
 
 
 def test_closed_rows_naming_a_condition_carry_cases():
+    """Review r3 M2: a case-free basis quotes the passage it rests on.
+
+    At ea599b92 the widened detector flags eight rows, among them
+    se_community_income_2004_2026 and se_units_1984_1985, and the four
+    bases there are prose.
+    """
     rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
     assert rows_missing_condition_cases(rows) == {}
+    based = []
     for row in rows:
         if "case_free_basis" in row["parameters"]:
+            based.append(row["rule_id"])
             assert not row["cases"]
             assert row["consequence"] not in {"noncovered", "deferred"}
             leaves = parameter_leaves(row["parameters"])
             assert not any(v in CONSEQUENCE_VALUES for _, v in leaves)
+            basis = row["parameters"]["case_free_basis"]
+            assert set(basis) == {"explanation", "citation"}
+            cited = basis["citation"]
+            assert cited["capture"] in {c["capture"] for c in row["citations"]}
+            text = source_text(CAPTURE_DIRECTORY / cited["capture"])
+            assert " ".join(cited["quote"].split()) in text
+    assert len(based) == 9
+    assert not set(based) & {
+        "se_community_income_1968_1979",
+        "se_community_income_2004_2026",
+    }
 
 
 @settings(deadline=None)
 @given(
     st.sampled_from(sorted(CONSEQUENCE_VALUES - {"open"})),
-    st.sampled_from(["", "unless the employer elects", "only when paid"]),
+    st.sampled_from(
+        [
+            "",
+            "unless the employer elects",
+            "only when paid",
+            "when a spouse manages it",
+            "if the arrangement requires it",
+        ]
+    ),
+    st.booleans(),
     st.booleans(),
 )
-def test_condition_detector_flags_every_signal(consequence, words, key):
+def test_condition_detector_flags_every_signal(
+    consequence, words, key, nested
+):
     """The detector is the test's oracle, so its own signals are tested."""
     row = {
         "consequence": consequence,
@@ -1306,7 +1350,9 @@ def test_condition_detector_flags_every_signal(consequence, words, key):
         "open_reason": None,
         "cases": [],
     }
-    expected = (consequence == "noncovered") + bool(words) + key
+    if nested:
+        row["parameters"]["INVENTED_branches"] = [{"when": "INVENTED"}]
+    expected = (consequence == "noncovered") + bool(words) + key + nested
     assert len(condition_signals(row)) == expected
     flagged = rows_missing_condition_cases([{"rule_id": "INVENTED", **row}])
     assert bool(flagged) == bool(expected)
@@ -1385,7 +1431,8 @@ def condition_case_problems(row, threshold_ids):
 def test_condition_parameters_on_case_rows_name_their_cases():
     """Review r3 M1: the detector reaches rows that have cases.
 
-    At ea599b92 no row recorded these ties, so it flagged all 32.
+    At ea599b92 no row recorded these ties, so it flagged all 32 rows it
+    reached then; se_community_income_1968_1979 gained cases since.
     """
     raw = json.loads(REGISTRY_ARTIFACT.read_text())
     threshold_ids = {t["threshold_id"] for t in raw["thresholds"]}
@@ -1398,7 +1445,7 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     tied = [
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
-    assert len(tied) == 32
+    assert len(tied) == 33
     assert all(row["cases"] and row["open_reason"] is None for row in tied)
 
 
@@ -2433,6 +2480,52 @@ def test_primary_act_boundaries_preserve_midyear_changes(registry):
         )
         assert registry.lookup_date(family, boundary)[0].rule_id == after_id
         assert len(registry.lookup(family, boundary.year)) == 2
+
+
+COMMUNITY_SPOUSES = {
+    # INVENTED spouses' records, by the cases whose conditions hold.
+    "partner_on_own_share": (set(), "covered"),
+    "spouse_of_partner": (
+        {"partnership_share_of_spouse_partner"},
+        "noncovered",
+    ),
+    "spouse_the_income_belongs_to": (set(), "covered"),
+}
+
+
+@pytest.mark.parametrize("spouse", sorted(COMMUNITY_SPOUSES))
+@pytest.mark.parametrize(
+    ("day", "other_spouse"),
+    [
+        (date(1975, 6, 1), "business_income_treated_as_other_spouses"),
+        (date(2010, 6, 1), "business_income_of_other_spouse"),
+    ],
+)
+def test_community_income_excludes_the_other_spouses_share(
+    registry, day, other_spouse, spouse
+):
+    """Review r3 M2: 411(a)(5)(B) says "no part of such share shall be
+    taken into account in computing the net earnings from self-employment
+    of the spouse"; (a)(5)(A) assigns business income to one spouse (or by
+    shares), so the other spouse's record excludes it."""
+    (rule,) = registry.lookup_date("self_employment_community_income", day)
+    matched, expected = COMMUNITY_SPOUSES[spouse]
+    assert rule.resolve(matched)["consequence"] == expected
+    assert rule.resolve({other_spouse})["consequence"] == "noncovered"
+    assert "case_free_basis" not in rule.parameters
+
+
+def test_units_1984_1985_base_cases_are_schema_cases(registry):
+    """Review r3 M2: the five base cases left parameters for the schema."""
+    (rule,) = registry.lookup("self_employment_units", 1985)
+    assert "coverage_base_cases" not in rule.parameters
+    bases = rule.parameters["eligible_base_by_case"]
+    assert set(bases) == {c["case_id"] for c in rule.cases} | {
+        "residual_default"
+    }
+    below = rule.resolve({"church_combined_below_100"})
+    assert below["consequence"] == "noncovered"
+    assert rule.resolve(())["consequence"] == "covered_above_threshold"
 
 
 def test_community_income_uses_operational_taxable_year_change(registry):

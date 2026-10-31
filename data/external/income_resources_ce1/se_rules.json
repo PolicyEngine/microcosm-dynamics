@@ -1184,7 +1184,11 @@
           ]
         }
       ],
-      "case_free_basis": "The management and partnership conditions decide which spouse the community business income belongs to (the assignment parameters), not whether it is net earnings, so no condition changes the consequence."
+      "condition_cases": {
+        "taxable_year_condition": {
+          "not_a_coverage_condition": "States the row's window: taxable years that do not include October 1980 (POMS RS 01802.400 A), which the family's date axis applies."
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_1968_1979",
@@ -1199,11 +1203,32 @@
       "trade_or_business"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "partnership_share_of_spouse_partner",
+        "precedence": 1,
+        "consequence": "noncovered",
+        "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
+        "when": {
+          "community_property_income": "community income or loss under applicable community property laws",
+          "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+        }
+      },
+      {
+        "case_id": "business_income_treated_as_other_spouses",
+        "precedence": 2,
+        "consequence": "noncovered",
+        "description": "Former 411(a)(5)(A), quoted in the 2004 amendment note, treated all of a community business's gross income and deductions as the husband's \"unless the wife exercises substantially all of the management and control\", in which case all of it was the wife's; the other spouse's net earnings exclude it.",
+        "when": {
+          "community_property_income": "community income from a trade or business other than a partnership",
+          "substantially_all_business_management_and_control": "former 411(a)(5)(A) treats the income as the other spouse's: the person is the husband and the wife exercises substantially all of the management and control, or the person is the wife and does not"
+        }
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No case holds: the income is this person's own under former 411(a)(5) (business income treated as this spouse's, or a partner's own distributive share), so this family does not exclude it; apply the other families."
     }
   },
   {
@@ -1515,11 +1540,32 @@
       "trade_or_business"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "partnership_share_of_spouse_partner",
+        "precedence": 1,
+        "consequence": "noncovered",
+        "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
+        "when": {
+          "community_property_income": "community income or loss under applicable community property laws",
+          "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+        }
+      },
+      {
+        "case_id": "business_income_of_other_spouse",
+        "precedence": 2,
+        "consequence": "noncovered",
+        "description": "411(a)(5)(A): community business income is \"treated as the gross income and deductions of the spouse carrying on such trade or business\" or, if jointly operated, of each spouse by their respective distributive shares; the other spouse's net earnings exclude the rest.",
+        "when": {
+          "community_property_income": "community income from a trade or business other than a partnership",
+          "business_operator_spouse": "the other spouse carries on the business, or, for a jointly operated business, the part that is the other spouse's distributive share"
+        }
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No case holds: the income is this person's own under 411(a)(5) (the spouse carrying on the business, this spouse's share of a jointly operated business, or a partner's own distributive share), so this family does not exclude it; apply the other families."
     }
   },
   {
@@ -1983,7 +2029,16 @@
           ]
         }
       ],
-      "case_free_basis": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings."
+      "case_free_basis": {
+        "explanation": "The exception changes the taxable year to which director fees are assigned, not whether they are net earnings.",
+        "citation": {
+          "capture": "lii_26_1402.html",
+          "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+          "authority": "26 USC 1402, pinned LII republication",
+          "location": "1990 amendment note quoting the former last undesignated paragraph",
+          "quote": "shall be deemed to have been derived (and received) by such individual in that year, at the time the services were performed, regardless of when the income is actually paid to or received by such individual (unless it was actually paid and received prior to that year)"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_director_timing_1988_1990",
@@ -3617,7 +3672,16 @@
           ]
         }
       ],
-      "case_free_basis": "The nonfarm conditions decide whether the optional computation is available; when they fail the regular computation applies, and both are tested against the self-employment unit minimum."
+      "case_free_basis": {
+        "explanation": "The nonfarm conditions decide only whether the optional computation may replace the regular one, at the individual's option; when they fail the regular computation applies, and both are tested against the self-employment unit minimum.",
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "411(a), optional-method sentences",
+          "quote": "may, at his option, be deemed to be 66\u2154 percent of such gross income"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_optional_1973_2007",
@@ -4051,7 +4115,17 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "The regular-basis and other optional-method conditions decide only whether the optional computation may replace the regular one, at the individual's option; when they fail the regular computation applies, and both are tested against the self-employment unit minimum.",
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "411(a), optional-method sentences",
+          "quote": "may, at his option, be deemed to be 66\u2154 percent of such gross income"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_optional_2008_2026",
@@ -5171,30 +5245,6 @@
       "ordinary_net_earnings": "admissible farm/nonfarm/partnership earnings after their own allowed deductions and ordinary losses, including applicable optional-method amounts",
       "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
       "ordinary_losses_may_offset_church_remuneration": true,
-      "coverage_base_cases": [
-        {
-          "when": "no qualifying church remuneration",
-          "minimum_ordinary_net_earnings_cents": 40000,
-          "otherwise_base_cents": 0,
-          "eligible_base": "ordinary_net_earnings if threshold met"
-        },
-        {
-          "when": "qualifying church remuneration and combined earnings below 100 dollars",
-          "eligible_base_cents": 0
-        },
-        {
-          "when": "qualifying church remuneration and 100 <= combined earnings < 400 dollars and no Schedule C, Schedule F, or partnership loss",
-          "eligible_base": "qualifying_church_remuneration"
-        },
-        {
-          "when": "qualifying church remuneration and combined earnings at least 100 dollars and a Schedule C, Schedule F, or partnership loss",
-          "eligible_base": "combined_earnings"
-        },
-        {
-          "when": "qualifying church remuneration and combined earnings at least 400 dollars and no such loss",
-          "eligible_base": "combined_earnings"
-        }
-      ],
       "statutory_units": "One historical combined computation with the stated conditional church/ordinary floors; not the post-1985 two-unit rule",
       "wage_first_cap": "after the eligible-base cases, cap self-employment earnings at the combined maximum remaining after covered wages",
       "published_form_flow": {
@@ -5209,15 +5259,15 @@
         {
           "unit_id": "historical_combined_net_earnings",
           "aggregation_scope": "person_taxable_year_with_per_employer_church_gate",
-          "eligible_concept": "ordinary net earnings after admissible losses plus qualifying church gross remuneration; apply the declared coverage_base_cases",
+          "eligible_concept": "ordinary net earnings after admissible losses plus qualifying church gross remuneration; apply the row's cases",
           "factor": {
             "numerator": 1,
             "denominator": 1
           },
           "loss_treatment": "ordinary business losses may offset qualifying church remuneration; no self-employment loss offsets covered wages",
-          "threshold_basis": "Piecewise coverage_base_cases, retaining the church employer-year 100-dollar gate and conditional aggregate 100/400-dollar rules",
+          "threshold_basis": "The row's cases, retaining the church employer-year 100-dollar gate and conditional aggregate 100/400-dollar rules",
           "threshold_scope": "person_taxable_year_combined_computation",
-          "threshold_rule_parameters": "coverage_base_cases",
+          "threshold_rule_parameters": "cases and eligible_base_by_case",
           "rounding": "no new intermediate monetary rounding inferred from forms"
         }
       ],
@@ -5277,21 +5327,70 @@
             "1986"
           ]
         }
-      ]
+      ],
+      "eligible_base_by_case": {
+        "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero",
+        "church_combined_below_100": "zero",
+        "church_100_to_399_without_ordinary_loss": "qualifying_church_remuneration",
+        "church_at_least_100_with_ordinary_loss": "combined_earnings",
+        "church_at_least_400_without_ordinary_loss": "combined_earnings"
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1984_1985",
     "trigger_facts": [
       "employee_self_or_mixed",
       "amount",
-      "reporting_unit"
+      "reporting_unit",
+      "church_employee_service"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "church_combined_below_100",
+        "precedence": 1,
+        "consequence": "noncovered",
+        "description": "Below $100 of combined earnings the instructions stop.",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings below $100"
+        }
+      },
+      {
+        "case_id": "church_100_to_399_without_ordinary_loss",
+        "precedence": 2,
+        "consequence": "covered",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base.",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss"
+        }
+      },
+      {
+        "case_id": "church_at_least_100_with_ordinary_loss",
+        "precedence": 3,
+        "consequence": "covered",
+        "description": "With an ordinary loss the combined earnings are the base.",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss"
+        }
+      },
+      {
+        "case_id": "church_at_least_400_without_ordinary_loss",
+        "precedence": 4,
+        "consequence": "covered",
+        "description": "From $400 the combined earnings are the base.",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss"
+        }
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No qualifying electing-church remuneration: ordinary net earnings count once they reach $400 (former 411(b)(2)); apply the other families."
     }
   },
   {
@@ -5385,7 +5484,17 @@
             "1986"
           ]
         }
-      ]
+      ],
+      "case_free_basis": {
+        "explanation": "411(i) splits the computation into two units, each with its own minimum; the units' thresholds decide the amounts, and no condition changes this family's consequence.",
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "411(i)(2)(A)",
+          "quote": "(A) Subsection (b)(2) shall be applied separately\u2014 (i) to church employee income"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1986_1989",
