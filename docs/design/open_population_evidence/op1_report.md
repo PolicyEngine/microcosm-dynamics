@@ -673,7 +673,10 @@ review inject-r2 for more at `33e383b4`. Review inject-r3 approved
 `5a4fc14c` with one minor finding and two nits, since fixed. Their
 subsections, below, give the findings and the fixes. In the coordinator's
 tier-count slot the branch then merged master `172f690f` and recounted the
-tier inventories (condition 5).
+tier inventories (condition 5). Review inject-r4 approved `305b171b` with
+two minor findings and two nits, which this section answers by stating what
+the scan leaves out. In the next slot the branch merged master `a747bafa`
+and recounted again.
 
 ### Mechanism
 
@@ -744,12 +747,12 @@ so `POST_REVIEW_SOURCE_EXCLUSIONS` and its pin are unchanged.
 
 ### The coordinator's conditions and their evidence
 
-**1. No sealed code changes.** Against master `172f690f`, the master it
+**1. No sealed code changes.** Against master `a747bafa`, the master it
 last merged, the branch changes only `open_population/harness.py` and
 `gates.py`, OP1's two stream test modules, three files in this folder (this
 report, `op1_run_size.py` and `op1_run_size_injection.json`) and the two
 tier files the recount sets, `tests/tier_counts.json` and
-`tests/README-tiers.md` (§3's commands, with `172f690f` as the base). No
+`tests/README-tiers.md` (§3's commands, with `a747bafa` as the base). No
 engine or baselines attribute is patched, and
 `DirectRNGStreams` is not a registry subclass:
 - `test_a_direct_run_patches_no_sealed_module_attribute` compares every
@@ -800,12 +803,12 @@ computes, and the runs listed above check that on the paths they take.
 
 `test_sealed_code_holds_only_the_known_registry_type_check` runs an AST scan
 of `src/populace_dynamics/` outside `open_population/`: 302 modules at
-`172f690f`, once the five excluded modules below are dropped.
+`a747bafa`, once the five excluded modules below are dropped.
 - **What it reads.** The project's data-access record keeps two modules out
   of automated reads: `estimates/adjusted_poverty.py` and
   `uniform_cut_track_u/rows.py`. The scan also skips the depletion-cut
   modules, every path matching `src/populace_dynamics/bridge/depletion_cut*.py`,
-  so that what it reads does not depend on who runs it. At `172f690f` the
+  so that what it reads does not depend on who runs it. At `a747bafa` the
   pattern matches three: `bridge/depletion_cut.py`,
   `bridge/depletion_cut_population.py` and
   `bridge/depletion_cut_population_child.py`. The walk decides from each
@@ -857,9 +860,13 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   `setter`, `getter` or `deleter` is trusted only where its receiver is a
   property defined above it in the same class body: a function whose
   outermost decorator is `property` or another such accessor, not bound
-  again since. And any `register`, as an attribute or as a name bound
-  from one, is taken for a dispatcher's by its spelling alone: the hint
-  it dispatches on has its own check, and its other hints are trusted.
+  again since. The scan reads the class body's statements in order and
+  runs none of them, so a property under `if False` still counts, and a
+  walrus in a later function's default does not end it. Review inject-r4
+  found no check these two gaps hide outside limit classes 2 and 4. And
+  any `register`, as an attribute or as a name bound from one, is taken
+  for a dispatcher's by its spelling alone: the hint it dispatches on has
+  its own check, and its other hints are trusted.
   A class is trusted only with trusted
   decorators, no keywords and no base but `object`. A specific check is
   reported at the outermost node that makes it, and nothing under that
@@ -911,7 +918,11 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     code passed to `eval`, `exec`, `compile` or `ForwardRef` is parsed and
     scanned with the module, and so is literal code nested in it, down to
     five levels. A call whose literal code would be a sixth level is
-    reported as `dynamic-code` whatever the module binds.
+    reported as `dynamic-code` whatever the module binds. Annotations
+    differ. There only the hint checks parse literals, and they read
+    expressions, so a statement suite in an annotation, such as
+    `v: exec("def f(x): ...")`, stays unparsed at every depth and gives no
+    hit (limit class 4).
   - `member-introspection`: a dunder read on, or an introspection call
     such as `inspect.getmodule` or `getattr` on, a member of a module
     through which a class can be reached.
@@ -990,7 +1001,11 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     exception it allows is the four-digit width rule; with that rule off,
     the folder must agree.
 - **Deep expressions.** The walks that follow class info, instances and
-  module paths keep their own stacks, as the folder and the catch-all do.
+  module paths keep their own stacks, as the folder and the catch-all do,
+  with one exception: `module_path` still recurses through literal
+  `sys.modules[...]` subscripts. Beside a working check, such a chain
+  passes at 500 links and raises `RecursionError` at 1000. The error stops
+  the scan, so it cannot silently miss a check.
   `test_scan_reads_long_chains_without_exhausting_recursion` gives seven
   working checks inside or beside chains 3000 links long: a sum of
   literals, a union, slices, conditionals, attributes, calls and
@@ -1003,9 +1018,9 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   anything from such a container. The generated data modules of
   18.5, 11.1 and 1.6 MB are almost all such containers: pruning leaves
   178, 78 and 7 of their 706,994, 251,826 and 85,417 syntax-tree nodes, and
-  934,119 of the 2,007,907 in all 302 modules at `172f690f`. At `9cced8ff`
-  they were 934,099 of 2,007,887; master's Track B change is the only
-  source change between the two.
+  934,121 of the 2,007,909 in all 302 modules at `a747bafa`. At `9cced8ff`
+  they were 934,099 of 2,007,887; master's Track B changes are the only
+  source changes between the two.
   `test_pruning_leaves_every_invented_scan_unchanged` and
   `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
   literals, each placed in fourteen positions, folded ones among them)
@@ -1042,7 +1057,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     that track nothing; their reads of namespaces, docstrings, annotations
     and signatures give no hit.
   - `test_scan_trusts_an_accessor_only_of_a_property_above_it` gives
-    seven class bodies. A property's own `setter`, `deleter` and `getter`
+    seven cases. A property's own `setter`, `deleter` and `getter`
     give no hit; an accessor of a receiver bound nowhere, of a plain
     method, of a property bound again, of a property under another
     decorator, outside a class, or of a local `property` leaves the
@@ -1082,7 +1097,8 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   3. **Files read as data**, a module's own source among them, as with
      `open(__file__)` or `importlib.resources`.
   4. **Code it does not read**: the excluded modules, OP1's own package,
-     scripts, tests and third-party code.
+     scripts, tests, third-party code and literal statement suites inside
+     annotations.
 
   So a clean scan is evidence, not proof. Behaviour is checked
   separately, at run time: on the paths the reader runs and §4's identity
@@ -1223,7 +1239,7 @@ bounds. The full-size measurement is still due before OP10a.
 **4, by reader.** `test_every_stream_reader_is_run_or_named` takes a census
 of sealed code: each function, class or module that uses `rng_registry`,
 `person_generator` or `composition_rngs_from_registry` as an attribute, a
-name, a keyword or a string. At `172f690f` it finds 23 places and pins each
+name, a keyword or a string. At `a747bafa` it finds 23 places and pins each
 with the run that checks it or the reason none does:
 - ten run with both classes, below;
 - six build their own `ProjectionRNGRegistry` and read only that one:
@@ -1291,6 +1307,16 @@ the other four tiers keep master's counts. CI's
 `tests/test_tier_policy.py::test__given_collected_suite__then_tiers_match_policy_manifest`,
 which failed at `5a4fc14c` because the counts lagged, compares the whole
 collected suite with these files at each push.
+
+In the next slot, `174ff3f8` merges master `a747bafa` (Track B's `b0_2`
+files, a further holdout-registry change and master's own recount). Only the
+two tier files conflict, and the merge takes master's copies of them.
+Against `305b171b` it changes exactly master's 31 files, none of them under
+`tests/open_population` or in this folder. `ed2c0e90` then recounts. Master
+leaves `tests/open_population` and `tests/conftest.py` as they stood at
+`172f690f`, so the branch adds the same 457 node ids, all `unit`, and still
+changes no other test module. `unit` moves from 19,047 to 19,504 and the
+total from 25,617 to 26,074; the other four tiers keep master's counts.
 
 ### Review inject-r1
 
@@ -1395,6 +1421,39 @@ of the folder's 26 methods and 10 builtins, the Hypothesis grammar takes
 the methods with an argument or a width, and the walks that recursed keep
 their own stacks.
 
+### Review inject-r4
+
+Review inject-r4, a hard-tier Subfleet review on a Codex lane, read the
+branch at `305b171b` and returned APPROVE. It found no blocking or major
+finding under the behavioural claim, and r3's findings fixed. It confirmed
+the merge of `172f690f` and the recount, and it reran the seven-path
+command: 1,022 passed, 2 skipped and 1 strict xfail. Its two minor findings
+and two nits all concern how this section described the scan, so this
+section changes and the code does not: `tests/open_population` and
+`open_population/` stay byte-identical to what it approved.
+
+1. **Minor: literal statement suites in annotations escape both expansion
+   paths.** `_embedded` skips annotation nodes, and the hint checks parse
+   expressions only. So `v: exec('def f(x): ...')` runs a working check
+   when something reads the annotation, and the scan gives no hit. The
+   scan at `5a4fc14c` misses it too, and limit class 4 covers it, but the
+   literal-code claims did not say so. **Fix:** the `dynamic-code` bullet
+   and limit class 4 now state it.
+2. **Minor: `module_path` still recurses through `sys.modules` subscripts.**
+   Beside a working check, a chain of them passes at 500 links and raises
+   `RecursionError` at 1000. The arm predates the r3 fixes, and the error
+   fails loudly, but "keep their own stacks" claimed too much. **Fix:**
+   "Deep expressions" now states the exception.
+3. **Nit: accessor trust reads syntax.** A walrus in a later function's
+   default rebinds the name without ending the property, and a property
+   under `if False` still counts. **Fix:** the decorator paragraph now
+   states both. The accessor test's seven bodies also include one outside a
+   class, so this section now says seven cases.
+4. **Nit: the surviving mutant's explanation claimed too much.** Python can
+   import a package named `None.R`, so an invented exporter there tells the
+   mutant apart. **Fix:** the mutant paragraph now limits the claim to this
+   repository's modules.
+
 ### Commands and results
 
 ```sh
@@ -1402,14 +1461,14 @@ their own stacks.
 .venv/bin/python -m pytest --collect-only -q -p no:cacheprovider -m unit tests/open_population
 .venv/bin/black --check -l 79 src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
 .venv/bin/ruff check src/populace_dynamics/open_population tests/open_population docs/design/open_population_evidence/op1_run_size.py
-git diff --check 172f690f
-git diff --stat 172f690f
-git diff --quiet 172f690f -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs scripts tests/estimates
-git diff --numstat 172f690f -- tests/tier_counts.json tests/README-tiers.md
+git diff --check a747bafa
+git diff --stat a747bafa
+git diff --quiet a747bafa -- src/populace_dynamics/engine src/populace_dynamics/baselines src/populace_dynamics/cola_track_a src/populace_dynamics/track_b gates.yaml runs scripts tests/estimates
+git diff --numstat a747bafa -- tests/tier_counts.json tests/README-tiers.md
 ```
 
-Rounds before the tier-count slot used master `9cced8ff` as the base and
-also held `tests/tier_counts.json` and `tests/README-tiers.md` quiet; the
+Rounds before the first tier-count slot used master `9cced8ff` as the base
+and also held `tests/tier_counts.json` and `tests/README-tiers.md` quiet; the
 results below name the base each round used.
 
 The build ran the required command in its sandbox in five chunks of named
@@ -1579,14 +1638,49 @@ property kept, any decorator taken for `property`, and `_bound_names`
 skipping stores; embed depths of four and six, and an unreported sixth
 level; a budget that never raises, and source literals counted against it;
 a bounded source literal, and text, item, integer and template limits that
-refuse a value at the limit; `partition` dropped; the recursive part walk and module path
-restored; and the call receiver, call arguments, slice, conditional and
-`and` parts the four new spellings pin. The survivor drops `module_path`'s
-check for a missing base. It can only make a path that starts `None.`,
-which names no module, so it changes no result. The three stream mutants
+refuse a value at the limit; `partition` dropped; the recursive part walk
+and module path restored; and the call receiver, call arguments, slice,
+conditional and `and` parts the four new spellings pin. The survivor drops
+`module_path`'s check for a missing base. It can only make a path that
+starts `None.`, and no module in this repository has one, so it changes no
+result here. The three stream mutants
 above, rerun at `ec888be7`, still each change some reader's output, and
 unmutated no reader's output differs. None of these ran against the real
 tree.
+
+After review inject-r4, the merge of master `a747bafa` and the recount, the
+main session ran the same commands on the host at `ed2c0e90` from 11:51 to
+12:07 UTC on 31 October. The next commit changes only this report.
+`ed2c0e90` holds the same `tests/open_population` and `open_population/` as
+`305b171b`, so the mutant, chain and probe results above stand. The tests
+and the real-tree scan ran again because the tree they read changed. Each
+process ran under the load-check audit hook and started only at a
+one-minute load under 100:
+- `tests/open_population`: **694 passed and 1 strict xfail** in 47.57 s.
+- The other four modules: 104 passed in 2.40 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped;
+  master's changes add six. The required command plus those two modules,
+  in one process: **1,028 passed, 2 skipped and 1 strict xfail**.
+- Peak RSS was 1.33 GB.
+- The slowest tests took 15.08 s (the real-tree scan), 3.65 s (the census)
+  and 2.11 s (the fresh-interpreter import check).
+- No file under a bar was opened, the pattern line named only
+  `baselines/asfr.py` (read by the scan and the census, never displayed),
+  and a call-count hook on the one-process run counted no call to either
+  barred function.
+- `--collect-only -m unit tests/open_population` collects all 695. Black,
+  Ruff and `git diff --check a747bafa` are clean. `git diff --stat
+  a747bafa` lists the nine files of condition 1, and the sealed-path
+  `git diff --quiet` exits 0. `tests/tier_counts.json` differs from master
+  only in its `unit` line, and `tests/README-tiers.md` only in its `unit`
+  and total rows.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, and every module's folded values still weigh under 16,384; the
+  heaviest outside `baselines/asfr.py` still weighs 10,433.
+- All four of review inject-r4's counterexamples reproduce on invented
+  sources, at `ed2c0e90` and at `5a4fc14c`, as §6 now states them. A
+  `sys.modules` chain gives its check at 200 and 500 links and raises
+  `RecursionError` at 1000 and 2000.
 
 ### Restricted-files statement
 
@@ -1622,3 +1716,10 @@ only to run `di_aware_claiming`; no test calls a barred function. The main
 session's searches over `src/` and `tests/` took their file lists from the
 helper, and its measurement scripts printed paths, line numbers, node
 kinds, qualified names and counts.
+
+The fixes for review inject-r3, the wording for review inject-r4 and both
+tier-count merges followed the same rules. Git reads that spanned master's
+changes used `--name-only`, `--stat` or `--quiet`, and displayed none of
+master's changed files beyond the two tier files. The real-tree scripts
+read the scanned modules only through the test module's own walk, under
+the audit hook, and printed paths, line numbers, node kinds and counts.
