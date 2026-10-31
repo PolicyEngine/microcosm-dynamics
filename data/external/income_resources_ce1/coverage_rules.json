@@ -723,16 +723,8 @@
       "rule_id": "fishing_crew_share_service_1968"
     },
     {
-      "reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
-      "rule_id": "nonresident_alien_vocational_service_1987"
-    },
-    {
       "reason": "COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED: current RS 01802.400 states that section 425 replaced the Edwards court-order procedure and obsolete RS 01802.410 through .470; their pre-amendment allocation procedure is not captured.",
       "rule_id": "se_community_income_1980_2004_open"
-    },
-    {
-      "reason": "CRP_PRE2008_CLASSIFICATION_UNVERIFIED: the 2008 amendment note establishes only when the beneficiary exclusion begins. Earlier payments require the trade-or-business and rental-income tests, and the registry support window does not imply that CRP existed in 1968.",
-      "rule_id": "se_conservation_reserve_1968_2007"
     },
     {
       "reason": "FOREIGN_911_PRE1973_HISTORY_UNVERIFIED: the general override begins only after 1972; earlier underlying 911 text has not been obtained.",
@@ -12055,7 +12047,30 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "m1_admission_purpose_service_start_open",
+          "consequence": "open",
+          "description": "Only authorized M-1 service for the admission purpose divides the readings; other service, M-2 service included, is not excluded under either (POMS RS 01901.740 C).",
+          "open_alternatives": [
+            {
+              "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986.",
+              "name": "as_if_included_in_tra1986_section_123"
+            },
+            {
+              "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered. It must also read section 151(a)'s general rule (\"Except as otherwise provided in this section\", taxable years beginning after December 31, 1986) as not reaching the addition, because section 151(d) is the provision for section 123; no capture settles whether section 151(a) then supplies the date.",
+              "name": "from_enactment_1988_11_10"
+            }
+          ],
+          "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
+          "precedence": 1,
+          "when": {
+            "nonresident_alien_status": "nonresident alien",
+            "statutory_student_service": "authorized service performed to carry out the purpose of the M admission",
+            "visa_status": "M-1 nonimmigrant temporarily present in the United States"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
@@ -12109,23 +12124,14 @@
           "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1"
         }
       ],
-      "consequence": null,
-      "description": "From 1987 through 1988 the start of the M-1 vocational-student service exclusion is unsettled: the readings differ from January 1, 1987 to November 9, 1988, and both exclude M-1 admission-purpose service from November 10, 1988.",
-      "effective_end": "1988-12-31",
+      "consequence": "covered",
+      "description": "From 1987 to November 9, 1988 the readings differ on authorized M-1 service for the admission purpose only; from November 10, 1988 both exclude it, and no other service is excluded by 410(a)(19) under either reading.",
+      "effective_end": "1988-11-09",
       "effective_start": "1987-01-01",
       "family": "nonresident_alien_vocational_service",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986.",
-          "name": "as_if_included_in_tra1986_section_123"
-        },
-        {
-          "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered.",
-          "name": "from_enactment_1988_11_10"
-        }
-      ],
-      "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
         "boundary_clause": {
           "axis_exception": "Section 151(d) dates the M-class amendment by taxable years, while 410(a)(19) excludes service, so the family keeps the service-date axis; the open readings carry the taxable-year question, and for a calendar-year worker the first such year begins January 1, 1987.",
@@ -12178,15 +12184,9 @@
             ]
           }
         ],
-        "named_options": {
-          "as_if_included_in_tra1986_section_123": {
-            "basis": "Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a); Tax Reform Act of 1986 section 151(d)",
-            "m1_service_excluded_from": "1987-01-01"
-          },
-          "from_enactment_1988_11_10": {
-            "basis": "Pub. L. 100-647, approved November 10, 1988",
-            "m1_service_excluded_from": "1988-11-10"
-          }
+        "m1_exclusion_start_by_reading": {
+          "as_if_included_in_tra1986_section_123": "1987-01-01",
+          "from_enactment_1988_11_10": "1988-11-10"
         },
         "requires_admission_purpose_service": true,
         "unverified_dependency": "How section 151(d)'s limit to scholarships and fellowships granted after August 16, 1986 operates for the added M-class service exclusion.",
@@ -12225,8 +12225,8 @@
         "strict": "unresolved"
       },
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "No case holds: the service is not authorized M-1 admission-purpose work, so 410(a)(19) does not exclude it under either reading; apply the other families."
       },
       "rule_id": "nonresident_alien_vocational_service_1987",
       "trigger_facts": [
@@ -12301,15 +12301,14 @@
         }
       ],
       "consequence": "covered",
-      "description": "In the verified calendar-year window after the 1988 adding act, section 410(a)(19) excludes services by a nonresident alien temporarily present in M status only when the services carry out the purpose for which the individual was admitted. The earlier original-applicability question remains open separately.",
+      "description": "From the adding act's enactment on November 10, 1988, which both readings agree on, section 410(a)(19) excludes services by a nonresident alien temporarily present in M status only when the services carry out the purpose for which the individual was admitted.",
       "effective_end": "2026-12-31",
-      "effective_start": "1989-01-01",
+      "effective_start": "1988-11-10",
       "family": "nonresident_alien_vocational_service",
       "identification_class": "awaiting_ce2",
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
-        "before_this_window": "nonresident_alien_vocational_service_1987 refuses 1987-1988 with two named readings; nonresident_alien_vocational_service_1968 returns the pre-amendment rule",
         "boundary_clause": {
           "citation": {
             "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
@@ -12400,10 +12399,9 @@
             "title": 42
           }
         ],
+        "enactment": "1988-11-10",
         "requires_admission_purpose_service": true,
         "requires_nonresident_alien_status": true,
-        "verification_window_explanation": "Current M-class exclusion is established after the 1988 adding act; this does not resolve its earlier retroactive effective date.",
-        "verification_window_start": "1989-01-01",
         "visa_classes": [
           "M-1"
         ]
@@ -12442,7 +12440,7 @@
         "consequence": "covered",
         "description": "The service is not authorized M-1 admission-purpose work, so 410(a)(19) does not exclude it; apply the other families."
       },
-      "rule_id": "nonresident_alien_vocational_service_1989",
+      "rule_id": "nonresident_alien_vocational_service_1988_1110",
       "trigger_facts": [
         "enrollment",
         "nonresident_alien_status",
@@ -14815,6 +14813,13 @@
           "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
         },
         {
+          "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+          "location": "section 9023(b)(1)",
+          "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\"",
+          "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+        },
+        {
           "authority": "IRS Publication 517 (2025)",
           "capture": "irs_p517_2025.html",
           "location": "Regular Method; Amounts Included in Gross Income; Pastor Leslie Adams example",
@@ -14829,19 +14834,250 @@
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
+          "location": "1987 amendment note, subsec. (a)(7)",
+          "quote": "Subsec. (a)(7). Pub. L. 100\u2013203, \u00a7 9023(b)(1) , struck out reference to section 931",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
           "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
       "consequence": "covered",
-      "description": "Nonexempt clergy include parsonage value/allowance, employer meals/lodging, and qualifying foreign earnings without 107, 119, 911 exclusions; postretirement church benefits are excluded under (a)(7).",
-      "effective_end": "2026-12-31",
+      "description": "From taxable years beginning after 1972, nonexempt clergy compute net earnings without the 107, 119, 911 and 931 exclusions (411(a)(7) as amended by Pub. L. 92-603); postretirement church benefits are excluded under (a)(7).",
+      "effective_end": "1987-12-21",
       "effective_start": "1973-01-01",
       "family": "self_employment_clergy_gross_concept",
       "identification_class": "awaiting_ce2",
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "code_edition_evidence": [
+          {
+            "amendment_year_entries_verified_present": [
+              "1972",
+              "2004"
+            ],
+            "citation": {
+              "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+              "capture": "uscode_2004_42_411.html",
+              "location": "Historical comparison only, related to 411(a)(7); Amendments entries: 1972, 2004; Effective Date of 2004 Amendment; Effective Date of 1972 Amendments",
+              "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1"
+            },
+            "contemporaneous_code_status": "unavailable",
+            "edition_year": 2004,
+            "historical_note_headings_verified_present": [
+              "Effective Date of 2004 Amendment",
+              "Effective Date of 1972 Amendments"
+            ],
+            "primary_history_citation_status": "existing_row_specific_primary_references",
+            "primary_history_citations": [
+              {
+                "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+                "capture": "govinfo_plaw_108publ203.html",
+                "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
+                "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+              }
+            ],
+            "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+            "section": 411,
+            "section_references_verified_present": [
+              "411(a)(7)"
+            ],
+            "support_kind": "historical_amendment_notes",
+            "title": 42,
+            "unavailable_contemporaneous_edition_labels": [
+              1970,
+              1976,
+              1982,
+              1988
+            ]
+          },
+          {
+            "amendment_year_entries_verified_present": [
+              "1972"
+            ],
+            "citation": {
+              "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+              "capture": "uscode_1994_42_411.html",
+              "location": "Section text as printed: 411(a)(7)",
+              "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
+            },
+            "edition_year": 1994,
+            "historical_note_headings_verified_present": [
+              "Effective Date of 1972 Amendments"
+            ],
+            "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+            "section": 411,
+            "section_references_verified_present": [
+              "411(a)(7)"
+            ],
+            "support_kind": "section_text_as_printed",
+            "title": 42
+          },
+          {
+            "amendment_year_entries_verified_present": [
+              "1972",
+              "2004"
+            ],
+            "citation": {
+              "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+              "capture": "uscode_2004_42_411.html",
+              "location": "Section text as printed: 411(a)(7)",
+              "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1"
+            },
+            "edition_year": 2004,
+            "historical_note_headings_verified_present": [
+              "Effective Date of 2004 Amendment",
+              "Effective Date of 1972 Amendments"
+            ],
+            "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+            "section": 411,
+            "section_references_verified_present": [
+              "411(a)(7)"
+            ],
+            "support_kind": "section_text_as_printed",
+            "title": 42
+          },
+          {
+            "amendment_year_entries_verified_present": [
+              "1972",
+              "2004"
+            ],
+            "citation": {
+              "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+              "capture": "uscode_2024_42_411.html",
+              "location": "Section text as printed: 411(a)(7)",
+              "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+            },
+            "edition_year": 2024,
+            "historical_note_headings_verified_present": [
+              "Effective Date of 2004 Amendment",
+              "Effective Date of 1972 Amendment"
+            ],
+            "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+            "section": 411,
+            "section_references_verified_present": [
+              "411(a)(7)"
+            ],
+            "support_kind": "section_text_as_printed",
+            "title": 42
+          }
+        ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+        "gross_income_exclusions_disregarded": [
+          "26USC107",
+          "26USC119",
+          "26USC911",
+          "26USC931"
+        ],
+        "retired_clergy_exception_effective_scope": "Years beginning before, on, or after 1994-12-31 under section 422(b); no 1995/2004 start is inferred.",
+        "retired_clergy_housing_and_church_plan_benefits": "excluded; Public Law 108-203 section 422 applies to years before, on, or after 1994-12-31",
+        "service_exemption_decided_by": "clergy_religious_service family"
+      },
+      "rare_exclusion": null,
+      "residual_default": {
+        "consequence": "covered",
+        "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values; apply the other families."
+      },
+      "rule_id": "se_clergy_gross_concept_1973_1987",
+      "trigger_facts": [
+        "amount",
+        "clergy_or_religious_exemption",
+        "clergy_remuneration",
+        "clergy_retirement_benefit",
+        "ministerial_service",
+        "retirement_payment",
+        "taxable_year_start"
+      ],
+      "worked_examples": []
+    },
+    {
+      "alternative": null,
+      "cases": [
+        {
+          "case_id": "exempt_minister",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+          "precedence": 1,
+          "when": {
+            "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+          }
+        },
+        {
+          "case_id": "retired_clergy_benefits",
+          "consequence": "noncovered",
+          "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31.",
+          "precedence": 2,
+          "when": {
+            "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+          }
+        }
+      ],
+      "citations": [
+        {
+          "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+          "capture": "govinfo_plaw_108publ203.html",
+          "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
+          "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+        },
+        {
+          "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+          "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+          "location": "section 9023(b)(1)",
+          "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\"",
+          "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Regular Method; Amounts Included in Gross Income; Pastor Leslie Adams example",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "1987 amendment note, subsec. (a)(7)",
+          "quote": "Subsec. (a)(7). Pub. L. 100\u2013203, \u00a7 9023(b)(1) , struck out reference to section 931",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        }
+      ],
+      "consequence": "covered",
+      "description": "Nonexempt clergy include parsonage value or allowance, employer meals and lodging, and qualifying foreign earnings without the 107, 119 and 911 exclusions. Pub. L. 100-203 section 9023(b)(1) struck section 931 from (a)(7), and (a)(8) as amended disregards the 931 exclusion for every individual (the possessions family); postretirement church benefits are excluded under (a)(7).",
+      "effective_end": "2026-12-31",
+      "effective_start": "1987-12-22",
+      "family": "self_employment_clergy_gross_concept",
+      "identification_class": "awaiting_ce2",
+      "open_alternatives": [],
+      "open_reason": null,
+      "parameters": {
+        "boundary_clause": {
+          "citation": {
+            "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+            "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+            "location": "section 9023(b)(1)",
+            "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\"",
+            "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -14970,7 +15206,7 @@
         "consequence": "covered",
         "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values; apply the other families."
       },
-      "rule_id": "se_clergy_gross_concept_1973_2026",
+      "rule_id": "se_clergy_gross_concept_1987_2026",
       "trigger_facts": [
         "amount",
         "clergy_or_religious_exemption",
@@ -14990,7 +15226,7 @@
             "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
           },
           "example_id": "irs517_2025_adams_parsonage",
-          "expected_rule_id": "se_clergy_gross_concept_1973_2026",
+          "expected_rule_id": "se_clergy_gross_concept_1987_2026",
           "income_year": 2025,
           "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
           "published_inputs": {
@@ -15012,7 +15248,7 @@
             "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
           },
           "example_id": "irs517_2025_mexico_clergy_foreign_exclusion",
-          "expected_rule_id": "se_clergy_gross_concept_1973_2026",
+          "expected_rule_id": "se_clergy_gross_concept_1987_2026",
           "income_year": 2025,
           "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
           "published_inputs": {
@@ -15513,7 +15749,38 @@
     },
     {
       "alternative": null,
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "crp_payment_in_real_estate_dealer_business",
+          "consequence": "covered",
+          "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
+          "precedence": 1,
+          "when": {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+          }
+        },
+        {
+          "case_id": "crp_payment_classification_open",
+          "consequence": "open",
+          "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included.",
+          "open_alternatives": [
+            {
+              "description": "The payment is rent for land placed in the reserve: 411(a)(1) excludes it from net earnings, unless it is received in a real estate dealer's business or under the farm-rental proviso.",
+              "name": "rental_income_exclusion"
+            },
+            {
+              "description": "The payment is income from the recipient's trade or business, such as farming, and enters net earnings under the base definition.",
+              "name": "trade_or_business_receipts"
+            }
+          ],
+          "open_reason": "CRP_CLASSIFICATION_UNVERIFIED: no capture settles whether a Conservation Reserve payment that 411(a)(1) does not name (before 2008, any such payment; from 2008, one to a recipient not receiving 402 or 423 benefits) is rental from real estate or income from the recipient's trade or business. The 2008 amendment note establishes only when the beneficiary exclusion begins.",
+          "precedence": 2,
+          "when": {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -15522,23 +15789,14 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": null,
-      "description": "Before the special exclusion for payments after 2007, the captured effective-date note does not establish whether a Conservation Reserve payment was trade-or-business income or excluded rental income. Defer that classification to se_base_definition and se_rental_income; no CRP consequence is selected for this window.",
+      "consequence": "covered",
+      "description": "Before the 2008 beneficiary exclusion, no capture settles whether a Conservation Reserve payment is rental from real estate or trade-or-business income, so a payment refuses unless both readings agree (a real estate dealer's rent). The window does not imply that the program existed in 1968.",
       "effective_end": "2007-12-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_conservation_reserve",
       "identification_class": "awaiting_ce2",
-      "open_alternatives": [
-        {
-          "description": "Determine whether the payment belongs to net earnings under se_base_definition.",
-          "name": "trade_or_business_receipts"
-        },
-        {
-          "description": "Determine whether se_rental_income excludes the payment under the rental exception.",
-          "name": "rental_income_exclusion"
-        }
-      ],
-      "open_reason": "CRP_PRE2008_CLASSIFICATION_UNVERIFIED: the 2008 amendment note establishes only when the beneficiary exclusion begins. Earlier payments require the trade-or-business and rental-income tests, and the registry support window does not imply that CRP existed in 1968.",
+      "open_alternatives": [],
+      "open_reason": null,
       "parameters": {
         "code_edition_evidence": [
           {
@@ -15632,23 +15890,20 @@
             "title": 42
           }
         ],
-        "defer_to_families": [
-          "self_employment_base_definition",
-          "self_employment_rental_income"
-        ],
         "effective_basis": "payment_date",
         "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
         "special_2008_crp_exclusion": false
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": null,
-        "description": "No residual legal consequence is selected while this question remains open."
+        "consequence": "covered",
+        "description": "No case holds: the payment is not a 16 U.S.C. 3833(2) Conservation Reserve payment, so this family does not apply; apply the other families."
       },
       "rule_id": "se_conservation_reserve_1968_2007",
       "trigger_facts": [
         "amount",
-        "conservation_reserve_payment"
+        "conservation_reserve_payment",
+        "real_estate_dealer_status"
       ],
       "worked_examples": []
     },
@@ -15658,7 +15913,7 @@
         {
           "case_id": "crp_payment_in_real_estate_dealer_business",
           "consequence": "covered",
-          "description": "411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; apply the other families.",
+          "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
           "overrides": [
             "crp_payment_to_beneficiary"
           ],
@@ -15666,6 +15921,27 @@
           "when": {
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
             "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+          }
+        },
+        {
+          "case_id": "crp_payment_classification_open",
+          "consequence": "open",
+          "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included.",
+          "open_alternatives": [
+            {
+              "description": "The payment is rent for land placed in the reserve: 411(a)(1) excludes it from net earnings, unless it is received in a real estate dealer's business or under the farm-rental proviso.",
+              "name": "rental_income_exclusion"
+            },
+            {
+              "description": "The payment is income from the recipient's trade or business, such as farming, and enters net earnings under the base definition.",
+              "name": "trade_or_business_receipts"
+            }
+          ],
+          "open_reason": "CRP_CLASSIFICATION_UNVERIFIED: no capture settles whether a Conservation Reserve payment that 411(a)(1) does not name (before 2008, any such payment; from 2008, one to a recipient not receiving 402 or 423 benefits) is rental from real estate or income from the recipient's trade or business. The 2008 amendment note establishes only when the beneficiary exclusion begins.",
+          "precedence": 2,
+          "when": {
+            "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423",
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
           }
         },
         {
@@ -15678,7 +15954,7 @@
           "overrides": [
             "crp_payment_to_beneficiary"
           ],
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
             "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
@@ -15688,7 +15964,7 @@
           "case_id": "crp_payment_to_beneficiary",
           "consequence": "noncovered",
           "description": "411(a)(1) excludes these payments with rentals from real estate.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423",
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
@@ -15703,7 +15979,7 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
-      "consequence": "deferred",
+      "consequence": "covered",
       "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
       "effective_end": "2026-12-31",
       "effective_start": "2008-01-01",
@@ -15764,12 +16040,8 @@
       },
       "rare_exclusion": null,
       "residual_default": {
-        "consequence": "deferred",
-        "defers_to": [
-          "self_employment_rental_income",
-          "self_employment_base_definition"
-        ],
-        "description": "411(a)(1) excludes only payments to individuals receiving 402 or 423 benefits. Other CRP payments are decided by the rental and base definition families."
+        "consequence": "covered",
+        "description": "No case holds: the payment is not a 16 U.S.C. 3833(2) Conservation Reserve payment, so this family does not apply; apply the other families."
       },
       "rule_id": "se_conservation_reserve_2008_2026",
       "trigger_facts": [

@@ -7145,7 +7145,7 @@
     "rule_id": "nonresident_alien_vocational_service_1987",
     "family": "nonresident_alien_vocational_service",
     "effective_start": "1987-01-01",
-    "effective_end": "1988-12-31",
+    "effective_end": "1988-11-09",
     "citations": [
       {
         "capture": "poms_rs_01901740.html",
@@ -7206,9 +7206,9 @@
       "statutory_student_service",
       "services_performed_date"
     ],
-    "consequence": null,
+    "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "From 1987 through 1988 the start of the M-1 vocational-student service exclusion is unsettled: the readings differ from January 1, 1987 to November 9, 1988, and both exclude M-1 admission-purpose service from November 10, 1988.",
+    "description": "From 1987 to November 9, 1988 the readings differ on authorized M-1 service for the admission purpose only; from November 10, 1988 both exclude it, and no other service is excluded by 410(a)(19) under either reading.",
     "parameters": {
       "code_edition_evidence": [
         {
@@ -7251,16 +7251,6 @@
           ]
         }
       ],
-      "named_options": {
-        "as_if_included_in_tra1986_section_123": {
-          "m1_service_excluded_from": "1987-01-01",
-          "basis": "Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a); Tax Reform Act of 1986 section 151(d)"
-        },
-        "from_enactment_1988_11_10": {
-          "m1_service_excluded_from": "1988-11-10",
-          "basis": "Pub. L. 100-647, approved November 10, 1988"
-        }
-      },
       "requires_admission_purpose_service": true,
       "unverified_dependency": "How section 151(d)'s limit to scholarships and fellowships granted after August 16, 1986 operates for the added M-class service exclusion.",
       "visa_classes": [
@@ -7275,6 +7265,10 @@
           "quote": "shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986"
         },
         "axis_exception": "Section 151(d) dates the M-class amendment by taxable years, while 410(a)(19) excludes service, so the family keeps the service-date axis; the open readings carry the taxable-year question, and for a calendar-year worker the first such year begins January 1, 1987."
+      },
+      "m1_exclusion_start_by_reading": {
+        "as_if_included_in_tra1986_section_123": "1987-01-01",
+        "from_enactment_1988_11_10": "1988-11-10"
       }
     },
     "worked_examples": [],
@@ -7309,27 +7303,41 @@
       ]
     },
     "alternative": null,
-    "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
-    "cases": [],
-    "open_alternatives": [
+    "open_reason": null,
+    "cases": [
       {
-        "name": "as_if_included_in_tra1986_section_123",
-        "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986."
-      },
-      {
-        "name": "from_enactment_1988_11_10",
-        "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered."
+        "case_id": "m1_admission_purpose_service_start_open",
+        "precedence": 1,
+        "consequence": "open",
+        "description": "Only authorized M-1 service for the admission purpose divides the readings; other service, M-2 service included, is not excluded under either (POMS RS 01901.740 C).",
+        "when": {
+          "nonresident_alien_status": "nonresident alien",
+          "visa_status": "M-1 nonimmigrant temporarily present in the United States",
+          "statutory_student_service": "authorized service performed to carry out the purpose of the M admission"
+        },
+        "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
+        "open_alternatives": [
+          {
+            "name": "as_if_included_in_tra1986_section_123",
+            "description": "Section 1019(a) of Pub. L. 100-647 makes section 1001(d)(2)(E) take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names in its heading. That Act's section 151(d) then dates it, and its limit to scholarships and fellowships granted after August 16, 1986 reaches only scholarship and fellowship amounts, not service pay. M-1 admission-purpose service is excluded from taxable years beginning after December 31, 1986."
+          },
+          {
+            "name": "from_enactment_1988_11_10",
+            "description": "Section 151(d)'s rule is written for scholarship and fellowship grants and dates no service pay, so the as-if-included rule gives the M-class exclusion no earlier date for service. The exclusion applies from the correcting act's enactment on November 10, 1988, and earlier M-1 service stays covered. It must also read section 151(a)'s general rule (\"Except as otherwise provided in this section\", taxable years beginning after December 31, 1986) as not reaching the addition, because section 151(d) is the provision for section 123; no capture settles whether section 151(a) then supplies the date."
+          }
+        ]
       }
     ],
+    "open_alternatives": [],
     "residual_default": {
-      "consequence": null,
-      "description": "No residual legal consequence is selected while this question remains open."
+      "consequence": "covered",
+      "description": "No case holds: the service is not authorized M-1 admission-purpose work, so 410(a)(19) does not exclude it under either reading; apply the other families."
     }
   },
   {
-    "rule_id": "nonresident_alien_vocational_service_1989",
+    "rule_id": "nonresident_alien_vocational_service_1988_1110",
     "family": "nonresident_alien_vocational_service",
-    "effective_start": "1989-01-01",
+    "effective_start": "1988-11-10",
     "effective_end": "2026-12-31",
     "citations": [
       {
@@ -7387,16 +7395,13 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "In the verified calendar-year window after the 1988 adding act, section 410(a)(19) excludes services by a nonresident alien temporarily present in M status only when the services carry out the purpose for which the individual was admitted. The earlier original-applicability question remains open separately.",
+    "description": "From the adding act's enactment on November 10, 1988, which both readings agree on, section 410(a)(19) excludes services by a nonresident alien temporarily present in M status only when the services carry out the purpose for which the individual was admitted.",
     "parameters": {
       "visa_classes": [
         "M-1"
       ],
       "requires_admission_purpose_service": true,
       "requires_nonresident_alien_status": true,
-      "verification_window_start": "1989-01-01",
-      "verification_window_explanation": "Current M-class exclusion is established after the 1988 adding act; this does not resolve its earlier retroactive effective date.",
-      "before_this_window": "nonresident_alien_vocational_service_1987 refuses 1987-1988 with two named readings; nonresident_alien_vocational_service_1968 returns the pre-amendment rule",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -7486,7 +7491,8 @@
           "location": "running head of the enacted text",
           "quote": "PUBLIC LAW 100-647\u2014NOV. 10, 1988"
         }
-      }
+      },
+      "enactment": "1988-11-10"
     },
     "worked_examples": [],
     "rare_exclusion": {

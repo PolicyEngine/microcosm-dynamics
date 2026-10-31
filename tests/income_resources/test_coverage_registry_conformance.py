@@ -1030,7 +1030,8 @@ def test_family_axes_follow_their_boundary_clauses():
         "clergy_1982_2026",
         "election_work_1978",
         "nonresident_alien_vocational_service_1987",
-        "nonresident_alien_vocational_service_1989",
+        "nonresident_alien_vocational_service_1988_1110",
+        "se_clergy_gross_concept_1987_2026",
         "state_local_1983_1991",
     ]
 
@@ -1112,7 +1113,7 @@ def test_date_axis_descriptions_quote_a_cited_capture(registry):
         for span in spans:
             assert any(span in text for text in texts), (rule.rule_id, span)
         checked += 1
-    assert checked == 55
+    assert checked == 56
 
 
 OPTION_RECORDS = re.compile(r"(^|_)(named_options|named_alternatives)$")
@@ -1156,7 +1157,7 @@ def test_open_readings_are_named_once_and_described_in_prose():
         + sum(len(case.get("open_alternatives", [])) for case in row["cases"])
         for row in rows
     )
-    assert described == 36
+    assert described == 38
 
 
 READING_TEXT = {
@@ -1389,35 +1390,52 @@ VOCATIONAL = "nonresident_alien_vocational_service"
 
 
 def test_vocational_readings_agree_before_1987_and_refuse_between(registry):
-    """Review r2 low 9: both legal readings settle the years they share.
+    """Review r2 low 9 and r3 M5: both readings settle what they share.
 
     Pub. L. 100-647 section 1001(d) names Reform Act section 123, so the
     M-class exclusion reaches no service before taxable years beginning
-    after 1986; its later start remains a named question.
+    after 1986. From 1987 to November 9, 1988 only authorized M-1 service
+    for the admission purpose refuses, and from enactment, November 10,
+    1988 (the extract's "Approved November 10, 1988"), both readings
+    exclude it.
     """
     rows = {r.rule_id: r for r in registry.rules if r.family == VOCATIONAL}
     early = rows["nonresident_alien_vocational_service_1968"]
     unsettled = rows["nonresident_alien_vocational_service_1987"]
+    later = rows["nonresident_alien_vocational_service_1988_1110"]
     agree = date.fromisoformat(early.parameters["readings_agree_before"])
     assert "M-1" in early.parameters["visa_classes"]
     assert "M" not in early.parameters["excluded_visa_classes"]
     for year in range(1968, agree.year):
         (rule,) = registry.lookup(VOCATIONAL, year)
         assert rule.resolve(())["consequence"] == "covered"
+    assert unsettled.open_reason is None
+    (case,) = unsettled.cases
     starts = {
-        name: date.fromisoformat(option["m1_service_excluded_from"])
-        for name, option in unsettled.parameters["named_options"].items()
+        name: date.fromisoformat(start)
+        for name, start in unsettled.parameters[
+            "m1_exclusion_start_by_reading"
+        ].items()
     }
-    assert set(starts) == {o["name"] for o in unsettled.open_alternatives}
+    assert set(starts) == {o["name"] for o in case["open_alternatives"]}
     assert min(starts.values()) == agree == unsettled.effective_start
-    assert max(starts.values()) <= unsettled.effective_end
-    for year in range(agree.year, unsettled.effective_end.year + 1):
+    assert max(starts.values()) == later.effective_start
+    assert unsettled.effective_end + timedelta(days=1) == later.effective_start
+    for day in (agree, date(1988, 11, 9)):
+        (rule,) = registry.lookup_date(VOCATIONAL, day)
         with pytest.raises(OpenRuleError, match="VOCATIONAL_M_CLASS"):
-            registry.lookup(VOCATIONAL, year)
-    (later,) = registry.lookup(VOCATIONAL, unsettled.effective_end.year + 1)
-    assert later.resolve({"m1_admission_purpose_service"})["consequence"] == (
-        "noncovered"
-    )
+            rule.resolve({case["case_id"]})
+        # M-2 and other service: not excluded under either reading.
+        assert rule.resolve(())["consequence"] == "covered"
+    for day in (date(1988, 11, 10), date(1988, 12, 31), date(2000, 1, 1)):
+        (rule,) = registry.lookup_date(VOCATIONAL, day)
+        assert rule is later
+        purpose = {"m1_admission_purpose_service"}
+        assert rule.resolve(purpose)["consequence"] == "noncovered"
+    assert [r.rule_id for r in registry.lookup(VOCATIONAL, 1988)] == [
+        unsettled.rule_id,
+        later.rule_id,
+    ]
     assert any(
         c.quote and "SECTION 123 OF THE REFORM ACT" in c.quote
         for c in unsettled.citations
@@ -2018,15 +2036,57 @@ def test_tribal_council_cases_and_uncaptured_crp_history(registry):
     assert tribal.resolve(agreement)["consequence"] == "covered"
     # Council staff and tribal employees are not council-member service.
     assert tribal.resolve(set())["consequence"] == "covered"
-    with pytest.raises(OpenRuleError, match="CRP_PRE2008"):
-        registry.lookup("self_employment_conservation_reserve", 2007)
+    (crp,) = registry.lookup("self_employment_conservation_reserve", 2007)
+    with pytest.raises(OpenRuleError, match="CRP_CLASSIFICATION"):
+        crp.resolve({"crp_payment_classification_open"})
+
+
+CRP = "self_employment_conservation_reserve"
+
+
+@pytest.mark.parametrize("year", [1990, 2007, 2008, 2010])
+def test_conservation_reserve_payments_follow_one_rule(registry, year):
+    """Review r3 M4: one classification question in both windows.
+
+    Before 2008 every Conservation Reserve payment, and from 2008 a
+    payment to a recipient not receiving 402 or 423 benefits, refuses on
+    the same question with the same readings, unless both readings agree
+    (a real estate dealer's rent); a beneficiary's payment is excluded from
+    2008.
+    """
+    rows = [r for r in registry.rules if r.family == CRP]
+    questions = {
+        (
+            case["open_reason"],
+            tuple(o["name"] for o in case["open_alternatives"]),
+        )
+        for rule in rows
+        for case in rule.cases
+        if "open_reason" in case
+    }
+    assert len(questions) == 1
+    assert all(rule.open_reason is None for rule in rows)
+    (rule,) = registry.lookup(CRP, year)
+    with pytest.raises(OpenRuleError, match="CRP_CLASSIFICATION"):
+        rule.resolve({"crp_payment_classification_open"})
+    dealer = {
+        "crp_payment_in_real_estate_dealer_business",
+        "crp_payment_classification_open",
+    }
+    assert rule.resolve(dealer)["consequence"] == "covered"
+    assert rule.resolve(())["consequence"] == "covered"
+    ids = {case["case_id"] for case in rule.cases}
+    assert ("crp_payment_to_beneficiary" in ids) == (year >= 2008)
+    if year >= 2008:
+        beneficiary = {"crp_payment_to_beneficiary"}
+        assert rule.resolve(beneficiary)["consequence"] == "noncovered"
 
 
 @pytest.mark.parametrize(
     ("family", "year", "matched", "expected"),
     [
         # HIGH-1 repros: each condition's failure no longer excludes.
-        ("self_employment_conservation_reserve", 2010, set(), "deferred"),
+        ("self_employment_conservation_reserve", 2010, set(), "covered"),
         (
             "self_employment_conservation_reserve",
             2010,
@@ -2348,6 +2408,32 @@ def test_federal_legislative_branch_exception_is_returned(registry, year):
         c["consequence"] == "covered"
         and "legislative" in str(c["when"]).lower()
         for c in rule.cases
+    )
+
+
+@pytest.mark.parametrize(
+    ("day", "rule_id", "with_931"),
+    [
+        (date(1973, 1, 1), "se_clergy_gross_concept_1973_1987", True),
+        (date(1987, 12, 21), "se_clergy_gross_concept_1973_1987", True),
+        (date(1987, 12, 22), "se_clergy_gross_concept_1987_2026", False),
+        (date(2025, 1, 1), "se_clergy_gross_concept_1987_2026", False),
+    ],
+)
+def test_clergy_gross_concept_disregards_931_until_1987(
+    registry, day, rule_id, with_931
+):
+    """Review r3 M6: the 1972 amendment put sections 911 and 931 in
+    411(a)(7); Pub. L. 100-203 section 9023(b)(1) struck "and section 931"
+    from it, and (a)(8) as amended disregards 931 for everyone."""
+    (rule,) = registry.lookup_date("self_employment_clergy_gross_concept", day)
+    assert rule.rule_id == rule_id
+    disregarded = rule.parameters["gross_income_exclusions_disregarded"]
+    assert ("26USC931" in disregarded) == with_931
+    assert {"26USC107", "26USC119", "26USC911"} <= set(disregarded)
+    assert any(
+        c.quote and "struck out reference to section 931" in c.quote
+        for c in rule.citations
     )
 
 

@@ -889,11 +889,25 @@
         "capture": "irs_p517_2025.html",
         "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "1987 amendment note, subsec. (a)(7)",
+        "quote": "Subsec. (a)(7). Pub. L. 100\u2013203, \u00a7 9023(b)(1) , struck out reference to section 931"
+      },
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+        "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+        "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+        "location": "section 9023(b)(1)",
+        "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\""
       }
     ],
     "consequence": "covered",
-    "description": "Nonexempt clergy include parsonage value/allowance, employer meals/lodging, and qualifying foreign earnings without 107, 119, 911 exclusions; postretirement church benefits are excluded under (a)(7).",
-    "effective_end": "2026-12-31",
+    "description": "From taxable years beginning after 1972, nonexempt clergy compute net earnings without the 107, 119, 911 and 931 exclusions (411(a)(7) as amended by Pub. L. 92-603); postretirement church benefits are excluded under (a)(7).",
+    "effective_end": "1987-12-21",
     "effective_start": "1973-01-01",
     "family": "self_employment_clergy_gross_concept",
     "identification_class": "awaiting_ce2",
@@ -902,7 +916,8 @@
       "gross_income_exclusions_disregarded": [
         "26USC107",
         "26USC119",
-        "26USC911"
+        "26USC911",
+        "26USC931"
       ],
       "retired_clergy_housing_and_church_plan_benefits": "excluded; Public Law 108-203 section 422 applies to years before, on, or after 1994-12-31",
       "service_exemption_decided_by": "clergy_religious_service family",
@@ -1023,7 +1038,7 @@
       "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
     },
     "rare_exclusion": null,
-    "rule_id": "se_clergy_gross_concept_1973_2026",
+    "rule_id": "se_clergy_gross_concept_1973_1987",
     "trigger_facts": [
       "amount",
       "clergy_or_religious_exemption",
@@ -1033,52 +1048,7 @@
       "retirement_payment",
       "taxable_year_start"
     ],
-    "worked_examples": [
-      {
-        "citation": {
-          "authority": "IRS Publication 517 (2025)",
-          "capture": "irs_p517_2025.html",
-          "location": "Amounts Included in Gross Income, Pastor Leslie Adams example",
-          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
-        },
-        "example_id": "irs517_2025_adams_parsonage",
-        "expected_rule_id": "se_clergy_gross_concept_1973_2026",
-        "income_year": 2025,
-        "published_inputs": {
-          "parsonage_value_cents": 1200000,
-          "salary_cents": 3900000
-        },
-        "source_passage": "Pastor Leslie Adams receives an annual salary of $39,000 as a full-time minister. The $39,000 includes $5,000 that is designated as a rental allowance to pay utilities. His church owns a parsonage that has a fair rental value of $12,000 per year. The church gives Pastor Adams the use of the parsonage. Pastor Adams isn\u2019t exempt from SE tax and must include $51,000 ($39,000 plus $12,000) when figuring his net earnings for SE tax purposes.",
-        "calculation": "minister_gross_concept",
-        "published_outputs": {
-          "included_se_gross_concept_cents": 5100000
-        },
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
-        "source_edition_year": 2025
-      },
-      {
-        "citation": {
-          "authority": "IRS Publication 517 (2025)",
-          "capture": "irs_p517_2025.html",
-          "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
-          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
-        },
-        "example_id": "irs517_2025_mexico_clergy_foreign_exclusion",
-        "expected_rule_id": "se_clergy_gross_concept_1973_2026",
-        "income_year": 2025,
-        "published_inputs": {
-          "salary_cents": 3500000,
-          "income_tax_foreign_exclusion_cents": 3500000
-        },
-        "source_passage": "You were the minister of a U.S. church in Mexico. You earned $35,000 in that position and were able to exclude it all for income tax purposes under the foreign earned income exclusion. The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment.",
-        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
-        "published_outputs": {
-          "included_se_gross_concept_cents": 3500000
-        },
-        "source_edition_year": 2025,
-        "calculation": "minister_gross_concept"
-      }
-    ],
+    "worked_examples": [],
     "cases": [
       {
         "case_id": "exempt_minister",
@@ -1602,13 +1572,13 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": null,
-    "description": "Before the special exclusion for payments after 2007, the captured effective-date note does not establish whether a Conservation Reserve payment was trade-or-business income or excluded rental income. Defer that classification to se_base_definition and se_rental_income; no CRP consequence is selected for this window.",
+    "consequence": "covered",
+    "description": "Before the 2008 beneficiary exclusion, no capture settles whether a Conservation Reserve payment is rental from real estate or trade-or-business income, so a payment refuses unless both readings agree (a real estate dealer's rent). The window does not imply that the program existed in 1968.",
     "effective_end": "2007-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_conservation_reserve",
     "identification_class": "awaiting_ce2",
-    "open_reason": "CRP_PRE2008_CLASSIFICATION_UNVERIFIED: the 2008 amendment note establishes only when the beneficiary exclusion begins. Earlier payments require the trade-or-business and rental-income tests, and the registry support window does not imply that CRP existed in 1968.",
+    "open_reason": null,
     "parameters": {
       "special_2008_crp_exclusion": false,
       "code_edition_evidence": [
@@ -1703,10 +1673,6 @@
           "amendment_year_entries_verified_present": []
         }
       ],
-      "defer_to_families": [
-        "self_employment_base_definition",
-        "self_employment_rental_income"
-      ],
       "effective_basis": "payment_date",
       "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\"."
     },
@@ -1714,23 +1680,46 @@
     "rule_id": "se_conservation_reserve_1968_2007",
     "trigger_facts": [
       "conservation_reserve_payment",
-      "amount"
+      "amount",
+      "real_estate_dealer_status"
     ],
     "worked_examples": [],
-    "cases": [],
-    "open_alternatives": [
+    "cases": [
       {
-        "description": "Determine whether the payment belongs to net earnings under se_base_definition.",
-        "name": "trade_or_business_receipts"
+        "case_id": "crp_payment_in_real_estate_dealer_business",
+        "precedence": 1,
+        "consequence": "covered",
+        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+        }
       },
       {
-        "description": "Determine whether se_rental_income excludes the payment under the rental exception.",
-        "name": "rental_income_exclusion"
+        "case_id": "crp_payment_classification_open",
+        "precedence": 2,
+        "consequence": "open",
+        "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included.",
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
+        },
+        "open_reason": "CRP_CLASSIFICATION_UNVERIFIED: no capture settles whether a Conservation Reserve payment that 411(a)(1) does not name (before 2008, any such payment; from 2008, one to a recipient not receiving 402 or 423 benefits) is rental from real estate or income from the recipient's trade or business. The 2008 amendment note establishes only when the beneficiary exclusion begins.",
+        "open_alternatives": [
+          {
+            "name": "rental_income_exclusion",
+            "description": "The payment is rent for land placed in the reserve: 411(a)(1) excludes it from net earnings, unless it is received in a real estate dealer's business or under the farm-rental proviso."
+          },
+          {
+            "name": "trade_or_business_receipts",
+            "description": "The payment is income from the recipient's trade or business, such as farming, and enters net earnings under the base definition."
+          }
+        ]
       }
     ],
+    "open_alternatives": [],
     "residual_default": {
-      "consequence": null,
-      "description": "No residual legal consequence is selected while this question remains open."
+      "consequence": "covered",
+      "description": "No case holds: the payment is not a 16 U.S.C. 3833(2) Conservation Reserve payment, so this family does not apply; apply the other families."
     }
   },
   {
@@ -1743,7 +1732,7 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
       }
     ],
-    "consequence": "deferred",
+    "consequence": "covered",
     "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
     "effective_end": "2026-12-31",
     "effective_start": "2008-01-01",
@@ -1820,15 +1809,36 @@
         "overrides": [
           "crp_payment_to_beneficiary"
         ],
-        "description": "411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; apply the other families.",
+        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
           "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
         }
       },
       {
-        "case_id": "crp_payment_under_farm_arrangement",
+        "case_id": "crp_payment_classification_open",
         "precedence": 2,
+        "consequence": "open",
+        "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included.",
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+          "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423"
+        },
+        "open_reason": "CRP_CLASSIFICATION_UNVERIFIED: no capture settles whether a Conservation Reserve payment that 411(a)(1) does not name (before 2008, any such payment; from 2008, one to a recipient not receiving 402 or 423 benefits) is rental from real estate or income from the recipient's trade or business. The 2008 amendment note establishes only when the beneficiary exclusion begins.",
+        "open_alternatives": [
+          {
+            "name": "rental_income_exclusion",
+            "description": "The payment is rent for land placed in the reserve: 411(a)(1) excludes it from net earnings, unless it is received in a real estate dealer's business or under the farm-rental proviso."
+          },
+          {
+            "name": "trade_or_business_receipts",
+            "description": "The payment is income from the recipient's trade or business, such as farming, and enters net earnings under the base definition."
+          }
+        ]
+      },
+      {
+        "case_id": "crp_payment_under_farm_arrangement",
+        "precedence": 3,
         "consequence": "deferred",
         "defers_to": [
           "self_employment_farm_rental_participation"
@@ -1844,7 +1854,7 @@
       },
       {
         "case_id": "crp_payment_to_beneficiary",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
           "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
@@ -1855,12 +1865,8 @@
     ],
     "open_alternatives": [],
     "residual_default": {
-      "consequence": "deferred",
-      "description": "411(a)(1) excludes only payments to individuals receiving 402 or 423 benefits. Other CRP payments are decided by the rental and base definition families.",
-      "defers_to": [
-        "self_employment_rental_income",
-        "self_employment_base_definition"
-      ]
+      "consequence": "covered",
+      "description": "No case holds: the payment is not a 16 U.S.C. 3833(2) Conservation Reserve payment, so this family does not apply; apply the other families."
     }
   },
   {
@@ -5800,6 +5806,274 @@
     "residual_default": {
       "consequence": "covered_above_threshold",
       "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+    }
+  },
+  {
+    "alternative": null,
+    "citations": [
+      {
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "capture": "lii_42_411.html",
+        "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "IRS Publication 517 (2025)",
+        "capture": "irs_p517_2025.html",
+        "location": "Regular Method; Amounts Included in Gross Income; Pastor Leslie Adams example",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+      },
+      {
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "capture": "govinfo_plaw_108publ203.html",
+        "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+      },
+      {
+        "authority": "IRS Publication 517 (2025)",
+        "capture": "irs_p517_2025.html",
+        "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "1987 amendment note, subsec. (a)(7)",
+        "quote": "Subsec. (a)(7). Pub. L. 100\u2013203, \u00a7 9023(b)(1) , struck out reference to section 931"
+      },
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+        "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+        "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+        "location": "section 9023(b)(1)",
+        "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\""
+      }
+    ],
+    "consequence": "covered",
+    "description": "Nonexempt clergy include parsonage value or allowance, employer meals and lodging, and qualifying foreign earnings without the 107, 119 and 911 exclusions. Pub. L. 100-203 section 9023(b)(1) struck section 931 from (a)(7), and (a)(8) as amended disregards the 931 exclusion for every individual (the possessions family); postretirement church benefits are excluded under (a)(7).",
+    "effective_end": "2026-12-31",
+    "effective_start": "1987-12-22",
+    "family": "self_employment_clergy_gross_concept",
+    "identification_class": "awaiting_ce2",
+    "open_reason": null,
+    "parameters": {
+      "gross_income_exclusions_disregarded": [
+        "26USC107",
+        "26USC119",
+        "26USC911"
+      ],
+      "retired_clergy_housing_and_church_plan_benefits": "excluded; Public Law 108-203 section 422 applies to years before, on, or after 1994-12-31",
+      "service_exemption_decided_by": "clergy_religious_service family",
+      "retired_clergy_exception_effective_scope": "Years beginning before, on, or after 1994-12-31 under section 422(b); no 1995/2004 start is inferred.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_plaw_108publ203.html",
+              "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+              "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+              "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Historical comparison only, related to 411(a)(7); Amendments entries: 1972, 2004; Effective Date of 2004 Amendment; Effective Date of 1972 Amendments"
+          },
+          "section_references_verified_present": [
+            "411(a)(7)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972",
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(7)"
+          },
+          "section_references_verified_present": [
+            "411(a)(7)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Section text as printed: 411(a)(7)"
+          },
+          "section_references_verified_present": [
+            "411(a)(7)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972",
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(7)"
+          },
+          "section_references_verified_present": [
+            "411(a)(7)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1972 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972",
+            "2004"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+          "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+          "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
+          "location": "section 9023(b)(1)",
+          "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\""
+        }
+      }
+    },
+    "rare_exclusion": null,
+    "rule_id": "se_clergy_gross_concept_1987_2026",
+    "trigger_facts": [
+      "amount",
+      "clergy_or_religious_exemption",
+      "clergy_remuneration",
+      "clergy_retirement_benefit",
+      "ministerial_service",
+      "retirement_payment",
+      "taxable_year_start"
+    ],
+    "worked_examples": [
+      {
+        "citation": {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Amounts Included in Gross Income, Pastor Leslie Adams example",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        "example_id": "irs517_2025_adams_parsonage",
+        "expected_rule_id": "se_clergy_gross_concept_1987_2026",
+        "income_year": 2025,
+        "published_inputs": {
+          "parsonage_value_cents": 1200000,
+          "salary_cents": 3900000
+        },
+        "source_passage": "Pastor Leslie Adams receives an annual salary of $39,000 as a full-time minister. The $39,000 includes $5,000 that is designated as a rental allowance to pay utilities. His church owns a parsonage that has a fair rental value of $12,000 per year. The church gives Pastor Adams the use of the parsonage. Pastor Adams isn\u2019t exempt from SE tax and must include $51,000 ($39,000 plus $12,000) when figuring his net earnings for SE tax purposes.",
+        "calculation": "minister_gross_concept",
+        "published_outputs": {
+          "included_se_gross_concept_cents": 5100000
+        },
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "source_edition_year": 2025
+      },
+      {
+        "citation": {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Self-Employment Tax: Figuring Net Earnings; Amounts Included in Gross Income; Overseas duty; minister in Mexico example",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        "example_id": "irs517_2025_mexico_clergy_foreign_exclusion",
+        "expected_rule_id": "se_clergy_gross_concept_1987_2026",
+        "income_year": 2025,
+        "published_inputs": {
+          "salary_cents": 3500000,
+          "income_tax_foreign_exclusion_cents": 3500000
+        },
+        "source_passage": "You were the minister of a U.S. church in Mexico. You earned $35,000 in that position and were able to exclude it all for income tax purposes under the foreign earned income exclusion. The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment.",
+        "income_year_basis": "source_edition_lookup_year_for_undated_published_example",
+        "published_outputs": {
+          "included_se_gross_concept_cents": 3500000
+        },
+        "source_edition_year": 2025,
+        "calculation": "minister_gross_concept"
+      }
+    ],
+    "cases": [
+      {
+        "case_id": "exempt_minister",
+        "precedence": 1,
+        "when": {
+          "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+        },
+        "consequence": "deferred",
+        "description": "411(c)(4)-(5) exclude exempt ministry; the clergy and religious family decides.",
+        "defers_to": [
+          "clergy_religious_service"
+        ]
+      },
+      {
+        "case_id": "retired_clergy_benefits",
+        "precedence": 2,
+        "when": {
+          "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values; apply the other families."
     }
   }
 ]
