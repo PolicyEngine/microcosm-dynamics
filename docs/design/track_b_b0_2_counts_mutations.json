@@ -1,0 +1,3215 @@
+{
+  "schema_version": 1,
+  "verification_class": "structural-count protocol conformance",
+  "admitted_scope": "Invented frames only; no real-data run.",
+  "mutation_method": "One deliberate production behavior change per check, from docs/design/track_b_b0_2_evidence/mutation_specs.json. Each check runs the whole count test module in a fresh pytest process with its own Hypothesis database; a nonzero exit kills it. The original source bytes are restored and their SHA-256 verified after every check. No mutated implementation is committed.",
+  "protocol_sha256": "6840f5fa41c897407c5896d4c3729ca5a5c0f1d166faa294e65e42309908ad23",
+  "restored_source_sha256": {
+    "scripts/track_b_b0_2_counts.py": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321"
+  },
+  "result": "127/127 mutations killed",
+  "runner_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 .venv/bin/python docs/design/track_b_b0_2_evidence/mutations.py RECORD",
+  "test_command": "PYTHONPATH=$PWD/src:$PWD python -m pytest -q -rf -p no:cacheprovider tests/test_track_b_b0_2_counts.py",
+  "checks": [
+    {
+      "mutation": "band edges",
+      "replacements": [
+        {
+          "old": "OLDER_BANDS = ((\"62_64\", 62, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+          "new": "OLDER_BANDS = ((\"62_64\", 63, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_relation_the_rows_do_not_guarantee_is_not_registered",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+        "tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support",
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]"
+      ],
+      "summary": "11 failed, 231 passed in 175.21s (0:02:55)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 175.8
+    },
+    {
+      "mutation": "lag set",
+      "replacements": [
+        {
+          "old": "LAGS = (2, 4)",
+          "new": "LAGS = (2, 6)",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+        "tests/test_track_b_b0_2_counts.py::test_counts_are_byte_invariant_to_valid_labor_values",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size"
+      ],
+      "summary": "4 failed, 238 passed in 192.53s (0:03:12)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 193.1
+    },
+    {
+      "mutation": "R_TA_PROXY age threshold",
+      "replacements": [
+        {
+          "old": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] >= 30)]",
+          "new": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] > 30)]",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "20 failed, 222 passed in 104.03s (0:01:44)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 104.6
+    },
+    {
+      "mutation": "valid-row rule",
+      "replacements": [
+        {
+          "old": "rows[\"valid\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+          "new": "rows[\"weight_positive\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_when_b0_1_counts_differ_from_the_inputs",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units",
+        "tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program",
+        "tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity"
+      ],
+      "summary": "22 failed, 220 passed in 130.80s (0:02:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 131.4
+    },
+    {
+      "mutation": "B3L origin wave",
+      "replacements": [
+        {
+          "old": "B3L_ORIGIN_WAVE = 2007",
+          "new": "B3L_ORIGIN_WAVE = 2009",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support"
+      ],
+      "summary": "2 failed, 240 passed in 105.79s (0:01:45)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 106.3
+    },
+    {
+      "mutation": "sensitive-quantity threshold changed from 10 to 9",
+      "replacements": [
+        {
+          "old": "DISCLOSURE_THRESHOLD = 10",
+          "new": "DISCLOSURE_THRESHOLD = 9",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosed_target_stays_outside_one_to_nine",
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again",
+        "tests/test_track_b_b0_2_counts.py::test_only_a_narrow_target_of_true_size_one_to_nine_withholds[9]",
+        "tests/test_track_b_b0_2_counts.py::test_the_fixed_base_is_ten_with_no_ladder",
+        "tests/test_track_b_b0_2_counts.py::test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half[9.0-narrow]",
+        "tests/test_track_b_b0_2_counts.py::test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half[9.5-narrow]",
+        "tests/test_track_b_b0_2_counts.py::test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half[None-narrow]"
+      ],
+      "summary": "12 failed, 230 passed in 129.48s (0:02:09)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 130.0
+    },
+    {
+      "mutation": "effective sizes left uncoarsened",
+      "replacements": [
+        {
+          "old": "_put(published, path, coarsen(value, base))",
+          "new": "_put(published, path, value if path[-1].endswith(\"_n_eff\") else coarsen(value, base))",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_the_committed_file_is_identical_for_every_protected_remainder"
+      ],
+      "summary": "2 failed, 240 passed in 120.35s (0:02:00)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 121.0
+    },
+    {
+      "mutation": "local copy allowed inside repository",
+      "replacements": [
+        {
+          "old": "raise SystemExit(\"local copy must be outside the repository\")",
+          "new": "pass  # Deliberately permit repository-local copies.",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[False]",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[True]",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_through_repository_symlink_before_read"
+      ],
+      "summary": "3 failed, 239 passed in 111.92s (0:01:51)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 112.5
+    },
+    {
+      "mutation": "coarsening rounds halves down",
+      "replacements": [
+        {
+          "old": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")) // 1) * base",
+          "new": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")).to_integral_value(rounding=\"ROUND_CEILING\") - 1) * base",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosed_target_stays_outside_one_to_nine",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_a_narrow_target_outside_one_to_nine_starts_another_round",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-2]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-2]",
+        "tests/test_track_b_b0_2_counts.py::test_audit_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_audit_programs_depend_only_on_the_publication",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[10-values0-expected0]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[50-values1-expected1]",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[10]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[50]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_effective_size_attack_registers_household_and_design_lower_bounds",
+        "tests/test_track_b_b0_2_counts.py::test_effective_sizes_are_coarsened_from_their_own_unrounded_values",
+        "tests/test_track_b_b0_2_counts.py::test_every_target_of_an_audit_stopped_before_any_round_is_unreached",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes3]",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_targets_are_classified_in_one_order_whatever_their_sizes",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]"
+      ],
+      "summary": "26 failed, 216 passed in 429.26s (0:07:09)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 430.2
+    },
+    {
+      "mutation": "effective-size lower bounds omitted",
+      "replacements": [
+        {
+          "old": "for path, count_path in registry.effective_bounds.items():",
+          "new": "for path, count_path in ():  # Deliberately omit effective bounds.",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_published_effective_size_lifts_its_count_interval"
+      ],
+      "summary": "1 failed, 241 passed in 102.88s (0:01:42)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 103.5
+    },
+    {
+      "mutation": "protection width reduced to 3",
+      "replacements": [
+        {
+          "old": "PROTECTION_WIDTH = 4",
+          "new": "PROTECTION_WIDTH = 3",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_audit_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]",
+        "tests/test_track_b_b0_2_counts.py::test_the_fixed_base_is_ten_with_no_ladder"
+      ],
+      "summary": "10 failed, 232 passed in 107.82s (0:01:47)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 108.4
+    },
+    {
+      "mutation": "unknown age counted in 80 and over",
+      "replacements": [
+        {
+          "old": "return _known_age(ages) & numeric.between(low, high)",
+          "new": "return (_known_age(ages) & numeric.between(low, high)) | (~_known_age(ages) & (low == 80))",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted",
+        "tests/test_track_b_b0_2_counts.py::test_missing_999_and_zero_ages_through_actual_named_readers"
+      ],
+      "summary": "2 failed, 240 passed in 124.61s (0:02:04)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 125.2
+    },
+    {
+      "mutation": "frozen check removed",
+      "replacements": [
+        {
+          "old": "    _check_protocol()\n",
+          "new": "    pass  # Deliberately omit frozen protocol validation.\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input[draft]",
+        "tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input[pin]"
+      ],
+      "summary": "2 failed, 240 passed in 128.43s (0:02:08)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 129.0
+    },
+    {
+      "mutation": "published B interval starts at B/2",
+      "replacements": [
+        {
+          "old": "return max(int(value - base // 2), base), int(value + base // 2 - 1)",
+          "new": "return int(value - base // 2), int(value + base // 2 - 1)",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_audit_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[10-values0-expected0]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[50-values1-expected1]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[10]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[50]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes3]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes4]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]"
+      ],
+      "summary": "11 failed, 231 passed in 120.73s (0:02:00)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 121.3
+    },
+    {
+      "mutation": "80-and-over band ends at 80",
+      "replacements": [
+        {
+          "old": "(\"80_plus\", 80, age67._MAX_AGE_CODE),",
+          "new": "(\"80_plus\", 80, 80),",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
+        "tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted",
+        "tests/test_track_b_b0_2_counts.py::test_missing_999_and_zero_ages_through_actual_named_readers"
+      ],
+      "summary": "3 failed, 239 passed in 196.50s (0:03:16)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 197.1
+    },
+    {
+      "mutation": "2009 lag origins dropped",
+      "replacements": [
+        {
+          "old": "if later not in WAVES:",
+          "new": "if later not in WAVES or wave == 2009:",
+          "occurrence": 1,
+          "anchor_occurrences": 2
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_integer_hidden_band_attack_is_blocked_on_full_release",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_registry_covers_all_statistics_and_correct_unit_types",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_unpublished_coresident_remainder_is_audited",
+        "tests/test_track_b_b0_2_counts.py::test_effective_size_attack_registers_household_and_design_lower_bounds",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_missing_999_and_zero_ages_through_actual_named_readers",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_committed_file_is_identical_for_every_protected_remainder",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "39 failed, 203 passed in 250.89s (0:04:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 251.4
+    },
+    {
+      "mutation": "outside-B2 household exclusion",
+      "replacements": [
+        {
+          "old": "outside = full[~full[\"interview\"].isin(domain[\"interview\"])]",
+          "new": "outside = full[~full[\"person_id\"].isin(domain[\"person_id\"])]",
+          "occurrence": "all",
+          "anchor_occurrences": 2
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_unpublished_coresident_remainder_is_audited",
+        "tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units",
+        "tests/test_track_b_b0_2_counts.py::test_the_committed_file_is_identical_for_every_protected_remainder"
+      ],
+      "summary": "3 failed, 239 passed in 112.22s (0:01:52)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 112.8
+    },
+    {
+      "mutation": "attempt record not checked, allowing a silent retry",
+      "replacements": [
+        {
+          "old": "if attempt.exists() or attempt.is_symlink():",
+          "new": "if False and (attempt.exists() or attempt.is_symlink()):",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        },
+        {
+          "old": "with attempt.open(\"x\", encoding=\"utf-8\") as stream:",
+          "new": "with attempt.open(\"w\", encoding=\"utf-8\") as stream:",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_from_outside_this_script_prints_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_attempt_record_survives_failed_start_and_refuses_retry",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_attempt_record_through_existing_symlink"
+      ],
+      "summary": "3 failed, 239 passed in 102.07s (0:01:42)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 102.6
+    },
+    {
+      "mutation": "effective bound for a published B starts at B/2",
+      "replacements": [
+        {
+          "old": "return max(base, math.ceil(value - base / 2))",
+          "new": "return max(0, math.ceil(value - base / 2))",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_published_effective_size_lifts_its_count_interval",
+        "tests/test_track_b_b0_2_counts.py::test_an_effective_size_bounds_its_count_from_below[10-10]"
+      ],
+      "summary": "2 failed, 240 passed in 165.73s (0:02:45)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 166.3
+    },
+    {
+      "mutation": "audit skips published subset differences",
+      "replacements": [
+        {
+          "old": "if superset == subset or keys[superset][0] != keys[subset][0]:",
+          "new": "if True:",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_audits_multi_atom_published_subset_differences",
+        "tests/test_track_b_b0_2_counts.py::test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_class_sizes_are_this_releases_classes_alone",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts",
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "12 failed, 230 passed in 124.42s (0:02:04)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 124.9
+    },
+    {
+      "mutation": "continuous relaxation replaces integer programs",
+      "replacements": [
+        {
+          "old": "integrality=np.full(self.variables, int(integral)),",
+          "new": "integrality=np.zeros(self.variables),",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosed_target_stays_outside_one_to_nine",
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes0]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes1]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes2]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes3]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes4]"
+      ],
+      "summary": "10 failed, 232 passed in 117.07s (0:01:57)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 117.6
+    },
+    {
+      "mutation": "pool seeded with the true sizes",
+      "replacements": [
+        {
+          "old": "    pool = WitnessPool(len(truth))\n",
+          "new": "    pool = WitnessPool(len(truth))\n    pool.add(truth)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_an_undetermined_sensitive_target_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again",
+        "tests/test_track_b_b0_2_counts.py::test_every_target_of_an_audit_stopped_before_any_round_is_unreached",
+        "tests/test_track_b_b0_2_counts.py::test_unanswered_programs_withhold"
+      ],
+      "summary": "5 failed, 237 passed in 130.03s (0:02:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 130.5
+    },
+    {
+      "mutation": "targets taken in order of true size",
+      "replacements": [
+        {
+          "old": "        for index in range(len(targets)):\n            if index in disclosed:",
+          "new": "        for index in sorted(range(len(targets)), key=lambda i: targets[i][\"true_size\"]):\n            if index in disclosed:",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_targets_are_classified_in_one_order_whatever_their_sizes"
+      ],
+      "summary": "5 failed, 237 passed in 116.17s (0:01:56)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 116.6
+    },
+    {
+      "mutation": "search windows centred on the true size",
+      "replacements": [
+        {
+          "old": "    low, high = pool.values(columns)\n",
+          "new": "    low, high = pool.values(columns)\n    low = high = target[\"true_size\"]\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_pool_shows_wide_runs_no_program",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_audit_programs_depend_only_on_the_publication",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again",
+        "tests/test_track_b_b0_2_counts.py::test_programs_with_earlier_counts_depend_only_on_the_publications",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "6 failed, 236 passed in 159.22s (0:02:39)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 159.8
+    },
+    {
+      "mutation": "disclosure test widened to sizes 2-9",
+      "replacements": [
+        {
+          "old": "if 1 <= targets[index][\"true_size\"] < DISCLOSURE_THRESHOLD:",
+          "new": "if 2 <= targets[index][\"true_size\"] < DISCLOSURE_THRESHOLD:",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_undetermined_sensitive_target_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]"
+      ],
+      "summary": "6 failed, 236 passed in 129.71s (0:02:09)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 130.3
+    },
+    {
+      "mutation": "an empty pool releases",
+      "replacements": [
+        {
+          "old": "            # No program found a point, so nothing can be shown wide.\n            status = \"withheld\"",
+          "new": "            # No program found a point, so nothing can be shown wide.\n            pass",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_every_target_of_an_audit_stopped_before_any_round_is_unreached"
+      ],
+      "summary": "1 failed, 241 passed in 206.16s (0:03:26)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 206.8
+    },
+    {
+      "mutation": "a single round, with no reclassification",
+      "replacements": [
+        {
+          "old": "        if not added:\n            break\n",
+          "new": "        break\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_narrow_target_outside_one_to_nine_starts_another_round",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-2]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-2]",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again"
+      ],
+      "summary": "8 failed, 234 passed in 105.26s (0:01:45)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 105.8
+    },
+    {
+      "mutation": "disclosed targets left unconstrained",
+      "replacements": [
+        {
+          "old": "self.disclosed = [tuple(target[\"columns\"]) for target in disclosed]",
+          "new": "self.disclosed = []",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosed_target_stays_outside_one_to_nine",
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_narrow_target_outside_one_to_nine_starts_another_round",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-2]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-2]",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again"
+      ],
+      "summary": "9 failed, 233 passed in 157.69s (0:02:37)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 158.2
+    },
+    {
+      "mutation": "pool keeps points a disclosure rules out",
+      "replacements": [
+        {
+          "old": "        pool.keep(system)\n",
+          "new": "        pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_narrow_target_outside_one_to_nine_starts_another_round",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again"
+      ],
+      "summary": "3 failed, 239 passed in 147.76s (0:02:27)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 148.3
+    },
+    {
+      "mutation": "relaxation margin loosened to 8.5",
+      "replacements": [
+        {
+          "old": "relaxed > DISCLOSURE_THRESHOLD - 0.5",
+          "new": "relaxed > DISCLOSURE_THRESHOLD - 1.5",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half[9.0-narrow]",
+        "tests/test_track_b_b0_2_counts.py::test_the_relaxation_proves_irrelevance_only_above_nine_and_a_half[9.5-narrow]"
+      ],
+      "summary": "2 failed, 240 passed in 109.14s (0:01:49)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 109.7
+    },
+    {
+      "mutation": "a timed-out search proves absence",
+      "replacements": [
+        {
+          "old": "proven_absent = proven_absent and status == 2",
+          "new": "proven_absent = proven_absent and status in (1, 2)",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_timed_out_search_proves_nothing[statuses0]",
+        "tests/test_track_b_b0_2_counts.py::test_a_timed_out_search_proves_nothing[statuses1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_timed_out_search_proves_nothing[statuses2]"
+      ],
+      "summary": "3 failed, 239 passed in 185.53s (0:03:05)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 186.1
+    },
+    {
+      "mutation": "solver witnesses used without the exact check",
+      "replacements": [
+        {
+          "old": "        if not self.feasible(sizes):\n            return None\n",
+          "new": "        if False:\n            return None\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_witnesses_are_checked_exactly_and_never_taken_from_the_solver"
+      ],
+      "summary": "1 failed, 241 passed in 105.30s (0:01:45)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 105.9
+    },
+    {
+      "mutation": "positive solver gap",
+      "replacements": [
+        {
+          "old": "\"mip_rel_gap\": gap,",
+          "new": "\"mip_rel_gap\": 0.01,",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_programs_use_one_thread_the_time_limit_and_exact_optima"
+      ],
+      "summary": "1 failed, 241 passed in 176.84s (0:02:56)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 177.5
+    },
+    {
+      "mutation": "atoms assumed nonempty",
+      "replacements": [
+        {
+          "old": "        self.bounds = Bounds(\n            0,",
+          "new": "        self.bounds = Bounds(\n            np.concatenate([np.ones(self.atoms), np.zeros(binaries)]),",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes0]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes1]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes2]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes3]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes4]",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[False]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]",
+        "tests/test_track_b_b0_2_counts.py::test_the_committed_file_is_identical_for_every_protected_remainder",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]"
+      ],
+      "summary": "23 failed, 219 passed in 109.67s (0:01:49)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 110.2
+    },
+    {
+      "mutation": "relations registered whether or not guaranteed",
+      "replacements": [
+        {
+          "old": "            if guaranteed:\n                registry.relate(",
+          "new": "            if True:\n                registry.relate(",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_relation_the_rows_do_not_guarantee_is_not_registered"
+      ],
+      "summary": "1 failed, 241 passed in 290.25s (0:04:50)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 290.8
+    },
+    {
+      "mutation": "a violated relation tolerated",
+      "replacements": [
+        {
+          "old": "            raise ValueError(f\"a guaranteed relation fails: {kind} {left}\")",
+          "new": "            continue",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_violated_relation_is_a_defect_not_data"
+      ],
+      "summary": "1 failed, 241 passed in 101.94s (0:01:41)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 102.4
+    },
+    {
+      "mutation": "relations dropped from the audit",
+      "replacements": [
+        {
+          "old": "    relations = model_relations(registry, model)\n",
+          "new": "    relations = model_relations(registry, model)[:0]\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]"
+      ],
+      "summary": "3 failed, 239 passed in 207.91s (0:03:27)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 208.3
+    },
+    {
+      "mutation": "public block reports the audited target count",
+      "replacements": [
+        {
+          "old": "        \"status\": audit[\"status\"],\n    }",
+          "new": "        \"status\": audit[\"status\"],\n        \"audited\": len(audit[\"targets\"]),\n    }",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_withheld_release_publishes_status_and_no_counts",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_the_committed_file_is_identical_for_every_protected_remainder"
+      ],
+      "summary": "7 failed, 235 passed in 166.97s (0:02:46)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 167.4
+    },
+    {
+      "mutation": "fractional ages accepted",
+      "replacements": [
+        {
+          "old": "numeric.between(1, age67._MAX_AGE_CODE) & numeric.mod(1).eq(0)",
+          "new": "numeric.between(1, age67._MAX_AGE_CODE)",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted"
+      ],
+      "summary": "1 failed, 241 passed in 94.09s (0:01:34)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 94.5
+    },
+    {
+      "mutation": "negative coarsening input accepted",
+      "replacements": [
+        {
+          "old": "if value < 0 or not np.isfinite(value):",
+          "new": "if not np.isfinite(value):",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_refuses_negative_and_nonfinite_values[-0.5]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_refuses_negative_and_nonfinite_values[-1]",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[-7-reading the inputs-^B0\\\\.2 stopped in coarsen, line \\\\d+: ValueError: counts and effective sizes must be finite and nonnegative$]",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[-7-the release-^B0\\\\.2 stopped in coarsen, line \\\\d+: ValueError: counts and effective sizes must be finite and nonnegative$]"
+      ],
+      "summary": "4 failed, 238 passed in 115.36s (0:01:55)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 115.9
+    },
+    {
+      "mutation": "nonfinite coarsening input accepted",
+      "replacements": [
+        {
+          "old": "if value < 0 or not np.isfinite(value):",
+          "new": "if value < 0:",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_refuses_negative_and_nonfinite_values[inf]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_refuses_negative_and_nonfinite_values[nan]"
+      ],
+      "summary": "2 failed, 240 passed in 191.80s (0:03:11)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 192.3
+    },
+    {
+      "mutation": "output replaces an existing file",
+      "replacements": [
+        {
+          "old": "        os.link(temporary, path)\n",
+          "new": "        os.replace(temporary, path)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_write_new_leaves_no_file_under_its_name_on_failure[link]",
+        "tests/test_track_b_b0_2_counts.py::test_write_new_writes_every_byte_and_refuses_an_existing_name"
+      ],
+      "summary": "4 failed, 238 passed in 100.07s (0:01:40)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 100.5
+    },
+    {
+      "mutation": "output not flushed to disk",
+      "replacements": [
+        {
+          "old": "                view = view[os.write(descriptor, view) :]\n            os.fsync(descriptor)\n",
+          "new": "                view = view[os.write(descriptor, view) :]\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_write_new_flushes_the_directory_after_linking",
+        "tests/test_track_b_b0_2_counts.py::test_write_new_leaves_no_file_under_its_name_on_failure[fsync]"
+      ],
+      "summary": "2 failed, 240 passed in 179.95s (0:02:59)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 180.5
+    },
+    {
+      "mutation": "a short write left incomplete",
+      "replacements": [
+        {
+          "old": "            while view:\n                view = view[os.write(descriptor, view) :]\n",
+          "new": "            os.write(descriptor, view)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_write_new_completes_short_writes"
+      ],
+      "summary": "1 failed, 241 passed in 248.57s (0:04:08)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 249.9
+    },
+    {
+      "mutation": "attempt record not flushed to disk",
+      "replacements": [
+        {
+          "old": "            stream.flush()\n            os.fsync(stream.fileno())\n",
+          "new": "            stream.flush()\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_attempt_record_is_flushed_to_disk"
+      ],
+      "summary": "1 failed, 241 passed in 160.69s (0:02:40)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 161.2
+    },
+    {
+      "mutation": "B0.1's sets left out of the model",
+      "replacements": [
+        {
+          "old": "    for path, (unit_type, units, _) in registry.prior.items():\n        grouped.setdefault((unit_type, units), []).append(path)\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[nested]",
+        "tests/test_track_b_b0_2_counts.py::test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_programs_with_earlier_counts_depend_only_on_the_publications",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[False]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[falling]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[late]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[rising]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_is_the_same_whatever_the_rounds",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "47 failed, 195 passed in 964.08s (0:16:04)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 965.2
+    },
+    {
+      "mutation": "B0.1's counts bound their sets only from below",
+      "replacements": [
+        {
+          "old": "        lower[row] = max(lower[row], value)\n        upper[row] = min(upper[row], value)\n",
+          "new": "        lower[row] = max(lower[row], value)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_audit_uses_the_relations_it_registers[True]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]"
+      ],
+      "summary": "17 failed, 225 passed, 148 warnings in 190.34s (0:03:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 190.9
+    },
+    {
+      "mutation": "targets are the refined atoms, not this release's classes",
+      "replacements": [
+        {
+          "old": "        rows = tuple(row for row in signature if current[row])\n",
+          "new": "        rows = tuple(signature)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[household]",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[nested]",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[release_panel]",
+        "tests/test_track_b_b0_2_counts.py::test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts",
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "15 failed, 227 passed in 161.26s (0:02:41)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 161.9
+    },
+    {
+      "mutation": "differences of two B0.1 sets audited as targets",
+      "replacements": [
+        {
+          "old": "                and not (current[subset] and current[superset])\n            ):\n",
+          "new": "                and False\n            ):\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_earlier_sets_refine_atoms_but_set_no_targets_of_their_own",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]"
+      ],
+      "summary": "3 failed, 239 passed in 281.00s (0:04:41)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 281.5
+    },
+    {
+      "mutation": "a B0.1 count not checked against its set",
+      "replacements": [
+        {
+          "old": "        if value != len(units):\n",
+          "new": "        if False:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_count_must_be_its_sets_size"
+      ],
+      "summary": "1 failed, 241 passed in 200.11s (0:03:20)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 200.6
+    },
+    {
+      "mutation": "B0.1's rerun not compared with its record",
+      "replacements": [
+        {
+          "old": "    if rerun != counts:\n",
+          "new": "    if False:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_when_b0_1_counts_differ_from_the_inputs",
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give"
+      ],
+      "summary": "2 failed, 240 passed in 142.59s (0:02:22)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 143.1
+    },
+    {
+      "mutation": "B0.1's sums not checked",
+      "replacements": [
+        {
+          "old": "        if value != sum(leaves[part] for part in sums[path]):\n",
+          "new": "        if False:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give"
+      ],
+      "summary": "1 failed, 241 passed in 180.22s (0:03:00)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 180.8
+    },
+    {
+      "mutation": "a modeled set B0.1 never published accepted",
+      "replacements": [
+        {
+          "old": "    if missing := set(sets) - set(leaves):\n",
+          "new": "    if missing := set():\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give"
+      ],
+      "summary": "1 failed, 241 passed in 274.48s (0:04:34)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 275.0
+    },
+    {
+      "mutation": "B0.1's ledger copies not checked",
+      "replacements": [
+        {
+          "old": "        if copied != expected:\n",
+          "new": "        if False:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give"
+      ],
+      "summary": "1 failed, 241 passed in 421.41s (0:07:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 422.0
+    },
+    {
+      "mutation": "a change pair's row count registered with its persons added",
+      "replacements": [
+        {
+          "old": "        value = sum(sign * _cell(counts, part) for sign, part in terms)\n",
+          "new": "        value = sum(_cell(counts, part) for sign, part in terms)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "25 failed, 217 passed in 334.08s (0:05:34)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 334.6
+    },
+    {
+      "mutation": "B0.1's sets not registered in main()",
+      "replacements": [
+        {
+          "old": "    register_b0_1(registry, earlier, committed[\"counts\"])\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]"
+      ],
+      "summary": "7 failed, 235 passed in 257.46s (0:04:17)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 257.9
+    },
+    {
+      "mutation": "B0.1's record not checked before the audit",
+      "replacements": [
+        {
+          "old": "    check_b0_1_record(\n        committed,\n        b0_1_structural_counts(person_wave, validity_by_wave),\n        earlier,\n    )\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_at_the_rerun_gate_before_any_count_is_written",
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_when_b0_1_counts_differ_from_the_inputs"
+      ],
+      "summary": "2 failed, 240 passed in 319.69s (0:05:19)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 320.2
+    },
+    {
+      "mutation": "B0.1's age support ends a year early",
+      "replacements": [
+        {
+          "old": "        in_support=valid[\"age\"].between(low, high).to_numpy(),\n",
+          "new": "        in_support=valid[\"age\"].between(low, high - 1).to_numpy(),\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_sets_are_the_sets_b0_1_counts",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]"
+      ],
+      "summary": "13 failed, 229 passed in 137.30s (0:02:17)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 137.9
+    },
+    {
+      "mutation": "B0.1's dispositions inverted",
+      "replacements": [
+        {
+          "old": "                [person for person, label in labels.items() if label == name],\n",
+          "new": "                [person for person, label in labels.items() if label != name],\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_from_outside_this_script_prints_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[5-splits1]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_counts_enter_the_audit_through_main[97-splits0]",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_sets_are_the_sets_b0_1_counts",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_sets_on_a_hand_counted_example",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "33 failed, 209 passed in 241.83s (0:04:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 242.8
+    },
+    {
+      "mutation": "an empty pool classified as wide",
+      "replacements": [
+        {
+          "old": "    if pool.size == 0:\n        return {**record, \"result\": \"narrow\", \"proof\": \"undetermined\"}, None\n",
+          "new": "    if pool.size == 0:\n        return {**record, \"result\": \"wide\", \"proof\": \"pool\"}, None\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_pool_proves_nothing_and_runs_no_program"
+      ],
+      "summary": "1 failed, 241 passed in 104.47s (0:01:44)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 104.9
+    },
+    {
+      "mutation": "an emptied pool not reseeded",
+      "replacements": [
+        {
+          "old": "        if reseeded:\n            # The disclosures ruled out every point: seed again under them.\n            seed_pool(system, pool, seconds=seconds)\n",
+          "new": "        if reseeded:\n            # The disclosures ruled out every point: seed again under them.\n            pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_disclosures_that_empty_the_pool_seed_it_again"
+      ],
+      "summary": "2 failed, 240 passed in 87.37s (0:01:27)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 87.8
+    },
+    {
+      "mutation": "an empty reseeding releases",
+      "replacements": [
+        {
+          "old": "            seed_pool(system, pool, seconds=seconds)\n            if pool.size == 0:\n                status = \"withheld\"\n",
+          "new": "            seed_pool(system, pool, seconds=seconds)\n            if pool.size == 0:\n                status = \"released\"\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files"
+      ],
+      "summary": "1 failed, 241 passed in 96.17s (0:01:36)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 96.5
+    },
+    {
+      "mutation": "seed directions drawn without the fixed seed",
+      "replacements": [
+        {
+          "old": "    generator = np.random.default_rng(POOL_SEED)\n",
+          "new": "    generator = np.random.default_rng()\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_audit_programs_depend_only_on_the_publication",
+        "tests/test_track_b_b0_2_counts.py::test_main_records_provenance_and_checks_b01_size",
+        "tests/test_track_b_b0_2_counts.py::test_programs_with_earlier_counts_depend_only_on_the_publications",
+        "tests/test_track_b_b0_2_counts.py::test_seed_directions_come_from_the_fixed_seed",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "7 failed, 235 passed in 178.66s (0:02:58)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 179.1
+    },
+    {
+      "mutation": "targets involving B0.1's sets marked as this release's",
+      "replacements": [
+        {
+          "old": "                \"earlier\": not (current[superset] and current[subset]),\n",
+          "new": "                \"earlier\": False,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts",
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "6 failed, 236 passed in 112.06s (0:01:52)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 112.8
+    },
+    {
+      "mutation": "the local copy writes atom columns",
+      "replacements": [
+        {
+          "old": "        {key: target[key] for key in TARGET_FIELDS if key in target}\n",
+          "new": "        {key: target[key] for key in (*TARGET_FIELDS, \"columns\") if key in target}\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts"
+      ],
+      "summary": "5 failed, 237 passed in 410.82s (0:06:50)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 411.9
+    },
+    {
+      "mutation": "the local copy sums every target into class sizes",
+      "replacements": [
+        {
+          "old": "        if target[\"kind\"] == \"atom\":\n            class_sizes.setdefault(",
+          "new": "        if True:\n            class_sizes.setdefault(",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_class_sizes_are_this_releases_classes_alone"
+      ],
+      "summary": "1 failed, 241 passed in 131.54s (0:02:11)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 132.0
+    },
+    {
+      "mutation": "B0.1's households taken at each row's wave",
+      "replacements": [
+        {
+          "old": "            home[person] for person in persons if pd.notna(home[person])\n",
+          "new": "            person for person in persons if pd.notna(home[person])\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_sets_are_the_sets_b0_1_counts",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1_sets_on_a_hand_counted_example",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_main_allows_relative_local_copy_resolving_outside_repository",
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only",
+        "tests/test_track_b_b0_2_counts.py::test_the_b0_1_record_must_be_the_one_these_inputs_give",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "20 failed, 222 passed in 178.35s (0:02:58)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 178.8
+    },
+    {
+      "mutation": "the local copy writes the atom sizes",
+      "replacements": [
+        {
+          "old": "        \"class_sizes\": class_sizes,\n    }\n",
+          "new": "        \"class_sizes\": class_sizes,\n        \"atom_sizes\": audit[\"atom_sizes\"],\n    }\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_block_holds_only_base_rules_and_status",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only"
+      ],
+      "summary": "7 failed, 235 passed in 195.28s (0:03:15)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 195.8
+    },
+    {
+      "mutation": "the audit prints the atom sizes",
+      "replacements": [
+        {
+          "old": "    truth = model[\"sizes\"]\n",
+          "new": "    truth = model[\"sizes\"]\n    print(truth.tolist(), file=sys.stderr)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_every_output_the_script_can_make_names_no_value"
+      ],
+      "summary": "1 failed, 241 passed in 151.33s (0:02:31)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 151.9
+    },
+    {
+      "mutation": "a failure keeps a library's message",
+      "replacements": [
+        {
+          "old": "    return f\"B0.2 stopped in {where}: {type(error).__name__}\"\n",
+          "new": "    return f\"B0.2 stopped in {where}: {type(error).__name__}: {error}\"\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_while_reading_the_inputs_keeps_its_type_and_line",
+        "tests/test_track_b_b0_2_counts.py::test_an_interruption_or_a_librarys_exit_prints_no_chain[<lambda>-reading the inputs-^B0\\\\.2 stopped in .+, line \\\\d+: (KeyboardInterrupt|SystemExit)$]",
+        "tests/test_track_b_b0_2_counts.py::test_an_interruption_or_a_librarys_exit_prints_no_chain[KeyboardInterrupt-reading the inputs-^B0\\\\.2 stopped in .+, line \\\\d+: (KeyboardInterrupt|SystemExit)$]",
+        "tests/test_track_b_b0_2_counts.py::test_attempt_record_survives_failed_start_and_refuses_retry",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_a_local_copy_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_never_overwrites_an_output_that_appears_during_read",
+        "tests/test_track_b_b0_2_counts.py::test_main_public_write_failure_keeps_complete_local_copy_and_attempt",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[7-reading the inputs-^B0\\\\.2 stopped in coarsen, line \\\\d+: TypeError$]",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[7-writing the outputs-^B0\\\\.2 stopped in coarsen, line \\\\d+: TypeError$]"
+      ],
+      "summary": "9 failed, 233 passed in 121.94s (0:02:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 122.4
+    },
+    {
+      "mutation": "warnings shown inside the guard",
+      "replacements": [
+        {
+          "old": "            warnings.simplefilter(\"ignore\")\n            yield\n",
+          "new": "            warnings.simplefilter(\"default\")\n            yield\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_warnings_inside_the_guard_are_dropped_unseen"
+      ],
+      "summary": "1 failed, 241 passed in 209.31s (0:03:29)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 209.8
+    },
+    {
+      "mutation": "the solver prints its log",
+      "replacements": [
+        {
+          "old": "                    \"disp\": False,\n",
+          "new": "                    \"disp\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_programs_use_one_thread_the_time_limit_and_exact_optima"
+      ],
+      "summary": "1 failed, 241 passed in 215.64s (0:03:35)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 216.0
+    },
+    {
+      "mutation": "the rerun gate skips the rebuilt sets' sizes",
+      "replacements": [
+        {
+          "old": "        if len(units) != sum(sign * leaves[part] for sign, part in terms):\n",
+          "new": "        if False:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_at_the_rerun_gate_before_any_count_is_written",
+        "tests/test_track_b_b0_2_counts.py::test_the_rerun_gate_stops_on_a_rebuilt_set_that_is_not_its_count"
+      ],
+      "summary": "2 failed, 240 passed in 181.94s (0:03:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 182.4
+    },
+    {
+      "mutation": "differences found in row order, not this release's first",
+      "replacements": [
+        {
+          "old": "    pairs.sort(key=lambda pair: not (current[pair[0]] and current[pair[1]]))\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "1 failed, 241 passed in 248.32s (0:04:08)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 248.8
+    },
+    {
+      "mutation": "two of this release's sets that B0.1 also published make no target",
+      "replacements": [
+        {
+          "old": "                and earlier[superset]\n                and not (current[subset] and current[superset])\n            ):\n",
+          "new": "                and earlier[superset]\n            ):\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "3 failed, 239 passed in 242.42s (0:04:02)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 242.9
+    },
+    {
+      "mutation": "the program limit back at 60 seconds",
+      "replacements": [
+        {
+          "old": "PROGRAM_SECONDS = 300.0\n",
+          "new": "PROGRAM_SECONDS = 60.0\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_programs_use_one_thread_the_time_limit_and_exact_optima"
+      ],
+      "summary": "1 failed, 241 passed in 108.59s (0:01:48)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 109.0
+    },
+    {
+      "mutation": "the guard catches only Exception",
+      "replacements": [
+        {
+          "old": "    except BaseException as error:\n        failure = _failure_text(error, phase)\n",
+          "new": "    except Exception as error:\n        failure = _failure_text(error, phase)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 2,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "7 failed, 219 passed in 89.14s (0:01:29)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 89.7
+    },
+    {
+      "mutation": "the local copy writes the rounds",
+      "replacements": [
+        {
+          "old": "        \"status\": audit[\"status\"],\n        \"targets\": targets,\n",
+          "new": "        \"status\": audit[\"status\"],\n        \"rounds\": audit[\"rounds\"],\n        \"targets\": targets,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_empty_reseeding_withholds_with_complete_files",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_is_the_same_whatever_the_rounds",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_writes_nothing_of_b0_1_sets_beyond_their_counts"
+      ],
+      "summary": "4 failed, 238 passed in 228.90s (0:03:48)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 229.4
+    },
+    {
+      "mutation": "the local copy writes each target's settling round",
+      "replacements": [
+        {
+          "old": "    \"true_size\",\n    \"result\",\n)\n",
+          "new": "    \"true_size\",\n    \"result\",\n    \"round\",\n)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[irrelevant-2]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-1]",
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-2]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[falling]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[late]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[rising]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_is_the_same_whatever_the_rounds"
+      ],
+      "summary": "9 failed, 233 passed in 118.79s (0:01:58)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 119.3
+    },
+    {
+      "mutation": "provenance gains a figure from the panel",
+      "replacements": [
+        {
+          "old": "            \"worktree_clean\": True,\n",
+          "new": "            \"worktree_clean\": True,\n            \"rows_read\": len(person_wave),\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_committed_provenance_is_the_requested_shape_and_input_hashes",
+        "tests/test_track_b_b0_2_counts.py::test_main_withheld_release_commits_provenance_and_status_only"
+      ],
+      "summary": "2 failed, 240 passed in 120.33s (0:02:00)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 120.8
+    },
+    {
+      "mutation": "a failure in the release prints its type and line",
+      "replacements": [
+        {
+          "old": "    if phase not in LOCATED_PHASES:\n        return f\"B0.2 stopped in {RELEASE}\"\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_deep_in_the_disposition_rebuild_names_the_phase_alone",
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_from_outside_this_script_prints_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_an_interruption_or_a_librarys_exit_prints_no_chain[<lambda>-the release-^B0\\\\.2 stopped in the release$]",
+        "tests/test_track_b_b0_2_counts.py::test_an_interruption_or_a_librarys_exit_prints_no_chain[KeyboardInterrupt-the release-^B0\\\\.2 stopped in the release$]",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[True]",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[7-an unlisted phase-^B0\\\\.2 stopped in the release$]",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[7-the release-^B0\\\\.2 stopped in the release$]"
+      ],
+      "summary": "7 failed, 235 passed in 176.47s (0:02:56)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 177.0
+    },
+    {
+      "mutation": "the guard skips the descriptor redirect",
+      "replacements": [
+        {
+          "old": "        os.dup2(null, 1)\n        os.dup2(null, 2)\n",
+          "new": "        pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_deep_in_the_disposition_rebuild_names_the_phase_alone",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[False]",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[True]"
+      ],
+      "summary": "3 failed, 239 passed in 194.78s (0:03:14)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 195.3
+    },
+    {
+      "mutation": "the guard skips the C library's flush",
+      "replacements": [
+        {
+          "old": "    ctypes.CDLL(None).fflush(None)\n",
+          "new": "    pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_every_output_the_script_can_make_names_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[False]",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[True]"
+      ],
+      "summary": "3 failed, 239 passed in 167.78s (0:02:47)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 168.3
+    },
+    {
+      "mutation": "the guard leaves Python's streams unredirected",
+      "replacements": [
+        {
+          "old": "            with redirect_stdout(python_null), redirect_stderr(python_null):\n                yield\n",
+          "new": "            yield\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[False]",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[True]"
+      ],
+      "summary": "2 failed, 240 passed in 187.72s (0:03:07)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 188.2
+    },
+    {
+      "mutation": "the guard restores the descriptors before flushing",
+      "replacements": [
+        {
+          "old": "        try:\n            _flush_streams()\n        finally:\n            os.dup2(saved[0], 1)\n            os.dup2(saved[1], 2)\n",
+          "new": "        try:\n            os.dup2(saved[0], 1)\n            os.dup2(saved[1], 2)\n        finally:\n            _flush_streams()\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[False]",
+        "tests/test_track_b_b0_2_counts.py::test_nothing_printed_inside_the_guard_is_seen[True]"
+      ],
+      "summary": "2 failed, 240 passed in 99.79s (0:01:39)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 100.3
+    },
+    {
+      "mutation": "main runs the release in the reading phase",
+      "replacements": [
+        {
+          "old": "    with count_free_failures(RELEASE):\n",
+          "new": "    with count_free_failures(READING):\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_deep_in_the_disposition_rebuild_names_the_phase_alone",
+        "tests/test_track_b_b0_2_counts.py::test_a_failure_from_outside_this_script_prints_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_every_output_the_script_can_make_names_no_value"
+      ],
+      "summary": "3 failed, 239 passed in 121.73s (0:02:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 122.1
+    },
+    {
+      "mutation": "the script's own raise in the release loses its message",
+      "replacements": [
+        {
+          "old": "    if raised_here:\n        where",
+          "new": "    if raised_here and phase in LOCATED_PHASES:\n        where",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_main_rejects_b01_size_mismatch",
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_at_the_rerun_gate_before_any_count_is_written",
+        "tests/test_track_b_b0_2_counts.py::test_main_stops_when_b0_1_counts_differ_from_the_inputs",
+        "tests/test_track_b_b0_2_counts.py::test_only_this_scripts_own_raise_keeps_its_message[-7-the release-^B0\\\\.2 stopped in coarsen, line \\\\d+: ValueError: counts and effective sizes must be finite and nonnegative$]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "11 failed, 231 passed in 171.72s (0:02:51)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 172.3
+    },
+    {
+      "mutation": "the load check reads the one-minute load",
+      "replacements": [
+        {
+          "old": "        os.getloadavg()[1],\n",
+          "new": "        os.getloadavg()[0],\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_host_state_reads_niceness_darwin_priority_qos_load_and_cpus"
+      ],
+      "summary": "1 failed, 241 passed in 127.05s (0:02:07)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 127.6
+    },
+    {
+      "mutation": "the AC power check is dropped",
+      "replacements": [
+        {
+          "old": "            \"ac_power\": self.host.power_source() == AC_POWER,\n",
+          "new": "            \"ac_power\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host0-ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host1-ac_power]"
+      ],
+      "summary": "4 failed, 238 passed in 141.89s (0:02:21)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 142.4
+    },
+    {
+      "mutation": "the sleep-assertion check is dropped",
+      "replacements": [
+        {
+          "old": "            \"sleep_assertions\": all(\n",
+          "new": "            \"sleep_assertions\": True or all(\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host2-sleep_assertions]"
+      ],
+      "summary": "3 failed, 239 passed in 195.17s (0:03:15)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 195.6
+    },
+    {
+      "mutation": "the nice check is dropped",
+      "replacements": [
+        {
+          "old": "            \"nice\": niceness == 0,\n",
+          "new": "            \"nice\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host3-nice]"
+      ],
+      "summary": "3 failed, 239 passed in 206.96s (0:03:26)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 207.4
+    },
+    {
+      "mutation": "the background-policy check is dropped",
+      "replacements": [
+        {
+          "old": "            \"background\": background == 0,\n",
+          "new": "            \"background\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host4-background]"
+      ],
+      "summary": "3 failed, 239 passed in 206.98s (0:03:26)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 207.6
+    },
+    {
+      "mutation": "the QoS check is dropped",
+      "replacements": [
+        {
+          "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
+          "new": "            \"qos\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host5-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host6-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host7-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host8-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host9-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "9 failed, 233 passed in 130.32s (0:02:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 130.8
+    },
+    {
+      "mutation": "the load check is dropped",
+      "replacements": [
+        {
+          "old": "            \"load\": load < cpus,\n",
+          "new": "            \"load\": True,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host10-load]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host11-load]"
+      ],
+      "summary": "4 failed, 238 passed in 163.42s (0:02:43)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 164.0
+    },
+    {
+      "mutation": "the QoS check passes a background clamp",
+      "replacements": [
+        {
+          "old": "QOS_CLASS_DEFAULT = 0x15\n",
+          "new": "QOS_CLASS_DEFAULT = 0x09\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host5-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host6-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host8-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "7 failed, 235 passed in 144.97s (0:02:24)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 145.4
+    },
+    {
+      "mutation": "the QoS check passes an unknown class below the default",
+      "replacements": [
+        {
+          "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
+          "new": "            \"qos\": qos not in (0x11, 0x09, 0x05),\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host8-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host9-qos]"
+      ],
+      "summary": "2 failed, 240 passed in 130.73s (0:02:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 131.2
+    },
+    {
+      "mutation": "the QoS check fails an unspecified class",
+      "replacements": [
+        {
+          "old": "            \"qos\": qos == QOS_CLASS_UNSPECIFIED or qos >= QOS_CLASS_DEFAULT,\n",
+          "new": "            \"qos\": qos >= QOS_CLASS_DEFAULT,\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_unclamped_qos_classes_meet_the_run_conditions[0]"
+      ],
+      "summary": "1 failed, 241 passed in 315.18s (0:05:15)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 315.6
+    },
+    {
+      "mutation": "a lapsed sleep assertion is not taken again",
+      "replacements": [
+        {
+          "old": "                self.assertions[kind] = self.host.hold(kind)\n",
+          "new": "                pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_an_assertion_at_the_off_level_is_given_back_and_taken_again"
+      ],
+      "summary": "2 failed, 240 passed in 200.81s (0:03:20)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 201.3
+    },
+    {
+      "mutation": "the sleep assertions are taken only after the attempt record",
+      "replacements": [
+        {
+          "old": "    conditions = _start_conditions()\n    _start_attempt(local, repository_head, script_sha256)\n",
+          "new": "    _start_attempt(local, repository_head, script_sha256)\n    conditions = _start_conditions()\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_holds_its_sleep_assertions_from_before_the_attempt_to_the_end",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_without_iokit_before_the_attempt[library]",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_without_iokit_before_the_attempt[symbol]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host0-ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host1-ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host10-load]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host11-load]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host2-sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host3-nice]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host4-background]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host5-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host6-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host7-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host8-qos]",
+        "tests/test_track_b_b0_2_counts.py::test_runtime_refuses_to_start_unless_every_run_condition_holds[host9-qos]"
+      ],
+      "summary": "15 failed, 227 passed in 218.93s (0:03:38)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 219.4
+    },
+    {
+      "mutation": "the run conditions are checked only at the start",
+      "replacements": [
+        {
+          "old": "            self.before_program()\n",
+          "new": "            pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]",
+        "tests/test_track_b_b0_2_counts.py::test_the_run_conditions_are_checked_before_every_program"
+      ],
+      "summary": "10 failed, 232 passed in 275.96s (0:04:35)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 276.4
+    },
+    {
+      "mutation": "a failing condition stops the run at once",
+      "replacements": [
+        {
+          "old": "            if rechecks == RECHECKS:\n",
+          "new": "            if rechecks == 0:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "9 failed, 233 passed in 204.88s (0:03:24)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 205.4
+    },
+    {
+      "mutation": "the wait stops one recheck early",
+      "replacements": [
+        {
+          "old": "            if rechecks == RECHECKS:\n",
+          "new": "            if rechecks == RECHECKS - 1:\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[clears]",
+        "tests/test_track_b_b0_2_counts.py::test_the_bounded_wait_runs_with_a_shortened_bound_and_real_waits[fails]"
+      ],
+      "summary": "8 failed, 234 passed in 86.16s (0:01:26)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 86.6
+    },
+    {
+      "mutation": "rechecks do not wait",
+      "replacements": [
+        {
+          "old": "            time.sleep(RECHECK_SECONDS)\n",
+          "new": "            pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[ac_power]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[background]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[load]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[nice]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[qos]",
+        "tests/test_track_b_b0_2_counts.py::test_a_condition_failing_for_24_hours_stops_the_run_with_its_name[sleep_assertions]",
+        "tests/test_track_b_b0_2_counts.py::test_a_failed_condition_is_waited_out_and_changes_no_decision"
+      ],
+      "summary": "7 failed, 235 passed in 207.87s (0:03:27)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 208.3
+    },
+    {
+      "mutation": "an unreached target keeps an earlier round's result",
+      "replacements": [
+        {
+          "old": "            outcome[\"round\"] == ending\n",
+          "new": "            True\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_target_the_ending_round_did_not_reach_is_unreached[wide-2]"
+      ],
+      "summary": "1 failed, 241 passed in 96.64s (0:01:36)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 97.2
+    },
+    {
+      "mutation": "a class names no sets",
+      "replacements": [
+        {
+          "old": "                    for key in (\"sets\", \"superset\", \"subset\")\n",
+          "new": "                    for key in (\"superset\", \"subset\")\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_small_b0_1_cell_that_is_a_b0_2_set_withholds",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_holds_this_releases_counts_and_decisions_only"
+      ],
+      "summary": "2 failed, 240 passed in 126.92s (0:02:06)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 127.4
+    },
+    {
+      "mutation": "a class's sets include B0.1's",
+      "replacements": [
+        {
+          "old": "                list(path) for path in registry.sets if path_rows[path] in held\n",
+          "new": "                list(path) for path in path_rows if path_rows[path] in held\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[coinciding]",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[household]",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[release_panel]",
+        "tests/test_track_b_b0_2_counts.py::test_each_class_names_this_releases_sets_that_hold_it[worked_rosters]",
+        "tests/test_track_b_b0_2_counts.py::test_this_releases_targets_do_not_depend_on_earlier_sets"
+      ],
+      "summary": "5 failed, 237 passed in 121.02s (0:02:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 121.5
+    },
+    {
+      "mutation": "the identifier check is dropped",
+      "replacements": [
+        {
+          "old": "        _require_unit_identifiers(person_wave, anchor, design)\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[anchor-a present anchor row has no person or interview number-row has no person or interview number]",
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[design cluster-a present person has no design stratum or cluster-a present person has no design stratum or cluster]",
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[design row-a present person has no design stratum or cluster-a present person has no design stratum or cluster]",
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[design stratum-a present person has no design stratum or cluster-a present person has no design stratum or cluster]",
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[person id-a present person-wave row has no person or interview number-row has no person or interview number]",
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[person-wave-a present person-wave row has no person or interview number-row has no person or interview number]"
+      ],
+      "summary": "6 failed, 236 passed in 208.09s (0:03:28)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 208.8
+    },
+    {
+      "mutation": "the identifier check counts every row",
+      "replacements": [
+        {
+          "old": "    rows = {\"person-wave\": _present(person_wave), \"anchor\": _present(anchor)}\n",
+          "new": "    rows = {\"person-wave\": person_wave, \"anchor\": anchor}\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_missing_identifier_on_a_unit_no_set_counts_is_no_stop"
+      ],
+      "summary": "1 failed, 241 passed in 251.01s (0:04:11)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 251.7
+    },
+    {
+      "mutation": "the audit saves the atom sizes to a file in the temporary directory (np.save)",
+      "replacements": [
+        {
+          "old": "    truth = model[\"sizes\"]\n",
+          "new": "    truth = model[\"sizes\"]\n    np.save(os.path.join(os.environ.get(\"TMPDIR\", \"/tmp\"), \"b02_atoms.npy\"), truth)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_every_output_the_script_can_make_names_no_value",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages0-before0-4-3-withheld]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages1-before1-0-7-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_deaths_and_moves_changes_no_written_byte"
+      ],
+      "summary": "5 failed, 237 passed in 328.89s (0:05:28)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 329.6
+    },
+    {
+      "mutation": "the local copy marks a result settled after round 1 with a trailing dot",
+      "replacements": [
+        {
+          "old": "        {key: target[key] for key in TARGET_FIELDS if key in target}\n",
+          "new": "        {**{key: target[key] for key in TARGET_FIELDS if key in target}, **({\"result\": target[\"result\"] + \".\"} if target.get(\"round\", 1) > 1 else {})}\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[falling]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[late]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[rising]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_is_the_same_whatever_the_rounds"
+      ],
+      "summary": "4 failed, 238 passed in 206.35s (0:03:26)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 207.0
+    },
+    {
+      "mutation": "the local copy orders this release's targets by settling round",
+      "replacements": [
+        {
+          "old": "        for target in audit[\"targets\"]\n        if not target[\"earlier\"]\n",
+          "new": "        for target in sorted(audit[\"targets\"], key=lambda t: -t.get(\"round\", 0))\n        if not target[\"earlier\"]\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_ignores_rounds_that_order_or_mark_targets[rising]",
+        "tests/test_track_b_b0_2_counts.py::test_the_local_copy_is_the_same_whatever_the_rounds"
+      ],
+      "summary": "2 failed, 240 passed in 140.61s (0:02:20)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 141.3
+    },
+    {
+      "mutation": "B0.1's household sets are not registered",
+      "replacements": [
+        {
+          "old": "    for path, (unit_type, units, terms) in sets.items():\n        value = sum(",
+          "new": "    for path, (unit_type, units, terms) in sets.items():\n        if unit_type != \"persons\":\n            continue\n        value = sum(",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households"
+      ],
+      "summary": "1 failed, 241 passed in 153.82s (0:02:33)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 154.5
+    },
+    {
+      "mutation": "an assertion at the off level counts as held",
+      "replacements": [
+        {
+          "old": "                and level.value == _ASSERTION_ON\n",
+          "new": "                or True\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_assertion_set_to_the_off_level_reads_as_not_held",
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[False-True-0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[True-True-0]"
+      ],
+      "summary": "3 failed, 239 passed in 117.76s (0:01:57)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 118.3
+    },
+    {
+      "mutation": "an assertion at the off level is not given back before it is taken again",
+      "replacements": [
+        {
+          "old": "                # One that exists at the off level is given back first.\n                self.host.release(assertion)\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_assertion_at_the_off_level_is_given_back_and_taken_again"
+      ],
+      "summary": "1 failed, 241 passed in 164.41s (0:02:44)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 165.0
+    },
+    {
+      "mutation": "the assertion check does not give back the properties it copies",
+      "replacements": [
+        {
+          "old": "            self.cf.CFRelease(properties)\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[False-True-0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[False-True-255]",
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[True-True-0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_host_calls_give_back_every_object_they_own[True-True-255]"
+      ],
+      "summary": "4 failed, 238 passed in 121.72s (0:02:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 122.3
+    },
+    {
+      "mutation": "the identifier check does not require a design stratum",
+      "replacements": [
+        {
+          "old": "    complete = design.dropna(subset=[\"person_id\", \"stratum\", \"cluster\"])\n",
+          "new": "    complete = design.dropna(subset=[\"person_id\", \"cluster\"])\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_present_unit_without_an_identifier_stops_the_run_while_reading[design stratum-a present person has no design stratum or cluster-a present person has no design stratum or cluster]"
+      ],
+      "summary": "1 failed, 241 passed in 126.24s (0:02:06)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 126.8
+    },
+    {
+      "mutation": "the exemption is never applied",
+      "replacements": [
+        {
+          "old": "                outcome = {**outcome, \"result\": \"exempt\"}\n",
+          "new": "                pass\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table0]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "10 failed, 232 passed in 139.85s (0:02:19)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 140.5
+    },
+    {
+      "mutation": "the exemption compares against the round's own programs",
+      "replacements": [
+        {
+          "old": "            if outcome[\"result\"] == \"narrow\" and exempt(\n                earlier, targets[index], outcome, seconds=seconds\n            ):",
+          "new": "            if outcome[\"result\"] == \"narrow\" and exempt(\n                earlier and (system, earlier[1]),\n                targets[index],\n                outcome,\n                seconds=seconds,\n            ):",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households"
+      ],
+      "summary": "5 failed, 237 passed in 115.32s (0:01:55)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 116.0
+    },
+    {
+      "mutation": "only a target of true size 1 to 9 can be exempt",
+      "replacements": [
+        {
+          "old": "    if earlier is None or outcome.get(\"proof\") != \"optima\":\n        return False\n",
+          "new": "    if earlier is None or outcome.get(\"proof\") != \"optima\":\n        return False\n    if target[\"true_size\"] >= DISCLOSURE_THRESHOLD:\n        return False\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "9 failed, 233 passed in 154.27s (0:02:34)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 154.9
+    },
+    {
+      "mutation": "a target holding an atom no B0.1 set counts can be exempt",
+      "replacements": [
+        {
+          "old": "    if uncounted[columns].any():\n        return False\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed"
+      ],
+      "summary": "1 failed, 241 passed in 123.87s (0:02:03)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 124.5
+    },
+    {
+      "mutation": "an unproven exemption program counts as exempt",
+      "replacements": [
+        {
+          "old": "        return False\n    (maximum, _), (minimum, _) = extremes\n",
+          "new": "        return True\n    (maximum, _), (minimum, _) = extremes\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed"
+      ],
+      "summary": "1 failed, 241 passed in 122.98s (0:02:02)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 123.6
+    },
+    {
+      "mutation": "a range within B0.1's, not equal to it, is exempt",
+      "replacements": [
+        {
+          "old": "    return [minimum, maximum] == outcome[\"range\"]\n",
+          "new": "    low, high = outcome[\"range\"]\n    return minimum <= low and high <= maximum\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_earlier_exact_count_narrows_a_hidden_band",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_b0_1s_exact_household_count_withholds_a_small_bands_households",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed"
+      ],
+      "summary": "6 failed, 236 passed in 115.17s (0:01:55)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 115.8
+    },
+    {
+      "mutation": "the exemption programs both maximize",
+      "replacements": [
+        {
+          "old": "        for sense in (1, -1)\n",
+          "new": "        for sense in (1, 1)\n",
+          "occurrence": 1,
+          "anchor_occurrences": 2
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "10 failed, 232 passed in 121.90s (0:02:01)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 122.4
+    },
+    {
+      "mutation": "the exemption reads its least and greatest sizes swapped",
+      "replacements": [
+        {
+          "old": "    (maximum, _), (minimum, _) = extremes\n    return",
+          "new": "    (minimum, _), (maximum, _) = extremes\n    return",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_programs_depend_only_on_the_publications[table1]"
+      ],
+      "summary": "10 failed, 232 passed in 184.16s (0:03:04)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 184.6
+    },
+    {
+      "mutation": "the exemption programs are not recorded",
+      "replacements": [
+        {
+          "old": "    outcome[\"programs\"].extend([\"earlier maximum\", \"earlier minimum\"])\n",
+          "new": "",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]",
+        "tests/test_track_b_b0_2_counts.py::test_the_exemption_fails_closed"
+      ],
+      "summary": "4 failed, 238 passed in 172.23s (0:02:52)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 172.8
+    },
+    {
+      "mutation": "an exempt target is disclosed",
+      "replacements": [
+        {
+          "old": "            settled[index] = {**outcome, \"round\": len(rounds) + 1}\n            if outcome[\"result\"] != \"narrow\":\n",
+          "new": "            settled[index] = {**outcome, \"round\": len(rounds) + 1}\n            if outcome[\"result\"] == \"exempt\":\n                added.append(index)\n                continue\n            if outcome[\"result\"] != \"narrow\":\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader",
+        "tests/test_track_b_b0_2_counts.py::test_classes_b0_1_already_fixes_are_exempt_and_release",
+        "tests/test_track_b_b0_2_counts.py::test_relabeling_a_death_and_a_move_changes_no_written_byte[ages2-before2-0-6-released]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-1]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[atom-2]",
+        "tests/test_track_b_b0_2_counts.py::test_switching_off_one_exemption_withholds_on_that_target_alone[difference-3]"
+      ],
+      "summary": "8 failed, 234 passed in 184.39s (0:03:04)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 184.9
+    },
+    {
+      "mutation": "an exempt target is not tested again",
+      "replacements": [
+        {
+          "old": "            if settled.get(index, {}).get(\"result\") == \"irrelevant\":\n",
+          "new": "            if settled.get(index, {}).get(\"result\") in (\n                \"irrelevant\",\n                \"exempt\",\n            ):\n",
+          "occurrence": 1,
+          "anchor_occurrences": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_disclosure_that_narrows_an_exempt_target_ends_its_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_an_exempt_difference_disclosed_instead_ends_a_class_exemption",
+        "tests/test_track_b_b0_2_counts.py::test_audit_with_earlier_counts_agrees_with_an_exhaustive_reader"
+      ],
+      "summary": "3 failed, 239 passed in 130.07s (0:02:10)",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+      "elapsed_seconds": 130.5
+    }
+  ]
+}
