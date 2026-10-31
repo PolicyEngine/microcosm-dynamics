@@ -1,0 +1,50 @@
+[
+  {
+    "file": "lii_26_761_r1.html",
+    "url": "https://www.law.cornell.edu/uscode/text/26/761",
+    "retrieved_at": "2026-10-25T18:55:30.981408Z",
+    "bytes": 50713,
+    "sha256": "4dca1c604de8d06f0c4a469a9f66f1014c266f743840600108012c3332b156d5",
+    "provenance": "26 U.S.C. 761(f)(1)-(2), qualified joint venture joint return, membership, material participation and election conditions, with effective-date note.",
+    "status": "captured"
+  },
+  {
+    "file": "cfr_1996_20_4041082_r1.txt",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-1996-title20-vol2/html/CFR-1996-title20-vol2-sec404-1082.htm",
+    "retrieved_at": "2026-10-25T19:45:53.218891Z",
+    "bytes": 11046,
+    "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+    "provenance": "Official April 1, 1996 Code of Federal Regulations section 404.1082, text HTML rendition. Dealer and occupant-services details are not backcast before the captured edition.",
+    "status": "captured"
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802410",
+    "status": "SOURCE_UNAVAILABLE",
+    "searched_utc": "2026-10-25",
+    "reason": "HTTP 404; no obsolete Edwards-procedure section text returned."
+  },
+  {
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802470",
+    "status": "SOURCE_UNAVAILABLE",
+    "searched_utc": "2026-10-25",
+    "reason": "HTTP 404; no obsolete Edwards-procedure section text returned."
+  },
+  {
+    "url": "https://www.govinfo.gov/content/pkg/CFR-1968-title20-vol1/html/CFR-1968-title20-vol1-sec404-1053.htm",
+    "status": "SOURCE_UNAVAILABLE",
+    "searched_utc": "2026-10-25",
+    "reason": "HTTP 200 generic error page; no historical section text returned."
+  },
+  {
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-101/html/STATUTE-101-Pg1330.htm",
+    "status": "SOURCE_UNAVAILABLE",
+    "searched_utc": "2026-10-25",
+    "reason": "HTTP 200 generic error page; no act text returned."
+  },
+  {
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title26-vol18/xml/CFR-2024-title26-vol18-sec1-1402a-5.xml",
+    "status": "SOURCE_UNAVAILABLE",
+    "searched_utc": "2026-10-25",
+    "reason": "HTTP 200 generic error page; no section XML returned."
+  }
+]

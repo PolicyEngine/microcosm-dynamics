@@ -1,0 +1,66 @@
+[
+  {
+    "file": "govinfo_statute102_pg3342_extract.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102-Pg3342.pdf",
+    "retrieved_at": "2026-10-26T13:18:26Z",
+    "bytes": 1115690,
+    "sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd",
+    "provenance": {
+      "extracted_from": {
+        "file": "govinfo_statute102_pg3342.pdf",
+        "bytes": 75705438,
+        "sha256": "e8a5ee6e337e668f3eaec1389f54616f7a112eed0521a1d2d1f02a373f586d5a",
+        "pages": 471
+      },
+      "original_pdf_pages": [
+        1,
+        8,
+        9,
+        10,
+        11,
+        252,
+        471
+      ],
+      "kept": "first page; section 1001, amendments related to title I of the Reform Act, including subsection (d) on section 123 (102 Stat. 3349-3352); section 1019, effective date of title I (102 Stat. 3593); approval date (102 Stat. 3812)",
+      "method": "qpdf --deterministic-id --empty --pages govinfo_statute102_pg3342.pdf 1,8,9,10,11,252,471 -- govinfo_statute102_pg3342_extract.pdf (qpdf version 12.4.2)",
+      "note": "Public Law 100-647, Technical and Miscellaneous Revenue Act of 1988. Captured by plain request in review round 2 to identify the Reform Act provision that section 1001(d)(2)(E) relates to.",
+      "signature_status": "original_signature_invalidated_by_page_extraction",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
+    "status": "captured"
+  },
+  {
+    "file": "govinfo_statute102_pg3342_extract.pdf.txt",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102-Pg3342.pdf",
+    "retrieved_at": "2026-10-26T13:18:26Z",
+    "bytes": 17922,
+    "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6",
+    "provenance": {
+      "derived_from": "govinfo_statute102_pg3342_extract.pdf",
+      "source_sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd",
+      "method": "pdftotext -f 2 -l 6 -layout",
+      "pdf_pages": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "original_pdf_pages": [
+        8,
+        9,
+        10,
+        11,
+        252
+      ],
+      "printed_pages": [
+        "3349",
+        "3350",
+        "3351",
+        "3352",
+        "3593"
+      ]
+    },
+    "status": "captured"
+  }
+]

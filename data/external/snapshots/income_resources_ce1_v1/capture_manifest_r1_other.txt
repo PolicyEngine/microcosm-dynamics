@@ -1,0 +1,3 @@
+# CE1 review round 1 other/government captures: UTC SHA-256 bytes file
+# URL https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap83-subchapIII-sec8331.htm
+2026-10-25T19:46:26Z e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc 229944 ce1r1_usc2024_5_8331.html

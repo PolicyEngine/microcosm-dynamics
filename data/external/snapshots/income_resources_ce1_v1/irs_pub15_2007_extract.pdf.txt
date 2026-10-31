@@ -1,0 +1,84 @@
+Page 32 of 68 of Publication 15                                                                                             11:10 - 13-DEC-2006
+
+The type and rule above prints on all proofs including departmental reproduction proofs. MUST be removed before printing.
+
+
+
+
+        Special Classes of Employment and                                        Treatment Under Employment Taxes
+            Special Types of Payments                 Income Tax Withholding         Social Security and Medicare       Federal Unemployment
+        Homeworkers (industrial, cottage
+        industry):
+        1. Common law employees.                     Withhold                        Taxable                           Taxable
+        2. Statutory employees.                      Exempt                          Taxable if paid $100 or more in Exempt
+           See page 7 for details.                                                   cash in a year.
+        Hospital employees:
+        1. Interns                                   Withhold                        Taxable                           Exempt
+        2. Patients                                  Withhold                        Taxable (Exempt for state or      Exempt
+                                                                                     local government hospitals.)
+        Household employees:
+        1. Domestic service in private homes.        Exempt (withhold if both        Taxable if paid $1,500 or more    Taxable if employer paid total
+           Farmers, see Publication 51               employer and employee           in cash in 2007. Exempt if        cash wages of $1,000 or more
+           (Circular A).                             agree).                         performed by an individual        in any quarter in the current or
+                                                                                     under age 18 during any           preceding calendar year.
+                                                                                     portion of the calendar year
+                                                                                     and is not the principal
+                                                                                     occupation of the employee.
+        2. Domestic service in college clubs,        Exempt (withhold if both        Exempt if paid to regular         Taxable if employer paid total
+           fraternities, and sororities.             employer and employee           student; also exempt if           cash wages of $1,000 or more
+                                                     agree).                         employee is paid less than        in any quarter in the current or
+                                                                                     $100 in a year by an income-      preceding calendar year.
+                                                                                     tax-exempt employer.
+        Insurance for employees:
+        1. Accident and health insurance             Exempt (except 2%               Exempt                            Exempt
+           premiums under a plan or system for       shareholder-employees of
+           employees and their dependents            S corporations).
+           generally or for a class or classes of
+           employees and their dependents.
+        2. Group-term life insurance costs.          Exempt                          Exempt, except for the cost of    Exempt
+           See Publication 15-B for details.                                         group-term life insurance that
+                                                                                     is includible in the employee’s
+                                                                                     gross income. (Special rules
+                                                                                     apply for former employees.)
+        Insurance agents or solicitors:
+        1. Full-time life insurance salesperson.     Withhold only if employee       Taxable                           Taxable if (1) employee under
+                                                     under common law. See                                             common law and (2) not paid
+                                                     page 7.                                                           solely by commissions.
+        2. Other salesperson of life, casualty,      Withhold only if employee       Taxable only if employee          Taxable if (1) employee under
+           etc., insurance.                          under common law.               under common law.                 common law and (2) not paid
+                                                                                                                       solely by commissions.
+        Interest on loans with below-market          See Publication 15-A.
+        interest rates (foregone interest and
+        deemed original issue discount).
+        Leave-sharing plans: Amounts paid to         Withhold                        Taxable                           Taxable
+        an employee under a leave-sharing plan.
+        Newspaper carriers and vendors:              Exempt (withhold if both        Exempt                            Exempt
+        Newspaper carriers under age 18;             employer and employee
+        newspaper and magazine vendors               voluntarily agree).
+        buying at fixed prices and retaining
+        receipts from sales to customers. See
+        Publication 15-A for information on
+        statutory nonemployee status.
+        Noncash payments:
+        1. For household work, agricultural labor,   Exempt (withhold if both        Exempt                            Exempt
+           and service not in the course of the      employer and employee
+           employer’s trade or business.             voluntarily agree).
+        2. To certain retail commission              Optional with employer.         Taxable                           Taxable
+           salespersons ordinarily paid solely on
+           a cash commission basis.
+        Nonprofit organizations.                     See Publication 15-A.
+        Officers or shareholders of an S             Withhold                        Taxable                           Taxable
+        Corporation. Distributions and other
+        payments by an S corporation to a
+        corporate officer or shareholder must be
+        treated as wages to the extent the
+        amounts are reasonable compensation
+        for services to the corporation by an
+        employee. (See the Instructions for Form
+        1120S.)
+
+
+
+
+Page 32                                                                                                             Publication 15 (January 2007)
+

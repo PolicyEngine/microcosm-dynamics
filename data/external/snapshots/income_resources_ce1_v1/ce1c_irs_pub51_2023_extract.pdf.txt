@@ -1,0 +1,335 @@
+or Schedule F (Form 1040) as sole proprietors. Each
+spouse must also file a separate Schedule SE (Form
+1040) to pay self-employment taxes, as applicable.
+Spouses using the qualified joint venture rules are trea-
+ted as sole proprietors for federal tax purposes and gener-
+ally don't need an EIN. If employment taxes are owed by
+the qualified joint venture, either spouse may report and
+pay the employment taxes due on the wages paid to the
+employees using the EIN of that spouse's sole proprietor-
+ship. Generally, filing as a qualified joint venture won't in-
+crease the spouses' total tax owed on the joint income tax
+return. However, it gives each spouse credit for social se-
+curity earnings on which retirement benefits are based
+and for Medicare coverage without filing a partnership re-
+turn.
+Note. If your spouse is your employee, not your part-
+ner, you must withhold and pay federal income, social se-
+curity, and Medicare taxes for them. However, the wages
+aren’t subject to FUTA tax.
+For more information on qualified joint ventures, go to
+IRS.gov/QJV.
+Exception—Community income. If you and your
+spouse wholly own an unincorporated business as com-
+munity property under the community property laws of a
+state, foreign country, or U.S. possession, you can treat
+the business either as a sole proprietorship (of the spouse
+who carried on the business) or a partnership. You may
+still make an election to be taxed as a qualified joint ven-
+ture instead of a partnership. See Exception—Qualified
+joint venture, earlier in this section.
+3. Wages and Other
+Compensation
+Cash wages that you pay to employees for farmwork are
+generally subject to social security tax and Medicare tax.
+You may also be required to withhold, deposit, and report
+Additional Medicare Tax. See section 4 for more informa-
+tion. If the wages are subject to social security and Medi-
+care taxes, they’re also subject to federal income tax with-
+holding. You’re liable for the payment of these taxes to the
+federal government whether or not you collect them from
+your employees. If, for example, you withhold less than
+the correct tax from an employee's wages, you’re still lia-
+ble for the full amount. You may also be liable for FUTA
+tax, which isn't withheld by you or paid by the employee.
+FUTA tax is discussed in section 10. Cash wages include
+checks, money orders, and any kind of money or cash.
+For more information on what payments are considered
+taxable wages, see Pub. 15.
+Noncash wages (including commodity wages). Non-
+cash wages include food, lodging, clothing, transportation
+passes, farm products, or other goods or commodities.
+Noncash wages paid to farmworkers, including commod-
+ity wages, aren't subject to social security taxes, Medicare
+taxes, or federal income tax withholding. However, you
+and your employee can agree to have federal income tax
+withheld on noncash wages.
+Noncash wages, including commodity wages, are trea-
+ted as cash wages if the substance of the transaction is a
+cash payment. Noncash wages treated as cash wages
+are subject to social security taxes, Medicare taxes, and
+federal income tax withholding.
+Report the value of noncash wages in box 1 of Form
+W-2 together with cash wages. Noncash wages for farm-
+work are subject to federal income tax unless a specific
+exclusion applies. Don't show noncash wages in box 3 or
+5 of Form W-2 (unless the substance of the transaction is
+a cash payment and they’re being treated as cash wa-
+ges).
+Other compensation. Pubs. 15-A and 15-B discuss
+other forms of compensation that may be taxable.
+Family members. Generally, the wages that you pay to
+family members who are your employees are subject to
+social security and Medicare taxes, federal income tax
+withholding, and FUTA tax. However, certain exemptions
+may apply for your child, spouse, or parent. See the table,
+How Do Employment Taxes Apply to Farmwork, in
+section 12.
+Household employees. The wages of an employee who
+performs household services, such as a maid, babysitter,
+gardener, or cook, in your home aren't subject to social
+security and Medicare taxes if you pay that employee
+cash wages of less than $2,600 in 2023.
+Social security and Medicare taxes don't apply to cash
+wages for housework in your private home if it was done
+by your spouse or your child under age 21. Nor do the
+taxes apply to housework done by your parent unless:
+• You have a child (including an adopted child or step-
+child) living in your home who is under age 18 or has a
+physical or mental condition that requires care by an
+adult for at least 4 continuous weeks in the calendar
+quarter services were performed; and
+• You’re a widow or widower, or divorced and not re-
+married, or have a spouse in the home who, because
+of a physical or mental condition, can't care for your
+child for at least 4 continuous weeks in the calendar
+quarter services were performed.
+For more information, see Pub. 926.
+Wages for household work are generally not a de-
+ductible farm expense. See Nondeductible Pay in
+chapter 4 of Pub. 225 for more information.
+Share farmers. You don't have to withhold or pay social
+security and Medicare taxes on amounts paid to share
+farmers under share-farming arrangements.
+Compensation paid to H-2A visa holders. Report
+compensation of $600 or more paid to foreign agricultural
+workers who entered the country on H-2A visas in box 1 of
+Form W-2 but don't report it as social security wages
+(box 3) or Medicare wages (box 5) on Form W-2 because
+compensation paid to H-2A workers for agricultural labor
+CAUTION
+!
+Page 10 Publication 51 (2023)performed in connection with this visa isn't subject to so-
+cial security and Medicare taxes. On Form W-2, don't
+check box 13 (Statutory employee), as H-2A workers
+aren't statutory employees.
+An employer isn't required to withhold federal income
+tax from compensation paid to an H-2A worker for agricul-
+tural labor performed in connection with this visa but may
+withhold if the worker asks for withholding and the em-
+ployer agrees. In that case, the worker must give the em-
+ployer a completed Form W-4. Federal income tax with-
+held should be reported in box 2 of Form W-2.
+These reporting rules apply when the H-2A worker pro-
+vides their TIN to the employer. If the H-2A worker doesn't
+provide a TIN and the total annual wages to the H-2A
+worker are at least $600, the employer is required to
+backup withhold. See the Instructions for Forms
+1099-MISC and 1099-NEC and the Instructions for Form
+945.
+For more information on foreign agricultural workers on
+H-2A visas, go to IRS.gov/H2A.
+4. Social Security and
+Medicare Taxes
+Generally, you must withhold social security and Medicare
+taxes on all cash wage payments that you make to your
+employees. You may also be required to withhold Addi-
+tional Medicare Tax. For more information, see Additional
+Medicare Tax withholding, later.
+The $150 Test or the $2,500 Test
+All cash wages that you pay to an employee during the
+year for farmwork are subject to social security and Medi-
+care taxes and federal income tax withholding if either of
+the two tests below is met.
+• You pay cash wages to an employee of $150 or more
+in a year for farmwork (count all cash wages paid on a
+time, piecework, or other basis). The $150 test applies
+separately to each farmworker that you employ. If you
+employ a family of workers, each member is treated
+separately. Don't count wages paid by other employ-
+ers.
+• The total that you pay for farmwork (cash and non-
+cash) to all your employees is $2,500 or more during
+the year.
+Exceptions. Annual cash wages of less than $150 you
+pay to a seasonal farmworker aren't subject to social se-
+curity and Medicare taxes, or federal income tax withhold-
+ing, even if you pay $2,500 or more to all your farmwork-
+ers. However, these wages count toward the $2,500 test
+for determining whether other farmworkers' wages are
+subject to social security and Medicare taxes.
+A seasonal farmworker is a worker who:
+• Is employed in agriculture as a hand-harvest laborer,
+• Is paid piece rates in an operation that is usually paid
+on a piece-rate basis in the region of employment,
+• Commutes daily from their permanent home to the
+farm, and
+• Had been employed in agriculture less than 13 weeks
+in the preceding calendar year.
+Social Security and Medicare Tax
+Withholding
+The tax rate for social security is 6.2% (amount withheld)
+each for the employer and employee (12.4% total). The
+social security wage base limit is $160,200. The tax rate
+for Medicare is 1.45% (amount withheld) each for the em-
+ployee and employer (2.9% total). There is no wage base
+limit for Medicare tax; all covered wages are subject to
+Medicare tax.
+Social security and Medicare taxes apply to most pay-
+ments of sick pay, including payments made by third par-
+ties such as insurance companies. For details, see sec-
+tion 6 of Pub. 15-A.
+Qualified sick leave wages and qualified family
+leave wages for leave taken after March 31, 2020,
+and before April 1, 2021, aren't subject to the em-
+ployer share of social security tax; therefore, the tax rate
+on these wages is 6.2%. Qualified sick leave wages and
+qualified family leave wages for leave taken after March
+31, 2021, and before October 1, 2021, are subject to both
+the employer share (6.2%) and employee share (6.2%) of
+social security tax (12.4% total).
+For purposes of this publication, all references to
+“sick pay” mean ordinary sick pay, not “qualified
+sick leave wages” under the FFCRA, as amended
+by the COVID-related Tax Relief Act of 2020, and the
+ARP.
+Additional Medicare Tax withholding. In addition to
+withholding Medicare tax at 1.45%, you must withhold a
+0.9% Additional Medicare Tax from wages you pay to an
+employee in excess of $200,000 in a calendar year.
+You’re required to begin withholding Additional Medicare
+Tax in the pay period in which you pay wages in excess of
+$200,000 to an employee and continue to withhold it each
+pay period until the end of the calendar year. Additional
+Medicare Tax is only imposed on the employee. There is
+no employer share of Additional Medicare Tax. All wages
+that are subject to Medicare tax are subject to Additional
+Medicare Tax withholding if paid in excess of the
+$200,000 withholding threshold.
+For more information on what wages are subject to
+Medicare tax, see the chart, Special Rules for Various
+Types of Services and Payments, in section 15 of Pub.
+15. For more information on Additional Medicare Tax, go
+to IRS.gov/ADMTfaqs.
+Employee share paid by employer. If you would rather
+pay a household or agricultural employee's share of the
+social security and Medicare taxes without withholding
+CAUTION
+!
+TIP
+Publication 51 (2023) Page 11them from the employee’s wages, you may do so. If you
+don't withhold the taxes, however, you must still pay them
+on behalf of the employee. Any employee social security
+and Medicare taxes that you pay are additional income to
+the employee. Include it in box 1 of the employee's Form
+W-2, but don't count it as social security and Medicare
+wages and don't include it in boxes 3 and 5. Also, don't
+count the additional income as wages for FUTA tax purpo-
+ses. Different rules apply to employer payments of social
+security and Medicare taxes for non-household and
+non-agricultural employees. See section 7 of Pub. 15-A.
+Example. Gavrielle operates a small family fruit farm.
+Gavrielle employs day laborers in the picking season to al-
+low Gavrielle time to get the crops to market. Gavrielle
+doesn't deduct the employees' share of social security
+and Medicare taxes from their pay; instead, Gavrielle pays
+it on their behalf. When Gavrielle prepares the employees'
+Forms W-2, Gavrielle adds each employee's share of so-
+cial security and Medicare taxes that Gavrielle paid to the
+employee's wage income (box 1 of Form W-2), but
+doesn't include it in box 3 (social security wages) or box 5
+(Medicare wages and tips).
+For 2022, Gavrielle paid Dan $1,000 during the year.
+Gavrielle enters $1,076.50 in box 1 of Dan's Form W-2
+($1,000 wages plus $76.50 social security and Medicare
+taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3
+and 5 of Dan's Form W-2.
+Withholding social security and Medicare taxes on
+nonresident alien employees. In general, if you pay
+wages to nonresident alien employees, you must withhold
+social security and Medicare taxes as you would for a
+U.S. citizen or resident alien. However, see Pub. 515 for
+exceptions to this general rule. One such exception is for
+foreign agricultural workers on H-2A visas, who are ex-
+empt from social security and Medicare taxes. See Com-
+pensation paid to H-2A visa holders in section 3.
+Religious exemption. An exemption from social security
+and Medicare taxes is available to members of a recog-
+nized religious sect opposed to insurance. This exemption
+is available only if both the employee and the employer
+are members of the sect. For more information, see Pub.
+517.
+5. Federal Income Tax
+Withholding
+Farm operators and crew leaders must withhold federal
+income tax from the wages of farmworkers if the wages
+are subject to social security and Medicare taxes. The
+amount to withhold is figured on gross wages before tak-
+ing out social security and Medicare taxes, union dues,
+etc. You may use one of several methods to determine the
+amount of federal income tax withholding. They’re dis-
+cussed in Pub. 15-T.
+Redesigned Form W-4. The IRS redesigned Form W-4
+for 2020 and subsequent years. Before 2020, the value of
+a withholding allowance was tied to the amount of the per-
+sonal exemption. Due to changes in the law, taxpayers
+can no longer claim personal exemptions or dependency
+exemptions; therefore, Form W-4 no longer asks an em-
+ployee to report the number of withholding allowances
+that they are claiming. The revised Form W-4 is divided
+into five steps. Step 1 and Step 5 apply to all employees.
+In Step 1, employees enter personal information like their
+name and filing status. In Step 5, employees sign the
+form. Employees who complete only Step 1 and Step 5
+will have their withholding figured based on their filing sta-
+tus’s standard deduction and tax rates with no other ad-
+justments. If applicable, in Step 2, employees increase
+their withholding to account for higher tax rates due to in-
+come from other jobs in their household. Under Step 2,
+employees either enter an additional amount to withhold
+per payroll period in Step 4(c) or check the box in Step
+2(c) for higher withholding rate tables to apply to their wa-
+ges. In Step 3, employees decrease their withholding by
+reporting the annual amount of any credits they will claim
+on their income tax return. In Step 4, employees may in-
+crease or decrease their withholding based on the annual
+amount of other income or deductions they will report on
+their income tax return and they may also request any ad-
+ditional federal income tax they want withheld each pay
+period.
+Employees who have submitted Form W-4 in any year
+before 2020 aren’t required to submit a new form merely
+because of the redesign. Employers will continue to figure
+withholding based on the information from the employee’s
+most recently submitted Form W-4. The withholding ta-
+bles in Pub. 15-T allow employers to figure withholding
+based on a Form W-4 for 2019 or earlier, as well as the re-
+designed Form W-4. While you may ask your employees
+first paid wages before 2020 that have not yet submitted a
+redesigned Form W-4 to submit new Forms W-4 using the
+redesigned version of the form, you should explain to
+them that they’re not required to do this and if they don’t
+submit a new Form W-4, withholding will continue based
+on a valid Form W-4 previously submitted. All newly hired
+employees must use the redesigned form. Similarly, any
+other employees who wish to adjust their withholding must
+use the redesigned form.
+Pub. 15-T provides an optional computational bridge to
+treat 2019 or earlier Forms W-4 as if they were 2020 or
+later Forms W-4 for purposes of figuring federal income
+tax withholding. This computational bridge allows you to
+use computational procedures and data fields for a 2020
+and later Form W-4 to arrive at the equivalent withholding
+for an employee that would have applied using the com-
+putational procedures and data fields on a 2019 or earlier
+Form W-4. See How To Treat 2019 and Earlier Forms
+W-4 as if They Were 2020 or Later Forms W-4 in the Intro-
+duction section of Pub. 15-T.
+More information. For more information about the re-
+designed Form W‐4 and regulations that provide guidance
+for employers concerning income tax withholding from
+employees’ wages, see Treasury Decision 9924, 2020‐44
+I.R.B. 943, available at IRS.gov/irb/
+2020-44_IRB#TD-9924. For information about Form W‐4,
+go to IRS.gov/FormW4. Employer instructions on how to
+Page 12 Publication 51 (2023)

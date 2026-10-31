@@ -1,0 +1,32 @@
+2026-10-25T02:37:51Z 3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb 78804 uscode_2024_42_411.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec411.htm
+# Provenance: "Official 2024 United States Code section; modifiers and amendment/effective-date notes."
+
+2026-10-25T02:37:51Z 3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a 130770 uscode_2024_26_162.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapB-partVI-sec162.htm
+# Provenance: "Official 2024 United States Code section; health-insurance deduction and historical notes."
+
+2026-10-25T02:37:51Z 380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772 7551 uscode_2024_26_7873.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleF-chap80-subchapC-sec7873.htm
+# Provenance: "Official 2024 United States Code section; treaty fishing conditions and retroactive effective date."
+
+2026-10-25T02:37:51Z 01d4f66dc81614c56bf5ed494102c291003ae116dd00b6b39575c9ceaaf07f19 125312 uscode_2024_42_416.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec416.htm
+# Provenance: "Official 2024 United States Code section; retirement age in subsection(l) and amendment history."
+
+2026-10-25T02:37:51Z ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455 12198 cfr_2024_20_4041082.xml
+# URL: https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1082.xml
+# Provenance: "Official 2024 20 CFR404.1082; rental-income rule, limitations and published examples."
+
+2026-10-25T02:37:51Z a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4 359285 govinfo_plaw_111publ240.html
+# URL: https://www.govinfo.gov/content/pkg/PLAW-111publ240/html/PLAW-111publ240.htm
+# Provenance: "Public Law111-240 section2042; temporary2010 health-insurance deduction for SE-tax NESE."
+
+# Extract of govinfo_statute79_pg286.pdf (24847693 bytes, sha256 37c1d0e2e136a53ceab72db8df7560187555972ca9071bd2fd67ce1c30274f14): original PDF pages 1,114,115,138; qpdf --deterministic-id --empty --pages govinfo_statute79_pg286.pdf 1,114,115,138 -- govinfo_statute79_pg286_extract.pdf (qpdf version 12.4.2)
+2026-10-25T02:37:55Z 183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129 761274 govinfo_statute79_pg286_extract.pdf
+# URL: https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf
+# Provenance: "Public Law89-97, Social Security Amendments of1965; section325,79Stat399. Whole-act fallback because official HTML/txt/ocr/text renditions were Page Not Found."
+
+2026-10-25T02:37:55Z 6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63 3620 govinfo_statute79_pg286_extract.pdf.txt
+# URL: https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg286.pdf
+# Provenance: {"derived_from": "govinfo_statute79_pg286_extract.pdf", "source_sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129", "method": "pdftotext -f 2 -l 2 -layout", "pdf_pages": [2], "printed_pages": [399], "original_pdf_pages": [114]}

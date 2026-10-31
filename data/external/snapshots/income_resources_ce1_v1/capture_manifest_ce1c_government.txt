@@ -1,0 +1,61 @@
+2026-10-25T02:04:36Z 57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c 848159 govinfo_statute88_pg420.pdf
+# URL: https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf
+# Provenance: "Official Statutes at Large granule; Public Law 93-368 section 10, 88 Stat. 422."
+
+2026-10-25T02:04:36Z ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b 28795 poms_rs_01802400.html
+# URL: https://secure.ssa.gov/poms.nsf/lnx/0301802400
+# Provenance: "SSA POMS RS 01802.400; community-property allocation history and published examples."
+
+2026-10-25T02:04:36Z 384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104 22016 poms_rs_01901300.html
+# URL: https://secure.ssa.gov/poms.nsf/lnx/0301901300
+# Provenance: "SSA POMS RS 01901.300; District of Columbia coverage history."
+
+2026-10-25T02:04:36Z 7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b 22059 poms_rs_01901320.html
+# URL: https://secure.ssa.gov/apps10/poms.nsf/lnx/0301901320
+# Provenance: "SSA POMS RS 01901.320; American Samoa, Guam and CNMI coverage histories."
+
+2026-10-25T02:04:37Z e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373 128616 irs_schedule_se_1984.pdf
+# URL: https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf
+# Provenance: "IRS Schedule SE for 1984; historical church remuneration and ordinary-income/loss computation."
+
+2026-10-25T02:04:37Z b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb 4593 irs_schedule_se_1984.pdf.txt
+# URL: https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf
+# Provenance: {"derived_from": "irs_schedule_se_1984.pdf", "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1984.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)", "pdf_pages": [1], "printed_pages": [1], "source_sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373", "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout", "regenerated": "2026-10-26: this command reproduces these bytes", "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"}
+
+2026-10-25T02:04:37Z db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8 127742 irs_schedule_se_1985.pdf
+# URL: https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf
+# Provenance: "IRS Schedule SE for 1985; historical church remuneration and ordinary-income/loss computation."
+
+2026-10-25T02:04:37Z 3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa 4603 irs_schedule_se_1985.pdf.txt
+# URL: https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf
+# Provenance: {"derived_from": "irs_schedule_se_1985.pdf", "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1985.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)", "pdf_pages": [1], "printed_pages": [1], "source_sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8", "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout", "regenerated": "2026-10-26: this command reproduces these bytes", "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"}
+
+# Extract of irs_form1040_instructions_1985.pdf (4293993 bytes, sha256 84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5): original PDF pages 1,31; qpdf --deterministic-id --empty --pages irs_form1040_instructions_1985.pdf 1,31 -- irs_form1040_instructions_1985_extract.pdf (qpdf version 12.4.2)
+2026-10-25T02:04:37Z ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35 128765 irs_form1040_instructions_1985_extract.pdf
+# URL: https://www.irs.gov/pub/irs-prior/i1040--1985.pdf
+# Provenance: "IRS Form 1040 instructions for 1985, printed page 31; Schedule SE church-employee instructions for lines 9 and 13."
+
+2026-10-25T02:04:37Z 55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68 8190 irs_form1040_instructions_1985_extract.pdf.txt
+# URL: https://www.irs.gov/pub/irs-prior/i1040--1985.pdf
+# Provenance: {"derived_from": "irs_form1040_instructions_1985_extract.pdf", "source_sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35", "method": "pdftoppm -r 140 -f 2 -l 2 -png irs_form1040_instructions_1985_extract.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)", "pdf_pages": [2], "original_pdf_pages": [31], "printed_pages": [31], "first_derived": "2026-10-25 from original PDF page 31 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout, named irs_form1040_instructions_1985.pdf.txt", "regenerated": "2026-10-26: this command, and the same command on original PDF page 31, reproduce these bytes", "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"}
+
+2026-10-25T02:04:37Z 40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1 69072 uscode_1994_42_411.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec411.htm
+# Provenance: "Official 1994 United States Code section granule; former church-remuneration text and amendment/effective-date notes."
+
+2026-10-25T02:04:38Z 260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27 83953 uscode_1994_42_409.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec409.htm
+# Provenance: "Official 1994 United States Code section granule; annual nonprofit remuneration threshold and 1977 amendment/effective-date notes."
+
+2026-10-25T02:04:38Z ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8 77847 uscode_2013_42_411.html
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2013-title42/html/USCODE-2013-title42-chap7-subchapII-sec411.htm
+# Provenance: "Official 2013 United States Code section granule; optional-method lower and upper limits in subsection (k)."
+
+# Extract of federal_register_1975_07_10.pdf (29449191 bytes, sha256 ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84): original PDF pages 1,13,14; qpdf --deterministic-id --empty --pages federal_register_1975_07_10.pdf 1,13,14 -- federal_register_1975_07_10_extract.pdf (qpdf version 12.4.2)
+2026-10-25T02:16:45Z 8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b 630595 federal_register_1975_07_10_extract.pdf
+# URL: https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf
+# Provenance: "Official Federal Register issue; final20CFR404.1053(c)(5),40FR29071-29072. Current CFR section XML is small but omits the pre1974 rule. No smaller official historical section rendition was located; the full issue is retained as a necessary fallback. Retrieval UTC records completion of the captured-byte write."
+
+2026-10-25T02:16:45Z 19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459 16197 federal_register_1975_07_10_extract.pdf.txt
+# URL: https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf
+# Provenance: {"derived_from": "federal_register_1975_07_10_extract.pdf", "source_sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b", "method": "pdftotext -f 2 -l 3 -raw", "pdf_pages": [2, 3], "printed_pages": [29071, 29072], "original_pdf_pages": [13, 14]}

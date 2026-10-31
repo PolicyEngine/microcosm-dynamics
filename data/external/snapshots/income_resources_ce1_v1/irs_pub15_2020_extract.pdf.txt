@@ -1,0 +1,117 @@
+Employers at IRS.gov/ITWA to help you figure federal in-
+come tax withholding.
+Redesigned Form W-4 for 2020. The IRS has rede-
+signed Form W-4 for 2020. In the past, the value of a with-
+holding allowance was tied to the amount of the personal
+exemption. Due to changes in the law, taxpayers can no
+longer claim personal exemptions or dependency exemp-
+tions; therefore, the 2020 Form W-4 no longer asks an
+employee to report the number of withholding allowances
+that they are claiming. The revised Form W-4 is divided
+into five steps. Step 1 and Step 5 apply to all employees.
+In Step 1, employees enter personal information like their
+name and filing status. In Step 5, employees sign the
+form. Employees who complete only Step 1 and Step 5
+will have their withholding figured based on their filing sta-
+tus's standard deduction and tax rates with no other ad-
+justments. If applicable, in Step 2, employees increase
+their withholding to account for higher tax rates due to in-
+come from other jobs in their household. Under Step 2,
+employees either enter an additional amount to withhold
+per payroll period in Step 4(c) or check the box in Step
+2(c) for higher withholding rate tables to apply to their wa-
+ges. In Step 3, employees decrease their withholding by
+reporting the annual amount of any credits they will claim
+on their income tax return. In Step 4, employees may in-
+crease or decrease their withholding based on the annual
+amount of other income or deductions they will report on
+their income tax return and they may also request any ad-
+ditional federal income tax they want withheld each pay
+period.
+Employees who have submitted Form W-4 in any year
+before 2020 aren't required to submit a new form merely
+because of the redesign. Employers will continue to figure
+withholding based on the information from the employee's
+most recently submitted Form W-4. The withholding ta-
+bles in Pub. 15-T allow employers to figure withholding
+based on a Form W-4 for an earlier year as well as the re-
+designed 2020 Form W-4. While you may ask your em-
+ployees first paid wages before 2020 to submit new
+Forms W-4 using the redesigned version of the form, you
+should explain to them that they’re not required to do this
+and if they don't submit a new Form W-4, withholding will
+continue based on a valid Form W-4 previously submitted.
+All newly hired employees first paid wages after 2019
+must use the redesigned form. Similarly, any other em-
+ployees who wish to adjust their withholding must use the
+redesigned form. A new employee who is first paid wages
+in 2020, including an employee who previously worked for
+you and was rehired in 2020, and who fails to furnish a
+Form W-4 will be treated as if they had checked the box
+for Single or Married filing separately in Step 1(c) and
+made no entries in Step 2, Step 3, or Step 4 of the 2020
+Form W-4. However, an employee who was paid wages in
+2019 and who failed to furnish a Form W-4 should con-
+tinue to be treated as single and claiming zero allowances
+on a 2019 Form W-4. See section 9 for additional details.
+For the latest information about developments related to
+Form W-4, go to IRS.gov/FormW4.
+Social security and Medicare tax for 2020. The social
+security tax rate is 6.2% each for the employee and
+employer, unchanged from 2019. The social security
+wage base limit is $137,700.
+The Medicare tax rate is 1.45% each for the employee
+and employer, unchanged from 2019. There is no wage
+base limit for Medicare tax.
+Social security and Medicare taxes apply to the wages
+of household workers you pay $2,200 or more in cash wa-
+ges for 2020. Social security and Medicare taxes apply to
+election workers who are paid $1,900 or more in cash or
+an equivalent form of compensation in 2020.
+New Form 1099-NEC. There is a new Form 1099-NEC
+to report nonemployee compensation paid in 2020. The
+2020 Form 1099-NEC will be due February 1, 2021. For
+nonemployee compensation paid in 2019, continue to use
+Form 1099-MISC, which is due January 31, 2020.
+Disaster tax relief. Disaster tax relief is available for
+those impacted by disasters. For more information about
+disaster relief, go to IRS.gov/DisasterTaxRelief.
+Reminders
+Moving expense reimbursement. P.L. 115-97 sus-
+pends the exclusion for qualified moving expense reim-
+bursements from your employee's income for tax years
+beginning after 2017 and before 2026. However, the ex-
+clusion is still available in the case of a member of the
+U.S. Armed Forces on active duty who moves because of
+a permanent change of station due to a military order. The
+exclusion applies only to reimbursement of moving expen-
+ses that the member could deduct if he or she had paid or
+incurred them without reimbursement. See Moving Ex-
+penses in Pub. 3, Armed Forces' Tax Guide, for the defini-
+tion of what constitutes a permanent change of station
+and to learn which moving expenses are deductible.
+Withholding on supplemental wages. P.L. 115-97
+lowered the withholding rates on supplemental wages for
+tax years beginning after 2017 and before 2026. See sec-
+tion 7 for the withholding rates.
+Backup withholding. P.L. 115-97 lowered the backup
+withholding rate to 24% for tax years beginning after 2017
+and before 2026. For more information on backup with-
+holding, see Backup withholding, later.
+Qualified small business payroll tax credit for in-
+creasing research activities. For tax years beginning
+after 2015, a qualified small business may elect to claim
+up to $250,000 of its credit for increasing research activi-
+ties as a payroll tax credit against the employer’s share of
+social security tax. The payroll tax credit must be elected
+on an original income tax return that is timely filed (includ-
+ing extensions). The portion of the credit used against the
+employer’s share of social security tax is allowed in the
+first calendar quarter beginning after the date that the
+qualified small business filed its income tax return. The
+election and determination of the credit amount that will
+be used against the employer's share of social security
+tax are made on Form 6765, Credit for Increasing Re-
+search Activities. The amount from Form 6765, line 44,
+must then be reported on Form 8974, Qualified Small
+Page 2 Publication 15 (2020)

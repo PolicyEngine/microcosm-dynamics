@@ -1,0 +1,2621 @@
+[
+  {
+    "rule_id": "se_rental_income_1968_1996",
+    "family": "self_employment_rental_income",
+    "effective_start": "1968-01-01",
+    "effective_end": "1996-03-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(1); 1956 amendment note for material participation; later agent/CRP changes remain in their own families"
+      },
+      {
+        "capture": "cfr_2024_20_4041082.xml",
+        "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+        "authority": "20 CFR 404.1082, official 2024 edition",
+        "location": "(a)-(d), rental-income core, real-estate-dealer holdings, farm arrangements and occupant services"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(1) text; 1974, 1956 and 1954 amendment notes"
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(a)-(e), dealer holdings, occupant services and attributable deductions"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "rental_income",
+      "real_estate_dealer_status",
+      "services_to_occupants",
+      "material_participation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "411(a)(1) excludes rentals from real estate and from personal property leased with it, including crop-share rentals, with their attributable deductions, unless received in the course of a trade or business as a real estate dealer; the farm-arrangement proviso defers to the farm rental participation family. Only the regulatory dealer-holdings, occupant-services and space-payment details stay open.",
+    "parameters": {
+      "scope": "Historical occupant-services and dealer-holdings detail is unverified. A plain request for the 1968 official CFR section returned no section text.",
+      "farm_material_participation_family": "self_employment_farm_rental_participation",
+      "evidence_only_boundaries": [
+        {
+          "side": "end",
+          "date": "1996-04-01",
+          "kind": "regulation_edition",
+          "citation": {
+            "capture": "cfr_1996_20_4041082_r1.txt",
+            "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+            "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+            "location": "edition header",
+            "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition"
+          },
+          "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law."
+        }
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "dealer_investment_or_speculative_holdings",
+        "precedence": 1,
+        "when": {
+          "real_estate_dealer_status": "real estate dealer receiving rentals from real estate held for investment or speculation rather than for sale to customers"
+        },
+        "consequence": "open",
+        "description": "The dealer-holdings split is regulatory detail.",
+        "open_reason": "RENTAL_DEALER_HOLDINGS_RULE_UNVERIFIED: 411(a)(1) keeps rentals received in the course of a trade or business as a real estate dealer; the rule that a dealer's investment or speculative holdings stay excluded is captured only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3).",
+        "open_alternatives": [
+          {
+            "name": "apply_1996_holdings_rule",
+            "description": "Keep these rentals excluded, as 20 CFR 404.1082(b)(3) (April 1, 1996 edition) does."
+          },
+          {
+            "name": "statutory_dealer_text_only",
+            "description": "Include them when received in the course of the dealer's trade or business, reading 411(a)(1) without the later regulatory split."
+          }
+        ]
+      },
+      {
+        "case_id": "real_estate_dealer_rentals",
+        "precedence": 2,
+        "when": {
+          "real_estate_dealer_status": "rentals received in the course of a trade or business as a real estate dealer"
+        },
+        "consequence": "covered",
+        "description": "411(a)(1) dealer clause; apply the other families.",
+        "overrides": [
+          "real_estate_rentals"
+        ]
+      },
+      {
+        "case_id": "services_to_occupants_regulatory_detail",
+        "precedence": 3,
+        "when": {
+          "services_to_occupants": "living quarters rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+        },
+        "consequence": "open",
+        "description": "The occupant-services test is regulatory detail.",
+        "open_reason": "RENTAL_OCCUPANT_SERVICES_RULE_UNVERIFIED: the rule that such payments enter net earnings is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2).",
+        "open_alternatives": [
+          {
+            "name": "apply_1996_occupant_services_rule",
+            "description": "Include the payments in net earnings, as 20 CFR 404.1082(d)(2) (April 1, 1996 edition) does."
+          },
+          {
+            "name": "statutory_rental_exclusion",
+            "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes."
+          }
+        ]
+      },
+      {
+        "case_id": "parking_warehouse_storage_space_regulatory_detail",
+        "precedence": 4,
+        "when": {
+          "rental_income": "payments for the use of space in parking lots, warehouses or storage garages"
+        },
+        "consequence": "open",
+        "description": "The space-payment rule is regulatory detail.",
+        "open_reason": "RENTAL_SPACE_PAYMENTS_RULE_UNVERIFIED: the rule including these payments in net earnings is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2)(i).",
+        "open_alternatives": [
+          {
+            "name": "apply_1996_space_payments_rule",
+            "description": "Include the payments in net earnings, as 20 CFR 404.1082(d)(2)(i) (April 1, 1996 edition) does."
+          },
+          {
+            "name": "statutory_rental_exclusion",
+            "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes."
+          }
+        ]
+      },
+      {
+        "case_id": "farm_rental_arrangement",
+        "precedence": 5,
+        "when": {
+          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+        },
+        "consequence": "deferred",
+        "description": "411(a)(1) proviso; the farm rental participation family decides.",
+        "overrides": [
+          "real_estate_rentals"
+        ],
+        "defers_to": [
+          "self_employment_farm_rental_participation"
+        ]
+      },
+      {
+        "case_id": "real_estate_rentals",
+        "precedence": 6,
+        "when": {
+          "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(1)."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not rental income from real estate, so 411(a)(1) does not exclude it; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_rental_income_1996_2026",
+    "family": "self_employment_rental_income",
+    "effective_start": "1996-04-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(1); 1956 amendment note for material participation; later agent/CRP changes remain in their own families"
+      },
+      {
+        "capture": "cfr_2024_20_4041082.xml",
+        "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+        "authority": "20 CFR 404.1082, official 2024 edition",
+        "location": "(a)-(d), rental-income core, real-estate-dealer holdings, farm arrangements and occupant services"
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(a)-(e), dealer holdings, occupant services and attributable deductions"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "rental_income",
+      "real_estate_dealer_status",
+      "services_to_occupants",
+      "material_participation"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Real-estate rentals, personal property leased with the real estate, and their attributable deductions are excluded from NESE, subject to the statutory real-estate-dealer and farm material-participation exceptions.",
+    "parameters": {
+      "rental_income_and_attributable_deductions_excluded": true,
+      "includes_crop_share_rentals": true,
+      "real_estate_dealer_exception": "Include rentals received in the course of the real-estate-dealer business; investment or speculative holdings remain excluded.",
+      "occupant_services": {
+        "verified_regulation_edition": 1996,
+        "historical_backcast": false,
+        "current_regulatory_detail": "Services primarily for occupant convenience, beyond customary occupancy services, can make the payments business income; heat/light, common-area cleaning and trash collection alone do not. This text is captured in the 1996 and 2024 editions."
+      },
+      "farm_material_participation_family": "self_employment_farm_rental_participation",
+      "scope": "Income-definition modifier; does not exclude all earnings of a person receiving rents.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "later_text_and_source_credit_comparison",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "cfr_2024_20_4041082.xml",
+              "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+              "authority": "20 CFR 404.1082, official 2024 edition",
+              "location": "(a)-(d), rental-income core, real-estate-dealer holdings, farm arrangements and occupant services"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(1); Amendments entries: 1956; Effective Date of 1956 Amendment; section text and source credit; no earlier effective-date claim"
+          },
+          "section_references_verified_present": [
+            "411(a)(1)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1956 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1956"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(1)"
+          },
+          "section_references_verified_present": [
+            "411(a)(1)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1956 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1956"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(1)"
+          },
+          "section_references_verified_present": [
+            "411(a)(1)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1956 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1956"
+          ]
+        }
+      ],
+      "evidence_only_boundaries": [
+        {
+          "side": "start",
+          "date": "1996-04-01",
+          "kind": "regulation_edition",
+          "citation": {
+            "capture": "cfr_1996_20_4041082_r1.txt",
+            "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+            "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+            "location": "edition header",
+            "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition"
+          },
+          "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law."
+        }
+      ],
+      "condition_cases": {
+        "real_estate_dealer_exception": {
+          "cases": {
+            "real_estate_dealer_rentals": [
+              "real_estate_dealer_status"
+            ]
+          }
+        }
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "real_estate_dealer_rentals",
+        "precedence": 1,
+        "when": {
+          "real_estate_dealer_status": "rental received in dealer business from real estate held for sale to customers"
+        },
+        "consequence": "covered",
+        "description": "Investment or speculative holdings do not enter the dealer-business exception."
+      },
+      {
+        "case_id": "services_to_occupants",
+        "precedence": 2,
+        "when": {
+          "services_to_occupants": "services primarily for occupant convenience beyond customary occupancy services"
+        },
+        "consequence": "covered",
+        "description": "The services exception in 20 CFR 404.1082(d) applies."
+      },
+      {
+        "case_id": "parking_warehouse_storage_space",
+        "precedence": 3,
+        "when": {
+          "rental_income": "payments for the use of space in parking lots, warehouses or storage garages"
+        },
+        "consequence": "covered",
+        "description": "20 CFR 404.1082(d)(2)(i) includes these payments in net earnings.",
+        "overrides": [
+          "real_estate_rentals"
+        ]
+      },
+      {
+        "case_id": "farm_rental_arrangement",
+        "precedence": 4,
+        "when": {
+          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+        },
+        "consequence": "deferred",
+        "description": "411(a)(1) proviso; the farm rental participation family decides.",
+        "overrides": [
+          "real_estate_rentals"
+        ],
+        "defers_to": [
+          "self_employment_farm_rental_participation"
+        ]
+      },
+      {
+        "case_id": "real_estate_rentals",
+        "precedence": 5,
+        "when": {
+          "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(1); 20 CFR 404.1082(a) and (d)(1)."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not rental income from real estate, so 411(a)(1) does not exclude it (20 CFR 404.1082(e)); apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_passive_income_1968_1976",
+    "family": "self_employment_passive_income",
+    "effective_start": "1968-01-01",
+    "effective_end": "1976-10-03",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(2); 1978 amendment note under Public Law 95-600 section 703(j)(14)(D), including editorial explanation of the obsolete section 25/35 reference; effective-date note section 703(r)"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(2) and the 1978 amendment note on the struck section 25(a) parenthetical"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "dividend_or_interest_income",
+      "securities_dealer_status"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "411(a)(2) excludes dividends on any share of stock and the specified interest, other than interest described in 1939 Code section 25(a), unless received as a dealer in stocks or securities. Only the attributable deductions stay open.",
+    "parameters": {
+      "stock_dividends_excluded": true,
+      "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C. 411, official United States Code 2008 edition label",
+            "location": "Historical comparison only, related to 411(a)(2); Amendments entries: 1978, 2008; Effective Date of 2008 Amendment; Effective Date of 1978 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2008 Amendment",
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978",
+            "2008"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Only the named amendment/effective-date note supplies historical comparison; section text printed in this edition is not asserted for the earlier or later rule window.",
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C. 411, official United States Code 2008 edition label",
+            "location": "Historical comparison only, related to 411(a)(2); Amendments entries: 1978, 2008; Effective Date of 2008 Amendment; Effective Date of 1978 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2008 Amendment",
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978",
+            "2008"
+          ]
+        }
+      ],
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "dealer_in_stocks_or_securities",
+        "precedence": 1,
+        "when": {
+          "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+        },
+        "consequence": "covered",
+        "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+        "overrides": [
+          "specified_dividends",
+          "specified_interest"
+        ]
+      },
+      {
+        "case_id": "deductions_attributable_to_excluded_receipts",
+        "precedence": 2,
+        "when": {
+          "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+        },
+        "consequence": "open",
+        "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+        "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+        "open_alternatives": [
+          {
+            "name": "exclude_attributable_deductions",
+            "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment."
+          },
+          {
+            "name": "apply_general_deduction_definition",
+            "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment."
+          }
+        ]
+      },
+      {
+        "case_id": "interest_described_in_1939_code_25a",
+        "precedence": 3,
+        "when": {
+          "dividend_or_interest_income": "interest described in section 25(a) of the Internal Revenue Code of 1939"
+        },
+        "consequence": "covered",
+        "description": "Former 411(a)(2) parenthetical '(other than interest described in section 25(a) of the Internal Revenue Code of 1939)', struck by Pub. L. 95-600 section 703(j)(14)(D) effective October 4, 1976 (1978 amendment and effective-date notes): 411(a)(2) does not exclude this interest. The text of 1939 Code section 25(a) is not captured, so a caller must establish this fact from that section.",
+        "overrides": [
+          "specified_interest"
+        ]
+      },
+      {
+        "case_id": "specified_dividends",
+        "precedence": 4,
+        "when": {
+          "dividend_or_interest_income": "dividends on any share of stock"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2)."
+      },
+      {
+        "case_id": "specified_interest",
+        "precedence": 5,
+        "when": {
+          "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued with interest coupons or in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2)."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_passive_income_1976_2008",
+    "family": "self_employment_passive_income",
+    "effective_start": "1976-10-04",
+    "effective_end": "2008-09-30",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(2); Public Law 95-600 section 703(j)(14)(D) removal and section 703(r) effective date; 2008 amendment/effective-date notes establish the next wording boundary"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(2), contemporaneous coupon/registered-form wording"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "dividend_or_interest_income",
+      "securities_dealer_status"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "411(a)(2) excludes dividends on any share of stock and interest on the specified obligations issued with interest coupons or in registered form, unless received as a dealer in stocks or securities. Only the attributable deductions stay open.",
+    "parameters": {
+      "stock_dividends_excluded": true,
+      "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
+      "title42_instrument_wording": "with interest coupons or in registered form",
+      "obsolete_interest_exception_removed": "1976-10-04",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C. 411, official United States Code 2008 edition label",
+            "location": "Historical comparison only, related to 411(a)(2); Amendments entries: 1978, 2008; Effective Date of 2008 Amendment; Effective Date of 1978 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2008 Amendment",
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978",
+            "2008"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(2)"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2007,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2007_42_411.html",
+            "sha256": "701a5797aee86cb6ff994c589f353585d3e04a03e89b919f560f692cd2ff5d6a",
+            "authority": "42 U.S.C. 411, official United States Code 2007 edition label",
+            "location": "Section text as printed: 411(a)(2)"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978"
+          ]
+        }
+      ],
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "dealer_in_stocks_or_securities",
+        "precedence": 1,
+        "when": {
+          "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+        },
+        "consequence": "covered",
+        "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+        "overrides": [
+          "specified_dividends",
+          "specified_interest"
+        ]
+      },
+      {
+        "case_id": "deductions_attributable_to_excluded_receipts",
+        "precedence": 2,
+        "when": {
+          "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+        },
+        "consequence": "open",
+        "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+        "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+        "open_alternatives": [
+          {
+            "name": "exclude_attributable_deductions",
+            "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment."
+          },
+          {
+            "name": "apply_general_deduction_definition",
+            "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment."
+          }
+        ]
+      },
+      {
+        "case_id": "specified_dividends",
+        "precedence": 3,
+        "when": {
+          "dividend_or_interest_income": "dividends on any share of stock"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2)."
+      },
+      {
+        "case_id": "specified_interest",
+        "precedence": 4,
+        "when": {
+          "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued with interest coupons or in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2)."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_passive_income_2008_2026",
+    "family": "self_employment_passive_income",
+    "effective_start": "2008-10-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(2); Public Law 110-246 section 4115(c)(1)(A)(i), (B)(iii) and section 4407 effective-date note"
+      },
+      {
+        "capture": "lii_26_1402.html",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+        "authority": "26 USC 1402, pinned LII republication",
+        "location": "1402(a)(2), literal coupons wording"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(2), footnote 2",
+        "quote": "So in original. Probably should be \"coupons\". See 2008 Amendment note below."
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "dividend_or_interest_income",
+      "securities_dealer_status"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "411(a)(2) excludes dividends on any share of stock and interest on the specified registered-form obligations, unless received as a dealer in stocks or securities. The attributable deductions and the Title 42 'interest benefits' wording for other obligations stay open.",
+    "parameters": {
+      "stock_dividends_excluded": true,
+      "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
+      "named_wordings": [
+        {
+          "name": "title42_literal_benefits",
+          "text": "with interest benefits or in registered form",
+          "authority": "42 USC 411(a)(2)"
+        },
+        {
+          "name": "title26_literal_coupons",
+          "text": "with interest coupons or in registered form",
+          "authority": "26 USC 1402(a)(2)"
+        }
+      ],
+      "title42_wording_change_effective": "2008-10-01",
+      "code_edition_evidence": [
+        {
+          "title": 26,
+          "section": 1402,
+          "edition_year": 2008,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2008_26_1402.html",
+            "sha256": "b94297ea8dd6abd8a9c4d4d701ce1ea0306e41f4e6858b30fc9d9f0c48ae5213",
+            "authority": "26 U.S.C. 1402, official United States Code 2008 edition label",
+            "location": "Section text as printed: 1402(a)(2)"
+          },
+          "section_references_verified_present": [
+            "1402(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": []
+        },
+        {
+          "title": 26,
+          "section": 1402,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_26_1402.html",
+            "sha256": "557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275",
+            "authority": "26 U.S.C. 1402, official United States Code 2024 edition label",
+            "location": "Section text as printed: 1402(a)(2)"
+          },
+          "section_references_verified_present": [
+            "1402(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": []
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C. 411, official United States Code 2008 edition label",
+            "location": "Section text as printed: 411(a)(2)"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2008 Amendment",
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978",
+            "2008"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(2)"
+          },
+          "section_references_verified_present": [
+            "411(a)(2)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2008 Amendment",
+            "Effective Date of 1978 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1978",
+            "2008"
+          ]
+        }
+      ],
+      "effective_basis": "payment_date",
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "dealer_in_stocks_or_securities",
+        "precedence": 1,
+        "when": {
+          "securities_dealer_status": "dividends or interest received in the course of a trade or business as a dealer in stocks or securities"
+        },
+        "consequence": "covered",
+        "description": "411(a)(2) closing clause: the exclusion does not reach a dealer's receipts; apply the other families.",
+        "overrides": [
+          "specified_dividends",
+          "specified_interest_registered_form"
+        ]
+      },
+      {
+        "case_id": "deductions_attributable_to_excluded_receipts",
+        "precedence": 2,
+        "when": {
+          "dividend_or_interest_income": "a deduction attributable to dividends or interest that 411(a)(2) excludes"
+        },
+        "consequence": "open",
+        "description": "Only the attributable deductions are open; the receipts themselves are decided by the cases below.",
+        "open_reason": "PASSIVE_INCOME_DEDUCTIONS_UNVERIFIED: 411(a)(2) excludes the dividends and interest but, unlike 411(a)(1), does not add 'together with the deductions attributable thereto'; no captured source says whether the attributable deductions are also left out.",
+        "open_alternatives": [
+          {
+            "name": "exclude_attributable_deductions",
+            "description": "Exclude attributable deductions if a controlling primary source establishes that adjustment."
+          },
+          {
+            "name": "apply_general_deduction_definition",
+            "description": "Apply section 411(a) general deduction language if a controlling primary source establishes that treatment."
+          }
+        ]
+      },
+      {
+        "case_id": "obligation_not_in_registered_form",
+        "precedence": 3,
+        "when": {
+          "dividend_or_interest_income": "interest on a bond, debenture, note, or certificate, or other evidence of indebtedness, issued other than in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+        },
+        "consequence": "open",
+        "description": "Interest on a registered-form obligation is decided below; only obligations outside registered form depend on the wording.",
+        "open_reason": "TITLE42_INTEREST_BENEFITS_WORDING: Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) substituted 'benefits' for 'coupons' in 411(a)(2). The 2024 Code prints 'interest benefits' with the note 'So in original. Probably should be \"coupons\".', while 26 U.S.C. 1402(a)(2) keeps 'with interest coupons'.",
+        "open_alternatives": [
+          {
+            "name": "title26_literal_coupons",
+            "description": "Exclude the interest only if the obligation was issued with interest coupons, as 26 U.S.C. 1402(a)(2) reads and the 2024 Code note suggests."
+          },
+          {
+            "name": "title42_literal_benefits",
+            "description": "Apply the printed 'interest benefits' wording, which no captured source defines."
+          }
+        ]
+      },
+      {
+        "case_id": "specified_dividends",
+        "precedence": 4,
+        "when": {
+          "dividend_or_interest_income": "dividends on any share of stock"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2)."
+      },
+      {
+        "case_id": "specified_interest_registered_form",
+        "precedence": 5,
+        "when": {
+          "dividend_or_interest_income": "interest on any bond, debenture, note, or certificate, or other evidence of indebtedness, issued in registered form by any corporation (including one issued by a government or political subdivision thereof)"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(2); registered-form obligations are named in both the Title 42 and Title 26 wordings."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not dividends or interest of the kinds 411(a)(2) names, so the paragraph does not exclude it; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_puerto_rico_1968_2026",
+    "family": "self_employment_puerto_rico_income",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(6); 1960 amendment under Public Law 86-778 section 103(j)(3), replacing former 116(1) by 933 before the registry period"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(6) and 1960 historical note"
+      }
+    ],
+    "trigger_facts": [
+      "country_of_residence",
+      "residence_period",
+      "trade_or_business"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "A Puerto Rico resident computes NESE in the same manner as a U.S. citizen without the income exclusion in section 933 of the Internal Revenue Code.",
+    "parameters": {
+      "resident_jurisdiction": "Puerto Rico",
+      "income_tax_exclusion_disregarded": "26 USC 933",
+      "scope": "NESE computation override; service exclusions and income-source/residence facts remain separate.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "later_text_and_source_credit_comparison",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(6); Amendments entries: 1960; Effective Date of 1960 Amendment; section text and source credit; no earlier effective-date claim"
+          },
+          "section_references_verified_present": [
+            "411(a)(6)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(6)"
+          },
+          "section_references_verified_present": [
+            "411(a)(6)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(6)"
+          },
+          "section_references_verified_present": [
+            "411(a)(6)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        }
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "A Puerto Rico resident's net earnings are computed as a citizen's, without the section 933 exclusion; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_territorial_residency_1968_2026",
+    "family": "self_employment_territorial_residency",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), final residency sentence; Public Law 86-778 section 103(h) added Guam/American Samoa in 1960"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(b) territorial-resident sentence"
+      }
+    ],
+    "trigger_facts": [
+      "citizenship",
+      "country_of_residence",
+      "residence_period"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not treated as a nonresident alien for the self-employment-income definition.",
+    "parameters": {
+      "jurisdictions": [
+        "Puerto Rico",
+        "Virgin Islands",
+        "Guam",
+        "American Samoa"
+      ],
+      "nonresident_alien_treatment_disapplied": true,
+      "scope": "411(b) residency exception only; does not by itself establish coverage of a service or repeal another exclusion.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "later_text_and_source_credit_comparison",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(b); Amendments entries: 1960; Effective Date of 1960 Amendment; section text and source credit; no earlier effective-date claim"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(b)"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(b)"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        }
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for 411(b); this family changes nothing else; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_foreign_income_1968_1972_open",
+    "family": "self_employment_foreign_911_income",
+    "effective_start": "1968-01-01",
+    "effective_end": "1972-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "1972 amendment/effective-date notes for Public Law 92-603 section 124(a), (c)"
+      },
+      {
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
+        "authority": "Public Law 92-603, Social Security Amendments of 1972",
+        "location": "section 124(a), (c), 86 Stat 1357"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "citizenship",
+      "country_of_residence",
+      "residence_period",
+      "foreign_earned_income_exclusion",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": null,
+    "identification_class": "awaiting_ce2",
+    "description": "The general 411(a)(10) override was added for years after 1972; the earlier underlying foreign-income exclusion history is not reconstructed.",
+    "parameters": {
+      "general_411a10_override_not_yet_added": true,
+      "named_options": [
+        {
+          "name": "underlying_historical_income_tax_rule",
+          "explanation": "Requires contemporaneous 911 and applicable 411 text; no current override is backcast."
+        },
+        {
+          "name": "clergy_specific_rule",
+          "explanation": "Apply the separately dated clergy gross-concept family when ministerial facts are present."
+        }
+      ],
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
+              "authority": "Public Law 92-603, Social Security Amendments of 1972",
+              "location": "section 124(a), (c), 86 Stat 1357"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(10); Amendments entries: 1972; Effective Date of 1972 Amendments"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": "FOREIGN_911_PRE1973_HISTORY_UNVERIFIED: the general override begins only after 1972; earlier underlying 911 text has not been obtained.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Requires contemporaneous 911 and applicable 411 text; no current override is backcast.",
+        "name": "underlying_historical_income_tax_rule"
+      },
+      {
+        "description": "Apply the separately dated clergy gross-concept family when ministerial facts are present.",
+        "name": "clergy_specific_rule"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
+  },
+  {
+    "rule_id": "se_foreign_income_1973_1981",
+    "family": "self_employment_foreign_911_income",
+    "effective_start": "1973-01-01",
+    "effective_end": "1981-12-31",
+    "citations": [
+      {
+        "capture": "govinfo_statute86_pg1329_extract.pdf",
+        "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
+        "authority": "Public Law 92-603, Social Security Amendments of 1972",
+        "location": "section 124(a), (c), 86 Stat 1357"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "1972 amendment and effective-date notes; 1983 note quotes the prior whole-year-resident clause"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "citizenship",
+      "country_of_residence",
+      "residence_period",
+      "foreign_earned_income_exclusion",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": "open",
+    "identification_class": "awaiting_ce2",
+    "description": "For an individual resident of the United States during the entire taxable year, disregard the former 911(a)(2) exclusion in computing NESE.",
+    "parameters": {
+      "individual_condition": "Resident of the United States during the entire taxable year",
+      "income_tax_exclusion_disregarded": "historical 26 USC 911(a)(2)",
+      "effective_taxable_year_begin_after": "1972-12-31",
+      "scope": "Only the specified override; no conclusion for a person who fails the residency condition.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1970,
+            1976
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_statute86_pg1329_extract.pdf",
+              "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
+              "authority": "Public Law 92-603, Social Security Amendments of 1972",
+              "location": "section 124(a), (c), 86 Stat 1357"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(10); Amendments entries: 1972; Effective Date of 1972 Amendments"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        }
+      ],
+      "nonresident_reading": {
+        "candidate": "411(a) starts from subtitle A gross income, so a 911 exclusion this clause does not override would keep the excluded amount out of net earnings.",
+        "status": "not verified: the 1973-1981 text of the 411(a) gross-income clause is not captured"
+      },
+      "condition_cases": {
+        "individual_condition": {
+          "cases": {
+            "us_resident_entire_taxable_year": [
+              "residence_period"
+            ]
+          }
+        }
+      },
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "us_resident_entire_taxable_year",
+        "precedence": 1,
+        "when": {
+          "residence_period": "resident of the United States during the entire taxable year"
+        },
+        "consequence": "covered",
+        "description": "Public Law 92-603 section 124(a): the 911(a)(2) exclusion does not apply."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "open",
+      "description": "Section 124 says nothing for anyone else. The candidate reading in parameters.nonresident_reading is recorded but not chosen."
+    }
+  },
+  {
+    "rule_id": "se_foreign_income_1982_1983",
+    "family": "self_employment_foreign_911_income",
+    "effective_start": "1982-01-01",
+    "effective_end": "1983-12-31",
+    "citations": [
+      {
+        "capture": "govinfo_statute97_pg65_extract.pdf",
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+        "authority": "Public Law 98-21, Social Security Amendments of 1983",
+        "location": "section 323(b)(2)(B), (c)(2), 97 Stat 121"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "effective-date note"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "citizenship",
+      "country_of_residence",
+      "residence_period",
+      "foreign_earned_income_exclusion",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": null,
+    "identification_class": "awaiting_ce2",
+    "description": "For an individual described in historical 911(d)(1)(B), the transitional rule disregards 911(a)(1); the qualifier is retained as an explicit historical dependency.",
+    "parameters": {
+      "individual_condition": "Individual described in historical 26 USC 911(d)(1)(B)",
+      "income_tax_exclusion_disregarded": "26 USC 911(a)(1)",
+      "effective_taxable_year_begin_after": "1981-12-31",
+      "effective_taxable_year_begin_before": "1984-01-01",
+      "historical_qualifying_definition": "Not independently reconstructed; do not replace it with a current-law definition.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1982
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_statute97_pg65_extract.pdf",
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+              "authority": "Public Law 98-21, Social Security Amendments of 1983",
+              "location": "section 323(b)(2)(B), (c)(2), 97 Stat 121"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(10); Amendments entries: 1972; Effective Date of 1972 Amendments"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": "FOREIGN_911_1982_1983_QUALIFIER_UNVERIFIED: the amending act is obtained but the contemporaneous 911(d)(1)(B) definition has not been independently verified.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Apply the override if contemporaneous section 911(d)(1)(B) establishes the required qualification.",
+        "name": "qualifying_foreign_resident_override"
+      },
+      {
+        "description": "Retain the underlying historical income-tax treatment when the special qualification is not established.",
+        "name": "historical_qualification_not_established"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
+  },
+  {
+    "rule_id": "se_foreign_income_1984_2026",
+    "family": "self_employment_foreign_911_income",
+    "effective_start": "1984-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "govinfo_statute97_pg65_extract.pdf",
+        "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+        "authority": "Public Law 98-21, Social Security Amendments of 1983",
+        "location": "section 323(b)(2)(A), (c)(2), 97 Stat 121"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(10) and 1983 effective-date notes"
+      }
+    ],
+    "trigger_facts": [
+      "trade_or_business",
+      "citizenship",
+      "country_of_residence",
+      "residence_period",
+      "foreign_earned_income_exclusion",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "The 911(a)(1) foreign-earned-income exclusion is disregarded in computing NESE from taxable years beginning after 1983.",
+    "parameters": {
+      "income_tax_exclusion_disregarded": "26 USC 911(a)(1)",
+      "effective_taxable_year_begin_after": "1983-12-31",
+      "scope": "NESE computation override; citizenship, residency, service coverage and any agreement rules remain separate facts.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1982,
+            1988
+          ],
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_statute97_pg65_extract.pdf",
+              "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+              "authority": "Public Law 98-21, Social Security Amendments of 1983",
+              "location": "section 323(b)(2)(A), (c)(2), 97 Stat 121"
+            }
+          ],
+          "primary_history_citation_status": "existing_row_specific_primary_references",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(10); Amendments entries: 1972; Effective Date of 1972 Amendments"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(10)"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendments"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(10)"
+          },
+          "section_references_verified_present": [
+            "411(a)(10)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1972 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1972"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "The 911(a)(1) exclusion is disregarded in computing net earnings, so foreign earned income stays in; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_possessions_931_history_open",
+    "family": "self_employment_possessions_931_income",
+    "effective_start": "1968-01-01",
+    "effective_end": "1987-12-21",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(8); 1987 amendment note quotes former text; no section 9023 effective-date note"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(8) successor text"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(8)"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(8); amendment history contains no later change to this paragraph"
+      },
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+        "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+        "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, section 9023(b), 101 Stat. 1330-296",
+        "location": "section 9023(b)(2), the new 211(a)(8) (42 U.S.C. 411(a)(8))",
+        "quote": "\"(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;\""
+      },
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf",
+        "sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1",
+        "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, Part 2 of subtitle A of title IX, 101 Stat. 1330-294 to 1330-296",
+        "location": "extract pages 3-5: sections 9021-9023, all of Part 2; nothing there dates section 9023 (section 9022(c) dates only section 9022); approval date December 22, 1987 on extract page 6"
+      }
+    ],
+    "trigger_facts": [
+      "possession_income_exclusion",
+      "country_of_residence",
+      "residence_period",
+      "taxable_year"
+    ],
+    "consequence": null,
+    "identification_class": "awaiting_ce2",
+    "description": "Before Pub. L. 100-203, former 411(a)(7) and (a)(8) applied the former possessions rules. Their operative text and the reach of the 1987 replacement before its enactment are not established, so these days refuse.",
+    "parameters": {
+      "named_options": [
+        {
+          "name": "former_possessions_definition",
+          "text": "Possession in former 931/932 does not include Virgin Islands, Guam or American Samoa."
+        },
+        {
+          "name": "successor_931_override",
+          "text": "The gross-income exclusion in 931 does not apply."
+        }
+      ],
+      "amending_act": "Public Law 100-203 section 9023(b)(2)",
+      "boundary_note": "Pub. L. 100-203 section 9023(b), enacted December 22, 1987, replaced 411(a)(8) and states no effective date; the successor rule governs from enactment in its own row.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(8); Amendments entries: 1987"
+          },
+          "section_references_verified_present": [
+            "411(a)(8)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [
+            "1987"
+          ],
+          "effective_date_note_support": "not_established_for_Public_Law_100_203_section_9023b"
+        }
+      ]
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": "POSSESSIONS_931_HISTORY_UNVERIFIED: before Pub. L. 100-203 (enacted 1987-12-22), former 411(a)(7) and (a)(8) applied the former section 931 and 932 possessions rules, whose operative text is not captured. Section 9023 states no effective date, so whether its replacement reaches days before enactment is not established.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Possession in former 931/932 does not include Virgin Islands, Guam or American Samoa.",
+        "name": "former_possessions_definition"
+      },
+      {
+        "description": "The gross-income exclusion in 931 does not apply.",
+        "name": "successor_931_override"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
+  },
+  {
+    "rule_id": "se_possessions_931_1987_2026",
+    "family": "self_employment_possessions_931_income",
+    "effective_start": "1987-12-22",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf.txt",
+        "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+        "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, section 9023(b), 101 Stat. 1330-296",
+        "location": "section 9023(b)(2), the new 211(a)(8) (42 U.S.C. 411(a)(8))",
+        "quote": "\"(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;\""
+      },
+      {
+        "capture": "govinfo_statute101_pg1330_extract.pdf",
+        "sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1",
+        "authority": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987, Part 2 of subtitle A of title IX, 101 Stat. 1330-294 to 1330-296",
+        "location": "extract pages 3-5: sections 9021-9023, all of Part 2; nothing there dates section 9023 (section 9022(c) dates only section 9022); approval date December 22, 1987 on extract page 6"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(8) successor text"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(8); amendment history contains no later change to this paragraph"
+      }
+    ],
+    "trigger_facts": [
+      "possession_income_exclusion",
+      "country_of_residence",
+      "residence_period",
+      "taxable_year"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "From enactment of Pub. L. 100-203 on December 22, 1987, 411(a)(8) says the section 931 exclusion from gross income does not apply in computing net earnings from self-employment.",
+    "parameters": {
+      "amending_act": "Public Law 100-203 section 9023(b)(2)",
+      "enactment": "1987-12-22",
+      "effective_date_clause": "None for section 9023: neither the section nor Part 2 of subtitle A of title IX dates it (101 Stat. 1330-294 to 1330-296).",
+      "case_free_basis": {
+        "explanation": "411(a)(8) as amended by Pub. L. 100-203 section 9023(b)(2) states no condition: the section 931 exclusion does not apply for any individual, so no fact changes this family's consequence.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(8)",
+          "quote": "(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;"
+        }
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "The section 931 exclusion does not apply, so this family excludes nothing; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_treaty_fishing_1968_2026",
+    "family": "self_employment_treaty_fishing",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(14); 1988 amendment under Public Law 100-647 section 3043(b); section 3044 effective-date note"
+      },
+      {
+        "capture": "uscode_2024_26_7873.html",
+        "sha256": "380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772",
+        "authority": "26 USC 7873, official 2024 United States Code section granule",
+        "location": "7873(a)-(c); Public Law 100-647 section 3044 effective-date and no-inference provision"
+      },
+      {
+        "capture": "uscode_2024_26_7873.html",
+        "sha256": "380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772",
+        "authority": "26 USC 7873, official 2024 United States Code section granule",
+        "location": "7873(c)(2)",
+        "quote": "If, but for this paragraph, all but a de minimis amount\u2014 (A) derived by a qualified Indian tribal entity, or by an individual through such an entity, is entitled to the benefits of paragraph (1) of subsection (a), or (B) paid to an individual for services is entitled to the benefits of paragraph (2) of subsection (a), then the entire amount shall be entitled to the benefits of such paragraph."
+      }
+    ],
+    "trigger_facts": [
+      "tribal_fishing_rights_income",
+      "tribal_fishing_qualified_entity",
+      "trade_or_business",
+      "tribal_membership",
+      "tribal_fishing_member_activity"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Exclude income exempt under 7873 from NESE, subject to the tribal fishing-right, membership, activity and qualified-entity conditions. The amendment expressly reaches periods before enactment.",
+    "parameters": {
+      "excluded_income_reference": "26 USC 7873",
+      "recognized_fishing_right_secured_as_of": "1988-03-17",
+      "qualifying_income": "Fishing-rights-related income of a tribal member directly or through a qualified Indian entity, or income of the qualified entity, as defined in 7873.",
+      "qualified_entity_conditions": "Apply 7873(b)(3), including equity ownership, management and applicable 90 percent gross-receipts/10 percent equity tests; tribal fishing activity alone is insufficient.",
+      "effective_periods": "All periods beginning before, on, or after 1988-11-10",
+      "prior_treaty_inference": "The act creates no inference about the independent prior existence or scope of treaty exemptions.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(a)(14); Amendments entries: 1988; Effective Date of 1988 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(14)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(14)"
+          },
+          "section_references_verified_present": [
+            "411(a)(14)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(14)"
+          },
+          "section_references_verified_present": [
+            "411(a)(14)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988"
+          ]
+        }
+      ],
+      "member_activity_condition": "Substantially all harvesting in the fishing rights-related activity must be performed by members of the tribe (26 U.S.C. 7873(b)(1)).",
+      "condition_cases": {
+        "member_activity_condition": {
+          "cases": {
+            "section_7873_exempt_income": [
+              "tribal_fishing_member_activity"
+            ]
+          }
+        },
+        "qualified_entity_conditions": {
+          "cases": {
+            "section_7873_exempt_income": [
+              "tribal_fishing_qualified_entity"
+            ]
+          }
+        },
+        "de_minimis_rule": {
+          "cases": {
+            "section_7873c2_de_minimis_amount": [
+              "tribal_fishing_rights_income",
+              "tribal_fishing_qualified_entity"
+            ]
+          }
+        }
+      },
+      "de_minimis_rule": "26 U.S.C. 7873(c)(2)(A): a de minimis unrelated part of an amount derived through a qualified Indian entity shares the exemption when all the rest is exempt under 7873(a)(1)."
+    },
+    "worked_examples": [],
+    "rare_exclusion": {
+      "strict": "unresolved",
+      "negligible_candidate": null,
+      "search_result": "Broader IRS/TIGTA/GAO/CRS and SSA/Census/BLS searches found legal or audit guidance but no published quantitative bound for the target exclusion population.",
+      "searches": [
+        {
+          "query": "\"tribal\" \"fishing\" \"7873\" (statistics OR number OR count)",
+          "domains": [
+            "irs.gov",
+            "tigta.gov",
+            "gao.gov",
+            "crsreports.congress.gov"
+          ],
+          "searched_utc": "2026-10-25",
+          "result": "IRS legal/audit guidance; no bound on the target exclusion population. Search performed and reported by root agent."
+        },
+        {
+          "query": "\"treaty fishing\" \"employment\" (statistics OR number) -DYNASIM -MINT -Trustees -inurl:oact -inurl:projections",
+          "domains": [
+            "ssa.gov/policy/docs",
+            "census.gov",
+            "bls.gov"
+          ],
+          "searched_utc": "2026-10-25",
+          "result": "No qualifying bound. Search performed and reported by root agent."
+        }
+      ]
+    },
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "section_7873_exempt_income",
+        "precedence": 1,
+        "when": {
+          "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+          "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity",
+          "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
+          "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(14); 7873(a)-(b)."
+      },
+      {
+        "case_id": "section_7873c2_de_minimis_amount",
+        "precedence": 2,
+        "when": {
+          "tribal_fishing_rights_income": "a de minimis part of an amount derived through a qualified Indian entity, all but which is exempt under 7873(a)(1)",
+          "tribal_membership": "a member of the tribe, deriving the amount through a qualified Indian entity",
+          "tribal_fishing_qualified_entity": "the entity meets 7873(b)(3)"
+        },
+        "consequence": "noncovered",
+        "description": "7873(c)(2)(A): if all but a de minimis amount derived by an individual through a qualified Indian entity is exempt under (a)(1), \"the entire amount shall be entitled to the benefits of such paragraph\", so 411(a)(14) excludes the de minimis part too."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "The income is not exempt under 7873, so 411(a)(14) does not exclude it; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_health_insurance_1968_1986",
+    "family": "self_employment_health_insurance_deduction",
+    "effective_start": "1968-01-01",
+    "effective_end": "1986-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(15); 1988 addition, 1990 renumbering and 2004 reference correction; section 1019(a) retroactivity"
+      },
+      {
+        "capture": "uscode_2024_26_162.html",
+        "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+        "authority": "26 USC 162, official 2024 United States Code section granule",
+        "location": "162(l)(4); Public Law 99-514 section 1161 effective date; Public Law 100-647 section 1011B(b) technical correction and section 1019(a)"
+      }
+    ],
+    "trigger_facts": [
+      "health_insurance_deduction",
+      "trade_or_business",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": null,
+    "identification_class": "awaiting_ce2",
+    "description": "The special self-employed health-insurance deduction was added for taxable years after 1986; earlier treatment is not inferred from the later named deduction.",
+    "parameters": {
+      "special_health_deduction_not_yet_added": true,
+      "first_taxable_year_begin_after": "1986-12-31",
+      "scope": "No assertion about all possible pre-1987 business-expense treatment.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Historical comparison only, related to 411(a)(15); Amendments entries: 1988, 1990, 2004; Effective Date of 2004 Amendment; Effective Date of 1990 Amendment; Effective Date of 1988 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990",
+            "2004"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": "HEALTH_INSURANCE_PRE1987_HISTORY_UNVERIFIED: the later 162(l)/(m) provision has a verified 1987 start, but earlier treatment under other provisions is not fully reconstructed.",
+    "cases": [],
+    "open_alternatives": [
+      {
+        "description": "Determine whether the payment qualified under a contemporaneous general business deduction.",
+        "name": "general_business_deduction"
+      },
+      {
+        "description": "Determine whether the payment remained a nondeductible personal expense under contemporaneous law.",
+        "name": "personal_expense"
+      }
+    ],
+    "residual_default": {
+      "consequence": null,
+      "description": "No residual legal consequence is selected while this question remains open."
+    }
+  },
+  {
+    "rule_id": "se_health_insurance_1987_2009",
+    "family": "self_employment_health_insurance_deduction",
+    "effective_start": "1987-01-01",
+    "effective_end": "2009-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(15); 1988 addition, 1990 renumbering and 2004 reference correction; section 1019(a) retroactivity"
+      },
+      {
+        "capture": "uscode_2024_26_162.html",
+        "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+        "authority": "26 USC 162, official 2024 United States Code section granule",
+        "location": "162(l)(4); Public Law 99-514 section 1161 effective date; Public Law 100-647 section 1011B(b) technical correction and section 1019(a)"
+      }
+    ],
+    "trigger_facts": [
+      "health_insurance_deduction",
+      "trade_or_business",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Do not subtract the special self-employed health-insurance income-tax deduction when computing the specified NESE definition.",
+    "parameters": {
+      "title42_coverage_nese_health_deduction_allowed": false,
+      "title26_se_tax_nese_health_deduction_allowed": false,
+      "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2004,
+          "support_kind": "historical_amendment_notes",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_2004_42_411.html",
+            "sha256": "440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1",
+            "authority": "42 U.S.C. 411, official United States Code 2004 edition label",
+            "location": "Historical comparison only, related to 411(a)(15); Amendments entries: 1988, 1990, 2004; Effective Date of 2004 Amendment; Effective Date of 1990 Amendment; Effective Date of 1988 Amendment"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990",
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(a)(15)"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C. 411, official United States Code 2008 edition label",
+            "location": "Section text as printed: 411(a)(15)"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990",
+            "2004"
+          ]
+        }
+      ],
+      "case_free_basis": {
+        "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(15)",
+          "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;"
+        }
+      },
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_health_insurance_2011_2026",
+    "family": "self_employment_health_insurance_deduction",
+    "effective_start": "2011-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(15); 1988 addition, 1990 renumbering and 2004 reference correction; section 1019(a) retroactivity"
+      },
+      {
+        "capture": "uscode_2024_26_162.html",
+        "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+        "authority": "26 USC 162, official 2024 United States Code section granule",
+        "location": "162(l)(4); Public Law 99-514 section 1161 effective date; Public Law 100-647 section 1011B(b) technical correction and section 1019(a)"
+      }
+    ],
+    "trigger_facts": [
+      "health_insurance_deduction",
+      "trade_or_business",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Do not subtract the special self-employed health-insurance income-tax deduction when computing the specified NESE definition.",
+    "parameters": {
+      "title42_coverage_nese_health_deduction_allowed": false,
+      "title26_se_tax_nese_health_deduction_allowed": false,
+      "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2012,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2012_42_411.html",
+            "sha256": "3943dbedbfee61b4c2c0f2e2c3e7ab4b880cbc7036d06f94a262ff768d239b0a",
+            "authority": "42 U.S.C. 411, official United States Code 2012 edition label",
+            "location": "Section text as printed: 411(a)(15)"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990",
+            "2004"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(a)(15)"
+          },
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 2004 Amendment",
+            "Effective Date of 1990 Amendment",
+            "Effective Date of 1988 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1988",
+            "1990",
+            "2004"
+          ]
+        }
+      ],
+      "case_free_basis": {
+        "explanation": "411(a)(15) disallows the 162(l) deduction in every individual's computation; \"when computing\" in the description names the computation, not a condition.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(a)(15)",
+          "quote": "(15) The deduction under section 162(l) of the Internal Revenue Code of 1986 (relating to health insurance costs of self-employed individuals) shall not be allowed;"
+        }
+      },
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_health_insurance_2010",
+    "family": "self_employment_health_insurance_deduction",
+    "effective_start": "2010-01-01",
+    "effective_end": "2010-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a)(15); 1988 addition, 1990 renumbering and 2004 reference correction; section 1019(a) retroactivity"
+      },
+      {
+        "capture": "uscode_2024_26_162.html",
+        "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+        "authority": "26 USC 162, official 2024 United States Code section granule",
+        "location": "162(l)(4); Public Law 99-514 section 1161 effective date; Public Law 100-647 section 1011B(b) technical correction and section 1019(a)"
+      },
+      {
+        "capture": "govinfo_plaw_111publ240.html",
+        "sha256": "a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4",
+        "authority": "Public Law 111-240, Small Business Jobs Act of 2010",
+        "location": "section 2042, temporary 2010 amendment to 162(l)(4)"
+      }
+    ],
+    "trigger_facts": [
+      "health_insurance_deduction",
+      "trade_or_business",
+      "taxable_year",
+      "taxable_year_start"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "Retain the distinct 2010 Title 42 coverage-NESE and Title 26 SE-tax provisions; the temporary tax amendment did not amend 411(a)(15).",
+    "parameters": {
+      "named_concepts": [
+        {
+          "name": "title42_coverage_nese",
+          "authority": "42 USC 411(a)(15)",
+          "health_deduction_allowed": false
+        },
+        {
+          "name": "title26_se_tax_nese_2010",
+          "authority": "26 USC 162(l)(4), Public Law 111-240 section 2042",
+          "health_deduction_allowed": true
+        }
+      ],
+      "conflation_forbidden": true,
+      "title42_coverage_nese_health_deduction_allowed": false,
+      "title26_se_tax_nese_health_deduction_allowed": true,
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2008,
+          "support_kind": "adjacent_edition_section_comparison",
+          "scope": "Before/after edition comparison only: no 2010 edition of 411 was obtained. The 2010 distinction rests on the separately cited Public Law 111-240 section 2042, which amended 162(l)(4) rather than 411(a)(15). This edition is not asserted as contemporaneous 2010 text.",
+          "contemporaneous_code_status": "2010_section_411_not_obtained",
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_plaw_111publ240.html",
+              "sha256": "a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4",
+              "authority": "Public Law 111-240, Small Business Jobs Act of 2010",
+              "location": "section 2042, temporary 2010 amendment to 162(l)(4)"
+            }
+          ],
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [],
+          "citation": {
+            "capture": "uscode_2008_42_411.html",
+            "sha256": "f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46",
+            "authority": "42 U.S.C.411, official United States Code 2008 edition label",
+            "location": "411(a)(15), adjacent-edition comparison only; no 2010 edition text claim"
+          }
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2012,
+          "support_kind": "adjacent_edition_section_comparison",
+          "scope": "Before/after edition comparison only: no 2010 edition of 411 was obtained. The 2010 distinction rests on the separately cited Public Law 111-240 section 2042, which amended 162(l)(4) rather than 411(a)(15). This edition is not asserted as contemporaneous 2010 text.",
+          "contemporaneous_code_status": "2010_section_411_not_obtained",
+          "primary_history_citations": [
+            {
+              "capture": "govinfo_plaw_111publ240.html",
+              "sha256": "a96ffcb5a7fdc23d6bdfd38239cd15255ccafea3ca3a01fc3753b0df5f5b70a4",
+              "authority": "Public Law 111-240, Small Business Jobs Act of 2010",
+              "location": "section 2042, temporary 2010 amendment to 162(l)(4)"
+            }
+          ],
+          "section_references_verified_present": [
+            "411(a)(15)"
+          ],
+          "historical_note_headings_verified_present": [],
+          "amendment_year_entries_verified_present": [],
+          "citation": {
+            "capture": "uscode_2012_42_411.html",
+            "sha256": "3943dbedbfee61b4c2c0f2e2c3e7ab4b880cbc7036d06f94a262ff768d239b0a",
+            "authority": "42 U.S.C.411, official United States Code 2012 edition label",
+            "location": "411(a)(15), adjacent-edition comparison only; no 2010 edition text claim"
+          }
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "411(a)(15), which the 2010 temporary amendment did not change, keeps the 162(l) deduction out of coverage net earnings; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_partner_death_1968_2026",
+    "family": "self_employment_partner_death",
+    "effective_start": "1968-01-01",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(f); 1958 amendment note Public Law 85-840 section 313(a)"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(f), deceased-partner allocation"
+      }
+    ],
+    "trigger_facts": [
+      "partnership_status",
+      "partner_death_date",
+      "partnership_taxable_year",
+      "taxable_year"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "When death closes the partner taxable year within rather than with the partnership year, include the statutorily allocated ordinary share through the death month.",
+    "parameters": {
+      "trigger": "Death ends the partner's individual taxable year within, and not with, the partnership taxable year.",
+      "excluded_partnership_period_begin": "First day of the calendar month following the month of death",
+      "allocation": "Allocate the partnership ordinary income/loss ratably over its taxable year under 411(f).",
+      "deceased_partner_share_includes": "Estate or successor-in-interest share as specified in 411(f).",
+      "scope": "Timing/allocation rule; does not characterize a capital item as ordinary income.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "later_text_and_source_credit_comparison",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(f); Amendments entries: 1958; Effective Date of 1958 Amendment; section text and source credit; no earlier effective-date claim"
+          },
+          "section_references_verified_present": [
+            "411(f)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1958 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1958"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(f)"
+          },
+          "section_references_verified_present": [
+            "411(f)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1958 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1958"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(f)"
+          },
+          "section_references_verified_present": [
+            "411(f)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1958 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1958"
+          ]
+        }
+      ],
+      "case_free_basis": {
+        "explanation": "411(f) adds a share to the deceased partner's final-year computation; its condition (a taxable year ending within, not with, the partnership year) decides which share enters that computation, not whether any income is excluded.",
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "411(f)",
+          "quote": "In computing a partner's net earnings from self-employment for his taxable year which ends as a result of his death (but only if such taxable year ends within, and not with, the taxable year of the partnership), there shall be included"
+        }
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "411(f) adds the deceased partner's allocated share through the month of death to the final-year computation; otherwise the ordinary partnership rules apply."
+    }
+  }
+]

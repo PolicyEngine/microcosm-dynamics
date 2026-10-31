@@ -1,0 +1,2763 @@
+[
+  {
+    "file": "poms_rs_01402020.html",
+    "retrieved_at": "2026-10-24T20:59:14Z",
+    "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2",
+    "size_bytes": 32489,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301402020"
+  },
+  {
+    "file": "poms_rs_01901200.html",
+    "retrieved_at": "2026-10-24T20:59:14Z",
+    "sha256": "afec731c79bccd9e69440d863c6b76c3079b79eee8da1d58f2a647daa5cc49f5",
+    "size_bytes": 27542,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901200"
+  },
+  {
+    "file": "poms_rs_01402215.html",
+    "retrieved_at": "2026-10-24T20:59:14Z",
+    "sha256": "3e91a5b94b9f053a45afbcb34421db1c6d107b6ed0cf1bd4500fd52cb4dc6b07",
+    "size_bytes": 18532,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/apps10/poms.nsf/lnx/0301402215"
+  },
+  {
+    "file": "poms_rs_01901520.html",
+    "retrieved_at": "2026-10-24T20:59:14Z",
+    "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476",
+    "size_bytes": 26552,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901520"
+  },
+  {
+    "file": "poms_sl_90015501.html",
+    "retrieved_at": "2026-10-24T20:59:15Z",
+    "sha256": "dee956e739a5e929367157997795f959af097f81f94377e53560b41f1f36e69d",
+    "size_bytes": 28457,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1990015501"
+  },
+  {
+    "file": "poms_sl_30001357.html",
+    "retrieved_at": "2026-10-24T20:59:15Z",
+    "sha256": "d240e04da60ba92488e501f4f11b3e08cdce1fddfa3122deac5d8a08f090c278",
+    "size_bytes": 42850,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.Nsf/lnx/1930001357"
+  },
+  {
+    "reason": "HTTP 403",
+    "resolution": {
+      "archive_timestamp": "20261013081352",
+      "archive_url": "https://web.archive.org/web/20261013081352id_/https://www.ssa.gov/OACT/COLA/CovThresh.html",
+      "capture": "ssa_oact_cola_covthresh_wayback_20261013081352.html",
+      "retrieved_at": "2026-10-24T22:15:15Z",
+      "status": "answered_by_archived_capture"
+    },
+    "status": "SOURCE_BLOCKED",
+    "url": "https://www.ssa.gov/oact/cola/CovThresh.html",
+    "attempted_filename": "ssa_coverage_thresholds.html"
+  },
+  {
+    "file": "irs_pub926_2026.html",
+    "retrieved_at": "2026-10-24T20:59:15Z",
+    "sha256": "d52a3a6b5a481a13668586196522e9113f0252fabc61df1d003c95b128d4bd38",
+    "size_bytes": 287215,
+    "status": "captured",
+    "url": "https://www.irs.gov/publications/p926"
+  },
+  {
+    "reason": "HTTP 404",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/publications/p51",
+    "attempted_filename": "irs_pub51_2025.html"
+  },
+  {
+    "file": "lii_42_409.html",
+    "retrieved_at": "2026-10-24T20:59:22Z",
+    "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+    "size_bytes": 194357,
+    "status": "captured",
+    "url": "https://www.law.cornell.edu/uscode/text/42/409"
+  },
+  {
+    "file": "lii_42_418.html",
+    "retrieved_at": "2026-10-24T20:59:22Z",
+    "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+    "size_bytes": 377717,
+    "status": "captured",
+    "url": "https://www.law.cornell.edu/uscode/text/42/418"
+  },
+  {
+    "file": "poms_rs_01901250.html",
+    "retrieved_at": "2026-10-24T20:59:22Z",
+    "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f",
+    "size_bytes": 40647,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901250"
+  },
+  {
+    "file": "poms_rs_01901400.html",
+    "retrieved_at": "2026-10-24T20:59:23Z",
+    "sha256": "bcd09bd15e01e94ab9d9b46a82c27a3c8e06bd19214350809e0968196ec9252a",
+    "size_bytes": 53280,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901400"
+  },
+  {
+    "file": "poms_rs_01901_toc.html",
+    "retrieved_at": "2026-10-24T20:59:23Z",
+    "sha256": "d8acd05fc550aad264efdf9fd48d818d25c47d18146f7cefb141ec83d6a87e50",
+    "size_bytes": 29281,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901000",
+    "retention_status": "removed_uncited_no_derivative_dependency"
+  },
+  {
+    "file": "poms_rs_01402025.html",
+    "retrieved_at": "2026-10-24T20:59:23Z",
+    "sha256": "de0c04135c4b30f85f395607ee4c84700ae70ea6a5620673fef1259fc1e59acf",
+    "size_bytes": 17974,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301402025"
+  },
+  {
+    "file": "poms_rs_01402216.html",
+    "retrieved_at": "2026-10-24T20:59:23Z",
+    "sha256": "e535abe2282e2e7f6eab472eab2da2df380b201aaaf44454665e23cfd5ceca05",
+    "size_bytes": 21049,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301402216"
+  },
+  {
+    "file": "irs_pub15_2026.html",
+    "retrieved_at": "2026-10-24T20:59:23Z",
+    "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
+    "size_bytes": 624774,
+    "status": "captured",
+    "url": "https://www.irs.gov/publications/p15"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--1999.pdf",
+    "attempted_filename": "irs_pub926_1999.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2000.pdf",
+    "attempted_filename": "irs_pub926_2000.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2001.pdf",
+    "attempted_filename": "irs_pub926_2001.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2002.pdf",
+    "attempted_filename": "irs_pub926_2002.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2003.pdf",
+    "attempted_filename": "irs_pub926_2003.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2004.pdf",
+    "attempted_filename": "irs_pub926_2004.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2005.pdf",
+    "attempted_filename": "irs_pub926_2005.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2006.pdf",
+    "attempted_filename": "irs_pub926_2006.pdf"
+  },
+  {
+    "reason": "HTTP Error 404: Not Found",
+    "status": "SOURCE_UNAVAILABLE",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2007.pdf",
+    "attempted_filename": "irs_pub926_2007.pdf"
+  },
+  {
+    "file": "irs_pub926_2008_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "fd938fc70f300693efe4bb7d534ff3424db31c5103f6b304c96f31f038658edf",
+    "size_bytes": 914802,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2008.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2008.pdf",
+        "bytes": 1027949,
+        "sha256": "2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc",
+        "pages": 19,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2008.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        3
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2008.pdf 3 -- irs_pub926_2008_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2008.pdf",
+          "input_sha256": "2a7ebda05d5ba33090a3e8af383d65cfd2e9b6cf64d49086e2ca06a7f669f5fc",
+          "original_pdf_pages": [
+            1,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2008.pdf 1,3 -- irs_pub926_2008_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 914802,
+          "output_sha256": "61ac4e3c525879a884c77ac6a38ce26b44385acb7c9dab613264b4fbc29d351c"
+        },
+        {
+          "input": "irs_pub926_2008_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "61ac4e3c525879a884c77ac6a38ce26b44385acb7c9dab613264b4fbc29d351c",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2008_extract.pdf 2 -- irs_pub926_2008_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 29606,
+          "output_sha256": "fd938fc70f300693efe4bb7d534ff3424db31c5103f6b304c96f31f038658edf"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2008)",
+        "text_derivative": "irs_pub926_2008_extract.pdf.txt"
+      }
+    },
+    "bytes": 29606
+  },
+  {
+    "file": "irs_pub926_2008_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "add271906fceb2e9670bfcba833b8385e483c22c34935ea714878230faa2eb29",
+    "size_bytes": 5784,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2008.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2008_extract.pdf",
+      "source_sha256": "fd938fc70f300693efe4bb7d534ff3424db31c5103f6b304c96f31f038658edf",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2009_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:52Z",
+    "sha256": "8ba2ce6c05d8da685cb66d2499545847a80a099be2a3bba6b7a508f5b89ae245",
+    "size_bytes": 1002916,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2009.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2009.pdf",
+        "bytes": 1209711,
+        "sha256": "aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab",
+        "pages": 23,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2009.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        3
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2009.pdf 3 -- irs_pub926_2009_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2009.pdf",
+          "input_sha256": "aae55bd9c28b6fb9bce0d49b018e8e76b940812610dec5dbe0f205a495b29cab",
+          "original_pdf_pages": [
+            1,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2009.pdf 1,3 -- irs_pub926_2009_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1002916,
+          "output_sha256": "441f00bdeb4be06c7cf673cc8f60a0140ad933ba4b4c86586bff5a102e709ad2"
+        },
+        {
+          "input": "irs_pub926_2009_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "441f00bdeb4be06c7cf673cc8f60a0140ad933ba4b4c86586bff5a102e709ad2",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2009_extract.pdf 2 -- irs_pub926_2009_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 68154,
+          "output_sha256": "8ba2ce6c05d8da685cb66d2499545847a80a099be2a3bba6b7a508f5b89ae245"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2009)",
+        "text_derivative": "irs_pub926_2009_extract.pdf.txt"
+      }
+    },
+    "bytes": 68154
+  },
+  {
+    "file": "irs_pub926_2009_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:52Z",
+    "sha256": "41cab3b38db222c01fc2174da86e04fc37bb9fc947d383e0243c9d1b0410925a",
+    "size_bytes": 5566,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2009.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2009_extract.pdf",
+      "source_sha256": "8ba2ce6c05d8da685cb66d2499545847a80a099be2a3bba6b7a508f5b89ae245",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2010_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:52Z",
+    "sha256": "2ca40cc6946254437aef1751187ceb11ea6349e83466d777ff255f87f99eb242",
+    "size_bytes": 1003395,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2010.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2010.pdf",
+        "bytes": 1215096,
+        "sha256": "19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350",
+        "pages": 22,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2010.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        3
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2010.pdf 3 -- irs_pub926_2010_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2010.pdf",
+          "input_sha256": "19f9c00ed706e7dad89d0cf021e6984883059a165db8d7a8fbe81a4026814350",
+          "original_pdf_pages": [
+            1,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2010.pdf 1,3 -- irs_pub926_2010_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1003395,
+          "output_sha256": "ebb1fff843026da1c599187fa2b8a0063eada16346480cce445374ab8753a43c"
+        },
+        {
+          "input": "irs_pub926_2010_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "ebb1fff843026da1c599187fa2b8a0063eada16346480cce445374ab8753a43c",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2010_extract.pdf 2 -- irs_pub926_2010_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 64929,
+          "output_sha256": "2ca40cc6946254437aef1751187ceb11ea6349e83466d777ff255f87f99eb242"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2010)",
+        "text_derivative": "irs_pub926_2010_extract.pdf.txt"
+      }
+    },
+    "bytes": 64929
+  },
+  {
+    "file": "irs_pub926_2010_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:52Z",
+    "sha256": "ce14adb1a923227cc7c71c959cf341c3e8cbb72a235a9b1377c07f6b55804162",
+    "size_bytes": 5533,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2010.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2010_extract.pdf",
+      "source_sha256": "2ca40cc6946254437aef1751187ceb11ea6349e83466d777ff255f87f99eb242",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2011_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "09089bfb1cae0f16bc0ceb17f47e568cc14663c02b05fdb153f173080ac14518",
+    "size_bytes": 1013918,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2011.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2011.pdf",
+        "bytes": 1233471,
+        "sha256": "efe71fab0cebfd45a79fef68771ab7fde1d2678b6d1cf8251ea36c66ab523a06",
+        "pages": 22,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2011.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        3
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2011.pdf 3 -- irs_pub926_2011_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2011.pdf",
+          "input_sha256": "efe71fab0cebfd45a79fef68771ab7fde1d2678b6d1cf8251ea36c66ab523a06",
+          "original_pdf_pages": [
+            1,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2011.pdf 1,3 -- irs_pub926_2011_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1013918,
+          "output_sha256": "72d1a15468326ab3fcc58011b3f6a1b27268ccdb80e00baf18ad10b936f1f685"
+        },
+        {
+          "input": "irs_pub926_2011_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "72d1a15468326ab3fcc58011b3f6a1b27268ccdb80e00baf18ad10b936f1f685",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2011_extract.pdf 2 -- irs_pub926_2011_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 75523,
+          "output_sha256": "09089bfb1cae0f16bc0ceb17f47e568cc14663c02b05fdb153f173080ac14518"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2011)",
+        "text_derivative": "irs_pub926_2011_extract.pdf.txt"
+      }
+    },
+    "bytes": 75523
+  },
+  {
+    "file": "irs_pub926_2011_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "1a58542821457eeaf423efc5647e3a928ff758374067279eb4dd366f5eea14ca",
+    "size_bytes": 5766,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2011.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2011_extract.pdf",
+      "source_sha256": "09089bfb1cae0f16bc0ceb17f47e568cc14663c02b05fdb153f173080ac14518",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2012_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "a1862152650d1b69bb32a0db09029d023c3f188779cd87ab00707960143a2569",
+    "size_bytes": 1015424,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2012.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2012.pdf",
+        "bytes": 1200587,
+        "sha256": "bb0104e3c3f822ee6edefebf3b6f440436765d24bfc4c39b9ea663e379500216",
+        "pages": 20,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2012.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        3
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2012.pdf 3 -- irs_pub926_2012_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2012.pdf",
+          "input_sha256": "bb0104e3c3f822ee6edefebf3b6f440436765d24bfc4c39b9ea663e379500216",
+          "original_pdf_pages": [
+            1,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2012.pdf 1,3 -- irs_pub926_2012_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1015424,
+          "output_sha256": "6a48da4cd405754adc49b3bb31f4bc36924cab7ade807483a1fe56aaa8920523"
+        },
+        {
+          "input": "irs_pub926_2012_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "6a48da4cd405754adc49b3bb31f4bc36924cab7ade807483a1fe56aaa8920523",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2012_extract.pdf 2 -- irs_pub926_2012_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 76461,
+          "output_sha256": "a1862152650d1b69bb32a0db09029d023c3f188779cd87ab00707960143a2569"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (March 2012)",
+        "text_derivative": "irs_pub926_2012_extract.pdf.txt"
+      }
+    },
+    "bytes": 76461
+  },
+  {
+    "file": "irs_pub926_2012_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "2036593956f386fd1706c86ee23e9b7b7a81b11d024802293ac2f9f159426d25",
+    "size_bytes": 5428,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2012.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2012_extract.pdf",
+      "source_sha256": "a1862152650d1b69bb32a0db09029d023c3f188779cd87ab00707960143a2569",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2013_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "bca4442427f79b163d69c3e5ef2ecb64d5a5f3c38b3655f39afb23e929b3e3bc",
+    "size_bytes": 1004570,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2013.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2013.pdf",
+        "bytes": 1239147,
+        "sha256": "5685f2c266a49727afa1453a9c14caa380582c3a4c1c71318abbc6eb9fa4ef7b",
+        "pages": 16,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2013.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2013.pdf 4 -- irs_pub926_2013_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2013.pdf",
+          "input_sha256": "5685f2c266a49727afa1453a9c14caa380582c3a4c1c71318abbc6eb9fa4ef7b",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2013.pdf 1,4 -- irs_pub926_2013_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1004570,
+          "output_sha256": "ea28ac51e07267387d8bb25a8eacb437a950e826f4252c3d21ac9304856caf4a"
+        },
+        {
+          "input": "irs_pub926_2013_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "ea28ac51e07267387d8bb25a8eacb437a950e826f4252c3d21ac9304856caf4a",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2013_extract.pdf 2 -- irs_pub926_2013_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 101760,
+          "output_sha256": "bca4442427f79b163d69c3e5ef2ecb64d5a5f3c38b3655f39afb23e929b3e3bc"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2013)",
+        "text_derivative": "irs_pub926_2013_extract.pdf.txt"
+      }
+    },
+    "bytes": 101760
+  },
+  {
+    "file": "irs_pub926_2013_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "6d2ee134e424c65bd2b8cbb455212ed755c7e55826a8900c74fbe6fdebbabc33",
+    "size_bytes": 4503,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2013.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2013_extract.pdf",
+      "source_sha256": "bca4442427f79b163d69c3e5ef2ecb64d5a5f3c38b3655f39afb23e929b3e3bc",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2014_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "a0ad5c79b0e5030b3409c474c3f5f2e9803222e0a38d99bbafc341b17403e477",
+    "size_bytes": 1003848,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2014.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2014.pdf",
+        "bytes": 1237031,
+        "sha256": "6e68e5d1f89440eba31bb0ad76a93ec039edec40c0a76758f93c7440d67e1395",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2014.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2014.pdf 4 -- irs_pub926_2014_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2014.pdf",
+          "input_sha256": "6e68e5d1f89440eba31bb0ad76a93ec039edec40c0a76758f93c7440d67e1395",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2014.pdf 1,4 -- irs_pub926_2014_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1003848,
+          "output_sha256": "e46ddaee8b52cdc40092a9a5c9e18d4e62a6b4d9b30c92b5e98ac53730093dd6"
+        },
+        {
+          "input": "irs_pub926_2014_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "e46ddaee8b52cdc40092a9a5c9e18d4e62a6b4d9b30c92b5e98ac53730093dd6",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2014_extract.pdf 2 -- irs_pub926_2014_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 101463,
+          "output_sha256": "a0ad5c79b0e5030b3409c474c3f5f2e9803222e0a38d99bbafc341b17403e477"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2014)",
+        "text_derivative": "irs_pub926_2014_extract.pdf.txt"
+      }
+    },
+    "bytes": 101463
+  },
+  {
+    "file": "irs_pub926_2014_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "cb50bd5901691533e54e4091548bdf3317d0ba7cd0596da47d7a03c619deabac",
+    "size_bytes": 4582,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2014.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2014_extract.pdf",
+      "source_sha256": "a0ad5c79b0e5030b3409c474c3f5f2e9803222e0a38d99bbafc341b17403e477",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2015_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "f69ed6e8b1fe37c592e41bebfe7dd7204304f75066db6efc9fe93beef31c1ecd",
+    "size_bytes": 2034147,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2015.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2015.pdf",
+        "bytes": 2242868,
+        "sha256": "ab8009488d7b7385b5db87d612a230e35b8a90127d891321e7c0dba80837ebaf",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2015.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2015.pdf 4 -- irs_pub926_2015_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2015.pdf",
+          "input_sha256": "ab8009488d7b7385b5db87d612a230e35b8a90127d891321e7c0dba80837ebaf",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2015.pdf 1,4 -- irs_pub926_2015_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 2034147,
+          "output_sha256": "cb8361535cfdbf30c3fb9cee67319917c596628fa08859c421e08e34e4db1f01"
+        },
+        {
+          "input": "irs_pub926_2015_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "cb8361535cfdbf30c3fb9cee67319917c596628fa08859c421e08e34e4db1f01",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2015_extract.pdf 2 -- irs_pub926_2015_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 103150,
+          "output_sha256": "f69ed6e8b1fe37c592e41bebfe7dd7204304f75066db6efc9fe93beef31c1ecd"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2015)",
+        "text_derivative": "irs_pub926_2015_extract.pdf.txt"
+      }
+    },
+    "bytes": 103150
+  },
+  {
+    "file": "irs_pub926_2015_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "fd87212fd691926382b003cee8a59b535e1905d9fc76857a3dd8c9a8ab9dc095",
+    "size_bytes": 4132,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2015.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2015_extract.pdf",
+      "source_sha256": "f69ed6e8b1fe37c592e41bebfe7dd7204304f75066db6efc9fe93beef31c1ecd",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2016_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "a70c65f5dda1dc71cef3cb8f06af541995316e91b236defc982b4219b2ec745e",
+    "size_bytes": 2036982,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2016.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2016.pdf",
+        "bytes": 2243964,
+        "sha256": "d2bfd05cee0aff3cf0d9f04a23fd1acc5c096cd584a7b6d57c88adae6dd4b051",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2016.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2016.pdf 4 -- irs_pub926_2016_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2016.pdf",
+          "input_sha256": "d2bfd05cee0aff3cf0d9f04a23fd1acc5c096cd584a7b6d57c88adae6dd4b051",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2016.pdf 1,4 -- irs_pub926_2016_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 2036982,
+          "output_sha256": "7d2491c98ec61d5089d5b59ae4a961d240eb0d6506714e35bfb745b48dc490ec"
+        },
+        {
+          "input": "irs_pub926_2016_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "7d2491c98ec61d5089d5b59ae4a961d240eb0d6506714e35bfb745b48dc490ec",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2016_extract.pdf 2 -- irs_pub926_2016_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 105975,
+          "output_sha256": "a70c65f5dda1dc71cef3cb8f06af541995316e91b236defc982b4219b2ec745e"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2016)",
+        "text_derivative": "irs_pub926_2016_extract.pdf.txt"
+      }
+    },
+    "bytes": 105975
+  },
+  {
+    "file": "irs_pub926_2016_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "dc062abf4eab7a7949e08d208d1b358ed5f9cca0cb0cd3d878422571082c2d52",
+    "size_bytes": 5147,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2016.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2016_extract.pdf",
+      "source_sha256": "a70c65f5dda1dc71cef3cb8f06af541995316e91b236defc982b4219b2ec745e",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2017_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "d4a619c00e1ede845f5e9f1bb5305933249ad56a4fe20e40b3e501cff9cea05e",
+    "size_bytes": 1245431,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2017.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2017.pdf",
+        "bytes": 1458960,
+        "sha256": "51c8acee1cf1e68c5293b105ee4dd7e8e91fbe2f5b584c5d530e3e91d7883ba5",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2017.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2017.pdf 4 -- irs_pub926_2017_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2017.pdf",
+          "input_sha256": "51c8acee1cf1e68c5293b105ee4dd7e8e91fbe2f5b584c5d530e3e91d7883ba5",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2017.pdf 1,4 -- irs_pub926_2017_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1245431,
+          "output_sha256": "108630700092d1d88c52b8f507bdc69520f2e677252986aa726e9643936371ed"
+        },
+        {
+          "input": "irs_pub926_2017_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "108630700092d1d88c52b8f507bdc69520f2e677252986aa726e9643936371ed",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2017_extract.pdf 2 -- irs_pub926_2017_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 107874,
+          "output_sha256": "d4a619c00e1ede845f5e9f1bb5305933249ad56a4fe20e40b3e501cff9cea05e"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2017)",
+        "text_derivative": "irs_pub926_2017_extract.pdf.txt"
+      }
+    },
+    "bytes": 107874
+  },
+  {
+    "file": "irs_pub926_2017_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "31417a0848035b3f8d6d5943487bf9678149b3e26873c3c4aa53fd4907a8a150",
+    "size_bytes": 5815,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2017.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2017_extract.pdf",
+      "source_sha256": "d4a619c00e1ede845f5e9f1bb5305933249ad56a4fe20e40b3e501cff9cea05e",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2018_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "a12ece1b295ca612dc569ffe590bce794fad86704c1344574a9881490aedfb69",
+    "size_bytes": 1237329,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2018.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2018.pdf",
+        "bytes": 1447977,
+        "sha256": "0ec94bf3be3a2c42ecfe1bd317b06ca7b9eff42aa884f9dd8264b2f1a9175893",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2018.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2018.pdf 4 -- irs_pub926_2018_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2018.pdf",
+          "input_sha256": "0ec94bf3be3a2c42ecfe1bd317b06ca7b9eff42aa884f9dd8264b2f1a9175893",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2018.pdf 1,4 -- irs_pub926_2018_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1237329,
+          "output_sha256": "1dcd525e7f53488388fbc616a51fe26862fc1ec22d33ee70c46203079ec6f6e3"
+        },
+        {
+          "input": "irs_pub926_2018_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "1dcd525e7f53488388fbc616a51fe26862fc1ec22d33ee70c46203079ec6f6e3",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2018_extract.pdf 2 -- irs_pub926_2018_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 111433,
+          "output_sha256": "a12ece1b295ca612dc569ffe590bce794fad86704c1344574a9881490aedfb69"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2018)",
+        "text_derivative": "irs_pub926_2018_extract.pdf.txt"
+      }
+    },
+    "bytes": 111433
+  },
+  {
+    "file": "irs_pub926_2018_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:53Z",
+    "sha256": "a1345c1466820f7f50796271da75d62ba5f7b954fac6baa7c1b358c10f481a6d",
+    "size_bytes": 6728,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2018.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2018_extract.pdf",
+      "source_sha256": "a12ece1b295ca612dc569ffe590bce794fad86704c1344574a9881490aedfb69",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2019_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "3b5f17f5b94dac397052f9deea3b3d41b8227aef4aa76c8dd36cc7b49026d24d",
+    "size_bytes": 1239191,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2019.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2019.pdf",
+        "bytes": 1453978,
+        "sha256": "10edd57ad64b445187548b8ba5fb46ff5d4fd28854e64c229d854df07c721eae",
+        "pages": 17,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2019.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        4
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2019.pdf 4 -- irs_pub926_2019_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2019.pdf",
+          "input_sha256": "10edd57ad64b445187548b8ba5fb46ff5d4fd28854e64c229d854df07c721eae",
+          "original_pdf_pages": [
+            1,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2019.pdf 1,4 -- irs_pub926_2019_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1239191,
+          "output_sha256": "3d314bffdf2147374a4abc47e29ef43546405ccecfafc40af4bbe80dfc6e4146"
+        },
+        {
+          "input": "irs_pub926_2019_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "3d314bffdf2147374a4abc47e29ef43546405ccecfafc40af4bbe80dfc6e4146",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2019_extract.pdf 2 -- irs_pub926_2019_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 111534,
+          "output_sha256": "3b5f17f5b94dac397052f9deea3b3d41b8227aef4aa76c8dd36cc7b49026d24d"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2019)",
+        "text_derivative": "irs_pub926_2019_extract.pdf.txt"
+      }
+    },
+    "bytes": 111534
+  },
+  {
+    "file": "irs_pub926_2019_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "83c11bc7e020e1fe213ae7c481460c27276e74fd8d2a7743b8e3fb34c283ee42",
+    "size_bytes": 6955,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2019.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2019_extract.pdf",
+      "source_sha256": "3b5f17f5b94dac397052f9deea3b3d41b8227aef4aa76c8dd36cc7b49026d24d",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        4
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2020_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "e81a05117fb5b1caea399e2c834112d81b8dea37a18f4f99368dc6012b251f23",
+    "size_bytes": 1237432,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2020.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2020.pdf",
+        "bytes": 1460561,
+        "sha256": "de29f1f1566d7c111fb134985468fb1c2578bcad4cfee10f2b28d02ee3779d2d",
+        "pages": 18,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2020.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2020.pdf 5 -- irs_pub926_2020_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2020.pdf",
+          "input_sha256": "de29f1f1566d7c111fb134985468fb1c2578bcad4cfee10f2b28d02ee3779d2d",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2020.pdf 1,5 -- irs_pub926_2020_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1237432,
+          "output_sha256": "b47321f4832b407d24fa1598fe20682cfbfd7d4eed57d6a079cb67391decdd59"
+        },
+        {
+          "input": "irs_pub926_2020_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "b47321f4832b407d24fa1598fe20682cfbfd7d4eed57d6a079cb67391decdd59",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2020_extract.pdf 2 -- irs_pub926_2020_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 127902,
+          "output_sha256": "e81a05117fb5b1caea399e2c834112d81b8dea37a18f4f99368dc6012b251f23"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2020)",
+        "text_derivative": "irs_pub926_2020_extract.pdf.txt"
+      }
+    },
+    "bytes": 127902
+  },
+  {
+    "file": "irs_pub926_2020_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "b7433258fe6c41a15035d69e4ec588af959f0ab3d224d4edc7048e4e11f4aa9f",
+    "size_bytes": 6463,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2020.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2020_extract.pdf",
+      "source_sha256": "e81a05117fb5b1caea399e2c834112d81b8dea37a18f4f99368dc6012b251f23",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2021_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "6dbc2acd3ae5ff40af4229534e1c04b93dc9481d1637f63ade38e8c990523de0",
+    "size_bytes": 1239052,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2021.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2021.pdf",
+        "bytes": 1461397,
+        "sha256": "c3a83427f9ee43469fef5037ca508dd2a8feabe903a5a4ad3e81c0cafbdaa164",
+        "pages": 19,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2021.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2021.pdf 5 -- irs_pub926_2021_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2021.pdf",
+          "input_sha256": "c3a83427f9ee43469fef5037ca508dd2a8feabe903a5a4ad3e81c0cafbdaa164",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2021.pdf 1,5 -- irs_pub926_2021_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1239052,
+          "output_sha256": "8b0e07440deb3536cd9746e89056ffd5810733ce8da46b82fc7440f1a384c26f"
+        },
+        {
+          "input": "irs_pub926_2021_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "8b0e07440deb3536cd9746e89056ffd5810733ce8da46b82fc7440f1a384c26f",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2021_extract.pdf 2 -- irs_pub926_2021_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 108572,
+          "output_sha256": "6dbc2acd3ae5ff40af4229534e1c04b93dc9481d1637f63ade38e8c990523de0"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2021)",
+        "text_derivative": "irs_pub926_2021_extract.pdf.txt"
+      }
+    },
+    "bytes": 108572
+  },
+  {
+    "file": "irs_pub926_2021_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "546896c37061452c66ea02be0c6c5e8dee75996e9d70b0307f5dbf66ef36ccfb",
+    "size_bytes": 6205,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2021.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2021_extract.pdf",
+      "source_sha256": "6dbc2acd3ae5ff40af4229534e1c04b93dc9481d1637f63ade38e8c990523de0",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2022_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "1f5cbcd1f4a0ba596f464d05ad5f0ac4ad82dd586a8943fe293ed88cbebe6e2b",
+    "size_bytes": 1032651,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2022.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2022.pdf",
+        "bytes": 1238442,
+        "sha256": "f4a28adbfb8e9d64d341cc85995f90f850976b280167a4dfaaef0209d4ca52f0",
+        "pages": 18,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2022.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2022.pdf 5 -- irs_pub926_2022_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2022.pdf",
+          "input_sha256": "f4a28adbfb8e9d64d341cc85995f90f850976b280167a4dfaaef0209d4ca52f0",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2022.pdf 1,5 -- irs_pub926_2022_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1032651,
+          "output_sha256": "b860c424104edc0dcc90e64c46afa15100604a6978ee7cc254c0c3cbeeabd08b"
+        },
+        {
+          "input": "irs_pub926_2022_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "b860c424104edc0dcc90e64c46afa15100604a6978ee7cc254c0c3cbeeabd08b",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2022_extract.pdf 2 -- irs_pub926_2022_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 105760,
+          "output_sha256": "1f5cbcd1f4a0ba596f464d05ad5f0ac4ad82dd586a8943fe293ed88cbebe6e2b"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2022)",
+        "text_derivative": "irs_pub926_2022_extract.pdf.txt"
+      }
+    },
+    "bytes": 105760
+  },
+  {
+    "file": "irs_pub926_2022_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "8272c60b64aff7338bddf85e92fe7f635b9dcda4114d5d2c4ae78185a31d10f6",
+    "size_bytes": 6467,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2022.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2022_extract.pdf",
+      "source_sha256": "1f5cbcd1f4a0ba596f464d05ad5f0ac4ad82dd586a8943fe293ed88cbebe6e2b",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2023_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "48624333ea23d4ff88a9c9e111898b87e3ef05cbf5012ee52a269eb107a2c497",
+    "size_bytes": 1035760,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2023.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2023.pdf",
+        "bytes": 1232757,
+        "sha256": "d90591781aff2490149f001f4a9a9856001c8b2b793a00ba8688eeaed3872235",
+        "pages": 18,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2023.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2023.pdf 5 -- irs_pub926_2023_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2023.pdf",
+          "input_sha256": "d90591781aff2490149f001f4a9a9856001c8b2b793a00ba8688eeaed3872235",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2023.pdf 1,5 -- irs_pub926_2023_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1035760,
+          "output_sha256": "fd8280ef75bd9dc142ca20f923b6b9f101b78386e8e19410fb62d892af40b0b9"
+        },
+        {
+          "input": "irs_pub926_2023_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "fd8280ef75bd9dc142ca20f923b6b9f101b78386e8e19410fb62d892af40b0b9",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2023_extract.pdf 2 -- irs_pub926_2023_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 109442,
+          "output_sha256": "48624333ea23d4ff88a9c9e111898b87e3ef05cbf5012ee52a269eb107a2c497"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2023)",
+        "text_derivative": "irs_pub926_2023_extract.pdf.txt"
+      }
+    },
+    "bytes": 109442
+  },
+  {
+    "file": "irs_pub926_2023_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "9adc87ce34136d63edd5ad00613738b07bc92bd418726d5e82d1d07c4f497009",
+    "size_bytes": 6328,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2023.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2023_extract.pdf",
+      "source_sha256": "48624333ea23d4ff88a9c9e111898b87e3ef05cbf5012ee52a269eb107a2c497",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2024_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "c0e91427e2459c493a32e7e1ae3baf09ce606064e4401f7af706a1903a939e26",
+    "size_bytes": 1032146,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2024.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2024.pdf",
+        "bytes": 1244666,
+        "sha256": "e0f2397a2d34d661c82e2e3a19012a42ad00387b2bec58aac0b8be8838def2b4",
+        "pages": 18,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2024.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2024.pdf 5 -- irs_pub926_2024_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2024.pdf",
+          "input_sha256": "e0f2397a2d34d661c82e2e3a19012a42ad00387b2bec58aac0b8be8838def2b4",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2024.pdf 1,5 -- irs_pub926_2024_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1032146,
+          "output_sha256": "295a4fff78cf4c444faadeccbf7523dcb10c10c5f616bed878047b7fd23edbfe"
+        },
+        {
+          "input": "irs_pub926_2024_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "295a4fff78cf4c444faadeccbf7523dcb10c10c5f616bed878047b7fd23edbfe",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2024_extract.pdf 2 -- irs_pub926_2024_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 106933,
+          "output_sha256": "c0e91427e2459c493a32e7e1ae3baf09ce606064e4401f7af706a1903a939e26"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2024)",
+        "text_derivative": "irs_pub926_2024_extract.pdf.txt"
+      }
+    },
+    "bytes": 106933
+  },
+  {
+    "file": "irs_pub926_2024_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "4b771998ebe13efea40b6b3f74b7bae2cacf26c37c4c82a855d494ec7e2cadb7",
+    "size_bytes": 6509,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2024.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2024_extract.pdf",
+      "source_sha256": "c0e91427e2459c493a32e7e1ae3baf09ce606064e4401f7af706a1903a939e26",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub926_2025_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "66ddc0cf13b110001ef129a3efb040b975b5fe4319fec5dbfef6ff226b75bd81",
+    "size_bytes": 1043992,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2025.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub926_2025.pdf",
+        "bytes": 1250568,
+        "sha256": "1e25a16919cb96ef49aa6fef40cd3aa99b5009427bf5cc7067c5127c97ddf2b7",
+        "pages": 18,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub926_2025.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        5
+      ],
+      "kept": "Table 1, Do You Need To Pay Employment Taxes?, from its heading to its closing note",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub926_2025.pdf 5 -- irs_pub926_2025_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub926_2025.pdf",
+          "input_sha256": "1e25a16919cb96ef49aa6fef40cd3aa99b5009427bf5cc7067c5127c97ddf2b7",
+          "original_pdf_pages": [
+            1,
+            5
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2025.pdf 1,5 -- irs_pub926_2025_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1043992,
+          "output_sha256": "aad183ad60df510afe8baa20cfc2cdd4c5a479c7502ded0d8f48acafd89fc9c0"
+        },
+        {
+          "input": "irs_pub926_2025_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "aad183ad60df510afe8baa20cfc2cdd4c5a479c7502ded0d8f48acafd89fc9c0",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub926_2025_extract.pdf 2 -- irs_pub926_2025_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 110223,
+          "output_sha256": "66ddc0cf13b110001ef129a3efb040b975b5fe4319fec5dbfef6ff226b75bd81"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 926 (2025)",
+        "text_derivative": "irs_pub926_2025_extract.pdf.txt"
+      }
+    },
+    "bytes": 110223
+  },
+  {
+    "file": "irs_pub926_2025_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "56d8c0f44521c2a84fcca0ec90a043d919c77a3911b30e9b10ca69945f257699",
+    "size_bytes": 6276,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p926--2025.pdf",
+    "provenance": {
+      "derived_from": "irs_pub926_2025_extract.pdf",
+      "source_sha256": "66ddc0cf13b110001ef129a3efb040b975b5fe4319fec5dbfef6ff226b75bd81",
+      "method": "pdftotext -f 1 -l 1 -layout",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        5
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2017_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "bab062fe03bcebd02422d6c7239b2a48f43538a4dc9fa3535d92b0c5500f9377",
+    "size_bytes": 1248988,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2017.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2017.pdf",
+        "bytes": 2591703,
+        "sha256": "5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742",
+        "pages": 69,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2017.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2017.pdf 2 -- irs_pub15_2017_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2017.pdf",
+          "input_sha256": "5706c73fe2b3dcfe91e68a3d5f5fe681af4a2937b1418c6ef096ec77a8e40742",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2017.pdf 1,2 -- irs_pub15_2017_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1248988,
+          "output_sha256": "43dbef6b5741579d5a3cd58dcf86457c2f087a958f53eeb4fa13417cf113cec6"
+        },
+        {
+          "input": "irs_pub15_2017_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "43dbef6b5741579d5a3cd58dcf86457c2f087a958f53eeb4fa13417cf113cec6",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2017_extract.pdf 2 -- irs_pub15_2017_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 107593,
+          "output_sha256": "bab062fe03bcebd02422d6c7239b2a48f43538a4dc9fa3535d92b0c5500f9377"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2017)",
+        "text_derivative": "irs_pub15_2017_extract.pdf.txt"
+      }
+    },
+    "bytes": 107593
+  },
+  {
+    "file": "irs_pub15_2017_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "40c9905c49b0da385931c14464daa5c4cc9ca998e8d02bfd303f220c1d27ff6c",
+    "size_bytes": 6216,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2017.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2017_extract.pdf",
+      "source_sha256": "bab062fe03bcebd02422d6c7239b2a48f43538a4dc9fa3535d92b0c5500f9377",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2018_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "c03ded93b530880a4a309f73b2759945559fc7a00c2d35b1547788130d97fe75",
+    "size_bytes": 1237588,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2018.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2018.pdf",
+        "bytes": 2564310,
+        "sha256": "4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524",
+        "pages": 70,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2018.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2018.pdf 2 -- irs_pub15_2018_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2018.pdf",
+          "input_sha256": "4bb2974ef8dba02fadd31cac31006475a148d3c8c532570c90ae8aafcc7bf524",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2018.pdf 1,2 -- irs_pub15_2018_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1237588,
+          "output_sha256": "7f7de38dac33ba6685da866ff8ee2f479bc6aeb665f264add8572885e99a28d8"
+        },
+        {
+          "input": "irs_pub15_2018_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "7f7de38dac33ba6685da866ff8ee2f479bc6aeb665f264add8572885e99a28d8",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2018_extract.pdf 2 -- irs_pub15_2018_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 107808,
+          "output_sha256": "c03ded93b530880a4a309f73b2759945559fc7a00c2d35b1547788130d97fe75"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2018)",
+        "text_derivative": "irs_pub15_2018_extract.pdf.txt"
+      }
+    },
+    "bytes": 107808
+  },
+  {
+    "file": "irs_pub15_2018_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "1afa0c925954355b420c45ffac8d30b19d0d21cc311e533299a847757d45b098",
+    "size_bytes": 6099,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2018.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2018_extract.pdf",
+      "source_sha256": "c03ded93b530880a4a309f73b2759945559fc7a00c2d35b1547788130d97fe75",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2019_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "e1f0d6f5ac322d84e680077260776150e500c8645b4b78f3c7caeeeafbe3d70b",
+    "size_bytes": 1243806,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2019.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2019.pdf",
+        "bytes": 2556525,
+        "sha256": "897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d",
+        "pages": 70,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2019.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2019.pdf 2 -- irs_pub15_2019_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2019.pdf",
+          "input_sha256": "897c1786918b2d8d5ffd195251c021a7b997988662ecd1533e881393636e5e9d",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2019.pdf 1,2 -- irs_pub15_2019_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1243806,
+          "output_sha256": "fc2844370adcd013364c17cb36480c3f58785a4a496fecfa0551fc57fc48e598"
+        },
+        {
+          "input": "irs_pub15_2019_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "fc2844370adcd013364c17cb36480c3f58785a4a496fecfa0551fc57fc48e598",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2019_extract.pdf 2 -- irs_pub15_2019_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 111902,
+          "output_sha256": "e1f0d6f5ac322d84e680077260776150e500c8645b4b78f3c7caeeeafbe3d70b"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2019)",
+        "text_derivative": "irs_pub15_2019_extract.pdf.txt"
+      }
+    },
+    "bytes": 111902
+  },
+  {
+    "file": "irs_pub15_2019_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "22db5346ad55ebadaef97f8250560f07122da90f9bab6cae488bda3052fe3674",
+    "size_bytes": 6408,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2019.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2019_extract.pdf",
+      "source_sha256": "e1f0d6f5ac322d84e680077260776150e500c8645b4b78f3c7caeeeafbe3d70b",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2020_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "7177912bb900d92a8d04c2fa7b686fb19f7b1262e46cb7fac556d74581a832b9",
+    "size_bytes": 1243565,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2020.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2020.pdf",
+        "bytes": 1703409,
+        "sha256": "1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03",
+        "pages": 48,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2020.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2020.pdf 2 -- irs_pub15_2020_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2020.pdf",
+          "input_sha256": "1ed94e53c28129ba5974b6f336f4cbc5c6f77ea13cbb3e64c9137d5a855dcf03",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2020.pdf 1,2 -- irs_pub15_2020_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1243565,
+          "output_sha256": "a956aab992b3d06b52ad7fb15444768553616d8f68c81f5dbffa74cab3e271ec"
+        },
+        {
+          "input": "irs_pub15_2020_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "a956aab992b3d06b52ad7fb15444768553616d8f68c81f5dbffa74cab3e271ec",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2020_extract.pdf 2 -- irs_pub15_2020_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 108974,
+          "output_sha256": "7177912bb900d92a8d04c2fa7b686fb19f7b1262e46cb7fac556d74581a832b9"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2020)",
+        "text_derivative": "irs_pub15_2020_extract.pdf.txt"
+      }
+    },
+    "bytes": 108974
+  },
+  {
+    "file": "irs_pub15_2020_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:54Z",
+    "sha256": "25d27289d03c930e0acc6d38fb011db8b56960df781deff957a7c0164ecd23b3",
+    "size_bytes": 6241,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2020.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2020_extract.pdf",
+      "source_sha256": "7177912bb900d92a8d04c2fa7b686fb19f7b1262e46cb7fac556d74581a832b9",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2021_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "43c4b16bc2dea95ecba5deb70a0fddfe478a67f179ba73c5df3e3484e7ed90a2",
+    "size_bytes": 1260109,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2021.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2021.pdf",
+        "bytes": 1723694,
+        "sha256": "4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577",
+        "pages": 50,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2021.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2,
+        3
+      ],
+      "kept": "What's New from its heading on page 2 through its election-workers paragraph",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2021.pdf 2,3 -- irs_pub15_2021_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2021.pdf",
+          "input_sha256": "4097d8cfcdd62a0a2d661449c2ad3656f331b32cd5be98542ce87e154cc55577",
+          "original_pdf_pages": [
+            1,
+            2,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2021.pdf 1,2,3 -- irs_pub15_2021_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1260109,
+          "output_sha256": "f9532f0541e8b5e820db32422cf78512ac4fcefb586d3fa35668ce2ae95af141"
+        },
+        {
+          "input": "irs_pub15_2021_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "f9532f0541e8b5e820db32422cf78512ac4fcefb586d3fa35668ce2ae95af141",
+          "input_pages": [
+            2,
+            3
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2021_extract.pdf 2,3 -- irs_pub15_2021_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 147032,
+          "output_sha256": "43c4b16bc2dea95ecba5deb70a0fddfe478a67f179ba73c5df3e3484e7ed90a2"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2021)",
+        "text_derivative": "irs_pub15_2021_extract.pdf.txt"
+      }
+    },
+    "bytes": 147032
+  },
+  {
+    "file": "irs_pub15_2021_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "6e5cbbb41362764a0aed080a231531f4db49fb787a09344d454a81a6d0caaad5",
+    "size_bytes": 6187,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2021.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2021_extract.pdf",
+      "source_sha256": "43c4b16bc2dea95ecba5deb70a0fddfe478a67f179ba73c5df3e3484e7ed90a2",
+      "method": "pdftotext -f 2 -l 2 -raw",
+      "pdf_pages": [
+        2
+      ],
+      "original_pdf_pages": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2022_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "6d95ad1902e63a1a684fbd4e4eb7f419a3c3565c9157353d631d15c6f60db231",
+    "size_bytes": 1038360,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2022.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2022.pdf",
+        "bytes": 1533264,
+        "sha256": "da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929",
+        "pages": 49,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2022.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2022.pdf 2 -- irs_pub15_2022_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2022.pdf",
+          "input_sha256": "da84afd9ea390ad1f6ed1190530268bdcbb18e2d460d0e35a3fba67b2f076929",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2022.pdf 1,2 -- irs_pub15_2022_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1038360,
+          "output_sha256": "d4bd47782e806334022de6bc730b4888204f3f4580b53233faf0e762834443cf"
+        },
+        {
+          "input": "irs_pub15_2022_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "d4bd47782e806334022de6bc730b4888204f3f4580b53233faf0e762834443cf",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2022_extract.pdf 2 -- irs_pub15_2022_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 108177,
+          "output_sha256": "6d95ad1902e63a1a684fbd4e4eb7f419a3c3565c9157353d631d15c6f60db231"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2022)",
+        "text_derivative": "irs_pub15_2022_extract.pdf.txt"
+      }
+    },
+    "bytes": 108177
+  },
+  {
+    "file": "irs_pub15_2022_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "c0c185c92d80bfb73c0e738f06a528a5653f461ba04f0b4313c481e47c013647",
+    "size_bytes": 6364,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2022.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2022_extract.pdf",
+      "source_sha256": "6d95ad1902e63a1a684fbd4e4eb7f419a3c3565c9157353d631d15c6f60db231",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2023_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "35738199ff526bd469f4a3f0959a6c83fcfa54d2a2a367e711687a8814826cdc",
+    "size_bytes": 1038786,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2023.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2023.pdf",
+        "bytes": 1568745,
+        "sha256": "8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3",
+        "pages": 49,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2023.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2023.pdf 2 -- irs_pub15_2023_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2023.pdf",
+          "input_sha256": "8a01453e8efa954af1953c35852ff2a19f4375857372d3f262f93541a8b1e6e3",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2023.pdf 1,2 -- irs_pub15_2023_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1038786,
+          "output_sha256": "37e7c6050dc84640d36064a4d9c64bcf4a6dcc87620a9e3bd90233e730856411"
+        },
+        {
+          "input": "irs_pub15_2023_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "37e7c6050dc84640d36064a4d9c64bcf4a6dcc87620a9e3bd90233e730856411",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2023_extract.pdf 2 -- irs_pub15_2023_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 108554,
+          "output_sha256": "35738199ff526bd469f4a3f0959a6c83fcfa54d2a2a367e711687a8814826cdc"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2023)",
+        "text_derivative": "irs_pub15_2023_extract.pdf.txt"
+      }
+    },
+    "bytes": 108554
+  },
+  {
+    "file": "irs_pub15_2023_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "c784207895ad6d764cedc76827dbe8f39dfcc9d1b7e9d0a88e0338434696eedc",
+    "size_bytes": 6269,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2023.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2023_extract.pdf",
+      "source_sha256": "35738199ff526bd469f4a3f0959a6c83fcfa54d2a2a367e711687a8814826cdc",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2024_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "58e1ab7a8b0231da126e04d6f6ac91fceb0e8af947779196e39b824a6017f72a",
+    "size_bytes": 1037790,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2024.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2024.pdf",
+        "bytes": 1638730,
+        "sha256": "3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0",
+        "pages": 57,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2024.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2024.pdf 2 -- irs_pub15_2024_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2024.pdf",
+          "input_sha256": "3a15da95e39b24f2b6c61f4abc85298c897f57600c3508f9381fab7180a092e0",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2024.pdf 1,2 -- irs_pub15_2024_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1037790,
+          "output_sha256": "ba48561867c860023042531088ecc01e4b6cca6b3dd05dcb43d770b8f719901e"
+        },
+        {
+          "input": "irs_pub15_2024_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "ba48561867c860023042531088ecc01e4b6cca6b3dd05dcb43d770b8f719901e",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2024_extract.pdf 2 -- irs_pub15_2024_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 108580,
+          "output_sha256": "58e1ab7a8b0231da126e04d6f6ac91fceb0e8af947779196e39b824a6017f72a"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2024)",
+        "text_derivative": "irs_pub15_2024_extract.pdf.txt"
+      }
+    },
+    "bytes": 108580
+  },
+  {
+    "file": "irs_pub15_2024_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "0443885a8c71d0cf2e003f746fec4c73dac969970d77bbf52f3a1baf2665519c",
+    "size_bytes": 6259,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2024.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2024_extract.pdf",
+      "source_sha256": "58e1ab7a8b0231da126e04d6f6ac91fceb0e8af947779196e39b824a6017f72a",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2025_extract.pdf",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "d35d56d54523a69044907c31c222a2c322ce0637f7099b8741b4e6b8235e8078",
+    "size_bytes": 1042238,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2025.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2025.pdf",
+        "bytes": 1638723,
+        "sha256": "168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0",
+        "pages": 58,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2025.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        2
+      ],
+      "kept": "page 2, What's New from the top of the page through its election-workers paragraph; the section's heading and opening paragraphs sit on the dropped cover page",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2025.pdf 2 -- irs_pub15_2025_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "irs_pub15_2025.pdf",
+          "input_sha256": "168837bd5f666d8c0a7cd59a1309512c0429974b5b7b982ae781a3b9f925b7a0",
+          "original_pdf_pages": [
+            1,
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2025.pdf 1,2 -- irs_pub15_2025_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1042238,
+          "output_sha256": "075a8cabaeaa953ad7e397a7367c1363ea518686cce4f0c39c4b3f583c25c68d"
+        },
+        {
+          "input": "irs_pub15_2025_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "075a8cabaeaa953ad7e397a7367c1363ea518686cce4f0c39c4b3f583c25c68d",
+          "input_pages": [
+            2
+          ],
+          "method": "qpdf --deterministic-id --empty --pages irs_pub15_2025_extract.pdf 2 -- irs_pub15_2025_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 107909,
+          "output_sha256": "d35d56d54523a69044907c31c222a2c322ce0637f7099b8741b4e6b8235e8078"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 15 (2025)",
+        "text_derivative": "irs_pub15_2025_extract.pdf.txt"
+      }
+    },
+    "bytes": 107909
+  },
+  {
+    "file": "irs_pub15_2025_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T20:59:55Z",
+    "sha256": "9e0a0e350dd4db5757e8ce84c55364c15de0ce6ee913addf53bb150a317cbbee",
+    "size_bytes": 6305,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2025.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2025_extract.pdf",
+      "source_sha256": "d35d56d54523a69044907c31c222a2c322ce0637f7099b8741b4e6b8235e8078",
+      "method": "pdftotext -f 1 -l 1 -raw",
+      "pdf_pages": [
+        1
+      ],
+      "original_pdf_pages": [
+        2
+      ]
+    }
+  },
+  {
+    "file": "poms_rs_01901120.html",
+    "retrieved_at": "2026-10-24T21:00:16Z",
+    "sha256": "f1a38bd51fd4856cedf573081ecaefcf681de65ba82b76b053937838f877de23",
+    "size_bytes": 19397,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901120"
+  },
+  {
+    "file": "poms_rs_01901220.html",
+    "retrieved_at": "2026-10-24T21:00:16Z",
+    "sha256": "fd39ebaca7c1ea96ac0fcf46f92142356eed890b931b0c5957621067f05f6470",
+    "size_bytes": 20818,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901220"
+  },
+  {
+    "file": "poms_rs_01901720.html",
+    "retrieved_at": "2026-10-24T21:00:16Z",
+    "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423",
+    "size_bytes": 28250,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901720"
+  },
+  {
+    "file": "poms_rs_01901735.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "e45f20ca6dbdb891b88fbc9f78cb878f9412ac16e12fc436e94875f04d243be7",
+    "size_bytes": 147650,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901735",
+    "retention_status": "removed_uncited_no_derivative_dependency"
+  },
+  {
+    "file": "poms_rs_01901740.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "fd5012990be30b1d20ba19957d79733c3a3f62119f0c3234d8df951d94bd37d1",
+    "size_bytes": 35805,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901740"
+  },
+  {
+    "file": "poms_rs_01901760.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "be443d8357027cd98cbd9556a5dc383b9548fb96e4680786583dbadd2c746c78",
+    "size_bytes": 19261,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901760"
+  },
+  {
+    "file": "poms_rs_01901170.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "95291729040678c2604e901962e85f62b7b33da783e8433bb7f42d017badfcdd",
+    "size_bytes": 24631,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901170"
+  },
+  {
+    "file": "poms_rs_01901500.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "165a4fe4f7696cbd4ea2f50d8ee9d8e52dc9a48b5d707f257a27d53e80be24cf",
+    "size_bytes": 19146,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901500"
+  },
+  {
+    "file": "poms_rs_01901280.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "b92564dd650a4166c0018e9c6388c15753d56a1ebb6c03b403b4f1ae68582319",
+    "size_bytes": 24798,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901280"
+  },
+  {
+    "file": "lii_26_3121.html",
+    "retrieved_at": "2026-10-24T21:00:17Z",
+    "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+    "size_bytes": 597191,
+    "status": "captured",
+    "url": "https://www.law.cornell.edu/uscode/text/26/3121"
+  },
+  {
+    "file": "poms_rs_01802050.html",
+    "retrieved_at": "2026-10-24T21:00:18Z",
+    "sha256": "37004f8f751e3c96c7b9e635a45d5b2352eb5da325d068675f6a9a3141bec630",
+    "size_bytes": 20746,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802050"
+  },
+  {
+    "file": "irs_pub17_1999.pdf",
+    "retrieved_at": "2026-10-24T21:04:06Z",
+    "sha256": "97c3c88b3c4ac364af3cc444b25edb2e85b9f80a9832899c46dd35fa34ffc85c",
+    "size_bytes": 1717364,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--1999.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2000.pdf",
+    "retrieved_at": "2026-10-24T21:04:06Z",
+    "sha256": "91d65a8f01563c361c7a9a98e3882a2aad70ef44d9b3663c2cc8b073031b6d60",
+    "size_bytes": 1594840,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2000.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2001.pdf",
+    "retrieved_at": "2026-10-24T21:04:06Z",
+    "sha256": "7d1656aa5987903bf16abf83ddd6934128f589460b068833478d6d705e591d73",
+    "size_bytes": 1813457,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2001.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2002.pdf",
+    "retrieved_at": "2026-10-24T21:04:06Z",
+    "sha256": "ce343d4919f6e83dd8d4f0c1f92256269facdf1a7efdd57db550c954138e4ce0",
+    "size_bytes": 1785900,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2002.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2003.pdf",
+    "retrieved_at": "2026-10-24T21:04:07Z",
+    "sha256": "1dfffd0656c220e25398f447d19e32f913a078a68d64c9a4869769bda34a81a7",
+    "size_bytes": 2121747,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2003.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2004.pdf",
+    "retrieved_at": "2026-10-24T21:04:07Z",
+    "sha256": "76320cdc1d06bcc06cfb8c8f74c66bb2ea86abccecd848ab8c526f8de447f7fb",
+    "size_bytes": 2137525,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2004.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2005.pdf",
+    "retrieved_at": "2026-10-24T21:04:07Z",
+    "sha256": "f15d227d97cc428e5f12cb54e4208303342a537274b2459da9e88215b9c162e2",
+    "size_bytes": 1970709,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2005.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2006.pdf",
+    "retrieved_at": "2026-10-24T21:04:07Z",
+    "sha256": "861caefae0ac145bc073a996c8b387e9374bd2b8cbcb8a49c04b4f41f5307258",
+    "size_bytes": 4596673,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2006.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub17_2007.pdf",
+    "retrieved_at": "2026-10-24T21:04:08Z",
+    "sha256": "56dee95488e8746da3e0b33d643f80d452f37f8d2458d1bdeca5e85d11c55f88",
+    "size_bytes": 2661214,
+    "status": "not_retained",
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2007.pdf",
+    "reason": "No registry row cites it, so the PDF was removed from the capture folder; URL, size and SHA-256 record the bytes captured."
+  },
+  {
+    "file": "irs_pub15_1999_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:23Z",
+    "sha256": "9fa2d996f048e61de369a3aaf5b6680406150dab1c316de430b271fc3b3e1f9a",
+    "size_bytes": 27133,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--1999.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_1999.pdf",
+        "bytes": 330756,
+        "sha256": "4fa28e02d794205d866087edea633830c8c0d4e0c32981e06d2bd46ad03df33a",
+        "pages": 64,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_1999.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        28,
+        29
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_1999.pdf 1,28,29 -- irs_pub15_1999_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_1999_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:23Z",
+    "sha256": "567db43f5217318c5c2e0f77e9f254d0080d43015a49feb18ce5e17f72b25b9f",
+    "size_bytes": 6613,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--1999.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_1999_extract.pdf",
+      "source_sha256": "9fa2d996f048e61de369a3aaf5b6680406150dab1c316de430b271fc3b3e1f9a",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        29
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2000_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "c115fe012ceece908670269d510cf8e8c0dddd3e55b99bade0b2da378db6ad0b",
+    "size_bytes": 24257,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2000.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2000.pdf",
+        "bytes": 268671,
+        "sha256": "0b260e568bb67a518416ba6bed5cdc9009b98f3ddcd9cbbbecf0fe8cf471c1cf",
+        "pages": 64,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2000.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        28,
+        29
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2000.pdf 1,28,29 -- irs_pub15_2000_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2000_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "853d76f90de609eb6cb21995999679947a0b67d8967aeeff09df66a57554c320",
+    "size_bytes": 6613,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2000.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2000_extract.pdf",
+      "source_sha256": "c115fe012ceece908670269d510cf8e8c0dddd3e55b99bade0b2da378db6ad0b",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        29
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2001_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:23Z",
+    "sha256": "0338771c78f8cfb69dbd78c42d0171540d5175500998e0ea15434d8ce48c03e2",
+    "size_bytes": 57935,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2001.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2001.pdf",
+        "bytes": 306074,
+        "sha256": "bcca2c54a7b9add4e07a50db85886117d2628439068bc21c30d34e1fead6065e",
+        "pages": 64,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2001.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        28,
+        29
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2001.pdf 1,28,29 -- irs_pub15_2001_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2001_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:23Z",
+    "sha256": "6c36301769b19ad611103de9cb0efa4421be603b46ae4a8b5395e8e15374cabb",
+    "size_bytes": 6613,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2001.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2001_extract.pdf",
+      "source_sha256": "0338771c78f8cfb69dbd78c42d0171540d5175500998e0ea15434d8ce48c03e2",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        29
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2002_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "a93c4130173a9cde2e19f65ae00295a763e24c40428f72ea7cd9eb091f82f3cc",
+    "size_bytes": 70380,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2002.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2002.pdf",
+        "bytes": 347242,
+        "sha256": "de232610a85d471a8a6a8bc36ddb763cd8f4308a0b6a14ee19637867a1ef3cf8",
+        "pages": 64,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2002.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        28,
+        29
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2002.pdf 1,28,29 -- irs_pub15_2002_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2002_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "9b05424522465970312b013c26cb32c1d7493567a254b579a07f5d5ef23fcd9b",
+    "size_bytes": 7059,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2002.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2002_extract.pdf",
+      "source_sha256": "a93c4130173a9cde2e19f65ae00295a763e24c40428f72ea7cd9eb091f82f3cc",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        29
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2003_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:25Z",
+    "sha256": "5688e10f4059a6e74c02d1d3076b72ede2f083ef45a50d33d994dce4f08aac64",
+    "size_bytes": 74347,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2003.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2003.pdf",
+        "bytes": 352386,
+        "sha256": "dc10b5026ca0f8cdf677ebcc4078fd9de608585fb4792c57124cbecd622e04aa",
+        "pages": 66,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2003.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        28,
+        29
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2003.pdf 1,28,29 -- irs_pub15_2003_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2003_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:25Z",
+    "sha256": "2cd9202cdd1e8b95b69dc4a0048dd7f967e3d940b5ecad9de61757eff1b58103",
+    "size_bytes": 6999,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2003.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2003_extract.pdf",
+      "source_sha256": "5688e10f4059a6e74c02d1d3076b72ede2f083ef45a50d33d994dce4f08aac64",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        29
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2004_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "dc31e090705615ece54f77dff632fa9959503fcb585bdf04a45a88c3bfd90f8c",
+    "size_bytes": 67623,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2004.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2004.pdf",
+        "bytes": 345783,
+        "sha256": "885d1e0ea9ca9057266067c148db6ea065dfc1591de3a3b22cfaa92bf8231161",
+        "pages": 68,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2004.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        29,
+        30
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2004.pdf 1,29,30 -- irs_pub15_2004_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2004_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "7e83b1e9a1244fa825ee64f2ef4669411387173e5728be2300ca7b6efd2d26c1",
+    "size_bytes": 6920,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2004.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2004_extract.pdf",
+      "source_sha256": "dc31e090705615ece54f77dff632fa9959503fcb585bdf04a45a88c3bfd90f8c",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        30
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2005_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "be4e7cc3dfdddef9549194b758e66ca5c57d29ef51df4eac89f2666cddee6ca1",
+    "size_bytes": 71169,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2005.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2005.pdf",
+        "bytes": 382065,
+        "sha256": "6f3867d20acd1c0fff2323026c66c47e0e13c8815460eb0f71bd5a169fc67401",
+        "pages": 68,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2005.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        30,
+        31
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2005.pdf 1,30,31 -- irs_pub15_2005_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2005_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "bfaeab881289b93ef9f491c42434a6afa461bd3545b9c1d9cf080c6ade985b39",
+    "size_bytes": 6999,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2005.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2005_extract.pdf",
+      "source_sha256": "be4e7cc3dfdddef9549194b758e66ca5c57d29ef51df4eac89f2666cddee6ca1",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        31
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2006_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "30286226480459c07473f40acf4fef87186c155484ac9e6046568c793221f1e2",
+    "size_bytes": 187426,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2006.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2006.pdf",
+        "bytes": 501972,
+        "sha256": "7b807cecffec8425c49b297a205236f69a927ca4041b986572c9d2dde5743c66",
+        "pages": 68,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2006.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        30,
+        31
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2006.pdf 1,30,31 -- irs_pub15_2006_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2006_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:24Z",
+    "sha256": "23dbc413d17fafba7b21e6f82bd7eaecba0747e9e14ffd5fd544d8c1e17e007e",
+    "size_bytes": 6922,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2006.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2006_extract.pdf",
+      "source_sha256": "30286226480459c07473f40acf4fef87186c155484ac9e6046568c793221f1e2",
+      "method": "pdftotext -f 3 -l 3 -layout",
+      "pdf_pages": [
+        3
+      ],
+      "original_pdf_pages": [
+        31
+      ]
+    }
+  },
+  {
+    "file": "irs_pub15_2007_extract.pdf",
+    "retrieved_at": "2026-10-24T21:10:25Z",
+    "sha256": "525e5194ee1afbc5657064425cd27f23ea8763cc57b40aec69d2633f8dad393d",
+    "size_bytes": 75159,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2007.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_pub15_2007.pdf",
+        "bytes": 393386,
+        "sha256": "d56262a59664f59649c5ea28db568d4e9a14706adae0923aa7bcb14ae364c670",
+        "pages": 68,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_pub15_2007.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        30,
+        31,
+        32
+      ],
+      "kept": "cover page; the Special Rules for Various Types of Services and Payments table from its heading to the Household employees row, Domestic service in private homes",
+      "method": "qpdf --deterministic-id --empty --pages irs_pub15_2007.pdf 1,30,31,32 -- irs_pub15_2007_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    }
+  },
+  {
+    "file": "irs_pub15_2007_extract.pdf.txt",
+    "retrieved_at": "2026-10-24T21:10:25Z",
+    "sha256": "7218adc4f2472810feca385128528c95498eb5b8f666bc5c90b29305b1fc64cb",
+    "size_bytes": 6883,
+    "status": "captured",
+    "url": "https://www.irs.gov/pub/irs-prior/p15--2007.pdf",
+    "provenance": {
+      "derived_from": "irs_pub15_2007_extract.pdf",
+      "source_sha256": "525e5194ee1afbc5657064425cd27f23ea8763cc57b40aec69d2633f8dad393d",
+      "method": "pdftotext -f 4 -l 4 -layout",
+      "pdf_pages": [
+        4
+      ],
+      "original_pdf_pages": [
+        32
+      ]
+    }
+  },
+  {
+    "file": "poms_rs_01402230.html",
+    "retrieved_at": "2026-10-24T21:16:47Z",
+    "sha256": "886e790806303e6a098f80cc580eb9685b7bb817aa4bc5764955034146bb3561",
+    "size_bytes": 26235,
+    "status": "captured",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301402230"
+  }
+]

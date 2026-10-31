@@ -1,0 +1,153 @@
+{
+  "status": "current_text_verified_historical_effective_dates_open",
+  "citations": [
+    {
+      "capture": "lii_42usc403.html",
+      "sha256": "089ec01fbef104c50892cc9097a12a5a259d3b58c0f335a16f6d67f0021df41a",
+      "authority": "42 U.S.C.403(f)(5), assignment-pinned current text and amendment notes",
+      "location": "(f)(5)(A)\u2013(E); amendment notes 1965, 1980, 1983, 1989, 1990"
+    },
+    {
+      "capture": "lii_42_409.html",
+      "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+      "authority": "42 U.S.C. 409(a), text captured 2026-10-24",
+      "location": "(a)(1),(6)(B),(6)(C),(7)(B),(8)"
+    }
+  ],
+  "income_year_support": [
+    1968,
+    2026
+  ],
+  "historical_refusal": "Current concept is documented; historical \u00a7403(f)(5) effective-date reconstruction is incomplete. Do not apply current text to earlier income years by assumption.",
+  "earnings_equation": "wages_for_services_in_year + net_earnings_from_self_employment - net_loss_from_self_employment",
+  "self_employment": {
+    "reference": "42 U.S.C.411",
+    "disregarded_trade_or_business_exclusions": [
+      "411(c)(1)",
+      "411(c)(4)",
+      "411(c)(5)"
+    ],
+    "thresholds_apply": false,
+    "reason": "411(b)(2) and(i)(2) define self-employment income;403(f)(5)(B) uses net earnings/net loss.",
+    "church_employee_income": "411(i)(1) includes gross church employee income with no deductions and excludes it and associated deductions from the other unit. \u00a7411(a)(11) remains applicable after that separation (\u00a7411(i)(3)); RET factor exceptions in POMS are recorded separately."
+  },
+  "disregarded_wage_limits": [
+    {
+      "paragraph": "409(a)(1)",
+      "concept": "annual contribution and benefit maximum",
+      "component_threshold": false,
+      "aggregation": "person_year"
+    },
+    {
+      "paragraph": "409(a)(6)(B)",
+      "concept": "domestic cash remuneration threshold",
+      "component_threshold": true,
+      "aggregation": "employer_employee_year"
+    },
+    {
+      "paragraph": "409(a)(6)(C)",
+      "concept": "casual nonbusiness cash remuneration threshold",
+      "component_threshold": true,
+      "aggregation": "employer_employee_year"
+    },
+    {
+      "paragraph": "409(a)(7)(B)",
+      "concept": "agricultural cash remuneration gates",
+      "component_threshold": true,
+      "aggregation": "employer_employee_year_or_employer_year"
+    },
+    {
+      "paragraph": "409(a)(8)",
+      "concept": "statutory homeworker cash remuneration threshold",
+      "component_threshold": true,
+      "aggregation": "employer_employee_year"
+    }
+  ],
+  "deeming_rule": {
+    "required_conditions": [
+      {
+        "condition_id": "service_location_and_employee_status",
+        "fact_names": [
+          "employee_self_or_mixed",
+          "place_of_work",
+          "active_us_military_service"
+        ],
+        "test": "Employee service within the United States, or service outside the United States in active United States military or naval service."
+      },
+      {
+        "condition_id": "no_self_employment_double_count",
+        "fact_names": [
+          "remuneration_in_self_employment"
+        ],
+        "test": "Remuneration is not includible in net earnings or net loss from self-employment."
+      }
+    ],
+    "connective": "both",
+    "citation": {
+      "capture": "lii_42usc403.html",
+      "sha256": "089ec01fbef104c50892cc9097a12a5a259d3b58c0f335a16f6d67f0021df41a",
+      "authority": "42 U.S.C.403(f)(5)(C)",
+      "location": "(f)(5)(C), first sentence",
+      "quote": "shall be deemed to be employment as so defined if the remuneration for such services is not includible"
+    }
+  },
+  "retirement_exclusions": [
+    "403(f)(5)(C)(i): payment on account of retirement, including employer insurance,annuity or fund payments to employee/dependents",
+    "403(f)(5)(C)(ii): employer payments on/after termination because of retirement after plan-specified age"
+  ],
+  "gross_income_exclusions_D": [
+    {
+      "clause": "403(f)(5)(D)(i)",
+      "conditions": [
+        "attained statutory retirement age by last day of taxable year",
+        "royalties from copyright/patent obtained before taxable year of attaining that age",
+        "property created by own personal effort",
+        "facts shown to satisfaction of Commissioner"
+      ],
+      "excluded": "such royalties"
+    },
+    {
+      "clause": "403(f)(5)(D)(ii)",
+      "conditions": [
+        "entitled to title II benefits other than disability insurance or disabled-child benefits",
+        "receipt in year after initial entitlement year",
+        "income not attributable to services after initial entitlement month",
+        "facts shown to satisfaction of Commissioner"
+      ],
+      "excluded": "such other income"
+    }
+  ],
+  "timing_E": "Corporate-director net earnings are deemed derived/received when services performed, regardless of later receipt; exception where paid and received before that service year.",
+  "history_locators": [
+    {
+      "year": 1965,
+      "act": "P.L.89-97\u00a7325(a)",
+      "change": "added(D) royalty exclusion"
+    },
+    {
+      "year": 1980,
+      "act": "P.L.96-473\u00a73(a)",
+      "change": "expanded(D) to other deferred income"
+    },
+    {
+      "year": 1983,
+      "act": "P.L.98-21\u00a7324(c)(4)",
+      "change": "added special retirement wage exclusions"
+    },
+    {
+      "year": 1989,
+      "act": "P.L.101-239\u00a710208(d)(2)",
+      "change": "renumbered 409 cross references"
+    },
+    {
+      "year": 1990,
+      "act": "P.L.101-508\u00a75123(a)",
+      "change": "moved director timing sentence from 411(a) to 403(f)(5)(E)"
+    }
+  ],
+  "refusal_reasons": [
+    "RET_WAGE_ELIGIBILITY_UNRESOLVED",
+    "RET_REMUNERATION_TYPE_UNRESOLVED",
+    "RET_SE_FACTS_UNRESOLVED"
+  ]
+}

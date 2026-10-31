@@ -1,0 +1,244 @@
+[
+  {
+    "file": "govinfo_statute88_pg420.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "bytes": 848159,
+    "sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
+    "provenance": "Official Statutes at Large granule; Public Law 93-368 section 10, 88 Stat. 422.",
+    "status": "captured"
+  },
+  {
+    "file": "poms_rs_01802400.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802400",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "bytes": 28795,
+    "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b",
+    "provenance": "SSA POMS RS 01802.400; community-property allocation history and published examples.",
+    "status": "captured"
+  },
+  {
+    "file": "poms_rs_01901300.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901300",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "bytes": 22016,
+    "sha256": "384c025ee347662acf17d7f6f23c36035464aae515886ad0510b34d34362b104",
+    "provenance": "SSA POMS RS 01901.300; District of Columbia coverage history.",
+    "status": "captured"
+  },
+  {
+    "file": "poms_rs_01901320.html",
+    "url": "https://secure.ssa.gov/apps10/poms.nsf/lnx/0301901320",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "bytes": 22059,
+    "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
+    "provenance": "SSA POMS RS 01901.320; American Samoa, Guam and CNMI coverage histories.",
+    "status": "captured"
+  },
+  {
+    "file": "irs_schedule_se_1984.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 128616,
+    "sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
+    "provenance": "IRS Schedule SE for 1984; historical church remuneration and ordinary-income/loss computation.",
+    "status": "captured"
+  },
+  {
+    "file": "irs_schedule_se_1985.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 127742,
+    "sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
+    "provenance": "IRS Schedule SE for 1985; historical church remuneration and ordinary-income/loss computation.",
+    "status": "captured"
+  },
+  {
+    "file": "irs_form1040_instructions_1985_extract.pdf",
+    "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 128765,
+    "sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
+    "provenance": {
+      "extracted_from": {
+        "file": "irs_form1040_instructions_1985.pdf",
+        "bytes": 4293993,
+        "sha256": "84839e690f39800618d0994f94aa4ba96b753ca9ffadeb40aea563328518faf5",
+        "pages": 52,
+        "git": "PolicyEngine/microcosm-dynamics commit c0ea2b2425c98495eea7898571b4c31840894208, data/external/snapshots/income_resources_ce1_v1/irs_form1040_instructions_1985.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        31
+      ],
+      "kept": "cover page; printed page 31, the first page of the Schedule SE instructions, with Employees of Churches and Qualified Church-Controlled Organizations and Lines 9 and 13",
+      "method": "qpdf --deterministic-id --empty --pages irs_form1040_instructions_1985.pdf 1,31 -- irs_form1040_instructions_1985_extract.pdf (qpdf version 12.4.2)",
+      "note": "IRS Form 1040 instructions for 1985, printed page 31; Schedule SE church-employee instructions for lines 9 and 13.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
+    "status": "captured"
+  },
+  {
+    "file": "uscode_1994_42_411.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec411.htm",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 69072,
+    "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+    "provenance": "Official 1994 United States Code section granule; former church-remuneration text and amendment/effective-date notes.",
+    "status": "captured"
+  },
+  {
+    "file": "uscode_1994_42_409.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec409.htm",
+    "retrieved_at": "2026-10-25T02:04:38Z",
+    "bytes": 83953,
+    "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27",
+    "provenance": "Official 1994 United States Code section granule; annual nonprofit remuneration threshold and 1977 amendment/effective-date notes.",
+    "status": "captured"
+  },
+  {
+    "file": "uscode_2013_42_411.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2013-title42/html/USCODE-2013-title42-chap7-subchapII-sec411.htm",
+    "retrieved_at": "2026-10-25T02:04:38Z",
+    "bytes": 77847,
+    "sha256": "ad631036f46c79d2a0de884aa5c30c23ce670f18b3626e0696456292b8957fc8",
+    "provenance": "Official 2013 United States Code section granule; optional-method lower and upper limits in subsection (k).",
+    "status": "captured"
+  },
+  {
+    "file": "irs_schedule_se_1984.pdf.txt",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1984.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 4593,
+    "sha256": "b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb",
+    "provenance": {
+      "derived_from": "irs_schedule_se_1984.pdf",
+      "source_sha256": "e8e1694160b2db5f70dfeec2ba23dc3e39ca784bd560cb59d79f4045f0f2c373",
+      "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1984.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
+      "pdf_pages": [
+        1
+      ],
+      "printed_pages": [
+        1
+      ],
+      "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "regenerated": "2026-10-26: this command reproduces these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
+    },
+    "status": "captured"
+  },
+  {
+    "file": "irs_schedule_se_1985.pdf.txt",
+    "url": "https://www.irs.gov/pub/irs-prior/f1040sse--1985.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 4603,
+    "sha256": "3dde3ba3f0d74df032ee2fadc301bbfbebab2c6bb84400a7b920ed9b72d4acfa",
+    "provenance": {
+      "derived_from": "irs_schedule_se_1985.pdf",
+      "source_sha256": "db6ef5c6817a4fd6039761ec397235a0e415ffed30d07fb8b9cd82c63ea115f8",
+      "method": "pdftoppm -r 140 -f 1 -l 1 -png irs_schedule_se_1985.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
+      "pdf_pages": [
+        1
+      ],
+      "printed_pages": [
+        1
+      ],
+      "first_derived": "2026-10-25 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout",
+      "regenerated": "2026-10-26: this command reproduces these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
+    },
+    "status": "captured"
+  },
+  {
+    "file": "irs_form1040_instructions_1985_extract.pdf.txt",
+    "url": "https://www.irs.gov/pub/irs-prior/i1040--1985.pdf",
+    "retrieved_at": "2026-10-25T02:04:37Z",
+    "bytes": 8190,
+    "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
+    "provenance": {
+      "derived_from": "irs_form1040_instructions_1985_extract.pdf",
+      "source_sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
+      "method": "pdftoppm -r 140 -f 2 -l 2 -png irs_form1040_instructions_1985_extract.pdf | tesseract stdin stdout (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0)",
+      "pdf_pages": [
+        2
+      ],
+      "original_pdf_pages": [
+        31
+      ],
+      "printed_pages": [
+        31
+      ],
+      "first_derived": "2026-10-25 from original PDF page 31 as pdftoppm PNG at 140 dpi followed by tesseract stdin/stdout, named irs_form1040_instructions_1985.pdf.txt",
+      "regenerated": "2026-10-26: this command, and the same command on original PDF page 31, reproduce these bytes",
+      "restored": "review round 2, low 7: the only text of a scanned page that se_units_1984_1985 cites"
+    },
+    "status": "captured"
+  },
+  {
+    "file": "govinfo_statute88_pg420.pdf.txt",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-88/pdf/STATUTE-88-Pg420.pdf",
+    "retrieved_at": "2026-10-25T02:04:36Z",
+    "bytes": 16242,
+    "sha256": "7f2ef40b0c26fafdf8909000a6fea0161651828d5620203b31720315c5f2844d",
+    "provenance": {
+      "derived_from": "govinfo_statute88_pg420.pdf",
+      "source_sha256": "57ff96fd32a3860873d19dbcbb4f910cd059cdddd645d419d482baa39fb61e6c",
+      "method": "pdftotext -layout; full source granule"
+    },
+    "status": "captured",
+    "retention_status": "removed_uncited_no_derivative_dependency"
+  },
+  {
+    "file": "federal_register_1975_07_10_extract.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf",
+    "retrieved_at": "2026-10-25T02:16:45Z",
+    "bytes": 630595,
+    "sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
+    "provenance": {
+      "extracted_from": {
+        "file": "federal_register_1975_07_10.pdf",
+        "bytes": 29449191,
+        "sha256": "ff819fb0c478f5aa30d6d8bf204a9b2acf05db59a5f841a2b87ad0eba9cf9d84",
+        "pages": 172,
+        "git": "PolicyEngine/microcosm-dynamics commit 1be4b75302395c32d1cee42d9569a31811bb2291, data/external/snapshots/income_resources_ce1_v1/federal_register_1975_07_10.pdf (PR 583 history)"
+      },
+      "original_pdf_pages": [
+        1,
+        13,
+        14
+      ],
+      "kept": "cover; FR Doc. 75-17887, 40 FR 29071-29072, from its heading to its filing line",
+      "method": "qpdf --deterministic-id --empty --pages federal_register_1975_07_10.pdf 1,13,14 -- federal_register_1975_07_10_extract.pdf (qpdf version 12.4.2)",
+      "note": "Official Federal Register issue; final 20 CFR 404.1053(c)(5), 40 FR 29071-29072. Current CFR section XML is small but omits the pre-1974 rule. No smaller official historical rendition was located, so the cited pages are kept as an extract of the whole issue.",
+      "signature_status": "original_signature_invalidated_by_page_extraction",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
+    "status": "captured"
+  },
+  {
+    "file": "federal_register_1975_07_10_extract.pdf.txt",
+    "url": "https://www.govinfo.gov/content/pkg/FR-1975-07-10/pdf/FR-1975-07-10.pdf",
+    "retrieved_at": "2026-10-25T02:16:45Z",
+    "bytes": 16197,
+    "sha256": "19f470f8c1b4ed0275980faf43446d3819240d6453c6cd7a9e52e0533b200459",
+    "provenance": {
+      "derived_from": "federal_register_1975_07_10_extract.pdf",
+      "source_sha256": "8770b406f5d6d04c58e18880b8601208e7aa686758195b29c3adbcf7a4a0d60b",
+      "method": "pdftotext -f 2 -l 3 -raw",
+      "pdf_pages": [
+        2,
+        3
+      ],
+      "original_pdf_pages": [
+        13,
+        14
+      ],
+      "printed_pages": [
+        29071,
+        29072
+      ]
+    },
+    "status": "captured"
+  }
+]

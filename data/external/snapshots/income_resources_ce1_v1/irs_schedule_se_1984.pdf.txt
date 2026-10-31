@@ -1,0 +1,132 @@
+SCHEDULE SE Computation of Social Security Self-Employment Tax
+
+m 104
+TUT 1) > See Instructions for Schedule SE (Form 1040).
+Department of the Treasury
+
+Internal Revenue Service D> Attach to Form 1040.
+
+OMB No. 1545.
+
+0074
+
+1984
+
+Name of self-employed person (as shown on social security card)
+
+| Social security number of |
+
+self-employed person >
+|
+
+GEE] Regular Computation of Net Earnings from Self-Employment
+
+Note: /f you performed services for certain churches or church-controlled organizations and you are not a minister or
+a member of a religious order, see the instructions.
+
+1 Net profit or (loss) from Schedule F (Form 1040), line 56 or line 89, and farm Clue Schedule K-1
+(Form 1065), line 17a .
+
+2 Net profit or (loss) from Schedule Cc (Form 1040), line 32, Schedule k- 1 (Form 1065), tine 17 (other
+than farming), and Form W-2 wages of $100 or more from an electing church or church-controlled
+organization (See instructions for other income to report.) . oa . .
+Note: |_|] Check here if you are exempt from self-employment tax on your earnings as a minister,
+member of a religious order, or Christian Science practitioner because you filed Form 4361. See
+instructions for kinds of income to report. If you have other earnings of $400 or more that are subject to
+self-employment tax, include those earnings on this line.
+
+7
+
+Optional Computation of Net Earnings from Self-Employment
+(See “Who Can Use Schedule SE”)
+
+Generally, this part may be used only if you meet any of the following tests:
+
+A Your gross farm profits (Schedule F (Form 1040), line 31 or line 87) were not more than $2,400, or
+B_ Your gross farm profits (Schedule F (Form 1040), line 31 or line 87) were more than $2,400 and your net farm profits,
+
+(Schedule F (Form 1040), line 56 or line 89) were less than $1,600, or
+
+Your net nonfarm profits (Schedule C (Form 1040), line 32) were less than $1,600 and also less than two-thirds (24)
+
+of your gross nonfarm income (Schedule C (Form 1040), line 5).
+See instructions for other limitations.
+
+3 Maximum income for optional methods
+
+4 Farm Optional Method—If you meet test A or B above, enter: two-thirds (2) of gross profits from
+Schedule F (Form 1040), line 31 or line 87, and farm partnerships, Schedule K-1 (Form 1065), line 17b,
+or $1,600, whichever is smaller. : Se
+
+5 Subtract line 4 from line 3. : :
+
+6 Nonfarm Optional Methad—I you meet test C, enter: the smaller of two thirds (2) of gross nonfarm in-
+
+come from Schedule C (Form 1040), line 5, and Schedule K-1 (Form 1065), line 17c (other than farm-
+ing), or $1,600, or, if you elected the farm optional method, the amount online5 . oD
+
+3
+
+$1,600
+
+oO
+
+GEE Computation of Social Security Self-Employment Tax
+
+7 Enter the amount from Part |, line 1, or, if you elected the farm optional method, Part ll, line4 .
+
+8 Enter the amount from Part |, line 2, or, if you elected the nonfarm optional method, Part Il, line 6 .
+
+9 Add lines 7 and 8. If less than $400, you are not subject to self-employment tax. Do not fill in the rest of the
+schedule. (Exception: If this line is less than $400 and you are an employee of an electing church or church-
+controlled organization, complete the schedule unless this line is a loss. See instructions.) . .
+
+10 The largest amount of combined wages and self-employment earnings subject to social security or
+railroad retirement tax (Tier |) for 1984 is...
+
+11 a Total social security wages and tips from Forms Ww: 2 and railroad retirement
+
+compensation (Tier I). Note: U.S. Government employees whose wages are
+
+only subject to the 1.3% hospital insurance benefits tax (Medicare) and
+
+employees of certain church or church-controlled organizations, should not
+include those wages on this line (see instructions). . . . . . lla
+
+Joo |
+
+10
+
+$37,800
+
+0o
+
+b Unreported tips subject to social security tax from Form 4137, line 9, or
+to railroad retirementtax(Tierl). . . . 2... 2... . « {1b
+
+¢ Addlines llaand 11b .
+12 a Subtract line 11¢ from line 10. 20
+b~ Enter your “qualified” U.S. Government wages if you a are ‘required tou use the worksheet i in Part Mm of
+the instructions. [J2b| |
+© Enter your Form W.2 wages from an electing church or church-controlied organization.
+[d2ej
+13 Enter the smaller of line 9 or line 12a .
+If line 13 is $37,800 or more, fill in $4,271.40 on line “ Otherwise, ‘multiply line 13 mn 113 on enter
+
+theresultonline14 . .
+14 Self-employment tax. ‘Enter this amount on'Form'1040, line 51 |
+
+llc
+12a
+
+we
+
+.
+
+2113.
+
+14
+
+For Paperwork Reduction Act Notice, see Form 1040 Instructions.
+
+Schedule SE (Form 1040) 1984

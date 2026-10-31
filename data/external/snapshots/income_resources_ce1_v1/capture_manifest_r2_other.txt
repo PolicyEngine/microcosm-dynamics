@@ -1,0 +1,7 @@
+# CE1 round-2 other-family primary-source captures.
+# URL https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102-Pg3342.pdf
+# Extract of govinfo_statute102_pg3342.pdf (75705438 bytes, sha256 e8a5ee6e337e668f3eaec1389f54616f7a112eed0521a1d2d1f02a373f586d5a): original PDF pages 1,8,9,10,11,252,471; qpdf --deterministic-id --empty --pages govinfo_statute102_pg3342.pdf 1,8,9,10,11,252,471 -- govinfo_statute102_pg3342_extract.pdf (qpdf version 12.4.2)
+2026-10-26T13:18:26Z ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd 1115690 govinfo_statute102_pg3342_extract.pdf
+# Text derivative of govinfo_statute102_pg3342_extract.pdf: pdftotext -f 2 -l 6 -layout govinfo_statute102_pg3342_extract.pdf govinfo_statute102_pg3342_extract.pdf.txt
+2026-10-26T13:18:26Z 87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6 17922 govinfo_statute102_pg3342_extract.pdf.txt
+# Provenance: {"derived_from": "govinfo_statute102_pg3342_extract.pdf", "source_sha256": "ba1e63a2fe62ec2fcbb3e57dff3da5b599fc85d87a50d8c3d6854f2d3f4aa2dd", "method": "pdftotext -f 2 -l 6 -layout", "pdf_pages": [2, 3, 4, 5, 6], "original_pdf_pages": [8, 9, 10, 11, 252], "printed_pages": ["3349", "3350", "3351", "3352", "3593"]}

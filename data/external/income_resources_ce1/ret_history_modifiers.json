@@ -1,0 +1,141 @@
+{
+  "schema": "ce1.ret_modifiers.v1",
+  "status": "verified_definition_deltas_with_remaining_refusals",
+  "citations": [
+    {
+      "capture": "govinfo_statute79_pg286_extract.pdf",
+      "sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129",
+      "authority": "Public Law 89-97, Social Security Amendments of 1965",
+      "location": "section 325(a)(1)-(2), (b), 79 Stat. 399; original PDF page 114, extract page 2"
+    },
+    {
+      "capture": "govinfo_statute79_pg286_extract.pdf.txt",
+      "sha256": "6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63",
+      "authority": "Text derivative of official Public Law 89-97",
+      "location": "original PDF page 114 (extract page 2), printed 79 Stat. 399; pdftotext -layout derivative of the extract; extract and original hashes recorded in the manifest"
+    },
+    {
+      "capture": "govinfo_statute97_pg65_extract.pdf",
+      "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+      "authority": "Public Law 98-21, Social Security Amendments of 1983",
+      "location": "section 201(a), (c), 97 Stat 107-109"
+    },
+    {
+      "capture": "uscode_2024_42_416.html",
+      "sha256": "01d4f66dc81614c56bf5ed494102c291003ae116dd00b6b39575c9ceaaf07f19",
+      "authority": "42 USC 416, official 2024 United States Code section granule",
+      "location": "416(l)(1)-(3); 1983 amendment note adds(l); no subsequent(l) amendment listed"
+    }
+  ],
+  "verified_changes": [
+    {
+      "change_id": "ret_d_original_1965",
+      "enactment_date": "1965-07-30",
+      "effective_taxable_year_begin_after": "1964-12-31",
+      "registry_income_years_before_1978_replacement": [
+        1968,
+        1977
+      ],
+      "citations": [
+        {
+          "capture": "govinfo_statute79_pg286_extract.pdf",
+          "sha256": "183e68ee6a0b819c45d0ad855bfe58f59df1988330f7fd360cc4a353cb790129",
+          "authority": "Public Law 89-97, Social Security Amendments of 1965",
+          "location": "section 325(a)(1)-(2), (b), 79 Stat. 399; original PDF page 114, extract page 2"
+        },
+        {
+          "capture": "govinfo_statute79_pg286_extract.pdf.txt",
+          "sha256": "6def05d2d18afb13c3c67babfa61ca21fec567cb44437b94d41e2de9c7b90d63",
+          "authority": "Text derivative of official Public Law 89-97",
+          "location": "original PDF page 114 (extract page 2), printed 79 Stat. 399; pdftotext -layout derivative of the extract; extract and original hashes recorded in the manifest"
+        }
+      ],
+      "authority": "Public Law 89-97 section 325(a)(2), (b), 79 Stat 399",
+      "rules": {
+        "copyright_or_patent_royalties": {
+          "age_condition": "Attained age 65 on or before the last day of the taxable year.",
+          "secretary_finding": "Shows to the satisfaction of the Secretary that the royalties and property meet the statutory conditions.",
+          "property_timing_condition": "Copyright or patent obtained before the taxable year in which the individual attained age 65.",
+          "personal_effort_condition": "Property to which the copyright or patent relates was created by the individual own personal efforts.",
+          "effect": "Exclude such royalties from gross income for RET NESE/net-loss computation."
+        }
+      },
+      "original_b_baseline": "Section 325(a)(1) excludes 211(c)(1), (4), (5) from the ordinary definition and adds the D gross-income exclusion; this 1965 baseline does not verify every intervening amendment of B.",
+      "replaces_prior_refusal": "Original 1965 (D) text is now obtained and verified; do not continue listing its absence as an unresolved dependency."
+    },
+    {
+      "change_id": "ret_416l_retirement_age_schedule",
+      "enactment_date": "1983-04-20",
+      "citations": [
+        {
+          "capture": "govinfo_statute97_pg65_extract.pdf",
+          "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
+          "authority": "Public Law 98-21, Social Security Amendments of 1983",
+          "location": "section 201(a), (c), 97 Stat 107-109"
+        },
+        {
+          "capture": "uscode_2024_42_416.html",
+          "sha256": "01d4f66dc81614c56bf5ed494102c291003ae116dd00b6b39575c9ceaaf07f19",
+          "authority": "42 USC 416, official 2024 United States Code section granule",
+          "location": "416(l)(1)-(3); 1983 amendment note adds(l); no subsequent(l) amendment listed"
+        }
+      ],
+      "authority": "Public Law 98-21 section 201(a), (c), 97 Stat 107-109; 42 USC 416(l)",
+      "replaces_prior_refusal": "Full 416(l) schedule and absence of later listed (l) amendments are verified; the prior fragment dependency on unreconstructed 416(l) history is answered.",
+      "age_reference": "Applicable individual retirement age; year attaining early retirement age and benefit type determine the schedule, not income year alone.",
+      "early_retirement_age_by_benefit_type": {
+        "old_age": 62,
+        "wife": 62,
+        "husband": 62,
+        "widow": 60,
+        "widower": 60
+      },
+      "retirement_age_schedule": [
+        {
+          "early_retirement_age_year_end": 1999,
+          "retirement_age_months": 780
+        },
+        {
+          "early_retirement_age_year_start": 2000,
+          "early_retirement_age_year_end": 2004,
+          "base_age_months": 780,
+          "increment_months_per_year": 2,
+          "increment_base_year": 1999
+        },
+        {
+          "early_retirement_age_year_start": 2005,
+          "early_retirement_age_year_end": 2016,
+          "retirement_age_months": 792
+        },
+        {
+          "early_retirement_age_year_start": 2017,
+          "early_retirement_age_year_end": 2021,
+          "base_age_months": 792,
+          "increment_months_per_year": 2,
+          "increment_base_year": 2016
+        },
+        {
+          "early_retirement_age_year_start": 2022,
+          "retirement_age_months": 804
+        }
+      ],
+      "before_dependent_reference": "Original 1965 (D) used age 65; the 1983 act replaces the age reference with 416(l), subject to its amendment/effective history already recorded in ret_history_government."
+    }
+  ],
+  "remaining_refusals": [
+    {
+      "income_years": [
+        1968,
+        1983
+      ],
+      "reason": "Historical 409 retirement-payment exclusions and all plan-definition/transition interactions still require complete verification. The targeted 1984 transitions already recorded do not establish every earlier plan rule."
+    },
+    {
+      "income_years": [
+        1968,
+        2026
+      ],
+      "reason": "RET contribution calculation continues refusing whenever any year-specific 411 eligible-concept/factor, 409 threshold, timing, age or church-income dependency is unverified. Closing original (D) and 416(l) does not establish the whole concept."
+    }
+  ]
+}
