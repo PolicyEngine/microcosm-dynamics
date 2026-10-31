@@ -6,8 +6,9 @@ configurations below, and nothing else: no population claim, no payment
 timing, no annual earnings or charge determination (R2), and no ARF or
 recomputation (R3). The deduction entry points apply caller-declared monthly
 deductions before redistributing the maximum (203(a)(4)).
-No-care spouse deductions require an unreduced benefit and an explicit
-under-full-retirement-age attestation (203(c)(2); 20 CFR 404.421(a)).
+No-care spouse deductions require an unreduced benefit and under-FRA
+status, derived from supplied facts or otherwise attested (203(c)(2);
+20 CFR 404.421(a)).
 Own-work events must withhold a positive amount; a zero deduction is an
 input error and never changes the family-maximum computation.
 Max's ruling d515 (2026-09-28) adopted §10 question 9's default: a Python
@@ -2265,8 +2266,9 @@ class BenefitDeduction:
     own-work deductions have ``permanent=False``; all other supported events
     are permanent. Dual entitlement is already declared by ``OwnBenefit``;
     an explicit marker must agree with the ordinary G payable.
-    ``under_full_retirement_age`` must be True for a spouse no-care
-    deduction (203(c)(2); 20 CFR 404.421(a)); None does not establish age.
+    ``under_full_retirement_age`` attests a spouse no-care deduction only
+    when the supplied cohort does not settle age (203(c)(2); 20 CFR
+    404.421(a)). Supplied facts take priority over the attestation.
     Own-work payables must be strictly below the ordinary rate after NH
     reservations. R2 emits only strictly positive own-work deductions.
     """
@@ -3827,8 +3829,10 @@ def _check_deduction_inputs(
         raise InvalidFamilyInput(
             "Temporary deductions require every beneficiary's household"
         )
-    for key, event in deductions.items():
-        member = members[key]
+    for member in beneficiaries:
+        event = deductions.get(member.beneficiary_id)
+        if event is None:
+            continue
         if (
             event.reason is DeductionReason.DUAL_ENTITLEMENT
             and member.own_benefit is None
@@ -3851,26 +3855,39 @@ def _check_deduction_inputs(
                     raise InvalidFamilyInput(
                         "No-child-in-care deduction excludes age-reduced spouses"
                     )
-                if event.under_full_retirement_age is not True:
+                under_fra = None
+                if member.birth_year is not None:
+                    # SSA cohorts run Jan 2 through Jan 1 of the next
+                    # year, with age attained the day before the birthday
+                    # (RS 00615.003/.010). A cohort gives an interval,
+                    # not an exact birthday or FRA-attainment month.
+                    earliest_fra = member.birth_year * 12 + _fra_months(
+                        member.birth_year, params
+                    )
+                    latest_fra = earliest_fra + 11
+                    month = payment_month.year * 12 + payment_month.month - 1
+                    if month < earliest_fra:
+                        under_fra = True
+                    elif month >= latest_fra:
+                        under_fra = False
+                own = member.own_benefit
+                if own is not None and own.delayed_credit_months:
+                    # Credits accrue only after FRA (Act 202(w)). Prior
+                    # own-RIB reduction months instead persist after FRA
+                    # and cannot establish the person's current age.
+                    under_fra = False
+                if under_fra is False:
+                    raise InvalidFamilyInput(
+                        "No-child-in-care deduction contradicts the birth cohort "
+                        "or supplied post-FRA credits"
+                    )
+                if event.under_full_retirement_age is False or (
+                    under_fra is None
+                    and event.under_full_retirement_age is not True
+                ):
                     raise InvalidFamilyInput(
                         "No-child-in-care spouse deduction requires under-FRA status"
                     )
-                if member.birth_year is not None:
-                    # SSA cohorts run Jan 2 through Jan 1 of the next
-                    # year; the latest possible Jan 1 birth attains FRA
-                    # in the preceding month (RS 00615.003/.010).
-                    latest_fra = (
-                        (member.birth_year + 1) * 12
-                        + _fra_months(member.birth_year, params)
-                        - 1
-                    )
-                    if (
-                        payment_month.year * 12 + payment_month.month - 1
-                        >= latest_fra
-                    ):
-                        raise InvalidFamilyInput(
-                            "Under-FRA attestation contradicts the birth cohort"
-                        )
             if isinstance(member.child_in_care, str):
                 raise InvalidFamilyInput(
                     "No-child-in-care deduction conflicts with current care"

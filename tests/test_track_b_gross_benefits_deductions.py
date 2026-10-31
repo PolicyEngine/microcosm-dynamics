@@ -167,6 +167,7 @@ def test_rs_02501_160_separate_households(payable, permanent, expected):
 
 
 def test_rs_02501_130_no_child_in_care():
+    assert "Their spouse (age 55)" in source_text("poms_rs_02501_130")
     state = g.RecordState(
         g.FamilyKind.RETIREMENT,
         F("242.30"),

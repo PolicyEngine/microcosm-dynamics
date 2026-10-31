@@ -2490,6 +2490,7 @@ examples:
             reason: no_child_in_care
             payable: '0'
             permanent: true
+            under_full_retirement_age: true
         households:
           B: home
           C2: home
@@ -2515,6 +2516,7 @@ examples:
             reason: no_child_in_care
             payable: '0'
             permanent: true
+            under_full_retirement_age: true
         households:
           B: home
           C2: home

@@ -88,6 +88,7 @@ CLASS_ERRORS.update(
             "reason": (None, "own_earnings_test", g.FamilyKind.SURVIVOR),
             "payable": MONEY,
             "permanent": BOOL,
+            "under_full_retirement_age": (0, 1, "true"),
         },
         "BeneficiaryBenefit": {
             "beneficiary_id": TEXT,

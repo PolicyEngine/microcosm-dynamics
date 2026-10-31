@@ -198,9 +198,31 @@ def test_declared_two_record_contradiction_is_input_error(
 
 
 @settings(max_examples=12, deadline=None, derandomize=True)
-@given(pia=st.integers(1, 100).map(lambda n: 10 * n), estimated=st.booleans())
-def test_two_record_derivation_is_order_independent(pia, estimated):
-    case = dual_record(pia, estimated=estimated)
+@given(
+    pia=st.integers(1, 100).map(lambda n: 10 * n),
+    estimated=st.booleans(),
+    own_first=st.booleans(),
+)
+def test_two_record_derivation_is_order_independent(pia, estimated, own_first):
+    own = dual_record(pia, estimated=estimated)
+    no_own = dual_record(pia, estimated=estimated, own=False)
+    first, second = (own, no_own) if own_first else (no_own, own)
+    later_people = {b.beneficiary_id: b for b in second.beneficiaries}
+    case = replace(
+        first,
+        beneficiaries=tuple(
+            replace(
+                person,
+                gross_rates=(person.gross_rates[0],)
+                + later_people[person.beneficiary_id].gross_rates[1:],
+            )
+            for person in first.beneficiaries
+        ),
+        family_months={
+            1: first.family_months[1],
+            2: second.family_months[1],
+        },
+    )
     reordered = replace(
         case,
         beneficiaries=tuple(reversed(case.beneficiaries)),

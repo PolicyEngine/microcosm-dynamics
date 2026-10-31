@@ -675,7 +675,7 @@ G never falls back to a single-worker computation.
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
 | `savings_clause_403a5` | Under explicit `LITERAL_REFUSAL`, a governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
-| `savings_clause_membership_change` | Membership or record kind changes during a carried operational protection; the capture supplies no successor protection rule |
+| `savings_clause_membership_change` | Membership changes at the first qualifying fall, or membership/record kind changes during carried operational protection; the capture supplies no successor protection rule |
 | `savings_clause_rate_procedure` | An operational raise needs an uncaptured survivor/dual/deduction/reduced-auxiliary allocation, a simultaneous age-factor change or declining FMAX prevents causal attribution, or the protected rate exceeds OB; the captured procedure does not settle these payments |
 | `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
 | `widow_drc_savings_clause` | A May 1978 beneficiary protected from widow(er) deceased-worker DRC reductions (RS 00615.712) |
@@ -787,7 +787,8 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
 8. **Results are deterministic and independent of beneficiary order.** Every
    amount is a dime multiple, and each whole-dollar payment is the floor of its
    amount.
-9. **403(a)(5).** Along any month path that starts at entitlement:
+9. **403(a)(5), explicit `LITERAL_REFUSAL` reading.** Along any month
+   path that starts at entitlement:
    - an admitted month with anyone under the maximum is never below an
      earlier protected total, and never follows such a fall;
    - a refused month has someone under the maximum and a fall behind it;
@@ -2624,22 +2625,47 @@ dictionaries retain associations. Types, enum identities and every raw
 container entry follow the existing public schema. `worker_deductions`
 optionally reserves the number holder's charges against auxiliaries; those
 charges do not release room (GN 02603.040B; RS 02501.155B.3.c).
-For a spouse's `NO_CHILD_IN_CARE` event, `under_full_retirement_age=True`
-is required and the supplied spouse benefit must be unreduced for age.
-Act 203(c)(2) limits this deduction to a spouse "under retirement age"
-whose benefit "was not reduced under the provisions of section 202(q)";
-20 CFR 404.421(a) likewise excludes the reduced-benefit election month.
-Missing or false age attestation, age-reduced spouse benefits and declared
-current care are `InvalidFamilyInput` before a family or household refusal.
-The attestation must also agree with a supplied birth cohort. SSA cohorts
-run from January 2 through January 1 of the following year, with age
-attained the day before the birthday (RS 00615.003/.010). If the payment
-month is at or after even that cohort's latest possible FRA month, an
-under-FRA attestation is impossible and invalid; an unknown birthday inside
-the cohort's FRA interval remains a caller-attested fact. A 1950-cohort
-spouse in January 2024 therefore cannot lose its $2 ordinary benefit under
-a falsely attested no-care event on PIA $4/MAX $6.
+For a spouse's `NO_CHILD_IN_CARE` event the supplied spouse benefit must
+be unreduced for age. The captured Act 203(c)(2) says "if a wife or husband
+under retirement age" and "and such wife's or husband's insurance benefit
+for such month was not reduced under the provisions of section 202(q)".
+The captured 20 CFR 404.421(a) says "if he or she is under full retirement
+age" and excludes a month when "there is in effect a certificate of election
+for him or her to receive actuarially reduced wife's or husband's benefits
+for such month". The quotation test checks each phrase verbatim against the
+existing hashed Act and CFR captures.
+
+G first uses supplied facts. Positive spouse reduction months exclude this
+deduction, irrespective of the age attestation. A beneficiary cohort, an
+own-benefit cohort, or a cohort resolved across household records establishes
+an FRA-attainment interval. SSA cohorts run January 2 through the following
+January 1; age is attained the day before the birthday (RS 00615.003/.010).
+The earliest FRA month is January of the cohort year plus FRA months, and
+the latest is eleven months later. Before that interval, under-FRA status
+is established and no attestation is required. At or after its latest month,
+the deduction is invalid. Supplied own delayed-credit months also exclude
+under-FRA status (Act 202(w)); own-RIB reduction months persist after FRA
+and do not by themselves establish current age. Zero spouse reduction
+months establish an unreduced benefit, but do not establish age.
+
+Only if no supplied fact settles age (including a payment month inside the
+cohort's FRA interval) must `under_full_retirement_age=True` be supplied.
+An explicit false attestation is incompatible with a no-care spouse event.
+Contradictory age, age-reduced benefits and declared current care raise
+`InvalidFamilyInput` before any family or household refusal and produce no
+denominator row. Each entitlement on every household record is checked,
+including repeated person IDs. A 1950-cohort spouse in January 2024 cannot
+lose its $2 ordinary benefit through a falsely attested no-care event on
+PIA $4/MAX $6. A 1960-cohort spouse needs no separate age attestation in
+that month. The optional attestation completes missing age information; it
+does not override facts G already admits.
 Mother/father deductions under 203(c)(3)-(4) have no spouse age condition.
+
+The RS 02501.130 registry example explicitly describes "Their spouse
+(age 55)". Both November and December inputs attest under-FRA status on
+that supplied premise; the registry loader passes the optional field through.
+The capture-quotation test checks the age phrase and retains all published
+$83.50 child rates and $83 whole-dollar payments.
 
 | Configuration | Result |
 |---|---|
@@ -2647,7 +2673,7 @@ Mother/father deductions under 203(c)(3)-(4) have no spouse age condition.
 | Auxiliary or survivor own earnings deduction, full or partial | Supported |
 | Permanent deduction | GN 02603.050C redistribution |
 | Estimated own earnings deduction | Same-household increase; other households retain their previous rate |
-| No child in care, full deduction | Supported for an unreduced spouse with an explicit under-FRA attestation, or a mother/father |
+| No child in care, full deduction | Supported for an unreduced spouse whose under-FRA status is derived or, if unknown, attested; or a mother/father |
 | Dual entitlement | Existing Parisi computation, including zero technical rates |
 | Workers' compensation offset | `workers_compensation_offset` |
 | Prisoner suspension | `prisoner_suspension` |
@@ -3016,6 +3042,18 @@ Every new invariant has a Hypothesis property beside the examples:
   the spouse age exclusion and required eligibility fact in both public
   forms. `test_age_reduced_no_care_is_input_error_before_refusal` keeps
   invalid declarations out of the denominator even with a held refusal.
+  `test_supplied_younger_cohort_needs_no_age_attestation` checks exact
+  equality with the explicitly attested result using either cohort field.
+  `test_supplied_older_cohort_is_input_error_before_household_refusal`
+  checks input priority and zero denominator rows.
+  `test_cohort_fra_interval_uses_attestation_only_when_needed` pins both
+  interval endpoints across generated cohorts 1938–1960 against an
+  independent Act 216(l) FRA schedule, retaining explicit cohort 1958
+  examples. `test_each_household_entitlement_checks_no_care_age_before_refusal`
+  generates positive reductions and pins repeated-person order independence.
+  `test_supplied_delayed_credits_exclude_no_care_even_inside_cohort_interval`
+  generates positive credits and checks that attestation cannot override
+  a supplied post-FRA fact.
 - `test_zero_event_cannot_change_existing_full_deduction_output` rejects
   permanent and temporary no-op events without any result or denominator
   change, preserving exact and whole-dollar controls, determinism and the

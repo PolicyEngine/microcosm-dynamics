@@ -186,6 +186,9 @@ def _scenario(raw):
                         g.DeductionReason(value["reason"]),
                         F(value.get("payable", "0")),
                         value.get("permanent", True),
+                        under_full_retirement_age=value.get(
+                            "under_full_retirement_age"
+                        ),
                     )
                     for key, value in raw.get("deductions", {}).items()
                 },
