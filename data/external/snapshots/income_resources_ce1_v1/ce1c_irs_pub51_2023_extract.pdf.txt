@@ -1,0 +1,66 @@
+them from the employee’s wages, you may do so. If you          a withholding allowance was tied to the amount of the per-
+don't withhold the taxes, however, you must still pay them     sonal exemption. Due to changes in the law, taxpayers
+on behalf of the employee. Any employee social security        can no longer claim personal exemptions or dependency
+and Medicare taxes that you pay are additional income to       exemptions; therefore, Form W-4 no longer asks an em-
+the employee. Include it in box 1 of the employee's Form       ployee to report the number of withholding allowances
+W-2, but don't count it as social security and Medicare        that they are claiming. The revised Form W-4 is divided
+wages and don't include it in boxes 3 and 5. Also, don't       into five steps. Step 1 and Step 5 apply to all employees.
+count the additional income as wages for FUTA tax purpo-       In Step 1, employees enter personal information like their
+ses. Different rules apply to employer payments of social      name and filing status. In Step 5, employees sign the
+security and Medicare taxes for non-household and              form. Employees who complete only Step 1 and Step 5
+non-agricultural employees. See section 7 of Pub. 15-A.        will have their withholding figured based on their filing sta-
+                                                               tus’s standard deduction and tax rates with no other ad-
+    Example. Gavrielle operates a small family fruit farm.     justments. If applicable, in Step 2, employees increase
+Gavrielle employs day laborers in the picking season to al-    their withholding to account for higher tax rates due to in-
+low Gavrielle time to get the crops to market. Gavrielle       come from other jobs in their household. Under Step 2,
+doesn't deduct the employees' share of social security         employees either enter an additional amount to withhold
+and Medicare taxes from their pay; instead, Gavrielle pays     per payroll period in Step 4(c) or check the box in Step
+it on their behalf. When Gavrielle prepares the employees'     2(c) for higher withholding rate tables to apply to their wa-
+Forms W-2, Gavrielle adds each employee's share of so-         ges. In Step 3, employees decrease their withholding by
+cial security and Medicare taxes that Gavrielle paid to the    reporting the annual amount of any credits they will claim
+employee's wage income (box 1 of Form W-2), but                on their income tax return. In Step 4, employees may in-
+doesn't include it in box 3 (social security wages) or box 5   crease or decrease their withholding based on the annual
+(Medicare wages and tips).                                     amount of other income or deductions they will report on
+    For 2022, Gavrielle paid Dan $1,000 during the year.       their income tax return and they may also request any ad-
+Gavrielle enters $1,076.50 in box 1 of Dan's Form W-2          ditional federal income tax they want withheld each pay
+($1,000 wages plus $76.50 social security and Medicare         period.
+taxes paid for Dan). Gavrielle enters $1,000.00 in boxes 3         Employees who have submitted Form W-4 in any year
+and 5 of Dan's Form W-2.                                       before 2020 aren’t required to submit a new form merely
+                                                               because of the redesign. Employers will continue to figure
+Withholding social security and Medicare taxes on              withholding based on the information from the employee’s
+nonresident alien employees. In general, if you pay            most recently submitted Form W-4. The withholding ta-
+wages to nonresident alien employees, you must withhold        bles in Pub. 15-T allow employers to figure withholding
+social security and Medicare taxes as you would for a          based on a Form W-4 for 2019 or earlier, as well as the re-
+U.S. citizen or resident alien. However, see Pub. 515 for      designed Form W-4. While you may ask your employees
+exceptions to this general rule. One such exception is for     first paid wages before 2020 that have not yet submitted a
+foreign agricultural workers on H-2A visas, who are ex-        redesigned Form W-4 to submit new Forms W-4 using the
+empt from social security and Medicare taxes. See Com-         redesigned version of the form, you should explain to
+pensation paid to H-2A visa holders in section 3.              them that they’re not required to do this and if they don’t
+Religious exemption. An exemption from social security         submit a new Form W-4, withholding will continue based
+and Medicare taxes is available to members of a recog-         on a valid Form W-4 previously submitted. All newly hired
+nized religious sect opposed to insurance. This exemption      employees must use the redesigned form. Similarly, any
+is available only if both the employee and the employer        other employees who wish to adjust their withholding must
+are members of the sect. For more information, see Pub.        use the redesigned form.
+517.                                                               Pub. 15-T provides an optional computational bridge to
+                                                               treat 2019 or earlier Forms W-4 as if they were 2020 or
+                                                               later Forms W-4 for purposes of figuring federal income
+5. Federal Income Tax                                          tax withholding. This computational bridge allows you to
+                                                               use computational procedures and data fields for a 2020
+Withholding                                                    and later Form W-4 to arrive at the equivalent withholding
+                                                               for an employee that would have applied using the com-
+                                                               putational procedures and data fields on a 2019 or earlier
+Farm operators and crew leaders must withhold federal
+                                                               Form W-4. See How To Treat 2019 and Earlier Forms
+income tax from the wages of farmworkers if the wages          W-4 as if They Were 2020 or Later Forms W-4 in the Intro-
+are subject to social security and Medicare taxes. The         duction section of Pub. 15-T.
+amount to withhold is figured on gross wages before tak-
+ing out social security and Medicare taxes, union dues,           More information. For more information about the re-
+etc. You may use one of several methods to determine the       designed Form W‐4 and regulations that provide guidance
+amount of federal income tax withholding. They’re dis-         for employers concerning income tax withholding from
+cussed in Pub. 15-T.                                           employees’ wages, see Treasury Decision 9924, 2020‐44
+                                                               I.R.B.     943,     available       at      IRS.gov/irb/
+Redesigned Form W-4. The IRS redesigned Form W-4               2020-44_IRB#TD-9924. For information about Form W‐4,
+for 2020 and subsequent years. Before 2020, the value of       go to IRS.gov/FormW4. Employer instructions on how to
+
+Page 12                                                                                             Publication 51 (2023)
+

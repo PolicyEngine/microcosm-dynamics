@@ -171,6 +171,8 @@ IRS_EXTRACTS = (
     {f"irs_pub926_{year}_extract.pdf" for year in range(2008, 2026)}
     | {f"irs_pub15_{year}_extract.pdf" for year in PUB15_EDITIONS}
     | {"irs_form1040_instructions_1985_extract.pdf"}
+    # Review r3 low 8: Pub 51 (2023), cited for page 12 only.
+    | {"ce1c_irs_pub51_2023_extract.pdf"}
 )
 PAGE_EXTRACTS = STATUTE_EXTRACTS | IRS_EXTRACTS
 QPDF_PAGES = re.compile(

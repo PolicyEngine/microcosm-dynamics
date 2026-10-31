@@ -954,15 +954,15 @@
       "citations": [
         {
           "authority": "IRS Publication 51 (2023)",
-          "capture": "ce1c_irs_pub51_2023.pdf",
-          "location": "Printed/PDF page 12, left column, Gavrielle/Dan example explicitly concerning 2022",
-          "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65"
+          "capture": "ce1c_irs_pub51_2023_extract.pdf",
+          "location": "extract page 2 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022",
+          "sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9"
         },
         {
           "authority": "IRS Publication 51 (2023), pinned text derivative",
-          "capture": "ce1c_irs_pub51_2023.pdf.txt",
-          "location": "Printed/PDF page 12, left column, employee share of taxes paid by employer; explicit 2022 transaction",
-          "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654"
+          "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+          "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
+          "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4"
         },
         {
           "authority": "IRS Publication 15 (2026)",
@@ -1170,9 +1170,9 @@
           "calculation": "agricultural_cash_wages",
           "citation": {
             "authority": "IRS Publication 51 (2023), pinned text derivative",
-            "capture": "ce1c_irs_pub51_2023.pdf.txt",
-            "location": "Printed/PDF page 12, left column, employee share of taxes paid by employer; explicit 2022 transaction",
-            "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654"
+            "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+            "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
+            "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4"
           },
           "example_id": "irs51_2023_gavrielle_dan_2022_wages",
           "expected_rule_id": "agricultural_service_1988",

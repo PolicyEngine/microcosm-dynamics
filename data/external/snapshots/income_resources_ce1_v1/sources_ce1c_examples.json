@@ -1,22 +1,45 @@
 [
   {
-    "file": "ce1c_irs_pub51_2023.pdf",
-    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf",
+    "bytes": 1059541,
+    "file": "ce1c_irs_pub51_2023_extract.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "ce1c_irs_pub51_2023.pdf",
+        "bytes": 1335168,
+        "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+        "pages": 29
+      },
+      "original_pdf_pages": [
+        1,
+        12
+      ],
+      "kept": "cover page, and page 12 with the Gavrielle and Dan example explicitly concerning 2022",
+      "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023.pdf 1,12 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
     "retrieved_at": "2026-10-25T02:39:46Z",
-    "bytes": 1335168,
-    "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
-    "provenance": "IRS Publication 51 (2023), printed/PDF page 12, example explicitly concerning 2022."
+    "sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
   },
   {
-    "file": "ce1c_irs_pub51_2023.pdf.txt",
-    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf",
+    "bytes": 7434,
+    "file": "ce1c_irs_pub51_2023_extract.pdf.txt",
+    "provenance": {
+      "derived_from": "ce1c_irs_pub51_2023_extract.pdf",
+      "source_sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
+      "method": "pdftotext -f 2 -l 2 -layout",
+      "pdf_pages": [
+        2
+      ],
+      "original_pdf_pages": [
+        12
+      ]
+    },
     "retrieved_at": "2026-10-25T02:39:46Z",
-    "bytes": 192853,
-    "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
-    "provenance": "Text derivative generated with pdftotext -layout; no content editing.",
-    "derived_from": "ce1c_irs_pub51_2023.pdf",
-    "derived_from_sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
-    "derivation_command": "pdftotext -layout INPUT.pdf OUTPUT.pdf.txt"
+    "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
+    "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
   },
   {
     "file": "ce1c_poms_rs_02101125.html",

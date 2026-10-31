@@ -10,8 +10,6 @@
 # Extract of govinfo_statute86_pg1329.pdf (31269765 bytes, sha256 dc7b68bf5b573afb2623f7337021f3c44bd15acc9c44ad626ac5675da0a87126): original PDF pages 1,25,26,27,28,29,31,32,38,165; qpdf --deterministic-id --empty --pages govinfo_statute86_pg1329.pdf 1,25,26,27,28,29,31,32,38,165 -- govinfo_statute86_pg1329_extract.pdf (qpdf version 12.4.2)
 2026-10-24T21:00:53Z 5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0 1899665 govinfo_statute86_pg1329_extract.pdf
 # URL https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf
-# Extract of govinfo_statute97_pg65.pdf (18999106 bytes, sha256 eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb): original PDF pages 1,3,4,5,6,7,8,25,26,27,43,44,45,57,58,59,60,61,62,108; qpdf --deterministic-id --empty --pages govinfo_statute97_pg65.pdf 1,3,4,5,6,7,8,25,26,27,43,44,45,57,58,59,60,61,62,108 -- govinfo_statute97_pg65_extract.pdf (qpdf version 12.4.2)
-2026-10-24T21:00:53Z 82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad 3445893 govinfo_statute97_pg65_extract.pdf
 # URL https://www.irs.gov/publications/p517
 2026-10-24T20:59:37Z 2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82 361352 irs_p517_2025.html
 # URL https://www.irs.gov/pub/irs-prior/p15--1999.pdf

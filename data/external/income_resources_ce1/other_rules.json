@@ -200,16 +200,16 @@
         "location": "Social Security and Medicare Taxes; employee portion paid by employer; Gavrielle/Dan example, explicit 2026 transaction"
       },
       {
-        "capture": "ce1c_irs_pub51_2023.pdf",
-        "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+        "capture": "ce1c_irs_pub51_2023_extract.pdf",
+        "sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
         "authority": "IRS Publication 51 (2023)",
-        "location": "Printed/PDF page 12, left column, Gavrielle/Dan example explicitly concerning 2022"
+        "location": "extract page 2 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022"
       },
       {
-        "capture": "ce1c_irs_pub51_2023.pdf.txt",
-        "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
+        "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+        "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "Printed/PDF page 12, left column, employee share of taxes paid by employer; explicit 2022 transaction"
+        "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
       }
     ],
     "trigger_facts": [
@@ -300,10 +300,10 @@
         "source_edition_year": 2023,
         "income_year_basis": "published_transaction_year",
         "citation": {
-          "capture": "ce1c_irs_pub51_2023.pdf.txt",
-          "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
+          "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+          "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
           "authority": "IRS Publication 51 (2023), pinned text derivative",
-          "location": "Printed/PDF page 12, left column, employee share of taxes paid by employer; explicit 2022 transaction"
+          "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
         },
         "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year.",
         "expected_rule_id": "agricultural_service_1988",

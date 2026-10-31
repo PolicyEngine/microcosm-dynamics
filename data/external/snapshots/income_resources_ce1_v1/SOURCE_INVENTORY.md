@@ -7,7 +7,6 @@ Reused LII captures retain the original two-day retrieval range; its manifest su
 | govinfo_plaw_108publ203.html | https://www.govinfo.gov/content/pkg/PLAW-108publ203/html/PLAW-108publ203.htm | 2026-10-24T21:07:40Z | 166935 | `d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35` |
 | govinfo_statute81_pg821_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-81/pdf/STATUTE-81-Pg821.pdf | 2026-10-24T21:00:52Z | 975404 | `f41170ec21af82e6313e9cc8038e12c6ed5e3875983fbea62a5f61d94407620f` |
 | govinfo_statute86_pg1329_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf | 2026-10-24T21:00:53Z | 1899665 | `5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0` |
-| govinfo_statute97_pg65_extract.pdf | https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf | 2026-10-24T21:00:53Z | 3445893 | `82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad` |
 | irs_p517_2025.html | https://www.irs.gov/publications/p517 | 2026-10-24T20:59:37Z | 361352 | `2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82` |
 | irs_p517_2025.pdf (not retained: duplicates irs_p517_2025.html) | https://www.irs.gov/pub/irs-pdf/p517.pdf | 2026-10-24T20:58:53Z | 1363199 | `42b05466cf30b99d4d487df5bb9ff412250a3e072217a8320b3727b60182b451` |
 | irs_pub15_1999_extract.pdf | https://www.irs.gov/pub/irs-prior/p15--1999.pdf | 2026-10-24T21:10:23Z | 27133 | `9fa2d996f048e61de369a3aaf5b6680406150dab1c316de430b271fc3b3e1f9a` |
@@ -330,8 +329,8 @@ The original HTTP 403 `SOURCE_BLOCKED` request remains recorded and is answered 
 
 | File | URL | Retrieval UTC | Bytes | SHA-256 |
 |---|---|---|---:|---|
-| ce1c_irs_pub51_2023.pdf | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 1335168 | d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65 |
-| ce1c_irs_pub51_2023.pdf.txt | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 192853 | 58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654 |
+| ce1c_irs_pub51_2023_extract.pdf | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 1059541 | `aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9` |
+| ce1c_irs_pub51_2023_extract.pdf.txt | https://www.irs.gov/pub/irs-prior/p51--2023.pdf | 2026-10-25T02:39:46Z | 7434 | `a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4` |
 | ce1c_poms_rs_02101125.html | https://secure.ssa.gov/poms.nsf/lnx/0302101125 | 2026-10-25T02:39:46Z | 33721 | d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b |
 | ce1c_poms_sl_30001334.html | https://secure.ssa.gov/poms.nsf/lnx/1930001334 | 2026-10-25T02:39:45Z | 35902 | c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41 |
 

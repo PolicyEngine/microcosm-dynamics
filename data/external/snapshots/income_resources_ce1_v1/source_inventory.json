@@ -81,49 +81,6 @@
     "url": "https://www.govinfo.gov/content/pkg/STATUTE-86/pdf/STATUTE-86-Pg1329.pdf"
   },
   {
-    "bytes": 3445893,
-    "file": "govinfo_statute97_pg65_extract.pdf",
-    "provenance": {
-      "extracted_from": {
-        "file": "govinfo_statute97_pg65.pdf",
-        "bytes": 18999106,
-        "sha256": "eebc09899a9a4f0a02e46ea9175253586f2b4f8e4e8602a97d2f963f0a8b08fb",
-        "pages": 108,
-        "git": "PolicyEngine/microcosm-dynamics commit 9de8458f52bb9c59c4508a7c101382d8e44acf1a, data/external/snapshots/income_resources_ce1_v1/govinfo_statute97_pg65.pdf (PR 583 history)"
-      },
-      "original_pdf_pages": [
-        1,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        25,
-        26,
-        27,
-        43,
-        44,
-        45,
-        57,
-        58,
-        59,
-        60,
-        61,
-        62,
-        108
-      ],
-      "kept": "first page; sections 101-103 (97 Stat. 67-72); section 124 (97 Stat. 89-91); section 201 (97 Stat. 107-109); sections 323 and 324 (97 Stat. 121-126); approval date (97 Stat. 172)",
-      "method": "qpdf --deterministic-id --empty --pages govinfo_statute97_pg65.pdf 1,3,4,5,6,7,8,25,26,27,43,44,45,57,58,59,60,61,62,108 -- govinfo_statute97_pg65_extract.pdf (qpdf version 12.4.2)",
-      "note": "Original captured by plain request.",
-      "signature_status": "original_signature_invalidated_by_page_extraction",
-      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
-    },
-    "retrieved_at": "2026-10-24T21:00:53Z",
-    "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad",
-    "url": "https://www.govinfo.gov/content/pkg/STATUTE-97/pdf/STATUTE-97-Pg65.pdf"
-  },
-  {
     "reason": "HTTP 200 redirects to GovInfo Page Not Found; body not a historical statute",
     "status": "UNAVAILABLE",
     "url": "https://www.govinfo.gov/content/pkg/USCODE-1964-title42/pdf/USCODE-1964-title42-chap7-subchapII-sec411.pdf",
@@ -3777,22 +3734,45 @@
     "url": "https://www.loc.gov/item/uscode1970-028042007/?fo=json"
   },
   {
-    "bytes": 1335168,
-    "file": "ce1c_irs_pub51_2023.pdf",
-    "provenance": "IRS Publication 51 (2023), printed/PDF page 12, example explicitly concerning 2022.",
+    "bytes": 1059541,
+    "file": "ce1c_irs_pub51_2023_extract.pdf",
+    "provenance": {
+      "extracted_from": {
+        "file": "ce1c_irs_pub51_2023.pdf",
+        "bytes": 1335168,
+        "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+        "pages": 29
+      },
+      "original_pdf_pages": [
+        1,
+        12
+      ],
+      "kept": "cover page, and page 12 with the Gavrielle and Dan example explicitly concerning 2022",
+      "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023.pdf 1,12 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2)",
+      "note": "Original captured by plain request.",
+      "signature_status": "original_unsigned",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
     "retrieved_at": "2026-10-25T02:39:46Z",
-    "sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+    "sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
     "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
   },
   {
-    "bytes": 192853,
-    "derivation_command": "pdftotext -layout INPUT.pdf OUTPUT.pdf.txt",
-    "derived_from": "ce1c_irs_pub51_2023.pdf",
-    "derived_from_sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
-    "file": "ce1c_irs_pub51_2023.pdf.txt",
-    "provenance": "Text derivative generated with pdftotext -layout; no content editing.",
+    "bytes": 7434,
+    "file": "ce1c_irs_pub51_2023_extract.pdf.txt",
+    "provenance": {
+      "derived_from": "ce1c_irs_pub51_2023_extract.pdf",
+      "source_sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
+      "method": "pdftotext -f 2 -l 2 -layout",
+      "pdf_pages": [
+        2
+      ],
+      "original_pdf_pages": [
+        12
+      ]
+    },
     "retrieved_at": "2026-10-25T02:39:46Z",
-    "sha256": "58bc0a7bf9a747d201006e5ba5ea37f7c3b42288d7cec59279f9a615f66c1654",
+    "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
     "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
   },
   {
