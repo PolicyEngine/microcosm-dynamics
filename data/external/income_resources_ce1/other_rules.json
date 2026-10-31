@@ -201,15 +201,15 @@
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf",
-        "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
+        "sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47",
         "authority": "IRS Publication 51 (2023)",
-        "location": "extract page 4 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022"
+        "location": "extract page 3 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022"
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
         "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
+        "location": "text of extract page 3 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
       }
     ],
     "trigger_facts": [
@@ -303,7 +303,7 @@
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
           "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
           "authority": "IRS Publication 51 (2023), pinned text derivative",
-          "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
+          "location": "text of extract page 3 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
         },
         "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year.",
         "expected_rule_id": "agricultural_service_1988",
@@ -4836,29 +4836,29 @@
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf",
-        "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
+        "sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47",
         "authority": "IRS Publication 51 (2023)",
-        "location": "extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders; extract page 4 (original PDF page 12), H-2A exception"
+        "location": "extract pages 1-2 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders; extract page 3 (original PDF page 12), H-2A exception"
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
         "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "text of extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders",
+        "location": "text of extract pages 1-2 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders",
         "quote": "compensation paid to H-2A workers for agricultural labor"
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
         "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "text of extract page 3 (original PDF page 11), section 3",
+        "location": "text of extract page 2 (original PDF page 11), section 3",
         "quote": "An employer isn't required to withhold federal income tax from compensation paid to an H-2A worker for agricul- tural labor performed in connection with this visa"
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
         "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "text of extract page 4 (original PDF page 12), Nonresident alien employees",
+        "location": "text of extract page 3 (original PDF page 12), Nonresident alien employees",
         "quote": "One such exception is for foreign agricultural workers on H-2A visas, who are ex- empt from social security and Medicare taxes."
       }
     ],

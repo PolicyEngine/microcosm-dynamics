@@ -955,13 +955,13 @@
         {
           "authority": "IRS Publication 51 (2023)",
           "capture": "ce1c_irs_pub51_2023_extract.pdf",
-          "location": "extract page 4 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022",
-          "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38"
+          "location": "extract page 3 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022",
+          "sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47"
         },
         {
           "authority": "IRS Publication 51 (2023), pinned text derivative",
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-          "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
+          "location": "text of extract page 3 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
           "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1"
         },
         {
@@ -1171,7 +1171,7 @@
           "citation": {
             "authority": "IRS Publication 51 (2023), pinned text derivative",
             "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-            "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
+            "location": "text of extract page 3 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction",
             "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1"
           },
           "example_id": "irs51_2023_gavrielle_dan_2022_wages",
@@ -9202,27 +9202,27 @@
         {
           "authority": "IRS Publication 51 (2023)",
           "capture": "ce1c_irs_pub51_2023_extract.pdf",
-          "location": "extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders; extract page 4 (original PDF page 12), H-2A exception",
-          "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38"
+          "location": "extract pages 1-2 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders; extract page 3 (original PDF page 12), H-2A exception",
+          "sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47"
         },
         {
           "authority": "IRS Publication 51 (2023), pinned text derivative",
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-          "location": "text of extract page 3 (original PDF page 11), section 3",
+          "location": "text of extract page 2 (original PDF page 11), section 3",
           "quote": "An employer isn't required to withhold federal income tax from compensation paid to an H-2A worker for agricul- tural labor performed in connection with this visa",
           "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1"
         },
         {
           "authority": "IRS Publication 51 (2023), pinned text derivative",
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-          "location": "text of extract page 4 (original PDF page 12), Nonresident alien employees",
+          "location": "text of extract page 3 (original PDF page 12), Nonresident alien employees",
           "quote": "One such exception is for foreign agricultural workers on H-2A visas, who are ex- empt from social security and Medicare taxes.",
           "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1"
         },
         {
           "authority": "IRS Publication 51 (2023), pinned text derivative",
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-          "location": "text of extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders",
+          "location": "text of extract pages 1-2 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders",
           "quote": "compensation paid to H-2A workers for agricultural labor",
           "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1"
         },
@@ -24860,234 +24860,234 @@
         {
           "authority": "IRS Publication 926 (2008)",
           "capture": "irs_pub926_2008_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 3)",
-          "sha256": "61ac4e3c525879a884c77ac6a38ce26b44385acb7c9dab613264b4fbc29d351c"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 3)",
+          "sha256": "fd938fc70f300693efe4bb7d534ff3424db31c5103f6b304c96f31f038658edf"
         },
         {
           "authority": "IRS Publication 926 (2008)",
           "capture": "irs_pub926_2008_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 3)",
+          "location": "text of extract page 1 (original PDF page 3)",
           "quote": "Pay cash wages of $1,600 or more in 2008 to any one",
           "sha256": "add271906fceb2e9670bfcba833b8385e483c22c34935ea714878230faa2eb29"
         },
         {
           "authority": "IRS Publication 926 (2009)",
           "capture": "irs_pub926_2009_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 3)",
-          "sha256": "441f00bdeb4be06c7cf673cc8f60a0140ad933ba4b4c86586bff5a102e709ad2"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 3)",
+          "sha256": "8ba2ce6c05d8da685cb66d2499545847a80a099be2a3bba6b7a508f5b89ae245"
         },
         {
           "authority": "IRS Publication 926 (2009)",
           "capture": "irs_pub926_2009_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 3)",
+          "location": "text of extract page 1 (original PDF page 3)",
           "quote": "Pay cash wages of $1,700 or more in 2009 to any one",
           "sha256": "41cab3b38db222c01fc2174da86e04fc37bb9fc947d383e0243c9d1b0410925a"
         },
         {
           "authority": "IRS Publication 926 (2010)",
           "capture": "irs_pub926_2010_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 3)",
-          "sha256": "ebb1fff843026da1c599187fa2b8a0063eada16346480cce445374ab8753a43c"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 3)",
+          "sha256": "2ca40cc6946254437aef1751187ceb11ea6349e83466d777ff255f87f99eb242"
         },
         {
           "authority": "IRS Publication 926 (2010)",
           "capture": "irs_pub926_2010_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 3)",
+          "location": "text of extract page 1 (original PDF page 3)",
           "quote": "Pay cash wages of $1,700 or more in 2010 to any one",
           "sha256": "ce14adb1a923227cc7c71c959cf341c3e8cbb72a235a9b1377c07f6b55804162"
         },
         {
           "authority": "IRS Publication 926 (2011)",
           "capture": "irs_pub926_2011_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 3)",
-          "sha256": "72d1a15468326ab3fcc58011b3f6a1b27268ccdb80e00baf18ad10b936f1f685"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 3)",
+          "sha256": "09089bfb1cae0f16bc0ceb17f47e568cc14663c02b05fdb153f173080ac14518"
         },
         {
           "authority": "IRS Publication 926 (2011)",
           "capture": "irs_pub926_2011_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 3)",
+          "location": "text of extract page 1 (original PDF page 3)",
           "quote": "Pay cash wages of $1,700 or more in 2011 to any one",
           "sha256": "1a58542821457eeaf423efc5647e3a928ff758374067279eb4dd366f5eea14ca"
         },
         {
           "authority": "IRS Publication 926 (2012)",
           "capture": "irs_pub926_2012_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 3)",
-          "sha256": "6a48da4cd405754adc49b3bb31f4bc36924cab7ade807483a1fe56aaa8920523"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 3)",
+          "sha256": "a1862152650d1b69bb32a0db09029d023c3f188779cd87ab00707960143a2569"
         },
         {
           "authority": "IRS Publication 926 (2012)",
           "capture": "irs_pub926_2012_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 3)",
+          "location": "text of extract page 1 (original PDF page 3)",
           "quote": "Pay cash wages of $1,800 or more in 2012 to any one",
           "sha256": "2036593956f386fd1706c86ee23e9b7b7a81b11d024802293ac2f9f159426d25"
         },
         {
           "authority": "IRS Publication 926 (2013)",
           "capture": "irs_pub926_2013_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "ea28ac51e07267387d8bb25a8eacb437a950e826f4252c3d21ac9304856caf4a"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "bca4442427f79b163d69c3e5ef2ecb64d5a5f3c38b3655f39afb23e929b3e3bc"
         },
         {
           "authority": "IRS Publication 926 (2013)",
           "capture": "irs_pub926_2013_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $1,800 or more in 2013 to any one",
           "sha256": "6d2ee134e424c65bd2b8cbb455212ed755c7e55826a8900c74fbe6fdebbabc33"
         },
         {
           "authority": "IRS Publication 926 (2014)",
           "capture": "irs_pub926_2014_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "e46ddaee8b52cdc40092a9a5c9e18d4e62a6b4d9b30c92b5e98ac53730093dd6"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "a0ad5c79b0e5030b3409c474c3f5f2e9803222e0a38d99bbafc341b17403e477"
         },
         {
           "authority": "IRS Publication 926 (2014)",
           "capture": "irs_pub926_2014_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $1,900 or more in 2014 to any one",
           "sha256": "cb50bd5901691533e54e4091548bdf3317d0ba7cd0596da47d7a03c619deabac"
         },
         {
           "authority": "IRS Publication 926 (2015)",
           "capture": "irs_pub926_2015_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "cb8361535cfdbf30c3fb9cee67319917c596628fa08859c421e08e34e4db1f01"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "f69ed6e8b1fe37c592e41bebfe7dd7204304f75066db6efc9fe93beef31c1ecd"
         },
         {
           "authority": "IRS Publication 926 (2015)",
           "capture": "irs_pub926_2015_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $1,900 or more in 2015 to any one",
           "sha256": "fd87212fd691926382b003cee8a59b535e1905d9fc76857a3dd8c9a8ab9dc095"
         },
         {
           "authority": "IRS Publication 926 (2016)",
           "capture": "irs_pub926_2016_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "7d2491c98ec61d5089d5b59ae4a961d240eb0d6506714e35bfb745b48dc490ec"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "a70c65f5dda1dc71cef3cb8f06af541995316e91b236defc982b4219b2ec745e"
         },
         {
           "authority": "IRS Publication 926 (2016)",
           "capture": "irs_pub926_2016_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $2,000 or more in 2016 to any one",
           "sha256": "dc062abf4eab7a7949e08d208d1b358ed5f9cca0cb0cd3d878422571082c2d52"
         },
         {
           "authority": "IRS Publication 926 (2017)",
           "capture": "irs_pub926_2017_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "108630700092d1d88c52b8f507bdc69520f2e677252986aa726e9643936371ed"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "d4a619c00e1ede845f5e9f1bb5305933249ad56a4fe20e40b3e501cff9cea05e"
         },
         {
           "authority": "IRS Publication 926 (2017)",
           "capture": "irs_pub926_2017_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $2,000 or more in 2017 to any one",
           "sha256": "31417a0848035b3f8d6d5943487bf9678149b3e26873c3c4aa53fd4907a8a150"
         },
         {
           "authority": "IRS Publication 926 (2018)",
           "capture": "irs_pub926_2018_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "1dcd525e7f53488388fbc616a51fe26862fc1ec22d33ee70c46203079ec6f6e3"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "a12ece1b295ca612dc569ffe590bce794fad86704c1344574a9881490aedfb69"
         },
         {
           "authority": "IRS Publication 926 (2018)",
           "capture": "irs_pub926_2018_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $2,100 or more in 2018 to any one",
           "sha256": "a1345c1466820f7f50796271da75d62ba5f7b954fac6baa7c1b358c10f481a6d"
         },
         {
           "authority": "IRS Publication 926 (2019)",
           "capture": "irs_pub926_2019_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 4)",
-          "sha256": "3d314bffdf2147374a4abc47e29ef43546405ccecfafc40af4bbe80dfc6e4146"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 4)",
+          "sha256": "3b5f17f5b94dac397052f9deea3b3d41b8227aef4aa76c8dd36cc7b49026d24d"
         },
         {
           "authority": "IRS Publication 926 (2019)",
           "capture": "irs_pub926_2019_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 4)",
+          "location": "text of extract page 1 (original PDF page 4)",
           "quote": "Pay cash wages of $2,100 or more in 2019 to any one",
           "sha256": "83c11bc7e020e1fe213ae7c481460c27276e74fd8d2a7743b8e3fb34c283ee42"
         },
         {
           "authority": "IRS Publication 926 (2020)",
           "capture": "irs_pub926_2020_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "b47321f4832b407d24fa1598fe20682cfbfd7d4eed57d6a079cb67391decdd59"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "e81a05117fb5b1caea399e2c834112d81b8dea37a18f4f99368dc6012b251f23"
         },
         {
           "authority": "IRS Publication 926 (2020)",
           "capture": "irs_pub926_2020_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,200 or more in 2020 to any one",
           "sha256": "b7433258fe6c41a15035d69e4ec588af959f0ab3d224d4edc7048e4e11f4aa9f"
         },
         {
           "authority": "IRS Publication 926 (2021)",
           "capture": "irs_pub926_2021_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "8b0e07440deb3536cd9746e89056ffd5810733ce8da46b82fc7440f1a384c26f"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "6dbc2acd3ae5ff40af4229534e1c04b93dc9481d1637f63ade38e8c990523de0"
         },
         {
           "authority": "IRS Publication 926 (2021)",
           "capture": "irs_pub926_2021_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,300 or more in 2021 to any one",
           "sha256": "546896c37061452c66ea02be0c6c5e8dee75996e9d70b0307f5dbf66ef36ccfb"
         },
         {
           "authority": "IRS Publication 926 (2022)",
           "capture": "irs_pub926_2022_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "b860c424104edc0dcc90e64c46afa15100604a6978ee7cc254c0c3cbeeabd08b"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "1f5cbcd1f4a0ba596f464d05ad5f0ac4ad82dd586a8943fe293ed88cbebe6e2b"
         },
         {
           "authority": "IRS Publication 926 (2022)",
           "capture": "irs_pub926_2022_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,400 or more in 2022 to any one",
           "sha256": "8272c60b64aff7338bddf85e92fe7f635b9dcda4114d5d2c4ae78185a31d10f6"
         },
         {
           "authority": "IRS Publication 926 (2023)",
           "capture": "irs_pub926_2023_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "fd8280ef75bd9dc142ca20f923b6b9f101b78386e8e19410fb62d892af40b0b9"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "48624333ea23d4ff88a9c9e111898b87e3ef05cbf5012ee52a269eb107a2c497"
         },
         {
           "authority": "IRS Publication 926 (2023)",
           "capture": "irs_pub926_2023_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,600 or more in 2023 to any one",
           "sha256": "9adc87ce34136d63edd5ad00613738b07bc92bd418726d5e82d1d07c4f497009"
         },
         {
           "authority": "IRS Publication 926 (2024)",
           "capture": "irs_pub926_2024_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "295a4fff78cf4c444faadeccbf7523dcb10c10c5f616bed878047b7fd23edbfe"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "c0e91427e2459c493a32e7e1ae3baf09ce606064e4401f7af706a1903a939e26"
         },
         {
           "authority": "IRS Publication 926 (2024)",
           "capture": "irs_pub926_2024_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,700 or more in 2024 to any one",
           "sha256": "4b771998ebe13efea40b6b3f74b7bae2cacf26c37c4c82a855d494ec7e2cadb7"
         },
         {
           "authority": "IRS Publication 926 (2025)",
           "capture": "irs_pub926_2025_extract.pdf",
-          "location": "Table 1, domestic cash coverage threshold; extract page 2 (original PDF page 5)",
-          "sha256": "aad183ad60df510afe8baa20cfc2cdd4c5a479c7502ded0d8f48acafd89fc9c0"
+          "location": "Table 1, domestic cash coverage threshold; extract page 1 (original PDF page 5)",
+          "sha256": "66ddc0cf13b110001ef129a3efb040b975b5fe4319fec5dbfef6ff226b75bd81"
         },
         {
           "authority": "IRS Publication 926 (2025)",
           "capture": "irs_pub926_2025_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 5)",
+          "location": "text of extract page 1 (original PDF page 5)",
           "quote": "Pay cash wages of $2,800 or more in 2025 to any one",
           "sha256": "56d8c0f44521c2a84fcca0ec90a043d919c77a3911b30e9b10ca69945f257699"
         },
@@ -25368,117 +25368,117 @@
         {
           "authority": "IRS Publication 15 (2017)",
           "capture": "irs_pub15_2017_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "43dbef6b5741579d5a3cd58dcf86457c2f087a958f53eeb4fa13417cf113cec6"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "bab062fe03bcebd02422d6c7239b2a48f43538a4dc9fa3535d92b0c5500f9377"
         },
         {
           "authority": "IRS Publication 15 (2017)",
           "capture": "irs_pub15_2017_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $1,800 or more in cash or an equivalent form of compensation in 2017.",
           "sha256": "40c9905c49b0da385931c14464daa5c4cc9ca998e8d02bfd303f220c1d27ff6c"
         },
         {
           "authority": "IRS Publication 15 (2018)",
           "capture": "irs_pub15_2018_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "7f7de38dac33ba6685da866ff8ee2f479bc6aeb665f264add8572885e99a28d8"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "c03ded93b530880a4a309f73b2759945559fc7a00c2d35b1547788130d97fe75"
         },
         {
           "authority": "IRS Publication 15 (2018)",
           "capture": "irs_pub15_2018_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $1,800 or more in cash or an equivalent form of compensation in 2018.",
           "sha256": "1afa0c925954355b420c45ffac8d30b19d0d21cc311e533299a847757d45b098"
         },
         {
           "authority": "IRS Publication 15 (2019)",
           "capture": "irs_pub15_2019_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "fc2844370adcd013364c17cb36480c3f58785a4a496fecfa0551fc57fc48e598"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "e1f0d6f5ac322d84e680077260776150e500c8645b4b78f3c7caeeeafbe3d70b"
         },
         {
           "authority": "IRS Publication 15 (2019)",
           "capture": "irs_pub15_2019_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $1,800 or more in cash or an equivalent form of compensation in 2019.",
           "sha256": "22db5346ad55ebadaef97f8250560f07122da90f9bab6cae488bda3052fe3674"
         },
         {
           "authority": "IRS Publication 15 (2020)",
           "capture": "irs_pub15_2020_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "a956aab992b3d06b52ad7fb15444768553616d8f68c81f5dbffa74cab3e271ec"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "7177912bb900d92a8d04c2fa7b686fb19f7b1262e46cb7fac556d74581a832b9"
         },
         {
           "authority": "IRS Publication 15 (2020)",
           "capture": "irs_pub15_2020_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $1,900 or more in cash or an equivalent form of compensation in 2020.",
           "sha256": "25d27289d03c930e0acc6d38fb011db8b56960df781deff957a7c0164ecd23b3"
         },
         {
           "authority": "IRS Publication 15 (2021)",
           "capture": "irs_pub15_2021_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 3 (original PDF page 3)",
-          "sha256": "f9532f0541e8b5e820db32422cf78512ac4fcefb586d3fa35668ce2ae95af141"
+          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 3)",
+          "sha256": "43c4b16bc2dea95ecba5deb70a0fddfe478a67f179ba73c5df3e3484e7ed90a2"
         },
         {
           "authority": "IRS Publication 15 (2021)",
           "capture": "irs_pub15_2021_extract.pdf.txt",
-          "location": "text of extract page 3 (original PDF page 3)",
+          "location": "text of extract page 2 (original PDF page 3)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $2,000 or more in cash or an equivalent form of compensation in 2021.",
           "sha256": "6e5cbbb41362764a0aed080a231531f4db49fb787a09344d454a81a6d0caaad5"
         },
         {
           "authority": "IRS Publication 15 (2022)",
           "capture": "irs_pub15_2022_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "d4bd47782e806334022de6bc730b4888204f3f4580b53233faf0e762834443cf"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "6d95ad1902e63a1a684fbd4e4eb7f419a3c3565c9157353d631d15c6f60db231"
         },
         {
           "authority": "IRS Publication 15 (2022)",
           "capture": "irs_pub15_2022_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $2,000 or more in cash or an equivalent form of compensation in 2022.",
           "sha256": "c0c185c92d80bfb73c0e738f06a528a5653f461ba04f0b4313c481e47c013647"
         },
         {
           "authority": "IRS Publication 15 (2023)",
           "capture": "irs_pub15_2023_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "37e7c6050dc84640d36064a4d9c64bcf4a6dcc87620a9e3bd90233e730856411"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "35738199ff526bd469f4a3f0959a6c83fcfa54d2a2a367e711687a8814826cdc"
         },
         {
           "authority": "IRS Publication 15 (2023)",
           "capture": "irs_pub15_2023_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $2,200 or more in cash or an equivalent form of compensation in 2023.",
           "sha256": "c784207895ad6d764cedc76827dbe8f39dfcc9d1b7e9d0a88e0338434696eedc"
         },
         {
           "authority": "IRS Publication 15 (2024)",
           "capture": "irs_pub15_2024_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "ba48561867c860023042531088ecc01e4b6cca6b3dd05dcb43d770b8f719901e"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "58e1ab7a8b0231da126e04d6f6ac91fceb0e8af947779196e39b824a6017f72a"
         },
         {
           "authority": "IRS Publication 15 (2024)",
           "capture": "irs_pub15_2024_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $2,300 or more in cash or an equivalent form of compensation in 2024.",
           "sha256": "0443885a8c71d0cf2e003f746fec4c73dac969970d77bbf52f3a1baf2665519c"
         },
         {
           "authority": "IRS Publication 15 (2025)",
           "capture": "irs_pub15_2025_extract.pdf",
-          "location": "What is New; election-workers threshold; extract page 2 (original PDF page 2)",
-          "sha256": "075a8cabaeaa953ad7e397a7367c1363ea518686cce4f0c39c4b3f583c25c68d"
+          "location": "What is New; election-workers threshold; extract page 1 (original PDF page 2)",
+          "sha256": "d35d56d54523a69044907c31c222a2c322ce0637f7099b8741b4e6b8235e8078"
         },
         {
           "authority": "IRS Publication 15 (2025)",
           "capture": "irs_pub15_2025_extract.pdf.txt",
-          "location": "text of extract page 2 (original PDF page 2)",
+          "location": "text of extract page 1 (original PDF page 2)",
           "quote": "Social security and Medicare taxes apply to election workers who are paid $2,400 or more in cash or an equivalent form of compensation in 2025.",
           "sha256": "9e0a0e350dd4db5757e8ce84c55364c15de0ce6ee913addf53bb150a317cbbee"
         },

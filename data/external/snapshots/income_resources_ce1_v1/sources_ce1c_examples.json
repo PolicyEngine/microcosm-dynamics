@@ -1,6 +1,6 @@
 [
   {
-    "bytes": 1080937,
+    "bytes": 175814,
     "file": "ce1c_irs_pub51_2023_extract.pdf",
     "provenance": {
       "extracted_from": {
@@ -11,19 +11,50 @@
         "git": "PolicyEngine/microcosm-dynamics commit 45ef91d398042eaff26c3eaf9410fde9847a770c, data/external/snapshots/income_resources_ce1_v1/ce1c_irs_pub51_2023.pdf (PR 583 history)"
       },
       "original_pdf_pages": [
-        1,
         10,
         11,
         12
       ],
-      "kept": "cover page; pages 10-11, section 3's Compensation paid to H-2A visa holders paragraph across the page break; page 12, the Gavrielle and Dan example explicitly concerning 2022, and the H-2A exception note",
-      "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023.pdf 1,10,11,12 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2)",
+      "kept": "pages 10-11, section 3's Compensation paid to H-2A visa holders paragraph across the page break; page 12, the Gavrielle and Dan example explicitly concerning 2022, and the H-2A exception note",
+      "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023.pdf 10,11,12 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2)",
       "note": "Original captured by plain request.",
       "signature_status": "original_unsigned",
-      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge.",
+      "chain": [
+        {
+          "input": "ce1c_irs_pub51_2023.pdf",
+          "input_sha256": "d30a6c09d22673a5a1987ea49278d654858c7ebe2721672b8b9a6713c4d89a65",
+          "original_pdf_pages": [
+            1,
+            10,
+            11,
+            12
+          ],
+          "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023.pdf 1,10,11,12 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2)",
+          "output_bytes": 1080937,
+          "output_sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38"
+        },
+        {
+          "input": "ce1c_irs_pub51_2023_extract.pdf as committed at fc1d7e04fb243b2ba46a0e588cf40a8c2fda1f70",
+          "input_sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
+          "input_pages": [
+            2,
+            3,
+            4
+          ],
+          "method": "qpdf --deterministic-id --empty --pages ce1c_irs_pub51_2023_extract.pdf 2,3,4 -- ce1c_irs_pub51_2023_extract.pdf (qpdf version 12.4.2), run on a copy of the input",
+          "output_bytes": 175814,
+          "output_sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47"
+        }
+      ],
+      "cover_dropped": {
+        "reason": "Review r3 note 1: the shared IRS cover JPEG repeats across editions; a kept page's own text states the edition.",
+        "edition_statement": "Publication 51 (2023)",
+        "text_derivative": "ce1c_irs_pub51_2023_extract.pdf.txt"
+      }
     },
     "retrieved_at": "2026-10-25T02:39:46Z",
-    "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
+    "sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47",
     "url": "https://www.irs.gov/pub/irs-prior/p51--2023.pdf"
   },
   {
@@ -31,12 +62,12 @@
     "file": "ce1c_irs_pub51_2023_extract.pdf.txt",
     "provenance": {
       "derived_from": "ce1c_irs_pub51_2023_extract.pdf",
-      "source_sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
-      "method": "pdftotext -f 2 -l 4 -raw",
+      "source_sha256": "11287deef144e898a4775403ce4a09d990215cda19c112688a55e3aac9f74f47",
+      "method": "pdftotext -f 1 -l 3 -raw",
       "pdf_pages": [
+        1,
         2,
-        3,
-        4
+        3
       ],
       "original_pdf_pages": [
         10,

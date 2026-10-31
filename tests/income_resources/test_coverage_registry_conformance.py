@@ -13,10 +13,13 @@ Capture-folder invariants:
   ``removed_duplicate_of_cited_capture`` naming a present duplicate. All
   rows for one file agree.
 * A page extract records its original's file, size, SHA-256 and page
-  count, and its kept pages (the cover first) as its qpdf command lists
-  them. Its ``signature_status`` matches whether the extract carries the
-  original's ``/ByteRange``. A text derivative of an extract records its
-  pages in both numberings.
+  count, and its kept pages as its qpdf command lists them. It keeps the
+  cover first unless a ``cover_dropped`` record names the text derivative
+  of a kept page that states the edition; a recorded ``chain`` of qpdf
+  steps leads from the original to the extract's bytes. Its
+  ``signature_status`` matches whether the extract carries the original's
+  ``/ByteRange``. A text derivative of an extract records its pages in
+  both numberings.
 * Every recorded ``pdftotext`` call parses under pdftotext 26.09.0, and a
   derivative's ``-f``/``-l`` range is its recorded ``pdf_pages``.
 * A row that cites a scanned page also quotes that page's OCR text.
@@ -214,10 +217,14 @@ def test_page_extracts_record_their_originals():
         assert re.fullmatch(r"[0-9a-f]{64}", original["sha256"])
         pages = row["provenance"]["original_pdf_pages"]
         assert pages == sorted(set(pages))
-        assert pages[0] == 1 and pages[-1] <= original["pages"]
+        assert pages[-1] <= original["pages"]
+        # Review r3 note 1: an extract keeps its cover unless a kept page
+        # states the edition (test_dropped_covers_name_their_edition).
+        assert (pages[0] == 1) == ("cover_dropped" not in row["provenance"])
         method = QPDF_PAGES.match(row["provenance"]["method"])
         assert (method[1], method[3]) == (original["file"], row["file"])
         assert [int(page) for page in method[2].split(",")] == pages
+        assert chain_problems(row) == []
     derived = [
         row
         for row in inventory
@@ -240,6 +247,202 @@ def test_page_extracts_record_their_originals():
         assert row["provenance"]["original_pdf_pages"] == [
             kept[page - 1] for page in row["provenance"]["pdf_pages"]
         ]
+
+
+def chain_problems(row):
+    """Breaks in a recorded chain of qpdf steps from the original.
+
+    The first step takes original pages from the recorded original; each
+    later step takes pages of the step before it by their page numbers
+    there, from those bytes; the last step's output is the row's bytes.
+    """
+    provenance = row["provenance"]
+    chain = provenance.get("chain")
+    if chain is None:
+        return []
+    original = provenance["extracted_from"]
+    problems = []
+    first = chain[0]
+    if (first["input"], first["input_sha256"]) != (
+        original["file"],
+        original["sha256"],
+    ):
+        problems.append("first step input")
+    pages = first["original_pdf_pages"]
+    for before, step in zip(chain, chain[1:], strict=False):
+        if step["input_sha256"] != before["output_sha256"]:
+            problems.append("step input")
+        if not all(1 <= page <= len(pages) for page in step["input_pages"]):
+            problems.append("step pages")
+            break
+        pages = [pages[page - 1] for page in step["input_pages"]]
+    if pages != provenance["original_pdf_pages"]:
+        problems.append("pages")
+    if (chain[-1]["output_bytes"], chain[-1]["output_sha256"]) != (
+        row["bytes"],
+        row["sha256"],
+    ):
+        problems.append("output")
+    return problems
+
+
+@settings(deadline=None)
+@given(
+    st.lists(st.integers(2, 30), min_size=1, max_size=4, unique=True),
+    st.sampled_from(
+        ["none", "first_input", "link", "pages", "output", "out_of_range"]
+    ),
+)
+def test_chain_checker_flags_broken_links(later_pages, broken):
+    """The note 1 chain checker is the test's oracle: a cover-and-pages
+    extract, then the same pages without the cover."""
+    kept = [1, *sorted(later_pages)]
+    second_pages = list(range(2, len(kept) + 1))
+    row = {
+        "bytes": 2,
+        "sha256": "2" * 64,
+        "provenance": {
+            "extracted_from": {"file": "INVENTED.pdf", "sha256": "0" * 64},
+            "original_pdf_pages": kept[1:],
+            "chain": [
+                {
+                    "input": "INVENTED.pdf",
+                    "input_sha256": "0" * 64,
+                    "original_pdf_pages": kept,
+                    "output_bytes": 1,
+                    "output_sha256": "1" * 64,
+                },
+                {
+                    "input_sha256": "1" * 64,
+                    "input_pages": second_pages,
+                    "output_bytes": 2,
+                    "output_sha256": "2" * 64,
+                },
+            ],
+        },
+    }
+    chain = row["provenance"]["chain"]
+    if broken == "first_input":
+        chain[0]["input_sha256"] = "9" * 64
+    elif broken == "link":
+        chain[1]["input_sha256"] = "9" * 64
+    elif broken == "pages":
+        chain[1]["input_pages"] = [1, *second_pages]
+    elif broken == "output":
+        chain[1]["output_sha256"] = "9" * 64
+    elif broken == "out_of_range":
+        chain[1]["input_pages"] = [len(kept) + 1]
+    assert bool(chain_problems(row)) == (broken != "none")
+
+
+EDITION_FILE = re.compile(r"(?:^|_)irs_pub(\d+)_(\d{4})_extract\.pdf$")
+
+
+def dropped_cover_problems(row, derivatives):
+    """A dropped cover whose edition statement names another edition, or is
+    not in the pinned text of a kept page of the extract.
+
+    ``derivatives`` maps a text derivative's file name to its provenance
+    and its whitespace-normalized text.
+    """
+    record = row["provenance"].get("cover_dropped")
+    if record is None:
+        return []
+    problems = []
+    edition = EDITION_FILE.search(row["file"])
+    statement = record["edition_statement"]
+    if not (
+        edition
+        and re.fullmatch(
+            rf"Publication {edition[1]} \((?:[A-Z][a-z]+ )?{edition[2]}\)",
+            statement,
+        )
+    ):
+        problems.append("edition")
+    derivative = derivatives.get(record["text_derivative"])
+    if derivative is None or (
+        derivative["provenance"].get("derived_from") != row["file"]
+    ):
+        problems.append("derivative")
+    elif statement not in derivative["text"]:
+        problems.append("statement")
+    return problems
+
+
+def test_dropped_covers_name_their_edition():
+    """Review r3 note 1: 28 IRS extracts carried one 873,242-byte cover
+    JPEG. Each now drops it, and a kept page's own text, in its pinned
+    derivative, states the edition; the rest keep their first page."""
+    inventory = read_inventory()
+    rows = {row["file"]: row for row in inventory if "file" in row}
+    dropped = {
+        name: row
+        for name, row in rows.items()
+        if "cover_dropped" in structured_provenance(row)
+    }
+    derivatives = {
+        name: {
+            "provenance": row["provenance"],
+            "text": " ".join((CAPTURE_DIRECTORY / name).read_text().split()),
+        }
+        for name, row in rows.items()
+        if structured_provenance(row).get("derived_from") in dropped
+    }
+    problems = {
+        name: found
+        for name, row in dropped.items()
+        if (found := dropped_cover_problems(row, derivatives))
+    }
+    assert problems == {}
+    assert set(dropped) == (
+        {f"irs_pub926_{year}_extract.pdf" for year in range(2008, 2026)}
+        | {f"irs_pub15_{year}_extract.pdf" for year in range(2017, 2026)}
+        | {"ce1c_irs_pub51_2023_extract.pdf"}
+    )
+    for name, row in dropped.items():
+        assert 1 not in row["provenance"]["original_pdf_pages"]
+        assert len(row["provenance"]["chain"]) == 2
+        assert row["bytes"] < 200_000, name
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["926", "15", "51"]),
+    st.integers(2008, 2025),
+    st.integers(-1, 1),
+    st.sampled_from(["", "March "]),
+    st.sampled_from(["kept", "absent", "other_extract", "no_derivative"]),
+)
+def test_dropped_cover_checker_flags_unstated_editions(
+    publication, year, year_shift, month, text
+):
+    """The note 1 checker is the test's oracle."""
+    name = f"irs_pub{publication}_{year}_extract.pdf"
+    statement = f"Publication {publication} ({month}{year + year_shift})"
+    row = {
+        "file": name,
+        "provenance": {
+            "cover_dropped": {
+                "edition_statement": statement,
+                "text_derivative": name + ".txt",
+            }
+        },
+    }
+    texts = {
+        "kept": f"INVENTED Page 3 {statement} INVENTED",
+        "absent": "INVENTED Page 3 INVENTED",
+    }
+    derivatives = {}
+    if text != "no_derivative":
+        source = "INVENTED_other.pdf" if text == "other_extract" else name
+        derivatives[name + ".txt"] = {
+            "provenance": {"derived_from": source},
+            "text": texts.get(text, texts["kept"]),
+        }
+    expected = year_shift != 0 or text != "kept"
+    assert bool(dropped_cover_problems(row, derivatives)) == expected
+    del row["provenance"]["cover_dropped"]
+    assert dropped_cover_problems(row, derivatives) == []
 
 
 # pdftotext 26.09.0's options, from `pdftotext -h`. Each value is its own
