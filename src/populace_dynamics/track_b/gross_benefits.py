@@ -6,6 +6,10 @@ configurations below, and nothing else: no population claim, no payment
 timing, no annual earnings or charge determination (R2), and no ARF or
 recomputation (R3). The deduction entry points apply caller-declared monthly
 deductions before redistributing the maximum (203(a)(4)).
+No-care spouse deductions require an unreduced benefit and an explicit
+under-full-retirement-age attestation (203(c)(2); 20 CFR 404.421(a)).
+Own-work events must withhold a positive amount; a zero deduction is an
+input error and never changes the family-maximum computation.
 Max's ruling d515 (2026-09-28) adopted §10 question 9's default: a Python
 reference now, with Axiom differential checks as diagnostics once a pinned
 rule exists. At this module's creation rulespec-us had no 42 U.S.C. 403
@@ -229,8 +233,10 @@ RS 00630.400): a qualifying prior month needs a binding maximum, two or
 more entitled persons and an age reduction; the next month's PIA increase
 must itself lower family payment. SavingsClauseGuard computes the protected
 life-case rates, without changing formula FMAX, and carries the protection
-under RS 00615.801B.2. Active-protection membership changes and payment
-procedures not settled by the capture refuse by name. The explicit
+under RS 00615.801B.2. Membership changes at the first qualifying fall or
+during carried protection, and payment procedures not settled by the
+capture, refuse by name. Prior and current subject own-benefit or deduction
+facts are checked before establishing or extending protection. The explicit
 SavingsClauseReading.LITERAL_REFUSAL switch retains the earlier broad
 cross-month refusal reading. Both readings preserve unknown-history refusals.
 
@@ -456,6 +462,8 @@ class UnsupportedReason(Enum):
     PENALTY_DEDUCTION = "penalty_deduction"
     MARITIME_DEDUCTION = "maritime_deduction"
     ELECTION_CERTIFICATE_SUSPENSION = "election_certificate_suspension"
+    #: Deferred coverage: no NH-reservation/age-reduction allocation
+    #: procedure has been derived; no competing authoritative algorithms.
     DEDUCTION_AGE_WORK_INTERACTION = "deduction_age_work_interaction"
 
 
@@ -2257,15 +2265,30 @@ class BenefitDeduction:
     own-work deductions have ``permanent=False``; all other supported events
     are permanent. Dual entitlement is already declared by ``OwnBenefit``;
     an explicit marker must agree with the ordinary G payable.
+    ``under_full_retirement_age`` must be True for a spouse no-care
+    deduction (203(c)(2); 20 CFR 404.421(a)); None does not establish age.
+    Own-work payables must be strictly below the ordinary rate after NH
+    reservations. R2 emits only strictly positive own-work deductions.
     """
 
     reason: DeductionReason
     payable: Fraction = Fraction(0)
     permanent: bool = True
+    under_full_retirement_age: bool | None = None
 
     def __post_init__(self):
         _input_type(self.reason, DeductionReason, "deduction reason")
         _input_type(self.permanent, bool, "permanent")
+        if self.under_full_retirement_age is not None:
+            _input_type(
+                self.under_full_retirement_age,
+                bool,
+                "under_full_retirement_age",
+            )
+            if self.reason is not DeductionReason.NO_CHILD_IN_CARE:
+                raise InvalidFamilyInput(
+                    "Under-FRA attestation describes a no-child-in-care deduction"
+                )
         object.__setattr__(self, "payable", _exact(self.payable, "payable"))
         if self.payable < 0:
             raise InvalidFamilyInput("payable must be nonnegative")
@@ -3780,7 +3803,12 @@ _DEDUCTION_REFUSALS = {
 
 
 def _check_deduction_inputs(
-    beneficiaries, deductions, households, worker_deductions
+    beneficiaries,
+    deductions,
+    households,
+    worker_deductions,
+    payment_month,
+    params,
 ):
     members = {b.beneficiary_id: b for b in beneficiaries}
     for label, mapping in (
@@ -3818,6 +3846,31 @@ def _check_deduction_inputs(
                 raise InvalidFamilyInput(
                     "No-child-in-care deduction needs a spouse or mother/father"
                 )
+            if member.role in _SPOUSE_ROLES:
+                if member.reduction_months:
+                    raise InvalidFamilyInput(
+                        "No-child-in-care deduction excludes age-reduced spouses"
+                    )
+                if event.under_full_retirement_age is not True:
+                    raise InvalidFamilyInput(
+                        "No-child-in-care spouse deduction requires under-FRA status"
+                    )
+                if member.birth_year is not None:
+                    # SSA cohorts run Jan 2 through Jan 1 of the next
+                    # year; the latest possible Jan 1 birth attains FRA
+                    # in the preceding month (RS 00615.003/.010).
+                    latest_fra = (
+                        (member.birth_year + 1) * 12
+                        + _fra_months(member.birth_year, params)
+                        - 1
+                    )
+                    if (
+                        payment_month.year * 12 + payment_month.month - 1
+                        >= latest_fra
+                    ):
+                        raise InvalidFamilyInput(
+                            "Under-FRA attestation contradicts the birth cohort"
+                        )
             if isinstance(member.child_in_care, str):
                 raise InvalidFamilyInput(
                     "No-child-in-care deduction conflicts with current care"
@@ -3872,6 +3925,9 @@ def family_benefits_after_deductions(
     whenever an own-work event is estimated. Empty deductions returns G's
     ordinary result. ``worker_deductions`` reserves NH work deductions;
     these never release room (GN 02603.040B; RS 02501.155B.3.c).
+    Concurrent NH reservations and auxiliary age reductions have deferred
+    allocation coverage and refuse as ``deduction_age_work_interaction``;
+    no procedure has been derived for that combination.
     R2 owns earnings, charge order, grace years and permanent determinations.
     """
     if standalone is not True:
@@ -3883,7 +3939,12 @@ def family_benefits_after_deductions(
     )
     worker_deductions = {} if worker_deductions is None else worker_deductions
     _check_deduction_inputs(
-        beneficiaries, deductions, households, worker_deductions
+        beneficiaries,
+        deductions,
+        households,
+        worker_deductions,
+        payment_month,
+        params,
     )
     _check_deduction_amount_bounds(
         state, beneficiaries, deductions, worker_deductions
@@ -3926,6 +3987,13 @@ def _after_deductions(
                 "Deductee payable exceeds the pre-deduction rate"
             )
         if (
+            event.reason is DeductionReason.OWN_EARNINGS_TEST
+            and event.payable == gross
+        ):
+            raise InvalidFamilyInput(
+                "Own-earnings-test event must withhold a positive amount"
+            )
+        if (
             event.reason is DeductionReason.DUAL_ENTITLEMENT
             and event.payable != gross
         ):
@@ -3954,7 +4022,7 @@ def _after_deductions(
         raise _computed(
             FamilyConfigurationUnsupported,
             UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
-            "Concurrent NH reservations and age reductions need a pinned allocation reading",
+            "Concurrent NH reservations and age reductions have deferred allocation coverage",
         )
     subject = [
         row for row in baseline.beneficiaries if row.subject_to_family_maximum
@@ -4455,7 +4523,12 @@ def household_benefits_after_deductions(
         b for record in records.values() for b in record.beneficiaries
     )
     _check_deduction_inputs(
-        all_members, deductions, households, worker_deductions
+        all_members,
+        deductions,
+        households,
+        worker_deductions,
+        payment_month,
+        params,
     )
     for record in records.values():
         _check_family_inputs(
@@ -4464,24 +4537,40 @@ def household_benefits_after_deductions(
         _check_deduction_amount_bounds(
             record.state, record.beneficiaries, deductions, worker_deductions
         )
-    _refuse_household(held)
     results = {}
+    family_refusals = []
     for rid in sorted(records):
         record = records[rid]
         ids = {b.beneficiary_id for b in record.beneficiaries}
-        results[rid] = _after_deductions(
-            record.state,
-            record.beneficiaries,
-            payment_month,
-            params,
-            {bid: value for bid, value in deductions.items() if bid in ids},
-            {bid: value for bid, value in households.items() if bid in ids},
-            {
-                bid: value
-                for bid, value in worker_deductions.items()
-                if bid in ids
-            },
-        )
+        try:
+            results[rid] = _after_deductions(
+                record.state,
+                record.beneficiaries,
+                payment_month,
+                params,
+                {
+                    bid: value
+                    for bid, value in deductions.items()
+                    if bid in ids
+                },
+                {
+                    bid: value
+                    for bid, value in households.items()
+                    if bid in ids
+                },
+                {
+                    bid: value
+                    for bid, value in worker_deductions.items()
+                    if bid in ids
+                },
+            )
+        except FamilyConfigurationUnsupported as error:
+            family_refusals.append(error)
+    # Amount-dependent errors on every computable record precede either
+    # household coverage or a different record's held coverage refusal.
+    _refuse_household(held)
+    if family_refusals:
+        raise family_refusals[0]
     return _computed(
         HouseholdBenefits, payment_month, MappingProxyType(results)
     )
@@ -4686,6 +4775,14 @@ def _savings_has_deductions(result: FamilyBenefits) -> bool:
     )
 
 
+def _savings_has_own_benefits(result: FamilyBenefits) -> bool:
+    """Subject own benefits need an uncaptured dual-entitlement procedure."""
+    return any(
+        row.subject_to_family_maximum and row.own_benefit is not None
+        for row in result.beneficiaries
+    )
+
+
 def _savings_payment(
     result: FamilyBenefits, protected: Fraction
 ) -> FamilyBenefits:
@@ -4780,15 +4877,18 @@ class SavingsClauseGuard:
     ``reading`` is an exact canonical SavingsClauseReading enum; its default
     SSA_OPERATIONAL follows d1338 and POMS RS 00630.400. Protection starts
     only after an age-reduced, maximum-reduced month with at least two
-    entitled persons, followed by a PIA increase that lowers payment with
-    unchanged membership. The two captured life-case procedures compute
-    protected auxiliary payments. Formula FMAX and its counted shares stay
-    unchanged. RS 00615.801B.2 carries the protected total, including a
-    period when the formula payment overtakes it and it later becomes
-    payable again. Membership changes during that carried protection refuse
-    with SAVINGS_CLAUSE_MEMBERSHIP_CHANGE. Survivor, dual-entitlement,
-    deduction and unspecified reduced-auxiliary procedures refuse with
-    SAVINGS_CLAUSE_RATE_PROCEDURE when protection would change money.
+    entitled persons, followed by a PIA increase that lowers payment. The
+    two captured life-case procedures compute protected auxiliary payments.
+    Formula FMAX and its counted shares stay unchanged. RS 00615.801B.2
+    carries the protected total, including a period when the formula payment
+    overtakes it and it later becomes payable again. Membership changes at
+    that first qualifying fall or during carried protection refuse with
+    SAVINGS_CLAUSE_MEMBERSHIP_CHANGE.
+    Subject own benefits or deductions in either the prior or current
+    month refuse with SAVINGS_CLAUSE_RATE_PROCEDURE before establishing or
+    extending protection, retaining uncertain history. Survivor and
+    unspecified reduced-auxiliary procedures also refuse when protection
+    would change money.
 
     LITERAL_REFUSAL retains G v2: every qualifying month followed by a PIA
     increase protects its total, without an age condition or immediate fall.
@@ -4904,7 +5004,7 @@ class SavingsClauseGuard:
     @property
     @_validated_entry
     def refused_since(self) -> YearMonth | None:
-        """The first month whose total fell below the protected total."""
+        """The first refused fall or membership change in this history."""
         return (
             None
             if self._refused_since is None
@@ -5029,8 +5129,9 @@ class SavingsClauseGuard:
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE,
-                "membership changed while 203(a)(5) protection was active; "
-                "RS 00630.400 does not establish the successor protection",
+                "membership changed at a qualifying fall or while "
+                "203(a)(5) protection was active; RS 00630.400 does not "
+                "establish the successor protection",
             )
         if self._unknown_since is not None and _governed(result):
             raise _computed(
@@ -5041,19 +5142,23 @@ class SavingsClauseGuard:
             )
         if self._floor is not None and (
             _savings_has_deductions(result)
+            or _savings_has_own_benefits(result)
             or (
                 prior is not None
                 and prior.result is not None
-                and _savings_has_deductions(prior.result)
+                and (
+                    _savings_has_deductions(prior.result)
+                    or _savings_has_own_benefits(prior.result)
+                )
             )
         ):
             self._unknown_since = self._unknown_since or result.payment_month
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE,
-                "deductions in the current or prior month interact with "
-                "carried protection; pre-offset age rates do not establish "
-                "the protected payment under RS 00630.400",
+                "own benefits or deductions in the current or prior month "
+                "interact with carried protection; pre-offset age rates "
+                "do not establish the protected payment under RS 00630.400",
             )
         if (
             prior is not None
@@ -5061,14 +5166,29 @@ class SavingsClauseGuard:
             and _qualifies(prior.result)
             and _operational_age_reduced(prior.result)
             and result.pia > prior.pia
-            and membership == _savings_membership(prior.result)
             and total < _savings_clause_total_validated(prior.result)
         ):
+            if membership != _savings_membership(prior.result):
+                self._unknown_since = (
+                    self._unknown_since or result.payment_month
+                )
+                self._refused_since = (
+                    self._refused_since or result.payment_month
+                )
+                raise _computed(
+                    FamilyConfigurationUnsupported,
+                    UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE,
+                    "membership changed with a qualifying PIA increase "
+                    "and lower payment; RS 00630.400 does not establish "
+                    "the successor protection",
+                )
             if (
                 _savings_age_basis(result) != _savings_age_basis(prior.result)
                 or result.family_maximum < prior.result.family_maximum
                 or _savings_has_deductions(result)
                 or _savings_has_deductions(prior.result)
+                or _savings_has_own_benefits(result)
+                or _savings_has_own_benefits(prior.result)
             ):
                 self._unknown_since = (
                     self._unknown_since or result.payment_month
@@ -5077,9 +5197,10 @@ class SavingsClauseGuard:
                     FamilyConfigurationUnsupported,
                     UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE,
                     "age factors changed, the formula maximum fell, or "
-                    "either month has deductions, with a PIA increase and "
-                    "lower pre-offset total; the snapshots do not isolate "
-                    "the PIA's effect or establish the protected payment",
+                    "either month has own benefits or deductions, with a "
+                    "PIA increase and lower pre-offset total; the snapshots "
+                    "do not isolate the PIA's effect or establish the "
+                    "protected payment",
                 )
             protected = _savings_clause_total_validated(prior.result)
             if self._floor is None or protected > self._floor:

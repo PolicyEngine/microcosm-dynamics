@@ -178,7 +178,9 @@ def test_rs_02501_130_no_child_in_care():
         g.Beneficiary("C1", g.Role.CHILD),
         g.Beneficiary("C2", g.Role.CHILD),
     )
-    event = g.BenefitDeduction(g.DeductionReason.NO_CHILD_IN_CARE)
+    event = g.BenefitDeduction(
+        g.DeductionReason.NO_CHILD_IN_CARE, under_full_retirement_age=True
+    )
     result = compute(state, members, {"B": event})
     assert amounts(result) == {"B": F(0), "C1": F("83.50"), "C2": F("83.50")}
     assert result.beneficiaries[0].original_benefit == F("121.10")
@@ -226,6 +228,10 @@ def test_formula_bounds_monotonicity_households_order_and_determinism(
         b.beneficiary_id: ("elsewhere" if b.beneficiary_id == "C1" else "home")
         for b in members
     }
+    if payable == before["E"].auxiliary_payable:
+        with pytest.raises(g.InvalidFamilyInput):
+            compute(state, members, {"E": event}, households)
+        return
     result = compute(state, members, {"E": event}, households)
     again = compute(
         state,
@@ -445,12 +451,16 @@ def test_all_dual_beneficiaries_do_not_gain_from_another_deduction():
         )
         for i in range(3)
     )
-    result = compute(
-        state,
-        members,
-        {"C0": g.BenefitDeduction(g.DeductionReason.OWN_EARNINGS_TEST)},
-    )
+    result = compute(state, members)
     assert amounts(result) == dict.fromkeys(("C0", "C1", "C2"), F(0))
+    # R2 never emits an own-work event for zero actual withholding.
+    # A zero-rate dual beneficiary cannot have a further earnings deduction.
+    with pytest.raises(g.InvalidFamilyInput):
+        compute(
+            state,
+            members,
+            {"C0": g.BenefitDeduction(g.DeductionReason.OWN_EARNINGS_TEST)},
+        )
 
 
 @given(scale=st.integers(1, 20))

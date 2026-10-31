@@ -2,12 +2,12 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 13,
+  "confirmed_mutation_count": 24,
   "counts_by_layer": {
     "shared_provenance": 1,
-    "g_deductions": 5,
-    "r2": 3,
-    "g_savings": 4
+    "g_deductions": 8,
+    "r2": 7,
+    "g_savings": 8
   },
   "environment_contract": {
     "OMP_NUM_THREADS": "1",
@@ -579,6 +579,570 @@
         "verification": "run_mutations.py restores original text after every run and asserts final equality. All four original fragments are currently present in isolated and production modules."
       },
       "runner_reference": "scratch/savings_mutations/run_mutations.py"
+    },
+    {
+      "id": "round2_no_care_discard_age_exclusion",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                if member.reduction_months:\n",
+        "after": "                if False:\n"
+      },
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/deduction-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-deductions"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import gross_benefits as g; assert \"deduction-mutation-tree/src\" in g.__file__, g.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py",
+        "-k",
+        "test_under_fra_attestation_cannot_admit_an_age_reduced_spouse",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_under_fra_attestation_cannot_admit_an_age_reduced_spouse[False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_under_fra_attestation_cannot_admit_an_age_reduced_spouse[True]"
+      ],
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "83a73585b57ae29a036e7c013f64662dea019aa60605a0a1cd9f917d20273dd0",
+        "restored_test_summary": "2 passed, 22 deselected in 36.89s",
+        "restored_log": "scratch/review/round2_no_care_discard_age_exclusion-restored.log",
+        "restored_log_sha256": "ff762baf0580e3ce57472a9d12d3c212d9752d0655465eb3ce3c30735a76447e"
+      },
+      "log": {
+        "path": "scratch/review/round2_no_care_discard_age_exclusion-mutated.log",
+        "sha256": "0c4c1b4e90f441d62e21453dbe495182459cef0f78a2133287f24c88fccd4ebf",
+        "failure_summary": "2 failed, 22 deselected in 39.92s"
+      }
+    },
+    {
+      "id": "round2_no_care_discard_under_fra_requirement",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                if event.under_full_retirement_age is not True:\n",
+        "after": "                if False:\n"
+      },
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/deduction-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-deductions"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import gross_benefits as g; assert \"deduction-mutation-tree/src\" in g.__file__, g.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py",
+        "-k",
+        "test_no_care_spouse_requires_unreduced_under_fra_attestation",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_no_care_spouse_requires_unreduced_under_fra_attestation[None-False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_no_care_spouse_requires_unreduced_under_fra_attestation[None-True]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_no_care_spouse_requires_unreduced_under_fra_attestation[False-False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_no_care_spouse_requires_unreduced_under_fra_attestation[False-True]"
+      ],
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "83a73585b57ae29a036e7c013f64662dea019aa60605a0a1cd9f917d20273dd0",
+        "restored_test_summary": "6 passed, 18 deselected in 39.65s",
+        "restored_log": "scratch/review/round2_no_care_discard_under_fra_requirement-restored.log",
+        "restored_log_sha256": "8b635cf4d038f8abfb943060dae521d03dbf05e4060f95c61aed147d5a6f4838"
+      },
+      "log": {
+        "path": "scratch/review/round2_no_care_discard_under_fra_requirement-mutated.log",
+        "sha256": "defd78c73d3771a3d58eaea369e05c80ba764e0545cb251d22f272d149c14eff",
+        "failure_summary": "4 failed, 2 passed, 18 deselected in 31.05s"
+      }
+    },
+    {
+      "id": "round2_admit_zero_earnings_event",
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            and event.payable == gross\n",
+        "after": "            and event.payable > gross\n"
+      },
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/deduction-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-deductions"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import gross_benefits as g; assert \"deduction-mutation-tree/src\" in g.__file__, g.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py",
+        "-k",
+        "test_reviewed_zero_deduction_cases_are_input_errors",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[small-False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[small-True]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[large-False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[large-True]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[survivor-False]",
+        "tests/test_track_b_gross_benefits_deductions_fix_round_2.py::test_reviewed_zero_deduction_cases_are_input_errors[survivor-True]"
+      ],
+      "restoration": {
+        "reverted": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "83a73585b57ae29a036e7c013f64662dea019aa60605a0a1cd9f917d20273dd0",
+        "restored_test_summary": "6 passed, 18 deselected in 67.60s (0:01:07)",
+        "restored_log": "scratch/review/round2_admit_zero_earnings_event-restored.log",
+        "restored_log_sha256": "b9e70fbf6cd777507c544b0a778e5eb1d3b8d5a1f2e7d96cf7c3420f6f12741c"
+      },
+      "log": {
+        "path": "scratch/review/round2_admit_zero_earnings_event-mutated.log",
+        "sha256": "49271283243cf25456e27795171a47a1c72166a7472f1dfdb3e268e82bbd96f2",
+        "failure_summary": "6 failed, 18 deselected in 45.39s"
+      }
+    },
+    {
+      "id": "round2_r2_contextual_two_record_detection_removed",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if (b.two_record_entitlement or key in contextual_two_records) and (",
+        "after": "if b.two_record_entitlement and ("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import ret_ledger as r; assert r.__file__.startswith('/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree'),r.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_fix_round_2.py",
+        "-k",
+        "contextual_own_rib_requires_two_record_refusal and None"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-r2",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_contextual_own_rib_requires_two_record_refusal[None-False-10-1]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_contextual_own_rib_requires_two_record_refusal[None-False-1000-100]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_contextual_own_rib_requires_two_record_refusal[None-True-10-1]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_contextual_own_rib_requires_two_record_refusal[None-True-1000-100]"
+      ],
+      "log": {
+        "failure_summary": "4 failed, 16 deselected in 50.80s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "restored_test_summary": "4 passed, 16 deselected in 45.32s",
+        "isolated_source_sha256": "0e3f19edfbe36571718fac2559972132db3ac8efbd282262ffbfc28dc366c64d"
+      },
+      "metadata_reference": "scratch/review/r2-mutations.json"
+    },
+    {
+      "id": "round2_r2_contextual_two_record_consistency_removed",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "key in contextual_people\n",
+        "after": "False\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import ret_ledger as r; assert r.__file__.startswith('/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree'),r.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_fix_round_2.py",
+        "-k",
+        "declared_two_record_contradiction_is_input_error"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-r2",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_declared_two_record_contradiction_is_input_error[False-True-False]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_declared_two_record_contradiction_is_input_error[False-False-True]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_declared_two_record_contradiction_is_input_error[True-True-False]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_declared_two_record_contradiction_is_input_error[True-False-True]"
+      ],
+      "log": {
+        "failure_summary": "4 failed, 16 deselected in 29.01s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "restored_test_summary": "4 passed, 16 deselected in 38.60s",
+        "isolated_source_sha256": "0e3f19edfbe36571718fac2559972132db3ac8efbd282262ffbfc28dc366c64d"
+      },
+      "metadata_reference": "scratch/review/r2-mutations.json"
+    },
+    {
+      "id": "round2_r2_missing_parameter_hidden_by_held_g_refusal",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if record.year >= 2000:\n",
+        "after": "if record.year >= 2000 and not held_family_refusals:\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import ret_ledger as r; assert r.__file__.startswith('/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree'),r.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_fix_round_2.py",
+        "-k",
+        "missing_r1_parameter_precedes_held_g_refusal"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-r2",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_missing_r1_parameter_precedes_held_g_refusal[False]",
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_missing_r1_parameter_precedes_held_g_refusal[True]"
+      ],
+      "log": {
+        "failure_summary": "2 failed, 18 deselected in 36.59s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "restored_test_summary": "2 passed, 18 deselected in 30.77s",
+        "isolated_source_sha256": "0e3f19edfbe36571718fac2559972132db3ac8efbd282262ffbfc28dc366c64d"
+      },
+      "metadata_reference": "scratch/review/r2-mutations.json"
+    },
+    {
+      "id": "round2_r2_zero_excess_emits_a_g_deduction_event",
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if k != record.nh_id and own_deductions[k, m] > 0\n",
+        "after": "if k != record.nh_id and own_deductions[k, m] >= 0\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "import sys; from populace_dynamics.track_b import ret_ledger as r; assert r.__file__.startswith('/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree'),r.__file__; import pytest; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_ret_ledger_fix_round_2.py",
+        "-k",
+        "r2_emits_only_positive_actual_deduction_events"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-r2",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/r2-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_ret_ledger_fix_round_2.py::test_r2_emits_only_positive_actual_deduction_events"
+      ],
+      "log": {
+        "failure_summary": "1 failed, 19 deselected in 13.46s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "restored_test_summary": "1 passed, 19 deselected in 31.97s",
+        "isolated_source_sha256": "0e3f19edfbe36571718fac2559972132db3ac8efbd282262ffbfc28dc366c64d"
+      },
+      "metadata_reference": "scratch/review/r2-mutations.json"
+    },
+    {
+      "id": "round2_savings_skip_first_membership_trigger",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            and result.pia > prior.pia\n",
+        "after": "            and result.pia > prior.pia and membership == _savings_membership(prior.result)\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "from populace_dynamics.track_b import gross_benefits as g; assert 'savings-mutation-tree/src' in g.__file__, g.__file__; import pytest,sys; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py",
+        "-k",
+        "first_trigger_membership_change"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/savings-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-savings-mutation"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_first_trigger_membership_change_refuses_and_retains_denominator[pia0-new_pia0-maximum0-names0-ordinary_total0]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_first_trigger_membership_change_refuses_and_retains_denominator[pia1-new_pia1-maximum1-names1-ordinary_total1]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_first_trigger_membership_change_refuses_and_retains_denominator[pia2-new_pia2-maximum2-names2-ordinary_total2]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_first_trigger_membership_change_refuses_and_retains_denominator[pia3-new_pia3-maximum3-names3-ordinary_total3]"
+      ],
+      "log": {
+        "path": "scratch/review/round2_savings_skip_first_membership_trigger.log",
+        "sha256": "d381b9f01739b7c37580e37d5f95a0fb49bafa1c8427fae4fff562e5e5b23f4f",
+        "failure_summary": "4 failed, 14 deselected in 32.75s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "c5885aa63592f76e50867daa454bb9aee3f16a30abacbf3f3c487a27443aad6d",
+        "restored_log": "scratch/review/round2_savings_skip_first_membership_trigger-restored.log",
+        "restored_log_sha256": "3a701ed247406c521ef142c3e2c435dde7715e8db30275e1556f20cfb5c329f7",
+        "restored_test_summary": "4 passed, 14 deselected in 9.74s"
+      }
+    },
+    {
+      "id": "round2_savings_ignore_prior_own_benefit",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                or _savings_has_own_benefits(prior.result)\n",
+        "after": "                or False\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "from populace_dynamics.track_b import gross_benefits as g; assert 'savings-mutation-tree/src' in g.__file__, g.__file__; import pytest,sys; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py",
+        "-k",
+        "prior_own_benefit_cessation_refuses_before"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/savings-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-savings-mutation"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_prior_own_benefit_cessation_refuses_before_setting_protection[pia0-new_pia0-maximum0-own0-before_total0-prior_diagnostic0-after_total0-Role.SPOUSE]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_prior_own_benefit_cessation_refuses_before_setting_protection[pia0-new_pia0-maximum0-own0-before_total0-prior_diagnostic0-after_total0-Role.CHILD]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_prior_own_benefit_cessation_refuses_before_setting_protection[pia1-new_pia1-maximum1-own1-before_total1-prior_diagnostic1-after_total1-Role.SPOUSE]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_prior_own_benefit_cessation_refuses_before_setting_protection[pia1-new_pia1-maximum1-own1-before_total1-prior_diagnostic1-after_total1-Role.CHILD]"
+      ],
+      "log": {
+        "path": "scratch/review/round2_savings_ignore_prior_own_benefit.log",
+        "sha256": "efd32d1f9fdfec0f08e63bdab91a1ac74779f6ea7c111f5b385df5503965acfa",
+        "failure_summary": "4 failed, 14 deselected in 15.70s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "c5885aa63592f76e50867daa454bb9aee3f16a30abacbf3f3c487a27443aad6d",
+        "restored_log": "scratch/review/round2_savings_ignore_prior_own_benefit-restored.log",
+        "restored_log_sha256": "fe284da226dee5ded0ee8c4c435163c913cac30f2dacb20f08ce98f36ea3ba76",
+        "restored_test_summary": "4 passed, 14 deselected in 4.58s"
+      }
+    },
+    {
+      "id": "round2_savings_ignore_current_own_benefit_on_carried_floor",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            or _savings_has_own_benefits(result)\n",
+        "after": "            or False\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "from populace_dynamics.track_b import gross_benefits as g; assert 'savings-mutation-tree/src' in g.__file__, g.__file__; import pytest,sys; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py",
+        "-k",
+        "current_own_benefit_refuses_carried_and_dormant"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/savings-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-savings-mutation"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_carried_and_dormant_protection[False-Role.SPOUSE]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_carried_and_dormant_protection[False-Role.CHILD]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_carried_and_dormant_protection[True-Role.SPOUSE]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_carried_and_dormant_protection[True-Role.CHILD]"
+      ],
+      "log": {
+        "path": "scratch/review/round2_savings_ignore_current_own_benefit_on_carried_floor.log",
+        "sha256": "35c9170f75474a850df211acc14fa9eae34c53c1bff1d311be330ade5a555ee0",
+        "failure_summary": "4 failed, 14 deselected in 13.50s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "c5885aa63592f76e50867daa454bb9aee3f16a30abacbf3f3c487a27443aad6d",
+        "restored_log": "scratch/review/round2_savings_ignore_current_own_benefit_on_carried_floor-restored.log",
+        "restored_log_sha256": "6e082ef7797e0df3a9d26ec51f623546720d30a1b9cba581735579b3881b215b",
+        "restored_test_summary": "4 passed, 14 deselected in 22.11s"
+      }
+    },
+    {
+      "id": "round2_savings_ignore_current_own_benefit_at_trigger",
+      "layer": "g_savings",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                or _savings_has_own_benefits(result)\n",
+        "after": "                or False\n"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-c",
+        "from populace_dynamics.track_b import gross_benefits as g; assert 'savings-mutation-tree/src' in g.__file__, g.__file__; import pytest,sys; sys.exit(pytest.main(sys.argv[1:]))",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py",
+        "-k",
+        "current_own_benefit_refuses_before_setting"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/savings-mutation-tree/src:/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/nonexistent",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261025-031318-trackb-fix-g2-2/scratch/review/hypothesis-savings-mutation"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_before_setting_protection[Role.SPOUSE]",
+        "tests/test_track_b_gross_benefits_savings_fix_round_2.py::test_current_own_benefit_refuses_before_setting_protection[Role.CHILD]"
+      ],
+      "log": {
+        "path": "scratch/review/round2_savings_ignore_current_own_benefit_at_trigger.log",
+        "sha256": "bb7b92f25f39815bbaf21e0edd073a73d73777195ccfc43e951e6dcd2a0ac1d0",
+        "failure_summary": "2 failed, 16 deselected in 18.00s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "restored_test_exit_code": 0,
+        "isolated_source_sha256": "c5885aa63592f76e50867daa454bb9aee3f16a30abacbf3f3c487a27443aad6d",
+        "restored_log": "scratch/review/round2_savings_ignore_current_own_benefit_at_trigger-restored.log",
+        "restored_log_sha256": "77e10f90c4b2ae97c372f4f6b02ae7fffdd2ba526591f813fb4f53ff98c9f310",
+        "restored_test_summary": "2 passed, 16 deselected in 20.72s"
+      }
     }
   ],
   "restoration_verification_snapshot": {
@@ -595,5 +1159,11 @@
       "sha256_at_verification": "27568b175af5acf16c83012ae151584a237886723b3946e55539e07639131d50"
     }
   },
-  "restoration_snapshot_note": "These hashes identify the source state checked when mutations were consolidated. Subsequent reviewed fixes are separately hashed in the final verification artifact; mutation rules remain restored."
+  "restoration_snapshot_note": "These hashes identify the source state checked when mutations were consolidated. Subsequent reviewed fixes are separately hashed in the final verification artifact; mutation rules remain restored.",
+  "round_2_head": "0ccf66ff63874167ffff0eca34b15c5eca57b3ad",
+  "round_2_note": "Eleven new isolated one-line mutations caught and restored; no production mutation was retained. Exact commands, environments, failing names and restored counts are in each new record.",
+  "round_2_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "43ac51f6dc0a38c08f858521d8e2074d2466a87efaac3e0462db5d81404e7a86",
+    "src/populace_dynamics/track_b/ret_ledger.py": "0e3f19edfbe36571718fac2559972132db3ac8efbd282262ffbfc28dc366c64d"
+  }
 }

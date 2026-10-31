@@ -457,7 +457,15 @@ Each beneficiary also supplies actual earnings, optional estimated
 earnings, the RIB FRA month, the actual grace-helper decision and an
 optional `estimated_grace` decision for the current-year forecast,
 death and divorced-spouse facts, and flags for established statutory
-own-work protections or entitlement on two records. For ledger inputs,
+own-work protections or entitlement on two records. The optional
+`two_record_entitlement` declaration defaults to `None`: supplied G
+monthly own-benefit facts establish two-record entitlement, while an
+explicit boolean must agree with the contextual facts for that person
+over the year. With no supplied G context, `None` retains the absence of
+a declared second entitlement. An own benefit present in any supplied
+month establishes the annual exposure; a later cessation does not erase
+it. Own actual or estimated excess remains refused because RS
+02501.145-.150 require charging across both records. For ledger inputs,
 `fra_month=None` means FRA after the year, `0` means FRA before the year,
 and `1` through `12` identifies the attainment month. Survivors use the
 RIB FRA, even when their survivor-benefit FRA is earlier (RS
@@ -529,10 +537,13 @@ prior year's amount or relabelled as a statutory coverage refusal.
    404.415(b), .420, .434; RS 02501.021B.5.b, .095B.2 and .140).
 5. **Other workers' charging.** After NH charging, charge each auxiliary
    or survivor's excess against that person's remaining benefit only.
-   Do not charge an already exhausted month again. If this would free
-   binding family-maximum room for another beneficiary, refuse the
-   record for part (b) (20 CFR 404.434(b)(2)-(3); RS 02501.095B.3-4,
-   .155A.3-4; GN 02603.020-.050).
+   Do not charge an already exhausted month again. When this frees
+   binding family-maximum room for another beneficiary, readjust through
+   G using that month's declared `RETFamilyMonth` statutory and household
+   facts. Without those facts, retain the named refusal
+   `deduction_readjustment_requires_family_context` (20 CFR
+   404.434(b)(2)-(3); RS 02501.095B.3-4, .155A.3-4;
+   GN 02603.020-.050).
 6. **Protected months.** A worker's own excess cannot be charged in an
    unentitled month, a protected grace-year NSM, the FRA month or later,
    a DIB/DWB/CDB payment month, or an explicitly established own-work
@@ -891,6 +902,10 @@ In the table, unqualified property test names are in
 | R1 annual amounts and exact rates match every supported bundled year, with zero tolerance | `test_r1_differential_matches_every_supported_year_exactly`; `test_r1_differential_statutory_default_is_exactly_one_twelfth` |
 | The default statutory monthly limit is exactly annual/12, with zero tolerance; wages above it cannot protect a grace month | `test_r1_differential_statutory_default_is_exactly_one_twelfth`; readings `test_property_default_monthly_limit_is_exact_twelfth_and_controls_grace_wages`; unit `test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling`; source `test_act_203_f_8_d_v_vi_monthly_amounts_are_quoted_and_equal_annual_twelfths` |
 | Missing R1 years raise rather than substitute | `test_r1_differential_missing_year_raises_without_substitution`; unit `test_missing_parameter_year_is_not_carried_forward` |
+| G monthly own-benefit facts establish annual two-record exposure, independently of beneficiary and household order; an omitted flag cannot admit actual or estimated excess | review `test_contextual_own_rib_requires_two_record_refusal`; property `test_two_record_derivation_is_order_independent` |
+| A declared two-record flag contradicting supplied G facts is an input error and creates no outcome or denominator row | review `test_declared_two_record_contradiction_is_input_error` |
+| Missing supported R1 years precede held G coverage refusals and create no outcome or denominator row | review `test_missing_r1_parameter_precedes_held_g_refusal`; property `test_unavailable_supported_r1_year_is_never_a_coverage_row` |
+| R2 emits G own-work events only for positive actual deductions; a person with zero excess never becomes a deductee in either actual or estimated runs | review property `test_r2_emits_only_positive_actual_deduction_events` |
 | Every outcome row and weight stays in the coverage denominator; any refusal blocks an aggregate | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_coverage_denominator_keeps_refusals_and_blocks_aggregate` |
 | Exact 1/2 and 1/3 excess rates use an integer floor: excess is nonnegative and differs from the unrounded amount by less than $1 | readings `test_property_excess_uses_exact_statutory_rate_and_dollar_floor`; unit `test_lower_threshold_and_whole_dollar_floor`; unit `test_fra_threshold_uses_one_third_and_floors`; R1 differential above |
 | Invalid input is never counted as a statutory coverage gap | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_invalid_wage_inputs_raise_before_coverage_refusal`; `test_invalid_rates_raise_before_coverage_refusal`; `test_duplicate_identity_is_invalid_even_in_an_unsupported_record`; `test_invalid_inputs_are_not_counted_as_coverage_gaps` |

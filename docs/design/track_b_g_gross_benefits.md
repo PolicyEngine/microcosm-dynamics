@@ -5,7 +5,7 @@ benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
 **Status: build-only, 2026-09-29; statutory delayed-credit convention
-(#494), 2026-10-11; review fixes through 2026-10-18. No real-data
+(#494), 2026-10-11; review fixes through 2026-10-25. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -2624,6 +2624,22 @@ dictionaries retain associations. Types, enum identities and every raw
 container entry follow the existing public schema. `worker_deductions`
 optionally reserves the number holder's charges against auxiliaries; those
 charges do not release room (GN 02603.040B; RS 02501.155B.3.c).
+For a spouse's `NO_CHILD_IN_CARE` event, `under_full_retirement_age=True`
+is required and the supplied spouse benefit must be unreduced for age.
+Act 203(c)(2) limits this deduction to a spouse "under retirement age"
+whose benefit "was not reduced under the provisions of section 202(q)";
+20 CFR 404.421(a) likewise excludes the reduced-benefit election month.
+Missing or false age attestation, age-reduced spouse benefits and declared
+current care are `InvalidFamilyInput` before a family or household refusal.
+The attestation must also agree with a supplied birth cohort. SSA cohorts
+run from January 2 through January 1 of the following year, with age
+attained the day before the birthday (RS 00615.003/.010). If the payment
+month is at or after even that cohort's latest possible FRA month, an
+under-FRA attestation is impossible and invalid; an unknown birthday inside
+the cohort's FRA interval remains a caller-attested fact. A 1950-cohort
+spouse in January 2024 therefore cannot lose its $2 ordinary benefit under
+a falsely attested no-care event on PIA $4/MAX $6.
+Mother/father deductions under 203(c)(3)-(4) have no spouse age condition.
 
 | Configuration | Result |
 |---|---|
@@ -2631,7 +2647,7 @@ charges do not release room (GN 02603.040B; RS 02501.155B.3.c).
 | Auxiliary or survivor own earnings deduction, full or partial | Supported |
 | Permanent deduction | GN 02603.050C redistribution |
 | Estimated own earnings deduction | Same-household increase; other households retain their previous rate |
-| No child in care, full deduction | Supported for spouse or mother/father |
+| No child in care, full deduction | Supported for an unreduced spouse with an explicit under-FRA attestation, or a mother/father |
 | Dual entitlement | Existing Parisi computation, including zero technical rates |
 | Workers' compensation offset | `workers_compensation_offset` |
 | Prisoner suspension | `prisoner_suspension` |
@@ -2652,6 +2668,19 @@ capped at the original benefit and dime-floored before age reduction. A
 zero dual rate remains disregarded regardless of another deduction
 (GN 02603.050A.2). Explicit dual markers must match the existing own-benefit
 declaration and computed payable; they do not apply a second offset.
+An `OWN_EARNINGS_TEST` event must withhold a strictly positive amount after
+NH reservations. R2 selects events only where its actual own deduction is
+positive, including when annual excess is zero. A zero-amount event is
+therefore `InvalidFamilyInput` in both public G forms, before event coverage
+refusals. It produces no result or denominator row and cannot freeze a
+rate, release rounding slack or disable A.1's single-full-deduction rule.
+Household and family coverage refusals are held until amount-dependent
+input checks finish on every computable record. In the invented survivor
+PIA $4/MAX $6 case, a shared child and a unique child each have OB/gross $3
+on one record; the shared child also appears on a second record. A unique
+child's zero-withholding $3 event is invalid before the household's combined
+maximum refusal. The shared child's unsettled maximum cannot mask a
+separately derivable input error.
 
 `BeneficiaryBenefit.deduction` records the amount withheld from that row's
 age-adjusted gross amount after its own-benefit offset, and
@@ -2724,7 +2753,7 @@ identical; tests pin both quoted OBs and modern OBs rather than overriding
 the arithmetic or claiming historical rounding coverage. The captures do
 not date these examples or establish why they used upward rounding.
 
-### Readings needing judgment
+### Settled reading and deferred coverage
 
 GN 02603.050D.2 says "there are no partial deductions for temporary work
 deductions". RS 02501.160 Example 2 nevertheless instructs immediate
@@ -2735,10 +2764,12 @@ amounts. The literal GN sentence would refuse that temporary partial case;
 it would withhold C2's $20 June increase. The source assertions pin both
 sentences. No switch invents a different benefit amount.
 
-The interaction of NH reservations and age reductions is not established
-by a captured worked example. The implementation refuses that new mixed
-configuration by name; ordinary G/R2 age-reduced supported inputs remain
-unchanged. No population processing, combined maximum determination,
+The interaction of NH reservations and age reductions is deferred coverage:
+no allocation procedure has been derived for the combined configuration.
+This is not a conflict between authoritative algorithms, and missing worked
+examples alone do not establish an ambiguous reading. The implementation
+refuses the mixed configuration as `deduction_age_work_interaction`.
+No population processing, combined maximum determination,
 multiple auxiliary-record selection or annual earnings determination is
 in scope here.
 
@@ -2782,8 +2813,12 @@ Under `SSA_OPERATIONAL`, the prior month must have two or more entitled
 persons, a binding maximum, and at least one age-reduced beneficiary. The
 next month's PIA must rise and its family total must fall. These are the
 four requirements in RS 00630.400's "1972 Family Payment Saving Clause".
-Membership and exact worker/auxiliary age factors must be unchanged for the supported
-payment computation. A membership-driven decline starts no protection.
+Membership and exact worker/auxiliary age factors must be unchanged for the
+supported payment computation. The four source conditions are evaluated
+before this coverage boundary. A qualifying PIA increase and fall with
+changed membership refuses as `savings_clause_membership_change` and retains
+uncertain history. A membership-only decline without a PIA increase starts
+no protection.
 A simultaneous change of age factors or a declining formula maximum with
 a qualifying overall fall refuses by name because the snapshots do not
 isolate the PIA effect. For example, PIA/FMAX $100/$150 with an unreduced
@@ -2804,7 +2839,7 @@ carried protection refuses, including later months after the change.
 | Life case, one reduced spouse and at least one other auxiliary | Divide the family-payment loss by the auxiliary count; apply the spouse's exact RF to that increase and add it to the spouse's ordinary reduced rate; divide the remaining protected amount after the new worker and spouse rates among the other auxiliaries (RS 00630.400) |
 | No qualifying age reduction, no PIA increase, or no immediate fall | No operational protection starts |
 | Later raw payment is below an established protection | Reapply the captured procedure without changing formula FMAX (RS 00615.801B.2) |
-| Entitlement membership changes during carried protection | `savings_clause_membership_change`; the captured 1972 procedure does not say how protection survives the change |
+| Entitlement membership changes at the first qualifying fall or during carried protection | `savings_clause_membership_change`; the captured 1972 procedure does not establish successor protection |
 | Survivor, own-benefit offset, deduction, multiple reduced auxiliaries, lone reduced spouse, simultaneous age-factor change or declining FMAX with a qualifying fall, or a protected rate above OB | `savings_clause_rate_procedure`; the captured life-case allocation does not settle these rates |
 | Prior history is unknown or a skipped month may hide protection | `savings_clause_history_unknown`, retained in every denominator |
 | Explicit literal alternative reaches any later lower governed total | Existing `savings_clause_403a5` refusal; the original broad interpretation remains testable |
@@ -2931,6 +2966,11 @@ maximum shares. Those rates therefore cannot establish an operational
 family payment without an additional captured rule. Numeric `deduction`
 and `reserved_work_deduction` count even when `deduction_reason` is absent
 for an NH-only reservation. These fields remain part of each sealed result.
+Subject own-benefit facts are likewise checked in both months before
+establishing or extending protection, even while a carried floor is dormant.
+An own benefit ceasing at the trigger cannot turn the prior pre-offset
+diagnostic total into a payment floor. These unsettled procedures refuse
+as `savings_clause_rate_procedure` and retain the uncertain history.
 
 Executed counterexample: January PIA $1,000, FMAX $1,500, a worker reduced
 60 months to $700, and two children. One child's full permanent own-work
@@ -2952,6 +2992,53 @@ $1,000 example. The gap belongs to RS 00630.400's uncaptured interaction
 with GN 02603.050, not to input validity. No protected amount is inferred
 from a diagnostic pre-offset total, and every refusal retains its row and
 weight. Completing this combined payment procedure remains outside scope.
+
+### Round-2 input and history regressions
+
+The following are invented calculations, not published SSA examples.
+
+| Inputs | Ordinary calculation and resulting boundary |
+|---|---|
+| January 2024 PIA $4/MAX $6, spouse reduced 60 months | Spouse $1.30, whole dollars $1; a no-care declaration is invalid and cannot replace this with $0 |
+| Same record, plus two children and a full spouse own-work deduction | Children $1 each, whole dollars $1 each; a child event payable $.60 withholds zero and is invalid |
+| PIA $48/MAX $78, spouse reduced 60 months and three children | A full spouse deduction leaves children $10 each; adding a child's zero-withholding $7.50 marker is invalid |
+| Survivor PIA $1/MAX $1.10, three children | $.30 each and $.90 total; a $.30 own-work marker is invalid and cannot raise siblings to $.40 |
+| PIA $.40/MAX $.60 rises to $.50 with unchanged MAX and worker RF60; children C0/C1 become C0/C2 | Ordinary totals $.40 then $.30; the qualifying membership change refuses, whereas stable membership protects $.50 |
+| PIA $1,000/MAX $1,500 rises to $1,010, worker RF60 | January $1,200; replacement/removal gives ordinary $1,197 and addition $1,196.90; all qualifying membership changes refuse |
+| Spouse or child own benefit $.10 ceases as PIA $1 rises to $1.10, MAX $1.50, worker RF60 | Prior actual total $1.20, pre-offset diagnostic $1.30; current ordinary $1.10 cannot establish a $1.30 floor and refuses |
+
+The new files `test_track_b_gross_benefits_deductions_fix_round_2.py` and
+`test_track_b_gross_benefits_savings_fix_round_2.py` execute these boundaries.
+Every new invariant has a Hypothesis property beside the examples:
+
+- `test_under_fra_attestation_cannot_admit_an_age_reduced_spouse` and
+  `test_no_care_spouse_requires_unreduced_under_fra_attestation` enforce
+  the spouse age exclusion and required eligibility fact in both public
+  forms. `test_age_reduced_no_care_is_input_error_before_refusal` keeps
+  invalid declarations out of the denominator even with a held refusal.
+- `test_zero_event_cannot_change_existing_full_deduction_output` rejects
+  permanent and temporary no-op events without any result or denominator
+  change, preserving exact and whole-dollar controls, determinism and the
+  existing full age-reduced deductee. R2's Hypothesis property
+  `test_r2_emits_only_positive_actual_deduction_events` differentially
+  checks every emitted final/provisional G event against actual deductions.
+- `test_qualifying_membership_change_is_order_independent_refusal` keeps
+  first-trigger membership changes in the weighted denominator and retains
+  uncertain history independently of beneficiary order.
+  `test_membership_decline_without_pia_increase_stays_admitted` preserves
+  the supported no-PIA-increase control.
+- `test_prior_own_benefit_cessation_always_preserves_uncertain_history`
+  and `test_current_own_benefit_never_certifies_candidate_or_carried_protection`
+  prohibit a diagnostic pre-offset own-benefit rate from establishing or
+  extending protection, including dormant protection. Every legal refusal
+  retains its full weight; input errors retain no denominator row.
+
+These implement the orchestrator's settled readings under Max's
+2026-10-20 delegation. First-trigger membership and prior-month own-benefit
+cessation add deferred procedure coverage, with the named reasons above;
+they do not assert an alternative supported payment algorithm. The existing
+temporary-partial reading, least-sufficient-dime rounding, qualified
+monotonicity, A.1 exception and deduction-history refusal remain in force.
 
 ### Not in scope
 
