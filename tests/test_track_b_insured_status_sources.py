@@ -57,6 +57,7 @@ RULE_QUOTES = {
     "poms_rs_00301_101": [
         "For certain benefits, the QCs must be earned within a specific "
         "time frame.",
+        "Transitional Insured Status",
     ],
     "poms_rs_00301_102": [
         "Section 211 of the SSPA applies to an alien worker whose Social "
@@ -81,6 +82,7 @@ RULE_QUOTES = {
     "poms_rs_00301_106": [
         "Do not use QCs earned before 01/01/84 for deemed fully insured "
         "status.",
+        "deemed fully insured for all title II purposes",
     ],
     "poms_rs_00301_107": [
         "Contact the employer to establish that deemed fully insured "
@@ -153,6 +155,8 @@ RULE_QUOTES = {
     "poms_rs_00301_160": [
         "Meeting the requirements for a freeze only is not sufficient "
         "to qualify for Medicare.",
+        "Use GEQCs, DQCs, and regular QCs to establish the insured status "
+        "requirements for Medicare purposes.",
     ],
     "poms_rs_00301_161": [
         "The reduction is effective 01/94 or, if later, the month after "
@@ -168,6 +172,8 @@ RULE_QUOTES = {
     "poms_rs_00301_220": [
         "the number of months in each calendar year that are completely "
         "included within the taxable year.",
+        "we will allocate the SEI proportionately to the two calendars "
+        "years",
     ],
     "poms_rs_00301_230": [
         "Assignment of QCs is flexible.",
@@ -216,6 +222,7 @@ RULE_QUOTES = {
     ],
     "poms_rs_00301_340": [
         "We credit SEI equally to each quarter of the calendar year.",
+        "credit SEI equally to the calendar quarter in which the TY ends",
     ],
     "poms_rs_00301_345": [
         "If a number holder (NH) has maximum creditable earnings in a "
@@ -225,6 +232,8 @@ RULE_QUOTES = {
     "poms_rs_00301_350": [
         "The Railroad Retirement Act contains a table for computing "
         "compensation for QCs before 1978.",
+        "we may use RR compensation in determining the number of "
+        "quarters of coverage (QCs)",
     ],
     "poms_rs_00301_470": [
         "a WWII veteran who separated from active military service "
@@ -235,11 +244,14 @@ RULE_QUOTES = {
         "Any wages reallocated based on wages earned cannot then be "
         "used to establish a QC based on wages paid for the same year "
         "or any subsequent year.",
+        "fully insured status could be established by crediting certain "
+        "wages on an earned rather than a paid basis",
     ],
     "poms_rs_00301_480": [
         "It is also not effective for disabilities beginning after "
         "1955, as any NH disabled after 1955 and meeting the "
         "alternative test would be insured under the 20/40 rule.",
+        "at least 20 quarters of coverage (QC) by the end of that quarter",
     ],
     "poms_rs_00301_600": [
         "The election of coverage by a religious order under the "
@@ -251,6 +263,9 @@ RULE_QUOTES = {
     ],
     "ecfr_20cfr404_subpart_b": [
         "You reach a particular age on the day before your birthday.",
+        "you must meet one of these rules and you must be fully insured",
+        "For purposes of establishing a period of disability only, "
+        "we give you quarters of coverage",
         "You are fully insured as of the first day of the calendar "
         "quarter in which you acquire the last needed QC",
         "we do not count as an elapsed year any year which is wholly or "
@@ -317,6 +332,7 @@ RULE_QUOTES = {
         "for which you received benefits.",
     ],
     "lii_usc_42_413": [
+        "For purposes of sections 414(a) and 415(d)",
         "with such product, if not a multiple of $10, being rounded "
         "to the next higher multiple of $10 where such amount is a "
         "multiple of $5 but not of $10 and to the nearest multiple "

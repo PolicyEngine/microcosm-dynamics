@@ -61,6 +61,9 @@ def _classification(person, years, month):
         )
     except i.InvalidFamilyInput:
         assert not rows
+        denominator = count_family_outcomes(rows)
+        assert denominator.rows == denominator.unsupported_rows == 0
+        assert denominator.weight == denominator.unsupported_weight == 0
         return False
     denominator = count_family_outcomes(rows)
     assert denominator.rows == 1
@@ -218,40 +221,128 @@ def test_exact_classification_keeps_automatic_and_every_flagged_route(
     assert _assert_exact_classification(person, years, month) == [True] * 16
 
 
-@pytest.mark.parametrize("condition", list(i.CoverageCondition))
-def test_exact_classification_keeps_each_independent_flagged_route(condition):
-    if condition is i.CoverageCondition.RAILROAD_CREDITS:
-        person = i.Person(
-            date(1930, 2, 2),
-            disability_onset=date(1952, 7, 15),
-            prior_disability_periods_provenance=OBSERVED,
-            current_disability_period_established=True,
-            current_disability_period_provenance=OBSERVED,
-            current_disability_period_end=date(1952, 9, 30),
-            current_disability_period_end_provenance=OBSERVED,
-            sspa211_applies=False,
-            sspa211_provenance=OBSERVED,
-            conditions=(condition,),
-        )
-        month = date(1968, 2, 1)
-        years = history(person, month)
-        # Ordinary wages are known; separately flagged RR compensation
-        # is unresolved, so these are not final credited-QC declarations.
-        years[1950] = i.CoverageYear(
-            OBSERVED, quarterly_wages=(Fraction(0),) * 4
-        )
-        years[1953] = i.CoverageYear(UNKNOWN)
-        expected_fillings = 16
-    else:
-        person, years, month = _fixed_end_case()
-        person = replace(person, conditions=(condition,))
-        expected_fillings = 5
+@pytest.mark.parametrize(
+    "condition",
+    [
+        i.CoverageCondition.RAILROAD_CREDITS,
+        i.CoverageCondition.FISCAL_TAXABLE_YEAR,
+        i.CoverageCondition.SHORT_TAXABLE_YEAR,
+    ],
+)
+def test_exact_classification_keeps_raw_earnings_flagged_routes(condition):
+    person = i.Person(
+        date(1930, 2, 2),
+        disability_onset=date(1952, 7, 15),
+        prior_disability_periods_provenance=OBSERVED,
+        current_disability_period_established=True,
+        current_disability_period_provenance=OBSERVED,
+        current_disability_period_end=date(1952, 9, 30),
+        current_disability_period_end_provenance=OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=OBSERVED,
+        conditions=(condition,),
+    )
+    month = date(1968, 2, 1)
+    years = history(person, month)
+    # The raw amounts leave the separately flagged credit allocation
+    # unresolved; these are not final credited-QC declarations.
+    years[1950] = i.CoverageYear(OBSERVED, quarterly_wages=(Fraction(0),) * 4)
+    years[1953] = i.CoverageYear(UNKNOWN)
     upper = {year: i._credits(year, row, True) for year, row in years.items()}
     assert not i._pre1956_alternate_possible(person, upper, month, None)
-    assert (
-        _assert_exact_classification(person, years, month)
-        == [True] * expected_fillings
+    assert _assert_exact_classification(person, years, month) == [True] * 16
+
+
+@pytest.mark.parametrize(
+    "condition",
+    [
+        i.CoverageCondition.MILITARY_CREDITS,
+        i.CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,
+    ],
+)
+def test_exact_classification_keeps_independent_credit_routes(condition):
+    person, years, month = _fixed_end_case()
+    person = replace(person, conditions=(condition,))
+    upper = {year: i._credits(year, row, True) for year, row in years.items()}
+    assert not i._pre1956_alternate_possible(person, upper, month, None)
+    assert _assert_exact_classification(person, years, month) == [True] * 5
+
+
+def _flagged_minimum_case(condition, *, young, shortfall):
+    onset_year = 1985 if young else 2000
+    person = i.Person(
+        date(1960, 2, 2),
+        disability_onset=date(onset_year, 1, 15),
+        prior_disability_periods_provenance=OBSERVED,
+        current_disability_period_established=True,
+        current_disability_period_provenance=OBSERVED,
+        current_disability_period_end=date(onset_year, 12, 31),
+        current_disability_period_end_provenance=OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=OBSERVED,
+        conditions=(condition,),
     )
+    month = date(onset_year + 1, 1, 1)
+    counts = {onset_year - 2: 4 - shortfall}
+    if not young:
+        counts.update(
+            {year: 4 for year in range(onset_year - 5, onset_year - 2)}
+        )
+    years = history(person, month, counts)
+    years[onset_year - 1] = i.CoverageYear(UNKNOWN)
+    return person, years, month
+
+
+@pytest.mark.parametrize(
+    "condition",
+    [
+        i.CoverageCondition.DEEMED_FULLY_INSURED,
+        i.CoverageCondition.TRANSITIONAL_INSURED,
+        i.CoverageCondition.EARNED_BASIS,
+        i.CoverageCondition.SIMPLIFIED_PRE1951,
+        i.CoverageCondition.DISABILITY_BEFORE_1956,
+        i.CoverageCondition.RAILROAD_CREDITS,
+        i.CoverageCondition.FISCAL_TAXABLE_YEAR,
+        i.CoverageCondition.SHORT_TAXABLE_YEAR,
+    ],
+)
+@pytest.mark.parametrize("young", [False, True])
+@pytest.mark.parametrize("shortfall", [False, True])
+def test_exact_classification_bounds_flags_that_add_no_declared_credit(
+    condition, young, shortfall
+):
+    person, years, month = _flagged_minimum_case(
+        condition, young=young, shortfall=shortfall
+    )
+    # The recent-credit minima are twenty QCs and, for this under31
+    # fixture, half of sixteen elapsed quarters: eight QCs. Each direct
+    # envelope enumerates every annual filling, including the threshold.
+    expected = [False] * 5 if shortfall else [False] * 4 + [True]
+    assert _assert_exact_classification(person, years, month) == expected
+    if not shortfall:
+        concrete = {
+            **years,
+            person.disability_onset.year - 1: declared(4),
+        }
+        row = i.evaluate_insured_status(
+            "flagged-minimum-refusal",
+            Fraction(3, 2),
+            lambda: i.insured_status(
+                person, concrete, month, test=i.InsuredTest.FULLY
+            ),
+        )
+        assert row.result is None
+        assert (
+            row.unsupported.reason
+            is i.InsuredUnsupportedReason[condition.name]
+        )
+        denominator = count_family_outcomes((row,))
+        assert denominator.rows == denominator.unsupported_rows == 1
+        assert (
+            denominator.weight
+            == denominator.unsupported_weight
+            == Fraction(3, 2)
+        )
 
 
 def test_exact_classification_keeps_short_dib_entitled_prior_filling():

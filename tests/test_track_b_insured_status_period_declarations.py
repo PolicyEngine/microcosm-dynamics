@@ -5,11 +5,15 @@ Invented declarations only; no population, behavioral, or forecast claim.
 
 from dataclasses import replace
 from datetime import date
+from fractions import Fraction
 
 import pytest
 
 from populace_dynamics.track_b import insured_status as i
-from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
+from populace_dynamics.track_b.gross_benefits import (
+    InvalidFamilyInput,
+    count_family_outcomes,
+)
 from tests.test_track_b_insured_status import history
 
 
@@ -54,7 +58,7 @@ def test_established_current_period_with_unknown_prior_periods_uses_bounds():
     assert concrete.current_disability_period_start == date(2022, 4, 1)
     assert disability.dli.lower <= concrete.dli.lower <= disability.dli.upper
 
-    # No established period can overcome the universal six-QC minimum.
+    # Without foreign credits, these ordinary declarations lack six QCs.
     with pytest.raises(InvalidFamilyInput):
         i.insured_status(
             person,
@@ -63,19 +67,38 @@ def test_established_current_period_with_unknown_prior_periods_uses_bounds():
             test=i.InsuredTest.FULLY,
         )
 
-    for foreign_credits, conditions in (
-        (("invented-foreign-credit",), frozenset()),
-        ((), frozenset({i.CoverageCondition.RAILROAD_CREDITS})),
-    ):
-        invalid_person = replace(person, conditions=conditions)
-        with pytest.raises(InvalidFamilyInput):
-            i.insured_status(
-                invalid_person,
-                history(invalid_person, month),
-                month,
-                test=i.InsuredTest.FULLY,
-                totalization_credits=foreign_credits,
-            )
+    foreign_row = i.evaluate_insured_status(
+        "unknown-prior-foreign-credits",
+        Fraction(11, 5),
+        lambda: i.insured_status(
+            person,
+            history(person, month),
+            month,
+            test=i.InsuredTest.FULLY,
+            totalization_credits=("invented-foreign-credit",),
+        ),
+    )
+    assert foreign_row.result is None
+    assert (
+        foreign_row.unsupported.reason
+        is i.InsuredUnsupportedReason.TOTALIZATION
+    )
+    denominator = count_family_outcomes((foreign_row,))
+    assert denominator.rows == denominator.unsupported_rows == 1
+    assert (
+        denominator.weight == denominator.unsupported_weight == Fraction(11, 5)
+    )
+
+    railroad_person = replace(
+        person, conditions=(i.CoverageCondition.RAILROAD_CREDITS,)
+    )
+    with pytest.raises(InvalidFamilyInput):
+        i.insured_status(
+            railroad_person,
+            history(railroad_person, month),
+            month,
+            test=i.InsuredTest.FULLY,
+        )
 
 
 def test_unknown_earnings_deciding_established_current_start_refuse_by_name():

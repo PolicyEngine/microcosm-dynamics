@@ -61,19 +61,37 @@ def test_impossible_establishment_creates_no_evaluator_denominator_row():
 
 def test_impossible_unknown_history_validation_precedes_coverage_refusal():
     person = replace(
-        _impossible_person(),
+        _impossible_person(date(2022, 1, 15)),
+        prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
+        prior_disability_periods=(
+            i.DisabilityPeriod(date(2021, 1, 1), date(2022, 12, 31)),
+        ),
+        current_disability_period_end=date(2022, 12, 31),
+        current_disability_period_end_provenance=i.EarningsProvenance.OBSERVED,
         conditions=(i.CoverageCondition.RAILROAD_CREDITS,),
     )
     month = date(2029, 4, 1)
-    # Three own QCs cannot pass the floor even when foreign coverage is
-    # declared. Six own QCs leave that unmodeled route unresolved.
+    years = history(person, month, {2028: 3})
+    years[2020] = i.CoverageYear(i.EarningsProvenance.UNKNOWN)
+    # No credit route can remove the declared prior quarters or move the
+    # current start outside its fixed onset/end interval.
+    rows = []
     with pytest.raises(i.InvalidFamilyInput):
-        i.insured_status(
-            person,
-            history(person, month, {2028: 3}),
-            month,
-            totalization_credits=("invented-foreign-credit",),
+        rows.append(
+            i.evaluate_insured_status(
+                "fixed-overlap-before-foreign-refusal",
+                Fraction(11, 5),
+                lambda: i.insured_status(
+                    person,
+                    years,
+                    month,
+                    totalization_credits=("invented-foreign-credit",),
+                ),
+            )
         )
+    denominator = count_family_outcomes(rows)
+    assert denominator.rows == denominator.unsupported_rows == 0
+    assert denominator.weight == denominator.unsupported_weight == 0
 
 
 @settings(max_examples=20, deadline=None)

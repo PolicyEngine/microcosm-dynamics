@@ -120,16 +120,12 @@ def test_six_own_qcs_foreign_credits_and_unknown_prior_keep_refusal():
     _assert_row(row, i.InsuredUnsupportedReason.TOTALIZATION)
 
 
-def test_three_own_qcs_and_foreign_credits_still_fail_six_qc_floor():
+def test_three_own_qcs_and_foreign_credits_keep_named_refusal_and_weight():
     person = _person()
     month = date(2001, 1, 1)
     years = history(person, month, {1999: 3})
-    rows = []
-    with pytest.raises(i.InvalidFamilyInput, match="no possible insured"):
-        rows.append(
-            _evaluate(person, years, month, totalization_credits=("canada",))
-        )
-    assert count_family_outcomes(rows).rows == 0
+    row = _evaluate(person, years, month, totalization_credits=("canada",))
+    _assert_row(row, i.InsuredUnsupportedReason.TOTALIZATION)
 
 
 @pytest.mark.parametrize("young", [False, True])

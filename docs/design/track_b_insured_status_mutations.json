@@ -3084,5 +3084,409 @@
     }
   ],
   "round_10_note": "Thirteen deliberate in-memory mutations were caught and discarded. Required recovery, continuous-clock, proof-order, minimum, blindness, totalization, historical-classification and completion properties bite. Each run verified the implementation file remained unchanged. Recorded per-run source hashes identify the exact source used, before the final capitalization-only module-docstring correction. Reproduction commands are self-contained and apply to the final source. No committed mutation remains.",
-  "round_10_final_source_sha256": "5f4dcca84c5a5b37c0092c7eb7198a8a05fed8f2cc7088deb6192575b39f1f7a"
+  "round_10_final_source_sha256": "5f4dcca84c5a5b37c0092c7eb7198a8a05fed8f2cc7088deb6192575b39f1f7a",
+  "round_11_mutations": [
+    {
+      "name": "floor_above_foreign_return",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "a91184b71dd508e3ed318c58cb7f6358d85e8c4b0a378c031e6d46bd5270a5ed",
+      "changes": [
+        {
+          "before": "    if maximum_qcs < 6:\n        return False\n",
+          "after": ""
+        },
+        {
+          "before": "    if totalization_credits:\n        return True\n",
+          "after": "    if maximum_qcs < 6:\n        return False\n    if totalization_credits:\n        return True\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-floor_above_foreign_return.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_foreign_credit_refusal_is_independent_of_own_qc_count",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_foreign_credit_refusal_is_independent_of_own_qc_count"
+      ],
+      "result": "1 failed in 4.04s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_foreign_credit_refusal_is_independent_of_own_qc_count"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '    if maximum_qcs < 6:\\n        return False\\n'\nafter = ''\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nbefore = '    if totalization_credits:\\n        return True\\n'\nafter = '    if maximum_qcs < 6:\\n        return False\\n    if totalization_credits:\\n        return True\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_foreign_credit_refusal_is_independent_of_own_qc_count'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "proof_below_fully_route_return",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "ebecb0ab45f188b45431c4060922f29568a9f803ba563b50ce835be2380ca450",
+      "changes": [
+        {
+          "before": "    if (\n        not person.statutory_blindness\n        and person.prior_disability_periods_provenance\n        is not EarningsProvenance.UNKNOWN\n        and maximum_qcs < _minimum_current_period_qcs(person)\n    ):\n        return False\n    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\n        return True\n",
+          "after": "    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\n        return True\n    if (\n        not person.statutory_blindness\n        and person.prior_disability_periods_provenance\n        is not EarningsProvenance.UNKNOWN\n        and maximum_qcs < _minimum_current_period_qcs(person)\n    ):\n        return False\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-proof_below_fully_route_return.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall"
+      ],
+      "result": "1 failed in 2.04s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '    if (\\n        not person.statutory_blindness\\n        and person.prior_disability_periods_provenance\\n        is not EarningsProvenance.UNKNOWN\\n        and maximum_qcs < _minimum_current_period_qcs(person)\\n    ):\\n        return False\\n    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\\n        return True\\n'\nafter = '    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\\n        return True\\n    if (\\n        not person.statutory_blindness\\n        and person.prior_disability_periods_provenance\\n        is not EarningsProvenance.UNKNOWN\\n        and maximum_qcs < _minimum_current_period_qcs(person)\\n    ):\\n        return False\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "floor_above_fully_route_return",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "966fd2bbed9c36ee8eb698de18d511f53ec7266fd6b15cc516983e01b98c91ca",
+      "changes": [
+        {
+          "before": "    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\n        return True\n    if maximum_qcs < 6:\n        return False\n",
+          "after": "    if maximum_qcs < 6:\n        return False\n    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\n        return True\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-floor_above_fully_route_return.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply"
+      ],
+      "result": "8 failed, 4 passed in 7.24s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\\n        return True\\n    if maximum_qcs < 6:\\n        return False\\n'\nafter = '    if maximum_qcs < 6:\\n        return False\\n    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:\\n        return True\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "pre1956_return_above_floor",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "f5ba8418f27938547048147fd7276f129d560c2f2883e57f8415103e110019d2",
+      "changes": [
+        {
+          "before": "    if maximum_qcs < 6:\n        return False\n    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\n        return True\n",
+          "after": "    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\n        return True\n    if maximum_qcs < 6:\n        return False\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-pre1956_return_above_floor.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_pre1956_flag_with_blindness_keeps_ordinary_six_qc_floor",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_pre1956_flag_with_blindness_keeps_ordinary_six_qc_floor"
+      ],
+      "result": "1 failed, 1 passed in 2.12s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_pre1956_flag_with_blindness_keeps_ordinary_six_qc_floor[3]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '    if maximum_qcs < 6:\\n        return False\\n    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\\n        return True\\n'\nafter = '    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\\n        return True\\n    if maximum_qcs < 6:\\n        return False\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_pre1956_flag_with_blindness_keeps_ordinary_six_qc_floor'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "deemed_added_to_credit_routes",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "cbbcd56be97cf40e2e5d9f337dc5056b210dd4e05561c2f4630196e5ad1c1de2",
+      "changes": [
+        {
+          "before": "        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\n",
+          "after": "        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\n        CoverageCondition.DEEMED_FULLY_INSURED,\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-deemed_added_to_credit_routes.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall"
+      ],
+      "result": "1 failed in 3.37s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\\n'\nafter = '        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\\n        CoverageCondition.DEEMED_FULLY_INSURED,\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_set_cannot_hide_independently_proved_shortfall'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "simplified_added_to_credit_routes",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "79a9d8a124c6a845b99795af0710f66e1440ceef3317088a7605ff489773397c",
+      "changes": [
+        {
+          "before": "        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\n",
+          "after": "        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\n        CoverageCondition.SIMPLIFIED_PRE1951,\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-simplified_added_to_credit_routes.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_shortfall_and_exact_minimum_pair",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_shortfall_and_exact_minimum_pair"
+      ],
+      "result": "2 failed, 30 passed in 3.64s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_shortfall_and_exact_minimum_pair[False-42-20-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_shortfall_and_exact_minimum_pair[False-29-16-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\\n'\nafter = '        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,\\n        CoverageCondition.SIMPLIFIED_PRE1951,\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_no_credit_flag_shortfall_and_exact_minimum_pair'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "military_added_to_raw_earnings",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "b07b134dda23019b69ff1e4f5e7ccf6fda8ebd3509fc8480a74d5c80b873e38a",
+      "changes": [
+        {
+          "before": "        CoverageCondition.FISCAL_TAXABLE_YEAR,\n",
+          "after": "        CoverageCondition.FISCAL_TAXABLE_YEAR,\n        CoverageCondition.MILITARY_CREDITS,\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-military_added_to_raw_earnings.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope"
+      ],
+      "result": "4 failed, 8 passed in 6.34s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope[zero-42-20-CoverageCondition.MILITARY_CREDITS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope[zero-29-16-CoverageCondition.MILITARY_CREDITS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope[shortfall-42-20-CoverageCondition.MILITARY_CREDITS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope[shortfall-29-16-CoverageCondition.MILITARY_CREDITS]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        CoverageCondition.FISCAL_TAXABLE_YEAR,\\n'\nafter = '        CoverageCondition.FISCAL_TAXABLE_YEAR,\\n        CoverageCondition.MILITARY_CREDITS,\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_credit_route_keeps_refusal_even_with_complete_direct_envelope'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "short_taxable_year_dropped_from_raw_earnings",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "76a07e4fb29d300d57c1122d26cb2972a856c8a0d618a6cea7e57a2437e57c2a",
+      "changes": [
+        {
+          "before": "        CoverageCondition.SHORT_TAXABLE_YEAR,\n",
+          "after": ""
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-short_taxable_year_dropped_from_raw_earnings.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_raw_earnings_flag_preserves_route_only_without_direct_envelope",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_raw_earnings_flag_preserves_route_only_without_direct_envelope"
+      ],
+      "result": "2 failed, 4 passed in 2.78s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_raw_earnings_flag_preserves_route_only_without_direct_envelope[42-20-CoverageCondition.SHORT_TAXABLE_YEAR]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_raw_earnings_flag_preserves_route_only_without_direct_envelope[29-16-CoverageCondition.SHORT_TAXABLE_YEAR]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        CoverageCondition.SHORT_TAXABLE_YEAR,\\n'\nafter = ''\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_raw_earnings_flag_preserves_route_only_without_direct_envelope'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "proof_runs_with_blindness",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "245ae0ee2c8bde6fea93cafa34813430d29bf6b06ae15ac6f9f48827e9ab9567",
+      "changes": [
+        {
+          "before": "        not person.statutory_blindness\n        and person.prior_disability_periods_provenance\n",
+          "after": "        person.prior_disability_periods_provenance\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-proof_runs_with_blindness.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply"
+      ],
+      "result": "4 failed, 8 passed in 3.51s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[blind-3-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        not person.statutory_blindness\\n        and person.prior_disability_periods_provenance\\n'\nafter = '        person.prior_disability_periods_provenance\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "proof_runs_with_unknown_prior_history",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "59368554c5c5a2a92cc106426d0f22c90cdd2d404bf632929c11053fa3f1610f",
+      "changes": [
+        {
+          "before": "        and person.prior_disability_periods_provenance\n        is not EarningsProvenance.UNKNOWN\n",
+          "after": ""
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-proof_runs_with_unknown_prior_history.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply"
+      ],
+      "result": "8 failed, 4 passed in 7.16s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-3-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-6-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-6-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-6-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply[unknown-prior-6-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        and person.prior_disability_periods_provenance\\n        is not EarningsProvenance.UNKNOWN\\n'\nafter = ''\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_fully_route_refuses_when_recent_credit_proof_does_not_apply'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    },
+    {
+      "name": "proof_rejects_exact_minimum",
+      "source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+      "mutated_source_sha256": "09d2c494ab04a9de44da6f6b6d1dcb34acaf3e6d6654d195269a45880cf421c7",
+      "changes": [
+        {
+          "before": "        and maximum_qcs < _minimum_current_period_qcs(person)\n",
+          "after": "        and maximum_qcs <= _minimum_current_period_qcs(person)\n"
+        }
+      ],
+      "command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 TRACKB_ROUND11_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/scratch/review/round-11-mutation-proof_rejects_exact_minimum.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_11_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_11.py::test_no_flag_rejects_declaration_meeting_every_requirement",
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_flag_rejects_declaration_meeting_every_requirement"
+      ],
+      "result": "1 failed in 2.65s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_11.py::test_no_flag_rejects_declaration_meeting_every_requirement"
+      ],
+      "reproduction_command": "env PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11/src:/Users/maxghenis/.subfleet/worktrees/20261031-162231-trackb-fix-insured-11 OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round11 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round11 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_bytes()\nassert hashlib.sha256(original).hexdigest() == 'aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1'\nmodified = original.decode()\nbefore = '        and maximum_qcs < _minimum_current_period_qcs(person)\\n'\nafter = '        and maximum_qcs <= _minimum_current_period_qcs(person)\\n'\nassert modified.count(before) == 1\nmodified = modified.replace(before, after, 1)\nexec(compile(modified, i.__file__, \"exec\"), i.__dict__)\nimport pytest\nresult = pytest.main(['-q', '-p', 'no:xdist', '-p', 'no:cacheprovider', '--tb=short', 'tests/test_track_b_insured_status_fix_round_11.py::test_no_flag_rejects_declaration_meeting_every_requirement'])\nassert p.read_bytes() == original\nraise SystemExit(result)\nPY",
+      "mechanism": "Compile modified module in memory only; source bytes unchanged after execution",
+      "restored": true,
+      "open_audit": {
+        "restricted_opens": 0,
+        "subprocess.Popen": 0,
+        "os.system": 0
+      }
+    }
+  ],
+  "round_11_note": "Eleven deliberate isolated in-memory mutations were caught and discarded. All three new properties bite. Every run audited zero restricted opens or spawned processes and verified original implementation bytes unchanged. The exact commands and standalone reproductions above pin the final formatted source. No committed mutation remains.",
+  "round_11_final_source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1"
 }

@@ -34,8 +34,10 @@ applicability carry explicit provenance. A declaration is rejected only
 when every ordinary and possible specialist completion is impossible;
 assignment-independent minimum-QC proofs precede boundary complexity, skip
 unknown prior histories and stop at six QCs for blindness. Foreign credits
-preserve an unmodeled route after the own-QC floor; no totalized rule is
-claimed here.
+preserve an unmodeled route before every credit-count proof; no totalization
+minimum or eligibility rule is claimed here. Fully-insured-only flags cannot
+bypass an independent recent-credit shortfall, but remain possible below six
+actual QCs when that proof does not apply.
 Short DIB-entitled prior periods remain possible. Observable specialist credit
 alternatives cannot silently produce ordinary-only uninsured answers. The
 query month is a hypothetical entitlement month, not medical or
@@ -120,6 +122,29 @@ class CoverageCondition(Enum):
     FISCAL_TAXABLE_YEAR = "fiscal_taxable_year"
     SHORT_TAXABLE_YEAR = "short_taxable_year"
     SIMPLIFIED_PRE1951 = "simplified_pre1951"
+
+
+_FULLY_INSURED_ROUTE_CONDITIONS = frozenset(
+    {
+        CoverageCondition.DEEMED_FULLY_INSURED,
+        CoverageCondition.TRANSITIONAL_INSURED,
+        CoverageCondition.EARNED_BASIS,
+        CoverageCondition.SIMPLIFIED_PRE1951,
+    }
+)
+_RAW_EARNINGS_CONDITIONS = frozenset(
+    {
+        CoverageCondition.RAILROAD_CREDITS,
+        CoverageCondition.FISCAL_TAXABLE_YEAR,
+        CoverageCondition.SHORT_TAXABLE_YEAR,
+    }
+)
+_CREDIT_ROUTE_CONDITIONS = frozenset(
+    {
+        CoverageCondition.MILITARY_CREDITS,
+        CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT,
+    }
+)
 
 
 class InsuredUnsupportedReason(Enum):
@@ -1500,23 +1525,35 @@ def _current_period_start_horizon(person, month):
 
 
 def _flagged_establishment_possible(person, years):
-    """Overapproximate flagged alternatives to ordinary insurance.
+    """Preserve flags that can add credits outside the declared envelope.
 
-    Final direct QC declarations already supply the credited quarters;
-    unknown years already permit four. RR annual credits after 1977 use
-    the ordinary method (RS00301.230/.350). That flag alone cannot add QCs
-    to this complete direct-QC envelope.
-    Other specialist declarations are retained rather than adjudicated.
+    Fully-route flags change only the fully insured prerequisite, leaving
+    404.130's independent recent-credit rule standing (404.110-.112;
+    RS00301.101/.106/.470/.475; Act 213(c)). They are handled after that
+    proof, before the six-QC floor: 404.111 states no numeric minimum.
+    DISABILITY_BEFORE_1956 replaces the recent test without adding credits
+    and requires twenty QCs (RS00301.480 A), so it follows both proofs.
+
+    Raw-earnings flags affect compensation or SEI allocation (404.142/.144;
+    RS00301.220/.340/.350). Final direct QC declarations already supply
+    their credits, and unknown rows permit four; the I9 direct-credit
+    contract therefore bounds them. Credit-route flags can add credits
+    outside those rows: military credits may be freeze-only (404.133;
+    RS00301.131), and government QCs combine for Medicare (RS00301.160).
     """
     for condition in person.conditions:
-        if condition is CoverageCondition.RAILROAD_CREDITS and all(
+        if condition in _RAW_EARNINGS_CONDITIONS and all(
             row.qc_count is not None
             or row.qc_quarters is not None
             or row.provenance is EarningsProvenance.UNKNOWN
             for row in years.values()
         ):
             continue
-        return True
+        if (
+            condition in _RAW_EARNINGS_CONDITIONS
+            or condition in _CREDIT_ROUTE_CONDITIONS
+        ):
+            return True
     return False
 
 
@@ -1587,13 +1624,11 @@ def _could_establish_current_period(
         for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1)
     ):
         return False
-    if _flagged_establishment_possible(person, years):
-        return True
-    if maximum_qcs < 6:
-        return False
-    # Foreign coverage is an unmodeled route. After the existing own-QC
-    # floor, preserve its named refusal without claiming how it qualifies.
+    # Fixed chronology is independent of the unmodeled foreign route;
+    # no own-credit count proves impossibility on that route here.
     if totalization_credits:
+        return True
+    if _flagged_establishment_possible(person, years):
         return True
     # This proof must precede the alternate's boundary enumeration and
     # unknown-prior feasibility search: either can otherwise refuse before
@@ -1605,6 +1640,12 @@ def _could_establish_current_period(
         and maximum_qcs < _minimum_current_period_qcs(person)
     ):
         return False
+    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:
+        return True
+    if maximum_qcs < 6:
+        return False
+    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:
+        return True
     if _pre1956_alternate_possible(
         person, credits, month, exit_month, lower_credits=lower_credits
     ):
@@ -1759,9 +1800,11 @@ def insured_status(
     alternate refusal; post-1980 endings can differ under 404.321(c).
     Establishment is an input error only if no ordinary, observable, or
     flagged specialist route could validate any completion of the facts.
-    After the six-QC floor foreign credits preserve an unmodeled route;
-    no totalized rule is claimed. A conservative minimum-QC proof precedes
-    boundary complexity, except for blindness and unknown prior history.
+    Foreign credits preserve an unmodeled route before credit-count proofs;
+    no totalization minimum or eligibility rule is claimed. A conservative
+    minimum-QC proof precedes fully-insured-only flags and boundary
+    complexity, except for blindness and unknown prior history. Fully-route
+    flags precede the six-QC floor; the pre-1956 flag follows that floor.
     History validation runs first. Uncomputable QC rows use bounded
     unknown credits only for this proof; a possible declaration retains
     its original conversion refusal, including its reason and detail.
