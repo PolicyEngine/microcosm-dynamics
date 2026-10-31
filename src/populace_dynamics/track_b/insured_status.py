@@ -5,13 +5,18 @@ histories and captured statutory examples only; no population, behavioral,
 or forecast claim. Act 213, 214, 216(i), 223(c); 20 CFR 404 subpart B
 and 404.315/.320/.321;
 POMS RS 00301. Every year is declared, including zero and unknown years.
-Medical onset declares continuous disability through the query month; it
+Medical onset declares continuous disability through the query month,
+subject to an established historical period's ending under 404.321(b); it
 never establishes an administrative period of disability. An established
 period ends no later than the month before full retirement age; an unknown
 ending includes every candidate end quarter from insured start through
 query/cap and permitted continuation. The cap never establishes the end.
 The alternate test's 20/40 exclusion uses only quarters beginning before
-the FRA month, whether or not a period is declared established.
+the FRA month, whether or not a period is declared established. For an
+established period, the witness quarter must also begin by the declared
+end, known continuity date, or onset when neither date is known. Where
+the literal and period-covered readings of RS00301.480 A differ, the
+alternate route retains its named refusal.
 Dated continuity restricts possible endings without establishing an end;
 a date beyond the query quarter makes that quarter interior to the period.
 Disability tests
@@ -815,6 +820,14 @@ def _pre1956_alternate_possible(
     # A witness must allow a freeze or DIB before FRA (Act 216(i)(2)(D),
     # 404.315(a), 404.321(a)-(b)), regardless of declared establishment.
     last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))
+    if person.current_disability_period_established:
+        # 404.321(b): a pre-1980 period ends after disability ended or at 65.
+        last = min(
+            last,
+            person.current_disability_period_end
+            or person.current_disability_period_continues_through
+            or person.disability_onset,
+        )
     lower = credits if lower_credits is None else lower_credits
     # Source conflict us:oasdi-insured-pre1956-alternate-any-quarter-scan
     for quarter in range(
@@ -1581,8 +1594,9 @@ def insured_status(
 ) -> InsuredStatus:
     """Decide declared insurance, retaining coverage refusals in denominators.
 
-    Medical onset means continuously disabled through this query and never
-    establishes a period. Declare establishment, prior-period provenance,
+    Medical onset means continuously disabled through this query, subject
+    to an established historical period's ending under 404.321(b), and
+    never establishes a period. Declare establishment, prior-period provenance,
     and section 214(c) applicability; UNKNOWN never silently means none.
     Declare an administrative ending with its provenance when known. An
     observed continues-through date instead excludes earlier endings and
@@ -1593,6 +1607,10 @@ def insured_status(
     query, and the first insured quarter supplies the witness (404.131).
     An alternate for disability before 1956 is excluded only by 20/40 in a
     quarter beginning before the FRA month, independently of establishment.
+    For established periods it must also begin by every completion's
+    covered date: the declared end, continuity date, or otherwise onset.
+    Disagreement with the literal any-quarter reading retains the named
+    alternate refusal; post-1980 endings can differ under 404.321(c).
     Establishment is an input error only if no ordinary, observable, or
     flagged specialist route could validate any completion of the facts.
     History validation runs first. Uncomputable QC rows use bounded

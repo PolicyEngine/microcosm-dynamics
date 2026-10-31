@@ -76,6 +76,11 @@ def test_twenty_of_forty_before_october_1960_excludes_alternate_refusal():
 
 def test_twenty_of_forty_scan_includes_later_disabled_quarters_before_1960():
     person, years, month = _ordinary_pre1956_case()
+    person = replace(
+        person,
+        current_disability_period_end=date(1956, 12, 31),
+        current_disability_period_end_provenance=OBSERVED,
+    )
     years[1950] = i.CoverageYear(OBSERVED, qc_quarters=(False,) * 4)
     years[1940] = i.CoverageYear(OBSERVED, qc_quarters=(True,) * 4)
     years[1956] = i.CoverageYear(OBSERVED, qc_quarters=(True,) * 4)
@@ -89,6 +94,11 @@ def test_twenty_of_forty_alternate_exclusion_stops_before_october_1960(
     quarter,
 ):
     person, years, month = _ordinary_pre1956_case()
+    person = replace(
+        person,
+        current_disability_period_end=date(1960, 12, 31),
+        current_disability_period_end_provenance=OBSERVED,
+    )
     years[1950] = i.CoverageYear(OBSERVED, qc_quarters=(False,) * 4)
     years[1940] = i.CoverageYear(OBSERVED, qc_quarters=(True,) * 4)
     years[1955] = i.CoverageYear(
@@ -317,18 +327,15 @@ def test_alternate_exclusion_uses_existing_disability_scan_fra_boundary(
         qc_quarters=tuple(q == twentieth_quarter for q in range(1, 5)),
     )
     assert i._fra_date(person) == date(1953, 5, 1)
-    if twentieth_quarter == 2:
-        # The ordinary exclusion is available before FRA, but its first
-        # insured quarter is later than the fixed 1952 ending.
-        _assert_invalid_without_row(person, years, month)
-    else:
-        # A first ordinary witness after FRA cannot displace the valid
-        # alternate start in July 1952, before the fixed ending.
-        row = _row(person, years, month)
-        assert (
-            row.unsupported.reason
-            is i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956
-        )
-        assert count_family_outcomes((row,)).unsupported_weight == Fraction(
-            11, 5
-        )
+    # Neither a post-end pre-FRA witness nor a post-FRA witness can
+    # displace the possible alternate start in July 1952.
+    row = _row(person, years, month)
+    assert (
+        row.unsupported.reason
+        is i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956
+    )
+    denominator = count_family_outcomes((row,))
+    assert denominator.rows == denominator.unsupported_rows == 1
+    assert (
+        denominator.weight == denominator.unsupported_weight == Fraction(11, 5)
+    )

@@ -2435,5 +2435,185 @@
     }
   ],
   "round_7_note": "Four isolated in-memory implementation mutations were caught and discarded against the final source. The FRA-attainment-quarter limit, establishment-only FRA limit, one-month-early limit, and unconditional successful-witness short circuit each fail named public-path tests. Every child verified the disk source SHA-256 stayed unchanged. No implementation mutation was written to disk and no existing test assertion was weakened.",
-  "round_7_final_source_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
+  "round_7_final_source_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99",
+  "round_8_mutations": [
+    {
+      "name": "remove_declared_end_bound",
+      "before": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "after": "    if person.current_disability_period_established and person.current_disability_period_end is None:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses[7-end0]",
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses[7-end1]"
+      ],
+      "summary": [
+        "2 failed, 2 passed in 8.47s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nafter = '    if person.current_disability_period_established and person.current_disability_period_end is None:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    },
+    {
+      "name": "remove_continuity_bound",
+      "before": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "after": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.disability_onset,\n        )",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses[4]"
+      ],
+      "summary": [
+        "1 failed, 1 passed in 3.62s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nafter = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.disability_onset,\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    },
+    {
+      "name": "unknown_end_uses_query_instead_of_onset",
+      "before": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "after": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or month,\n        )",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_keeps_onset_witness_but_refuses_later_quarter"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_keeps_onset_witness_but_refuses_later_quarter[True]"
+      ],
+      "summary": [
+        "1 failed, 1 passed in 9.06s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nafter = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or month,\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_keeps_onset_witness_but_refuses_later_quarter'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    },
+    {
+      "name": "stop_alternate_scan_one_quarter_early",
+      "before": "_qid(person.disability_onset), min(_qid(last), 1960 * 4 + 2) + 1",
+      "after": "_qid(person.disability_onset), min(_qid(last), 1960 * 4 + 2)",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses[4-end0]",
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses[4-end1]"
+      ],
+      "summary": [
+        "2 failed, 2 passed in 11.01s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '_qid(person.disability_onset), min(_qid(last), 1960 * 4 + 2) + 1'\nafter = '_qid(person.disability_onset), min(_qid(last), 1960 * 4 + 2)'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_declared_end_quarter_includes_witness_but_next_quarter_refuses'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    },
+    {
+      "name": "bound_only_declared_ends",
+      "before": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "after": "    if person.current_disability_period_established and person.current_disability_period_end is not None:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses"
+      ],
+      "summary": [
+        "1 failed in 319.39s (0:05:19)"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nafter = '    if person.current_disability_period_established and person.current_disability_period_end is not None:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    },
+    {
+      "name": "bypass_continuity_bound_for_unknown_end",
+      "before": "    if person.current_disability_period_established:\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "after": "    if person.current_disability_period_established and not (\n        person.current_disability_period_end is None\n        and person.current_disability_period_continues_through is not None\n    ):\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\n        last = min(\n            last,\n            person.current_disability_period_end\n            or person.current_disability_period_continues_through\n            or person.disability_onset,\n        )",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses[7]"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses[7]"
+      ],
+      "summary": [
+        "1 failed in 11.69s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-8",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-8",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-8 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-8 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = '    if person.current_disability_period_established:\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nafter = '    if person.current_disability_period_established and not (\\n        person.current_disability_period_end is None\\n        and person.current_disability_period_continues_through is not None\\n    ):\\n        # 404.321(b): a pre-1980 period ends after disability ended or at 65.\\n        last = min(\\n            last,\\n            person.current_disability_period_end\\n            or person.current_disability_period_continues_through\\n            or person.disability_onset,\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_8.py::test_continuity_quarter_includes_witness_but_later_quarter_refuses[7]'])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+      "source_after_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+    }
+  ],
+  "round_8_note": "Six isolated in-memory implementation mutations were caught and discarded against the final source. Removing the declared-end bound, removing the continuity bound, bypassing the continuity ceiling for an UNKNOWN end, substituting query for onset, stopping one quarter early, and binding only declared ends each fail named public-path tests. The continuity removal catches loss of a covered-quarter witness, while bypassing the ceiling catches unsafe extension to a later quarter. The declared-end-only mutation is caught by the UNKNOWN-end completion invariant. Every foreground child verified the disk source SHA-256 stayed unchanged. No implementation mutation was written to disk and no existing assertion was weakened.",
+  "round_8_final_source_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
 }
