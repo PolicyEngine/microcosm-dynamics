@@ -10,6 +10,8 @@ never establishes an administrative period of disability. An established
 period ends no later than the month before full retirement age; an unknown
 ending includes every candidate end quarter from insured start through
 query/cap and permitted continuation. The cap never establishes the end.
+Dated continuity restricts possible endings without establishing an end;
+a date beyond the query quarter makes that quarter interior to the period.
 Disability tests
 scan onset and later quarters; period establishment and section 214(c)
 applicability carry explicit provenance. A declaration is rejected only
@@ -176,8 +178,11 @@ def _fact_provenance(provenance, convention_id, label):
 
 
 def _sspa211_applicability(person):
-    # RS00301.102 B.1/B.3: pre2004 assignments are exempt; an alien
-    # without a true-identity SSN is subject to the additional requirement.
+    # RS00301.102 B.1/B.3: pre2004 assignments are exempt. Later or absent
+    # true-identity assignments ordinarily trigger Section 211, but B.3.b's
+    # wrong-number SS-5 exception allows an adjudicated exemption when the
+    # worker could legitimately have been assigned an SSN before 2004. A
+    # worker born in 2004 or later cannot meet that exception's date limit.
     legacy = None
     if person.alien_worker:
         if person.ssn_never_assigned:
@@ -185,7 +190,11 @@ def _sspa211_applicability(person):
         elif person.ssn_assignment_date is not None:
             legacy = person.ssn_assignment_date >= date(2004, 1, 1)
     if person.sspa211_applies is not None:
-        if legacy is not None and legacy != person.sspa211_applies:
+        if (legacy is False and person.sspa211_applies) or (
+            person.alien_worker
+            and person.birth_date >= date(2004, 1, 1)
+            and not person.sspa211_applies
+        ):
             raise InvalidFamilyInput("Conflicting SSPA211 applicability facts")
         return person.sspa211_applies
     return legacy
@@ -285,6 +294,13 @@ class Person:
         EarningsProvenance.UNKNOWN
     )
     current_disability_period_end_convention_id: str | None = None
+    current_disability_period_continues_through: date | None = None
+    current_disability_period_continues_through_provenance: (
+        EarningsProvenance
+    ) = EarningsProvenance.UNKNOWN
+    current_disability_period_continues_through_convention_id: str | None = (
+        None
+    )
 
     def __post_init__(self):
         _fact_provenance(
@@ -374,6 +390,33 @@ class Person:
                 "Established period begins after its statutory FRA end"
             )
         fra_end = fra.replace(day=1) - timedelta(days=1)
+        _fact_provenance(
+            self.current_disability_period_continues_through_provenance,
+            self.current_disability_period_continues_through_convention_id,
+            "current disability period continuity",
+        )
+        through = self.current_disability_period_continues_through
+        if (
+            self.current_disability_period_continues_through_provenance
+            is EarningsProvenance.UNKNOWN
+        ) != (through is None):
+            raise InvalidFamilyInput(
+                "Current period continuity must match provenance"
+            )
+        if through is not None:
+            if not self.current_disability_period_established:
+                raise InvalidFamilyInput(
+                    "Period continuity requires established period"
+                )
+            if through < self.disability_onset or through > fra_end:
+                raise InvalidFamilyInput(
+                    "Period continuity outside onset and statutory FRA end"
+                )
+            if (
+                self.current_disability_period_end is not None
+                and through > self.current_disability_period_end
+            ) or (self.death_date is not None and through > self.death_date):
+                raise InvalidFamilyInput("Period continuity follows its end")
         periods = sorted(
             (
                 replace(p, end=min(p.end, fra_end)) if p.start < fra else p
@@ -756,6 +799,11 @@ def _pre1956_alternate_possible(person, credits, month, exit_month):
         1956, 1, 1
     ):
         return False
+    if person.current_disability_period_established:
+        # RS00301.480 B.1: a freeze cannot begin before 1952-07-01.
+        # An independent alternate route still must start before the
+        # declared ending or known continuity observation.
+        month = _current_period_start_horizon(person, month)
     first = max(_qid(person.disability_onset), 1952 * 4 + 2)
     last = min(_qid(month), 1955 * 4 + 3)
     for quarter in range(first, last + 1):
@@ -850,7 +898,7 @@ def _boundary_variants(rows, periods):
     if prod(map(len, options)) > 4096:
         _refuse(
             InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-            "More than4096 boundary assignments",
+            "More than 4096 boundary assignments",
         )
     for choices in product(*options):
         yield dict(zip(years, choices, strict=True))
@@ -1057,6 +1105,11 @@ def _unknown_prior_history_is_empty(person, credits, month, exit_month):
             current_disability_period_end=None,
             current_disability_period_end_provenance=EarningsProvenance.UNKNOWN,
             current_disability_period_end_convention_id=None,
+            current_disability_period_continues_through=None,
+            current_disability_period_continues_through_provenance=(
+                EarningsProvenance.UNKNOWN
+            ),
+            current_disability_period_continues_through_convention_id=None,
         )
         if _pre1956_alternate_possible(
             possible_prior, credits, start, exit_month
@@ -1208,6 +1261,11 @@ def _with_current_period(person, credits, month, exit_month):
         end = min(end, person.death_date)
     if end < start:
         raise InvalidFamilyInput("Current period ends before insured start")
+    if (
+        person.current_disability_period_continues_through is not None
+        and person.current_disability_period_continues_through < start
+    ):
+        raise InvalidFamilyInput("Period continuity precedes insured start")
     period = DisabilityPeriod(start, end)
     return (
         replace(
@@ -1227,6 +1285,8 @@ def _current_period_completions(person, completed, start, month):
     416(i)(2)(D) and 404.321(c) give alternative administrative endings.
     FRA/death cap the range; neither establishes its actual ending.
     End days within one quarter have identical insurance semantics.
+    A continuity observation removes earlier endings; it never supplies
+    an ending, including when observed later than the query.
     """
     if (
         start is None
@@ -1242,6 +1302,9 @@ def _current_period_completions(person, completed, start, month):
     ]
     if _qid(cap) > _qid(month):
         endings.append(cap)
+    through = person.current_disability_period_continues_through
+    if through is not None:
+        endings = [end for end in endings if end >= through]
     return tuple(
         replace(
             completed,
@@ -1250,6 +1313,19 @@ def _current_period_completions(person, completed, start, month):
         )
         for end in endings
     )
+
+
+def _current_period_start_horizon(person, month):
+    """Latest possible insured start under immutable period facts."""
+    horizon = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))
+    for fixed_bound in (
+        person.current_disability_period_end,
+        person.current_disability_period_continues_through,
+        person.death_date,
+    ):
+        if fixed_bound is not None:
+            horizon = min(horizon, fixed_bound.replace(day=1))
+    return horizon
 
 
 def _specialist_establishment_possible(
@@ -1280,10 +1356,13 @@ def _could_establish_current_period(
 ):
     """Reject only a declaration impossible under every possible route.
 
-    This is deliberately one-way: yes preserves a candidate or a named
-    refusal; it never establishes a period. Calendar/schema contradictions
-    have already been rejected. Ordinary premises cannot exclude a
-    specialist route or a short DIB-entitled prior period.
+    A fixed ending or continuity observation bounds the insured start.
+    Upper credits decide ordinary insurance by that bound, but a derived
+    prior-quarter overlap must be cleared by that same concrete filling.
+    Calendar/schema contradictions have already been rejected. Ordinary
+    premises cannot exclude a specialist route or a short DIB-entitled
+    prior period. Unresolved prior histories and more than 4096 overlap
+    fillings remain explicitly outside the exact ordinary predicate.
     """
     if not person.current_disability_period_established:
         return True
@@ -1292,6 +1371,10 @@ def _could_establish_current_period(
     ):
         return True
     if maximum_qcs < 6:
+        return False
+    horizon = _current_period_start_horizon(person, month)
+    rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
+    if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:
         return False
     if (
         person.prior_disability_periods_provenance
@@ -1307,27 +1390,73 @@ def _could_establish_current_period(
         prior_disability_periods_convention_id=None,
     )
     try:
-        _with_current_period(plain, credits, month, exit_month)
+        _with_current_period(plain, credits, horizon, exit_month)
     except InvalidFamilyInput:
-        # More credits can move the first insured start across a declared
-        # end or a represented prior-period boundary. Failure to construct
-        # that upper-credit period is not proof about every completion.
-        # Retain any UNKNOWN-credit declaration with an ordinary insured
-        # candidate; a public completion failure then receives a refusal.
-        return (
-            any(
-                row.provenance is EarningsProvenance.UNKNOWN
-                for row in years.values()
+        pass
+    else:
+        return True
+    # Ordinary insurance by a fixed date is monotone in credited quarters.
+    # An upper-credit failure here therefore disproves every ordinary
+    # filling, even if the same record first qualifies after the ending.
+    if not _decision_witness(
+        plain, credits, horizon, exit_month, InsuredTest.DISABILITY
+    )[0][0]:
+        return False
+    unknown = tuple(
+        year
+        for year, row in sorted(years.items())
+        if row.provenance is EarningsProvenance.UNKNOWN
+        and year <= horizon.year
+    )
+    if not unknown:
+        return False
+    lower = dict(credits)
+    lower.update({year: ((), 0) for year in unknown})
+    try:
+        _with_current_period(plain, lower, horizon, exit_month)
+    except InvalidFamilyInput:
+        pass
+    else:
+        return True
+    # A later witness alone does not suffice: the first insured quarter
+    # must both avoid the represented prior period and precede the fixed
+    # bound. Enumerate complete fillings only in this nonmonotone corner.
+    options = []
+    for year in unknown:
+        allowed = rows.get(year, ((), 0, ()))[2]
+        if year < 1978:
+            options.append(
+                tuple(
+                    (
+                        tuple(
+                            q
+                            for q, flag in zip(allowed, flags, strict=True)
+                            if flag
+                        ),
+                        0,
+                    )
+                    for flags in product((False, True), repeat=len(allowed))
+                )
             )
-            and _decision_witness(
-                plain,
-                credits,
-                min(month, _fra_date(plain).replace(day=1)),
-                exit_month,
-                InsuredTest.DISABILITY,
-            )[0][0]
+        else:
+            options.append(
+                tuple(((), count) for count in range(len(allowed) + 1))
+            )
+    if prod(map(len, options)) > 4096:
+        _refuse(
+            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+            "More than 4096 current-period overlap fillings; "
+            "ordinary establishment validity is unresolved",
         )
-    return True
+    for choices in product(*options):
+        filling = dict(credits)
+        filling.update(zip(unknown, choices, strict=True))
+        try:
+            _with_current_period(plain, filling, horizon, exit_month)
+        except InvalidFamilyInput:
+            continue
+        return True
+    return False
 
 
 def _dli_cap(person, month, exit_month):
@@ -1353,8 +1482,10 @@ def insured_status(
 
     Medical onset means continuously disabled through this query and never
     establishes a period. Declare establishment, prior-period provenance,
-    and section214(c) applicability; UNKNOWN never silently means none.
+    and section 214(c) applicability; UNKNOWN never silently means none.
     Declare an administrative ending with its provenance when known. An
+    observed continues-through date instead excludes earlier endings and
+    may be later than the query; it does not declare an endpoint. An
     ongoing period is bounded by possible endings, with a named refusal if
     the ending changes a requested status, and is always capped before FRA.
     Each disability window ends at its tested quarter, from onset through
@@ -1635,7 +1766,7 @@ def insured_status(
             ) and _qid(hi_date) == _qid(month)
         if applicability is None:
             # A guaranteed historical fully insured witness also needs
-            # resolved section214(c) facts. Keep the QC-only upper date;
+            # resolved section 214(c) facts. Keep the QC-only upper date;
             # false current status cannot prove a positive DLI lower date.
             lo_date = None
         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)
@@ -1696,6 +1827,10 @@ def insured_status(
             (
                 "current_disability_period_end",
                 person.current_disability_period_end_convention_id,
+            ),
+            (
+                "current_disability_period_continues_through",
+                person.current_disability_period_continues_through_convention_id,
             ),
             ("sspa211_applicability", person.sspa211_convention_id),
         )

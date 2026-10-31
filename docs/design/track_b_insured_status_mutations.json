@@ -1866,5 +1866,221 @@
     }
   ],
   "round_4_note": "Nine implementation mutations were caught in isolated in-memory module namespaces; no mutation was written to the working tree. Final source includes the UNKNOWN-prior concrete-enumeration guard, explicit missing-end disclosure, and sound refusal for invalid lower/upper earnings representatives when a valid completion remains possible. Existing concrete assertions remain; final controls and exact commands are in the fix-round-4 report.",
-  "round_4_final_source_sha256": "735245b19fce6f2439c222acac2956761032971c8fced8fde2f56d372b2abb95"
+  "round_4_final_source_sha256": "735245b19fce6f2439c222acac2956761032971c8fced8fde2f56d372b2abb95",
+  "round_5_mutations": [
+    {
+      "name": "round5_fixed_date_six_qc_boundary",
+      "before": "if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:",
+      "after": "if sum(len(_assign_qcs(*row)) for row in rows.values()) <= 6:",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_six_qcs_by_fixed_end_preserve_valid_unknown_declaration"
+      ],
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-psid /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/mutate_round5_possibility.py fixed_date_six_qc_boundary",
+      "summary": "1 failed in 3.92s; exactly six QCs before the fixed end must retain the valid concrete/UNKNOWN declarations.",
+      "isolated": true,
+      "restored": true,
+      "restoration": "Only inspect.getsource(_could_establish_current_period) was mutated and executed in the canonical module dictionary in an isolated process. The harness never wrote implementation files; process exit discarded the mutant.",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = inspect.getsource(i._could_establish_current_period)\nbefore = 'if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:'\nafter = 'if sum(len(_assign_qcs(*row)) for row in rows.values()) <= 6:'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_six_qcs_by_fixed_end_preserve_valid_unknown_declaration'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "round5_drop_same_filling_period_validation",
+      "before": "_with_current_period(plain, filling, horizon, exit_month)",
+      "after": "_decision_witness(plain, filling, horizon, exit_month, InsuredTest.DISABILITY)",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_different_fillings_cannot_separately_satisfy_end_and_overlap"
+      ],
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-psid /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/mutate_round5_possibility.py drop_same_filling_period_validation",
+      "summary": "1 failed in 3.74s; UNKNOWN became a counted refusal even though all16 concrete masks failed the fixed-end/overlap conjunction.",
+      "isolated": true,
+      "restored": true,
+      "restoration": "Only inspect.getsource(_could_establish_current_period) was mutated and executed in the canonical module dictionary in an isolated process. The harness never wrote implementation files; process exit discarded the mutant.",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = inspect.getsource(i._could_establish_current_period)\nbefore = '_with_current_period(plain, filling, horizon, exit_month)'\nafter = '_decision_witness(plain, filling, horizon, exit_month, InsuredTest.DISABILITY)'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_different_fillings_cannot_separately_satisfy_end_and_overlap'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "round5_lose_pre1978_quarter_placements",
+      "before": "if year < 1978:",
+      "after": "if year < 1937:",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_later_quarter_filling_can_clear_overlap_before_fixed_end"
+      ],
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-psid /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/mutate_round5_possibility.py lose_pre1978_quarter_placements",
+      "summary": "1 failed in 7.29s; annual flexible-count surrogates falsely rejected UNKNOWN despite seven valid later-quarter masks.",
+      "isolated": true,
+      "restored": true,
+      "restoration": "Only inspect.getsource(_could_establish_current_period) was mutated and executed in the canonical module dictionary in an isolated process. The harness never wrote implementation files; process exit discarded the mutant.",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = inspect.getsource(i._could_establish_current_period)\nbefore = 'if year < 1978:'\nafter = 'if year < 1937:'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_later_quarter_filling_can_clear_overlap_before_fixed_end'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "round5_lose_automatic_pre1956_bound",
+      "before": "if person.current_disability_period_established:",
+      "after": "if False and person.current_disability_period_established:",
+      "target_function": "_pre1956_alternate_possible",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound0-end]",
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound0-continuity]",
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound1-end]",
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound1-continuity]"
+      ],
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-psid /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/mutate_round5_possibility.py lose_automatic_pre1956_bound",
+      "summary": "4 failed, 4 passed in 12.21s; the automatic alternate route must start before declared end or continuity, independently of the ordinary scan.",
+      "isolated": true,
+      "restored": true,
+      "restoration": "Only inspect.getsource(_pre1956_alternate_possible) was mutated and executed in the canonical module dictionary in an isolated process. The harness never wrote implementation files; process exit discarded the mutant.",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = inspect.getsource(i._pre1956_alternate_possible)\nbefore = 'if person.current_disability_period_established:'\nafter = 'if False and person.current_disability_period_established:'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound0-end]', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound0-continuity]', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound1-end]', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_obeys_fixed_end_and_continuity[bound1-continuity]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "round5_lose_actual_fra_end_bound",
+      "before": "month, _fra_date(person).replace(day=1) - timedelta(days=1)",
+      "after": "month, _fra_date(person).replace(day=1) - timedelta(days=0)",
+      "target_function": "_current_period_start_horizon",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_must_precede_fra_month[7-False]"
+      ],
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-psid /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/mutate_round5_possibility.py lose_actual_fra_end_bound",
+      "summary": "1 failed, 1 passed in 5.80s; the alternate freeze cannot first begin at the FRA month boundary after its statutory end.",
+      "isolated": true,
+      "restored": true,
+      "restoration": "Only inspect.getsource(_current_period_start_horizon) was mutated and executed in the canonical module dictionary in an isolated process. The harness never wrote implementation files; process exit discarded the mutant.",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = inspect.getsource(i._current_period_start_horizon)\nbefore = 'month, _fra_date(person).replace(day=1) - timedelta(days=1)'\nafter = 'month, _fra_date(person).replace(day=1) - timedelta(days=0)'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_possibility.py::test_automatic_pre1956_start_must_precede_fra_month[7-False]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "id": "r5-sspa-reject-wrong-number-exemption",
+      "location": "src/populace_dynamics/track_b/insured_status.py::_sspa211_applicability",
+      "mutation": "if (legacy is False and person.sspa211_applies) or ( -> if (legacy is not None and legacy != person.sspa211_applies) or ( (in-memory function mutation only; birth condition retained)",
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-insured POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-insured PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = inspect.getsource(i._sspa211_applicability)\nbefore = 'if (legacy is False and person.sspa211_applies) or ('\nafter = 'if (legacy is not None and legacy != person.sspa211_applies) or ('\nassert source.count(before) == 1\nexec(source.replace(before, after), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_5_sspa.py::test_reviewed_post2003_assignment_accepts_observed_wrong_number_exemption']))\nPY",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_sspa.py::test_reviewed_post2003_assignment_accepts_observed_wrong_number_exemption"
+      ],
+      "result": "1 failed in 3.25s",
+      "restored": true,
+      "before": "        if (legacy is False and person.sspa211_applies) or (\n            person.alien_worker\n            and person.birth_date >= date(2004, 1, 1)\n            and not person.sspa211_applies\n        ):",
+      "after": "        if (legacy is not None and legacy != person.sspa211_applies) or (\n            person.alien_worker\n            and person.birth_date >= date(2004, 1, 1)\n            and not person.sspa211_applies\n        ):",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = '        if (legacy is False and person.sspa211_applies) or (\\n            person.alien_worker\\n            and person.birth_date >= date(2004, 1, 1)\\n            and not person.sspa211_applies\\n        ):'\nafter = '        if (legacy is not None and legacy != person.sspa211_applies) or (\\n            person.alien_worker\\n            and person.birth_date >= date(2004, 1, 1)\\n            and not person.sspa211_applies\\n        ):'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_sspa.py::test_reviewed_post2003_assignment_accepts_observed_wrong_number_exemption'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "id": "r5-sspa-accept-pre2004-applicability",
+      "location": "src/populace_dynamics/track_b/insured_status.py::_sspa211_applicability",
+      "mutation": "if (legacy is False and person.sspa211_applies) or ( -> if False or ( (in-memory function mutation only; birth condition retained)",
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round5-insured POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round5-insured PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = inspect.getsource(i._sspa211_applicability)\nbefore = 'if (legacy is False and person.sspa211_applies) or ('\nafter = 'if False or ('\nassert source.count(before) == 1\nexec(source.replace(before, after), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_5_sspa.py', '-k', 'test_pre2004_assignment_cannot_declare_section211_applicable']))\nPY",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_sspa.py::test_pre2004_assignment_cannot_declare_section211_applicable[condition0]",
+        "tests/test_track_b_insured_status_fix_round_5_sspa.py::test_pre2004_assignment_cannot_declare_section211_applicable[condition1]"
+      ],
+      "result": "2 failed, 23 deselected in 4.37s",
+      "restored": true,
+      "before": "        if (legacy is False and person.sspa211_applies) or (\n            person.alien_worker\n            and person.birth_date >= date(2004, 1, 1)\n            and not person.sspa211_applies\n        ):",
+      "after": "        if False or (\n            person.alien_worker\n            and person.birth_date >= date(2004, 1, 1)\n            and not person.sspa211_applies\n        ):",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = '        if (legacy is False and person.sspa211_applies) or (\\n            person.alien_worker\\n            and person.birth_date >= date(2004, 1, 1)\\n            and not person.sspa211_applies\\n        ):'\nafter = '        if False or (\\n            person.alien_worker\\n            and person.birth_date >= date(2004, 1, 1)\\n            and not person.sspa211_applies\\n        ):'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_sspa.py::test_pre2004_assignment_cannot_declare_section211_applicable[condition0]', 'tests/test_track_b_insured_status_fix_round_5_sspa.py::test_pre2004_assignment_cannot_declare_section211_applicable[condition1]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "id": "r5-sspa-accept-impossible-prebirth-exemption",
+      "location": "src/populace_dynamics/track_b/insured_status.py::_sspa211_applicability",
+      "mutation": "and person.birth_date >= date(2004, 1, 1) -> and False (in-memory function mutation only)",
+      "command": "Full reproducible in-memory pytest command is recorded in scratch/review/round5-sspa.md",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_sspa.py::test_post2003_birth_cannot_declare_wrong_number_exemption[conditions0-assigned-birth1]"
+      ],
+      "result": "1 failed in 6.54s",
+      "restored": true,
+      "before": "and person.birth_date >= date(2004, 1, 1)",
+      "after": "and False",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = 'and person.birth_date >= date(2004, 1, 1)'\nafter = 'and False'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_sspa.py::test_post2003_birth_cannot_declare_wrong_number_exemption[conditions0-assigned-birth1]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "continuity_does_not_filter_earlier_endings",
+      "before": "endings = [end for end in endings if end >= through]",
+      "after": "endings = [end for end in endings]",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/scratch/review/round5_continuity_mutation.py 0",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_later_continuity_makes_query_quarter_interior"
+      ],
+      "returncode": 1,
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round5",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round5",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5"
+      },
+      "restored": true,
+      "method": "Isolated in-memory implementation mutation; source unchanged.",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_later_continuity_makes_query_quarter_interior[through0]",
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_later_continuity_makes_query_quarter_interior[through1]"
+      ],
+      "summary": "2 failed in 7.37s",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = 'endings = [end for end in endings if end >= through]'\nafter = 'endings = [end for end in endings]'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_continuity.py::test_later_continuity_makes_query_quarter_interior[through0]', 'tests/test_track_b_insured_status_fix_round_5_continuity.py::test_later_continuity_makes_query_quarter_interior[through1]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "continuity_excludes_equal_ending",
+      "before": "endings = [end for end in endings if end >= through]",
+      "after": "endings = [end for end in endings if end > through]",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/scratch/review/round5_continuity_mutation.py 1",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_query_quarter_continuity_retains_ending_ambiguity"
+      ],
+      "returncode": 1,
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round5",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round5",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5"
+      },
+      "restored": true,
+      "method": "Isolated in-memory implementation mutation; source unchanged.",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_query_quarter_continuity_retains_ending_ambiguity[through1]"
+      ],
+      "summary": "1 failed, 1 passed in 4.87s",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = 'endings = [end for end in endings if end >= through]'\nafter = 'endings = [end for end in endings if end > through]'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_continuity.py::test_query_quarter_continuity_retains_ending_ambiguity[through1]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "continuity_does_not_require_establishment",
+      "before": "if not self.current_disability_period_established:\n                raise InvalidFamilyInput(\n                    \"Period continuity requires established period\"",
+      "after": "if False:\n                raise InvalidFamilyInput(\n                    \"Period continuity requires established period\"",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/scratch/review/round5_continuity_mutation.py 2",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_continuity_requires_a_possible_established_period"
+      ],
+      "returncode": 1,
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round5",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round5",
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-100240-trackb-fix-insured-5"
+      },
+      "restored": true,
+      "method": "Isolated in-memory implementation mutation; source unchanged.",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_5_continuity.py::test_continuity_requires_a_possible_established_period[facts2-through2]"
+      ],
+      "summary": "1 failed, 4 passed in 5.98s",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round5 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round5 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport inspect\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nsource = original\nbefore = 'if not self.current_disability_period_established:\\n                raise InvalidFamilyInput(\\n                    \"Period continuity requires established period\"'\nafter = 'if False:\\n                raise InvalidFamilyInput(\\n                    \"Period continuity requires established period\"'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_5_continuity.py::test_continuity_requires_a_possible_established_period[facts2-through2]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    }
+  ],
+  "round_5_note": "Ordinary fixed-date and same-filling validity, source-permitted SSPA exemptions and retained birth/assignment contradictions, continuity candidate intersection and validation, and automatic historical/FRA chronology. Every deliberate mutation was caught and discarded or reverted; no existing test assertion was weakened.",
+  "round_5_final_source_sha256": "04964886c402b0ff44dd958fa0b82b6055730f463fdf660a6e346999e13fd493"
 }
