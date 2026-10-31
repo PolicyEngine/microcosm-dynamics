@@ -10,6 +10,8 @@ never establishes an administrative period of disability. An established
 period ends no later than the month before full retirement age; an unknown
 ending includes every candidate end quarter from insured start through
 query/cap and permitted continuation. The cap never establishes the end.
+The alternate test's 20/40 exclusion uses only quarters beginning before
+the FRA month, whether or not a period is declared established.
 Dated continuity restricts possible endings without establishing an end;
 a date beyond the query quarter makes that quarter interior to the period.
 Disability tests
@@ -717,7 +719,7 @@ def _coverage_checks(person, years, month, credits):
 
 
 def _observable_coverage_paths(
-    person, years, month, exit_month, kind, lo, upper, lower
+    person, years, month, exit_month, kind, lo, quarter, upper, lower
 ):
     """Refuse favorable specialist paths revealed by ordinary declarations.
 
@@ -732,7 +734,12 @@ def _observable_coverage_paths(
     RS 00301.480 likewise reveals a possible pre1956 alternate disability
     path from onset and earnings; its application facts remain unmodeled.
     """
-    if lo[0]:
+    # A successful witness at or after FRA cannot resolve an earlier
+    # alternate route requiring a freeze or DIB month before FRA.
+    if lo[0] and (
+        kind is not InsuredTest.DISABILITY
+        or quarter < _fra_date(person).replace(day=1)
+    ):
         return
     if kind is InsuredTest.FULLY:
         before1951 = {year: row for year, row in years.items() if year < 1951}
@@ -805,16 +812,14 @@ def _pre1956_alternate_possible(
     # before October 1960. Only the lower filling can exclude every
     # completion. Use the ordinary disability window, including favorable
     # consideration or disregard of all prior periods (404.130(f)).
+    # A witness must allow a freeze or DIB before FRA (Act 216(i)(2)(D),
+    # 404.315(a), 404.321(a)-(b)), regardless of declared establishment.
+    last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))
     lower = credits if lower_credits is None else lower_credits
+    # Source conflict us:oasdi-insured-pre1956-alternate-any-quarter-scan
     for quarter in range(
-        _qid(person.disability_onset), min(_qid(month), 1960 * 4 + 2) + 1
+        _qid(person.disability_onset), min(_qid(last), 1960 * 4 + 2) + 1
     ):
-        # Use the established-period disability scan's FRA boundary.
-        if (
-            person.current_disability_period_established
-            and quarter > _fra_quarter(person)
-        ):
-            break
         for use_periods in (
             (True, False) if person.prior_disability_periods else (True,)
         ):
@@ -1586,6 +1591,8 @@ def insured_status(
     the ending changes a requested status, and is always capped before FRA.
     Each disability window ends at its tested quarter, from onset through
     query, and the first insured quarter supplies the witness (404.131).
+    An alternate for disability before 1956 is excluded only by 20/40 in a
+    quarter beginning before the FRA month, independently of establishment.
     Establishment is an input error only if no ordinary, observable, or
     flagged specialist route could validate any completion of the facts.
     History validation runs first. Uncomputable QC rows use bounded
@@ -1779,7 +1786,7 @@ def insured_status(
                     InsuredUnsupportedReason.CURRENT_PERIOD_END,
                     f"Unobserved statutory period end decides {kind.value}",
                 )
-        for p, (witness, _) in zip(
+        for p, (witness, quarter) in zip(
             decision_lo_people, lo_candidates, strict=True
         ):
             _observable_coverage_paths(
@@ -1789,6 +1796,7 @@ def insured_status(
                 coverage_end_month,
                 kind,
                 witness,
+                quarter,
                 upper,
                 lower,
             )

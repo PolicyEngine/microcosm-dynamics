@@ -2302,5 +2302,138 @@
     }
   ],
   "round_6_note": "Nine isolated in-memory implementation mutations were caught and discarded against the final source. No implementation mutation was written to disk; every child verified the final source SHA-256 stayed unchanged. The original sorted-year conversion refusal, bounded unknown fillings, fixed quarterly minimum, lower-credit 20/40 exclusion with its existing FRA boundary and October 1960 cutoff, and immutable overlap check remain enforced. No existing test assertion was weakened.",
-  "round_6_final_source_sha256": "223fb5e5b436a12b049d948c9cfdcf9827c606f403ab5ae419a37e2024dc174f"
+  "round_6_final_source_sha256": "223fb5e5b436a12b049d948c9cfdcf9827c606f403ab5ae419a37e2024dc174f",
+  "round_7_mutation_control": {
+    "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-7 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-7 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q --tb=short 'tests/test_track_b_insured_status_fix_round_7.py::test_fra_month_witness_keeps_reviewed_refusal_and_denominator[reviewer]' 'tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra' 'tests/test_track_b_insured_status_fix_round_7.py::test_fra_quarter_stays_only_when_it_begins_before_fra_month[2]'",
+    "returncode": 0,
+    "summary": [
+      "6 passed in 5.90s"
+    ]
+  },
+  "round_7_mutations": [
+    {
+      "name": "alternate_exclusion_uses_fra_attainment_quarter",
+      "before": "min(_qid(last), 1960 * 4 + 2)",
+      "after": "min(_qid(month), _fra_quarter(person), 1960 * 4 + 2)",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_7.py::test_fra_month_witness_keeps_reviewed_refusal_and_denominator[reviewer]"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_fra_month_witness_keeps_reviewed_refusal_and_denominator[reviewer]"
+      ],
+      "summary": [
+        "1 failed in 5.32s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-7",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-7",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-7 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-7 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = \"min(_qid(last), 1960 * 4 + 2)\"\nafter = \"min(_qid(month), _fra_quarter(person), 1960 * 4 + 2)\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main([\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"-q\",\"--tb=short\",\"tests/test_track_b_insured_status_fix_round_7.py::test_fra_month_witness_keeps_reviewed_refusal_and_denominator[reviewer]\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99",
+      "source_after_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
+    },
+    {
+      "name": "alternate_exclusion_fra_limit_only_for_established_period",
+      "before": "last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))",
+      "after": "last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1)) if person.current_disability_period_established else month",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[2-none]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[2-unknown]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[3-none]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[3-unknown]"
+      ],
+      "summary": [
+        "4 failed in 6.68s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-7",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-7",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-7 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-7 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = \"last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))\"\nafter = \"last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1)) if person.current_disability_period_established else month\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main([\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"-q\",\"--tb=short\",\"tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99",
+      "source_after_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
+    },
+    {
+      "name": "alternate_exclusion_fra_limit_one_month_early",
+      "before": "last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))",
+      "after": "last = min(month, (_fra_date(person).replace(day=1) - timedelta(days=1)).replace(day=1) - timedelta(days=1))",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_7.py::test_fra_quarter_stays_only_when_it_begins_before_fra_month[2]"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_fra_quarter_stays_only_when_it_begins_before_fra_month[2]"
+      ],
+      "summary": [
+        "1 failed in 5.83s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-7",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-7",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-7 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-7 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = \"last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))\"\nafter = \"last = min(month, (_fra_date(person).replace(day=1) - timedelta(days=1)).replace(day=1) - timedelta(days=1))\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main([\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"-q\",\"--tb=short\",\"tests/test_track_b_insured_status_fix_round_7.py::test_fra_quarter_stays_only_when_it_begins_before_fra_month[2]\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99",
+      "source_after_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
+    },
+    {
+      "name": "ordinary_success_unconditionally_hides_alternate",
+      "before": "if lo[0] and (\n        kind is not InsuredTest.DISABILITY\n        or quarter < _fra_date(person).replace(day=1)\n    ):\n        return",
+      "after": "if lo[0]:\n        return",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[2-none]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[2-unknown]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[3-none]",
+        "FAILED tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra[3-unknown]"
+      ],
+      "summary": [
+        "4 failed in 6.93s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent-trackb-fix-insured-7",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent-trackb-fix-insured-7",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent-trackb-fix-insured-7 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent-trackb-fix-insured-7 PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\ndigest = hashlib.sha256(original.encode()).hexdigest()\nprint('source_before_sha256', digest)\nbefore = \"if lo[0] and (\\n        kind is not InsuredTest.DISABILITY\\n        or quarter < _fra_date(person).replace(day=1)\\n    ):\\n        return\"\nafter = \"if lo[0]:\\n        return\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main([\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"-q\",\"--tb=short\",\"tests/test_track_b_insured_status_fix_round_7.py::test_unestablished_period_keeps_alternate_after_fra\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99",
+      "source_after_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
+    }
+  ],
+  "round_7_note": "Four isolated in-memory implementation mutations were caught and discarded against the final source. The FRA-attainment-quarter limit, establishment-only FRA limit, one-month-early limit, and unconditional successful-witness short circuit each fail named public-path tests. Every child verified the disk source SHA-256 stayed unchanged. No implementation mutation was written to disk and no existing test assertion was weakened.",
+  "round_7_final_source_sha256": "fe0d5c32e14d55a85e15890ebb6eb171a2c4e527f17ef7004bab268568001c99"
 }
