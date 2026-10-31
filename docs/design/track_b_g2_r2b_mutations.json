@@ -2,12 +2,12 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 28,
+  "confirmed_mutation_count": 39,
   "counts_by_layer": {
     "shared_provenance": 1,
-    "g_deductions": 12,
-    "r2": 7,
-    "g_savings": 8
+    "g_deductions": 14,
+    "r2": 12,
+    "g_savings": 12
   },
   "environment_contract": {
     "OMP_NUM_THREADS": "1",
@@ -1937,6 +1937,363 @@
         "restored_test_exit_code": 0
       },
       "evidence_run": "Fresh completed continuation replay; isolated sources, exact byte restoration and restored tests."
+    },
+    {
+      "id": "round3_own_cap_equality_accepted",
+      "layer": "g_deductions",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "and event.payable + nh == original",
+        "after": "and event.payable + nh > original"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deduction_cap.py",
+        "-k",
+        "own_event_at_ob_cap",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation0-False-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation0-False-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation0-True-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation0-True-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation1-False-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation1-False-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation1-True-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[False-reservation1-True-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation0-False-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation0-False-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation0-True-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation0-True-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation1-False-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation1-False-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation1-True-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row[True-reservation1-True-True]"
+      ],
+      "log": {
+        "path": "scratch/review/round3_own_cap_equality_accepted.log",
+        "sha256": "414b4d72de4989029d14ed391f6fc336b0a94d87afceeaaf456694cd1c11fae5",
+        "failure_summary": "16 failed, 17 deselected in 37.67s"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_source_untouched": true
+      },
+      "elapsed_seconds": 61.63
+    },
+    {
+      "id": "round3_cap_rejects_every_event_reason",
+      "layer": "g_deductions",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "and event.reason is DeductionReason.OWN_EARNINGS_TEST\n            and event.payable + nh == original",
+        "after": "and event.reason is not None\n            and event.payable + nh == original"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_deduction_cap.py",
+        "-k",
+        "other_event_equality or dual_marker_at_original",
+        "--tb=short"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_other_event_equality_keeps_existing_named_refusal[DeductionReason.DUAL_ENTITLEMENT-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_other_event_equality_keeps_existing_named_refusal[DeductionReason.DUAL_ENTITLEMENT-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_other_event_equality_keeps_existing_named_refusal[DeductionReason.PRISONER_SUSPENSION-False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_other_event_equality_keeps_existing_named_refusal[DeductionReason.PRISONER_SUSPENSION-True]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_dual_marker_at_original_benefit_stays_supported[False]",
+        "tests/test_track_b_gross_benefits_deduction_cap.py::test_dual_marker_at_original_benefit_stays_supported[True]"
+      ],
+      "log": {
+        "path": "scratch/review/round3_cap_rejects_every_event_reason.log",
+        "sha256": "7aaaa1ddeaf2ed39444ccdb05c03291ddb697099703e1bbe1f2f36fd73bcd194",
+        "failure_summary": "6 failed, 27 deselected in 67.29s (0:01:07)"
+      },
+      "restoration": {
+        "reverted": true,
+        "isolated_source_restored": true,
+        "production_source_untouched": true
+      },
+      "elapsed_seconds": 103.4
+    },
+    {
+      "id": "round3_operational_age_filter_removed",
+      "layer": "g_savings",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "row.subject_to_family_maximum and row.age_reduction_factor < 1",
+        "after": "row.entitled and row.age_reduction_factor < 1"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-110425-trackb-fix-g2-3/scratch/review/saving/mutation-source/run_pytest.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_saving_absence.py",
+        "-k",
+        "review_outside_divorced_age_reduction or outside_surviving_divorced_age"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_review_outside_divorced_age_reduction_cannot_start_protection[pia0-maximum0-child0-divorced0-total0-5-False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_review_outside_divorced_age_reduction_cannot_start_protection[pia0-maximum0-child0-divorced0-total0-5-True]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_review_outside_divorced_age_reduction_cannot_start_protection[pia1-maximum1-child1-divorced1-total1-0-False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_review_outside_divorced_age_reduction_cannot_start_protection[pia1-maximum1-child1-divorced1-total1-0-True]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_surviving_divorced_age_cannot_trigger_survivor_protection[False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_surviving_divorced_age_cannot_trigger_survivor_protection[True]"
+      ],
+      "failure_summary": "6 failed, 10 deselected in 46.69s",
+      "evidence": "scratch/review/saving/round3_mutations.json",
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3_operational_membership_filter_removed",
+      "layer": "g_savings",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if row.subject_to_family_maximum",
+        "after": "if row.entitled"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-110425-trackb-fix-g2-3/scratch/review/saving/mutation-source/run_pytest.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_saving_absence.py",
+        "-k",
+        "outside_membership_changes"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_membership_changes_preserve_active_and_dormant_protection[presence0-False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_membership_changes_preserve_active_and_dormant_protection[presence0-True]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_membership_changes_preserve_active_and_dormant_protection[presence1-False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_membership_changes_preserve_active_and_dormant_protection[presence1-True]"
+      ],
+      "failure_summary": "4 failed, 12 deselected in 30.36s",
+      "evidence": "scratch/review/saving/round3_mutations.json",
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3_operational_age_basis_filter_removed",
+      "layer": "g_savings",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if row.subject_to_family_maximum",
+        "after": "if row.entitled"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-110425-trackb-fix-g2-3/scratch/review/saving/mutation-source/run_pytest.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_saving_absence.py",
+        "-k",
+        "outside_age_basis_change"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_age_basis_change_does_not_hide_worker_protection[False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_outside_age_basis_change_does_not_hide_worker_protection[True]"
+      ],
+      "failure_summary": "2 failed, 14 deselected in 17.22s",
+      "evidence": "scratch/review/saving/round3_mutations.json",
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3_operational_person_count_filter_removed",
+      "layer": "g_savings",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "row.subject_to_family_maximum for row in result.beneficiaries",
+        "after": "row.entitled for row in result.beneficiaries"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-110425-trackb-fix-g2-3/scratch/review/saving/mutation-source/run_pytest.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_saving_absence.py",
+        "-k",
+        "surviving_divorced_person_cannot_supply"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_surviving_divorced_person_cannot_supply_operational_membership[False]",
+        "tests/test_track_b_gross_benefits_saving_absence.py::test_surviving_divorced_person_cannot_supply_operational_membership[True]"
+      ],
+      "failure_summary": "2 failed, 14 deselected in 14.30s",
+      "evidence": "scratch/review/saving/round3_mutations.json",
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3-fra-bypass_fra",
+      "layer": "r2",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "    if own is not None and own.birth_year is not None:\n",
+        "after": "    return\n    if own is not None and own.birth_year is not None:\n"
+      },
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/fra_mutations/bypass_fra/src:$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=$PWD/scratch/review/nonexistent POPULACE_DYNAMICS_EPUF_DIR=$PWD/scratch/review/nonexistent /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_fra_facts.py -k sole_widow_contradictory",
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "test_sole_widow_contradictory_fra_is_input_error_and_has_no_row"
+      ],
+      "log": {
+        "path": "scratch/review/fra_mutations/bypass_fra/result.log",
+        "sha256": "1423b5c4c3bdb9f5622e5e1f84e24301adc62d6b35796996b3581f74fd838e58",
+        "failure_summary": "1 failed, 123 deselected in 18.93s"
+      },
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3-fra-last_endpoint",
+      "layer": "r2",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "latest = earliest + 11",
+        "after": "latest = earliest + 10"
+      },
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/fra_mutations/last_endpoint/src:$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=$PWD/scratch/review/nonexistent POPULACE_DYNAMICS_EPUF_DIR=$PWD/scratch/review/nonexistent /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_fra_facts.py -k every_cohort_interval -x",
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "test_every_cohort_interval_endpoint_and_every_inside_declaration[False-1930-780]"
+      ],
+      "log": {
+        "path": "scratch/review/fra_mutations/last_endpoint/result.log",
+        "sha256": "3748f2a52616633219a9b174154a85a1dfe7b949fe04cd82520ac9d6837a0782",
+        "failure_summary": "1 failed, 90 deselected in 19.19s"
+      },
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3-fra-first_endpoint",
+      "layer": "r2",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "earliest = birth_year * 12 + g._fra_months(birth_year, params)",
+        "after": "earliest = birth_year * 12 + g._fra_months(birth_year, params) + 1"
+      },
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/fra_mutations/first_endpoint/src:$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=$PWD/scratch/review/nonexistent POPULACE_DYNAMICS_EPUF_DIR=$PWD/scratch/review/nonexistent /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_fra_facts.py -k every_cohort_interval -x",
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "test_every_cohort_interval_endpoint_and_every_inside_declaration[False-1930-780]"
+      ],
+      "log": {
+        "path": "scratch/review/fra_mutations/first_endpoint/result.log",
+        "sha256": "e81f46cfb1797a4c50ee48129d46a6fb45031329889e83dc000b70f890701981",
+        "failure_summary": "1 failed, 90 deselected in 39.39s"
+      },
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3-fra-ignore_own_drc",
+      "layer": "r2",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "    if own is not None and own.delayed_credit_months:\n",
+        "after": "    if False:\n"
+      },
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/fra_mutations/ignore_own_drc/src:$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=$PWD/scratch/review/nonexistent POPULACE_DYNAMICS_EPUF_DIR=$PWD/scratch/review/nonexistent /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_fra_facts.py -k own_delayed -x",
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "test_own_delayed_credits_prove_only_fra_by_context_month[None-False]"
+      ],
+      "log": {
+        "path": "scratch/review/fra_mutations/ignore_own_drc/result.log",
+        "sha256": "fffa2a38c60db4e7ff10889ae1f7748418821363e6887fd077af5739f70aa8c9",
+        "failure_summary": "1 failed, 96 deselected in 21.27s"
+      },
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
+    },
+    {
+      "id": "round3-fra-ignore_cohort_identity",
+      "layer": "r2",
+      "round": 3,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "        if birth_year is not None and birth_year != own.birth_year:\n",
+        "after": "        if False:\n"
+      },
+      "command": "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/fra_mutations/ignore_cohort_identity/src:$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=$PWD/scratch/review/nonexistent POPULACE_DYNAMICS_EPUF_DIR=$PWD/scratch/review/nonexistent /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_fra_facts.py -k paired_auxiliary_birth_cohorts",
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "test_paired_auxiliary_birth_cohorts_error_at_declaration_before_refusal[False]",
+        "test_paired_auxiliary_birth_cohorts_error_at_declaration_before_refusal[True]"
+      ],
+      "log": {
+        "path": "scratch/review/fra_mutations/ignore_cohort_identity/result.log",
+        "sha256": "a950c798148ec4552ad01f1249972042c15058550ffdcad78971c6afbec9c4a2",
+        "failure_summary": "2 failed, 125 deselected in 14.51s"
+      },
+      "restoration": {
+        "reverted": true,
+        "production_source_untouched": true
+      }
     }
   ],
   "restoration_verification_snapshot": {
@@ -1967,5 +2324,11 @@
     "inherited_pre_round_2": 13,
     "replaced_attempt_1_records": 11,
     "note": "All round-2 claims were independently rerun in deduction-audit, r2-audit and savings-audit. Earlier historical records remain distinct. No production mutation was retained."
+  },
+  "round_3_head": "872cebc73e4cfc41f21d82188cd11630266393d4",
+  "round_3_note": "Eleven new one-line mutations were caught in isolated source copies and reverted; production source stayed fixed. Earlier mutation records and restoration snapshots are historical.",
+  "round_3_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "cd03ee0b2c828f1fb7e09980b48f4a23e9a8ca49295aaa7a1dd2799d1fff9ed8",
+    "src/populace_dynamics/track_b/ret_ledger.py": "7b5a1491453fbd61e76c670a1ce84deb3818138d3313c21327661d328d7fa0c8"
   }
 }

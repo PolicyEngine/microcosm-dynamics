@@ -10,7 +10,9 @@ No-care spouse deductions require an unreduced benefit and under-FRA
 status, derived from supplied facts or otherwise attested (203(c)(2);
 20 CFR 404.421(a)).
 Own-work events must withhold a positive amount; a zero deduction is an
-input error and never changes the family-maximum computation.
+input error and never changes the family-maximum computation. Payable plus
+NH reservation must therefore be strictly below the original-benefit upper
+bound, including before a held coverage refusal.
 Max's ruling d515 (2026-09-28) adopted §10 question 9's default: a Python
 reference now, with Axiom differential checks as diagnostics once a pinned
 rule exists. At this module's creation rulespec-us had no 42 U.S.C. 403
@@ -3902,9 +3904,13 @@ def _check_deduction_amount_bounds(
 ):
     """Reject impossible amounts before any statutory coverage refusal.
 
-    The original benefit is an unconditional upper bound on a post-work
-    payable. For a parent, the one-parent OB is the conservative upper
-    bound until a supported computation resolves entitlement/count.
+    These entry points compute ordinary G from RecordState, before any
+    saving-clause guard. They cannot receive a carried protected rate.
+    The original benefit is therefore an upper bound on gross here
+    (GN 02603.050A). For a parent, the one-parent OB is the conservative
+    upper bound until a supported computation resolves entitlement/count.
+    Own-work events need strictly positive withholding after NH reserves;
+    equality to this upper bound is impossible even on a refused record.
     """
     for member in beneficiaries:
         bid = member.beneficiary_id
@@ -3920,6 +3926,14 @@ def _check_deduction_amount_bounds(
         if event is not None and event.payable + nh > original:
             raise InvalidFamilyInput(
                 "Deductee payable and NH reservation exceed the original benefit"
+            )
+        if (
+            event is not None
+            and event.reason is DeductionReason.OWN_EARNINGS_TEST
+            and event.payable + nh == original
+        ):
+            raise InvalidFamilyInput(
+                "Own-earnings-test event must withhold a positive amount"
             )
 
 
@@ -4748,33 +4762,45 @@ class SavingsClauseReading(Enum):
 
 
 def _savings_membership(result: FamilyBenefits) -> tuple:
-    """Membership is unordered; a change of record kind changes it too."""
+    """Operational membership excludes everyone outside 203(a)(3)(C)."""
     return (
         result.kind,
         result.worker_benefit is not None,
         frozenset(
             (row.beneficiary_id, row.role)
             for row in result.beneficiaries
-            if row.entitled
+            if row.subject_to_family_maximum
         ),
     )
 
 
 def _operational_age_reduced(result: FamilyBenefits) -> bool:
+    """An outside spouse cannot supply another person's age trigger."""
     return result.worker_reduced_for_age or any(
-        row.entitled and row.age_reduction_factor < 1
+        row.subject_to_family_maximum and row.age_reduction_factor < 1
         for row in result.beneficiaries
     )
 
 
+def _operational_qualifies(result: FamilyBenefits) -> bool:
+    """Apply 203(a)(3)(C)'s as-if-absent rule to the entitled-person count.
+
+    The literal reading deliberately retains its old count in _qualifies.
+    """
+    persons = sum(
+        row.subject_to_family_maximum for row in result.beneficiaries
+    ) + (result.worker_benefit is not None)
+    return result.family_maximum_binding and persons >= 2
+
+
 def _savings_age_basis(result: FamilyBenefits) -> tuple:
-    """Do not attribute a simultaneous change of age factors to the PIA."""
+    """Only governed age-factor changes can confound the PIA's effect."""
     return (
         result.worker_age_reduction_factor,
         frozenset(
             (row.beneficiary_id, row.age_reduction_factor)
             for row in result.beneficiaries
-            if row.entitled
+            if row.subject_to_family_maximum
         ),
     )
 
@@ -4894,7 +4920,10 @@ class SavingsClauseGuard:
     ``reading`` is an exact canonical SavingsClauseReading enum; its default
     SSA_OPERATIONAL follows d1338 and POMS RS 00630.400. Protection starts
     only after an age-reduced, maximum-reduced month with at least two
-    entitled persons, followed by a PIA increase that lowers payment. The
+    entitled persons, followed by a PIA increase that lowers payment.
+    Persons outside the maximum do not enter operational membership, age
+    conditions, or the entitled-person count (203(a)(3)(C)); their own
+    rates remain unchanged. The
     two captured life-case procedures compute protected auxiliary payments.
     Formula FMAX and its counted shares stay unchanged. RS 00615.801B.2
     carries the protected total, including a period when the formula payment
@@ -5180,7 +5209,7 @@ class SavingsClauseGuard:
         if (
             prior is not None
             and prior.result is not None
-            and _qualifies(prior.result)
+            and _operational_qualifies(prior.result)
             and _operational_age_reduced(prior.result)
             and result.pia > prior.pia
             and total < _savings_clause_total_validated(prior.result)

@@ -2836,8 +2836,15 @@ change—only total benefits payable are affected."
 ### Conditions and supported procedures
 
 Under `SSA_OPERATIONAL`, the prior month must have two or more entitled
-persons, a binding maximum, and at least one age-reduced beneficiary. The
-next month's PIA must rise and its family total must fall. These are the
+persons governed by the maximum, a binding maximum, and at least one
+governed age-reduced beneficiary. The NH counts as a governed person.
+Divorced spouses and surviving divorced spouses outside the maximum are
+absent from every operational predicate under Act 203(a)(3)(C): the person
+count, membership, age trigger, age-factor comparison, deductions,
+own-benefit checks and protected total. Their own ordinary rates remain
+unchanged. `LITERAL_REFUSAL` retains its earlier predicates and behavior.
+The next month's PIA must rise and its governed family total must fall.
+These are the
 four requirements in RS 00630.400's "1972 Family Payment Saving Clause".
 Membership and exact worker/auxiliary age factors must be unchanged for the
 supported payment computation. The four source conditions are evaluated
@@ -3125,3 +3132,79 @@ individuals = 225.30." Its displayed formula correctly gives $274.20
 before the original-benefit cap of $225.30. The existing A.2 test pins the
 literal narrative, raw quotient and capped payment side by side. This is
 an omitted cap in the narrative, not an alternate arithmetic rule.
+
+## Round-3 input premises and excluded beneficiaries
+
+Verification class: statutory conformance on invented cases and captured
+rules. This round adds no population, behavioral or forecast claim.
+
+The own-work input bound applies before either family or household
+coverage refusal. `OWN_EARNINGS_TEST` requires payable plus NH reservation
+strictly below the original-benefit upper bound: equality leaves no room
+for a positive own deduction. GN 02603.050A says "In all cases,
+beneficiaries are still limited to the original benefit amount." The
+deduction entry points take `RecordState` and compute ordinary G before
+any `SavingsClauseGuard`; a carried protected payment cannot enter this
+check. A future combined protected-payment/deduction procedure would need
+its own bound. Current above-OB protected-rate requests already refuse as
+`savings_clause_rate_procedure` rather than entering this path.
+
+The bound uses a widow's supplied larger OB basis and a parent's
+conservative one-parent OB (Act 202(e)/(f)(2), 202(h)(2)). On PIA $4, a
+parent's OB is $3.30 and a payable $3 event legitimately withholds $.30;
+using the two-parent $3 rate as an unconditional upper bound would reject
+that valid case. A widow with OB basis $5 and payable $4 likewise withholds
+$1. Equality remains permitted for dual-entitlement markers and other
+event reasons according to their existing semantics.
+
+The new fact-pattern input errors in this PR's third fix round have these
+premises. RET uses the same table in its design note.
+
+| Fact pattern classified as `InvalidFamilyInput` | Source proving impossibility | What would falsify the premise |
+|---|---|---|
+| RET NH or auxiliary FRA declaration lies outside every possible attainment month in the supplied G cohort | Act 203(f)(8)(E), (9); 20 CFR 404.430(b), 404.434(c); RS 02501.021B.3; cohort/attainment conventions in RS 00615.003/.010 | A birthday within the cohort whose RIB FRA satisfies the declaration; every such intersecting declaration remains admitted |
+| An auxiliary and that same person's own benefit supply different SSA birth cohorts, even if their FRA declaration fits both separately | Act 202(q)(6); RS 00615.003/.010; G's existing single-person cohort-consistency contract | The fields describe different people or different declared cohort conventions; this interface permits neither |
+| RET declaration places FRA after a supplied own DRC-increased G snapshot | Act 202(w)(2); RS 00615.692 | Credits belonging only to the deceased NH, or an own age reduction without own delayed credits; neither proves the survivor's age |
+| Own-work payable plus NH reservation equals the applicable OB upper bound | GN 02603.050A's OB limit and a strictly positive own-work deduction | A supported entry route carrying gross above that OB; this API has none, and larger widow OBs and one-parent rates are explicitly preserved |
+
+### Reproduced cases and invariants
+
+With survivor PIA $4/MAX $6 and child OB $3, own-work payable $3, or NH
+reservation $1 plus payable $2, is invalid even with administrative finality
+or another-record entitlement. PIA/MAX/OB $0 with payable $0 is also
+invalid. Both public forms produce no outcome or denominator row. The
+test `test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row`
+pins actual and estimated events; Hypothesis
+`test_upper_bound_equality_is_invalid_for_every_exact_reservation` varies
+PIA, role, exact reservation, coverage condition and public form.
+`test_other_event_equality_keeps_existing_named_refusal` and
+`test_dual_marker_at_original_benefit_stays_supported` preserve the other
+event semantics and counted coverage refusals. The parent and larger-widow
+tests pin the valid routes described above.
+
+In the excluded-divorced-spouse regression, January 2026 retirement PIA
+$4/MAX $6 rises to PIA $4.10 with MAX unchanged in February. The unreduced
+worker and two children have no governed age reduction. Adding an
+age-reduced divorced spouse D does not start protection: the children
+receive $.90 each and D receives $1.30. Exact record payment is $7.20,
+the sum of separate whole-dollar payments is $5, and protected total is
+`None`. At PIA $.40 to $.50/MAX $.60 the children receive $0 each,
+D $.10, exact record $.60 and whole-dollar record $0. Both beneficiary
+orders are pinned in
+`test_review_outside_divorced_age_reduction_cannot_start_protection`.
+The surviving-divorced regression uses the independently retained
+survivor COLA fall from governed $6.60 to $6.50; that person's age reduction
+cannot start protection for the governed survivors.
+
+Hypothesis histories in
+`test_property_operational_histories_treat_outside_people_as_absent` enforce
+unchanged other-person rates, protected totals, history and refusal
+decisions when either excluded spouse role is added or removed, in both
+orders. Named examples also cover active and dormant protection,
+excluded age-factor changes, and a sole governed survivor whose second
+person is outside the maximum. Every excluded person's own row remains
+ordinary. The old-guard comparison retains all 480 `LITERAL_REFUSAL` rows.
+
+No new statutory reading is required. The existing operational/literal
+choice and all previously recorded readings remain unchanged. No source
+capture, registry input or source manifest changes in this round.

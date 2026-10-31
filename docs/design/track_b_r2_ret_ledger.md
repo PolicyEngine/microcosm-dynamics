@@ -1842,6 +1842,91 @@ other tests deselected. Both staged microdata directory overrides pointed
 to nonexistent paths for every whole-suite collection and the selected
 policy test; that test's temporary directory was inside the workspace.
 
+## Round-3 consistency of declared FRA and G facts
+
+Verification class remains statutory conformance on invented record-years
+and captured rules. No population, behavioral or forecast claim is added.
+
+`RecordYear` checks each supplied G monthly context before any annual or
+G coverage refusal. For the NH it uses `worker_birth_year` and the own
+worker benefit; for auxiliaries it uses the beneficiary and own-benefit
+cohorts. A contradiction raises `InvalidFamilyInput`, so an evaluator
+cannot count that input as a coverage gap. Missing birth facts remain
+supported. No earnings or annual parameter lookup is needed to classify
+the supplied age facts, and validation runs once per public ledger call.
+
+The earnings test uses RIB FRA for every role. Act 203(f)(9) specifies the
+retirement age "which is applicable in the case of old-age insurance
+benefits, regardless of whether or not the particular benefits" are
+old-age benefits. RS 02501.021B.3 says "Always use the FRA for retirement
+insurance benefits (RIB) when applying the ET for RIB or widow(er)'s
+insurance benefits (WIB)." The captured 20 CFR 404.430(b) and 404.434(c)
+also point to 404.409(a). Thus the distinct widow age-reduction schedule
+under 216(l) does not create a competing RET reading. No new refusal or
+orchestrator ruling is needed.
+
+Under the cohort convention in RS 00615.003/.010, the possible FRA months
+run from `birth_year * 12 + RIB_FRA_months` through eleven months later.
+`fra_month=0` intersects dates before this calendar year; `None` intersects
+dates after this year; values 1 through 12 specify the corresponding
+month. A declaration is invalid only if its intersection with the whole
+cohort interval is empty. Both endpoints and every interior declaration
+remain accepted. The test enumerates every possible birthday independently
+of the implementation's interval arithmetic and FRA lookup.
+
+Positive own delayed credits prove only that FRA occurred by the G
+snapshot month. Act 202(w)(2) permits increment months from the FRA month
+itself. This check does not reconstruct credit dates, an exact birthday or
+a benefit-effective-date calendar; the staged captures do not supply the
+additional effective-date chronology for such a reconstruction. Own age
+reductions can persist after FRA and establish no current age. A larger
+survivor basis can reflect the deceased worker's credits and establishes
+no FRA date for the survivor.
+
+| Fact pattern classified as `InvalidFamilyInput` | Source proving impossibility | What would falsify the premise |
+|---|---|---|
+| NH or auxiliary FRA declaration has no overlap with the supplied G cohort interval | Act 203(f)(8)(E), (9); 20 CFR 404.430(b), 404.434(c); RS 02501.021B.3 and 00615.003/.010 | A birthday inside the cohort consistent with the declaration; all such intersections remain accepted |
+| An auxiliary's cohort disagrees with that same person's own-benefit cohort, even when FRA 0 fits each cohort separately | Act 202(q)(6); RS 00615.003/.010 and G's existing single-person cohort-consistency contract | Different people or different declared cohort conventions; neither is admitted for these two fields |
+| FRA is declared after a snapshot carrying that person's positive own delayed credits | Act 202(w)(2); RS 00615.692 | Only age-reduction months or inherited deceased-worker credits were supplied; these do not constrain the person's current FRA |
+
+### Examples and executed invariants
+
+The sole-widow regression has January 2024 PIA/MAX/OB $1 and cohort 1950.
+With `fra_month=None` the input errors without a denominator row. With
+`fra_month=0` it pays $1 with no own deduction, as required by Act
+203(f)(8)(E). The nearby spouse/child case and actual/estimated cases for
+cohorts 1930, 1950 and 1957 with declarations `None` and 12 also error.
+Consistent facts preserve existing named refusals and their full weights.
+
+The new `tests/test_track_b_ret_fra_facts.py` executes these invariants:
+
+- `test_every_cohort_interval_endpoint_and_every_inside_declaration`
+  covers both NH and auxiliary facts across every FRA cohort band.
+- Hypothesis
+  `test_fra_classification_matches_independent_birthday_enumeration`
+  checks acceptance exactly when at least one legal birthday agrees,
+  over all declaration values and both roles.
+- `test_missing_cohort_preserves_every_fra_declaration` and
+  `test_own_delayed_credits_prove_only_fra_by_context_month` preserve
+  uncertainty and the limited own-credit implication.
+- `test_every_auxiliary_role_uses_rib_fra_not_widow_reduction_age`
+  pins the role-specific source conclusion.
+- `test_fra_contradiction_precedes_coverage_refusal` and
+  `test_consistent_fra_keeps_named_coverage_refusal_in_denominator`
+  check both directions of input/refusal classification.
+- `test_paired_auxiliary_birth_cohorts_error_at_declaration_before_refusal`
+  and Hypothesis
+  `test_one_auxiliary_cannot_have_two_individually_post_fra_cohorts`
+  reject contradictory cohorts before a coverage refusal even when FRA 0
+  fits each separately. The NH's corresponding identity check already
+  runs in G's `RecordState` constructor.
+- `test_fra_facts_validate_once_per_public_ledger_call` checks the
+  public-call validation count. The source test independently recomputes
+  capture hashes and checks each quoted rule verbatim.
+
+No source capture, manifest, published worked-example figure, annual
+earnings formula or existing assertion changes in this round.
+
 ## Not in scope
 
 No real microdata, population pipeline, behavioral response or forecast

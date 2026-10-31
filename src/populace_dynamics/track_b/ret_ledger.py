@@ -23,6 +23,12 @@ from an outcome denominator or silently computed as a single worker.
 G's declared monthly own-benefit facts establish two-record entitlement;
 an optional annual declaration must agree with those facts. Actual or
 estimated excess on two records remains refused (RS 02501.145-.150).
+Supplied G cohorts constrain the RET FRA declaration to the whole possible
+attainment-month interval, for the NH and every auxiliary. The old-age FRA
+governs all roles, including survivors (Act 203(f)(9); RS 02501.021B.3).
+Applied own delayed credits establish FRA by the supplied context month;
+age reductions and the deceased worker's credits do not establish a
+survivor's current age. Contradictions error before coverage refusals.
 Every raw month-set element must be an integer month before deduplication;
 malformed input raises before a coverage refusal can become an outcome.
 
@@ -412,6 +418,55 @@ class RETFamilyMonth:
         object.__setattr__(self, "households", dict(self.households))
 
 
+def _check_fra_facts(
+    beneficiary: RETBeneficiary,
+    year: int,
+    month: int,
+    birth_year: int | None,
+    own: g.OwnBenefit | None,
+    params: g.SSAParameters,
+) -> None:
+    """Reject only FRA declarations impossible under supplied G facts.
+
+    Act 203(f)(9), CFR .430(b)/.434(c), RS 02501.021B.3: every role uses
+    old-age FRA, not the widow's age-reduction schedule. SSA cohort years
+    run Jan 2 through the following Jan 1 (RS 00615.003); age attainment
+    precedes the birthday, so the possible FRA months span eleven months
+    after the earliest one. Missing dates leave the entire interval open.
+    Own DRCs establish only that FRA has occurred by this snapshot; do
+    not infer an exact FRA date or use another person's inherited DRCs.
+    """
+    if own is not None and own.birth_year is not None:
+        if birth_year is not None and birth_year != own.birth_year:
+            raise InvalidFamilyInput(
+                "G own and beneficiary birth cohorts differ"
+            )
+        birth_year = own.birth_year
+    earliest = latest = None
+    if birth_year is not None:
+        earliest = birth_year * 12 + g._fra_months(birth_year, params)
+        latest = earliest + 11
+    if own is not None and own.delayed_credit_months:
+        known_by = year * 12 + month - 1
+        latest = known_by if latest is None else min(latest, known_by)
+    fra = beneficiary.fra_month
+    if fra is None:
+        consistent = latest is None or latest >= (year + 1) * 12
+    elif fra == 0:
+        consistent = earliest is None or earliest < year * 12
+    else:
+        declared = year * 12 + fra - 1
+        consistent = (earliest is None or earliest <= declared) and (
+            latest is None or declared <= latest
+        )
+    if earliest is not None and latest is not None and earliest > latest:
+        consistent = False
+    if not consistent:
+        raise InvalidFamilyInput(
+            "RET FRA declaration contradicts G birth cohort or own delayed credits"
+        )
+
+
 @_declared_input
 @dataclass(frozen=True)
 class RecordYear:
@@ -537,7 +592,24 @@ class RecordYear:
                 g.Role.DISABLED_WIDOW: (BenefitType.DWB,),
             }
             ret_people = {b.beneficiary_id: b for b in beneficiaries}
+            if self.kind is not RecordKind.DECEASED:
+                _check_fra_facts(
+                    ret_people[self.nh_id],
+                    self.year,
+                    month,
+                    context.state.worker_birth_year,
+                    context.state.worker,
+                    context.params,
+                )
             for auxiliary in context.beneficiaries:
+                _check_fra_facts(
+                    ret_people[auxiliary.beneficiary_id],
+                    self.year,
+                    month,
+                    auxiliary.birth_year,
+                    auxiliary.own_benefit,
+                    context.params,
+                )
                 contextual_people.add(auxiliary.beneficiary_id)
                 if auxiliary.own_benefit is not None:
                     contextual_two_records.add(auxiliary.beneficiary_id)
