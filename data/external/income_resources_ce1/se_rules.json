@@ -4276,7 +4276,8 @@
       "section_218_group",
       "section_218_position",
       "amount",
-      "public_office_1968_exemption_election"
+      "public_office_1968_exemption_election",
+      "public_office_functions"
     ],
     "worked_examples": [],
     "cases": [
@@ -4293,28 +4294,32 @@
         "case_id": "state_local_fee_basis_office",
         "precedence": 2,
         "when": {
+          "public_office_functions": "income is for performing the functions of a public office",
           "government_level": "state or political subdivision",
           "public_office_fee_basis": "position compensated solely on a fee basis",
           "section_218_position": "not covered by a Section 218 agreement in the relevant period",
           "public_office_1968_exemption_election": "no applicable election"
         },
         "consequence": "covered",
-        "description": "The fee-office exception to the public-office exclusion applies, subject to the other net-earnings rules."
+        "description": "411(c)(1)'s exception: the functions of a public office of a State or political subdivision, for fees received in a period when the position is compensated solely on a fee basis and its functions are not covered under a section 418 agreement, remain a trade or business, subject to the other net-earnings rules.",
+        "overrides": [
+          "public_office_functions"
+        ]
       },
       {
         "case_id": "public_office_functions",
         "precedence": 3,
         "when": {
-          "government_level": "performance of the functions of a public office"
+          "public_office_functions": "income is for performing the functions of a public office"
         },
         "consequence": "noncovered",
-        "description": "411(c)(1)."
+        "description": "411(c)(1): trade or business does not include the performance of the functions of a public office. This covers federal offices, salaried State and local offices, and fee-basis positions a section 418 agreement covers."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Not the performance of public-office functions, so 411(c)(1) does not exclude it; apply the other families."
+      "description": "No case holds: the income is not for performing the functions of a public office, so 411(c)(1) does not exclude it; apply the other families."
     }
   },
   {

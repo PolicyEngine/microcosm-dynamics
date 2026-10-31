@@ -1573,6 +1573,79 @@ def test_nonprofit_waiver_covers_only_listed_or_later_employees(
     assert "501(c)(3)" in rule.residual_default["description"]
 
 
+PUBLIC_OFFICERS = {
+    # INVENTED officers, by the cases whose conditions hold for them.
+    "salaried_state_officer": ({"public_office_functions"}, "noncovered"),
+    "fee_officer_in_a_section_218_position": (
+        {"public_office_functions"},
+        "noncovered",
+    ),
+    "federal_officer": ({"public_office_functions"}, "noncovered"),
+    "fee_officer_outside_section_218": (
+        {"public_office_functions", "state_local_fee_basis_office"},
+        "covered",
+    ),
+    "fee_officer_with_1968_election": (
+        {
+            "public_office_functions",
+            "public_law_90_248_election",
+        },
+        "noncovered",
+    ),
+    "not_a_public_office": (set(), "covered"),
+}
+
+
+@pytest.mark.parametrize("officer", sorted(PUBLIC_OFFICERS))
+def test_public_office_exclusion_reaches_every_office_but_the_fee_one(
+    registry, officer
+):
+    """Review r3 H2: 411(c)(1) excludes "the performance of the functions
+    of a public office", other than a fee-only State or local position
+    outside a section 418 agreement.
+
+    The exclusion conditions on a fact that says whether the income is for
+    a public office's functions, which the fee exception also requires.
+    """
+    (rule,) = registry.lookup_date(
+        "self_employment_public_office", date(2000, 6, 1)
+    )
+    matched, expected = PUBLIC_OFFICERS[officer]
+    assert rule.resolve(matched)["consequence"] == expected
+    cases = {case["case_id"]: case for case in rule.cases}
+    exclusion = cases["public_office_functions"]
+    assert set(exclusion["when"]) == {"public_office_functions"}
+    fee = cases["state_local_fee_basis_office"]
+    assert fee["when"]["public_office_functions"] == (
+        exclusion["when"]["public_office_functions"]
+    )
+    assert "public_office_functions" in fee["overrides"]
+    assert "public_office_functions" in TRIGGER_FACTS
+
+
+GOVERNMENT_LEVEL = re.compile(
+    r"\b(state|political subdivision|federal|united states|"
+    r"instrumentality|local|district of columbia|guam|american samoa)\b",
+    re.IGNORECASE,
+)
+
+
+def test_government_level_conditions_name_a_level_of_government():
+    """Review r3 H2: a case keyed on government_level that names no level
+    of government can never match a real fact value."""
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    found = [
+        (row["rule_id"], case["case_id"], case["when"]["government_level"])
+        for row in rows
+        for case in row["cases"]
+        if "government_level" in case["when"]
+    ]
+    assert len(found) == 6
+    assert [
+        entry for entry in found if not GOVERNMENT_LEVEL.search(entry[2])
+    ] == []
+
+
 @settings(deadline=None)
 @given(
     st.sampled_from(

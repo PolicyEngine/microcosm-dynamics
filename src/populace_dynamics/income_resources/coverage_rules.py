@@ -215,6 +215,8 @@ CE1_FIELD_PURPOSES = (
     "early_retirement_age_year",
     # Fee-based public office: irrevocable 1968 election.
     "public_office_1968_exemption_election",
+    # Public office: whether the income is for performing its functions.
+    "public_office_functions",
     # Treaty fishing: membership and member-performed activity share.
     "tribal_membership",
     "tribal_fishing_member_activity",
