@@ -2413,6 +2413,17 @@ REQUIRED_CONDITIONS = [
         "Also, the student must carry at least a half-time academic "
         "workload.",
     ),
+    # Review r3 sibling (r3c): section 8015(c)(3) as the 2024 Code's note
+    # under 26 U.S.C. 3121 sets out its enacted text.
+    (
+        "federal_1987_2026",
+        "after_official_service_from_1988_11_10",
+        {"federal_service": ("performed on or after 1988-11-10",)},
+        "ce1c_usc2024_26_3121.html",
+        "shall apply to any individual only upon the performance by such "
+        "individual of service described in subparagraph (C), (D), (E), "
+        "(F), (G), or (H) of section 210(a)(5) of the Social Security Act",
+    ),
 ]
 REQUIRED_CONDITION_ROWS = {
     row["rule_id"]: row
@@ -2635,6 +2646,40 @@ def test_federal_rows_carry_section_2601_c_d3_and_e(registry, rule_id):
     assert (delay is None) == (rule_id == "federal_1984_1986")
     if delay is not None:
         assert "before 1987" in delay
+
+
+SECTION_8015C3_ENACTED = (
+    "shall apply to any individual only upon the performance by such "
+    "individual of service described in subparagraph (C), (D), (E), (F), "
+    "(G), or (H) of section 210(a)(5) of the Social Security Act"
+)
+
+
+@pytest.mark.parametrize("rule_id", ["federal_1984_1986", "federal_1987_2026"])
+def test_federal_rows_quote_section_8015c3_as_enacted(registry, rule_id):
+    """Review r3 sibling (r3c): both rows cited section 8015(c)(3) only
+    through LII's paraphrase. The 2024 Code's note under 26 U.S.C. 3121
+    sets out the enacted text, so the rows quote it and keep the LII note.
+    """
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    enacted = [
+        c
+        for c in rule.citations
+        if c.capture == "ce1c_usc2024_26_3121.html"
+        and c.quote
+        and SECTION_8015C3_ENACTED in c.quote
+    ]
+    assert len(enacted) == 1
+    assert "8015(c)(3)" in enacted[0].location
+    assert "[Nov. 10, 1988]" in enacted[0].quote
+    assert any(
+        c.capture == "lii_42_410.html" and "8015(c)(3)" in c.location
+        for c in rule.citations
+    )
+    descriptions = " ".join(c.get("description", "") for c in rule.cases)
+    assert ("only upon the performance by such" in descriptions) == (
+        rule_id == "federal_1987_2026"
+    )
 
 
 def test_tribal_posting_rule_is_a_crediting_rule_not_a_case(registry):

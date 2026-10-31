@@ -2867,6 +2867,13 @@
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "Pub. L. 98-369 section 2601(d)(3) note",
         "quote": "social security coverage and taxes by reason of section 210(a)(5)(G) of the Social Security Act and section 3121(b)(5)(G) of the Internal Revenue Code of 1986 shall, with respect to such individual\u2019s service in the legislative branch of the Federal Government, become effective with the first month beginning after such 30-day period"
+      },
+      {
+        "capture": "ce1c_usc2024_26_3121.html",
+        "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab",
+        "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
+        "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3): the 1988 amendments reach only service on or after November 10, 1988, after this row ends",
+        "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988]."
       }
     ],
     "trigger_facts": [
@@ -3209,6 +3216,13 @@
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "Pub. L. 98-369 section 2601(d)(3) note",
         "quote": "social security coverage and taxes by reason of section 210(a)(5)(G) of the Social Security Act and section 3121(b)(5)(G) of the Internal Revenue Code of 1986 shall, with respect to such individual\u2019s service in the legislative branch of the Federal Government, become effective with the first month beginning after such 30-day period"
+      },
+      {
+        "capture": "ce1c_usc2024_26_3121.html",
+        "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab",
+        "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
+        "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3)",
+        "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988]."
       }
     ],
     "trigger_facts": [
@@ -3470,7 +3484,7 @@
           "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
         },
         "consequence": "covered",
-        "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3) applies it to an individual only upon performance of (C)-(H) service on or after November 10, 1988.",
+        "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it.",
         "overrides": [
           "defra_2601d_requalification",
           "grandfathered_continuous_service",

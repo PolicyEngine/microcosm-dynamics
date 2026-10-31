@@ -7337,6 +7337,13 @@
       ],
       "citations": [
         {
+          "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
+          "capture": "ce1c_usc2024_26_3121.html",
+          "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3): the 1988 amendments reach only service on or after November 10, 1988, after this row ends",
+          "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988].",
+          "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab"
+        },
+        {
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
           "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 101(a)(1), 97 Stat. 67-68; separation does not exceed 365 consecutive days",
@@ -7589,7 +7596,7 @@
         {
           "case_id": "after_official_service_from_1988_11_10",
           "consequence": "covered",
-          "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3) applies it to an individual only upon performance of (C)-(H) service on or after November 10, 1988.",
+          "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it.",
           "overrides": [
             "defra_2601d_requalification",
             "grandfathered_continuous_service",
@@ -7725,6 +7732,13 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
+          "capture": "ce1c_usc2024_26_3121.html",
+          "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3)",
+          "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988].",
+          "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab"
+        },
         {
           "authority": "5 U.S.C. 8331, official United States Code 2024 edition historical notes",
           "capture": "ce1r1_usc2024_5_8331.html",
