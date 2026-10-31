@@ -31,6 +31,7 @@ def test_established_current_period_with_unknown_prior_periods_uses_bounds():
     assert result.unknown_facts == (
         "prior_disability_periods",
         "current_disability_period_start",
+        "current_disability_period_end",
     )
     assert result.decided_despite_unknowns
     disability = i.insured_status(

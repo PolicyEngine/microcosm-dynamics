@@ -4,6 +4,7 @@ Invented cases and captured statutory rules only; no population, behavioral,
 or forecast claim.
 """
 
+import calendar
 from dataclasses import replace
 from datetime import date
 
@@ -48,8 +49,19 @@ def test_ongoing_period_end_cannot_invent_a_credited_query_endpoint():
     assert error.value.reason.value == (
         "ongoing_disability_period_end_decides_status"
     )
+    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
+        i.insured_status(
+            person, years, date(2026, 4, 1), test=i.InsuredTest.CURRENTLY
+        )
+    assert error.value.reason is i.InsuredUnsupportedReason.CURRENT_PERIOD_END
+    # Preserve the original running-period assertions with that end known.
+    continuing = replace(
+        person,
+        current_disability_period_end=date(2067, 1, 31),
+        current_disability_period_end_provenance=OBSERVED,
+    )
     later = i.insured_status(
-        person, years, date(2026, 4, 1), test=i.InsuredTest.CURRENTLY
+        continuing, years, date(2026, 4, 1), test=i.InsuredTest.CURRENTLY
     )
     assert not later.currently.insured
     assert later.currently.qc_count_lower == 5
@@ -69,8 +81,21 @@ def test_current_period_ends_before_fra_even_when_medical_disability_continues()
     person = _fra_person()
     month = date(2028, 10, 1)
     years = history(person, month, {y: 4 for y in range(2016, 2026)})
-    result = i.insured_status(
+    bounded = i.insured_status(
         person, years, month, test=i.InsuredTest.CURRENTLY
+    )
+    assert not bounded.currently.insured
+    assert bounded.currently.qc_count_lower == 2
+    assert bounded.currently.qc_count_upper == 5
+    assert "current_disability_period_end" in bounded.unknown_facts
+    # The cap still yields exactly five credits when its ending is declared.
+    capped = replace(
+        person,
+        current_disability_period_end=date(2026, 12, 31),
+        current_disability_period_end_provenance=OBSERVED,
+    )
+    result = i.insured_status(
+        capped, years, month, test=i.InsuredTest.CURRENTLY
     )
     assert not result.currently.insured
     assert result.currently.qc_count_lower == 5
@@ -246,7 +271,13 @@ def test_ongoing_period_completion_status_and_count_bounds_are_sound(
         {2016: 4, 2017: 4, 2020: counts[0], 2021: counts[1], 2026: current},
     )
     concrete = []
-    for ending in [date(2026, 3, 31), date(2026, 6, 30), date(2027, 12, 31)]:
+    endings = [
+        date(year, end_month, calendar.monthrange(year, end_month)[1])
+        for year in range(2022, 2027)
+        for end_month in (3, 6, 9, 12)
+        if (year, end_month) <= (2026, 3)
+    ] + [date(2026, 6, 30), date(2027, 12, 31)]
+    for ending in endings:
         value = i.insured_status(
             replace(
                 person,

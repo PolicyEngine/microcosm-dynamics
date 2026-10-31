@@ -8,10 +8,13 @@ POMS RS 00301. Every year is declared, including zero and unknown years.
 Medical onset declares continuous disability through the query month; it
 never establishes an administrative period of disability. An established
 period ends no later than the month before full retirement age; an unknown
-ending is bounded rather than fabricated at the query. Disability tests
+ending includes every candidate end quarter from insured start through
+query/cap and permitted continuation. The cap never establishes the end.
+Disability tests
 scan onset and later quarters; period establishment and section 214(c)
-applicability carry explicit provenance. Impossible UNKNOWN histories are
-rejected before any coverage refusal. Observable specialist credit
+applicability carry explicit provenance. A declaration is rejected only
+when every ordinary and possible specialist completion is impossible;
+short DIB-entitled prior periods remain possible. Observable specialist credit
 alternatives cannot silently produce ordinary-only uninsured answers. The
 query month is a hypothetical entitlement month, not medical or
 administrative adjudication. Annual QC assignment is favorable and
@@ -678,8 +681,10 @@ def _observable_coverage_paths(
     Act 213(c), 404.110(d), and RS 00301.315 make the pre1951 aggregate
     method available independently of an optional specialist flag. Its
     application, retroactivity and section227 conditions are not declared.
-    Act213(c) has no seven-EY limitation, unlike 404.110(d) and RS .315;
-    a potentially decisive path is refused without deciding that conflict.
+    RS .315 B.1.a describes the 1967 seven-EY condition; B.1.b removes
+    it under the 1990 amendments. 404.110(d)(1)(ii) supplies a June1992
+    application exception with section227 conditions. A potentially
+    decisive path is refused without fabricating these filing facts.
     Direct QC declarations supply credited quarters, not raw wage totals.
     RS 00301.480 likewise reveals a possible pre1956 alternate disability
     path from onset and earnings; its application facts remain unmodeled.
@@ -726,6 +731,7 @@ def _observable_coverage_paths(
             is EarningsProvenance.UNKNOWN
         ):
             required = 6
+        # Source conflict us:oasdi-insured-pre1951-seven-elapsed-years
         if unknown_wages or (
             wages >= 400 and wages // 400 + post1950 >= required
         ):
@@ -734,31 +740,39 @@ def _observable_coverage_paths(
                 "Pre1951 wages may establish fully insured status under "
                 "Act213(c); filing and retroactivity facts are unmodeled",
             )
-    elif (
-        kind is InsuredTest.DISABILITY
-        and person.disability_onset is not None
-        and person.disability_onset < date(1956, 1, 1)
+    elif kind is InsuredTest.DISABILITY and _pre1956_alternate_possible(
+        person, upper, month, exit_month
     ):
-        first = max(_qid(person.disability_onset), 1952 * 4 + 2)
-        last = min(_qid(month), 1955 * 4 + 3)
-        for quarter in range(first, last + 1):
-            rows, _ = _world(person, upper, quarter, exit_month, False)
-            continuous = tuple(range(1951 * 4, quarter))
-            assigned = {
-                qc
-                for row in rows.values()
-                for qc in _assign_qcs(*row, window=continuous)
-            }
-            if (
-                len(assigned) >= 20
-                and len(continuous) >= 6
-                and set(continuous) <= assigned
-            ):
-                _refuse(
-                    InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
-                    "Onset and QCs allow the RS00301.480 alternate test; "
-                    "application conditions are unmodeled",
-                )
+        _refuse(
+            InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
+            "Onset and QCs allow the RS00301.480 alternate test; "
+            "application conditions are unmodeled",
+        )
+
+
+def _pre1956_alternate_possible(person, credits, month, exit_month):
+    """RS00301.480 possibility, without guessing filing eligibility."""
+    if person.disability_onset is None or person.disability_onset >= date(
+        1956, 1, 1
+    ):
+        return False
+    first = max(_qid(person.disability_onset), 1952 * 4 + 2)
+    last = min(_qid(month), 1955 * 4 + 3)
+    for quarter in range(first, last + 1):
+        rows, _ = _world(person, credits, quarter, exit_month, False)
+        continuous = tuple(range(1951 * 4, quarter))
+        assigned = {
+            qc
+            for row in rows.values()
+            for qc in _assign_qcs(*row, window=continuous)
+        }
+        if (
+            len(assigned) >= 20
+            and len(continuous) >= 6
+            and set(continuous) <= assigned
+        ):
+            return True
+    return False
 
 
 def _credits(year, row, upper):
@@ -1001,8 +1015,10 @@ def _unknown_prior_history_is_empty(person, credits, month, exit_month):
     """Prove infeasibility of the earliest nonempty prior period only.
 
     The earliest period must begin insured without any earlier exclusions
-    (404.320(b)(2), 404.321(a)), fit before onset and FRA, and leave five
-    months before its ending month (404.320(b)(4)). Upper-credit witnesses
+    (404.320(b)(2), 404.321(a)), and fit before onset and FRA. Act216(i)
+    (2)(A) also permits a single DIB-entitled month; 404.315(a)(4) waives
+    waiting in specified cases. No five-month premise is safe here.
+    Upper-credit witnesses
     deliberately overapproximate possibility. A surviving quarter proves
     no actual history; it only prevents an invalid-input conclusion.
     """
@@ -1028,15 +1044,24 @@ def _unknown_prior_history_is_empty(person, credits, month, exit_month):
         prior_disability_periods_provenance=EarningsProvenance.OBSERVED,
         prior_disability_periods_convention_id=None,
     )
-    last_month = latest_end.year * 12 + latest_end.month - 1
     for quarter in range(first, _qid(latest_end) + 1):
         start = max(person.birth_date, _qdate(quarter))
         if start >= _fra_date(person):
             break
-        # Permissive about partial first/last months: only use this bound
-        # to prove impossibility, never to establish a period or its dates.
-        if start.year * 12 + start.month - 1 + 5 > last_month:
-            break
+        # A one-month DIB-entitled period may start and end this month.
+        # Overapproximate partial months too; this never establishes one.
+        possible_prior = replace(
+            plain,
+            disability_onset=start,
+            current_disability_period_established=False,
+            current_disability_period_end=None,
+            current_disability_period_end_provenance=EarningsProvenance.UNKNOWN,
+            current_disability_period_end_convention_id=None,
+        )
+        if _pre1956_alternate_possible(
+            possible_prior, credits, start, exit_month
+        ):
+            return False
         if _witness(
             plain,
             credits,
@@ -1148,17 +1173,10 @@ def _period_end_unknown(person, month):
     return (
         person.current_disability_period_established
         and person.current_disability_period_end is None
-        and month < _fra_date(person).replace(day=1)
-        and (
-            person.death_date is None
-            or person.death_date.replace(day=1) > month
-        )
     )
 
 
-def _with_current_period(
-    person, credits, month, exit_month, *, earliest_end=False
-):
+def _with_current_period(person, credits, month, exit_month):
     if not person.current_disability_period_established:
         return person, None
     fra = _fra_date(person)
@@ -1179,22 +1197,13 @@ def _with_current_period(
         else quarter
     )
     # 416(i)(2)(B)/(D), 404.321: the query is an observation cut-off,
-    # never an ending fact. Without an end declaration, compare completion
-    # in this quarter with continuation to the statutory FRA boundary.
+    # never an ending fact. This is the latest possible completion; the
+    # caller separately enumerates earlier unknown administrative endings.
     end = fra.replace(day=1) - timedelta(days=1)
     if start >= fra or start > end:
         raise InvalidFamilyInput("Established period begins at or after FRA")
     if person.current_disability_period_end is not None:
         end = min(end, person.current_disability_period_end)
-    elif earliest_end:
-        end = min(
-            end,
-            date(
-                month.year,
-                month.month,
-                calendar.monthrange(month.year, month.month)[1],
-            ),
-        )
     if person.death_date is not None:
         end = min(end, person.death_date)
     if end < start:
@@ -1210,6 +1219,115 @@ def _with_current_period(
         ),
         start,
     )
+
+
+def _current_period_completions(person, completed, start, month):
+    """Every possible end quarter through query, plus continuation.
+
+    416(i)(2)(D) and 404.321(c) give alternative administrative endings.
+    FRA/death cap the range; neither establishes its actual ending.
+    End days within one quarter have identical insurance semantics.
+    """
+    if (
+        start is None
+        or person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+        or not _period_end_unknown(person, month)
+    ):
+        return (completed,)
+    cap = completed.prior_disability_periods[-1].end
+    last = min(_qid(month), _qid(cap))
+    endings = [
+        min(_qend(quarter), cap) for quarter in range(_qid(start), last + 1)
+    ]
+    if _qid(cap) > _qid(month):
+        endings.append(cap)
+    return tuple(
+        replace(
+            completed,
+            prior_disability_periods=person.prior_disability_periods
+            + (DisabilityPeriod(start, end),),
+        )
+        for end in endings
+    )
+
+
+def _specialist_establishment_possible(
+    person, years, credits, month, exit_month
+):
+    """Overapproximate flagged/observable alternatives to ordinary insurance.
+
+    Final direct QC declarations already supply the credited quarters;
+    unknown years already permit four. RR annual credits after 1977 use
+    the ordinary method (RS00301.230/.350). That flag alone cannot add QCs
+    to this complete direct-QC envelope.
+    Other specialist declarations are retained rather than adjudicated.
+    """
+    for condition in person.conditions:
+        if condition is CoverageCondition.RAILROAD_CREDITS and all(
+            row.qc_count is not None
+            or row.qc_quarters is not None
+            or row.provenance is EarningsProvenance.UNKNOWN
+            for row in years.values()
+        ):
+            continue
+        return True
+    return _pre1956_alternate_possible(person, credits, month, exit_month)
+
+
+def _could_establish_current_period(
+    person, years, credits, month, exit_month, maximum_qcs
+):
+    """Reject only a declaration impossible under every possible route.
+
+    This is deliberately one-way: yes preserves a candidate or a named
+    refusal; it never establishes a period. Calendar/schema contradictions
+    have already been rejected. Ordinary premises cannot exclude a
+    specialist route or a short DIB-entitled prior period.
+    """
+    if not person.current_disability_period_established:
+        return True
+    if _specialist_establishment_possible(
+        person, years, credits, month, exit_month
+    ):
+        return True
+    if maximum_qcs < 6:
+        return False
+    if (
+        person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+        and not _unknown_prior_history_is_empty(
+            person, credits, month, exit_month
+        )
+    ):
+        return True
+    plain = replace(
+        person,
+        prior_disability_periods_provenance=EarningsProvenance.OBSERVED,
+        prior_disability_periods_convention_id=None,
+    )
+    try:
+        _with_current_period(plain, credits, month, exit_month)
+    except InvalidFamilyInput:
+        # More credits can move the first insured start across a declared
+        # end or a represented prior-period boundary. Failure to construct
+        # that upper-credit period is not proof about every completion.
+        # Retain any UNKNOWN-credit declaration with an ordinary insured
+        # candidate; a public completion failure then receives a refusal.
+        return (
+            any(
+                row.provenance is EarningsProvenance.UNKNOWN
+                for row in years.values()
+            )
+            and _decision_witness(
+                plain,
+                credits,
+                min(month, _fra_date(plain).replace(day=1)),
+                exit_month,
+                InsuredTest.DISABILITY,
+            )[0][0]
+        )
+    return True
 
 
 def _dli_cap(person, month, exit_month):
@@ -1241,7 +1359,8 @@ def insured_status(
     the ending changes a requested status, and is always capped before FRA.
     Each disability window ends at its tested quarter, from onset through
     query, and the first insured quarter supplies the witness (404.131).
-    Impossible establishment is an input error even with UNKNOWN history.
+    Establishment is an input error only if no ordinary, observable, or
+    flagged specialist route could validate any completion of the facts.
     No entry date, imputation, or pre-entry zero convention exists.
     """
     _validate_history(
@@ -1264,7 +1383,7 @@ def insured_status(
         and person.current_disability_period_provenance
         is EarningsProvenance.UNKNOWN
     )
-    end_unknown = _period_end_unknown(person, month) and not prior_unknown
+    end_unknown = _period_end_unknown(person, month)
     max_rows, _ = _world(
         person,
         upper,
@@ -1274,32 +1393,24 @@ def insured_status(
         include_zero=True,
     )
     maximum_qcs = sum(len(_assign_qcs(*row)) for row in max_rows.values())
-    if person.current_disability_period_established and maximum_qcs < 6:
+    if not _could_establish_current_period(
+        person, years, upper, month, coverage_end_month, maximum_qcs
+    ):
         raise InvalidFamilyInput(
-            "Established current period requires at least six lifetime QCs"
+            "Established current period has no possible insured disabled quarter"
         )
+    _coverage_checks(person, years, month, totalization_credits)
     if (
         person.current_disability_period_established
-        and prior_unknown
-        and _unknown_prior_history_is_empty(
+        and _pre1956_alternate_possible(
             person, upper, month, coverage_end_month
         )
     ):
-        # Empty is the only possible prior history. Validate establishment
-        # in that concrete world before retaining any coverage refusal.
-        # Keep the caller's UNKNOWN provenance and conservative output
-        # envelope if it is valid; no observed fact is invented here.
-        plain = replace(
-            person,
-            prior_disability_periods_provenance=EarningsProvenance.OBSERVED,
-            prior_disability_periods_convention_id=None,
+        _refuse(
+            InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
+            "RS00301.480 may establish the declared current period; "
+            "application conditions are unmodeled",
         )
-        _with_current_period(plain, upper, month, coverage_end_month)
-    if person.current_disability_period_established and not prior_unknown:
-        # Even the most favorable earnings completion must supply a legal
-        # insured start before FRA. Input errors precede coverage refusals.
-        _with_current_period(person, upper, month, coverage_end_month)
-    _coverage_checks(person, years, month, totalization_credits)
     applicability = _sspa211_applicability(person)
     # Known applicable cases require unimplemented work-authorization/visa
     # adjudication. Unknown applicability can decide a QC-only false result.
@@ -1328,46 +1439,40 @@ def insured_status(
             else:
                 uncertain_current_start = True
     else:
-        if person.current_disability_period_established:
-            initial_lo, _ = _decision_witness(
-                person,
-                lower,
-                month,
-                coverage_end_month,
-                InsuredTest.DISABILITY,
+        try:
+            lo_person, lo_start = _with_current_period(
+                person, lower, month, coverage_end_month
             )
-            if not initial_lo[0] and unknown:
-                initial_hi, _ = _decision_witness(
+            hi_person, hi_start = (
+                _with_current_period(
                     person,
                     upper,
                     month,
                     coverage_end_month,
-                    InsuredTest.DISABILITY,
                 )
-                if initial_hi[0]:
-                    _refuse(
-                        InsuredUnsupportedReason.UNKNOWN_EARNINGS,
-                        "Unknown facts decide the established current insured start",
-                    )
-        lo_person, lo_start = _with_current_period(
-            person, lower, month, coverage_end_month
-        )
-        hi_person, hi_start = (
-            _with_current_period(
-                person,
-                upper,
-                month,
-                coverage_end_month,
-                earliest_end=end_unknown,
+                if unknown
+                else (lo_person, lo_start)
             )
-            if unknown or end_unknown
-            else (lo_person, lo_start)
-        )
+        except InvalidFamilyInput:
+            if unknown:
+                _refuse(
+                    InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+                    "Unknown earnings decide a valid established current period",
+                )
+            # With known credits the shared possibility predicate already
+            # validated this identical construction before any refusal.
+            raise
     if lo_start != hi_start:
         _refuse(
             InsuredUnsupportedReason.UNKNOWN_EARNINGS,
             "Unknown earnings decide established current period start",
         )
+    lo_completions = _current_period_completions(
+        person, lo_person, lo_start, month
+    )
+    hi_completions = _current_period_completions(
+        person, hi_person, hi_start, month
+    )
     # The current disability is known only through the query. A frozen-exit
     # future DLI would require its unobserved recovery/end date.
     if (
@@ -1395,54 +1500,40 @@ def insured_status(
         # Establishment follows the first insured quarter; using its own
         # exclusion to prove that quarter would be circular. Subsequent
         # hypothetical-onset DLI quarters can use the established period.
-        decision_lo_person = (
-            person if kind is InsuredTest.DISABILITY else lo_person
+        decision_lo_people = (
+            (person,) if kind is InsuredTest.DISABILITY else lo_completions
         )
-        decision_hi_person = (
-            person if kind is InsuredTest.DISABILITY else hi_person
+        decision_hi_people = (
+            (person,) if kind is InsuredTest.DISABILITY else hi_completions
         )
-        lo, lo_quarter = _decision_witness(
-            decision_lo_person, lower, month, coverage_end_month, kind
+        lo_candidates = [
+            _decision_witness(p, lower, month, coverage_end_month, kind)
+            for p in decision_lo_people
+        ]
+        hi_candidates = (
+            [
+                _decision_witness(p, upper, month, coverage_end_month, kind)
+                for p in decision_hi_people
+            ]
+            if unknown
+            else lo_candidates
         )
-        hi, hi_quarter = (
-            _decision_witness(
-                decision_hi_person, upper, month, coverage_end_month, kind
-            )
-            if unknown or end_unknown
-            else (lo, lo_quarter)
-        )
+        lo, lo_quarter = lo_candidates[-1]
+        hi, hi_quarter = hi_candidates[0]
         if end_unknown:
-            same_earnings_end, _ = _decision_witness(
-                (
-                    person
-                    if kind is InsuredTest.DISABILITY
-                    else _with_current_period(
-                        person,
-                        lower,
-                        month,
-                        coverage_end_month,
-                        earliest_end=True,
-                    )[0]
-                ),
-                lower,
-                month,
-                coverage_end_month,
-                kind,
-            )
-            if lo[0] != same_earnings_end[0]:
+            if any(witness[0] != lo[0] for witness, _ in lo_candidates) or any(
+                witness[0] != hi[0] for witness, _ in hi_candidates
+            ):
                 _refuse(
                     InsuredUnsupportedReason.CURRENT_PERIOD_END,
                     f"Unobserved statutory period end decides {kind.value}",
                 )
-        _observable_coverage_paths(
-            decision_lo_person,
-            years,
-            month,
-            coverage_end_month,
-            kind,
-            lo,
-            upper,
-        )
+        for p, (witness, _) in zip(
+            decision_lo_people, lo_candidates, strict=True
+        ):
+            _observable_coverage_paths(
+                p, years, month, coverage_end_month, kind, witness, upper
+            )
         if lo[0] != hi[0]:
             _refuse(
                 InsuredUnsupportedReason.UNKNOWN_EARNINGS,
@@ -1488,15 +1579,16 @@ def insured_status(
                 and len(_events(person, month, kind)) > 1
             )
         )
+        witnesses = [value for value, _ in lo_candidates + hi_candidates]
         count_lo, count_hi = (
             (0, maximum_qcs)
             if broad
-            else (min(lo[1], hi[1]), max(lo[1], hi[1]))
+            else (min(w[1] for w in witnesses), max(w[1] for w in witnesses))
         )
         full_lo, full_hi = (
             (0, maximum_qcs)
             if broad
-            else (min(lo[7], hi[7]), max(lo[7], hi[7]))
+            else (min(w[7] for w in witnesses), max(w[7] for w in witnesses))
         )
         decisions[kind] = _computed(
             StatusDecision,
@@ -1520,14 +1612,22 @@ def insured_status(
         )
     dli = None
     if test in (InsuredTest.ALL, InsuredTest.DISABILITY):
-        lo_date, lo_censored = _last_insured(
-            lo_person, lower, month, coverage_end_month
+        lower_dates = [
+            _last_insured(p, lower, month, coverage_end_month)
+            for p in lo_completions
+        ]
+        upper_dates = (
+            [
+                _last_insured(p, upper, month, coverage_end_month)
+                for p in hi_completions
+            ]
+            if unknown
+            else lower_dates
         )
-        hi_date, hi_censored = (
-            _last_insured(hi_person, upper, month, coverage_end_month)
-            if unknown or end_unknown
-            else (lo_date, lo_censored)
-        )
+        lo_date = min((d for d, _ in lower_dates), key=lambda d: d or date.min)
+        hi_date = max((d for d, _ in upper_dates), key=lambda d: d or date.min)
+        lo_censored = any(c for _, c in lower_dates)
+        hi_censored = any(c for _, c in upper_dates)
         if (prior_unknown or current_unknown) and maximum_qcs >= 6:
             hi_date = _dli_cap(person, month, coverage_end_month)
             hi_censored = (
@@ -1556,6 +1656,21 @@ def insured_status(
         include_zero=True,
     )
     assigned = {y: _assign_qcs(*row) for y, row in lo_rows.items()}
+    completion_rows = [
+        _world(
+            p,
+            credits,
+            _qid(month),
+            coverage_end_month,
+            True,
+            include_zero=True,
+        )[0]
+        for people, credits in (
+            (lo_completions, lower),
+            (hi_completions, upper),
+        )
+        for p in people
+    ]
     unknown_facts = tuple(
         name
         for name, missing in (
@@ -1600,12 +1715,18 @@ def insured_status(
                     (
                         0
                         if prior_unknown or current_unknown
-                        else len(assigned[y])
+                        else min(
+                            len(_assign_qcs(*rows[y]))
+                            for rows in completion_rows
+                        )
                     ),
                     (
                         len(_assign_qcs(*max_rows[y]))
                         if prior_unknown or current_unknown
-                        else len(_assign_qcs(*hi_rows[y]))
+                        else max(
+                            len(_assign_qcs(*rows[y]))
+                            for rows in completion_rows
+                        )
                     ),
                 )
                 for y in lo_rows

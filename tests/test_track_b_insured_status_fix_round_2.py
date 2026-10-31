@@ -638,11 +638,31 @@ def test_unknown_current_period_refuses_when_establishment_changes_full_status()
         month,
         test=i.InsuredTest.ALL,
     )
+    # Establishment is known here, but the administrative end remains a
+    # separate missing fact and earlier completions can change full status.
+    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
+        i.insured_status(
+            replace(
+                person,
+                current_disability_period_established=True,
+                current_disability_period_provenance=(
+                    i.EarningsProvenance.OBSERVED
+                ),
+            ),
+            years,
+            month,
+            test=i.InsuredTest.FULLY,
+        )
+    assert error.value.reason is i.InsuredUnsupportedReason.CURRENT_PERIOD_END
     frozen = i.insured_status(
         replace(
             person,
             current_disability_period_established=True,
             current_disability_period_provenance=i.EarningsProvenance.OBSERVED,
+            current_disability_period_end=date(2047, 1, 31),
+            current_disability_period_end_provenance=(
+                i.EarningsProvenance.OBSERVED
+            ),
         ),
         years,
         month,

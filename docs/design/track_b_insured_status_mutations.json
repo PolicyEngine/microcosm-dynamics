@@ -1697,7 +1697,7 @@
     "log": "scratch/review/mutation-r3-validation-restored-baseline.log"
   },
   "round_3_final_source_sha256": "7a99028e7e227e3311e3f0b547e25260a4ce3c5b24bdda41a7ae53212744c6c9",
-  "round_3_note": "Actual mutation execution records are retained. Narrow restoration preserved disjoint concurrent edits. Each implementation mutation was caught; Sam is a documentary mutation because the existing arithmetic was correct. Final scoped gates are recorded in scratch/review/fix-round-3-report.md.",
+  "round_3_note": "Actual mutation execution records are retained. Narrow restoration preserved disjoint concurrent edits. Each implementation mutation was caught; Sam is a documentary mutation because the existing arithmetic was correct. The round-3 report was not kept; its scratch path is not a retained evidence artifact.",
   "round_3_source_transition": {
     "previous_final_source_sha256": "a4f06ba3a5883f6b8e96a7887063499bc8e49512870f986c74355106d23b1b26",
     "final_source_sha256": "a0d10a7fb495ecc48ee76d2d4b77eb4d9108db311246ec498604487ef2c3c37c",
@@ -1718,5 +1718,153 @@
     "restoration_exact": true,
     "evidence": "scratch/review/round3-exact-head-replay.json",
     "label": "Post-fix baseline replay; initial failing-first chronology remains in scratch notes."
-  }
+  },
+  "round_4_mutations": [
+    {
+      "name": "restore_five_month_minimum",
+      "before": "        possible_prior = replace(\n",
+      "after": "        if start.year * 12 + start.month - 1 + 5 > latest_end.year * 12 + latest_end.month - 1: break\n        possible_prior = replace(\n",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_short_dib_entitled_prior_period_keeps_unknown_history_refusal"
+      ],
+      "command": "POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round4-psid PYTHONPATH=$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np=Path('src/populace_dynamics/track_b/insured_status.py')\ns=p.read_text()\nbefore=hashlib.sha256(p.read_bytes()).hexdigest()\nold=\"        possible_prior = replace(\\n\"\nreplacement=\"        if start.year * 12 + start.month - 1 + 5 > latest_end.year * 12 + latest_end.month - 1: break\\n        possible_prior = replace(\\n\"\nassert s.count(old)==1\nexec(compile(s.replace(old,replacement), '<memory-mutation-five_month_minimum>', 'exec'), i.__dict__)\nresult=pytest.main([\"-q\",\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_short_dib_entitled_prior_period_keeps_unknown_history_refusal\",\"--tb=short\"])\nafter=hashlib.sha256(p.read_bytes()).hexdigest()\nprint('MUTATION',\"five_month_minimum\",'pytest_exit',result,'source_sha256',before,'unchanged',before==after)\nassert before==after\nraise SystemExit(result)\nPY",
+      "summary": "1 failed in 19.64s; restored five-month premise incorrectly raises InvalidFamilyInput for a valid short DIB-entitled prior filling.",
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_unchanged_after_run": true,
+      "isolated": true,
+      "restored": true,
+      "restoration": "The mutated source was executed only in the isolated Python process's canonical module namespace. No working-tree source write occurred; process exit discarded the mutant. Both before/after file SHA-256 values matched.",
+      "source_transition_note": "This hash identifies the implementation at this execution. Later restored controls include the UNKNOWN-prior integration guard, continued missing-end disclosure, and the additional lower/upper valid-fillings handling; those edits are not represented by this earlier execution hash."
+    },
+    {
+      "name": "disable_specialist_establishment_escape",
+      "before": "    if _specialist_establishment_possible(\n        person, years, credits, month, exit_month\n    ):\n",
+      "after": "    if False and _specialist_establishment_possible(\n        person, years, credits, month, exit_month\n    ):\n",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_pre1956_established_period_retains_automatic_specialist_refusal",
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unresolved_railroad_compensation_retains_independent_flagged_route"
+      ],
+      "command": "POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round4-psid PYTHONPATH=$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np=Path('src/populace_dynamics/track_b/insured_status.py')\ns=p.read_text()\nbefore=hashlib.sha256(p.read_bytes()).hexdigest()\nold=\"    if _specialist_establishment_possible(\\n        person, years, credits, month, exit_month\\n    ):\\n\"\nreplacement=\"    if False and _specialist_establishment_possible(\\n        person, years, credits, month, exit_month\\n    ):\\n\"\nassert s.count(old)==1\nexec(compile(s.replace(old,replacement), '<memory-mutation-no_specialist_escape>', 'exec'), i.__dict__)\nresult=pytest.main([\"-q\",\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_pre1956_established_period_retains_automatic_specialist_refusal\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unresolved_railroad_compensation_retains_independent_flagged_route\",\"--tb=short\"])\nafter=hashlib.sha256(p.read_bytes()).hexdigest()\nprint('MUTATION',\"no_specialist_escape\",'pytest_exit',result,'source_sha256',before,'unchanged',before==after)\nassert before==after\nraise SystemExit(result)\nPY",
+      "summary": "2 failed in 21.50s; automatic pre1956 and independent unresolved-RR possibilities incorrectly become InvalidFamilyInput.",
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_unchanged_after_run": true,
+      "isolated": true,
+      "restored": true,
+      "restoration": "The mutated source was executed only in the isolated Python process's canonical module namespace. No working-tree source write occurred; process exit discarded the mutant. Both before/after file SHA-256 values matched.",
+      "source_transition_note": "This hash identifies the implementation at this execution. Later restored controls include the UNKNOWN-prior integration guard, continued missing-end disclosure, and the additional lower/upper valid-fillings handling; those edits are not represented by this earlier execution hash."
+    },
+    {
+      "name": "disable_historic_prior_pre1956_escape",
+      "before": "        if _pre1956_alternate_possible(\n            possible_prior, credits, start, exit_month\n        ):\n",
+      "after": "        if False and _pre1956_alternate_possible(\n            possible_prior, credits, start, exit_month\n        ):\n",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_prior_history_preserves_pre1956_alternate_prior_start"
+      ],
+      "command": "POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round4-psid PYTHONPATH=$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np=Path('src/populace_dynamics/track_b/insured_status.py')\ns=p.read_text()\nbefore=hashlib.sha256(p.read_bytes()).hexdigest()\nold=\"        if _pre1956_alternate_possible(\\n            possible_prior, credits, start, exit_month\\n        ):\\n\"\nreplacement=\"        if False and _pre1956_alternate_possible(\\n            possible_prior, credits, start, exit_month\\n        ):\\n\"\nassert s.count(old)==1\nexec(compile(s.replace(old,replacement), '<memory-mutation-no_historic_prior_alternate>', 'exec'), i.__dict__)\nresult=pytest.main([\"-q\",\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_prior_history_preserves_pre1956_alternate_prior_start\",\"--tb=short\"])\nafter=hashlib.sha256(p.read_bytes()).hexdigest()\nprint('MUTATION',\"no_historic_prior_alternate\",'pytest_exit',result,'source_sha256',before,'unchanged',before==after)\nassert before==after\nraise SystemExit(result)\nPY",
+      "summary": "1 failed in 25.63s at explicit minimized example ending_year=1959, extra=0; historic specialist prior cannot be excluded by current-onset ordinary validation.",
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_unchanged_after_run": true,
+      "isolated": true,
+      "restored": true,
+      "restoration": "The mutated source was executed only in the isolated Python process's canonical module namespace. No working-tree source write occurred; process exit discarded the mutant. Both before/after file SHA-256 values matched.",
+      "source_transition_note": "This hash identifies the implementation at this execution. Later restored controls include the UNKNOWN-prior integration guard, continued missing-end disclosure, and the additional lower/upper valid-fillings handling; those edits are not represented by this earlier execution hash."
+    },
+    {
+      "name": "rethrow_unknown_earnings_completion_error",
+      "before": "            if unknown:\n                _refuse(\n                    InsuredUnsupportedReason.UNKNOWN_EARNINGS,\n                    \"Unknown earnings decide a valid established current period\",\n                )\n",
+      "after": "            if False and unknown:\n                _refuse(\n                    InsuredUnsupportedReason.UNKNOWN_EARNINGS,\n                    \"Unknown earnings decide a valid established current period\",\n                )\n",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_place_insured_start_before_declared_end",
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_before_declared_end_retains_denominator_row",
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_avoid_derived_prior_quarter_overlap"
+      ],
+      "command": "POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round4-psid PYTHONPATH=$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np=Path('src/populace_dynamics/track_b/insured_status.py')\ns=p.read_text()\nbefore=hashlib.sha256(p.read_bytes()).hexdigest()\nold=\"            if unknown:\\n                _refuse(\\n                    InsuredUnsupportedReason.UNKNOWN_EARNINGS,\\n                    \\\"Unknown earnings decide a valid established current period\\\",\\n                )\\n\"\nreplacement=\"            if False and unknown:\\n                _refuse(\\n                    InsuredUnsupportedReason.UNKNOWN_EARNINGS,\\n                    \\\"Unknown earnings decide a valid established current period\\\",\\n                )\\n\"\nassert s.count(old)==1\nexec(compile(s.replace(old,replacement), '<memory-mutation-rethrow-lower-completion>', 'exec'), i.__dict__)\nresult=pytest.main([\"-q\",\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_place_insured_start_before_declared_end\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_before_declared_end_retains_denominator_row\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_avoid_derived_prior_quarter_overlap\",\"--tb=short\"])\nafter=hashlib.sha256(p.read_bytes()).hexdigest()\nprint('MUTATION rethrow-lower-completion pytest_exit',result,'source_sha256',before,'unchanged',before==after)\nassert before==after\nraise SystemExit(result)\nPY",
+      "summary": "3 failed in 59.90s; rethrowing a completion input error discards valid opposite-endpoint fillings for both a declared end and a derived prior-quarter boundary.",
+      "source_hash": "735245b19fce6f2439c222acac2956761032971c8fced8fde2f56d372b2abb95",
+      "source_hash_unchanged_after_run": true,
+      "isolated": true,
+      "restored": true,
+      "restoration": "The substituted source ran only in an isolated Python module namespace; the working-tree file SHA-256 matched before and after. Process exit discarded the mutation.",
+      "transitional_attempt": "An earlier rethrow run caught two declared-end tests, but its post-run source-hash assertion failed because the root concurrently changed the central guard (start hash48d27dbadf2cd3d2f3598488d628144589a0c74a84ce1dca2a4eeed0ac7f106d). That transitional attempt is not the final validated mutation record; the repeated stable-source run above caught all three deterministic cases."
+    },
+    {
+      "name": "discard_unknown_earnings_upper_representation_alternative",
+      "before": "        # candidate; a public completion failure then receives a refusal.\n        return (\n",
+      "after": "        # candidate; a public completion failure then receives a refusal.\n        return False and (\n",
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_avoid_derived_prior_quarter_overlap"
+      ],
+      "command": "POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/round4-psid PYTHONPATH=$PWD/src:$PWD OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np=Path('src/populace_dynamics/track_b/insured_status.py')\ns=p.read_text()\nbefore=hashlib.sha256(p.read_bytes()).hexdigest()\nold=\"        # candidate; a public completion failure then receives a refusal.\\n        return (\\n\"\nreplacement=\"        # candidate; a public completion failure then receives a refusal.\\n        return False and (\\n\"\nassert s.count(old)==1\nexec(compile(s.replace(old,replacement), '<memory-mutation-discard-unknown-upper-alternative>', 'exec'), i.__dict__)\nresult=pytest.main([\"-q\",\"-p\",\"no:xdist\",\"-p\",\"no:cacheprovider\",\"tests/test_track_b_insured_status_fix_round_4_routes.py::test_unknown_earnings_can_avoid_derived_prior_quarter_overlap\",\"--tb=short\"])\nafter=hashlib.sha256(p.read_bytes()).hexdigest()\nprint('MUTATION discard-unknown-upper-alternative pytest_exit',result,'source_sha256',before,'unchanged',before==after)\nassert before==after\nraise SystemExit(result)\nPY",
+      "summary": "1 failed in 31.09s; discarding the UNKNOWN-credit representative alternative incorrectly rejects a valid lower-credit start after a legal historical prior freeze.",
+      "source_hash": "735245b19fce6f2439c222acac2956761032971c8fced8fde2f56d372b2abb95",
+      "source_hash_unchanged_after_run": true,
+      "isolated": true,
+      "restored": true,
+      "restoration": "The substituted source ran only in an isolated Python module namespace; the working-tree file SHA-256 matched before and after. Process exit discarded the mutation."
+    },
+    {
+      "name": "unknown_end_two_point_candidates",
+      "before": "range(_qid(start), last + 1)",
+      "after": "(last,)",
+      "summary": "1 failed in 25.88s; restoring the query-quarter and continuation candidates misses an earlier insured completion and fails DID NOT RAISE InsuredConfigurationUnsupported.",
+      "sourcehash_note": "The root agent changed only module/public docstring qualifications during this isolated run. The mutation process never wrote the source file; the root confirmed the behavioral implementation was unchanged.",
+      "isolated": true,
+      "restored": true,
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_retains_disagreeing_earlier_end_and_denominator_row[earlier-administrative-end]"
+      ],
+      "source_hash": "d9eb7ded5e44dcaa1496eb39c336d9dec9ae8d6844924a43dea2cb29cb1494a0",
+      "source_hash_after": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "reproduction_command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round4-psid PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = Path(i.__file__).read_text()\nbefore = 'range(_qid(start), last + 1)'\nafter = '(last,)'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_retains_disagreeing_earlier_end_and_denominator_row', '--tb=short']))\nPY",
+      "runner_note": "Single-substitution canonical-module execution in an isolated process before named test collection. Reproduction command expresses the executed protocol; execution hashes identify its snapshot. FRA parameter IDs later gained UNKNOWN-prior variants. Replay selectors intentionally use the whole current parametrized function; historical failing IDs/counts above are unchanged."
+    },
+    {
+      "name": "unknown_end_disappears_at_fra",
+      "before": "        and person.current_disability_period_end is None\n",
+      "after": "        and person.current_disability_period_end is None and month < _fra_date(person).replace(day=1)\n",
+      "summary": "2 failed in 24.45s; the FRA cap incorrectly erases current_disability_period_end from unknown_facts.",
+      "isolated": true,
+      "restored": true,
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_remains_unknown_at_and_after_fra_when_status_agrees[month0]",
+        "tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_remains_unknown_at_and_after_fra_when_status_agrees[month1]"
+      ],
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_after": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "reproduction_command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round4-psid PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = Path(i.__file__).read_text()\nbefore = '        and person.current_disability_period_end is None\\n'\nafter = '        and person.current_disability_period_end is None and month < _fra_date(person).replace(day=1)\\n'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_remains_unknown_at_and_after_fra_when_status_agrees', '--tb=short']))\nPY",
+      "runner_note": "Single-substitution canonical-module execution in an isolated process before named test collection. Reproduction command expresses the executed protocol; execution hashes identify its snapshot. FRA parameter IDs later gained UNKNOWN-prior variants. Replay selectors intentionally use the whole current parametrized function; historical failing IDs/counts above are unchanged."
+    },
+    {
+      "name": "annual_counts_ignore_earlier_endings",
+      "before": "        for p in people\n",
+      "after": "        for p in people[-1:]\n",
+      "summary": "1 failed in 5.37s; the annual upper bound zero misses the concrete earlier-ending count one.",
+      "isolated": true,
+      "restored": true,
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_annual_count_envelope_contains_earlier_completions"
+      ],
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_after": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "reproduction_command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round4-psid PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = Path(i.__file__).read_text()\nbefore = '        for p in people\\n'\nafter = '        for p in people[-1:]\\n'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_annual_count_envelope_contains_earlier_completions', '--tb=short']))\nPY",
+      "runner_note": "Single-substitution canonical-module execution in an isolated process before named test collection. Reproduction command expresses the executed protocol; execution hashes identify its snapshot. FRA parameter IDs later gained UNKNOWN-prior variants. Replay selectors intentionally use the whole current parametrized function; historical failing IDs/counts above are unchanged."
+    },
+    {
+      "name": "dli_ignores_earlier_endings",
+      "before": "            for p in lo_completions\n",
+      "after": "            for p in lo_completions[-1:]\n",
+      "summary": "1 failed in 11.31s; explicit nonblind query_quarters=8, late=0 has mutant lower DLI 2024-03-31, which excludes the earlier-ending concrete DLI 2023-03-31.",
+      "isolated": true,
+      "restored": true,
+      "failed_tests": [
+        "tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_dli_contains_every_administrative_end_completion"
+      ],
+      "source_hash": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "source_hash_after": "042488e8b685ee4a5d4a608073762439e781242d416c587152628eb8b656df16",
+      "reproduction_command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round4-epuf POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round4-psid PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\nsource = Path(i.__file__).read_text()\nbefore = '            for p in lo_completions\\n'\nafter = '            for p in lo_completions[-1:]\\n'\nassert source.count(before) == 1\nexec(compile(source.replace(before, after), i.__file__, 'exec'), i.__dict__)\nraise SystemExit(pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_4_endings.py::test_unknown_end_dli_contains_every_administrative_end_completion', '--tb=short']))\nPY",
+      "runner_note": "Single-substitution canonical-module execution in an isolated process before named test collection. Reproduction command expresses the executed protocol; execution hashes identify its snapshot. FRA parameter IDs later gained UNKNOWN-prior variants. Replay selectors intentionally use the whole current parametrized function; historical failing IDs/counts above are unchanged."
+    }
+  ],
+  "round_4_note": "Nine implementation mutations were caught in isolated in-memory module namespaces; no mutation was written to the working tree. Final source includes the UNKNOWN-prior concrete-enumeration guard, explicit missing-end disclosure, and sound refusal for invalid lower/upper earnings representatives when a valid completion remains possible. Existing concrete assertions remain; final controls and exact commands are in the fix-round-4 report.",
+  "round_4_final_source_sha256": "735245b19fce6f2439c222acac2956761032971c8fced8fde2f56d372b2abb95"
 }

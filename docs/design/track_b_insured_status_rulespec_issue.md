@@ -110,8 +110,15 @@ case inventory, preserving its coverage labels. In particular:
   defect rather than silently inventing its intended fiscal boundary.
 - Compare fully-insured requirements against every captured CFR 404.115
   birth-cohort row, including historical male transitions and January 1
-  birthdays. The RS 00301.800 HTML lacks the linked exhibit's bytes, so
-  request the exhibit capture before claiming a .800 differential.
+  birthdays. Run the .800 table differential against the retained
+  `poms_rs_00301_800_exhibit_pdftotext.txt` capture (SHA-256
+  `4459a0bccfc9d025973f3c9183042375780d6ee3f1a9f7e91b603490ba5a3a79`).
+  Its manifest retains the original PDF response hash
+  `9dcf53be30f06978b50e109ace88265ac38753700bb0093cb6213e01920af22f`
+  and the two GIF response hashes
+  `5e25a2e1dd124aa218af34b93f284049e9516612955ae1326ceff19160bd28bc`
+  and `65d94bae34becf54cf40e361cb6fb5668883f164efdff371122e8d2b9717efe3`.
+  No new exhibit capture is needed.
 - Exercise subsequent disability .140/.147 examples with all-or-none freeze
   handling and creditable endpoint quarters. Preserve any source-versus-rule
   discrepancy documented by the Python lane; do not make the compiler
