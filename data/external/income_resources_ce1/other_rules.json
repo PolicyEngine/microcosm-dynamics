@@ -201,15 +201,15 @@
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf",
-        "sha256": "aa8669fc7c1bc6a439230c34dec3d4b2648ac2cf716ff3ca73549f7adcab79c9",
+        "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
         "authority": "IRS Publication 51 (2023)",
-        "location": "extract page 2 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022"
+        "location": "extract page 4 (original PDF page 12), left column, Gavrielle/Dan example explicitly concerning 2022"
       },
       {
         "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-        "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
+        "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
         "authority": "IRS Publication 51 (2023), pinned text derivative",
-        "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
+        "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
       }
     ],
     "trigger_facts": [
@@ -301,9 +301,9 @@
         "income_year_basis": "published_transaction_year",
         "citation": {
           "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
-          "sha256": "a8c2be37a5a85ba23d853e192f199a2a3d40d3c7059b916dfe8ce92413f131c4",
+          "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
           "authority": "IRS Publication 51 (2023), pinned text derivative",
-          "location": "text of extract page 2 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
+          "location": "text of extract page 4 (original PDF page 12), left column, employee share of taxes paid by employer; explicit 2022 transaction"
         },
         "source_passage": "For 2022, Gavrielle paid Dan $1,000 during the year.",
         "expected_rule_id": "agricultural_service_1988",
@@ -2726,6 +2726,13 @@
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
         "authority": "42 USC 418 current code and amendment notes",
         "location": "418(c)(8)"
+      },
+      {
+        "capture": "poms_sl_30001357.html",
+        "sha256": "d240e04da60ba92488e501f4f11b3e08cdce1fddfa3122deac5d8a08f090c278",
+        "authority": "SSA POMS SL 30001.357",
+        "location": "NOTE before A",
+        "quote": "NOTE: Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system or the services are excluded from mandatory coverage."
       }
     ],
     "trigger_facts": [
@@ -2899,17 +2906,28 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "agreement_with_lower_threshold",
+        "case_id": "agreement_with_lower_threshold_nonmember",
         "precedence": 1,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
-        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C)."
+        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
+      },
+      {
+        "case_id": "agreement_with_lower_threshold_member",
+        "precedence": 2,
+        "when": {
+          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
       },
       {
         "case_id": "agreement_with_statutory_threshold",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
         },
@@ -2918,7 +2936,7 @@
       },
       {
         "case_id": "agreement_without_election_exclusion",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
         },
@@ -2927,7 +2945,7 @@
       },
       {
         "case_id": "outside_agreement_nonmember",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
@@ -2937,7 +2955,7 @@
       },
       {
         "case_id": "outside_agreement_member",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
@@ -4801,6 +4819,47 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "410(a)(1)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(1)",
+        "quote": "(1) Service performed by foreign agricultural workers lawfully admitted to the United States from the Bahamas, Jamaica, and the other British West Indies, or from any other foreign country or possession thereof, on a temporary basis to perform agricultural labor;"
+      },
+      {
+        "capture": "poms_rs_01901120.html",
+        "sha256": "f1a38bd51fd4856cedf573081ecaefcf681de65ba82b76b053937838f877de23",
+        "authority": "SSA POMS RS 01901.120",
+        "location": "A",
+        "quote": "Service after 1956 is excluded from covered employment when performed by foreign agricultural workers lawfully admitted to the U.S. temporarily to perform agricultural labor."
+      },
+      {
+        "capture": "ce1c_irs_pub51_2023_extract.pdf",
+        "sha256": "871238fd4ce47c8638a80f0d830d23676567d8649b01d0f384ba87ab51014e38",
+        "authority": "IRS Publication 51 (2023)",
+        "location": "extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders; extract page 4 (original PDF page 12), H-2A exception"
+      },
+      {
+        "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+        "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
+        "authority": "IRS Publication 51 (2023), pinned text derivative",
+        "location": "text of extract pages 2-3 (original PDF pages 10-11), section 3, Compensation paid to H-2A visa holders",
+        "quote": "compensation paid to H-2A workers for agricultural labor"
+      },
+      {
+        "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+        "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
+        "authority": "IRS Publication 51 (2023), pinned text derivative",
+        "location": "text of extract page 3 (original PDF page 11), section 3",
+        "quote": "An employer isn't required to withhold federal income tax from compensation paid to an H-2A worker for agricul- tural labor performed in connection with this visa"
+      },
+      {
+        "capture": "ce1c_irs_pub51_2023_extract.pdf.txt",
+        "sha256": "19fc1ab0b98879238f5f84b3453f063b82e07e8bb60b24fb373ed816682979b1",
+        "authority": "IRS Publication 51 (2023), pinned text derivative",
+        "location": "text of extract page 4 (original PDF page 12), Nonresident alien employees",
+        "quote": "One such exception is for foreign agricultural workers on H-2A visas, who are ex- empt from social security and Medicare taxes."
       }
     ],
     "trigger_facts": [
@@ -4811,7 +4870,6 @@
     "identification_class": "awaiting_ce2",
     "description": "Agricultural service by foreign workers lawfully admitted temporarily to the United States to perform agricultural labor is excluded. POMS dates the all-country temporary foreign agricultural-worker exclusion to after 1956.",
     "parameters": {
-      "temporary_lawful_agricultural_admission": true,
       "code_edition_evidence": [
         {
           "title": 42,
@@ -4884,7 +4942,20 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "admission_condition": {
+          "cases": {
+            "temporary_agricultural_admission_agricultural_labor": [
+              "nonresident_alien_status"
+            ],
+            "temporary_agricultural_admission_other_service": [
+              "nonresident_alien_status"
+            ]
+          }
+        }
+      },
+      "admission_condition": "Lawful temporary admission to perform agricultural labor (42 U.S.C. 410(a)(1)); the sources differ only on the service such a worker performs other than agricultural labor in connection with the visa."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4968,20 +5039,41 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "temporary_agricultural_admission",
+        "case_id": "temporary_agricultural_admission_agricultural_labor",
         "precedence": 1,
         "when": {
-          "agricultural_service": "agricultural labor",
-          "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor"
+          "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor",
+          "agricultural_service": "agricultural labor performed in connection with that admission"
         },
         "consequence": "noncovered",
-        "description": "42 U.S.C. 410(a)(1); POMS RS 01901.120 A."
+        "description": "42 U.S.C. 410(a)(1) and POMS RS 01901.120 A exclude service by such a worker, and Pub 51 (2023) section 3 exempts compensation \"for agricultural labor performed in connection with this visa\"; every source excludes this service."
+      },
+      {
+        "case_id": "temporary_agricultural_admission_other_service",
+        "precedence": 2,
+        "when": {
+          "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor",
+          "agricultural_service": "service other than agricultural labor performed in connection with that admission"
+        },
+        "consequence": "open",
+        "open_reason": "FOREIGN_AGRICULTURAL_OTHER_SERVICE_UNSETTLED: 42 U.S.C. 410(a)(1) excludes \"Service performed by foreign agricultural workers lawfully admitted ... on a temporary basis to perform agricultural labor\" and POMS RS 01901.120 A excludes service \"when performed by\" such workers, with no condition on the service, while Pub 51 (2023) section 3 names as exempt only compensation \"for agricultural labor performed in connection with this visa\". No capture settles the other service of such a worker, so it refuses.",
+        "open_alternatives": [
+          {
+            "name": "worker_admission_reading",
+            "description": "The exclusion follows the worker's admission, as the statute's \"Service performed by foreign agricultural workers\" and POMS RS 01901.120 A read, and Pub 51 (2023) page 12 says these workers \"are exempt from social security and Medicare taxes\": any service such a worker performs is excluded."
+          },
+          {
+            "name": "agricultural_labor_reading",
+            "description": "The exclusion reaches only the labor Pub 51 (2023) section 3 names, agricultural labor performed in connection with the visa, so the worker's other service is not excluded by this family."
+          }
+        ],
+        "description": "Pub 51 (2023) section 3 limits its statement to agricultural labor performed in connection with the visa; the statute and POMS state no such limit."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "The worker was not admitted temporarily to perform agricultural labor, so 410(a)(1) does not exclude the service; apply the other families."
+      "description": "The worker was not lawfully admitted temporarily to perform agricultural labor, so 410(a)(1) does not exclude the service; apply the other families."
     }
   },
   {
@@ -5190,6 +5282,20 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "410(a)(4)"
+      },
+      {
+        "capture": "poms_rs_01901170.html",
+        "sha256": "95291729040678c2604e901962e85f62b7b33da783e8433bb7f42d017badfcdd",
+        "authority": "SSA POMS RS 01901.170",
+        "location": "B",
+        "quote": "This excludes all service of officers and crewmen on foreign vessels or foreign aircraft, including service done within the U.S. if some part of the employee's service is done outside the U.S."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1954 amendment note to subsec. (a)(4)",
+        "quote": "made the exclusion with respect to services on non -American vessels or aircraft applicable only if the individual is not a United States citizen or the employer is not an American employer"
       }
     ],
     "trigger_facts": [
@@ -5202,9 +5308,8 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "For a non-American vessel/aircraft, service is excluded when the individual is employed on/in connection with it outside the United States and either the individual is not a U.S. citizen or the employer is not an American employer. This formulation has applied since 1955.",
+    "description": "For a non-American vessel/aircraft, service is excluded when the individual is employed on and in connection with it while it is outside the United States, which reaches that employment's service in the United States too, and either the individual is not a U.S. citizen or the employer is not an American employer. This formulation has applied since 1955.",
     "parameters": {
-      "requires_service_outside_us_on_vessel_or_aircraft": true,
       "exclusion_any_of": [
         "employee_not_us_citizen",
         "employer_not_american"
@@ -5293,7 +5398,8 @@
             ]
           }
         }
-      }
+      },
+      "clause_a_employment_test": "410(a)(4)(A) is met when the individual is employed on and in connection with the craft while it is outside the United States; it then reaches that employment's service in the United States too."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5381,22 +5487,22 @@
         "precedence": 1,
         "when": {
           "assignment": "employed on and in connection with a vessel that is not an American vessel, or an aircraft that is not an American aircraft",
-          "place_of_work": "outside the United States",
+          "place_of_work": "employed on and in connection with the vessel or aircraft when it is outside the United States; the employment's service within the United States is included",
           "citizenship": "not a United States citizen"
         },
         "consequence": "noncovered",
-        "description": "42 U.S.C. 410(a)(4)(A) and (B)(i)."
+        "description": "42 U.S.C. 410(a)(4)(A) and (B)(i). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\", and the 1954 amendment added clause (B) only."
       },
       {
         "case_id": "foreign_craft_non_american_employer",
         "precedence": 2,
         "when": {
           "assignment": "employed on and in connection with a vessel that is not an American vessel, or an aircraft that is not an American aircraft",
-          "place_of_work": "outside the United States",
+          "place_of_work": "employed on and in connection with the vessel or aircraft when it is outside the United States; the employment's service within the United States is included",
           "american_employer": "employer is not an American employer"
         },
         "consequence": "noncovered",
-        "description": "42 U.S.C. 410(a)(4)(A) and (B)(ii)."
+        "description": "42 U.S.C. 410(a)(4)(A) and (B)(ii). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\", and the 1954 amendment added clause (B) only."
       }
     ],
     "open_alternatives": [],
@@ -5764,7 +5870,7 @@
         "when": {
           "citizenship": "United States citizen",
           "place_of_work": "United States",
-          "international_organization_service": "employee of a designated international organization"
+          "international_organization_service": "employee of a public international organization designated under the International Organizations Immunities Act, while the designation is in effect and its conditions are met"
         },
         "consequence": "covered",
         "description": "411(c)(2)(C) makes this service a trade or business: covered as self-employment (POMS RS 01802.050 c).",
@@ -5901,7 +6007,7 @@
         "case_id": "transferred_federal_employee_410r",
         "precedence": 1,
         "when": {
-          "federal_service": "transferred to the organization under 5 U.S.C. 3582, after Federal service that was employment, with a right to reemployment under section 3582"
+          "federal_service": "transferred to the organization under 5 U.S.C. 3582, where immediately before the transfer the individual performed Federal service that was employment, with a right to reemployment under section 3582"
         },
         "consequence": "covered",
         "description": "410(r) makes this service employment.",
@@ -5915,7 +6021,7 @@
         "when": {
           "citizenship": "United States citizen",
           "place_of_work": "United States",
-          "international_organization_service": "employee of a designated international organization"
+          "international_organization_service": "employee of a public international organization designated under the International Organizations Immunities Act, while the designation is in effect and its conditions are met"
         },
         "consequence": "covered",
         "description": "411(c)(2)(C) makes this service a trade or business: covered as self-employment (POMS RS 01802.050 c).",
@@ -6829,7 +6935,8 @@
       "employee_self_or_mixed",
       "enrollment",
       "nonresident_alien_status",
-      "statutory_student_service"
+      "statutory_student_service",
+      "visa_status"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -6968,7 +7075,8 @@
         "case_id": "f1_j1_admission_purpose_service",
         "precedence": 1,
         "when": {
-          "nonresident_alien_status": "nonresident alien temporarily present as an F-1 or J-1 nonimmigrant",
+          "nonresident_alien_status": "nonresident alien",
+          "visa_status": "F-1 or J-1 nonimmigrant temporarily present in the United States",
           "statutory_student_service": "authorized service performed to carry out the purpose of the F or J admission"
         },
         "consequence": "noncovered",
@@ -7528,8 +7636,36 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
-        "location": "409(a)(8); 1977 amendment and effective-date notes"
+        "authority": "42 USC 409, current law and historical amendment notes; later-edition text, not contemporaneous pre-1994 section text",
+        "location": "former 409(j), the home-worker cash test, redesignated 409(a)(8) in 1989; 1960, 1977 and 1989 amendment notes"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1989 amendment note, Pub. L. 101-239 section 10208(d)(1)(T)",
+        "quote": "Former subsec. (j) redesignated subsec. (a)(8)."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1977 amendment note",
+        "quote": "1977\u2014Subsecs. (g)(3), (j). Pub. L. 95\u2013216, \u00a7 351(a)(1) , (2), substituted \u201cyear\u201d for \u201cquarter\u201d wherever appearing and \u201c$100\u201d for \u201c$50\u201d."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1960 amendment note",
+        "quote": "1960\u2014Subsec. (j). Pub. L. 86\u2013778, \u00a7 103(j)(2)(F) , substituted \u201csection 410(j)(3)(C)\u201d for \u201csection 410(k)(3)(C)\u201d."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(j)(3), closing clauses",
+        "quote": "if the contract of service contemplates that substantially all of such services are to be performed personally by such individual; except that an individual shall not be included in the term \u201c employee \u201d under the provisions of this paragraph if such individual has a substantial investment in facilities used in connection with the performance of such services (other than in facilities for transportation), or if the services are in the nature of a single transaction not part of a continuing relationship"
       }
     ],
     "trigger_facts": [
@@ -7609,10 +7745,10 @@
         "case_id": "statutory_homeworker",
         "precedence": 2,
         "when": {
-          "occupation": "home worker in a 410(j)(3)(C) occupational group who performs substantially all the services personally, has no substantial investment in facilities, and works in a continuing relationship"
+          "occupation": "home worker in a 410(j)(3)(C) occupational group, under a contract of service that contemplates that substantially all the services are to be performed personally, with no substantial investment in facilities (other than in facilities for transportation), in a continuing relationship"
         },
         "consequence": "covered_above_threshold",
-        "description": "Once the $50 calendar-quarter cash test is met, cash and noncash pay are wages (409(a)(8); POMS RS 01402.230 B.1)."
+        "description": "Once the $50 calendar-quarter cash test is met, cash and noncash pay are wages (former 409(j), which Pub. L. 101-239 section 10208(d)(1)(T) redesignated 409(a)(8) in 1989; POMS RS 01402.230 B.1)."
       }
     ],
     "open_alternatives": [],
@@ -8074,6 +8210,13 @@
         "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0",
         "authority": "Public Law 92-603 section 129(a)-(b), 86 Stat 1359",
         "location": "printed p.1359 (original PDF p.31; extract p.7)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(10)(B)",
+        "quote": "an organization described in section 509(a)(3) of the Internal Revenue Code of 1986 if the organization is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of a school, college, or university and is operated, supervised, or controlled by or in connection with such school, college, or university"
       }
     ],
     "trigger_facts": [
@@ -8272,7 +8415,7 @@
         "when": {
           "statutory_student_service": "service as a student",
           "enrollment": "enrolled and regularly attending classes",
-          "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization operated exclusively for it and operated, supervised or controlled by or in connection with it"
+          "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it"
         },
         "consequence": "noncovered",
         "description": "42 U.S.C. 410(a)(10); POMS RS 01901.720 A and C."
@@ -8399,6 +8542,13 @@
         "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
         "authority": "SSA POMS RS 01901.700, revision September 8, 2026",
         "location": "A historical Revenue Ruling 59-354 background;C.1-C.2;F non-federally recognized tribes"
+      },
+      {
+        "capture": "ce1c_poms_rs_01901700.html",
+        "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+        "authority": "SSA POMS RS 01901.700",
+        "location": "C.1 NOTE",
+        "quote": "We use earnings posted for members of Indian tribal councils for tax years 2005 and earlier in applicable benefit computations."
       }
     ],
     "trigger_facts": [
@@ -8408,7 +8558,6 @@
       "tribal_federal_recognition",
       "tribal_coverage_agreement",
       "historical_fica_treatment",
-      "historical_earnings_posting",
       "services_performed_date"
     ],
     "consequence": "covered",
@@ -8423,7 +8572,8 @@
         "through_tax_year": 2005,
         "requires": "earnings_already_posted",
         "consequence": "POMS directs use of these earnings in applicable benefit computations",
-        "payroll_coverage_consequence": "does_not_reclassify_default_noncovered_council_service"
+        "payroll_coverage_consequence": "does_not_reclassify_default_noncovered_council_service",
+        "posting_fact": "historical_earnings_posting"
       },
       "later_418a_retroactive_coverage": {
         "requires_all": [
@@ -8485,7 +8635,7 @@
       ],
       "condition_cases": {
         "benefit_credit_posting_rule": {
-          "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+          "not_a_coverage_condition": "POMS RS 01901.700 C.1 says council-member services \"do not constitute employment\" and, in its NOTE, that SSA uses earnings already posted for tax years 2005 and earlier in benefit computations. That crediting rule reads historical_earnings_posting and leaves coverage unchanged, so no case reads the fact."
         },
         "later_418a_retroactive_coverage": {
           "cases": {
@@ -8551,7 +8701,7 @@
           "tribal_federal_recognition": "federally recognized tribe"
         },
         "consequence": "noncovered",
-        "description": "POMS RS 01901.700 C.1, on the rationale of Revenue Ruling 59-354."
+        "description": "POMS RS 01901.700 C.1, on the rationale of Revenue Ruling 59-354. Earnings already posted for tax years 2005 and earlier still enter benefit computations (parameters.benefit_credit_posting_rule)."
       }
     ],
     "open_alternatives": [],

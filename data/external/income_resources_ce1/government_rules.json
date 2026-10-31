@@ -2853,6 +2853,20 @@
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
         "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
         "location": "409(h); note quoting Pub. L. 99-272 section 12112(c)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Pub. L. 98-369 section 2601(c) note",
+        "quote": "an individual shall not be considered to be subject to subchapter III of chapter 83 of title 5, United States Code, or to another retirement system established by a law of the United States for employees of the Federal Government (other than for members of the uniformed services), if he is contributing a reduced amount by reason of the Federal Employees\u2019 Retirement Contribution Temporary Adjustment Act of 1983"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Pub. L. 98-369 section 2601(d)(3) note",
+        "quote": "social security coverage and taxes by reason of section 210(a)(5)(G) of the Social Security Act and section 3121(b)(5)(G) of the Internal Revenue Code of 1986 shall, with respect to such individual\u2019s service in the legislative branch of the Federal Government, become effective with the first month beginning after such 30-day period"
       }
     ],
     "trigger_facts": [
@@ -2974,7 +2988,17 @@
             "1986"
           ]
         }
-      ]
+      ],
+      "section_2601e_nonprofit_service": {
+        "rule": "For 410(a)(5), as in effect in January 1983 and from 1984, service in the employ of a 501(c)(3) organization by an employee whom law requires to be subject to 5 U.S.C. chapter 83 subchapter III for that service counts as service in the employ of a United States instrumentality, so this family's cases decide it.",
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "Pub. L. 98-369 section 2601(e) note, Services Performed for Nonprofit Organizations by Federal Employees",
+          "quote": "service performed in the employ of a nonprofit organization described in section 501(c)(3) of the Internal Revenue Code of 1986 [ 26 U.S.C. 501(c)(3) ] by an employee who is required by law to be subject to subchapter III of chapter 83 of title 5, United States Code, with respect to such service, shall be considered to be service performed in the employ of an instrumentality of the United States"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -3038,7 +3062,7 @@
         "precedence": 6,
         "when": {
           "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)",
-          "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows"
+          "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
         },
         "consequence": "noncovered",
         "description": "Pub. L. 98-369 section 2601(d), as amended by Pub. L. 99-514 section 1883(a)(5)(A): the individual requalifies for the 410(a)(5) exemption as if the cessation had not occurred, which displaces 410(a)(5)(G)(ii)-(iii). Section 2601(f) makes the 1984 amendments effective for service after 1983 except as subsection (d) provides.",
@@ -3052,7 +3076,7 @@
         "precedence": 7,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
-          "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services)"
+          "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
         },
         "consequence": "covered",
         "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity.",
@@ -3066,10 +3090,10 @@
         "precedence": 8,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
-          "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system"
+          "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))"
         },
         "consequence": "covered",
-        "description": "410(a)(5)(G)(ii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983.",
+        "description": "410(a)(5)(G)(ii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983. Section 2601(d)(3) delays this coverage for an individual who meets 2601(d)(1)(A)-(B) and does not again become subject in time; until then the grandfather cases decide.",
         "overrides": [
           "grandfathered_continuous_service",
           "federal_annuitant"
@@ -3080,10 +3104,10 @@
         "precedence": 9,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
-          "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending"
+          "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))"
         },
         "consequence": "covered",
-        "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test.",
+        "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test. Section 2601(d)(3) delays this coverage for an individual who meets 2601(d)(1)(A)-(B) and does not again become subject in time; until then the grandfather cases decide.",
         "overrides": [
           "grandfathered_continuous_service",
           "federal_annuitant"
@@ -3171,6 +3195,20 @@
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
         "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
         "location": "409(h); note quoting Pub. L. 99-272 section 12112(c)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Pub. L. 98-369 section 2601(c) note",
+        "quote": "an individual shall not be considered to be subject to subchapter III of chapter 83 of title 5, United States Code, or to another retirement system established by a law of the United States for employees of the Federal Government (other than for members of the uniformed services), if he is contributing a reduced amount by reason of the Federal Employees\u2019 Retirement Contribution Temporary Adjustment Act of 1983"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Pub. L. 98-369 section 2601(d)(3) note",
+        "quote": "social security coverage and taxes by reason of section 210(a)(5)(G) of the Social Security Act and section 3121(b)(5)(G) of the Internal Revenue Code of 1986 shall, with respect to such individual\u2019s service in the legislative branch of the Federal Government, become effective with the first month beginning after such 30-day period"
       }
     ],
     "trigger_facts": [
@@ -3355,7 +3393,18 @@
         "location": "Effective Date of 1986 Amendment; Public Law 99-335 section 702(a), effective January 1, 1987"
       },
       "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H).",
-      "later_poms_waiver_guidance": "POMS RS 01901.340 C.3.c describes FEPCA waiver-of-offset coverage. This later guidance is not a condition applied throughout the row beginning in 1987; verify the applicable waiver law and effective date for such service."
+      "later_poms_waiver_guidance": "POMS RS 01901.340 C.3.c describes FEPCA waiver-of-offset coverage. This later guidance is not a condition applied throughout the row beginning in 1987; verify the applicable waiver law and effective date for such service.",
+      "section_2601d3_delay": "Section 2601(d)(3) delays 410(a)(5)(G) coverage only to the first month after the 30-day period of 2601(d)(1), which ends 30 days after July 18, 1984, or of 2601(d)(2), which ends 30 days after a return that must fall within 365 days of service ending before July 18, 1984. Every such month falls before 1987, so the delay changes no case in this row.",
+      "section_2601e_nonprofit_service": {
+        "rule": "For 410(a)(5), as in effect in January 1983 and from 1984, service in the employ of a 501(c)(3) organization by an employee whom law requires to be subject to 5 U.S.C. chapter 83 subchapter III for that service counts as service in the employ of a United States instrumentality, so this family's cases decide it.",
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "Pub. L. 98-369 section 2601(e) note, Services Performed for Nonprofit Organizations by Federal Employees",
+          "quote": "service performed in the employ of a nonprofit organization described in section 501(c)(3) of the Internal Revenue Code of 1986 [ 26 U.S.C. 501(c)(3) ] by an employee who is required by law to be subject to subchapter III of chapter 83 of title 5, United States Code, with respect to such service, shall be considered to be service performed in the employ of an instrumentality of the United States"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -3472,7 +3521,7 @@
         "precedence": 9,
         "when": {
           "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)",
-          "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows"
+          "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
         },
         "consequence": "noncovered",
         "description": "Pub. L. 98-369 section 2601(d), as amended by Pub. L. 99-514 section 1883(a)(5)(A): the individual requalifies for the 410(a)(5) exemption as if the cessation had not occurred, which displaces 410(a)(5)(G)(ii)-(iii). Section 2601(f) makes the 1984 amendments effective for service after 1983 except as subsection (d) provides.",
@@ -3486,7 +3535,7 @@
         "precedence": 10,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
-          "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services)"
+          "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
         },
         "consequence": "covered",
         "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity.",
@@ -3514,7 +3563,7 @@
         "precedence": 12,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
-          "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending"
+          "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
         },
         "consequence": "covered",
         "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test.",

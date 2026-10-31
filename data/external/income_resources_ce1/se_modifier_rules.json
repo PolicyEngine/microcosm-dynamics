@@ -1833,7 +1833,14 @@
         "capture": "uscode_2024_26_7873.html",
         "sha256": "380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772",
         "authority": "26 USC 7873, official 2024 United States Code section granule",
-        "location": "7873(a)-(b); Public Law 100-647 section 3044 effective-date and no-inference provision"
+        "location": "7873(a)-(c); Public Law 100-647 section 3044 effective-date and no-inference provision"
+      },
+      {
+        "capture": "uscode_2024_26_7873.html",
+        "sha256": "380698938697f0784a7a7256a8c2688968f633bd9e8c53cef5d0b08686c34772",
+        "authority": "26 USC 7873, official 2024 United States Code section granule",
+        "location": "7873(c)(2)",
+        "quote": "If, but for this paragraph, all but a de minimis amount\u2014 (A) derived by a qualified Indian tribal entity, or by an individual through such an entity, is entitled to the benefits of paragraph (1) of subsection (a), or (B) paid to an individual for services is entitled to the benefits of paragraph (2) of subsection (a), then the entire amount shall be entitled to the benefits of such paragraph."
       }
     ],
     "trigger_facts": [
@@ -1946,8 +1953,17 @@
               "tribal_fishing_qualified_entity"
             ]
           }
+        },
+        "de_minimis_rule": {
+          "cases": {
+            "section_7873c2_de_minimis_amount": [
+              "tribal_fishing_rights_income",
+              "tribal_fishing_qualified_entity"
+            ]
+          }
         }
-      }
+      },
+      "de_minimis_rule": "26 U.S.C. 7873(c)(2)(A): a de minimis unrelated part of an amount derived through a qualified Indian entity shares the exemption when all the rest is exempt under 7873(a)(1)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1991,6 +2007,17 @@
         },
         "consequence": "noncovered",
         "description": "411(a)(14); 7873(a)-(b)."
+      },
+      {
+        "case_id": "section_7873c2_de_minimis_amount",
+        "precedence": 2,
+        "when": {
+          "tribal_fishing_rights_income": "a de minimis part of an amount derived through a qualified Indian entity, all but which is exempt under 7873(a)(1)",
+          "tribal_membership": "a member of the tribe, deriving the amount through a qualified Indian entity",
+          "tribal_fishing_qualified_entity": "the entity meets 7873(b)(3)"
+        },
+        "consequence": "noncovered",
+        "description": "7873(c)(2)(A): if all but a de minimis amount derived by an individual through a qualified Indian entity is exempt under (a)(1), \"the entire amount shall be entitled to the benefits of such paragraph\", so 411(a)(14) excludes the de minimis part too."
       }
     ],
     "open_alternatives": [],

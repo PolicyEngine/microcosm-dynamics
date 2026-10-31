@@ -3293,6 +3293,13 @@
         "capture": "lii_42_411.html",
         "location": "411(a)(12); 1977 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(12)",
+        "quote": "There shall be excluded the distributive share of any item of income or loss of a limited partner , as such, other than guaranteed payments described in section 707(c) of the Internal Revenue Code of 1986 to that partner for services actually rendered to or on behalf of the partnership to the extent that those payments are established to be in the nature of remuneration for those services"
       }
     ],
     "consequence": "covered",
@@ -3389,6 +3396,16 @@
               "partnership_status"
             ]
           }
+        },
+        "excluded_concept": {
+          "cases": {
+            "guaranteed_payment_not_for_services": [
+              "partnership_status"
+            ],
+            "limited_partner_distributive_share": [
+              "partnership_status"
+            ]
+          }
         }
       },
       "effective_basis": "taxable_year_start",
@@ -3424,8 +3441,17 @@
         ]
       },
       {
-        "case_id": "limited_partner_distributive_share",
+        "case_id": "guaranteed_payment_not_for_services",
         "precedence": 2,
+        "when": {
+          "partnership_status": "707(c) guaranteed payment to a limited partner, or the part of one, that is not for services actually rendered to or on behalf of the partnership (for example, a payment for the use of capital), or not established to be in the nature of remuneration for those services"
+        },
+        "consequence": "noncovered",
+        "description": "411(a)(12) excludes a limited partner's distributive share \"other than guaranteed payments described in section 707(c) ... for services actually rendered ... to the extent that those payments are established to be in the nature of remuneration for those services\"; the rest of a 707(c) payment stays inside the exclusion."
+      },
+      {
+        "case_id": "limited_partner_distributive_share",
+        "precedence": 3,
         "when": {
           "partnership_status": "distributive share of income or loss of a limited partner, as such"
         },

@@ -171,7 +171,7 @@ IRS_EXTRACTS = (
     {f"irs_pub926_{year}_extract.pdf" for year in range(2008, 2026)}
     | {f"irs_pub15_{year}_extract.pdf" for year in PUB15_EDITIONS}
     | {"irs_form1040_instructions_1985_extract.pdf"}
-    # Review r3 low 8: Pub 51 (2023), cited for page 12 only.
+    # Review r3 low 8: Pub 51 (2023), cited for pages 10-12 (low 6).
     | {"ce1c_irs_pub51_2023_extract.pdf"}
 )
 PAGE_EXTRACTS = STATUTE_EXTRACTS | IRS_EXTRACTS
@@ -1150,7 +1150,7 @@ def test_open_readings_are_named_once_and_described_in_prose():
         + sum(len(case.get("open_alternatives", [])) for case in row["cases"])
         for row in rows
     )
-    assert described == 38
+    assert described == 40
 
 
 READING_TEXT = {
@@ -1738,7 +1738,7 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     tied = [
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
-    assert len(tied) == 33
+    assert len(tied) == 34
     assert all(row["cases"] and row["open_reason"] is None for row in tied)
 
 
@@ -1938,7 +1938,232 @@ REQUIRED_CONDITIONS = [
         "ce1c_plaw115_243.html",
         "timely paid in good faith (and not subsequently refunded)",
     ),
+    # Review r3 low 6: the narrow omissions, each pinned to its passage.
+    (
+        "se_limited_partner_1978_2026",
+        "guaranteed_payment_not_for_services",
+        {
+            "partnership_status": (
+                "707(c) guaranteed payment",
+                "not for services actually rendered",
+                "not established to be in the nature of remuneration",
+            )
+        },
+        "lii_42_411.html",
+        "other than guaranteed payments described in section 707(c) of the "
+        "Internal Revenue Code of 1986 to that partner for services actually "
+        "rendered",
+    ),
+    (
+        "se_treaty_fishing_1968_2026",
+        "section_7873c2_de_minimis_amount",
+        {
+            "tribal_fishing_rights_income": ("de minimis", "7873(a)(1)"),
+            "tribal_fishing_qualified_entity": ("7873(b)(3)",),
+        },
+        "uscode_2024_26_7873.html",
+        "If, but for this paragraph, all but a de minimis amount",
+    ),
+    *[
+        (
+            "foreign_vessel_aircraft_service_1968",
+            case_id,
+            {
+                "place_of_work": (
+                    "when it is outside the United States",
+                    "service within the United States is included",
+                )
+            },
+            "poms_rs_01901170.html",
+            "including service done within the U.S. if some part of the "
+            "employee's service is done outside the U.S.",
+        )
+        for case_id in (
+            "foreign_craft_noncitizen",
+            "foreign_craft_non_american_employer",
+        )
+    ],
+    *[
+        (
+            rule_id,
+            case_id,
+            {"federal_retirement_system": ("section 2601(c)",)},
+            "lii_42_410.html",
+            "if he is contributing a reduced amount by reason of the Federal "
+            "Employees’ Retirement Contribution Temporary Adjustment Act of "
+            "1983",
+        )
+        for rule_id in ("federal_1984_1986", "federal_1987_2026")
+        for case_id in (
+            "defra_2601d_requalification",
+            "legislative_not_retirement_covered_1983",
+            "legislative_ceased_coverage_after_1983",
+        )
+    ],
+    *[
+        (
+            "federal_1984_1986",
+            case_id,
+            {
+                "federal_retirement_system": (
+                    "section 2601(d)(3)",
+                    "first month beginning after that 30-day period",
+                )
+            },
+            "lii_42_410.html",
+            "become effective with the first month beginning after such "
+            "30-day period",
+        )
+        for case_id in (
+            "legislative_lump_sum_after_1983",
+            "legislative_ceased_coverage_after_1983",
+        )
+    ],
+    (
+        "election_work_1991_0702",
+        "agreement_with_lower_threshold_nonmember",
+        {
+            "section_218_position": ("below the statutory amount",),
+            "public_retirement_system_participation": ("not a member",),
+        },
+        "poms_sl_30001357.html",
+        "Beginning July 2, 1991, services optionally excluded from coverage "
+        "under a Section 218 Agreement may be mandatorily covered unless the "
+        "employee is a member of a public retirement system",
+    ),
+    (
+        "election_work_1991_0702",
+        "agreement_with_lower_threshold_member",
+        {
+            "section_218_position": ("below the statutory amount",),
+            "public_retirement_system_participation": (
+                "member of a retirement system",
+            ),
+        },
+        "poms_sl_30001357.html",
+        "In these States, the Social Security and Medicare tax applies when "
+        "the amount specified in the State’s agreement is met.",
+    ),
+    (
+        "foreign_agricultural_service_1968",
+        "temporary_agricultural_admission_agricultural_labor",
+        {
+            "nonresident_alien_status": (
+                "on a temporary basis to perform agricultural labor",
+            ),
+            "agricultural_service": (
+                "agricultural labor performed in connection with that "
+                "admission",
+            ),
+        },
+        "ce1c_irs_pub51_2023_extract.pdf.txt",
+        "compensation paid to H-2A workers for agricultural labor",
+    ),
+    (
+        "foreign_agricultural_service_1968",
+        "temporary_agricultural_admission_other_service",
+        {
+            "nonresident_alien_status": (
+                "on a temporary basis to perform agricultural labor",
+            ),
+            "agricultural_service": ("other than agricultural labor",),
+        },
+        "lii_42_410.html",
+        "(1) Service performed by foreign agricultural workers lawfully "
+        "admitted to the United States",
+    ),
+    *[
+        (
+            rule_id,
+            "us_citizen_in_united_states",
+            {
+                "international_organization_service": (
+                    "while the designation is in effect and its conditions "
+                    "are met",
+                )
+            },
+            "lii_42_411.html",
+            "(C) service described in section 410(a) (11), (12), or (15) of "
+            "this title performed in the United States by a citizen of the "
+            "United States",
+        )
+        for rule_id in (
+            "international_organization_service_1968",
+            "international_organization_service_1995",
+        )
+    ],
+    (
+        "international_organization_service_1995",
+        "transferred_federal_employee_410r",
+        {"federal_service": ("immediately before the transfer",)},
+        "lii_42_410.html",
+        "immediately before such transfer, such individual performed service "
+        "with a Federal agency",
+    ),
+    (
+        "statutory_homeworker_service_1968",
+        "statutory_homeworker",
+        {
+            "occupation": (
+                "contract of service that contemplates",
+                "(other than in facilities for transportation)",
+                "continuing relationship",
+            )
+        },
+        "lii_42_410.html",
+        "if the contract of service contemplates that substantially all of "
+        "such services are to be performed personally by such individual",
+    ),
+    (
+        "nonresident_alien_service_1968",
+        "f1_j1_admission_purpose_service",
+        {
+            "nonresident_alien_status": ("nonresident alien",),
+            "visa_status": ("F-1 or J-1 nonimmigrant",),
+            "statutory_student_service": ("to carry out the purpose",),
+        },
+        "lii_42_410.html",
+        "(19) Service which is performed by a nonresident alien individual "
+        "for the period he is temporarily present in the United States as a "
+        "nonimmigrant",
+    ),
+    (
+        "student_service_1973",
+        "enrolled_student_at_employing_school",
+        {
+            "employer_school_nexus": (
+                "organized, and at all times thereafter is operated",
+                "operated, supervised or controlled by or in connection",
+            )
+        },
+        "lii_42_410.html",
+        "if the organization is organized, and at all times thereafter is "
+        "operated, exclusively for the benefit of",
+    ),
 ]
+REQUIRED_CONDITION_ROWS = {
+    row["rule_id"]: row
+    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    if row["rule_id"] in {entry[0] for entry in REQUIRED_CONDITIONS}
+}
+
+
+def required_condition_problems(case, captures, facts, capture):
+    """Required facts or phrases a case's `when` lacks, and an uncited
+    capture. ``facts`` maps each fact to phrases its value must contain."""
+    problems = []
+    for fact, phrases in facts.items():
+        if fact not in case["when"]:
+            problems.append((fact, "missing"))
+            continue
+        problems.extend(
+            (fact, phrase)
+            for phrase in phrases
+            if phrase not in str(case["when"][fact])
+        )
+    if capture not in captures:
+        problems.append((capture, "uncited"))
+    return problems
 
 
 @pytest.mark.parametrize(
@@ -1949,17 +2174,254 @@ REQUIRED_CONDITIONS = [
 def test_statutory_conditions_sit_in_their_cases(
     registry, rule_id, case_id, facts, capture, passage
 ):
-    """Review r3 M1: each listed condition is a `when` fact of its case,
-    and the row cites the capture whose passage imposes it."""
+    """Review r3 M1 and low 6: each listed condition is a `when` fact of
+    its case, and the row cites the capture whose passage imposes it."""
     rule = next(r for r in registry.rules if r.rule_id == rule_id)
     case = next(c for c in rule.cases if c["case_id"] == case_id)
-    for fact, phrases in facts.items():
-        assert fact in case["when"], (rule_id, case_id, fact)
-        for phrase in phrases:
-            assert phrase in str(case["when"][fact]), (fact, phrase)
-    assert capture in {c.capture for c in rule.citations}
+    captures = {c.capture for c in rule.citations}
+    assert required_condition_problems(case, captures, facts, capture) == []
     text = source_text(CAPTURE_DIRECTORY / capture)
     assert " ".join(passage.split()) in text
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(REQUIRED_CONDITIONS),
+    st.sampled_from(["fact", "phrase", "capture"]),
+    st.data(),
+)
+def test_required_condition_checker_flags_a_dropped_condition(
+    entry, dropped, data
+):
+    """The M1 and low 6 checker is the test's oracle: removing any listed
+    fact, phrase or citation from a real case is flagged."""
+    rule_id, case_id, facts, capture, _ = entry
+    row = REQUIRED_CONDITION_ROWS[rule_id]
+    case = next(c for c in row["cases"] if c["case_id"] == case_id)
+    captures = {c["capture"] for c in row["citations"]}
+    assert required_condition_problems(case, captures, facts, capture) == []
+    when = dict(case["when"])
+    phrased = sorted(fact for fact, phrases in facts.items() if phrases)
+    if dropped == "phrase" and phrased:
+        fact = data.draw(st.sampled_from(phrased))
+        phrase = data.draw(st.sampled_from(facts[fact]))
+        when[fact] = str(when[fact]).replace(phrase, "INVENTED")
+    elif dropped == "capture":
+        captures = captures - {capture}
+    else:
+        del when[data.draw(st.sampled_from(sorted(facts)))]
+    mutated = {**case, "when": when}
+    assert required_condition_problems(mutated, captures, facts, capture)
+
+
+# Review r3 low 6: what each narrowed row returns for INVENTED fact
+# patterns, by the cases whose conditions they meet.
+LOW6_OUTCOMES = [
+    # A limited partner's 707(c) payment for the use of capital.
+    (
+        "self_employment_limited_partner",
+        2000,
+        {"guaranteed_payment_not_for_services"},
+        "noncovered",
+    ),
+    (
+        "self_employment_limited_partner",
+        2000,
+        {"guaranteed_payment_for_services"},
+        "covered",
+    ),
+    # The de minimis unrelated part of an entity-derived fishing amount.
+    (
+        "self_employment_treaty_fishing",
+        2000,
+        {"section_7873c2_de_minimis_amount"},
+        "noncovered",
+    ),
+    # A noncitizen crewman's in-port service on a foreign vessel he also
+    # serves on at sea.
+    (
+        "foreign_vessel_aircraft_service",
+        2000,
+        {"foreign_craft_noncitizen"},
+        "noncovered",
+    ),
+    # Nonmember and member election workers under a lower agreement amount.
+    (
+        "election_work",
+        1992,
+        {"agreement_with_lower_threshold_nonmember"},
+        "covered_above_threshold",
+    ),
+    (
+        "election_work",
+        1992,
+        {"agreement_with_lower_threshold_member"},
+        "covered_above_threshold",
+    ),
+    # An H-2A worker's farm work, and the same worker's other service.
+    (
+        "foreign_agricultural_service",
+        2000,
+        {"temporary_agricultural_admission_agricultural_labor"},
+        "noncovered",
+    ),
+    (
+        "foreign_agricultural_service",
+        2000,
+        {"temporary_agricultural_admission_other_service"},
+        "refuses",
+    ),
+    ("foreign_agricultural_service", 2000, set(), "covered"),
+    # A transferred Federal employee, and a citizen in the United States.
+    (
+        "international_organization_service",
+        2000,
+        {
+            "transferred_federal_employee_410r",
+            "us_citizen_in_united_states",
+            "designated_international_organization",
+        },
+        "covered",
+    ),
+    # F-1 admission-purpose work keyed on the visa class.
+    (
+        "nonresident_alien_service",
+        2000,
+        {"f1_j1_admission_purpose_service"},
+        "noncovered",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("family", "year", "matched", "expected"),
+    LOW6_OUTCOMES,
+    ids=[
+        f"{family}-{sorted(matched)}"
+        for family, _, matched, _ in LOW6_OUTCOMES
+    ],
+)
+def test_narrowed_rows_resolve_as_their_sources_say(
+    registry, family, year, matched, expected
+):
+    (rule,) = registry.lookup(family, year)
+    if expected == "refuses":
+        with pytest.raises(OpenRuleError, match="FOREIGN_AGRICULTURAL"):
+            rule.resolve(matched)
+    else:
+        assert rule.resolve(matched)["consequence"] == expected
+
+
+def test_election_nonmember_meets_either_threshold(registry):
+    """Review r3 low 6: from 1991-07-02 an optionally excluded nonmember is
+    mandatorily covered unless 410(a)(7)(F)(iv) excepts the pay, so both the
+    agreement's amount and the statutory annual amount bear on it."""
+    (rule,) = registry.lookup("election_work", 1992)
+    cases = {case["case_id"]: case for case in rule.cases}
+    nonmember = cases["agreement_with_lower_threshold_nonmember"]
+    assert "the agreement's amount" in nonmember["description"]
+    assert "statutory annual amount" in nonmember["description"]
+    member = cases["agreement_with_lower_threshold_member"]
+    assert "statutory annual" not in member["description"]
+    assert "agreement_with_lower_threshold" not in cases
+
+
+def test_foreign_agricultural_readings_name_both_sources(registry):
+    """Review r3 low 6: the agricultural-labor condition rests on Pub 51
+    (2023) section 3, which the row now cites; the statute and POMS key on
+    the worker's admission, so the worker's other service refuses."""
+    (rule,) = registry.lookup("foreign_agricultural_service", 2000)
+    other = next(c for c in rule.cases if "open_reason" in c)
+    names = {option["name"] for option in other["open_alternatives"]}
+    assert names == {"worker_admission_reading", "agricultural_labor_reading"}
+    quotes = " ".join(c.quote or "" for c in rule.citations)
+    assert "for agricultural labor" in quotes
+    assert "Service performed by foreign agricultural workers" in quotes
+    assert "ce1c_irs_pub51_2023_extract.pdf" in {
+        c.capture for c in rule.citations
+    }
+
+
+@pytest.mark.parametrize("rule_id", ["federal_1984_1986", "federal_1987_2026"])
+def test_federal_rows_carry_section_2601_c_d3_and_e(registry, rule_id):
+    """Review r3 low 6: 2601(c) narrows "subject to", 2601(d)(3) delays
+    (G) coverage for late requalifiers, and 2601(e) makes a 501(c)(3)
+    employee under subchapter III a Federal instrumentality employee."""
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    nonprofit = rule.parameters["section_2601e_nonprofit_service"]
+    cited = nonprofit["citation"]
+    assert cited["capture"] in {c.capture for c in rule.citations}
+    assert "501(c)(3)" in cited["quote"]
+    assert "instrumentality of the United States" in cited["quote"]
+    assert " ".join(cited["quote"].split()) in source_text(
+        CAPTURE_DIRECTORY / cited["capture"]
+    )
+    delay = rule.parameters.get("section_2601d3_delay")
+    assert (delay is None) == (rule_id == "federal_1984_1986")
+    if delay is not None:
+        assert "before 1987" in delay
+
+
+def test_tribal_posting_rule_is_a_crediting_rule_not_a_case(registry):
+    """Review r3 low 6: POMS RS 01901.700 C.1 says council-member services
+    "do not constitute employment", and its NOTE uses earnings posted
+    through 2005 in benefit computations. No case reads the posting fact,
+    so the 1968 row lists it only in the crediting rule that reads it."""
+    rule = next(
+        r for r in registry.rules if r.rule_id == "tribal_council_service_1968"
+    )
+    posting = rule.parameters["benefit_credit_posting_rule"]
+    assert posting["posting_fact"] == "historical_earnings_posting"
+    assert "historical_earnings_posting" not in rule.trigger_facts
+    tie = rule.parameters["condition_cases"]["benefit_credit_posting_rule"]
+    assert "historical_earnings_posting" in tie["not_a_coverage_condition"]
+    read = {fact for case in rule.cases for fact in case["when"]}
+    assert "historical_earnings_posting" not in read
+    member = {"federally_recognized_council_member"}
+    assert rule.resolve(member)["consequence"] == "noncovered"
+    assert any(
+        c.quote and "We use earnings posted" in c.quote for c in rule.citations
+    )
+
+
+def test_homeworker_cash_test_cites_its_1968_1977_location(registry):
+    """Review r3 low 6: before Pub. L. 101-239 redesignated it in 1989, the
+    home-worker cash test was 409(j), not 409(a)(8)."""
+    rule = next(
+        r
+        for r in registry.rules
+        if r.rule_id == "statutory_homeworker_service_1968"
+    )
+    locators = [c.location for c in rule.citations] + [
+        case.get("description", "") for case in rule.cases
+    ]
+    for text in locators:
+        if "409(a)(8)" in text:
+            assert "409(j)" in text, text
+    quotes = " ".join(c.quote or "" for c in rule.citations)
+    assert "Former subsec. (j) redesignated subsec. (a)(8)." in quotes
+    assert "“$100” for “$50”" in quotes
+
+
+def test_section_410a19_rows_key_the_visa_class_alike(registry):
+    """Review r3 low 6: every 410(a)(19) case names the alien status and the
+    visa class in separate facts, as the M-1 and Q rows do."""
+    families = {
+        "nonresident_alien_service",
+        "nonresident_alien_vocational_service",
+        "nonresident_alien_cultural_exchange_service",
+    }
+    found = [
+        case
+        for rule in registry.rules
+        if rule.family in families
+        for case in rule.cases
+        if "nonresident_alien_status" in case["when"]
+    ]
+    assert len(found) >= 4
+    for case in found:
+        assert case["when"]["nonresident_alien_status"] == "nonresident alien"
+        assert "nonimmigrant" in case["when"]["visa_status"]
 
 
 @pytest.mark.parametrize(
