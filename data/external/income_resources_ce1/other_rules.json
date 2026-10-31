@@ -4878,15 +4878,30 @@
         "authority": "IRS Publication 51 (2023), pinned text derivative",
         "location": "text of extract page 3 (original PDF page 12), Nonresident alien employees",
         "quote": "One such exception is for foreign agricultural workers on H-2A visas, who are ex- empt from social security and Medicare taxes."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1984 amendment note to subsec. (a)(1), Pub. L. 98-369 section 2663(a)(7)(A)",
+        "quote": "Subsec. (a)(1). Pub. L. 98\u2013369, \u00a7 2663(a)(7)(A) , struck out \u201c(A) under contracts entered into in accordance with title V of the Agricultural Act of 1949 , as amended, or (B)\u201d."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1984 Amendment note, Pub. L. 98-369 section 2664(b)",
+        "quote": "Amendment by section 2663(a)(7), (j)(3)(A)(i) of Pub. L. 98\u2013369 effective July 18, 1984 , but not to be construed as changing or affecting any right, liability, status, or interpretation which existed (under the provisions of law involved) before that date"
       }
     ],
     "trigger_facts": [
       "agricultural_service",
-      "nonresident_alien_status"
+      "nonresident_alien_status",
+      "services_performed_date"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Agricultural service by foreign workers lawfully admitted temporarily to the United States to perform agricultural labor is excluded. POMS dates the all-country temporary foreign agricultural-worker exclusion to after 1956.",
+    "description": "Agricultural service by foreign workers lawfully admitted temporarily to the United States to perform agricultural labor is excluded. POMS dates the all-country temporary foreign agricultural-worker exclusion to after 1956. Before July 18, 1984, former 410(a)(1)(A) also excluded service by foreign agricultural workers under contracts entered into in accordance with title V of the Agricultural Act of 1949.",
     "parameters": {
       "code_edition_evidence": [
         {
@@ -4971,9 +4986,18 @@
               "nonresident_alien_status"
             ]
           }
+        },
+        "title_v_contract_clause": {
+          "cases": {
+            "title_v_contract_worker_before_1984_07_18": [
+              "nonresident_alien_status",
+              "services_performed_date"
+            ]
+          }
         }
       },
-      "admission_condition": "Lawful temporary admission to perform agricultural labor (42 U.S.C. 410(a)(1)); the sources differ only on the service such a worker performs other than agricultural labor in connection with the visa."
+      "admission_condition": "Lawful temporary admission to perform agricultural labor (42 U.S.C. 410(a)(1)); the sources differ only on the service such a worker performs other than agricultural labor in connection with the visa.",
+      "title_v_contract_clause": "Former 410(a)(1)(A), struck by Pub. L. 98-369 section 2663(a)(7)(A) effective July 18, 1984, so its case reads the service date. The captures hold the struck words and the effective date, not the pre-1984 section text, and none says whether any title V contract was in force after 1967."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5057,8 +5081,18 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "temporary_agricultural_admission_agricultural_labor",
+        "case_id": "title_v_contract_worker_before_1984_07_18",
         "precedence": 1,
+        "when": {
+          "nonresident_alien_status": "foreign agricultural worker under a contract entered into in accordance with title V of the Agricultural Act of 1949, as amended",
+          "services_performed_date": "before 1984-07-18"
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(1)(A) excluded service by foreign agricultural workers \"under contracts entered into in accordance with title V of the Agricultural Act of 1949, as amended\" until Pub. L. 98-369 section 2663(a)(7)(A) struck it, effective July 18, 1984. Like clause (B), the clause describes the workers; no capture limits it to agricultural labor, so it ranks above the clause (B) cases. No capture says whether any such contract was in force after 1967."
+      },
+      {
+        "case_id": "temporary_agricultural_admission_agricultural_labor",
+        "precedence": 2,
         "when": {
           "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor",
           "agricultural_service": "agricultural labor performed in connection with that admission"
@@ -5068,7 +5102,7 @@
       },
       {
         "case_id": "temporary_agricultural_admission_other_service",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "nonresident_alien_status": "foreign worker lawfully admitted to the United States on a temporary basis to perform agricultural labor",
           "agricultural_service": "service other than agricultural labor performed in connection with that admission"
@@ -5091,7 +5125,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "The worker was not lawfully admitted temporarily to perform agricultural labor, so 410(a)(1) does not exclude the service; apply the other families."
+      "description": "The worker was not lawfully admitted temporarily to perform agricultural labor and, for service before July 18, 1984, worked under no title V contract, so 410(a)(1) does not exclude the service; apply the other families."
     }
   },
   {

@@ -2283,6 +2283,21 @@ REQUIRED_CONDITIONS = [
         "(1) Service performed by foreign agricultural workers lawfully "
         "admitted to the United States",
     ),
+    # Review r3 sibling (r3c): former 410(a)(1)(A), struck in 1984.
+    (
+        "foreign_agricultural_service_1968",
+        "title_v_contract_worker_before_1984_07_18",
+        {
+            "nonresident_alien_status": (
+                "under a contract entered into in accordance with title V of "
+                "the Agricultural Act of 1949",
+            ),
+            "services_performed_date": ("before 1984-07-18",),
+        },
+        "lii_42_410.html",
+        "struck out “(A) under contracts entered into in accordance with "
+        "title V of the Agricultural Act of 1949",
+    ),
     *[
         (
             rule_id,
@@ -2720,6 +2735,17 @@ SIBLING_OUTCOMES = [
         {"agreement_with_lower_threshold_member"},
         "covered_above_threshold",
     ),
+    # A title V contract worker, also admitted under clause (B), whose
+    # 1980 service is not agricultural labor: clause (A) decides.
+    (
+        "foreign_agricultural_service",
+        1980,
+        {
+            "title_v_contract_worker_before_1984_07_18",
+            "temporary_agricultural_admission_other_service",
+        },
+        "noncovered",
+    ),
 ]
 
 
@@ -2907,6 +2933,51 @@ def test_cash_equivalent_agricultural_transfer_follows_ssr_95_3p(
     }
     assert len(genuine) == 1
     assert rule.resolve(genuine)["consequence"] == "noncovered"
+
+
+TITLE_V_CLAUSE_STRUCK = date(1984, 7, 18)
+
+
+@example(date(1980, 6, 15), False)
+@example(TITLE_V_CLAUSE_STRUCK - timedelta(days=1), True)
+@example(TITLE_V_CLAUSE_STRUCK, True)
+@example(TITLE_V_CLAUSE_STRUCK, False)
+@given(st.dates(date(1968, 1, 1), date(2026, 12, 31)), st.booleans())
+@settings(deadline=None)
+def test_title_v_contract_clause_applies_before_july_18_1984(
+    registry, service_day, also_admitted
+):
+    """INVENTED worker under a title V contract, whose service is not
+    agricultural labor, and who may also hold a clause (B) admission.
+
+    Review r3 sibling (r3c): Pub. L. 98-369 section 2663(a)(7)(A) struck
+    former 410(a)(1)(A) effective July 18, 1984 (section 2664(b)). Before
+    that date the clause excludes the service; from it, the residual or
+    the clause (B) open case decides.
+    """
+    (rule,) = registry.lookup("foreign_agricultural_service", service_day.year)
+    matched = {
+        c["case_id"]
+        for c in rule.cases
+        if "title V" in c["when"].get("nonresident_alien_status", "")
+        and service_date_condition_holds(
+            c["when"]["services_performed_date"], service_day
+        )
+    }
+    assert len(matched) == (service_day < TITLE_V_CLAUSE_STRUCK)
+    if also_admitted:
+        matched.add("temporary_agricultural_admission_other_service")
+    if service_day < TITLE_V_CLAUSE_STRUCK:
+        assert rule.resolve(matched)["consequence"] == "noncovered"
+    elif also_admitted:
+        with pytest.raises(OpenRuleError, match="FOREIGN_AGRICULTURAL"):
+            rule.resolve(matched)
+    else:
+        assert rule.resolve(matched) is rule.residual_default
+        assert rule.resolve(matched)["consequence"] == "covered"
+    quotes = " ".join(c.quote or "" for c in rule.citations)
+    assert "effective July 18, 1984" in quotes
+    assert "title V of the Agricultural Act of 1949" in quotes
 
 
 def test_small_boat_fishing_date_comes_from_section_1207f4(registry):
