@@ -8806,6 +8806,13 @@
         "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
         "authority": "SSA POMS RS 01901.700, revision September 8, 2026",
         "location": "A historical Revenue Ruling 59-354 background;C.1-C.2;F non-federally recognized tribes"
+      },
+      {
+        "capture": "ce1c_poms_rs_01901700.html",
+        "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+        "authority": "SSA POMS RS 01901.700",
+        "location": "C.1 NOTE",
+        "quote": "We use earnings posted for members of Indian tribal councils for tax years 2005 and earlier in applicable benefit computations."
       }
     ],
     "trigger_facts": [
@@ -8815,7 +8822,6 @@
       "tribal_federal_recognition",
       "tribal_coverage_agreement",
       "historical_fica_treatment",
-      "historical_earnings_posting",
       "services_performed_date"
     ],
     "consequence": "covered",
@@ -8830,7 +8836,8 @@
         "through_tax_year": 2005,
         "requires": "earnings_already_posted",
         "consequence": "POMS directs use of these earnings in applicable benefit computations",
-        "payroll_coverage_consequence": "does_not_reclassify_default_noncovered_council_service"
+        "payroll_coverage_consequence": "does_not_reclassify_default_noncovered_council_service",
+        "years_in_this_row": "none: the rule reaches tax years through 2005, and this row begins 2018-09-20"
       },
       "later_418a_retroactive_coverage": {
         "requires_all": [
@@ -8897,7 +8904,7 @@
       ],
       "condition_cases": {
         "benefit_credit_posting_rule": {
-          "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+          "not_a_coverage_condition": "POMS RS 01901.700 C.1's NOTE uses earnings already posted for tax years 2005 and earlier in benefit computations. Every year it reaches falls before this row's 2018-09-20 start, so no case reads historical_earnings_posting and the row does not list the fact; tribal_council_service_1968 records the rule with its posting fact."
         },
         "later_418a_retroactive_coverage": {
           "cases": {

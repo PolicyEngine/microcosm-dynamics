@@ -2605,6 +2605,27 @@ def test_tribal_posting_rule_is_a_crediting_rule_not_a_case(registry):
     )
 
 
+def test_tribal_posting_rule_reaches_no_year_of_the_2018_row(registry):
+    """Review r3 sibling (r3c): the NOTE reaches tax years through 2005,
+    and the 2018 row begins 2018-09-20, so it lists no posting fact."""
+    rule = next(
+        r
+        for r in registry.rules
+        if r.rule_id == "tribal_council_service_2018_0920"
+    )
+    assert "historical_earnings_posting" not in rule.trigger_facts
+    read = {fact for case in rule.cases for fact in case["when"]}
+    assert "historical_earnings_posting" not in read
+    posting = rule.parameters["benefit_credit_posting_rule"]
+    assert posting["through_tax_year"] < rule.effective_start.year
+    tie = rule.parameters["condition_cases"]["benefit_credit_posting_rule"]
+    assert "2018-09-20" in tie["not_a_coverage_condition"]
+    assert any(
+        c.quote and "for tax years 2005 and earlier" in c.quote
+        for c in rule.citations
+    )
+
+
 def test_homeworker_cash_test_cites_its_1968_1977_location(registry):
     """Review r3 low 6: before Pub. L. 101-239 redesignated it in 1989, the
     home-worker cash test was 409(j), not 409(a)(8)."""
