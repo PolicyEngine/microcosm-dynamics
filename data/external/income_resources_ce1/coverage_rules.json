@@ -9632,7 +9632,7 @@
         {
           "case_id": "foreign_craft_noncitizen",
           "consequence": "noncovered",
-          "description": "42 U.S.C. 410(a)(4)(A) and (B)(i). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\", and the 1954 amendment added clause (B) only.",
+          "description": "42 U.S.C. 410(a)(4)(A) and (B)(i). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\"; the LII note on the 1954 amendment describes only the clause (B) conditions it added.",
           "precedence": 1,
           "when": {
             "assignment": "employed on and in connection with a vessel that is not an American vessel, or an aircraft that is not an American aircraft",
@@ -9643,7 +9643,7 @@
         {
           "case_id": "foreign_craft_non_american_employer",
           "consequence": "noncovered",
-          "description": "42 U.S.C. 410(a)(4)(A) and (B)(ii). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\", and the 1954 amendment added clause (B) only.",
+          "description": "42 U.S.C. 410(a)(4)(A) and (B)(ii). Clause (A) asks whether the individual \"is employed on and in connection with such vessel or aircraft when outside the United States\"; POMS RS 01901.170 B reads it to exclude service \"done within the U.S. if some part of the employee's service is done outside the U.S.\"; the LII note on the 1954 amendment describes only the clause (B) conditions it added.",
           "precedence": 2,
           "when": {
             "american_employer": "employer is not an American employer",
@@ -22971,7 +22971,7 @@
         {
           "case_id": "statutory_homeworker",
           "consequence": "covered_above_threshold",
-          "description": "Once the $50 calendar-quarter cash test is met, cash and noncash pay are wages (former 409(j), which Pub. L. 101-239 section 10208(d)(1)(T) redesignated 409(a)(8) in 1989; POMS RS 01402.230 B.1).",
+          "description": "Once the $50 calendar-quarter cash test is met, cash and noncash pay are wages (former 409(j), which Pub. L. 101-239 section 10208(d)(1)(A)-(K) redesignated 409(a)(8) in 1989; POMS RS 01402.230 B.1).",
           "precedence": 2,
           "when": {
             "occupation": "home worker in a 410(j)(3)(C) occupational group, under a contract of service that contemplates that substantially all the services are to be performed personally, with no substantial investment in facilities (other than in facilities for transportation), in a continuing relationship"
@@ -22996,7 +22996,14 @@
         {
           "authority": "42 USC 409, current law and historical amendment notes",
           "capture": "lii_42_409.html",
-          "location": "1989 amendment note, Pub. L. 101-239 section 10208(d)(1)(T)",
+          "location": "1989 amendment note to subsec. (a), Pub. L. 101-239 section 10208(d)(1)(A)-(K)",
+          "quote": "former subsecs. (j) and (k) as pars. (8) and (9)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 USC 409, current law and historical amendment notes",
+          "capture": "lii_42_409.html",
+          "location": "1989 amendment notes, subsec. (j) entry",
           "quote": "Former subsec. (j) redesignated subsec. (a)(8).",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },

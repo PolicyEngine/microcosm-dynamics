@@ -2603,6 +2603,12 @@ def test_homeworker_cash_test_cites_its_1968_1977_location(registry):
             assert "409(j)" in text, text
     quotes = " ".join(c.quote or "" for c in rule.citations)
     assert "Former subsec. (j) redesignated subsec. (a)(8)." in quotes
+    # The subsec. (a) note: section 10208(d)(1)(A)-(K) moved it.
+    assert "former subsecs. (j) and (k) as pars. (8) and (9)" in quotes
+    (cash_test,) = [
+        c for c in rule.cases if c["case_id"] == "statutory_homeworker"
+    ]
+    assert "10208(d)(1)(A)-(K)" in cash_test["description"]
     assert "“$100” for “$50”" in quotes
 
 
