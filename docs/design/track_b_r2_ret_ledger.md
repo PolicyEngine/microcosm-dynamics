@@ -1888,6 +1888,10 @@ no FRA date for the survivor.
 | NH or auxiliary FRA declaration has no overlap with the supplied G cohort interval | Act 203(f)(8)(E), (9); 20 CFR 404.430(b), 404.434(c); RS 02501.021B.3 and 00615.003/.010 | A birthday inside the cohort consistent with the declaration; all such intersections remain accepted |
 | An auxiliary's cohort disagrees with that same person's own-benefit cohort, even when FRA 0 fits each cohort separately | Act 202(q)(6); RS 00615.003/.010 and G's existing single-person cohort-consistency contract | Different people or different declared cohort conventions; neither is admitted for these two fields |
 | FRA is declared after a snapshot carrying that person's positive own delayed credits | Act 202(w)(2); RS 00615.692 | Only age-reduction months or inherited deceased-worker credits were supplied; these do not constrain the person's current FRA |
+| G and RET declare opposite NH entitlement for the same person and month | Act 202(a), 203(b); G's record kind and `WORKER_NOT_ENTITLED` state entitlement independently of cash, while RET `entitled_months` states the same month's entitlement | Different people or months, or confusion between zero payment and no entitlement; neither applies to these fields |
+| One person's known SSA cohort differs across monthly contexts or across explicit and own-benefit cohort fields | Act 202(q)(6); RS 00615.003/.010; G's existing single-person cohort-consistency contract | Different people or cohort conventions; neither is admitted for one identifier. A missing cohort remains unknown |
+| RET declares an entitled spouse whose own RIB/DIB PIA is at least half the NH's PIA | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's spouse entitlement test uses the declared PIAs without an own-MBA calculation | No own entitlement that month, a different person's benefit, or a different PIA basis; none matches these fields |
+| An entitled NH's original RET rate, or a DIB NH's gross RET rate, differs from G's declared PIA | RS 02501.110's 100%-of-PIA NH original share; Social Security Bulletin 75(3), Table 2's DIB worker benefit at 100% of PIA; G's direct PIA assignments | An unentitled month or a different person/month/rate concept; original rates for unentitled months remain valid without this constraint |
 
 ### Examples and executed invariants
 
@@ -1946,3 +1950,95 @@ check differences and actual deduction months so later milestones can
 implement their own cited rules. Axiom differentials remain diagnostics
 after a pinned rule exists; this build's verification remains statutory
 conformance within the stated supported scope.
+
+## PR 563 round 4: consistent entitlement and monthly identity
+
+Verification class remains statutory conformance on invented record-years
+and captured rules. No population, behavioral or forecast claim is added.
+
+G and RET declare the same NH's entitlement in each supplied month. The
+shared G helper `_declared_worker_entitled` resolves this from the record
+kind and `WORKER_NOT_ENTITLED`: a retirement record ordinarily has RIB, a
+disability record has DIB even without a retirement `OwnBenefit`, and a
+survivor record has no living NH payment. Zero money does not mean absence
+of entitlement. Before any G computation, `apply_ret_year` compares that
+declaration with RET `entitled_months` for every context in both directions
+(Act 202(a), 203(b)). Administrative finality and other coverage conditions
+cannot turn a contradiction into a counted refusal.
+
+`RecordYear` also gathers known cohorts by person over every monthly
+context. It reads the NH's `worker_birth_year` and worker own-benefit cohort,
+and each auxiliary's `birth_year` and `own_benefit.birth_year`. Distinct
+known cohorts for one identity error before coverage. Missing fields and
+cohorts declared only in some months remain valid. The implementation
+uses the same known-cohort identity rule as G's household check
+(Act 202(q)(6); RS 00615.003/.010). The existing per-month RIB-FRA and
+own-credit checks remain in place.
+
+### Audit of the held-refusal loop
+
+The former NH entitlement check depended only on declarations and now
+runs in a separate pass before any G computation. The audit also found a
+spouse subcase of the auxiliary entitlement check: own PIA at least half
+the NH PIA rules out spouse entitlement without computing own MBA. That
+subcase uses G's canonical `_is_entitled` predicate before any held
+refusal. At PIA/MAX $0/$0 with own PIA $0, and at $4/$6 with own PIA $2,
+administrative finality previously changed this contradiction from an
+input error into one refused row of weight 7; it now produces zero rows.
+This also covers spouse-with-child-in-care and divorced-spouse roles and
+both own RIB and DIB. A spouse with no own entitlement is not subject to
+that threshold, so matching zero-cash entitlement remains valid.
+
+The NH original-rate comparison also reads a declaration directly:
+G supplies `state.pia` as the original rate. The DIB NH gross rate is the
+same direct PIA assignment. Both validate before a held refusal, only in
+entitled months. RS 02501.110 states that the NH original benefit is 100%
+of PIA; the captured Bulletin Table 2 shows the DIB worker benefit at
+100% of PIA before and after the maximum. An original rate $.10 against
+PIA $0, or $4.10 against PIA $4, is therefore an input error even with
+administrative finality. A DIB gross rate $3 against PIA $4 is likewise
+an input error. Unentitled-month original rates retain their existing
+freedom because the original post-G comparison did not constrain them.
+
+Maximum binding requires statutory original and payable rates. Other
+auxiliary entitlement branches need computed own MBA and, for parents,
+the original-benefit threshold. Retirement NH gross and auxiliary gross
+and original rates need G's monetary computation. Those checks stay after successful G
+computation. Record-kind, monthly roster,
+role/type, cohort, FRA and explicit dual-entitlement consistency checks
+already run in `RecordYear` before coverage. R1 year availability remains
+an input requirement checked before re-raising a held G refusal.
+
+### Examples and executed invariants
+
+An NH declared not entitled by G but entitled in RET month 1 is invalid at
+PIA/MAX $0/$0 and $4/$6. The reverse declaration is invalid as well.
+Adding administrative finality previously produced one refused row of
+weight 7; both forms now raise `InvalidFamilyInput` and produce zero rows.
+The tests extend both directions through every month and retain unheld
+controls and matching zero-cash entitlements.
+
+A cohort 1950 in January and 1951 in February is contradictory whether
+the facts occur on the NH, an auxiliary, or move between explicit and
+own-benefit fields. Held and unheld, zero and positive cases all error
+with zero rows. The review's mixed auxiliary case previously paid $2;
+it now errors. Same-cohort and missing-cohort controls still compute or
+retain their independently declared coverage refusal and weight.
+
+| Invariant | Executing test |
+| --- | --- |
+| No held coverage condition masks an NH entitlement contradiction; no outcome row is constructed | `test_nh_entitlement_contradiction_never_becomes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_nh_contradiction` |
+| No held coverage condition masks a spouse's disqualifying declared own PIA | `test_declared_spouse_pia_disqualification_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_spouse_pia_contradiction` |
+| A spouse's own PIA strictly below half the NH PIA retains eligibility, and absence of own entitlement retains valid zero cash | `test_strictly_lower_spouse_own_pia_preserves_eligible_entitlement`; `test_spouse_without_own_entitlement_keeps_zero_and_positive_payments`; Hypothesis `test_own_pia_strictly_below_half_never_triggers_spouse_preflight` |
+| Entitled NH original rates and DIB gross rates agree with their directly declared PIA before any held refusal | `test_declared_nh_original_pia_mismatch_precedes_held_refusal`; `test_declared_dib_nh_gross_pia_mismatch_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_direct_nh_rate_contradiction` |
+| Matching direct NH rates and unentitled-month original-rate declarations retain their existing outcomes | `test_matching_direct_nh_rates_keep_zero_and_positive_payments`; `test_unentitled_nh_original_share_is_not_a_payable_rate_declaration`; Hypothesis `test_direct_nh_rate_preflight_preserves_every_matching_declaration` |
+| All monthly NH declarations validate before the first G computation | `test_later_nh_contradiction_precedes_every_g_computation` |
+| Record kind determines DIB entitlement even without an own RIB declaration | `test_disability_nh_entitlement_comes_from_record_kind` |
+| One person has one known cohort over every month and field pair, independent of context order | `test_two_known_monthly_cohorts_are_input_error_before_any_refusal`; Hypothesis `test_one_cohort_across_every_month_and_field_pair` |
+| Unentitled NHs retain their declared cohort identity | `test_unclaimed_nh_keeps_cross_month_worker_cohort_identity` |
+| One known cohort with gaps and consistent cohorts remain valid | `test_same_and_missing_monthly_cohorts_remain_valid`; Hypothesis `test_one_known_cohort_with_gaps_never_errors` |
+
+The premise table above records each new fact-pattern input error and its
+falsifier. This round introduces no additional RET statutory reading.
+The A.1/A.2 G composition refusal and its two source quotations are
+recorded in the G design note. Earlier statutory readings stand.

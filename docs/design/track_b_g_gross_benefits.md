@@ -672,6 +672,7 @@ G never falls back to a single-worker computation.
 | `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), an aged widow(er) with DIB, an own-RIB widow(er) before G's cohort-1929 implementation boundary (the source's method-D boundary is January 2, 1928; RS 00615.010/.020B), or DWB with own RIB or DIB |
 | `parisi_redistribution_ambiguous` | Own delayed credits, an actually limiting RIB-LIM after maximum and age reduction, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
+| `sole_full_deduction_zero_dual_composition` | GN 02603.050 A.1's sole full permanent deduction and A.2's zero dual rate admit different subject payments depending on composition order; equal-payment cases compute |
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
 | `savings_clause_403a5` | Under explicit `LITERAL_REFUSAL`, a governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
@@ -2669,7 +2670,7 @@ $83.50 child rates and $83 whole-dollar payments.
 
 | Configuration | Result |
 |---|---|
-| No deductions | Exactly the existing family or household result |
+| No events or NH reservations | Exactly the existing family or household result |
 | Auxiliary or survivor own earnings deduction, full or partial | Supported |
 | Permanent deduction | GN 02603.050C redistribution |
 | Estimated own earnings deduction | Same-household increase; other households retain their previous rate |
@@ -2682,7 +2683,8 @@ $83.50 child rates and $83 whole-dollar payments.
 | Penalty | `penalty_deduction` |
 | Maritime tax | `maritime_deduction` |
 | Missing election certificate | `election_certificate_suspension` |
-| Concurrent number-holder reservations and age reductions | `deduction_age_work_interaction` |
+| Concurrent subject number-holder reservations and subject age reductions | `deduction_age_work_interaction` |
+| Sole full permanent subject deduction and zero dual rows whose A.1/A.2 compositions change payment | `sole_full_deduction_zero_dual_composition` |
 | Combined maxima; multiple auxiliary records | Existing named refusals remain |
 
 The computation first obtains the ordinary G maximum-adjusted rates and
@@ -3157,8 +3159,8 @@ that valid case. A widow with OB basis $5 and payable $4 likewise withholds
 $1. Equality remains permitted for dual-entitlement markers and other
 event reasons according to their existing semantics.
 
-The new fact-pattern input errors in this PR's third fix round have these
-premises. RET uses the same table in its design note.
+The fact-pattern input errors added in this PR's third and fourth fix
+rounds have these premises. RET uses the same table in its design note.
 
 | Fact pattern classified as `InvalidFamilyInput` | Source proving impossibility | What would falsify the premise |
 |---|---|---|
@@ -3166,6 +3168,10 @@ premises. RET uses the same table in its design note.
 | An auxiliary and that same person's own benefit supply different SSA birth cohorts, even if their FRA declaration fits both separately | Act 202(q)(6); RS 00615.003/.010; G's existing single-person cohort-consistency contract | The fields describe different people or different declared cohort conventions; this interface permits neither |
 | RET declaration places FRA after a supplied own DRC-increased G snapshot | Act 202(w)(2); RS 00615.692 | Credits belonging only to the deceased NH, or an own age reduction without own delayed credits; neither proves the survivor's age |
 | Own-work payable plus NH reservation equals the applicable OB upper bound | GN 02603.050A's OB limit and a strictly positive own-work deduction | A supported entry route carrying gross above that OB; this API has none, and larger widow OBs and one-parent rates are explicitly preserved |
+| G and RET declare opposite NH entitlement for the same person and month | Act 202(a), 203(b); `WORKER_NOT_ENTITLED` explicitly declares no RIB/DIB entitlement, while RET `entitled_months` declares entitlement; G's record kind also determines whether an NH benefit exists | Different people or months, or a declaration about cash rather than entitlement; this interface distinguishes zero cash from absence of entitlement |
+| A person's known SSA cohort differs between monthly contexts, including between an explicit cohort and an own-benefit cohort | Act 202(q)(6); RS 00615.003/.010 define one birth cohort for one person; G already requires the same identity across household records | Different people or cohort conventions; neither is allowed for one identifier. Missing cohort facts do not imply a conflicting cohort |
+| RET declares an entitled spouse whose declared own RIB/DIB PIA equals or exceeds half the insured person's PIA | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's canonical spouse entitlement predicate compares the declared PIAs directly | No own entitlement in that month, a different person's own PIA, or a different PIA basis; the supplied G own benefit describes this person's current entitlement |
+| An entitled NH's RET original rate differs from G's declared PIA, or a DIB NH's gross rate differs from that PIA | RS 02501.110 states the NH original benefit is 100% of PIA; Social Security Bulletin 75(3), Table 2 shows DIB worker benefit at 100% of PIA; the G/RET interface copies these declared rates directly | An unentitled month, a different person/month, or a different rate definition; unentitled original-rate declarations remain unconstrained by this comparison |
 
 ### Reproduced cases and invariants
 
@@ -3208,3 +3214,103 @@ ordinary. The old-guard comparison retains all 480 `LITERAL_REFUSAL` rows.
 No new statutory reading is required. The existing operational/literal
 choice and all previously recorded readings remain unchanged. No source
 capture, registry input or source manifest changes in this round.
+
+## PR 563 round 4: outside deductions and competing exceptions
+
+Verification class: statutory conformance on invented cases and captured
+rules only. This round admits no population, behavioral or forecast claim.
+
+### Subject events and the deduction pipeline
+
+Act 203(a)(3)(C) computes the governed family as if the divorced or
+surviving divorced spouse were absent. GN 02603.020B states:
+
+> When any auxiliary or survivor is entitled to benefits that are not subject to the family maximum; i.e., a divorced spouse or surviving divorced spouse, consider only the auxiliaries or survivors who are subject to the maximum in calculating a benefit readjustment.
+
+The GN 02603.050A.1 sole-deductee predicate therefore counts subject events.
+An outside event still reduces that person's own cash. With January 2024
+retirement PIA $400 and MAX $600, spouse B has cohort 1960 and 36 reduction
+months, C is a child, and outside spouse D has cohort 1962 and 60 reduction
+months with no current or first-entitlement child in care. Full permanent
+own-work deductions on B and D leave NH $400, B $0, C $200 and D $0:
+record payment $600. The former $175 child rate and $575 total incorrectly
+counted D's event. At PIA $.80/MAX $1.20, C receives $.40 instead of $.30.
+Both public forms and beneficiary orders execute these cases.
+
+The survivor counterpart has PIA $400/MAX $600, widow B with cohort 1960,
+36 reduction months and an 80-month reduction period, and three children.
+Adding a surviving divorced spouse with cohort 1962, 60 reduction months,
+an 84-month period and a full own-work deduction preserves each child's
+$200 payment. The former event count reduced each child to $192.10.
+
+The audit covered every deduction-pipeline event use: removal of explicit
+dual markers, the empty-event shortcut, deferred age/NH allocation
+coverage, the subject explicit/permanent sets, the sole-full predicate,
+per-row cash updates, and subject reservations in the readjustment loop.
+Subject sets govern readjustment and its age/NH coverage check. Validation
+and unsupported event reasons still apply to every declared beneficiary;
+a malformed outside declaration or an outside person's own uncovered
+procedure can invalidate or refuse the complete public call.
+
+The empty-event shortcut also required correction: NH reservations must
+be applied even when there is no own-work event. With PIA $400/MAX $600,
+two children ordinarily receive $100 each. A $10 NH reservation on one
+child leaves that child $90, whether D and D's own event are present or
+absent. The earlier shortcut paid $100 until D's event activated the
+allocation loop. Outside ages and outside NH reservations likewise cannot
+supply a subject age/NH coverage trigger (GN 02603.020B; RS 02501.155B.3.c).
+
+### Readings for the orchestrator: A.1 and A.2 composition
+
+The conflict is named
+`us:oasdi-sole-full-deduction-zero-dual-composition`. GN 02603.050A.1 says:
+
+> If a beneficiary is subject to a full permanent deduction for any reason and no other deduction is involved for any beneficiary, disregard that beneficiary when distributing the family maximum.
+
+GN 02603.040A lists "Deduction because of entitlement to a benefit on
+another record" first in its deduction priority. This supports counting
+zero-rate dual entitlement as another deduction that blocks A.1.
+GN 02603.050A.2 instead says:
+
+> If dual entitlement reduces a beneficiary's rate to $0.00 (technically entitled) regardless of other deductions that may apply for any other beneficiary on record disregard the dually entitled beneficiary when distributing the family maximum.
+
+Disregarding that row first can leave the full permanent deductee alone.
+The captures do not settle the composition. The orchestrator's round-4
+ruling adopts neither payment when they differ. G raises
+`sole_full_deduction_zero_dual_composition`, retaining the refusal and its
+weight in every denominator. The check compares subject payments under
+both compositions using the same statutory allocation procedure. It runs
+when one subject full permanent deduction would qualify after disregarding
+zero dual rows, at least one such row exists, and no positive dual rate or
+NH reservation independently blocks A.1. Equal-payment cases compute,
+including an unbound maximum or no age amount to reserve. Partial,
+temporary and multiple subject events retain their existing procedure.
+
+For PIA $400/MAX $600, spouse B with 36 reduction months, child C and
+technically entitled child Z with own DIB $400, B's full permanent
+deduction produces C $175/record $575 under strict A.1, versus
+C $200/record $600 when A.2 is applied first. The $.80/$1.20 case differs
+by $.10. These are invented calculations derived from captured rules;
+no new published monetary example or capture is introduced.
+
+The check precedes any result admitted to a saving-clause guard.
+Round 3's `_savings_membership` continues to omit outside beneficiaries.
+Zero dual rows remain declared subject members; comparing the deduction
+compositions does not rewrite membership or the order of NH and own-work
+charges. The ordinary deduction priority and the earlier saving-clause
+readings remain in effect.
+
+### Executed invariants
+
+| Invariant | Executing test |
+| --- | --- |
+| Adding a supported outside spouse, with or without an event, preserves every subject payment in any order | `test_review_outside_deduction_cannot_lower_governed_child`; `test_surviving_divorced_deduction_cannot_lower_governed_children`; Hypothesis `test_outside_independence_in_any_beneficiary_order` |
+| NH reservations apply independently of an outside event or age | `test_outside_only_event_cannot_activate_subject_nh_deduction`; `test_outside_age_and_nh_reservation_do_not_trigger_subject_coverage`; Hypothesis `test_outside_independence_with_nh_only_reservations` |
+| The composition refusal occurs exactly when the two readings give different subject payments | `test_review_zero_dual_composition_refuses_with_preserved_denominator`; Hypothesis `test_composition_refusal_exactly_matches_competing_payment_readings` |
+| Equal-payment compositions and independent blockers retain computation | `test_composition_valid_controls_keep_computing` |
+| A difference only in counted maximum room cannot trigger a payment-conflict refusal | `test_composition_agrees_when_only_counted_reservation_changes` |
+| New reason metadata, exception notes and the complete refusal denominator retain their integrity | `test_zero_dual_composition_refusal_notes_preserve_reason_and_weight`; `test_every_unsupported_reason_has_a_refusal_case`; `test_every_retained_refusal_has_an_executed_named_witness` |
+
+Only named Track B test modules are run locally. Tier-policy and
+birth-evidence checks remain with CI. The conformance report is regenerated
+after the final rule, witness and report-input edits.

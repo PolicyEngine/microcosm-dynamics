@@ -2,11 +2,11 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 39,
+  "confirmed_mutation_count": 50,
   "counts_by_layer": {
     "shared_provenance": 1,
-    "g_deductions": 14,
-    "r2": 12,
+    "g_deductions": 18,
+    "r2": 19,
     "g_savings": 12
   },
   "environment_contract": {
@@ -2294,6 +2294,432 @@
         "reverted": true,
         "production_source_untouched": true
       }
+    },
+    {
+      "id": "round4-deduction-refuse_equal_composition_payments",
+      "round": 4,
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if any(\n            row.auxiliary_payable\n            != alternative_rows",
+        "after": "        if True or any(\n            row.auxiliary_payable\n            != alternative_rows"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py",
+        "--tb=short",
+        "-k",
+        "composition_refusal_exactly_matches_competing_payment_readings"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/.no-real-data",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/.no-real-data"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_composition_refusal_exactly_matches_competing_payment_readings[False]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_composition_refusal_exactly_matches_competing_payment_readings[True]"
+      ],
+      "log": {
+        "path": "scratch/review/deduction-round4-mutation-refuse_equal_composition_payments.log",
+        "sha256": "f3d517dc85bc08a4a855342d97fd58943e140b4ac09eee8cb0271d06791ebcfb",
+        "failure_summary": "2 failed, 69 deselected in 15.95s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0"
+      }
+    },
+    {
+      "id": "round4-deduction-miss_different_composition_payments",
+      "round": 4,
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if any(\n            row.auxiliary_payable\n            != alternative_rows",
+        "after": "        if False and any(\n            row.auxiliary_payable\n            != alternative_rows"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py",
+        "--tb=short",
+        "-k",
+        "composition_refusal_exactly_matches_competing_payment_readings"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/.no-real-data",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/.no-real-data"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_composition_refusal_exactly_matches_competing_payment_readings[False]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_composition_refusal_exactly_matches_competing_payment_readings[True]"
+      ],
+      "log": {
+        "path": "scratch/review/deduction-round4-mutation-miss_different_composition_payments.log",
+        "sha256": "ab4935a5597c6bf0277893c7267448ae4cf3d8c5c0e2f791a01979558850fb55",
+        "failure_summary": "2 failed, 75 deselected in 18.15s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0"
+      }
+    },
+    {
+      "id": "round4-deduction-restore_empty_event_shortcut",
+      "round": 4,
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if not events and not any(worker_deductions.values()):",
+        "after": "if not events:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py",
+        "-k",
+        "outside_independence_with_nh_only_reservations",
+        "--tb=short"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/.no-real-data",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/.no-real-data"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_with_nh_only_reservations[False]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_with_nh_only_reservations[True]"
+      ],
+      "log": {
+        "path": "scratch/review/deduction-round4-mutation-restore_empty_event_shortcut.log",
+        "sha256": "649c4dce74627ddb2fab2b31ea40373acd77835ecad547e0d9abcb8e28db915a",
+        "failure_summary": "2 failed, 75 deselected in 10.69s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0"
+      }
+    },
+    {
+      "id": "round4-deduction-restore_all_event_count",
+      "round": 4,
+      "layer": "g_deductions",
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "if len(explicit) == 1\n        and not dual",
+        "after": "if len(events) == 1\n        and not dual"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py",
+        "--tb=short",
+        "-k",
+        "outside_independence_in_any_beneficiary_order"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "$PWD/.no-real-data",
+        "POPULACE_DYNAMICS_EPUF_DIR": "$PWD/.no-real-data"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[False-FamilyKind.RETIREMENT]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[False-FamilyKind.DISABILITY]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[False-FamilyKind.SURVIVOR]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[True-FamilyKind.RETIREMENT]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[True-FamilyKind.DISABILITY]",
+        "tests/test_track_b_gross_benefits_fix_round_4_composition.py::test_outside_independence_in_any_beneficiary_order[True-FamilyKind.SURVIVOR]"
+      ],
+      "log": {
+        "path": "scratch/review/deduction-round4-mutation-restore_all_event_count.log",
+        "sha256": "5d7206f2ea4df76c6f2d8318b9c6e6bb07e7e503e2b97b690f5dc74a7eaac3f3",
+        "failure_summary": "6 failed, 87 deselected in 36.22s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0"
+      }
+    },
+    {
+      "id": "round4-ret-drop_nh_direction",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if g._declared_worker_entitled(context.state) != (",
+        "after": "if g._declared_worker_entitled(context.state) < ("
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py drop_nh_direction",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_no_held_coverage_condition_masks_nh_contradiction"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-drop_nh_direction.log",
+        "sha256": "fa07b5c3181b691ac16806ba1d9f2e958f1e20d3e8cbff258160d2770cdbda87",
+        "failure_summary": "1 failed, 2 warnings in 12.62s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
+    },
+    {
+      "id": "round4-ret-nh_after_held_refusal",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "    # Entitlement is a declared fact, including a zero-rate entitlement.\n    # Check every context before computing any G money or holding a refusal.\n    if record.kind is not RecordKind.DECEASED:\n        nh = next(\n            b for b in record.beneficiaries if b.beneficiary_id == record.nh_id\n        )\n        for month, context in record.family_months.items():\n            if g._declared_worker_entitled(context.state) != (\n                month in nh.entitled_months\n            ):\n                raise InvalidFamilyInput(\n                    \"G and RET NH entitlement facts differ\"\n                )\n",
+        "after": "    # Entitlement is a declared fact, including a zero-rate entitlement.\n    # Check every context before computing any G money or holding a refusal.\n    if record.kind is not RecordKind.DECEASED:\n        nh = next(\n            b for b in record.beneficiaries if b.beneficiary_id == record.nh_id\n        )\n        for month, context in record.family_months.items():\n            if g._declared_worker_entitled(context.state) != (\n                month in nh.entitled_months\n            ):\n                raise InvalidFamilyInput(\n                    \"G and RET NH entitlement facts differ\"\n                )\n"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py nh_after_held_refusal",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_no_held_coverage_condition_masks_nh_contradiction"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-nh_after_held_refusal.log",
+        "sha256": "612e9f6dee0e8431306b89519f0baa39ced3709573ab6a57d8752a7ad7db4291",
+        "failure_summary": "1 failed, 2 warnings in 8.56s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      },
+      "operation": "Move the exact block; do not change its contents",
+      "before_location": "before the G monthly computation loop",
+      "after_location": "after if held_family_refusals: raise held_family_refusals[0]"
+    },
+    {
+      "id": "round4-ret-drop_auxiliary_own_cohort",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                        auxiliary.own_benefit.birth_year,",
+        "after": "                        None,"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py drop_auxiliary_own_cohort",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_one_cohort_across_every_month_and_field_pair"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-drop_auxiliary_own_cohort.log",
+        "sha256": "3c2cf4744a5eb9dcf6170145a0b2d4fd446119aa5a074a99dca4ff4b42cde1cb",
+        "failure_summary": "1 failed, 2 warnings in 8.42s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
+    },
+    {
+      "id": "round4-ret-drop_worker_record_cohort",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "            remember_cohort(self.nh_id, context.state.worker_birth_year)",
+        "after": "            remember_cohort(self.nh_id, None)"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py drop_worker_record_cohort",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_one_cohort_across_every_month_and_field_pair"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-drop_worker_record_cohort.log",
+        "sha256": "3d9f1bacb0122a691785816db0ea6dbb7342a1f3c681ae56418026d451cfb8fb",
+        "failure_summary": "1 failed, 2 warnings in 11.30s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
+    },
+    {
+      "id": "round4-ret-disable_spouse_preflight",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                if not entitled:",
+        "after": "                if False:"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py disable_spouse_preflight",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_no_held_coverage_condition_masks_spouse_pia_contradiction"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-disable_spouse_preflight.log",
+        "sha256": "379fe03d48f0a837ee6ec77d6bda4d0ac0ce872c5f169f916cf0073759921bc4",
+        "failure_summary": "1 failed, 2 warnings in 3.85s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
+    },
+    {
+      "id": "round4-ret-drop_nh_original_preflight",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                if nh.original_rates[month - 1] != context.state.pia:",
+        "after": "                if False and nh.original_rates[month - 1] != context.state.pia:"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py drop_nh_original_preflight",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_no_held_coverage_condition_masks_direct_nh_rate_contradiction"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-drop_nh_original_preflight.log",
+        "sha256": "b6c02d50b815da2c4b103c4523a7473646df8682b861e4fc5411cbe02051f3bc",
+        "failure_summary": "1 failed, 2 warnings in 5.00s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
+    },
+    {
+      "id": "round4-ret-drop_dib_gross_preflight",
+      "round": 4,
+      "layer": "r2",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                    record.kind is RecordKind.DISABILITY",
+        "after": "                    False"
+      },
+      "command": "OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/track-b-round4 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/track-b-round4 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/ret-round4-mutation-check.py drop_dib_gross_preflight",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-round4",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-round4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_4.py::test_no_held_coverage_condition_masks_direct_nh_rate_contradiction"
+      ],
+      "log": {
+        "path": "scratch/review/ret-round4-mutation-drop_dib_gross_preflight.log",
+        "sha256": "0c078a28570835fb721ade004a50c3ff777f401209c39c637d49f70d2fb185ad",
+        "failure_summary": "1 failed, 2 warnings in 6.86s"
+      },
+      "mutation_method": "Assigned-workspace source changed for one foreground check, then restored in finally; no alternate git metadata.",
+      "restoration": {
+        "reverted": true,
+        "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+      }
     }
   ],
   "restoration_verification_snapshot": {
@@ -2330,5 +2756,12 @@
   "round_3_restoration_snapshot": {
     "src/populace_dynamics/track_b/gross_benefits.py": "cd03ee0b2c828f1fb7e09980b48f4a23e9a8ca49295aaa7a1dd2799d1fff9ed8",
     "src/populace_dynamics/track_b/ret_ledger.py": "7b5a1491453fbd61e76c670a1ce84deb3818138d3313c21327661d328d7fa0c8"
-  }
+  },
+  "round_4_head": "1ce508e538cd7d2a9ed8e82bbbc32a29fb0a1669",
+  "round_4_note": "Eleven fresh mutations caught by named Hypothesis properties and reverted: the eight original finding/shortcut checks, plus three declared-fact loop-audit checks. Valid corrected cohort fixtures and explicit survivor/NH minima were used for the final evidence. Earlier records remain historical.",
+  "round_4_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0",
+    "src/populace_dynamics/track_b/ret_ledger.py": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
+  },
+  "round_4_environment_note": "The older isolated-source imports contract describes historical rounds. Round 4 records identify foreground, reversible workspace mutations and their environments. Final restoration hashes include the completed declared-fact audit extension."
 }

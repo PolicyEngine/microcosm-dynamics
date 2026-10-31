@@ -1934,6 +1934,9 @@ def _unsupported_cases():
             )
         ),
         g.UnsupportedReason.SAVINGS_CLAUSE: lambda: _savings_clause_case(),
+        g.UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: (
+            lambda: _zero_dual_composition_case()
+        ),
         g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: lambda: (
             _guard(NOV, unknown=True).admit(_review_m2_path()[0])
         ),
@@ -2044,6 +2047,30 @@ def _unsupported_cases():
             )
         ),
     }
+
+
+def _zero_dual_composition_case():
+    return g.family_benefits_after_deductions(
+        _retired(400, 600),
+        (
+            g.Beneficiary(
+                "B", g.Role.SPOUSE, birth_year=1960, reduction_months=36
+            ),
+            g.Beneficiary("C", g.Role.CHILD),
+            g.Beneficiary(
+                "Z",
+                g.Role.CHILD,
+                own_benefit=g.OwnBenefit(DISABILITY, F(400)),
+            ),
+        ),
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={
+            "B": g.BenefitDeduction(g.DeductionReason.OWN_EARNINGS_TEST)
+        },
+        households={},
+        standalone=True,
+    )
 
 
 def _savings_clause_case():

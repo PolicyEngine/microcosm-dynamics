@@ -29,6 +29,12 @@ governs all roles, including survivors (Act 203(f)(9); RS 02501.021B.3).
 Applied own delayed credits establish FRA by the supplied context month;
 age reductions and the deceased worker's credits do not establish a
 survivor's current age. Contradictions error before coverage refusals.
+Every known cohort for one person agrees across monthly contexts,
+including record and own-benefit fields; missing cohorts add no constraint.
+Declared NH entitlement and spouse eligibility under the raw own-PIA
+threshold agree with RET before any G computation or held coverage refusal.
+NH original benefits and DIB gross benefits copy the declared PIA directly;
+those comparisons also precede G computation.
 Every raw month-set element must be an integer month before deduplication;
 malformed input raises before a coverage refusal can become an outcome.
 
@@ -566,6 +572,19 @@ class RecordYear:
         }[self.kind]
         contextual_people = set()
         contextual_two_records = set()
+        cohorts: dict[str, int] = {}
+
+        def remember_cohort(person: str, cohort: int | None) -> None:
+            # As in G's household check: one identity has one SSA cohort
+            # (402(q)(6); RS 00615.003/.010). Omission is not disagreement.
+            if cohort is None:
+                return
+            if person in cohorts and cohorts[person] != cohort:
+                raise InvalidFamilyInput(
+                    f"{person}'s birth_year differs across monthly contexts"
+                )
+            cohorts[person] = cohort
+
         for month, context in self.family_months.items():
             if context.state.kind is not expected_kind:
                 raise InvalidFamilyInput("G and RET record kinds differ")
@@ -601,6 +620,9 @@ class RecordYear:
                     context.state.worker,
                     context.params,
                 )
+            remember_cohort(self.nh_id, context.state.worker_birth_year)
+            if context.state.worker is not None:
+                remember_cohort(self.nh_id, context.state.worker.birth_year)
             for auxiliary in context.beneficiaries:
                 _check_fra_facts(
                     ret_people[auxiliary.beneficiary_id],
@@ -610,6 +632,12 @@ class RecordYear:
                     auxiliary.own_benefit,
                     context.params,
                 )
+                remember_cohort(auxiliary.beneficiary_id, auxiliary.birth_year)
+                if auxiliary.own_benefit is not None:
+                    remember_cohort(
+                        auxiliary.beneficiary_id,
+                        auxiliary.own_benefit.birth_year,
+                    )
                 contextual_people.add(auxiliary.beneficiary_id)
                 if auxiliary.own_benefit is not None:
                     contextual_two_records.add(auxiliary.beneficiary_id)
@@ -1142,6 +1170,49 @@ def apply_ret_year(
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
     if parameters is not None and not isinstance(parameters, RETParameters):
         raise InvalidFamilyInput("Use R1 RETParameters")
+    # Entitlement is a declared fact, including a zero-rate entitlement.
+    # Check every context before computing any G money or holding a refusal.
+    if record.kind is not RecordKind.DECEASED:
+        nh = next(
+            b for b in record.beneficiaries if b.beneficiary_id == record.nh_id
+        )
+        for month, context in record.family_months.items():
+            if g._declared_worker_entitled(context.state) != (
+                month in nh.entitled_months
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET NH entitlement facts differ"
+                )
+            if month in nh.entitled_months:
+                # G copies these NH facts directly from the declared PIA.
+                # RIB gross still needs G's age/DRC computation.
+                if nh.original_rates[month - 1] != context.state.pia:
+                    raise InvalidFamilyInput(
+                        "G context does not match RET rates"
+                    )
+                if (
+                    record.kind is RecordKind.DISABILITY
+                    and nh.gross_rates[month - 1] != context.state.pia
+                ):
+                    raise InvalidFamilyInput(
+                        "G context does not match RET rates"
+                    )
+    # Act 202(b)(1)(D), (c)(1)(D); RS 00202.005: spouse eligibility uses
+    # raw own PIA, not a computed own MBA. Other own-benefit roles need G's
+    # computed MBA/OB, so their entitlement comparison stays after G.
+    for context in record.family_months.values():
+        for auxiliary in context.beneficiaries:
+            if (
+                auxiliary.own_benefit is None
+                or auxiliary.role in g._SPOUSE_ROLES
+            ):
+                entitled, _ = g._is_entitled(
+                    auxiliary, context.state.pia, None
+                )
+                if not entitled:
+                    raise InvalidFamilyInput(
+                        "G and RET auxiliary entitlement facts differ"
+                    )
     # Retain the G facts needed for money-changing readjustment. A caller's
     # reduced rates cannot identify age reductions or dual entitlement.
     held_family_refusals = []
@@ -1160,18 +1231,6 @@ def apply_ret_year(
             held_family_refusals.append(error)
             continue
         baseline_rows = {b.beneficiary_id: b for b in baseline.beneficiaries}
-        if record.kind is not RecordKind.DECEASED:
-            nh = next(
-                b
-                for b in record.beneficiaries
-                if b.beneficiary_id == record.nh_id
-            )
-            if (baseline.worker_benefit is not None) != (
-                month in nh.entitled_months
-            ):
-                raise InvalidFamilyInput(
-                    "G and RET NH entitlement facts differ"
-                )
         if baseline.family_maximum_binding != (
             month in record.family_maximum_binding_months
         ):

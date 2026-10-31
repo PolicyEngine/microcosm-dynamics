@@ -188,11 +188,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 37
+    assert len(g.UnsupportedReason) == 38
     assert witnesses["denominator"] == {
-        "rows": 37,
+        "rows": 38,
         "supported": 0,
-        "refused": 37,
+        "refused": 38,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}

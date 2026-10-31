@@ -347,6 +347,7 @@
       "savings_clause_history_unknown": 0,
       "savings_clause_membership_change": 0,
       "savings_clause_rate_procedure": 0,
+      "sole_full_deduction_zero_dual_composition": 0,
       "widow_child_in_care_unknown": 168,
       "widow_drc_savings_clause": 4860,
       "widow_drc_savings_clause_history_unknown": 0,
@@ -562,8 +563,8 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 37,
-      "rows": 37,
+      "refused": 38,
+      "rows": 38,
       "supported": 0
     },
     "refused_by_reason": {
@@ -600,6 +601,7 @@
       "savings_clause_history_unknown": 1,
       "savings_clause_membership_change": 1,
       "savings_clause_rate_procedure": 1,
+      "sole_full_deduction_zero_dual_composition": 1,
       "widow_child_in_care_unknown": 1,
       "widow_drc_savings_clause": 1,
       "widow_drc_savings_clause_history_unknown": 1,
@@ -803,6 +805,12 @@
         "description": "A reduced spouse alone has no captured allocation procedure",
         "id": "savings_clause_rate_procedure",
         "reason": "savings_clause_rate_procedure",
+        "status": "refused"
+      },
+      {
+        "description": "GN 02603.050 A.1 and A.2 compose differently: child 175 versus 200",
+        "id": "sole_full_deduction_zero_dual_composition",
+        "reason": "sole_full_deduction_zero_dual_composition",
         "status": "refused"
       },
       {

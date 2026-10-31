@@ -13,6 +13,10 @@ Own-work events must withhold a positive amount; a zero deduction is an
 input error and never changes the family-maximum computation. Payable plus
 NH reservation must therefore be strictly below the original-benefit upper
 bound, including before a held coverage refusal.
+Outside-maximum beneficiaries and their events do not enter governed
+readjustment decisions (203(a)(3)(C); GN 02603.020B). Their own deductions
+still apply. GN 02603.050A.1 and A.2's sole-full and zero-dual exceptions
+have a named composition refusal only when their readings change cash.
 Max's ruling d515 (2026-09-28) adopted §10 question 9's default: a Python
 reference now, with Axiom differential checks as diagnostics once a pinned
 rule exists. At this module's creation rulespec-us had no 42 U.S.C. 403
@@ -468,6 +472,9 @@ class UnsupportedReason(Enum):
     #: Deferred coverage: no NH-reservation/age-reduction allocation
     #: procedure has been derived; no competing authoritative algorithms.
     DEDUCTION_AGE_WORK_INTERACTION = "deduction_age_work_interaction"
+    SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION = (
+        "sole_full_deduction_zero_dual_composition"
+    )
 
 
 @_sealed_refusal(UnsupportedReason)
@@ -3515,6 +3522,19 @@ def _refuse_widow_drc_savings_clause(
         )
 
 
+def _declared_worker_entitled(state: RecordState) -> bool:
+    """Resolve NH entitlement from the record kind and declared condition.
+
+    A survivor record has no living NH benefit. A disability record has
+    DIB; a retirement record has RIB unless WORKER_NOT_ENTITLED is declared.
+    This identity is knowable before any statutory coverage refusal.
+    """
+    return state.kind is FamilyKind.DISABILITY or (
+        state.kind is FamilyKind.RETIREMENT
+        and RecordCondition.WORKER_NOT_ENTITLED not in state.conditions
+    )
+
+
 def _family_benefits(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -3560,12 +3580,13 @@ def _family_benefits(
     parent_count = _entitled_parent_count(state, beneficiaries, params)
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
-    if state.kind is FamilyKind.RETIREMENT and not ieds:
-        worker_benefit = _own_monthly_benefit_validated(state.worker, params)[
-            1
-        ]
-    elif state.kind is FamilyKind.DISABILITY:
-        worker_benefit = state.pia
+    if _declared_worker_entitled(state):
+        if state.kind is FamilyKind.RETIREMENT:
+            worker_benefit = _own_monthly_benefit_validated(
+                state.worker, params
+            )[1]
+        else:
+            worker_benefit = state.pia
 
     rows: list[_Row] = []
     for beneficiary in beneficiaries:
@@ -3953,8 +3974,8 @@ def family_benefits_after_deductions(
 
     Mappings preserve associations; beneficiaries is an ordered tuple/list.
     Households are monthly membership IDs, required for all beneficiaries
-    whenever an own-work event is estimated. Empty deductions returns G's
-    ordinary result. ``worker_deductions`` reserves NH work deductions;
+    whenever an own-work event is estimated. No events or NH reservations
+    returns G's ordinary result. ``worker_deductions`` reserves NH deductions;
     these never release room (GN 02603.040B; RS 02501.155B.3.c).
     Concurrent NH reservations and auxiliary age reductions have deferred
     allocation coverage and refuse as ``deduction_age_work_interaction``;
@@ -4045,16 +4066,8 @@ def _after_deductions(
         for bid, event in deductions.items()
         if event.reason is not DeductionReason.DUAL_ENTITLEMENT
     }
-    if not events:
+    if not events and not any(worker_deductions.values()):
         return baseline
-    if any(worker_deductions.values()) and any(
-        row.age_reduction_factor != 1 for row in baseline.beneficiaries
-    ):
-        raise _computed(
-            FamilyConfigurationUnsupported,
-            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
-            "Concurrent NH reservations and age reductions have deferred allocation coverage",
-        )
     subject = [
         row for row in baseline.beneficiaries if row.subject_to_family_maximum
     ]
@@ -4063,6 +4076,101 @@ def _after_deductions(
     }
     # The existing Parisi result fixes which dual beneficiaries are deductees.
     # In particular .050A.2 disregards a zero dual rate regardless of other events.
+    dual = {
+        row.beneficiary_id for row in subject if row.own_benefit is not None
+    }
+    reserve = sum(
+        (
+            worker_deductions.get(row.beneficiary_id, Fraction(0))
+            for row in subject
+        ),
+        Fraction(0),
+    )
+    if reserve and any(row.age_reduction_factor != 1 for row in subject):
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
+            "Concurrent NH reservations and age reductions have deferred allocation coverage",
+        )
+    # GN 02603.050A.1 expressly overrides the C formula for one full,
+    # permanent subject deduction and no other subject deduction event.
+    # Act 203(a)(3)(C), GN 02603.020B: outside events affect only their cash.
+    disregard_full = {
+        bid
+        for bid in explicit
+        if len(explicit) == 1
+        and not dual
+        and not reserve
+        and events[bid].permanent
+        and events[bid].payable == 0
+    }
+    arguments = (
+        state,
+        beneficiaries,
+        payment_month,
+        params,
+        baseline,
+        events,
+        households,
+        worker_deductions,
+    )
+    result = _readjust_deduction_rows(*arguments, disregard_full)
+    zero_dual = {
+        row.beneficiary_id
+        for row in subject
+        if row.beneficiary_id in dual
+        and row.auxiliary_payable == row.counted_against_maximum == 0
+    }
+    if (
+        len(explicit) == 1
+        and zero_dual
+        and dual == zero_dual
+        and not reserve
+        and all(
+            events[bid].permanent and events[bid].payable == 0
+            for bid in explicit
+        )
+    ):
+        # Source conflict us:oasdi-sole-full-deduction-zero-dual-composition:
+        # GN 02603.050A.1's "no other deduction" can include dual entitlement
+        # (.040A); A.2 disregards zero dual rows regardless of other deductions.
+        # Neither composition is adopted when their actual payments differ.
+        alternative = _readjust_deduction_rows(*arguments, explicit)
+        alternative_rows = alternative.by_id()
+        if any(
+            row.auxiliary_payable
+            != alternative_rows[row.beneficiary_id].auxiliary_payable
+            for row in result.beneficiaries
+            if row.subject_to_family_maximum
+        ):
+            raise _computed(
+                FamilyConfigurationUnsupported,
+                UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION,
+                "GN 02603.050A.1 and A.2 do not settle how a sole full "
+                "permanent deduction composes with a zero-rate dual row; "
+                "the competing readings produce different payments",
+            )
+    return result
+
+
+def _readjust_deduction_rows(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+    disregard_full,
+):
+    """Use GN 02603.050C-D with one explicit A.1 disregard decision."""
+    subject = [
+        row for row in baseline.beneficiaries if row.subject_to_family_maximum
+    ]
+    explicit = {
+        row.beneficiary_id for row in subject if row.beneficiary_id in events
+    }
     dual = {
         row.beneficiary_id for row in subject if row.own_benefit is not None
     }
@@ -4075,17 +4183,6 @@ def _after_deductions(
         ),
         Fraction(0),
     )
-    # GN 02603.050A.1 expressly overrides the C formula for one full,
-    # permanent deduction and no other deduction event: disregard the row.
-    disregard_full = {
-        bid
-        for bid in explicit
-        if len(events) == 1
-        and not dual
-        and not reserve
-        and events[bid].permanent
-        and events[bid].payable == 0
-    }
     results = []
     for old in baseline.beneficiaries:
         bid = old.beneficiary_id

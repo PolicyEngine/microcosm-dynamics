@@ -54,3 +54,25 @@ def test_missing_refusal_notes_deletion_keeps_attribute_error(layer):
     refusal = _outcome(layer, refused=True).unsupported
     with pytest.raises(AttributeError):
         type(refusal).__delattr__(refusal, "__notes__")
+
+
+@settings(max_examples=10, deadline=None, derandomize=True)
+@given(notes=st.lists(st.text(), min_size=1, max_size=4))
+def test_zero_dual_composition_refusal_notes_preserve_reason_and_weight(notes):
+    from scripts.track_b_g_conformance_report import (
+        _zero_dual_composition_witness,
+    )
+
+    row = g.evaluate_family("composition", 7, _zero_dual_composition_witness)
+    refusal = row.unsupported
+    reason = g.UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION
+    assert refusal.reason is reason
+    for note in notes:
+        refusal.add_note(note)
+    assert refusal.__notes__ == notes
+    type(refusal).__delattr__(refusal, "__notes__")
+    assert not hasattr(refusal, "__notes__")
+    counts = g.count_family_outcomes((row,))
+    assert counts.rows == counts.unsupported_rows == 1
+    assert counts.weight == counts.unsupported_weight == 7
+    assert counts.unsupported_by_reason == {reason: (1, 7)}
