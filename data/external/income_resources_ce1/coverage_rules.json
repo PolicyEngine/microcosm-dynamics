@@ -9271,6 +9271,13 @@
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
+          "location": "1951 amendment note",
+          "quote": "1951\u2014Subsec. (a)(1)(C). Act Oct. 31, 1949 , \u00a7 505(a), as added by act July 12, 1951 , added subpar. (C).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
           "location": "1984 amendment note to subsec. (a)(1), Pub. L. 98-369 section 2663(a)(7)(A)",
           "quote": "Subsec. (a)(1). Pub. L. 98\u2013369, \u00a7 2663(a)(7)(A) , struck out \u201c(A) under contracts entered into in accordance with title V of the Agricultural Act of 1949 , as amended, or (B)\u201d.",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
@@ -9412,7 +9419,7 @@
             }
           }
         },
-        "title_v_contract_clause": "Former 410(a)(1)(A), struck by Pub. L. 98-369 section 2663(a)(7)(A) effective July 18, 1984, so its case reads the service date. The captures hold the struck words and the effective date, not the pre-1984 section text, and none says whether any title V contract was in force after 1967."
+        "title_v_contract_clause": "Former 410(a)(1)(A), struck by Pub. L. 98-369 section 2663(a)(7)(A) effective July 18, 1984, so its case reads the service date. The captures hold the struck words and the effective date, not the pre-1984 section text, and none says whether any title V contract was in force after 1967. The 42 U.S.C. 410 notes record amendments to (a)(1) in 1951, 1954, 1956, 1958 and 1984 only, so the struck clause stood throughout this row's years before July 18, 1984."
       },
       "rare_exclusion": {
         "negligible_candidate": null,

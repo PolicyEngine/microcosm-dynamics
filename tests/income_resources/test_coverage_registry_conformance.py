@@ -3078,6 +3078,11 @@ def test_title_v_contract_clause_applies_before_july_18_1984(
     quotes = " ".join(c.quote or "" for c in rule.citations)
     assert "effective July 18, 1984" in quotes
     assert "title V of the Agricultural Act of 1949" in quotes
+    # The clause stood from the row's start: the 410 notes amend (a)(1)
+    # in 1951, 1954, 1956, 1958 and 1984 only.
+    assert "added subpar. (C)" in quotes
+    clause = rule.parameters["title_v_contract_clause"]
+    assert "1951, 1954, 1956, 1958 and 1984 only" in clause
 
 
 POMS_STUDENT_EDITION = date(2024, 8, 15)
