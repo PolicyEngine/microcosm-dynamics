@@ -3926,5 +3926,16 @@
       "protected_path_violations_from_status": [],
       "final_check_note": "Final Black check explicitly used --workers1; Ruff final rerun set RAYON_NUM_THREADS1. No pytest was launched by this mechanics audit."
     }
+  },
+  "conformance_registry_hash_refresh": {
+    "reason": "The fix lane added two under_full_retirement_age lines to tests/data/track_b/gross_benefit_examples.yaml after its conformance check, so the report's registry hash went stale. CI's byte-for-byte test caught it at bbcdf7f4.",
+    "changed_field": "registry.sha256",
+    "changed_lines": 1,
+    "configurations_regenerated": 356400,
+    "registry_sha256_before": "a06a3f7158b6b5e4ce6901fd8de94bdf30e485ebbc3e967cdb9422ebd955abb6",
+    "registry_sha256_after": "58bc989f71090b513f9ed86fd22935e37d8237501477fee38eaef82952bab036",
+    "report_sha256_before": "ee8ef3247a700b4cec92dfc27bbb98b071deaba5566b092cb9c3df4f762be972",
+    "report_sha256_after": "df2317b43437689f770e08977487cf732bf4a8cad509e4c077630cd71973ffe4",
+    "note": "Earlier sha256 values in this ledger are measurements taken before this refresh."
   }
 }
