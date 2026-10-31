@@ -2311,20 +2311,28 @@ REQUIRED_CONDITIONS = [
         "immediately before such transfer, such individual performed service "
         "with a Federal agency",
     ),
-    (
-        "statutory_homeworker_service_1968",
-        "statutory_homeworker",
-        {
-            "occupation": (
-                "contract of service that contemplates",
-                "(other than in facilities for transportation)",
-                "continuing relationship",
-            )
-        },
-        "lii_42_410.html",
-        "if the contract of service contemplates that substantially all of "
-        "such services are to be performed personally by such individual",
-    ),
+    # No 410 note amends 410(j) after 1960, so the 1978 row too (r3c).
+    *[
+        (
+            rule_id,
+            "statutory_homeworker",
+            {
+                "occupation": (
+                    "contract of service that contemplates",
+                    "(other than in facilities for transportation)",
+                    "continuing relationship",
+                )
+            },
+            "lii_42_410.html",
+            "if the contract of service contemplates that substantially all "
+            "of such services are to be performed personally by such "
+            "individual",
+        )
+        for rule_id in (
+            "statutory_homeworker_service_1968",
+            "statutory_homeworker_service_1978",
+        )
+    ],
     (
         "nonresident_alien_service_1968",
         "f1_j1_admission_purpose_service",
@@ -2620,6 +2628,37 @@ def test_homeworker_cash_test_cites_its_1968_1977_location(registry):
     ]
     assert "10208(d)(1)(A)-(K)" in cash_test["description"]
     assert "“$100” for “$50”" in quotes
+
+
+def test_homeworker_1978_cash_test_sat_in_409j_until_1989(registry):
+    """Review r3 sibling (r3c): from 1978 the $100 calendar-year test sat
+    in former 409(j) until the 1989 redesignation, then in 409(a)(8)."""
+    rule = next(
+        r
+        for r in registry.rules
+        if r.rule_id == "statutory_homeworker_service_1978"
+    )
+    texts = [c.location for c in rule.citations] + [
+        case.get("description", "") for case in rule.cases
+    ]
+    for text in texts:
+        if "409(a)(8)" in text:
+            assert "409(j)" in text, text
+    (cash_test,) = [
+        c for c in rule.cases if c["case_id"] == "statutory_homeworker"
+    ]
+    assert "former 409(j) until" in cash_test["description"]
+    assert "10208(d)(1)(A)-(K)" in cash_test["description"]
+    quotes = " ".join(c.quote or "" for c in rule.citations)
+    for quote in (
+        "Former subsec. (j) redesignated subsec. (a)(8).",
+        "former subsecs. (j) and (k) as pars. (8) and (9)",
+        "“$100” for “$50”",
+        "remuneration paid and services rendered after December 31, 1977",
+        "is less than $100;",
+    ):
+        assert quote in quotes, quote
+    assert rule.effective_start == date(1978, 1, 1)
 
 
 def test_section_410a19_rows_key_the_visa_class_alike(registry):

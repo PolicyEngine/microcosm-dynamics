@@ -7800,8 +7800,50 @@
       {
         "capture": "lii_42_409.html",
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
-        "authority": "42USC409(a)(8),current law and 1977 notes; later-edition text and historical notes, not contemporaneous pre-1994 section text",
-        "location": "409(a)(8); 1977 amendment and effective-date notes"
+        "authority": "42 USC 409, current law and historical amendment notes; later-edition text, not contemporaneous pre-1994 section text",
+        "location": "former 409(j), the home-worker cash test, through 1989, and 409(a)(8) after Pub. L. 101-239 section 10208(d)(1)(A)-(K) redesignated it; 1977 and 1989 amendment notes and the 1977 effective-date note"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1989 amendment notes, subsec. (j) entry",
+        "quote": "Former subsec. (j) redesignated subsec. (a)(8)."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1989 amendment note to subsec. (a), Pub. L. 101-239 section 10208(d)(1)(A)-(K)",
+        "quote": "former subsecs. (j) and (k) as pars. (8) and (9)"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "1977 amendment note",
+        "quote": "1977\u2014Subsecs. (g)(3), (j). Pub. L. 95\u2013216, \u00a7 351(a)(1) , (2), substituted \u201cyear\u201d for \u201cquarter\u201d wherever appearing and \u201c$100\u201d for \u201c$50\u201d."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "Effective Date of 1977 Amendment note, Pub. L. 95-216 section 351(d)",
+        "quote": "shall apply with respect to remuneration paid and services rendered after December 31, 1977"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current law and historical amendment notes",
+        "location": "409(a)(8), current text; former 409(j) through 1989",
+        "quote": "(8) Remuneration paid by an employer in any year to an employee for service described in section 410(j)(3)(C) of this title (relating to home workers), if the cash remuneration paid in such year by the employer to the employee for such service is less than $100;"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(j)(3), closing clauses",
+        "quote": "if the contract of service contemplates that substantially all of such services are to be performed personally by such individual; except that an individual shall not be included in the term \u201c employee \u201d under the provisions of this paragraph if such individual has a substantial investment in facilities used in connection with the performance of such services (other than in facilities for transportation), or if the services are in the nature of a single transaction not part of a continuing relationship"
       }
     ],
     "trigger_facts": [
@@ -7881,10 +7923,10 @@
         "case_id": "statutory_homeworker",
         "precedence": 2,
         "when": {
-          "occupation": "home worker in a 410(j)(3)(C) occupational group who performs substantially all the services personally, has no substantial investment in facilities, and works in a continuing relationship"
+          "occupation": "home worker in a 410(j)(3)(C) occupational group, under a contract of service that contemplates that substantially all the services are to be performed personally, with no substantial investment in facilities (other than in facilities for transportation), in a continuing relationship"
         },
         "consequence": "covered_above_threshold",
-        "description": "Once the $100 calendar-year cash test is met, cash and noncash pay are wages (409(a)(8); POMS RS 01402.230 B.1)."
+        "description": "Once the $100 calendar-year cash test is met, cash and noncash pay are wages (former 409(j) until Pub. L. 101-239 section 10208(d)(1)(A)-(K) redesignated it 409(a)(8) in 1989; POMS RS 01402.230 B.1)."
       }
     ],
     "open_alternatives": [],
