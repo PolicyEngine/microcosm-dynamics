@@ -81,11 +81,14 @@ with a letter, `!` or `/`. The table and preformatted rules read each
 cell's or block's text without its tags; the row-header exemption also
 reads a header cell's `scope` attribute. The nine-digit rule skips comments
 and noscript blocks, whose tracking numbers are not page content. Each
-reading takes time linear in the page's length. The forms found to take
-quadratic time before (a long word in a tag, escaped quotes after an
-unpaired quote in a script, unclosed tags and comments, script start tags
-with no end tag, and table rows and cells that name an identifier) are
-timed by a test on invented pages of 200 to 780 kB.
+reading takes time linear in the page's length. A test times invented
+pages of 100 kB to 2.1 MB in the forms found to take quadratic time before
+(a long word in a tag, escaped quotes after an unpaired quote in a script,
+unclosed tags and comments, script start tags with no end tag, and table
+rows and cells that name an identifier) and in those where a slower form of
+a linear helper, found in review, does (a hyphenated word in a tag,
+unclosed tags after closed ones, script start tags with no `>` or after end
+tags, and identifier rows after rows of digits).
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
