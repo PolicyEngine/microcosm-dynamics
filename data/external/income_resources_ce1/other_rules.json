@@ -145,7 +145,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -453,7 +452,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -809,7 +807,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -961,7 +958,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1136,7 +1132,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1381,7 +1376,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1638,7 +1632,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1839,13 +1832,12 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "410(a)(17)'s exclusion is repealed for this window, so this family excludes nothing; apply the ordinary employment definition and the other families."
     }
   },
   {
@@ -1912,7 +1904,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"domestic\" \"under 18\" \"exemption\" \"number\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1997,7 +1988,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"domestic\" \"under 18\" \"exemption\" \"number\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2225,7 +2215,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"domestic\" \"under 18\" \"exemption\" \"number\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2431,7 +2420,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2664,7 +2652,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2909,7 +2896,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3146,7 +3132,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3296,7 +3281,6 @@
         "Web, domain irs.gov: \"child\" \"parent\" \"employment\" \"social security\" \"number\" \"exemption\" -IRM -forms; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3524,7 +3508,6 @@
         "Web, domain irs.gov: \"child\" \"parent\" \"employment\" \"social security\" \"number\" \"exemption\" -IRM -forms; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3954,7 +3937,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": "Exact applicability of Public Law 99-272 section 13303(c)(2), as corrected by Public Law 100-647 section 8016(a)(4), and its interaction with earlier retroactive fishing provisions remains unverified. The current crew-size disagreement is settled by Public Law 104-188 but does not settle these earlier dependencies.",
     "cases": [],
     "open_alternatives": [
@@ -4396,7 +4378,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4773,7 +4754,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4985,7 +4965,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5152,7 +5131,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"foreign government\" \"international organization\" \"exemption\" \"number employees\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5396,7 +5374,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5624,7 +5601,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5780,7 +5756,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"foreign government\" \"international organization\" \"exemption\" \"number employees\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5920,7 +5895,6 @@
         "Web, domains irs.gov and secure.ssa.gov: \"foreign government\" \"international organization\" \"exemption\" \"number employees\"; no published numeric prevalence bound located."
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -6242,7 +6216,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -6515,7 +6488,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -6705,13 +6677,12 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No paragraph of 410(a) names Q-class service before October 1, 1994, so this family excludes nothing; apply the other families."
     }
   },
   {
@@ -6815,7 +6786,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -6992,7 +6962,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -7133,7 +7102,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
@@ -7303,7 +7271,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -7526,7 +7493,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -7628,7 +7594,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -7740,7 +7705,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -7907,7 +7871,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -8056,7 +8019,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -8290,7 +8252,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -8391,7 +8352,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -8568,7 +8528,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -8764,7 +8723,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {

@@ -754,7 +754,6 @@
   "rare_exclusion_ruling": "open_no_reading_selected",
   "rules": [
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "noncash_remuneration",
@@ -919,7 +918,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "genuine_noncash_with_dominion",
@@ -1249,7 +1247,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "qualifying_sharefarmer_arrangement",
@@ -1587,7 +1584,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "farm_operated_for_profit",
@@ -1768,7 +1764,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "farm_operated_for_profit",
@@ -1943,7 +1938,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "nonresident_alien_ministry",
@@ -2500,7 +2494,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "nonresident_alien_ministry",
@@ -3057,7 +3050,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "nonresident_alien_ministry",
@@ -3780,7 +3772,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "commercial_enterprise",
@@ -4006,7 +3997,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "registered_organization_employer",
@@ -4249,7 +4239,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -4428,7 +4417,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "410(a)(17)'s exclusion is repealed for this window, so this family excludes nothing; apply the ordinary employment definition and the other families."
       },
       "rule_id": "communist_organization_service_2014_1219",
       "trigger_facts": [
@@ -4440,7 +4429,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "domestic_farm_service_before_1995",
@@ -4535,7 +4523,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "domestic_farm_service_before_1995",
@@ -4629,7 +4616,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "noncash_remuneration",
@@ -4846,7 +4832,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -5022,7 +5007,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "electing_church_nonministerial_service",
@@ -5198,7 +5182,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "electing_church_nonministerial_service",
@@ -5467,7 +5450,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "agreement_with_lower_threshold",
@@ -5690,7 +5672,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "agreement_with_lower_threshold",
@@ -5923,7 +5904,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "agreement_with_lower_threshold",
@@ -6179,7 +6159,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "agreement_with_lower_threshold",
@@ -6416,7 +6395,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "corporate_employer",
@@ -6567,7 +6545,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "corporate_employer",
@@ -6822,7 +6799,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "federal_retirement_system_service",
@@ -7009,7 +6985,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "federal_retirement_system_service",
@@ -7185,7 +7160,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "retired_judge_371b_payment",
@@ -7498,7 +7472,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "retired_judge_371b_payment",
@@ -7933,7 +7906,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -8296,7 +8268,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "child_under_18_for_parent",
@@ -8762,7 +8733,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "child_under_18_for_parent",
@@ -9128,7 +9098,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "temporary_agricultural_admission",
@@ -9329,7 +9298,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "us_citizen_in_united_states",
@@ -9519,7 +9487,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "foreign_craft_noncitizen",
@@ -9752,7 +9719,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "philippine_resident_h2_in_guam",
@@ -9969,7 +9935,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "us_citizen_in_united_states",
@@ -10137,7 +10102,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "transferred_federal_employee_410r",
@@ -10289,7 +10253,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "under_18_delivery",
@@ -10609,7 +10572,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_3508_direct_seller",
@@ -10895,7 +10857,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "effective_waiver_concurring_employee",
@@ -11076,7 +11037,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "effective_waiver_concurring_employee",
@@ -11297,7 +11257,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "csrs_required_nonprofit_employee",
@@ -11476,7 +11435,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -11609,7 +11567,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No paragraph of 410(a) names Q-class service before October 1, 1994, so this family excludes nothing; apply the other families."
       },
       "rule_id": "nonresident_alien_cultural_exchange_service_1968",
       "trigger_facts": [
@@ -11619,7 +11577,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "q_cultural_exchange_program_service",
@@ -11741,7 +11698,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "f1_j1_admission_purpose_service",
@@ -11917,7 +11873,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -12047,7 +12002,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "m1_admission_purpose_service_start_open",
@@ -12240,7 +12194,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "m1_admission_purpose_service",
@@ -12452,7 +12405,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "railroad_act_service",
@@ -12578,7 +12530,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "vow_duties_without_election",
@@ -12850,7 +12801,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "vow_duties_without_election",
@@ -13259,7 +13209,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_218_agreement_coverage",
@@ -13408,7 +13357,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_218_agreement_coverage",
@@ -13570,7 +13518,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_218_agreement_coverage",
@@ -13918,7 +13865,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -13961,7 +13907,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
       },
       "rule_id": "se_base_definition_1968_2026",
       "trigger_facts": [
@@ -13974,7 +13920,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "options_dealer_from_1984",
@@ -14144,7 +14089,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "effective_1402g_exemption",
@@ -14263,7 +14207,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -14384,7 +14327,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "effective_1402g_exemption",
@@ -14579,7 +14521,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "exempt_minister",
@@ -14802,7 +14743,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "exempt_minister",
@@ -15017,7 +14957,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "exempt_minister",
@@ -15285,7 +15224,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "partnership_share_of_spouse_partner",
@@ -15426,7 +15364,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -15590,7 +15527,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "partnership_share_of_spouse_partner",
@@ -15769,7 +15705,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "crp_payment_in_real_estate_dealer_business",
@@ -15929,7 +15864,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "crp_payment_in_real_estate_dealer_business",
@@ -16076,7 +16010,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -16169,7 +16102,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No director-specific deemed-receipt rule yet: director fees enter net earnings for their taxable year under the ordinary rules; apply the other families."
       },
       "rule_id": "se_director_timing_1968_1987",
       "trigger_facts": [
@@ -16183,7 +16116,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -16281,7 +16213,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Director fees count in the taxable year the services were performed, unless actually paid and received earlier; they are net earnings either way; apply the other families."
       },
       "rule_id": "se_director_timing_1988_1990",
       "trigger_facts": [
@@ -16295,7 +16227,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -16463,7 +16394,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Section 411 no longer deems director fees received in the service year; they enter net earnings under the ordinary 411 computation; apply the other families."
       },
       "rule_id": "se_director_timing_1991_2026",
       "trigger_facts": [
@@ -16477,7 +16408,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "not_employee_service",
@@ -16759,7 +16689,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "real_estate_dealer_rentals",
@@ -16963,7 +16892,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "no_actual_material_participation",
@@ -17195,7 +17123,6 @@
       ]
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17299,7 +17226,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "us_resident_entire_taxable_year",
@@ -17410,7 +17336,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17507,7 +17432,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17623,7 +17547,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The 911(a)(1) exclusion is disregarded in computing net earnings, so foreign earned income stays in; apply the other families."
       },
       "rule_id": "se_foreign_income_1984_2026",
       "trigger_facts": [
@@ -17638,7 +17562,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17730,7 +17653,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17859,7 +17781,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
       },
       "rule_id": "se_health_insurance_1987_2009",
       "trigger_facts": [
@@ -17871,7 +17793,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -17979,7 +17900,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "411(a)(15), which the 2010 temporary amendment did not change, keeps the 162(l) deduction out of coverage net earnings; apply the other families."
       },
       "rule_id": "se_health_insurance_2010",
       "trigger_facts": [
@@ -17991,7 +17912,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -18089,7 +18009,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
       },
       "rule_id": "se_health_insurance_2011_2026",
       "trigger_facts": [
@@ -18101,7 +18021,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -18179,7 +18098,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "411(j) does not reach payments before 1998, so this family excludes nothing; apply the other families."
       },
       "rule_id": "se_insurance_termination_1968_1997",
       "trigger_facts": [
@@ -18189,7 +18108,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "qualifying_termination_payment",
@@ -18329,7 +18247,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -18388,7 +18305,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No limited-partner exclusion yet: a limited partner's distributive share enters net earnings under the ordinary partnership rules; apply the other families."
       },
       "rule_id": "se_limited_partner_1968_1977",
       "trigger_facts": [
@@ -18400,7 +18317,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "guaranteed_payment_for_services",
@@ -18554,7 +18470,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -18668,7 +18583,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The regular computation applies, or the farm optional computation when elected; the result counts once it meets the self-employment minimum."
       },
       "rule_id": "se_optional_1968_1972",
       "trigger_facts": [
@@ -18681,7 +18596,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -18870,7 +18784,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The regular computation applies, or a farm or nonfarm optional computation when its conditions hold and it is elected; the result counts once it meets the self-employment minimum."
       },
       "rule_id": "se_optional_1973_2007",
       "trigger_facts": [
@@ -18883,7 +18797,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -19317,7 +19230,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "The regular computation applies, or a farm or nonfarm optional computation with the indexed limits when its conditions hold and it is elected; the result counts once it meets the self-employment minimum."
       },
       "rule_id": "se_optional_2008_2026",
       "trigger_facts": [
@@ -19330,7 +19243,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -19390,7 +19302,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "411(h) does not yet apply, so a dealer's section 1256 gains and losses follow the ordinary capital-gain exclusion; apply the other families."
       },
       "rule_id": "se_options_dealers_1968_1984",
       "trigger_facts": [
@@ -19402,7 +19314,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -19507,7 +19418,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "An options or commodities dealer's ordinary-course section 1256 gains and losses enter net earnings despite the capital-gain exclusion; apply the other families."
       },
       "rule_id": "se_options_dealers_1984_2026",
       "trigger_facts": [
@@ -19519,7 +19430,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -19641,7 +19551,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "411(f) adds the deceased partner's allocated share through the month of death to the final-year computation; otherwise the ordinary partnership rules apply."
       },
       "rule_id": "se_partner_death_1968_2026",
       "trigger_facts": [
@@ -19653,7 +19563,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "dealer_in_stocks_or_securities",
@@ -19819,7 +19728,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "dealer_in_stocks_or_securities",
@@ -19995,7 +19903,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "dealer_in_stocks_or_securities",
@@ -20217,7 +20124,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -20337,7 +20243,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -20404,7 +20309,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "public_law_90_248_election",
@@ -20584,7 +20488,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -20694,7 +20597,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "A Puerto Rico resident's net earnings are computed as a citizen's, without the section 933 exclusion; apply the other families."
       },
       "rule_id": "se_puerto_rico_1968_2026",
       "trigger_facts": [
@@ -20705,7 +20608,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -20827,7 +20729,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "No 411(a)(16) election yet: spouses' joint business income follows the partnership and community-income rules; apply the other families."
       },
       "rule_id": "se_joint_venture_1968_2006",
       "trigger_facts": [
@@ -20839,7 +20741,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "qualified_joint_venture",
@@ -20978,7 +20879,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "railroad_act_service",
@@ -21089,7 +20989,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "dealer_investment_or_speculative_holdings",
@@ -21257,7 +21156,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "real_estate_dealer_rentals",
@@ -21479,7 +21377,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "qualifying_retirement_payment",
@@ -21645,7 +21542,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -21760,7 +21656,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for 411(b); this family changes nothing else; apply the other families."
       },
       "rule_id": "se_territorial_residency_1968_2026",
       "trigger_facts": [
@@ -21771,7 +21667,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_7873_exempt_income",
@@ -21954,7 +21849,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -22052,7 +21946,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "One unit: other net earnings count once they reach $400; apply the other families."
       },
       "rule_id": "se_units_1968_1983",
       "trigger_facts": [
@@ -22064,7 +21958,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "church_combined_below_100",
@@ -22311,7 +22204,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -22420,7 +22312,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Church employee income and other net earnings are separate units with $100 and $400 minimums; each counts once it meets its own."
       },
       "rule_id": "se_units_1986_1989",
       "trigger_facts": [
@@ -22432,7 +22324,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -22647,7 +22538,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+        "description": "Separate ordinary and church units; regular positive net earnings receive the 411(a)(11) deduction before the unit minimums apply."
       },
       "rule_id": "se_units_1990_2026",
       "trigger_facts": [
@@ -22659,7 +22550,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [],
       "citations": [
         {
@@ -22858,7 +22748,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "common_law_employee",
@@ -22970,7 +22859,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "common_law_employee",
@@ -23082,7 +22970,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "enrolled_student_nurse",
@@ -23239,7 +23126,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_218_agreement_covers_students",
@@ -23400,7 +23286,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_218_agreement_covers_students",
@@ -23634,7 +23519,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "noncash_tips",
@@ -23721,7 +23605,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "later_418a_retroactive_coverage",
@@ -23912,7 +23795,6 @@
       "worked_examples": []
     },
     {
-      "alternative": null,
       "cases": [
         {
           "case_id": "section_418a_agreement_inclusion",

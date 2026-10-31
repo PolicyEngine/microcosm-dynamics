@@ -19,7 +19,6 @@ from populace_dynamics.income_resources.coverage_rules import (
     CONSEQUENCES,
     EFFECTIVE_BASES,
     SCHEMA_VERSION,
-    AlternativeRequiredError,
     CaptureIntegrityError,
     CoverageRegistry,
     CoverageRegistryError,
@@ -66,7 +65,6 @@ def invented_row(start=1968, end=2026, rule_id="INVENTED_rule"):
         "parameters": {"invented_value": 17},
         "worked_examples": [],
         "rare_exclusion": None,
-        "alternative": None,
         "open_reason": None,
     }
 
@@ -218,32 +216,32 @@ def test_midyear_law_change_returns_both_regimes(tmp_path):
     ].rule_id == ("INVENTED_after")
 
 
-@given(st.integers(1968, 2026))
+@given(st.integers(1968, 2025), st.integers(0, 3))
 @settings(
     deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
 )
-def test_overlap_requires_named_options_and_explicit_selection(tmp_path, year):
-    rows = [
-        invented_row(rule_id="INVENTED_a"),
-        invented_row(rule_id="INVENTED_b"),
-    ]
-    with pytest.raises(RuleOverlapError):
-        invented_registry(tmp_path, rows)
-    for row, name in zip(rows, ("reading_a", "reading_b"), strict=True):
-        row["alternative"] = {
-            "group": "INVENTED_question",
-            "name": name,
-            "explanation": "INVENTED unresolved source question",
-        }
+def test_overlapping_rows_are_refused(tmp_path, boundary, overlap_days):
+    """Review r3 note 3: no row used ``alternative``, so the mechanism is
+    gone and any overlap within a family is invalid."""
+    before = invented_row(rule_id="INVENTED_before")
+    after = invented_row(rule_id="INVENTED_after")
+    end = date(boundary, 12, 31)
+    before["effective_end"] = end.isoformat()
+    after["effective_start"] = (
+        end + timedelta(days=1 - overlap_days)
+    ).isoformat()
+    rows = [before, after]
+    if overlap_days:
+        with pytest.raises(RuleOverlapError, match="overlapping rows"):
+            invented_registry(tmp_path, rows)
+        return
     registry = invented_registry(tmp_path, rows)
-    with pytest.raises(AlternativeRequiredError):
-        registry.lookup("INVENTED_family", year)
-    assert (
-        registry.lookup("INVENTED_family", year, alternative="reading_b")[
-            0
-        ].rule_id
-        == "INVENTED_b"
-    )
+    with pytest.raises(TypeError):
+        registry.lookup("INVENTED_family", boundary, alternative="INVENTED")
+    row = invented_row()
+    row["alternative"] = None
+    with pytest.raises(RegistryValidationError, match="rule fields differ"):
+        CoverageRule.from_dict(row)
 
 
 @given(
@@ -392,26 +390,6 @@ def test_open_rule_refuses_and_payload_is_immutable(tmp_path):
         registry.lookup("INVENTED_family", 2000)
     with pytest.raises(TypeError):
         registry.rules[0].parameters["invented_value"] = 99
-
-
-def test_selected_alternative_never_borrows_a_different_reading(tmp_path):
-    rows = [
-        invented_row(rule_id="INVENTED_a"),
-        invented_row(rule_id="INVENTED_b"),
-    ]
-    rows[1]["effective_start"] = "2000-07-01"
-    for row, name in zip(rows, ("a", "b"), strict=True):
-        row["alternative"] = {
-            "group": "INVENTED_group",
-            "name": name,
-            "explanation": "INVENTED incomplete support for reading b",
-        }
-    registry = invented_registry(tmp_path, rows)
-    with pytest.raises(RuleGapError, match="selected alternative b"):
-        registry.lookup("INVENTED_family", 2000, alternative="b")
-    assert registry.lookup("INVENTED_family", 2000, alternative="a")[
-        0
-    ].rule_id == ("INVENTED_a")
 
 
 @given(st.lists(st.booleans(), min_size=1, max_size=3))
@@ -1772,7 +1750,6 @@ def test_refusals_and_caller_errors_have_disjoint_types():
         NoRuleError,
         RuleGapError,
         OpenRuleError,
-        AlternativeRequiredError,
         ThresholdUnavailableError,
         TableDefinitionUnverifiedError,
         RegistryValidationError,
@@ -1946,61 +1923,6 @@ def test_index_inputs_are_checked_when_a_published_value_decides(
         registry.threshold("INVENTED_threshold", 2025, index_inputs=supplied)
         == 110
     )
-
-
-@given(st.text(min_size=1, max_size=6), st.booleans())
-@example("b", True)
-@example("a", False)
-@settings(
-    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
-)
-def test_alternative_must_name_a_reading_of_the_family(
-    tmp_path, name, with_alternatives
-):
-    """Review r2 low 14: an alternative was ignored without readings.
-
-    A reading of an open question is not selectable either: the open row
-    still refuses, and a settled year would ignore the name.
-    """
-    rows = [invented_row(start=2001, rule_id="INVENTED_a")]
-    open_row = invented_row(end=2000, rule_id="INVENTED_open")
-    open_row["open_reason"] = "INVENTED unresolved legal question"
-    open_row["consequence"] = None
-    open_row["residual_default"]["consequence"] = None
-    open_row["open_alternatives"] = [
-        {"name": "INVENTED_open_a", "description": "INVENTED first reading"},
-        {"name": "INVENTED_open_b", "description": "INVENTED second reading"},
-    ]
-    sub = invented_case("invented_sub_question", 1, "open")
-    sub["open_reason"] = "INVENTED_SUB_QUESTION: no capture settles it"
-    sub["open_alternatives"] = [
-        {"name": "INVENTED_case_a", "description": "INVENTED first reading"},
-        {"name": "INVENTED_case_b", "description": "INVENTED second reading"},
-    ]
-    rows[0]["cases"] = [sub]
-    for year in (2000, 2010):
-        for reading in ("INVENTED_open_a", "INVENTED_case_b"):
-            with pytest.raises(UnknownIdentifierError, match="open question"):
-                invented_registry(tmp_path, [open_row, *rows]).lookup(
-                    "INVENTED_family", year, alternative=reading
-                )
-    rows[0]["cases"] = []
-    if with_alternatives:
-        rows.append(invented_row(rule_id="INVENTED_b"))
-        for row, label in zip(rows, ("a", "b"), strict=True):
-            row["alternative"] = {
-                "group": "INVENTED_group",
-                "name": label,
-                "explanation": "INVENTED overlapping readings",
-            }
-    registry = invented_registry(tmp_path, rows)
-    known = {"a", "b"} if with_alternatives else set()
-    if name not in known:
-        with pytest.raises(UnknownIdentifierError, match="no alternative"):
-            registry.lookup("INVENTED_family", 2010, alternative=name)
-        return
-    (rule,) = registry.lookup("INVENTED_family", 2010, alternative=name)
-    assert rule.alternative["name"] == name
 
 
 @given(st.one_of(st.none(), st.text(max_size=4)))

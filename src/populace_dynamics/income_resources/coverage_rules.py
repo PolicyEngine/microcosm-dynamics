@@ -19,9 +19,9 @@ Invariants (property tests in ``tests/income_resources``):
   actual start. A ``payment_date`` family is looked up by the date paid or
   received, which a year lookup sweeps day by day as for service dates.
   Every row of one family must use the same date axis.
-* Effective ranges partition each family's support. Unexplained overlaps
-  are invalid; named alternatives require an explicit selection at lookup.
-  Gaps and explicitly open legal questions refuse the affected query.
+* Effective ranges partition each family's support: overlapping rows are
+  invalid. Gaps and explicitly open legal questions refuse the affected
+  query.
 * Each row states its residual default, equal to its top-level consequence.
   Cases carry a row-unique ``case_id``, an integer ``precedence``, nonempty
   trigger-fact conditions and an enum consequence. Precedence is first match
@@ -58,10 +58,8 @@ Invariants (property tests in ``tests/income_resources``):
   negation of every higher-ranked condition in free text that no loader can
   check; ranks and override references are checked here.
 * Open legal rows have null/``open`` consequences, named alternatives and
-  no chosen reading. Their readings are not selectable: naming one as
-  ``alternative`` raises ``UnknownIdentifierError`` instead of being
-  ignored, and the row refuses until the law is settled. Only a closed
-  row's ``alternative`` record can be selected.
+  no chosen reading. No lookup selects a reading: the row refuses until the
+  law is settled.
   A closed row keeps a verified rule and opens only the sub-question no
   capture settles: a case with an ``open`` consequence, an ``open_reason``
   and at least two named ``open_alternatives``. ``resolve`` refuses with
@@ -94,8 +92,8 @@ Invariants (property tests in ``tests/income_resources``):
 * Errors separate three causes. Bad registry data raises
   ``RegistryValidationError`` or ``CaptureIntegrityError``. A legal refusal
   raises another ``CoverageRegistryError``. A caller error raises
-  ``TypeError``, ``ValueError`` or, for a family, case, threshold, table or
-  alternative name the registry does not define, ``UnknownIdentifierError``.
+  ``TypeError``, ``ValueError`` or, for a family, case, threshold or table
+  name the registry does not define, ``UnknownIdentifierError``.
   ``CoverageRegistryError`` derives from neither ``ValueError`` nor
   ``LookupError``, so catching a caller error never swallows a refusal.
 
@@ -286,11 +284,7 @@ class RuleGapError(NoRuleError):
 
 
 class RuleOverlapError(RegistryValidationError):
-    """Overlapping effective ranges lack distinct named alternatives."""
-
-
-class AlternativeRequiredError(CoverageRegistryError):
-    """The source question has named options and no selected reading."""
+    """Two rows of one family have overlapping effective ranges."""
 
 
 class OpenRuleError(CoverageRegistryError):
@@ -709,7 +703,6 @@ class CoverageRule:
     parameters: Mapping[str, Any]
     worked_examples: tuple[Mapping[str, Any], ...]
     rare_exclusion: Mapping[str, Any] | None
-    alternative: Mapping[str, str] | None
     open_reason: str | None
 
     @property
@@ -908,11 +901,6 @@ class CoverageRule:
                     ),
                     "a null prevalence bound requires recorded searches",
                 )
-        alternative = raw["alternative"]
-        if alternative is not None:
-            _require(isinstance(alternative, Mapping), "alternative object")
-            for name in ("group", "name", "explanation"):
-                _text(alternative.get(name), f"alternative.{name}")
         if raw["open_reason"] is not None:
             _text(raw["open_reason"], "open_reason")
         return cls(
@@ -935,7 +923,6 @@ class CoverageRule:
                 sorted(examples, key=lambda e: e["example_id"])
             ),
             rare_exclusion=_freeze(rare),
-            alternative=_freeze(alternative),
             open_reason=raw["open_reason"],
         )
 
@@ -1131,16 +1118,9 @@ class CoverageRegistry:
                     break
                 if right.effective_start > left.effective_end:
                     break
-                a, b = left.alternative, right.alternative
-                if not (
-                    a
-                    and b
-                    and a["group"] == b["group"]
-                    and a["name"] != b["name"]
-                ):
-                    raise RuleOverlapError(
-                        f"unexplained overlap: {left.rule_id}, {right.rule_id}"
-                    )
+                raise RuleOverlapError(
+                    f"overlapping rows: {left.rule_id}, {right.rule_id}"
+                )
         thresholds = raw.get("thresholds", [])
         _require(isinstance(thresholds, list), "thresholds list")
         ids = []
@@ -1322,43 +1302,11 @@ class CoverageRegistry:
         return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
 
     def _lookup_interval(
-        self, family: str, start: date, end: date, alternative: str | None
+        self, family: str, start: date, end: date
     ) -> tuple[CoverageRule, ...]:
         family_rules = [r for r in self.rules if r.family == family]
         if not family_rules:
             raise UnknownIdentifierError(f"unknown family: {family!r}")
-        if alternative is not None:
-            if not isinstance(alternative, str):
-                raise TypeError("alternative must be a string name")
-            names = {
-                r.alternative["name"] for r in family_rules if r.alternative
-            }
-            open_readings = {
-                o["name"]
-                for r in family_rules
-                for o in (
-                    *r.open_alternatives,
-                    *(
-                        o
-                        for case in r.cases
-                        for o in case.get("open_alternatives", ())
-                    ),
-                )
-            }
-            if alternative in open_readings - names:
-                # Naming a reading of an open question selects nothing: the
-                # open row or case still refuses, and settled years would
-                # silently ignore the name.
-                raise UnknownIdentifierError(
-                    f"{family}: {alternative!r} is a reading of an open "
-                    "question, which refuses until the law is settled; "
-                    f"selectable alternatives: {sorted(names)}"
-                )
-            if alternative not in names:
-                raise UnknownIdentifierError(
-                    f"{family}: {alternative!r} names no alternative of this "
-                    f"family; it has {sorted(names)}"
-                )
         candidates = [
             r
             for r in self.rules
@@ -1388,20 +1336,6 @@ class CoverageRegistry:
             ]
             if not active:
                 raise RuleGapError(f"rule gap: {family}, {point}")
-            if any(r.alternative for r in active):
-                names = sorted(r.alternative["name"] for r in active)
-                if alternative is None:
-                    raise AlternativeRequiredError(
-                        f"{family}, {point}: select one of {names}"
-                    )
-                active = [
-                    r for r in active if r.alternative["name"] == alternative
-                ]
-                if not active:
-                    raise RuleGapError(
-                        f"{family}, {point}: no rule for selected "
-                        f"alternative {alternative}"
-                    )
             for r in active:
                 if r.open_reason:
                     raise OpenRuleError(f"{r.rule_id}: {r.open_reason}")
@@ -1413,7 +1347,7 @@ class CoverageRegistry:
         )
 
     def lookup(
-        self, family: str, income_year: int, *, alternative: str | None = None
+        self, family: str, income_year: int
     ) -> tuple[CoverageRule, ...]:
         """Return regimes and cases on the family's stated date axis.
 
@@ -1431,14 +1365,10 @@ class CoverageRegistry:
             for r in self.rules
         )
         end = start if taxable_year_axis else date(year, 12, 31)
-        return self._lookup_interval(family, start, end, alternative)
+        return self._lookup_interval(family, start, end)
 
     def lookup_date(
-        self,
-        family: str,
-        axis_date: date,
-        *,
-        alternative: str | None = None,
+        self, family: str, axis_date: date
     ) -> tuple[CoverageRule, ...]:
         """Resolve one date on the family's axis.
 
@@ -1450,7 +1380,7 @@ class CoverageRegistry:
         if type(axis_date) is not date:
             raise TypeError("axis_date must be a date")
         _year(axis_date.year)
-        return self._lookup_interval(family, axis_date, axis_date, alternative)
+        return self._lookup_interval(family, axis_date, axis_date)
 
     def threshold(
         self,

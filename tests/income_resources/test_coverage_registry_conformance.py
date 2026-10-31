@@ -731,21 +731,14 @@ def test_all_family_year_coordinates_return_or_refuse(registry):
 
 @settings(deadline=None)
 @given(st.data())
-def test_real_ranges_partition_or_name_their_overlap(registry, data):
+def test_real_ranges_partition_each_family(registry, data):
     family = data.draw(st.sampled_from(registry.families))
     rules = sorted(
         [r for r in registry.rules if r.family == family],
         key=lambda r: (r.effective_start, r.rule_id),
     )
     for left, right in zip(rules, rules[1:], strict=False):
-        if right.effective_start <= left.effective_end:
-            assert left.alternative and right.alternative
-            assert left.alternative["group"] == right.alternative["group"]
-            assert left.alternative["name"] != right.alternative["name"]
-        else:
-            assert (
-                left.effective_end + timedelta(days=1) == right.effective_start
-            )
+        assert left.effective_end + timedelta(days=1) == right.effective_start
 
 
 @settings(deadline=None)
@@ -815,7 +808,6 @@ def test_real_cases_and_open_readings_obey_schema(registry, data):
     if rule.open_reason:
         assert rule.consequence in {None, "open"}
         assert len(rule.open_alternatives) >= 2
-        assert rule.alternative is None
 
 
 def test_open_cases_separate_legal_questions_from_missing_facts(registry):
@@ -1988,6 +1980,27 @@ def test_clergy_exemption_reaches_only_ministry(registry, rule_id):
     assert rule.resolve(citizen_abroad)["consequence"] == "covered"
 
 
+BOILERPLATE_RESIDUAL = "This family returns its stated consequence"
+
+
+def test_case_free_residuals_say_what_applies():
+    """Review r3 low 9: 27 case-free rows at ea599b92 kept a residual that
+    referred to conditional cases they do not have."""
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    stale = [
+        row["rule_id"]
+        for row in rows
+        if row["residual_default"]["description"].startswith(
+            BOILERPLATE_RESIDUAL
+        )
+        or (
+            not row["cases"]
+            and "conditional case" in row["residual_default"]["description"]
+        )
+    ]
+    assert stale == []
+
+
 def test_consequences_live_in_cases_not_parameters():
     rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
     stored = [
@@ -2637,19 +2650,23 @@ def published_outcome(registry, rule, example):
     kind = example["calculation"]
     params = rule.parameters
     year = example["income_year"]
+    # Review r3 low 7: every outcome a case decides goes through resolve,
+    # with every case whose conditions the example's facts meet.
     if kind == "domestic_threshold":
         annual = facts.pop("weekly_cash_wages") * facts.pop("weeks")
         over_18 = facts.pop("employee_over_18")
         unrelated = facts.pop("employee_unrelated")
         eligible = over_18 and unrelated
         threshold = registry.threshold(params["threshold_id"], year)
+        minor = set() if over_18 else {"minor_not_principal_occupation"}
+        decided = rule.resolve(minor)["consequence"]
         result = {
             "annual_cash_wages_dollars": annual,
             "social_security_coverage": (
                 "covered"
                 if eligible
                 and annual >= threshold
-                and rule.consequence == "covered_above_threshold"
+                and decided == "covered_above_threshold"
                 else "noncovered"
             ),
         }
@@ -2661,6 +2678,7 @@ def published_outcome(registry, rule, example):
             clears = cash >= 100 * registry.threshold(threshold_id, year)
             all_cash = params["all_cash_covered_when_test_met"]
             suffix = ""
+            matched = set()
         else:
             annual = facts.pop("expected_annual_cash_at_least_cents")
             over_18 = facts.pop("employee_over_18")
@@ -2671,6 +2689,7 @@ def published_outcome(registry, rule, example):
             )
             all_cash = params["all_cash_covered_when_threshold_met"]
             suffix = "_per_payday"
+            matched = set() if over_18 else {"minor_not_principal_occupation"}
         ss_cash = cash + (
             employer_paid_tax
             if params["employer_paid_employee_fica_included_in_wages"]
@@ -2681,7 +2700,8 @@ def published_outcome(registry, rule, example):
                 ss_cash
                 if clears
                 and all_cash
-                and rule.consequence == "covered_above_threshold"
+                and rule.resolve(matched)["consequence"]
+                == "covered_above_threshold"
                 else 0
             ),
             f"federal_income_tax_wages{suffix}_cents": cash
@@ -2713,32 +2733,33 @@ def published_outcome(registry, rule, example):
         business = facts.pop("trade_or_business")
         controlled = facts.pop("son_controls_work")
         assert parent and business and controlled
-        case = next(
-            c
+        matched = {
+            c["case_id"]
             for c in rule.cases
             if c["when"]
             .get("family_service", "")
             .startswith("parent employed by child in")
-        )
-        result = {"social_security_coverage": case["consequence"]}
+        }
+        assert matched
+        decided = rule.resolve(matched)["consequence"]
+        result = {"social_security_coverage": decided}
     elif kind == "order_service":
         required = facts.pop("required_order_duties")
         vow = facts.pop("vow_of_poverty")
         if required and vow:
-            excluded = params["poverty_vow_self_employment_excluded"]
-            result = {
-                "self_employment_coverage": (
-                    "noncovered" if excluded else "covered"
-                )
-            }
+            # The example states no order election.
+            assert params["poverty_vow_self_employment_excluded"]
+            decided = rule.resolve({"vow_duties_without_election"})
+            result = {"self_employment_coverage": decided["consequence"]}
         else:
-            consequence = next(
-                c["consequence"]
+            matched = {
+                c["case_id"]
                 for c in rule.cases
                 if c["when"]
                 .get("religious_order_service", "")
                 .startswith("ordinary employment for a third party")
-            )
+            }
+            consequence = rule.resolve(matched)["consequence"]
             result = {
                 "social_security_and_medicare_treatment": {
                     "noncovered": "not_subject_to_FICA",
@@ -2750,12 +2771,15 @@ def published_outcome(registry, rule, example):
         condition = (
             "effective 1402(e) exemption" if effective else "not established"
         )
-        consequence = next(
-            c["consequence"]
+        matched = {
+            c["case_id"]
             for c in rule.cases
             if c["when"].get("clergy_or_religious_exemption") == condition
-        )
-        result = {"social_security_coverage": consequence}
+        }
+        assert len(matched) == 1
+        result = {
+            "social_security_coverage": rule.resolve(matched)["consequence"]
+        }
     elif kind == "section_218_reentry":
         new_member = facts.pop("state_treats_as_new_member")
         prior_vote = facts.pop("prior_vote")
@@ -2774,27 +2798,26 @@ def published_outcome(registry, rule, example):
         assert date(year, 1, 1) >= date.fromisoformat(
             params["mandatory_start"]
         )
-        if agreement:
-            case = next(
-                c
-                for c in rule.cases
-                if c["when"]
+        membership = (
+            "member of an IRS-qualified system"
+            if member
+            else "not a member of an IRS-qualified system"
+        )
+        # Both cases hold for an agreement-covered member; rank decides.
+        matched = {
+            c["case_id"]
+            for c in rule.cases
+            if c["when"].get("public_retirement_system_participation")
+            == membership
+            or (
+                agreement
+                and c["when"]
                 .get("section_218_position", "")
                 .startswith("covered by effective")
             )
-        else:
-            membership = (
-                "member of an IRS-qualified system"
-                if member
-                else "not a member of an IRS-qualified system"
-            )
-            case = next(
-                c
-                for c in rule.cases
-                if c["when"].get("public_retirement_system_participation")
-                == membership
-            )
-        result = {"social_security_coverage": case["consequence"]}
+        }
+        decided = rule.resolve(matched)["consequence"]
+        result = {"social_security_coverage": decided}
     elif kind == "minister_gross_concept":
         salary = facts.pop("salary_cents")
         housing = facts.pop("parsonage_value_cents", 0)
@@ -2810,16 +2833,17 @@ def published_outcome(registry, rule, example):
         participation = owner_participates or (
             agent_participates and params["agent_activities_count"]
         )
-        case = next(
-            c
+        matched = {
+            c["case_id"]
             for c in rule.cases
             if c["when"].get("material_participation") is participation
-        )
+        }
+        decided = rule.resolve(matched)["consequence"]
         result = {
             "rental_income_included_in_nese": {
                 "covered": True,
                 "noncovered": False,
-            }[case["consequence"]]
+            }[decided]
         }
     else:
         pytest.fail(f"missing published-example oracle: {kind}")

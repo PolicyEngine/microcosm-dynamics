@@ -61,7 +61,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -325,7 +324,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -482,7 +480,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -670,7 +667,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -872,7 +868,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1065,13 +1060,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "A Puerto Rico resident's net earnings are computed as a citizen's, without the section 933 exclusion; apply the other families."
     }
   },
   {
@@ -1191,13 +1185,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for 411(b); this family changes nothing else; apply the other families."
     }
   },
   {
@@ -1286,7 +1279,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": "FOREIGN_911_PRE1973_HISTORY_UNVERIFIED: the general override begins only after 1972; earlier underlying 911 text has not been obtained.",
     "cases": [],
     "open_alternatives": [
@@ -1396,7 +1388,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1494,7 +1485,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": "FOREIGN_911_1982_1983_QUALIFIER_UNVERIFIED: the amending act is obtained but the contemporaneous 911(d)(1)(B) definition has not been independently verified.",
     "cases": [],
     "open_alternatives": [
@@ -1634,13 +1624,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The 911(a)(1) exclusion is disregarded in computing net earnings, so foreign earned income stays in; apply the other families."
     }
   },
   {
@@ -1745,7 +1734,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": "POSSESSIONS_931_HISTORY_UNVERIFIED: before Pub. L. 100-203 (enacted 1987-12-22), former 411(a)(7) and (a)(8) applied the former section 931 and 932 possessions rules, whose operative text is not captured. Section 9023 states no effective date, so whether its replacement reaches days before enactment is not established.",
     "cases": [],
     "open_alternatives": [
@@ -1821,7 +1809,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
@@ -1991,7 +1978,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2087,7 +2073,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": "HEALTH_INSURANCE_PRE1987_HISTORY_UNVERIFIED: the later 162(l)/(m) provision has a verified 1987 start, but earlier treatment under other provisions is not fully reconstructed.",
     "cases": [],
     "open_alternatives": [
@@ -2237,13 +2222,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
     }
   },
   {
@@ -2347,13 +2331,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The 162(l) deduction is not subtracted in computing net earnings; apply the other families."
     }
   },
   {
@@ -2467,13 +2450,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "411(a)(15), which the 2010 temporary amendment did not change, keeps the 162(l) deduction out of coverage net earnings; apply the other families."
     }
   },
   {
@@ -2601,13 +2583,12 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "411(f) adds the deceased partner's allocated share through the month of death to the final-year computation; otherwise the ordinary partnership rules apply."
     }
   }
 ]

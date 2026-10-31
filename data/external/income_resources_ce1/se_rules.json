@@ -1,6 +1,5 @@
 [
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -52,11 +51,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -226,7 +224,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -345,7 +342,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "26 USC 1402(g), pinned LII republication",
@@ -466,7 +462,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -661,7 +656,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -884,7 +878,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1099,7 +1092,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1240,7 +1232,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1404,7 +1395,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1583,7 +1573,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1743,7 +1732,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -1890,7 +1878,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411",
@@ -1993,11 +1980,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No director-specific deemed-receipt rule yet: director fees enter net earnings for their taxable year under the ordinary rules; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411",
@@ -2105,11 +2091,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Director fees count in the taxable year the services were performed, unless actually paid and received earlier; they are net earnings either way; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411",
@@ -2287,11 +2272,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Section 411 no longer deems director fees received in the service year; they enter net earnings under the ordinary 411 computation; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -2573,7 +2557,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -2777,7 +2760,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3009,7 +2991,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3093,11 +3074,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "411(j) does not reach payments before 1998, so this family excludes nothing; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3237,7 +3217,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3304,11 +3283,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No limited-partner exclusion yet: a limited partner's distributive share enters net earnings under the ordinary partnership rules; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3462,7 +3440,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3585,11 +3562,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The regular computation applies, or the farm optional computation when elected; the result counts once it meets the self-employment minimum."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -3787,11 +3763,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The regular computation applies, or a farm or nonfarm optional computation when its conditions hold and it is elected; the result counts once it meets the self-employment minimum."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -4234,11 +4209,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "The regular computation applies, or a farm or nonfarm optional computation with the indexed limits when its conditions hold and it is elected; the result counts once it meets the self-employment minimum."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -4306,11 +4280,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "411(h) does not yet apply, so a dealer's section 1256 gains and losses follow the ordinary capital-gain exclusion; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -4423,11 +4396,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "An options or commodities dealer's ordinary-course section 1256 gains and losses enter net earnings despite the capital-gain exclusion; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -4607,7 +4579,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -4737,11 +4708,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "No 411(a)(16) election yet: spouses' joint business income follows the partnership and community-income rules; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -4880,7 +4850,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 USC 411, pinned LII republication",
@@ -4991,7 +4960,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -5157,7 +5125,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -5263,11 +5230,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "One unit: other net earnings count once they reach $400; apply the other families."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -5514,7 +5480,6 @@
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -5631,11 +5596,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Church employee income and other net earnings are separate units with $100 and $400 minimums; each counts once it meets its own."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -5858,11 +5822,10 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "This family returns its stated consequence when none of its conditional cases applies; apply the other relevant coverage families as well."
+      "description": "Separate ordinary and church units; regular positive net earnings receive the 411(a)(11) deduction before the unit minimums apply."
     }
   },
   {
-    "alternative": null,
     "citations": [
       {
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",

@@ -498,7 +498,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1055,7 +1054,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -1778,7 +1776,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2000,7 +1997,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [],
     "open_alternatives": [],
@@ -2160,7 +2156,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2429,7 +2424,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2550,7 +2544,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2738,7 +2731,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -2986,7 +2978,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3368,7 +3359,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3699,7 +3689,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -3920,7 +3909,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4126,7 +4114,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4256,7 +4243,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4484,7 +4470,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -4893,7 +4878,6 @@
         }
       ]
     },
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5064,7 +5048,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5226,7 +5209,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5523,7 +5505,6 @@
       }
     ],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": null,
     "cases": [
       {
@@ -5796,7 +5777,6 @@
     },
     "worked_examples": [],
     "rare_exclusion": null,
-    "alternative": null,
     "open_reason": "TERRITORIAL_GOVERNMENT_HISTORY_UNVERIFIED: POMS dates and selected exceptions are pinned, but the complete family still requires the historical governor-certification records under Public Law 86-778 section 103(v), federal-retirement exceptions, independent 410(a) exclusions, and CNMI pre-1987/2012 transition authorities. The verified subcases must not imply that every territorial government record is classified.",
     "cases": [],
     "open_alternatives": [
