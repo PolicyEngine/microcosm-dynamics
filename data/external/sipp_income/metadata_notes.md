@@ -54,9 +54,10 @@ entities decoded:
 - the visible text with HTML comments, read twice, each time with a tag
   counted as a space: once with every span from a `<` to the next `>` taken
   for a tag and each script or style element that an end tag closes left
-  out, and once as a browser reads it, where a tag opens only with a
-  letter, `!` or `/`, script and style contents are left out, and title,
-  textarea and xmp contents are text, up to their end tag or the end of the
+  out, and once as a browser reads it, where a tag opens only with an
+  ASCII letter, `!` or `/`, script and style contents are left out, and
+  title, textarea and xmp contents are text, each up to `</` and its name,
+  folded as ASCII, followed by whitespace, `/` or `>`, or to the end of the
   page;
 - the page source with its tags, attributes and scripts, where the 40
   characters also hold no angle bracket, quote or equals sign. href and src
@@ -65,9 +66,9 @@ entities decoded:
   Script and style contents, up to their end tag or the end of the page,
   are read as they stand, so no `<` in script code hides a `src`
   assignment. The source is read twice: once with those elements found
-  where a browser starts them, in one scan from the start of the page, so
-  that a `<script` inside a quoted value opens none, and once with one
-  starting at every `<script` or `<style`, even inside another tag;
+  where a browser starts and ends them, in one scan from the start of the
+  page, so that a `<script` inside a quoted value opens none, and once with
+  one starting at every `<script` or `<style`, even inside another tag;
 - one at a time, each quoted attribute value other than href and src; each
   double- or single-quoted string in a script, as a scan from the script's
   start finds them, even one that an escaped quote mark opens; each
@@ -88,20 +89,27 @@ timed by a test on invented pages of 200 to 780 kB.
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
-name and its value in different attribute values or script strings, or one
-of them in a string and the other in script code; a script string after a
-lone quote mark in a comment, a regular expression or a template literal,
-which the scan of double- and single-quoted strings takes to open one, as
-in a comment such as `// it's`; an identifier and its value split by a
-tag, quote or equals sign in script or style code outside a quoted string,
-as in a comparison `PNUM < 101` or markup in a `text/template` script, or
-in an unquoted attribute value, as in `alt=PNUM's-101`; a value inside a
-tag after an identifier in the text, as in `PNUM <i 101`; a quoted
-attribute value in an end tag or a `<!` declaration, or after a name with
-marks other than `_ : . -`, as in `[alt]`; an attribute value that holds a
-raw `>`, which ends its tag; a value in an href or src value, unless it is
-a run of 14 or more digits; and a cell outside a table's first row and
-header cells that names an identifier after other words.
+name split by a tag or an invisible character, as in `PN<b></b>UM` or
+`SS&shy;UID`; an identifier name and its value in different attribute
+values, script strings or style strings, or one of them in a string and
+the other in script code; a script string after a lone quote mark in a
+comment, a regular expression or a template literal, which the scan of
+double- and single-quoted strings takes to open one, as in a comment such
+as `// it's`; an identifier and its value split by a tag, quote or equals
+sign in script or style code outside a quoted string, as in a comparison
+`PNUM < 101` or markup in a `text/template` script, or in an unquoted
+attribute value, as in `alt=PNUM's-101`; a value inside a tag after an
+identifier in the text, as in `PNUM <i 101`; comment marks that the text
+readings, which read comments as text, take another way than a browser: a
+comment that holds a script or style opening, which they take to hide the
+text after the comment up to an end tag, and a tag that ends with `-->`,
+as in `<b-->`, which they take to run on to the next `>`; nine digits after
+a comment closed by `--!>`, which the nine-digit rule reads as still open;
+a quoted attribute value in an end tag or a `<!` declaration, or after a
+name with marks other than `_ : . -`, as in `[alt]`; an attribute value
+that holds a raw `>`, which ends its tag; a value in an href or src value,
+unless it is a run of 14 or more digits; and a cell outside a table's first
+row and header cells that names an identifier after other words.
 
 The rules in turn refuse some pages that hold no case record, and such a
 page stops the capture loudly:
@@ -113,10 +121,17 @@ page stops the capture loudly:
 - a quoted value that names an identifier before a count across an
   apostrophe or decoded markup, as in a page summary `The SSUID's format in
   the 2018 panel, as 112 notes say`;
+- a template literal that holds JSON naming an identifier before a count,
+  as in `` `{"name": "SSUID", "pages": "112"}` ``, since a template literal
+  is read whole;
 - a link slug such as `ssuid-2024` in a script string or a `text/template`
   script, or in an `xlink:href`, `:href` or `img.src` value: the source
   reading removes those values as link targets, but the quoted-value
   reading skips only values named href or src;
+- a malformed tag whose quoted href value holds a script opening, as in
+  `<a href="<script src="/ssuid-2024.js">`: the browser scan of the source
+  removes the href value, which closes at the quote mark before the slug,
+  and reads the slug;
 - a definition that prints a comparison such as `PNUM < 101` in the
   visible text.
 

@@ -20,6 +20,7 @@ import re
 import signal
 import subprocess
 import sys
+import types
 import unicodedata
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -75,6 +76,26 @@ def _module(filename):
     spec = importlib.util.spec_from_file_location(name, EVIDENCE / filename)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    return module
+
+
+# The capture guard as round 8 reviewed it (085a33b9), frozen as text so
+# that no test run collects or imports it as a test module: every page it
+# refuses, the guard must refuse too.
+ROUND_8_GUARD = (
+    Path(__file__).parent / "fixtures" / "capture_user_notes_085a33b9.py.txt"
+)
+ROUND_8_GUARD_SHA256 = (
+    "b4b2e28c45cf53188d787cd811113f07ae44dbbbe7aab92eca5f53d0574a5d41"
+)
+
+
+@cache
+def _round_8_guard():
+    source = ROUND_8_GUARD.read_bytes()
+    module = types.ModuleType("invented_test_round_8_guard")
+    module.__file__ = str(ROUND_8_GUARD)
+    exec(compile(source, str(ROUND_8_GUARD), "exec"), module.__dict__)
     return module
 
 
@@ -1092,6 +1113,72 @@ INVENTED_RECORD_PAGES = {
     "string_after_script_name_with_long_s": (
         '<\u017fcript>a = "x</script><script>s = "<b>PNUM</b> 101";</script>'
     ),
+    # Round 10: pages that 085a33b9's guard refuses and only one reading
+    # refuses here: the split alone, for a script in an unclosed tag that
+    # runs over lines, is in upper case or holds an end tag in a string,
+    # and the double-quoted strings, read apart from template literals.
+    "multi_line_script_inside_unclosed_tag": (
+        "<a<script>\nif(i<n) src=PNUM+101;\n</script>"
+    ),
+    "upper_case_script_inside_unclosed_tag": (
+        "<a<SCRIPT>if(i<n) src=PNUM+101;</SCRIPT>"
+    ),
+    "end_tag_in_string_inside_unclosed_tag": (
+        '<a<script>x = "</b>"; if(i<n) src=PNUM+101;</script>'
+    ),
+    "string_across_template_literal": (
+        '<script>a = `x "PNUM (y\'s)` 101";</script>'
+    ),
+    # Round 10: the same forms for the browser readings alone: the browser
+    # scan of the source, for a script over lines or in upper case after a
+    # style tag in a quoted value, and the browser text, decoded, with
+    # element names in either case and comments unwrapped.
+    "multi_line_script_after_style_tag_in_quoted_value": (
+        '<a title="<style>"><script>\nx="</style>"; if(i<n) src=PNUM+101;'
+        "\n</script>"
+    ),
+    "upper_case_script_after_style_tag_in_quoted_value": (
+        '<a title="<style>"><SCRIPT>x="</style>"; if(i<n) src=PNUM+101;'
+        "</SCRIPT>"
+    ),
+    "textarea_contents_with_encoded_digits": (
+        "<textarea>PNUM <b &#49;&#48;&#49;</textarea>"
+    ),
+    "upper_case_title_contents": "<TITLE>PNUM <i 101</TITLE>",
+    "comment_comparison": "<!-- PNUM < 101 --><p>x</p>",
+    # Round 10: a browser ends a script, style, title, textarea or xmp
+    # element at "</" and its name followed by whitespace, "/" or ">", and
+    # folds only ASCII letters in tag names, so a name with a long s, the
+    # Kelvin sign or a dotless or dotted capital i opens no tag, names no
+    # script and ends no element.
+    "script_end_tag_with_attribute": (
+        "<script>x</script foo><p>PNUM <b>101</b></p><script>y</script>"
+    ),
+    "script_end_tag_self_closing": (
+        "<script>x</script/><p>PNUM <b>101</b></p><script>y</script>"
+    ),
+    "style_end_tag_with_attribute": (
+        "<style>a{}</style foo><p>PNUM <b>101</b></p><style>b{}</style>"
+    ),
+    "long_s_script_element": "<\u017fcript>PNUM <b>101</b></\u017fcript>",
+    "long_s_style_element": "<\u017ftyle>PNUM <b>101</b></\u017ftyle>",
+    "long_s_script_element_with_strings": (
+        '<\u017fcript>x = "PNUM"; y = "<b>101</b>";</\u017fcript>'
+    ),
+    "text_lt_long_s": "<p>PNUM <\u017f 101></p>",
+    "text_lt_kelvin_sign": "<p>PNUM <\u212a 101></p>",
+    "text_lt_dotless_i": "<p>PNUM <\u0131 101></p>",
+    "text_lt_dotted_capital_i": "<p>PNUM <\u0130 101></p>",
+    "dotted_capital_i_script_name_shows_markup": (
+        '<SCR\u0130PT>PNUM <b class="invented-highlight invented-emphasis">'
+        "101</b></SCR\u0130PT>"
+    ),
+    "title_end_tag_with_dotted_capital_i": (
+        "<title>x</T\u0130TLE>PNUM <i 101</title>"
+    ),
+    "script_end_tag_with_dotted_capital_i": (
+        "<script>x</scr\u0130pt><img src=PNUM+101></script>"
+    ),
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -1198,6 +1285,33 @@ INVENTED_DEFINITION_PAGES = {
     "script_name_with_dotted_capital_i": (
         '<SCR\u0130PT>var invented = {"id": "4567"};</script>'
         "<p>SSUID names the invented household.</p>"
+    ),
+    # Round 10: a count before an identifier in the text, which joining the
+    # two text readings with a space would place after one.
+    "count_before_identifier": "<p>112 notes describe the SSUID</p>",
+    # Round 10: pages a browser shows with no identifier beside a value. A
+    # browser ends a script at "</script foo>", but not at "</scripts>",
+    # hides an upper-case script, opens no script at a name with a dotted
+    # capital i and reads no end tag's attributes; and "<" before a long s
+    # opens no tag, so a src value after it stays text.
+    "script_end_tag_with_attribute_ends_link_target": (
+        '<a title="<style>"><script>x</script foo>y</style>'
+        "<img src=/ssuid-2024.png></script>"
+    ),
+    "dotted_capital_i_script_name_ends_link_target": (
+        "<script>x</script foo><SCR\u0130PT>y</script>"
+        '<img src="/ssuid-2024.png">'
+    ),
+    "script_end_tag_attributes": '<script>x</script a="PNUM" b="101">',
+    "script_end_tag_name_runs_on": (
+        "<script>x</scripts><p>PNUM <b>101</b></p></script>"
+    ),
+    "upper_case_script_strings": (
+        '<SCRIPT>var invented = {"title": "Invented PNUM note", '
+        '"id": "4567"};</SCRIPT>'
+    ),
+    "link_target_after_lt_long_s": (
+        "<p><\u017f title=PNUM src=/invented/a.png 101></p>"
     ),
 }
 
@@ -1413,20 +1527,31 @@ def test_identifier_value_window_is_forty_characters(width, refused):
     assert record_bearing_note(body) == refused
 
 
-# Invented pages of 200 to 780 kB in forms that a quadratic pattern reads
-# for minutes: a long word in a tag, escaped quotes after an unpaired quote
-# in a script, tags and comments that never close, script start tags with
-# no end tag, and table rows and cells that name an identifier.
+# Invented pages of 100 kB to 2.1 MB in forms that a quadratic pattern
+# reads for minutes: a long word in a tag, plain or hyphenated; escaped
+# quotes after an unpaired quote in a script; tags and comments that never
+# close, alone or after closed tags; script start tags with no end tag,
+# with no ">" or after end tags; and table rows and cells that name an
+# identifier, alone or after rows of digits.
 INVENTED_LONG_PAGES = {
     "long_word_in_tag": "<p " + "a" * 200_000 + ">x</p>",
+    "hyphenated_word_in_tag": "<p " + "a-" * 50_000 + ">x</p>",
     "escaped_quotes_in_script": (
-        '<script>s = "' + '\\"' * 100_000 + "</script>"
+        '<script>s = "' + '\\"' * 500_000 + "</script>"
     ),
     "unclosed_tags": "<a" * 200_000,
+    "unclosed_tags_after_closed_tags": "<b>" * 133_000 + "<a" * 200_000,
     "script_start_tags": "<script>" * 50_000,
+    "script_start_tags_without_bracket": "<script" * 300_000 + ">",
+    "script_start_tags_after_end_tags": (
+        "</script>" * 20_000 + "<script>" * 20_000
+    ),
     "unclosed_comments": "<!--" * 100_000,
     "identifier_rows": (
         "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
+    ),
+    "identifier_rows_after_digit_rows": (
+        "<table>" + "<tr><td>7" * 45_000 + "<tr><td>PNUM" * 33_000
     ),
     "identifier_cells_in_row": (
         "<table><tr><td>x</td></tr><tr>" + "<td>PNUM</td>" * 60_000
@@ -1447,14 +1572,16 @@ print(time.process_time() - start)
 
 @pytest.mark.parametrize("kind", sorted(INVENTED_LONG_PAGES))
 def test_guard_reads_long_pages_in_linear_time(kind):
-    # The guard read each page in under a second of CPU time, and the
-    # quadratic patterns it replaced, by their growth over a tenth of each
-    # page, would take from about two minutes to half an hour on the same
-    # host. The row of identifier cells is long enough that summing the row
-    # once per identifier cell also runs past the limit. The guard runs in a
-    # child process that the operating system stops after 6 s of CPU time,
-    # so a slow pattern fails here instead of stalling the run; CPU time,
-    # unlike wall time, grows little with host load.
+    # The guard read each page in under 1.5 s of CPU time, and the
+    # quadratic patterns it replaced, by their growth over a tenth of a
+    # page, would take from about two minutes to over an hour on the same
+    # host. Each page is also long enough that a slower form of a linear
+    # helper found in review, such as summing the row once per identifier
+    # cell or finding the last ">" again for each match, runs past the
+    # limit: by its growth, for 20 s or more. The guard runs in a child
+    # process that the operating system stops after 6 s of CPU time, so a
+    # slow pattern fails here instead of stalling the run; CPU time, unlike
+    # wall time, grows little with host load.
     child = subprocess.run(
         [
             sys.executable,
@@ -1488,6 +1615,11 @@ LINEAR_TOKENS = (
     "</script>",
     "</script >",
     "</scr\u0131pt>",
+    "</scr\u0130pt>",
+    "</script x>",
+    "</script/>",
+    "<\u017f",
+    "<\u212a",
     "<style>",
     "</style>",
     "<title>",
@@ -1496,9 +1628,16 @@ LINEAR_TOKENS = (
     "</noscript>",
     "<table>",
     "<tr>",
+    "</tr>",
     "<td>",
     "</td>",
+    "<th>",
+    ' scope="row"',
     "<pre>",
+    " alt=",
+    " a-b=",
+    " a:b=",
+    "a.b=",
     '"',
     "'",
     "`",
@@ -1508,6 +1647,11 @@ LINEAR_TOKENS = (
     " ",
     "\n",
     "x",
+    "Variable",
+    "Description",
+    "PNUM",
+    "7",
+    "101",
 )
 
 
@@ -1517,8 +1661,11 @@ LINEAR_TOKENS = (
 @settings(max_examples=300, deadline=None)
 def test_linear_readings_match_their_patterns(tokens):
     # Each helper that keeps a reading linear gives what the plain pattern
-    # gives, on invented text. The examples spell "script" with a long s
-    # and with a dotted capital I, which "(?i)" reads as an s and an i.
+    # gives, on invented text, and so do the attribute pattern, whose names
+    # start only where a run of name characters starts, and the table rules,
+    # which read each row and column once, where round 8's guard read them
+    # cell by cell. The examples spell "script" with a long s and with a
+    # dotted capital I, which "(?i)" reads as an s and an i.
     text = "".join(tokens)
     capture = _module("capture_user_notes.py")
     for pattern in (
@@ -1555,6 +1702,92 @@ def test_linear_readings_match_their_patterns(tokens):
             "".join(strings) if isinstance(strings, tuple) else strings
             for strings in found
         ]
+    for tag in re.findall(r"<[A-Za-z][^>]*>", text):
+        assert capture.ATTRIBUTE.findall(tag) == re.findall(
+            r"([\w:.-]+)\s*=\s*(?:\"([^\"]*)\"|'([^']*)')", tag
+        )
+    for table in capture._finditer(capture.TABLE, text):
+        assert capture._identifier_column(table.group()) == (
+            _round_8_guard()._identifier_column(table.group())
+        )
+
+
+def test_round_8_guard_fixture_is_frozen():
+    assert hashlib.sha256(ROUND_8_GUARD.read_bytes()).hexdigest() == (
+        ROUND_8_GUARD_SHA256
+    )
+
+
+# Parts of the pages the rule property draws, one from each in turn: the
+# forms the round-9 review found that only one reading refuses, a script
+# in an unclosed tag that runs over lines, is in upper case or holds an end
+# tag in a string, and a double-quoted string across a template literal,
+# with other openings, contents and end tags. A plain random search over
+# tokens found the first forms only after thousands of pages.
+RULE_PARTS = (
+    ("", "<a", "<a ", '<a title="<style>">', "<p>"),
+    (
+        "<script>",
+        "<SCRIPT>",
+        "<style>",
+        "<title>",
+        "<\u017fcript>",
+        "<SCR\u0130PT>",
+    ),
+    ("", "\n"),
+    ("", 'x = "</b>"; ', 'x="</style>"; ', "a = `x "),
+    (
+        "if(i<n) src=PNUM+101;",
+        '"PNUM (y\'s)` 101";',
+        "PNUM <i 101",
+        "PNUM <b>101</b>",
+    ),
+    ("", "\n"),
+    ("", "</script>", "</SCRIPT>", "</script foo>", "</style>", "</title>"),
+)
+
+
+@given(
+    parts=st.tuples(*(st.sampled_from(part) for part in RULE_PARTS)),
+    noise=st.lists(st.sampled_from(LINEAR_TOKENS), max_size=8),
+    place=st.integers(0, len(RULE_PARTS)),
+)
+@example(
+    parts=("<a", "<script>", "\n", "", "if(i<n) src=PNUM+101;", "\n", ""),
+    noise=["</script>"],
+    place=7,
+)
+@example(
+    parts=("<a", "<SCRIPT>", "", "", "if(i<n) src=PNUM+101;", "", ""),
+    noise=["</SCRIPT>"],
+    place=7,
+)
+@example(
+    parts=(
+        "<a",
+        "<script>",
+        "",
+        'x = "</b>"; ',
+        "if(i<n) src=PNUM+101;",
+        "",
+        "</script>",
+    ),
+    noise=[],
+    place=0,
+)
+@example(
+    parts=("", "<script>", "", "a = `x ", '"PNUM (y\'s)` 101";', "", ""),
+    noise=["</script>"],
+    place=7,
+)
+@settings(max_examples=300, deadline=None)
+def test_no_page_the_round_8_guard_refuses_is_admitted(parts, noise, place):
+    # The rule of rounds 9 and 10: the guard keeps every reading 085a33b9
+    # made, so every page that guard refuses is refused. Invented noise
+    # tokens go between two of the parts.
+    page = "".join(parts[:place]) + "".join(noise) + "".join(parts[place:])
+    if _round_8_guard().record_bearing_note(page):
+        assert _module("capture_user_notes.py").record_bearing_note(page)
 
 
 @given(

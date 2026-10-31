@@ -74,16 +74,30 @@ def _element(names: str) -> str:
     return rf"(?is)<({names})\b[^>]*>(.*?)(?:</\1\s*>|$)"
 
 
+def _browser_element(names: str) -> str:
+    """An element of one of ``names`` as a browser starts and ends it, or a
+    tag. The names, the end tag's repeat of the opening's name and a tag's
+    first letter fold ASCII letters only, as a browser's do, so "ſ", the
+    Kelvin sign, "ı" and "İ" match no ASCII letter; ``\\b`` still reads
+    Unicode word characters. The element ends at ``</name`` followed by
+    whitespace, ``/`` or ``>``, through the next ``>``, or at the end of
+    the page."""
+    return (
+        rf"(?is)<((?a:{names}))\b[^>]*>(.*?)"
+        r"(?:</(?a:\1)(?=[\t\n\f\r />])[^>]*(?:>|$)|$)"
+        rf"|(?a:{TAG})"
+    )
+
+
 # Script and style elements, one at every "<script" or "<style".
 ELEMENT = re.compile(_element("script|style"))
-# The same elements where a browser starts them, and the tags between.
-BROWSER_SOURCE = re.compile(_element("script|style") + "|" + TAG)
+# The same elements where a browser starts and ends them, and the tags
+# between.
+BROWSER_SOURCE = re.compile(_browser_element("script|style"))
 # Elements whose contents a browser does not parse as tags: script and
 # style contents are not shown, and title, textarea and xmp contents are
 # shown as text.
-BROWSER_TEXT = re.compile(
-    _element("script|style|title|textarea|xmp") + "|" + TAG
-)
+BROWSER_TEXT = re.compile(_browser_element("script|style|title|textarea|xmp"))
 # Scripts for their strings, as the round-8 guard read them: any end tag
 # that "(?i)script" matches ends one, where the template's end tag must
 # repeat the opening's name, which Python's re compares in lower case. The
@@ -119,7 +133,11 @@ def _finditer(pattern: re.Pattern, text: str):
     tag opens. Python's re retries such a pattern at each ``<`` that no
     ``>`` follows, each time to the end of the text. No match starts after
     the last ``>``, so the search stops there; a match that reaches it is
-    matched again on the whole text, where it may run to the end."""
+    matched again on the whole text, where it may run to the end. That
+    relies on ``(?s)`` in each pattern that can end with ``$``: a match the
+    search ends at that ``>`` with ``$`` must, matched again, run on past
+    every character after it, line ends included, and without ``(?s)`` it
+    stops at a line end, so ``pattern.match`` returns None."""
     end = text.rfind(">") + 1
     for match in pattern.finditer(text, 0, end):
         if match.end() == end:
@@ -192,13 +210,16 @@ def note_text(body: str) -> str:
 
 
 def _browser_text(body: str) -> str:
-    """The text as a browser reads it: a tag opens with a letter, ``!`` or
-    ``/``, script and style contents are not shown, and title, textarea and
-    xmp contents are text as they stand, up to their end tag or the end of
-    the page."""
+    """The text as a browser reads it: a tag opens with an ASCII letter,
+    ``!`` or ``/``, script and style contents are not shown, and title,
+    textarea and xmp contents are text as they stand, up to their end tag
+    or the end of the page."""
 
     def shown(match):
-        if match.group(1) and match.group(1).casefold() not in {
+        # Names compare in lower case, which keeps "ſ", "ı" and "İ" apart
+        # from "s" and "i", as a browser's ASCII folding does; casefold
+        # would read "<ſcript>" as a script.
+        if match.group(1) and match.group(1).lower() not in {
             "script",
             "style",
         }:
@@ -312,11 +333,12 @@ def _without_link_targets(body: str) -> tuple[str, str]:
     are code, not tags: they are kept as they stand, and only their opening
     tag loses its href and src values. So no ``<`` in script code, such as
     ``i<n`` or ``a</b``, hides a ``src`` assignment. The first reading finds
-    these elements where a browser starts them, in one scan from the start
-    of the page, so a ``<script`` inside a quoted value opens none. The
-    second starts an element at every ``<script`` or ``<style``, even inside
-    another tag, as the guard did before the first was added; it is kept
-    because the first, alone, would admit some pages it refuses."""
+    these elements where a browser starts and ends them, in one scan from
+    the start of the page, so a ``<script`` inside a quoted value opens
+    none. The second starts an element at every ``<script`` or ``<style``,
+    even inside another tag, as the guard did before the first was added;
+    it is kept because the first, alone, would admit some pages it
+    refuses."""
 
     def browser(match):
         if match.group(1):
@@ -412,10 +434,11 @@ def record_bearing_note(body: str) -> bool:
         read twice, each time with a tag counted as a space: once with
         every span from a ``<`` to the next ``>`` taken for a tag and each
         script or style element that an end tag closes left out, and once
-        as a browser reads it, where a tag opens only with a letter, ``!``
-        or ``/``, script and style contents are left out, and title,
-        textarea and xmp contents are text, up to their end tag or the end
-        of the page;
+        as a browser reads it, where a tag opens only with an ASCII letter,
+        ``!`` or ``/``, script and style contents are left out, and title,
+        textarea and xmp contents are text, each up to ``</`` and its name,
+        folded as ASCII, followed by whitespace, ``/`` or ``>``, or to the
+        end of the page;
       - the page source with its tags, attributes and scripts, where the
         40 characters hold no angle bracket (a tag, or a ``<`` or ``>``
         decoded from an entity), quote or equals sign either. href and src
@@ -423,9 +446,9 @@ def record_bearing_note(body: str) -> bool:
         and from their opening tags, while script and style contents, up to
         their end tag or the end of the page, are read as they stand. It is
         read twice: once with those elements found where a browser starts
-        them, in one scan from the start of the page, and once with one
-        starting at every ``<script`` or ``<style``, even inside another
-        tag;
+        and ends them, in one scan from the start of the page, and once
+        with one starting at every ``<script`` or ``<style``, even inside
+        another tag;
       - one at a time: each quoted attribute value other than href and src;
         each double- or single-quoted string in a script, as a scan from
         the script's start finds them, even one that an escaped quote mark
@@ -447,16 +470,24 @@ def record_bearing_note(body: str) -> bool:
 
     These forms are out of scope, so a page that holds only them is stored:
     a value before its identifier name; ``<br>``-separated CSV text without
-    an identifier; div grids; an identifier name and its value in different
-    attribute values or script strings, or one of them in a string and the
-    other in script code; a script string after a lone quote mark in a
-    comment, a regular expression or a template literal, which the scan of
-    double- and single-quoted strings takes to open one, as in a comment
-    such as ``// it's``; an identifier and its value split by a tag, quote
-    or equals sign in script or style code outside a quoted string, as in a
+    an identifier; div grids; an identifier name split by a tag or an
+    invisible character, as in ``PN<b></b>UM`` or ``SS&shy;UID``; an
+    identifier name and its value in different attribute values, script
+    strings or style strings, or one of them in a string and the other in
+    script code; a script string after a lone quote mark in a comment, a
+    regular expression or a template literal, which the scan of double- and
+    single-quoted strings takes to open one, as in a comment such as
+    ``// it's``; an identifier and its value split by a tag, quote or
+    equals sign in script or style code outside a quoted string, as in a
     comparison ``PNUM < 101`` or markup in a ``text/template`` script, or in
     an unquoted attribute value, as in ``alt=PNUM's-101``; a value inside a
-    tag after an identifier in the text, as in ``PNUM <i 101``; a quoted
+    tag after an identifier in the text, as in ``PNUM <i 101``; comment
+    marks that the text readings, which read comments as text, take another
+    way than a browser: a comment that holds a script or style opening,
+    which they take to hide the text after the comment up to an end tag,
+    and a tag that ends with ``-->``, as in ``<b-->``, which they take to
+    run on to the next ``>``; nine digits after a comment closed by
+    ``--!>``, which the nine-digit rule reads as still open; a quoted
     attribute value in an end tag or a ``<!`` declaration, or after a name
     with marks other than ``_ : . -``, as in ``[alt]``; an attribute value
     that holds a raw ``>``, which ends its tag; a value in an href or src
@@ -472,14 +503,19 @@ def record_bearing_note(body: str) -> bool:
     or an index row ``SSUIDs. See 112 notes.``; a quoted value that names
     an identifier before a count across an apostrophe or decoded markup, as
     in a page summary ``The SSUID's format in the 2018 panel, as 112 notes
-    say``; a link slug such as ``ssuid-2024`` in a script string or a
-    ``text/template`` script, or in an ``xlink:href``, ``:href`` or
-    ``img.src`` value, which the source reading removes as a link target
-    but the quoted-value reading reads, since it skips only values named
-    href or src; and a definition that prints a comparison such as
-    ``PNUM < 101`` in the text. A decimal character reference of more than
-    4,300 digits makes ``html.unescape`` raise, which stops the capture
-    too.
+    say``; a template literal that holds JSON naming an identifier before a
+    count, as in ``{"name": "SSUID", "pages": "112"}``, since a template
+    literal is read whole; a link slug such as ``ssuid-2024`` in a script
+    string or a ``text/template`` script, or in an ``xlink:href``,
+    ``:href`` or ``img.src`` value, which the source reading removes as a
+    link target but the quoted-value reading reads, since it skips only
+    values named href or src; a malformed tag whose quoted href value holds
+    a script opening, as in ``<a href="<script src="/ssuid-2024.js">``,
+    where the browser scan of the source removes the href value, which
+    closes at the quote mark before the slug, and reads the slug; and a
+    definition that prints a comparison such as ``PNUM < 101`` in the text.
+    A decimal character reference of more than 4,300 digits makes
+    ``html.unescape`` raise, which stops the capture too.
 
     Each reading takes time linear in the page's length; the slow forms
     found so far are timed in the tests.
