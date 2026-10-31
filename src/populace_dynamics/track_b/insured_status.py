@@ -36,8 +36,10 @@ assignment-independent minimum-QC proofs precede boundary complexity, skip
 unknown prior histories and stop at six QCs for blindness. Foreign credits
 preserve an unmodeled route before every credit-count proof; no totalization
 minimum or eligibility rule is claimed here. Fully-insured-only flags cannot
-bypass an independent recent-credit shortfall, but remain possible below six
-actual QCs when that proof does not apply.
+bypass a failed recent-rule scan under upper credits, but retain a possible
+pre1956 alternate. Blindness and unknown prior history disable that scan.
+The declared pre1956 flag adds no route beyond the automatic alternate.
+Flag-specific conditions remain declared facts rather than adjudicated rules.
 Short DIB-entitled prior periods remain possible. Observable specialist credit
 alternatives cannot silently produce ordinary-only uninsured answers. The
 query month is a hypothetical entitlement month, not medical or
@@ -1112,7 +1114,16 @@ def _assignment(rows, window, boundary):
     )
 
 
-def _witness(person, credits, at, exit_month, kind, *, onset=True):
+def _witness(
+    person,
+    credits,
+    at,
+    exit_month,
+    kind,
+    *,
+    onset=True,
+    ignore_fully_insured=False,
+):
     end = _qid(at)
     best = None
     # Source conflict us:oasdi-insured-prior-disability-favorable-disregard
@@ -1224,7 +1235,9 @@ def _witness(person, credits, at, exit_month, kind, *, onset=True):
                 assignment = _assignment(rows, window, boundary)
                 count = len(set(assignment) & set(window))
                 insured = count >= required and (
-                    fully if kind is InsuredTest.DISABILITY else True
+                    (fully or ignore_fully_insured)
+                    if kind is InsuredTest.DISABILITY
+                    else True
                 )
                 score = (insured, count - required, count, rule)
                 candidate = (
@@ -1530,9 +1543,12 @@ def _flagged_establishment_possible(person, years):
     Fully-route flags change only the fully insured prerequisite, leaving
     404.130's independent recent-credit rule standing (404.110-.112;
     RS00301.101/.106/.470/.475; Act 213(c)). They are handled after that
-    proof, before the six-QC floor: 404.111 states no numeric minimum.
-    DISABILITY_BEFORE_1956 replaces the recent test without adding credits
-    and requires twenty QCs (RS00301.480 A), so it follows both proofs.
+    numerical proof, and preserve possibility only if a recent rule or the
+    automatic pre1956 alternate remains possible. They bypass the ordinary
+    six-QC floor: 404.111 states no numeric minimum. The pre1956 flag adds
+    no route beyond the automatic alternate (RS00301.480 A/B.1); that
+    alternate still requires twenty QCs. No flag's own conditions are
+    adjudicated here.
 
     Raw-earnings flags affect compensation or SEI allocation (404.142/.144;
     RS00301.220/.340/.350). Final direct QC declarations already supply
@@ -1590,6 +1606,39 @@ def _minimum_current_period_qcs(person):
     return min(20, max(6, elapsed // 2))
 
 
+def _outside_prior_periods(person, quarter):
+    """A candidate start must not overlap any declared prior quarter."""
+    return all(
+        not _qid(period.start) <= quarter <= _qid(period.end)
+        for period in person.prior_disability_periods
+    )
+
+
+def _recent_rule_possible(person, credits, horizon, exit_month):
+    """404.130(b)-(d) possibility, relaxing only the fully prerequisite.
+
+    Upper credits preserve every feasible assignment and favorable prior
+    treatment. Failure in every eligible quarter therefore disproves all
+    lower fillings. Complexity cannot disprove a specialist declaration.
+    """
+    try:
+        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1):
+            if not _outside_prior_periods(person, quarter):
+                continue
+            if _witness(
+                person,
+                credits,
+                _qdate(quarter),
+                exit_month,
+                InsuredTest.DISABILITY,
+                ignore_fully_insured=True,
+            )[0]:
+                return True
+    except InsuredConfigurationUnsupported:
+        return True
+    return False
+
+
 def _could_establish_current_period(
     person,
     years,
@@ -1617,10 +1666,7 @@ def _could_establish_current_period(
         return True
     horizon = _current_period_start_horizon(person, month)
     if person.prior_disability_periods and not any(
-        all(
-            not _qid(period.start) <= quarter <= _qid(period.end)
-            for period in person.prior_disability_periods
-        )
+        _outside_prior_periods(person, quarter)
         for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1)
     ):
         return False
@@ -1640,16 +1686,25 @@ def _could_establish_current_period(
         and maximum_qcs < _minimum_current_period_qcs(person)
     ):
         return False
-    if person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS:
+    fully_route = bool(person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS)
+    if fully_route and (
+        person.statutory_blindness
+        or person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+    ):
         return True
-    if maximum_qcs < 6:
+    if not fully_route and maximum_qcs < 6:
         return False
-    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:
+    if fully_route and _recent_rule_possible(
+        person, credits, horizon, exit_month
+    ):
         return True
     if _pre1956_alternate_possible(
         person, credits, month, exit_month, lower_credits=lower_credits
     ):
         return True
+    if fully_route:
+        return False
     rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
     if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:
         return False
@@ -1804,7 +1859,11 @@ def insured_status(
     no totalization minimum or eligibility rule is claimed. A conservative
     minimum-QC proof precedes fully-insured-only flags and boundary
     complexity, except for blindness and unknown prior history. Fully-route
-    flags precede the six-QC floor; the pre-1956 flag follows that floor.
+    flags bypass the six-QC floor but must retain a recent-rule witness or
+    automatic pre1956 alternate when that proof applies. Blindness and
+    unknown prior histories preserve their named flags without this scan.
+    The pre1956 flag adds no route beyond the automatic alternate. A flag's
+    own conditions remain declared facts and are not tested.
     History validation runs first. Uncomputable QC rows use bounded
     unknown credits only for this proof; a possible declaration retains
     its original conversion refusal, including its reason and detail.

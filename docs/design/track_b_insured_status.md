@@ -125,7 +125,9 @@ possibility retains its named refusal. The automatically observable
 alternate-pre1956 scan independently obeys the same immutable start
 horizon. The first permitted alternate start is July 1, 1952 (RS .480 B.1).
 An earlier fixed start horizon cannot be rescued by that later witness.
-Explicit specialist declarations remain separately preserved.
+An explicit `DISABILITY_BEFORE_1956` declaration supplies no route beyond
+that automatic alternate. Other specialist declarations retain only the
+possibilities allowed by their flag classes below.
 
 The captured 404.321(b), headed "When disability ended before December 1,
 1980", says:
@@ -225,11 +227,9 @@ After the fixed-quarter overlap check, declared foreign credits preserve
 their unmodeled route before every credit-count proof. Credit-route flags,
 or raw-earnings flags without a complete direct-QC envelope, do likewise.
 The flag classes and their captured premises are listed below. The
-minimum-requirement proof then precedes fully-route flags, the ordinary
-six-QC floor, the declared pre1956 alternate, and every automatic alternate
-scan, boundary enumeration, or UNKNOWN-prior-history feasibility scan.
-The proof runs only with known prior history and without statutory
-blindness. Every
+minimum-requirement proof precedes every recent-rule or alternate scan,
+boundary enumeration, and UNKNOWN-prior-history feasibility scan. It runs
+only with known prior history and without statutory blindness. Every
 remaining ordinary 20/40 or alternate route needs 20 QCs. If the earliest
 candidate start permits the under-31 or subsequent-special rule, the proof
 also takes that rule's requirement after removing every prior-period
@@ -245,10 +245,29 @@ lower bound too high (404.130(a)–(f); RS .480 A).
 Blindness uses the fully insured prerequisite alone (`blindness_fully_only`),
 so it disables the stronger proof. UNKNOWN prior history can supply
 additional exclusions and also disables that proof. A fully-route flag
-then preserves its named refusal even below six actual QCs: its unmodeled
-fully insured rule may replace that ordinary prerequisite. The pre1956
-alternate changes the recent test but still requires 20 QCs (RS .480 A),
-so its explicit flag remains below the ordinary six-QC floor.
+preserves its named refusal in either case, even below six actual QCs:
+its unmodeled fully insured rule may replace that ordinary prerequisite.
+With known prior history and no blindness, the flag instead needs a
+possible recent rule in a nonoverlapping starting quarter from onset
+through the immutable horizon, or a possible automatic pre1956 alternate.
+The recent scan uses the same assignment, all-period use/disregard, and
+special-window rules as the ordinary witness, relaxing only its fully
+insured prerequisite (404.130(a)–(d), (f)). If maximum feasible credits
+cannot satisfy any such recent rule and the alternate is unavailable, no
+lower-credit filling can establish the period. A fully-route flag changes
+neither constraint. A complexity refusal during this scan preserves
+possibility so that the flag retains its own named refusal.
+
+Without a fully-route flag, the ordinary six-QC floor still precedes the
+automatic alternate. The pre1956 alternate needs 20 QCs (RS .480 A) and
+an eligible start no later than December 31, 1955 (RS .480 B.1). Its
+explicit flag adds no credit, condition, or route beyond the automatic
+check and therefore supplies no separate early return. Any declaration
+that survives establishment validation still receives the flag's named
+refusal. The rule does not test a flag's own conditions: for example, a
+`DEEMED_FULLY_INSURED` declaration stays a declared fact even for a birth
+year outside 404.112's nonprofit-worker condition. These proofs determine
+only whether that fact could supply the missing prerequisite.
 
 Declared foreign credits receive `totalization_credits_unsupported`, with
 their evaluator row and weight, for zero, three, six, or ten own QCs once
@@ -568,13 +587,21 @@ every raw row. The establishment possibility checks then precede coverage
 refusals. Within those checks, fixed-quarter overlap comes first, followed
 by declared foreign credits and any credit-route flag or raw-earnings flag
 without a complete direct-QC envelope. The known-history nonblind
-minimum-requirement proof follows. Next come fully-route flags, the
-ordinary six-QC floor, the declared pre1956 alternate, and the automatic
-alternate route. Only then can boundary assignments, UNKNOWN
-prior-history feasibility, or concrete earnings fillings be enumerated.
-Neither `_unknown_prior_history_is_empty` nor an alternate-path
-`_boundary_variants` call can run ahead of the applicable proof. Before
-that proof, raw conversion can encounter only four reachable refusals: `qc_amount_year_unsupported`,
+minimum-requirement proof follows before every boundary enumeration.
+A fully-route flag then preserves possibility immediately for blindness
+or UNKNOWN prior history. Without that flag, fewer than six maximum QCs
+proves impossibility. Otherwise a fully-route flag needs a recent-rule
+witness from onset through the horizon, or the automatic pre1956
+alternate. Neither route means impossibility even with that flag. An
+explicit `DISABILITY_BEFORE_1956` flag supplies no separate route or early
+return. The remaining ordinary boundary assignments, UNKNOWN prior-history
+feasibility, and concrete earnings fillings follow unchanged. Neither
+`_unknown_prior_history_is_empty` nor an alternate-path
+`_boundary_variants` call can run ahead of the minimum-requirement proof.
+A complexity refusal in the fully-route recent scan preserves possibility,
+so it does not replace the declared flag's own refusal reason. Raw
+conversion, before the establishment proofs, can encounter only four
+reachable refusals: `qc_amount_year_unsupported`,
 `1937_earnings_allocation_unsupported`,
 `pre1955_agricultural_allocation_unsupported`, and
 `pre1951_self_employment_unsupported`. These are deferred while possibility
@@ -628,7 +655,10 @@ declaration survives every applicable impossibility proof. The following
 table supplies the classification premises used by those proofs. Section
 404.130(a) requires one of its four rules "and you must be fully insured";
 a rule changing only fully insured status cannot supply missing recent
-credits. This classification does not adjudicate the flagged rules.
+credits. This classification does not adjudicate the flagged rules or
+test whether a flag's own conditions are met. In particular, an otherwise
+unreachable 404.112 birth cohort does not invalidate an explicitly declared
+`DEEMED_FULLY_INSURED` fact.
 
 | Flag | Captured premise and effect | Class |
 | --- | --- | --- |
@@ -636,7 +666,7 @@ credits. This classification does not adjudicate the flagged rules.
 | `TRANSITIONAL_INSURED` | RS .101 B.1 lists "Transitional Insured Status" beside fully insured status for spouse benefits. It is absent from 404.130's four rules and supplies no recent QC. | Fully route |
 | `EARNED_BASIS` | RS .475 A says "fully insured status could be established by crediting certain wages on an earned rather than a paid basis". Its stated special method changes the fully insured prerequisite. | Fully route |
 | `SIMPLIFIED_PRE1951` | Act 213(c) says "For purposes of sections 414(a) and 415(d)"; 404.110(d)(1) says "For purposes of paragraph (b) of this section". Simplified credits affect fully insured status, not the independent recent test. | Fully route |
-| `DISABILITY_BEFORE_1956` | RS .480 A requires "at least 20 quarters of coverage (QC) by the end of that quarter". The alternate replaces the recent test and supplies no additional QC. | Recent test |
+| `DISABILITY_BEFORE_1956` | RS .480 A requires "at least 20 quarters of coverage (QC) by the end of that quarter", the continuous-QC clock, and an eligible historical start; B.1 says "the last day on which it can begin is 12/31/55". The flag adds no credit or route beyond the automatic alternate check. A surviving declaration retains its named refusal. | Recent test |
 | `RAILROAD_CREDITS` | RS .350 A says "we may use RR compensation in determining the number of quarters of coverage (QCs)"; RS .131 also identifies freeze credits. Compensation can add QCs before a final direct-QC declaration. | Raw earnings |
 | `FISCAL_TAXABLE_YEAR` | RS .220 says "we will allocate the SEI proportionately to the two calendars years"; 404.142 and .144 govern taxable-year allocation. The rule acts on earnings, not an already declared final QC count. | Raw earnings |
 | `SHORT_TAXABLE_YEAR` | RS .340 B.2.b says "credit SEI equally to the calendar quarter in which the TY ends" and preceding quarters in the taxable year; 404.142 and .144 govern allocation. | Raw earnings |
@@ -648,10 +678,14 @@ is a direct `qc_count`, direct `qc_quarters`, or UNKNOWN row. I9's
 direct-credit contract then already fixes or bounds the final credits;
 raw-amount allocation cannot add credits outside it. Military credits
 are excluded from that contract because 404.133 expressly gives freeze-only
-credits. Fully-route flags remain below the recent-credit proof but above
-the ordinary six-QC floor. Their named refusals survive blindness or
-UNKNOWN prior history, which disable the proof, and any case meeting the
-minimum. The pre1956 flag remains below that floor because it needs 20 QCs.
+credits. Fully-route flags remain below the numerical recent-credit proof
+and, with known prior history and no blindness, the candidate-quarter
+recent scan. They bypass only the ordinary fully insured prerequisite and
+its six-QC floor. Their named refusals survive blindness or UNKNOWN prior
+history, where the recent proof is inapplicable, and any case with a
+possible recent or automatic alternate route. The pre1956 flag still obeys
+the ordinary six-QC floor and automatic alternate conditions because it
+adds no credit or route.
 
 Automatic detection additionally applies where the ordinary
 declarations reveal a potentially decisive specialist route:
@@ -670,7 +704,7 @@ allocation or adjudicate application facts.
 | Condition | Observable trigger or absent fact |
 | --- | --- |
 | `SIMPLIFIED_PRE1951` | Raw 1937–1950 quarterly wages provide an aggregate divided by $400; post1950 upper QCs and the fully insured prerequisite bound whether it could decide status (213(c); 404.110(d); RS .315). UNKNOWN pre1951 years can supply unbounded raw wages and therefore also trigger the refusal. Direct `qc_quarters` declare credited quarters rather than raw wages. The simplified method does not apply to a disability claim. Filing, retroactivity, and section 227 facts remain unmodeled. |
-| `DISABILITY_BEFORE_1956` | Medical onset and QCs reveal a possible RS .480 alternative: at least 20 total QCs and every counted quarter from 1951Q1 through the quarter before a qualifying 1952Q3–1955Q4 candidate quarter at or after onset, with at least six such quarters, under favorable all-period use or disregard (RS .132 B.2, C.2). For declared current establishment, that candidate must fit the immutable declared-end/continuity/death/FRA horizon. RS .480 A excludes the route when the lower-credit filling has 20/40 in the rule's disabled-quarter scan before October 1960; if only some fillings do, the alternate remains possible. Refuse automatically when this could change a failed disability predicate. Application conditions remain unmodeled. |
+| `DISABILITY_BEFORE_1956` | The explicit flag adds no route beyond this automatic check. Medical onset and QCs reveal a possible RS .480 alternative: at least 20 total QCs and every counted quarter from 1951Q1 through the quarter before a qualifying 1952Q3–1955Q4 candidate quarter at or after onset, with at least six such quarters, under favorable all-period use or disregard (RS .132 B.2, C.2). For declared current establishment, that candidate must fit the immutable declared-end/continuity/death/FRA horizon. RS .480 A excludes the route when the lower-credit filling has 20/40 in the rule's disabled-quarter scan before October 1960; if only some fillings do, the alternate remains possible. Refuse automatically when this could change a failed disability predicate. Application conditions remain unmodeled. |
 | `DEEMED_FULLY_INSURED` | Wages and dates do not identify covered nonprofit employment or veteran status; retain the explicit flag (404.111–.112; RS .106/.107/.470). |
 | `TRANSITIONAL_INSURED` | Cohort dates alone do not identify the necessary historical benefit/application facts; retain the explicit flag (RS .101's transitional-benefit referrals). |
 | `RAILROAD_CREDITS`, `MILITARY_CREDITS` | Ordinary covered earnings do not identify railroad or military service and additional credits; retain explicit flags (RS .350; RS .120/.470). |
@@ -683,8 +717,10 @@ already have automatic refusals in the QC conversion layer. Historical
 query/blindness/subsequent-special dates and uncaptured future increments
 also already trigger their refusals without a specialist flag.
 
-A `CoverageCondition` explicitly triggers each specialist refusal. The
-module does not infer excluded specialist facts from ordinary earnings.
+A `CoverageCondition` explicitly triggers its specialist refusal after
+all applicable establishment-impossibility checks. The module does not
+infer excluded specialist facts from ordinary earnings or adjudicate a
+flag's own conditions.
 Fiscal/short-year allocation helpers execute source arithmetic privately
 for conformance tests; they do not expand the public calendar-year API.
 
@@ -751,21 +787,22 @@ to a statutory sentence that does not state it.
 | I6. An alien worker's actual pre2004 SSN assignment conflicts with declared SSPA applicability; birth on/after January 1, 2004 conflicts with declared exemption. Both never-assigned and an assigned SSN, or assignment before birth, remain invalid. A worker born before 2004 may pair a post2003 assignment or never-assigned status with an adjudicated exemption. | RS .102 B.1 says an alien assigned an SSN before 2004 "is exempt", including a nonwork SSN. B.3.b says, "If an alien worker could have legitimately been assigned an SSN before 1/1/2004, the worker is exempt from the requirements of section 211 of the SSPA." Its wrong-number SS-5 scenario issued another person's number "instead of assigning the alien worker their own SSN". Thus observed or convention-filled exemption overrides either later-assignment or never-assigned presumptions when legitimate pre2004 assignment was possible. Birth on/after January 1, 2004 rules out that exception independently of the assignment record. B.4.b's worker without an SSN "is nevertheless considered to meet the work SSN requirement" when work-authorized; meeting that requirement alone supplies no exemption. |
 | I7. Explicit quarterly QCs or positive quarterly wages cannot occur before birth, after the query/coverage-end quarter, or after the death quarter. Every required coverage year is declared exactly once through the earliest query, exit, or death year. | A213(a)(2)(B)(i), (v): "no quarter after the quarter in which an individual dies" and "no quarter shall be counted ... prior to the beginning of such quarter"; B404.146(a)-(b) agree. Birth and supplied-record exit caps, complete years, and no implicit zeros are interface premises. Annual counts are capped rather than dated after exit. Specialist earned-basis or additional-credit declarations remain refusals and do not reinterpret an explicit ordinary covered-quarter declaration. |
 | I8. A declared current establishment is invalid only after the shared possibility check excludes every route and every feasible prior/earnings filling. One ordinary filling must satisfy its insured start, recovery or administrative end, continuity, and overlap constraints together. | C320(b)(2) requires insured disability "in the calendar quarter in which you became disabled, or in a later calendar quarter"; C321(a) chooses the first such quarter. B404.130(a) supplies four ordinary rules and RS .480 supplies the alternate historical rule. The start horizon uses an inferred recovery month when I14 permits one, otherwise the declared end, together with continuity/query/death/FRA caps. Maximum credits establish only monotone insurance by that fixed horizon. A derived prior-quarter overlap requires a single lower-credit or enumerated filling whose first start also clears that overlap. An ordinary or alternate witness after the horizon cannot supply possibility. Foreign credits and the flag classes determine which credit-count proofs apply, in the refusal order above, before any alternate or boundary enumeration. The alternate's 20/40 exclusion instead uses U10's earliest date shared by every completion; a later witness cannot prove impossibility under every defensible reading of RS .480 A. |
-| I9. Fewer than six maximum feasible ordinary lifetime QCs proves current establishment impossible only after foreign credits, credit-route flags, unresolved raw-earnings flags, and fully-route flags have preserved their possible routes. | B404.110(b)(1): "You need at least 6 QCs but not more than 40 QCs"; B404.130(a): "you must be fully insured". The flag table supplies each exception's captured premise. A record composed entirely of direct final QC declarations (`qc_count` or `qc_quarters`) and UNKNOWN years fixes or bounds all admissible final credits from RR compensation and fiscal/short taxable-year allocation. This is the direct-credit input contract, not a claim that ordinary RSDI credits exhaust freeze-only military credits: B404.133 expressly supplies the latter, so `MILITARY_CREDITS` remains a separate credit route even with direct rows. Any raw row leaves the raw-earnings route unresolved. Period exclusions alone cannot add ordinary QCs. RS .480 A separately requires 20 QCs, so `DISABILITY_BEFORE_1956` cannot rescue a below-six declaration. No ordinary floor applies to the unmodeled foreign-credit route (U11). |
+| I9. Without a fully-route flag, fewer than six maximum feasible ordinary lifetime QCs proves current establishment impossible only after foreign credits, credit-route flags, and unresolved raw-earnings flags have preserved their possible routes. | B404.110(b)(1): "You need at least 6 QCs but not more than 40 QCs"; B404.130(a): "you must be fully insured". The flag table supplies each exception's captured premise. A record composed entirely of direct final QC declarations (`qc_count` or `qc_quarters`) and UNKNOWN years fixes or bounds all admissible final credits from RR compensation and fiscal/short taxable-year allocation. This is the direct-credit input contract, not a claim that ordinary RSDI credits exhaust freeze-only military credits: B404.133 expressly supplies the latter, so `MILITARY_CREDITS` remains a separate credit route even with direct rows. Any raw row leaves the raw-earnings route unresolved. Period exclusions alone cannot add ordinary QCs. RS .480 A separately requires 20 QCs and the explicit `DISABILITY_BEFORE_1956` flag adds no route beyond the automatic alternate, so it cannot rescue a below-six declaration. Fully-route flags bypass this fully insured floor but still obey I15 and I16 where applicable. No ordinary floor applies to the unmodeled foreign-credit route (U11). |
 | I10. The supported calendar, mandatory historical sex, and explicit establishment declaration must be supplied: birth years 1870–9900, query years through 9990, sex for births before January 2, 1913, and establishment provenance whenever onset is present. | These are interface-domain requirements. B404.110(b)(2) and .132 apply different historical male/female endpoints; B404.110(c) excludes only a period "we established for you". Missing facts are not inferred. Calendar limits reserve space for date arithmetic and assert no legal incapacity outside the implementation domain; alternative credit routes cannot supply missing declared facts. |
 | I11. A continues-through observation requires established disability, cannot precede medical onset or the first feasible insured start, cannot exceed the pre-FRA or death boundary, and cannot follow a declared administrative end. | C320(b)(2) and C321(a) require the insured start; A216(i)(2)(D) and C321(c) bound the period's end. A declaration that a period was in force on a date requires that date to lie within one possible period. This is a dated observation, not an asserted ending; a date later than the query is allowed. Provenance and convention identifiers follow the existing fact schema. |
 | I12. A raw-credit conversion refusal cannot hide established-period impossibility that every feasible filling of that row preserves. | C320(b)(2), C321(a), and B404.110(b)(1) supply the insured-start and six-QC premises. The #530 input contract puts input errors before coverage refusals. Schema validation remains first; the four conversion refusals are deferred only for this proof, with unresolved rows bounded by feasible ordinary quarters. A surviving filling preserves the original refusal reason and note rather than manufacturing a supported status. |
 | I13. If no starting quarter from onset through the immutable horizon clears all supplied prior-period quarters, current establishment is impossible independently of credit fillings, their count, or a specialist route. | C320(b)(2) and C321(a) require an insured beginning within that interval; I4's nonoverlapping-quarter representation applies to that same beginning. A credit route cannot move a candidate outside the fixed interval or remove a supplied prior quarter. This fixed contradiction is checked before specialist possibility and filling enumeration; it does not treat UNKNOWN prior history as supplied empty history. |
 
 | I14. A declared recovery-only historical end implies a recovery month two months earlier; recovery before the onset month or a derived start after that month is invalid. | C321(b) ends the period on "the last day of the second month following the month in which your disability ended". C320(b)(2) and B404.131(a) require an insured quarter in which the worker was disabled, so an administrative grace month cannot supply a new disabled quarter. The helper returns no recovery inference for an end on/after February 1, 1981, in/after the month preceding FRA, or in/after the death month. These carve-outs preserve the existing validity horizon and make no claim about paragraph (c) recovery or administrative ending rules. |
-| I15. With known prior history, no blindness, no foreign credits, no credit-route flag, and no raw-earnings flag outside a complete direct-QC envelope, fewer maximum feasible lifetime QCs than the lowest remaining recent-rule requirement proves establishment impossible before fully-route refusals or coverage enumeration. | B404.130(a) requires a recent rule "and you must be fully insured". The flag table's fully-route rules cannot change the independent recent-credit requirement. B404.130(b) needs 20 QCs; (c)–(d) permit the special half-elapsed-quarter rule with six-QC floor and 20-QC ceiling; RS .480 A also needs 20. At the earliest candidate start, remove every prior-period quarter from special elapsed time, including credited endpoints. Every actual use/disregard witness has at least those elapsed quarters, and later starts cannot reduce them. Taking the smallest applicable requirement therefore cannot exceed any true route minimum. Ignoring the fully insured prerequisite and window availability only relaxes the bound. Blindness (B404.130(e)) needs only fully insured status, and UNKNOWN prior history could remove further quarters; both disable the stronger proof. |
+| I15. With known prior history, no blindness, no foreign credits, no credit-route flag, and no raw-earnings flag outside a complete direct-QC envelope, fewer maximum feasible lifetime QCs than the lowest remaining recent-rule requirement proves establishment impossible before fully-route refusals or coverage enumeration. | B404.130(a) requires a recent rule "and you must be fully insured". The flag table's fully-route rules cannot change the independent recent-credit requirement. B404.130(b) needs 20 QCs; (c)–(d) permit the special half-elapsed-quarter rule with six-QC floor and 20-QC ceiling; RS .480 A also needs 20. At the earliest candidate start, remove every prior-period quarter from special elapsed time, including credited endpoints. Every actual use/disregard witness has at least those elapsed quarters, and later starts cannot reduce them. Taking the smallest applicable requirement therefore cannot exceed any true route minimum. Ignoring the fully insured prerequisite and window availability only relaxes the bound. Blindness (B404.130(e)) needs only fully insured status, and UNKNOWN prior history could remove further quarters; both disable this numerical proof and I16's recent scan. The minimum remains ahead of every boundary enumeration, including the recent scan. |
+| I16. With known prior history, no blindness, and no route adding credits outside the declared envelope, a fully-route flag cannot establish a current period unless some nonoverlapping candidate quarter meets a recent rule under maximum feasible credits or the automatic pre1956 alternate remains possible. | B404.130(a) requires one rule "and you must be fully insured"; (b) requires 20 QCs in 40 quarters; (c) and (d) supply the under31 and subsequent-special recent alternatives. C320(b)(2) permits the onset quarter or a later disabled quarter, and C321(a) selects the first qualifying quarter. The scan includes the onset and horizon quarters and skips every candidate within a supplied prior-period quarter using I13's same overlap predicate. It retains B404.130(f)'s favorable all-period use or disregard and annual assignment, and relaxes only the fully insured prerequisite. Upper credits bound every feasible filling; failure there therefore proves every lower filling lacks a recent witness. An open RS .480 route remains an independent possibility for a fully-route flag. A complexity refusal is not impossibility and preserves the flag's own named refusal. The scan tests no flag-specific condition. |
 
 | ID and UNKNOWN collapse | Captured text and alternative-route defense |
 | --- | --- |
 | U1. UNKNOWN prior history can collapse to empty solely for impossibility validation when no earliest prior period could start insured, on/after birth, before current onset and the FRA end. | C320(b)(2) and C321(a) require an insured beginning without a still-earlier period. A216(i)(2)(A) permits "five full calendar months' duration or" DIB entitlement "for one or more months". The scan therefore admits a one-month period and maximum feasible earnings. Any possible ordinary or specialist starting route stops the proof. It establishes no observed empty-history fact. |
 | U2. UNKNOWN current establishment needs no new-period alternative if there is no medical onset or onset is at/after the statutory latest starting month. | A216(i)(2)(A)-(D) and C321 prohibit a period without disability or a nonempty pre-FRA interval. This removes an impossible new-period alternative only; it does not remove UNKNOWN prior history or an existing period's UNKNOWN administrative end. |
 | U3. With unknown prior/current periods, true ordinary FULLY and CURRENTLY status under favorable all-period disregard decides true. A DISABILITY witness must also survive any current-establishment completion that ends the disability before that witness. | C320(a): "If benefits ... would be denied or reduced because of a period of disability, the period of disability will not be taken into consideration." B404.130(f) also permits counting all prior quarters if favorable. RS .120 requires all periods used or all disregarded; selective exclusions are not assumed. Specialist credit regimes are refused first. |
-| U4. With unknown periods, fewer than six maximum feasible QCs decides false only on the ordinary route after specialist possibilities are excluded; it supplies no foreign-credit impossibility proof. | B404.110(b)(1) and B404.130(a) supply the ordinary six-QC prerequisite. U3's disregard cannot manufacture credits. UNKNOWN prior history disables I15. Foreign credits, fully-route and credit-route flags, and raw-earnings flags outside a complete direct envelope preserve named refusals. The direct-envelope contract and the declared pre1956 alternate still obey I9; blindness alone supplies no credits and does not replace the ordinary fully insured prerequisite. |
+| U4. With unknown periods, fewer than six maximum feasible QCs decides false only on the ordinary route after specialist possibilities are excluded; it supplies no foreign-credit impossibility proof. | B404.110(b)(1) and B404.130(a) supply the ordinary six-QC prerequisite. U3's disregard cannot manufacture credits. UNKNOWN prior history disables both I15 and I16 and preserves a fully-route flag's named refusal even when every known recent window is empty. Foreign credits, credit-route flags, and raw-earnings flags outside a complete direct envelope also preserve named refusals. Without a fully-route flag, the direct-envelope contract and declared pre1956 alternate still obey I9; that alternate flag adds no route beyond B4. Blindness alone supplies no credits and does not replace the ordinary fully insured prerequisite. |
 | U5. UNKNOWN earnings decide a requested Boolean only if all lower/upper ordinary earnings witnesses agree, under the permitted fixed-period/all-period treatments; an uncertain established start refuses only after at least one feasible filling survives. | B404.143 credits one QC for each increment, maximum four; B404.130 and .146 supply assignment/exclusion rules. Adding ordinary QCs cannot invalidate a fixed treatment. A derived start cannot be silently held fixed when the completion changes it. If a lower or upper representative cannot construct the declared period, but another single filling meets its end, continuity, and prior-overlap constraints, the public result is `unknown_earnings_years_decide_status`. If no ordinary filling can qualify by the declared end and all independent routes are impossible, it is an input error and creates no row. A deferred raw-conversion row uses temporary unknown fillings only for possibility, then retains its conversion refusal. Specialist possibilities and administrative-end candidates are considered separately. |
 | U6. UNKNOWN administrative end decides a status only when every end-quarter candidate from start through query/cap, plus permitted continuation, agrees, after applying any continuity lower bound. | A216(i)(2)(D) uses "whichever ... is the earlier"; C321(c)(3) includes "the last month for which you received benefits" after substantial gainful activity. Medical continuity cannot exclude early ends; a dated administrative continuity observation can. FRA/death caps limit the latest candidate and do not turn the unknown into a fact. Both ending and prior-history unknown facts remain disclosed when both are missing; UNKNOWN prior history uses the universal envelopes rather than inventing a derived current period to enumerate. The unchanged completion enumeration can include early endings rejected by I14 if declared concretely. Agreement across that larger set still implies agreement across every valid completion, while disagreement can preserve an extra refusal. An actual supplied end keeps its declared-date semantics; known ending provenance requires an ending date. |
 | U7. UNKNOWN SSPA applicability preserves an ordinary QC-only false status, but never a QC-only true status. | RS .102 B.2 says the worker "must meet one of the following additional requirements" and may fail "even if" the QC requirement is met. Applicability can remove ordinary insurance and cannot supply missing QCs. Known applicability retains adjudication refusal; any separate specialist path is refused first. |
@@ -780,7 +817,7 @@ to a statutory sentence that does not state it.
 | B1. UNKNOWN annual ordinary QCs range from zero through four, reduced by assignable birth/query/death/exit quarters. Deferred raw-conversion rows use their feasible minimum/maximum fillings only for establishment possibility. Exact annual amounts are monotone in earnings; every calendar year stays in 0–4. | B404.143: "we cannot credit you with more than four QCs for any calendar year"; A213(a)(2)(B)(vi) prohibits duplicate calendar-quarter QCs; B404.146 excludes unbegun/death quarters. Birth/exit are supplied-record premises. Additional-credit regimes retain refusal and cannot escape this bound through an ordinary result. Deferred rows still raise their original conversion refusal after a valid possibility survives; no temporary filling is exposed as a computed status. |
 | B2. Ordinary fully insured requirements lie in 6–40 and exclude only established disability years. Every elapsed-year endpoint uses its relevant candidate year and the historical sex/cohort rule. | B404.110(b)(1), (b)(2), (c), .132; A214(a) says "not counting ... any year any part of which was included in a period of disability". Medical onset without establishment cannot freeze years. Deemed/transitional alternatives are refused before using the ordinary requirement as universal. |
 | B3. A simplified-pre1951 possibility uses the smallest known freeze requirement, or six for unresolved establishment/history, and maximum post1950 ordinary credits without exclusions. UNKNOWN pre1951 raw wages remain potentially decisive. | A213(c) grants "one quarter of coverage for each $400" subject to resulting fully insured status; B404.110(c)-(d); RS .315 B.1-B.2 record alternate historical/application conditions. This is an over-approximation for refusal, not a computed deemed-credit answer. A favorable ordinary witness with a higher requirement cannot narrow it. |
-| B4. An alternate-pre1956 possibility uses maximum feasible QCs and an eligible 1952Q3–1955Q4 start with at least 20 total QCs and at least six continuous credited clock quarters, under favorable all-period use or disregard. It survives unless lower credits establish 20/40 in U10's shared disabled-quarter scan. | RS .480 A requires "at least 20 quarters of coverage" and "all quarters beginning with 03/51 ... are QCs", with "at least six"; B.1 permits the first freeze day 07/01/52 through 12/31/55. RS .132 B.2 applies prior-period exclusions to the continuous alternate clock, retaining credited beginning/ending quarters; C.2 requires all periods used or all disregarded. Candidate starts obey I8/I14's latest permissible horizon, so recovery before July 1952 cannot be rescued by the first alternate start. Exclusion instead obeys U10's earliest shared date, including the two-month offset for declared ends and continuity. A lower-credit ordinary 20/40 witness in that shared interval removes the route for all credit fillings; an upper-only or later witness preserves the named refusal. Unmodeled application conditions can remove candidates but do not prove an input error. Explicit specialist flags remain independent. |
+| B4. An alternate-pre1956 possibility uses maximum feasible QCs and an eligible 1952Q3–1955Q4 start with at least 20 total QCs and at least six continuous credited clock quarters, under favorable all-period use or disregard. It survives unless lower credits establish 20/40 in U10's shared disabled-quarter scan. | RS .480 A requires "at least 20 quarters of coverage" and "all quarters beginning with 03/51 ... are QCs", with "at least six"; B.1 permits the first freeze day 07/01/52 through 12/31/55. RS .132 B.2 applies prior-period exclusions to the continuous alternate clock, retaining credited beginning/ending quarters; C.2 requires all periods used or all disregarded. Candidate starts obey I8/I14's latest permissible horizon, so recovery before July 1952 cannot be rescued by the first alternate start. Exclusion instead obeys U10's earliest shared date, including the two-month offset for declared ends and continuity. A lower-credit ordinary 20/40 witness in that shared interval removes the route for all credit fillings; an upper-only or later witness preserves the named refusal. Unmodeled application conditions can remove candidates but do not prove an input error. An explicit `DISABILITY_BEFORE_1956` flag adds no route beyond this check. A fully-route flag may rely on this same alternate possibility when its ordinary recent rules fail; neither flag adjudicates the alternate's application conditions. |
 | B5. Universal recent, fully-prerequisite, and annual count envelopes use zero through maximum feasible ordinary lifetime/year QCs whenever unknown periods/earnings can switch witnesses. | A213(a)(2)(B)(vi) prohibits double credit; B404.146(d) excludes interiors unless disregarded. Every concrete ordinary assignment is a subset of feasible unique lifetime quarters. The envelope permits every witness, even when adding QCs switches to a lower-count witness. Specialist possibilities remain refusals. |
 | B6. With known earnings and an UNKNOWN ending, returned count bounds include all end-candidate counts admitted by continuity; with entirely known facts they remain exact. | B404.120(b), .130(f), .146(d) distinguish credited endpoints and excluded interiors. All candidate quarters are enumerated, including early endpoints and capped-FRA candidates, subject to any continues-through observation; extrema therefore cover each completion. A continuity date is never inserted as a credited endpoint. No monotonic endpoint-count premise is used. |
 | B7. DLI lies through query without frozen exit, or through the pre-FRA-quarter/death horizon with frozen coverage; `None` is the bottom bound. A future exit cannot remove query censoring. | RS .148 defines DLI as "the last day in the last quarter" in which status is met and limits the search relative to FRA. B404.146(b) caps credits after death; A216(i)(2)(B) caps new periods. Future undeclared work is not assumed zero. Specialist routes are refused before this ordinary DLI calculation. |
@@ -788,7 +825,7 @@ to a statutory sentence that does not state it.
 | B9. With unknown periods the disregard DLI is a lower bound and the permitted query/FRA/death horizon is the upper bound; unknown SSPA applicability reduces any positive DLI lower bound to `None`. | C320(a) permits favorable disregard; B404.130(f) permits counting all prior-period quarters; RS .102 B.2 imposes an additional requirement. The bound does not infer a particular recovery or history. Exemption can recover the ordinary upper witness but cannot exceed the calendar horizon. |
 | B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. |
 | B11. At most 4,096 combinations of disability endpoint assignments are searched exactly, after any applicable impossibility proof. | B404.143(b) and RS .230 permit favorable assignment; B404.130(f) makes credited endpoints decisive. Fixed-overlap, six-QC, and I15's minimum-requirement checks precede `_boundary_variants`, including both alternate-path calls and UNKNOWN-prior-history feasibility. A remaining excess returns `disability_boundary_assignments_unsupported`; computational complexity is neither a statutory impossibility bound nor permission to retain an all-invalid declaration. |
-| B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum and 20/40 ceiling. | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite, and pre1956/flagged specialist paths retain refusal rather than being forced through an ordinary window. |
+| B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum and 20/40 ceiling. | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite. A fully-route flag must still leave a recent-rule witness or possible automatic pre1956 alternate where I16 applies; the pre1956 flag adds no route beyond that alternate. Specialist paths retaining possibility receive their named refusal. |
 | B13. Indexed annual QC amounts are at least the prior year's statutory increment and the rounded indexed 1978 amount, with nearest-$10 rounding and $5 ties upward. | A213(d)(2) chooses "the larger of" the prior increment and indexed amount, rounded to "the next higher multiple of $10" at a $5 tie. This exact parameter calculation has no disability or specialist alternative; input-domain checks require positive NAWI and a statutory prior increment. |
 | B14. Declaring continuity never widens the administrative-end candidate set; every returned status and count envelope remains valid for every retained concrete ending. | C321(c)'s ending events still govern. Set intersection with ends on/after the observation can only remove candidates; it creates neither an ending nor a new credit. The universal envelope remains unchanged where other unknown facts require it. |
 | B15. Ordinary establishment overlap resolution enumerates at most 4,096 unknown-credit fillings after its fixed-date monotonicity, candidate-quarter, six-QC, and minimum-requirement proofs. | C320(b)(2) and C321(a) require one insured beginning consistent with the complete declaration. I13 settles fixed-quarter overlap and I15 settles a known-history nonblind lifetime-QC shortfall before enumeration. If neither settles the declaration, a search beyond the limit returns `disability_boundary_assignments_unsupported`; it asserts neither a concrete filling nor an input error. |
@@ -826,10 +863,10 @@ The specialist test is split by flag class:
 `test_exact_classification_keeps_raw_earnings_flagged_routes`,
 `test_exact_classification_keeps_independent_credit_routes`, and
 `test_exact_classification_bounds_flags_that_add_no_declared_credit`.
-Each rules out an automatic pre1956 witness to test the explicit routes
-independently. Fully-route flags
-are paired at a proved recent-credit shortfall and the exact minimum;
-raw-earnings flags are paired with a complete direct envelope and an
+Each rules out an automatic pre1956 witness to isolate the flag classes.
+Fully-route flags are paired at a proved recent-credit shortfall and the
+exact minimum. Raw-earnings flags are paired with a complete direct
+envelope and an
 unresolved raw row. Credit-route flags retain refusals with a complete
 direct envelope, while the declared pre1956 route cannot bypass a
 below-six shortfall. Blindness and UNKNOWN prior history preserve the
@@ -1042,29 +1079,40 @@ denominators:
 | Invariant | Executing tests |
 | --- | --- |
 | Adding foreign credits to a declaration clearing fixed chronology always preserves the totalization refusal, one row, and exact weight, independently of its own-QC count or flags. Fixed overlap still produces an input error and no row. | `test_foreign_credit_refusal_is_independent_of_own_qc_count` (Hypothesis); `test_foreign_credits_refuse_without_an_own_qc_floor`; `test_fixed_overlap_precedes_every_flag_and_foreign_route` |
-| With known prior history and no blindness, any flag set supplying no additional credit under the complete direct-envelope contract leaves a total-QC shortfall below the recent-rule minimum input-invalid. The expected minimum is computed independently of `_minimum_current_period_qcs`; this numerical proof does not decide every temporal shortfall described below. | `test_no_credit_flag_set_cannot_hide_independently_proved_shortfall` (Hypothesis); `test_no_credit_flag_shortfall_and_exact_minimum_pair`; `test_review_recent_credit_shortfall_cannot_be_cured_by_deeming` |
+| With known prior history and no blindness, any flag set supplying no additional credit under the complete direct-envelope contract leaves a total-QC shortfall below the recent-rule minimum input-invalid. The expected minimum is computed independently of `_minimum_current_period_qcs`; round 12 supplements this numerical proof with the candidate-quarter scan below. | `test_no_credit_flag_set_cannot_hide_independently_proved_shortfall` (Hypothesis); `test_no_credit_flag_shortfall_and_exact_minimum_pair`; `test_review_recent_credit_shortfall_cannot_be_cured_by_deeming` |
 | A flag cannot turn a declaration meeting every ordinary requirement into an input error. At the exact ordinary or under31 minimum, each flag retains its own reason, one row, and exact weight. | `test_no_flag_rejects_declaration_meeting_every_requirement` (Hypothesis); `test_no_credit_flag_shortfall_and_exact_minimum_pair`; `test_credit_route_keeps_refusal_even_with_complete_direct_envelope` |
 | Fully-route flags retain their named refusals with blindness below six actual QCs or UNKNOWN prior history. The declared pre1956 alternate cannot bypass the ordinary six-QC floor even with blindness, but at 20 QCs retains its refusal. | `test_fully_route_refuses_when_recent_credit_proof_does_not_apply`; `test_pre1956_flag_with_blindness_keeps_ordinary_six_qc_floor` |
 | A complete direct envelope bounds every raw-earnings flag, including UNKNOWN rows; a raw row preserves its unmodeled allocation route. Military and Medicare government credits preserve a separate route even with direct rows. Combining flags preserves each independent route. | `test_raw_earnings_flag_preserves_route_only_without_direct_envelope`; `test_exact_classification_bounds_flags_that_add_no_declared_credit`; `test_credit_route_keeps_refusal_even_with_complete_direct_envelope`; `test_two_flag_classes_preserve_each_independent_route` |
 
-Round 11 has a remaining temporal limit. Its numerical recent-credit proof
-does not test whether sufficient total credits fall inside any candidate
-window before a fully-route flag returns possible. An invented worker born
+Round 12 closes round 11's temporal limitation. An invented worker born
 February 2, 1960, with onset January 15, 2000, an established period ending
 December 31, 2000, known empty prior history, no blindness, and 20 direct
-QCs entirely in 1978–1982 has zero QCs in every 2000 candidate 40-quarter
-window. Without a flag the declaration is invalid. Each fully-route flag
-instead retains its named refusal, one row, and weight 13/7 under the
-prescribed order. Reducing the total to 19 makes every such flagged
-declaration invalid under the numerical proof. Section 404.130(b)(2)
-requires 20 QCs in the 40-quarter period, independently of fully insured
-status under paragraph (a); the fully-route premises above supply no
-recent-window credits. This residual is conservative over-refusal rather
-than evidence of a concrete valid completion. The scratch regression
-`test_fully_only_flag_cannot_supply_missing_recent_window_qcs` records the
-four failing cases. The requested numerical-proof correction leaves the
-later temporal scan unchanged; this additional ordering issue remains
-unfixed.
+QCs entirely in 1978–1982 has zero QCs in every candidate 40-quarter
+window. The unflagged declaration and each fully-route declaration now
+raise `InvalidFamilyInput`, with no evaluator row. Reducing the total to
+19 remains invalid under the earlier numerical proof. The new recent scan
+keeps both inclusive quarter edges, the immutable horizon and recovery
+bound, prior-period overlap, favorable assignment, all-period use or
+disregard, and under31/subsequent-special alternatives. It ignores only
+the fully insured prerequisite. A recent witness preserves the flag's
+named refusal even when the ordinary fully insured requirement fails.
+Blindness, UNKNOWN prior history, an open automatic pre1956 alternate, or
+an unresolved scan complexity likewise preserves possibility. The
+`DISABILITY_BEFORE_1956` flag has no separate early return: an onset after
+1955 with neither an ordinary nor an alternate route is invalid, while
+either possible route preserves the flag's named refusal. These are
+establishment-classification corrections under 404.130(a)–(d), C320(b)(2),
+C321(a), and RS .480 A–B.1, not adjudications of the flags' own conditions.
+
+| Invariant | Executing tests |
+| --- | --- |
+| With known prior history, no blindness, and only flags adding no credits, a declaration with onset after 1955 is input-invalid when an independent plain-arithmetic assignment/window oracle finds no recent witness. The generated grid includes declarations before age 31. Every invalid declaration has no evaluator row or weight. | `test_independent_recent_oracle_proves_no_credit_flag_impossibility` (Hypothesis); `test_old_lifetime_credits_cannot_supply_any_recent_window` |
+| A fully-route flag relaxes only the fully insured prerequisite. With the alternate absent, its establishment classification matches the independent recent oracle in both directions; a recent witness retains its named refusal even when the ordinary fully insured prerequisite fails. A possible alternate independently preserves that refusal. | `test_fully_flag_changes_fully_only_against_unflagged_recent_oracle` (Hypothesis); `test_fully_flag_exactness_includes_independent_alternate_oracle` (Hypothesis); `test_fully_route_relaxes_only_fully_insured_when_recent_rule_passes`; `test_fully_route_keeps_alternate_when_ordinary_recent_rule_is_closed` |
+| At every tested quarter, a true ordinary DISABILITY witness stays true when only the fully insured prerequisite is relaxed on identical credits. | `test_witness_keyword_only_relaxes_fully_prerequisite` (Hypothesis) |
+| The recent scan includes both the onset quarter and horizon quarter, and the horizon quarter counts even when the end falls inside it. It does not admit a witness beyond an inferred recovery bound. A credit one quarter too old cannot enter any candidate window. | `test_scan_includes_onset_and_the_earliest_quarter_of_forty`; `test_scan_includes_horizon_quarter_and_stops_at_recovery_bound`; `test_scan_reaches_last_candidate_quarter_even_with_end_inside_quarter` |
+| The recent scan retains under-31 and subsequent-special requirements, favorable use of every prior period or disregard of every period, credited endpoints, and the shared rejection of candidate quarters inside supplied prior periods. | `test_special_recent_requirement_and_one_short`; `test_subsequent_special_recent_rule_can_pass_below_twenty_qcs`; `test_recent_window_uses_all_prior_periods_or_disregards_all`; `test_candidate_inside_prior_period_does_not_supply_recent_witness` |
+| Blindness and UNKNOWN prior history preserve fully-route refusals even with empty recent windows. UNKNOWN recent years preserve possibility whenever an admissible filling supplies a recent witness, and every surviving concrete filling retains the flag's refusal. Complexity preserves that flag reason rather than substituting a computational refusal. | `test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses`; `test_unknown_recent_years_and_every_surviving_filling_keep_flag_reason`; `test_complexity_preserves_fully_route_reason` |
+| A declared pre1956 flag adds no establishment route beyond the automatic alternate: onset after 1955 with no ordinary route is invalid; either an ordinary witness or the historical alternate retains the named refusal. Credit-route and unbounded raw-earnings flags remain capable of adding credits, and a deferred conversion keeps its original reason when a recent witness remains possible. Surviving outcomes retain one evaluator row and exact weight 11/5. | `test_pre1956_flag_cannot_open_a_route_after_1955`; `test_pre1956_flag_keeps_named_refusal_when_alternate_conditions_hold`; `test_pre1956_flag_keeps_named_refusal_when_ordinary_route_is_open`; `test_credit_and_unbounded_raw_earnings_flags_can_add_recent_credits`; `test_deferred_conversion_keeps_original_refusal_with_possible_recent_rule` |
 
 The round-8 UNKNOWN-ending and round-9 UNKNOWN-establishment completion
 properties above remain in force with the corrected shared disabled month.
@@ -1254,9 +1302,10 @@ permitted July 1, 1952 start. The declaration is therefore input-invalid.
 A July declared end now also fails, because it implies May recovery. A
 September declared end implies July recovery and preserves the automatic
 route. July and September continuity observations instead retain the
-unknown-ending route and its named refusal. This source-required chronological check is
-independent of the ordinary possibility scan and of explicit specialist
-flags. A woman born July 2, 1887 reaches FRA in July 1952, so her
+unknown-ending route and its named refusal. This source-required
+chronological check applies to the automatic alternate even with an
+explicit `DISABILITY_BEFORE_1956` declaration or a fully-route flag. A
+woman born July 2, 1887 reaches FRA in July 1952, so her
 period's latest end is June 30 and the alternate July 1 start is already
 too late. An August 2 birth instead permits that start. This actual
 month-before-FRA limit is shared by the ordinary and automatic scans.
@@ -1552,8 +1601,15 @@ established period, even with `DEEMED_FULLY_INSURED`. The corrected result
 is an input error and zero rows; 20 recent QCs preserve the deemed-full
 refusal, one row, and weight 11/5. The fully-route, recent-test,
 raw-earnings, and credit-route classifications above follow the captured
-premises and introduce no additional discretionary reading. Neither
-finding adjudicates payment, so it establishes no dollar change.
+premises and introduce no additional discretionary reading. Round 12
+also applies the recent rule to the temporal location of those credits:
+20 old lifetime QCs cannot cure an empty candidate window. RS .480 B.1's
+"the last day on which it can begin is 12/31/55" also bars a separate
+pre1956-flag escape for a later onset. The flag adds no route beyond the
+automatic alternate check. Neither correction tests a flag's own
+conditions; an explicitly declared fully insured route remains a supplied
+fact even if its cohort would not satisfy 404.112. These corrections make
+no payment adjudication and establish no dollar change.
 
 Mutation checks are recorded in
 [`track_b_insured_status_mutations.json`](track_b_insured_status_mutations.json).

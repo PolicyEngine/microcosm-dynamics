@@ -3488,5 +3488,357 @@
     }
   ],
   "round_11_note": "Eleven deliberate isolated in-memory mutations were caught and discarded. All three new properties bite. Every run audited zero restricted opens or spawned processes and verified original implementation bytes unchanged. The exact commands and standalone reproductions above pin the final formatted source. No committed mutation remains.",
-  "round_11_final_source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1"
+  "round_11_final_source_sha256": "aebd9223724bc6694e320590a72cd744cb7309dbcb92600bd7ffb11f5d4ca4d1",
+  "round_12_mutations": [
+    {
+      "name": "keyword_noop",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "8b2793b9cd445eafcd04f938d3fee6114ed779a12f40e269d77e827dfce38282",
+      "changes": [
+        {
+          "before": "(fully or ignore_fully_insured)",
+          "after": "fully"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_witness_keyword_only_relaxes_fully_prerequisite"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-keyword_noop.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_witness_keyword_only_relaxes_fully_prerequisite > scratch/review/round-12-mutation-keyword_noop.txt 2>&1",
+      "result": "1 failed in 3.82s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_witness_keyword_only_relaxes_fully_prerequisite"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_witness_keyword_only_relaxes_fully_prerequisite <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'keyword_noop', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '(fully or ignore_fully_insured)', 'after': 'fully'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "fully_route_without_recent_scan",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "fe97f55de6c11124b0c566472b8164ae407f2b9d8697a5a3003b9abd50b06410",
+      "changes": [
+        {
+          "before": "    if fully_route and _recent_rule_possible(\n        person, credits, horizon, exit_month\n    ):\n",
+          "after": "    if fully_route:\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_independent_recent_oracle_proves_no_credit_flag_impossibility",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_changes_fully_only_against_unflagged_recent_oracle"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-fully_route_without_recent_scan.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_independent_recent_oracle_proves_no_credit_flag_impossibility tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_changes_fully_only_against_unflagged_recent_oracle > scratch/review/round-12-mutation-fully_route_without_recent_scan.txt 2>&1",
+      "result": "2 failed in 3.78s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_independent_recent_oracle_proves_no_credit_flag_impossibility",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_changes_fully_only_against_unflagged_recent_oracle"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_independent_recent_oracle_proves_no_credit_flag_impossibility tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_changes_fully_only_against_unflagged_recent_oracle <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'fully_route_without_recent_scan', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    if fully_route and _recent_rule_possible(\\n        person, credits, horizon, exit_month\\n    ):\\n', 'after': '    if fully_route:\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "drop_fully_route_alternate_fallback",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "7865c679010fa86cefff7cb0ea1747fd5df52da858f07b6daa69aa9ce5d8e68f",
+      "changes": [
+        {
+          "before": "    if _pre1956_alternate_possible(\n        person, credits, month, exit_month, lower_credits=lower_credits\n    ):\n        return True\n    if fully_route:\n",
+          "after": "    if not fully_route and _pre1956_alternate_possible(\n        person, credits, month, exit_month, lower_credits=lower_credits\n    ):\n        return True\n    if fully_route:\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_exactness_includes_independent_alternate_oracle"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-drop_fully_route_alternate_fallback.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_exactness_includes_independent_alternate_oracle > scratch/review/round-12-mutation-drop_fully_route_alternate_fallback.txt 2>&1",
+      "result": "1 failed in 3.46s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_exactness_includes_independent_alternate_oracle"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_fully_flag_exactness_includes_independent_alternate_oracle <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'drop_fully_route_alternate_fallback', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    if _pre1956_alternate_possible(\\n        person, credits, month, exit_month, lower_credits=lower_credits\\n    ):\\n        return True\\n    if fully_route:\\n', 'after': '    if not fully_route and _pre1956_alternate_possible(\\n        person, credits, month, exit_month, lower_credits=lower_credits\\n    ):\\n        return True\\n    if fully_route:\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "scan_starts_one_quarter_late",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "b61d7bbc8c91fc04619d9febed552767ec06092457299cb91dda45b19e047800",
+      "changes": [
+        {
+          "before": "        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1):\n",
+          "after": "        for quarter in range(_qid(person.disability_onset) + 1, _qid(horizon) + 1):\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_scan_includes_onset_and_the_earliest_quarter_of_forty"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-scan_starts_one_quarter_late.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_scan_includes_onset_and_the_earliest_quarter_of_forty > scratch/review/round-12-mutation-scan_starts_one_quarter_late.txt 2>&1",
+      "result": "1 failed, 1 passed in 1.90s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_scan_includes_onset_and_the_earliest_quarter_of_forty[False]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_scan_includes_onset_and_the_earliest_quarter_of_forty <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'scan_starts_one_quarter_late', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1):\\n', 'after': '        for quarter in range(_qid(person.disability_onset) + 1, _qid(horizon) + 1):\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "scan_stops_one_quarter_early",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "97ec626446437b06ce39a14529da1a19358a727972f1453ebca0ba27424ff53a",
+      "changes": [
+        {
+          "before": "        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1):\n",
+          "after": "        for quarter in range(_qid(person.disability_onset), _qid(horizon)):\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_scan_reaches_last_candidate_quarter_even_with_end_inside_quarter"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-scan_stops_one_quarter_early.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_scan_reaches_last_candidate_quarter_even_with_end_inside_quarter > scratch/review/round-12-mutation-scan_stops_one_quarter_early.txt 2>&1",
+      "result": "1 failed, 1 passed in 2.34s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_scan_reaches_last_candidate_quarter_even_with_end_inside_quarter[False]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_scan_reaches_last_candidate_quarter_even_with_end_inside_quarter <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'scan_stops_one_quarter_early', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1):\\n', 'after': '        for quarter in range(_qid(person.disability_onset), _qid(horizon)):\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "scan_counts_candidate_inside_prior_period",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "16cdc4852f8eaa8cfa42b373fa1bf5e7f6ab66963057ee6f8f307432380d1911",
+      "changes": [
+        {
+          "before": "            if not _outside_prior_periods(person, quarter):\n                continue\n",
+          "after": ""
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_candidate_inside_prior_period_does_not_supply_recent_witness"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-scan_counts_candidate_inside_prior_period.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_candidate_inside_prior_period_does_not_supply_recent_witness > scratch/review/round-12-mutation-scan_counts_candidate_inside_prior_period.txt 2>&1",
+      "result": "1 failed in 1.43s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_candidate_inside_prior_period_does_not_supply_recent_witness"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_candidate_inside_prior_period_does_not_supply_recent_witness <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'scan_counts_candidate_inside_prior_period', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '            if not _outside_prior_periods(person, quarter):\\n                continue\\n', 'after': ''}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "restore_pre1956_flag_early_return",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "666cae10bd0b01aae72aaaa755f70be03aae0ccee093500f45f8c4936a60deaa",
+      "changes": [
+        {
+          "before": "    if not fully_route and maximum_qcs < 6:\n        return False\n",
+          "after": "    if not fully_route and maximum_qcs < 6:\n        return False\n    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\n        return True\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_pre1956_flag_cannot_open_a_route_after_1955"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-restore_pre1956_flag_early_return.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_pre1956_flag_cannot_open_a_route_after_1955 > scratch/review/round-12-mutation-restore_pre1956_flag_early_return.txt 2>&1",
+      "result": "1 failed in 1.27s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_pre1956_flag_cannot_open_a_route_after_1955"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_pre1956_flag_cannot_open_a_route_after_1955 <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'restore_pre1956_flag_early_return', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    if not fully_route and maximum_qcs < 6:\\n        return False\\n', 'after': '    if not fully_route and maximum_qcs < 6:\\n        return False\\n    if CoverageCondition.DISABILITY_BEFORE_1956 in person.conditions:\\n        return True\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "remove_blindness_bypass",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "61ed9135e4905084d9e4560244f92355fbd2c0d682550fc761062bce42804bd1",
+      "changes": [
+        {
+          "before": "    if fully_route and (\n        person.statutory_blindness\n        or person.prior_disability_periods_provenance\n        is EarningsProvenance.UNKNOWN\n    ):\n",
+          "after": "    if fully_route and (\n        person.prior_disability_periods_provenance\n        is EarningsProvenance.UNKNOWN\n    ):\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-remove_blindness_bypass.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses > scratch/review/round-12-mutation-remove_blindness_bypass.txt 2>&1",
+      "result": "4 failed, 4 passed in 2.32s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[blindness-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[blindness-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[blindness-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[blindness-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'remove_blindness_bypass', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    if fully_route and (\\n        person.statutory_blindness\\n        or person.prior_disability_periods_provenance\\n        is EarningsProvenance.UNKNOWN\\n    ):\\n', 'after': '    if fully_route and (\\n        person.prior_disability_periods_provenance\\n        is EarningsProvenance.UNKNOWN\\n    ):\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "remove_unknown_prior_bypass",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "5cb21399f1531832317716977a89ff812e7ae88579330dd217bffb74c21af0c3",
+      "changes": [
+        {
+          "before": "    if fully_route and (\n        person.statutory_blindness\n        or person.prior_disability_periods_provenance\n        is EarningsProvenance.UNKNOWN\n    ):\n",
+          "after": "    if fully_route and person.statutory_blindness:\n"
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-remove_unknown_prior_bypass.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses > scratch/review/round-12-mutation-remove_unknown_prior_bypass.txt 2>&1",
+      "result": "4 failed, 4 passed in 5.53s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[unknown-prior-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[unknown-prior-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[unknown-prior-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses[unknown-prior-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'remove_unknown_prior_bypass', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    if fully_route and (\\n        person.statutory_blindness\\n        or person.prior_disability_periods_provenance\\n        is EarningsProvenance.UNKNOWN\\n    ):\\n', 'after': '    if fully_route and person.statutory_blindness:\\n'}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    },
+    {
+      "name": "recent_complexity_escapes",
+      "source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+      "mutated_source_sha256": "900d1017ba32837586023949ab2c0912e809980babd347709c4256e07b953170",
+      "changes": [
+        {
+          "before": "    except InsuredConfigurationUnsupported:\n        return True\n    return False\n\n\ndef _could_establish_current_period(",
+          "after": "    except InsuredConfigurationUnsupported:\n        raise\n    return False\n\n\ndef _could_establish_current_period("
+        }
+      ],
+      "pytest_arguments": [
+        "-q",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "--tb=short",
+        "tests/test_track_b_insured_status_fix_round_12.py::test_complexity_preserves_fully_route_reason"
+      ],
+      "command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" TRACKB_ROUND12_MUTATION=/Users/maxghenis/.subfleet/worktrees/20261031-164238-trackb-fix-insured-12/scratch/review/round-12-mutation-recent_complexity_escapes.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_12_named.py -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_complexity_preserves_fully_route_reason > scratch/review/round-12-mutation-recent_complexity_escapes.txt 2>&1",
+      "result": "1 failed in 2.34s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_12.py::test_complexity_preserves_fully_route_reason"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "mechanism": "Compile modified module in memory only; source bytes verified unchanged after execution",
+      "restored": true,
+      "reproduction_command": "env OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round12 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round12 PYTHONPATH=\"$PWD/src:$PWD\" /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - -q -p no:xdist -p no:cacheprovider --tb=short tests/test_track_b_insured_status_fix_round_12.py::test_complexity_preserves_fully_route_reason <<'PY'\n\"\"\"Run named invented-data tests with restricted-file open auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nimport sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nBARRED_NAMES = {\n    \"gates.yaml\",\n    \"adjusted_poverty.py\",\n    \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\",\n    \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\",\n    \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED_NAMES\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\n        \"POPULACE_DYNAMICS_PSID_DIR\",\n        \"POPULACE_DYNAMICS_EPUF_DIR\",\n    ):\n        assert os.environ[name] == \"/nonexistent/trackb-round12\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND12_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = True\n    if spec_path:\n        spec = {'name': 'recent_complexity_escapes', 'source_sha256': '8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018', 'changes': [{'before': '    except InsuredConfigurationUnsupported:\\n        return True\\n    return False\\n\\n\\ndef _could_establish_current_period(', 'after': '    except InsuredConfigurationUnsupported:\\n        raise\\n    return False\\n\\n\\ndef _could_establish_current_period('}]}\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\n            \"MUTATION\",\n            spec[\"name\"],\n            \"source_sha256=\" + hashlib.sha256(original).hexdigest(),\n            \"mutated_sha256=\" + hashlib.sha256(source.encode()).hexdigest(),\n            flush=True,\n        )\n    import pytest\n\n    try:\n        result = pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n    return result\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\nPY"
+    }
+  ],
+  "round_12_note": "Ten deliberate isolated in-memory mutations were caught and discarded. All four new generated properties bite, including both recent-rule exactness properties, the alternate oracle, and strict relaxation. Every mutation run audited zero restricted opens or spawned processes and verified original implementation bytes unchanged. Standalone reproduction commands include their own audit hook and exact source pin.",
+  "round_12_final_source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018"
 }
