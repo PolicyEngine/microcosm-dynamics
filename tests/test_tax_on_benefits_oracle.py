@@ -68,10 +68,6 @@ def _exit_when_orphaned():
         time.sleep(1)
 
 
-threading.Thread(
-    target=_exit_when_orphaned, name="f1-parent-watchdog", daemon=True
-).start()
-
 # The thread needs the GIL, so a long C call that holds it delays the exit
 # until the call returns. The kernel-side backstop below does not wait.
 _GUARD = '''
@@ -113,7 +109,17 @@ if sys.platform.startswith("linux"):
     import ctypes
 
     # PR_SET_PDEATHSIG: the kernel kills this worker when its parent dies.
-    ctypes.CDLL(None, use_errno=True).prctl(1, signal.SIGKILL)
+    if ctypes.CDLL(None, use_errno=True).prctl(1, signal.SIGKILL) != 0:
+        sys.exit(
+            "f1 oracle worker: PR_SET_PDEATHSIG failed with errno "
+            f"{ctypes.get_errno()}"
+        )
+    # The signal is armed only for a parent alive at the call. A launcher
+    # that died first has already re-parented this worker, and no signal
+    # will come, so exit before serving any job. Status 71, not the
+    # watchdog's 70, marks an orphan found at startup.
+    if os.getppid() != _launcher:
+        os._exit(71)
 elif hasattr(select, "kqueue"):
     # A small guard process with no pipes of ours waits on kernel exit
     # events for the launcher and this worker, and exits with the worker.
@@ -132,6 +138,12 @@ elif hasattr(select, "kqueue"):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+
+# Started after the backstop, so on Linux an orphan found at startup exits
+# through the check above instead of racing this thread to it.
+threading.Thread(
+    target=_exit_when_orphaned, name="f1-parent-watchdog", daemon=True
+).start()
 
 worker_stdin, worker_stdout, worker_stderr = (
     sys.stdin, sys.stdout, sys.stderr

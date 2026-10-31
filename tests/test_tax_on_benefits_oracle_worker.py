@@ -7,8 +7,15 @@ exact pid. The test holds the worker's stdin open, so stdin EOF cannot end
 the worker: only the parent-death watchdog and its kernel-side backstop
 can. The third state holds the GIL in a C call, which the watchdog thread
 alone cannot interrupt.
+
+The Linux startup is checked by injecting each condition rather than
+racing a real parent death: a stand-in ``prctl`` that fails, and a
+launcher pid that is not the worker's parent. The stand-in also sets
+``sys.platform``, so those checks run the Linux branch on any host; the
+checks with the real ``PR_SET_PDEATHSIG`` run only on Linux.
 """
 
+import errno
 import json
 import os
 import select
@@ -136,3 +143,110 @@ def test_worker_exits_when_its_launcher_is_killed(state):
             stream.close()
         if worker_pid is not None and _alive(worker_pid):
             os.kill(worker_pid, signal.SIGKILL)
+
+
+# PR_GET_PDEATHSIG (2) reports the armed signal; the job writes it to fd 2.
+_DEATH_SIGNAL_JOB = (
+    "import ctypes, os\n"
+    "armed = ctypes.c_int()\n"
+    "ctypes.CDLL(None).prctl(2, ctypes.byref(armed))\n"
+    "os.write(2, b'pdeathsig %d\\n' % armed.value)\n"
+)
+_ORPHANED_AT_STARTUP = 71
+_ON_LINUX = sys.platform.startswith("linux")
+
+
+def _stand_in(result, error):
+    """An INVENTED libc whose ``prctl`` returns ``result`` with ``error``.
+
+    Prepended to the worker source, it reports each call on fd 2 and sets
+    ``sys.platform`` after importing the worker's modules, so the worker's
+    Linux startup runs on any host.
+    """
+    return (
+        "import ctypes, os, select, signal, subprocess, sys, threading\n"
+        "class _StandInLibc:\n"
+        "    def prctl(self, option, value):\n"
+        "        os.write(2, b'prctl %d %d\\n' % (option, value))\n"
+        f"        ctypes.set_errno({error})\n"
+        f"        return {result}\n"
+        "ctypes.CDLL = lambda name, use_errno=False: _StandInLibc()\n"
+        "sys.platform = 'linux'\n"
+    )
+
+
+def _not_the_parent():
+    """A live pid that is not the worker's parent: this process's parent."""
+    return os.getppid()
+
+
+def _start_and_offer_one_job(program, launcher_pid, job=_READY_JOB):
+    """Start a worker, offer one job, close stdin, and collect its exit."""
+    worker = subprocess.Popen(
+        [sys.executable, "-u", "-c", program, str(launcher_pid)],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    try:
+        request = json.dumps({"source": job, "stdin": ""}) + "\n"
+        stdout, stderr = worker.communicate(
+            request.encode("utf-8"), timeout=_STARTUP_SECONDS
+        )
+    finally:
+        # Never leave a process behind, even when an assertion failed.
+        if worker.poll() is None:
+            worker.kill()
+            worker.wait(timeout=_EXIT_SECONDS)
+    return worker.returncode, stdout, stderr
+
+
+@pytest.mark.parametrize(
+    "result,error,launcher,code",
+    [
+        # INVENTED failure: the stand-in returns -1 with EINVAL.
+        (-1, errno.EINVAL, "parent", 1),
+        # Armed, but the launcher is no longer the parent.
+        (0, 0, "not-parent", _ORPHANED_AT_STARTUP),
+        # Armed under its launcher: the startup returns and serves a job.
+        (0, 0, "parent", 0),
+    ],
+    ids=["prctl-fails", "launcher-not-parent", "armed-under-launcher"],
+)
+def test_linux_startup_with_an_injected_prctl(result, error, launcher, code):
+    pid = os.getpid() if launcher == "parent" else _not_the_parent()
+    returncode, stdout, stderr = _start_and_offer_one_job(
+        _stand_in(result, error) + _WORKER_SOURCE, pid
+    )
+    assert returncode == code
+    assert f"prctl 1 {int(signal.SIGKILL)}\n".encode() in stderr
+    if code == 0:
+        assert json.loads(stdout)["ok"] is True
+        assert b"ready\n" in stderr
+    else:
+        # The startup ended before the request loop: no job was served.
+        assert stdout == b""
+        assert b"ready" not in stderr
+    if code == 1:
+        message = f"PR_SET_PDEATHSIG failed with errno {errno.EINVAL}"
+        assert message.encode() in stderr
+
+
+@pytest.mark.skipif(not _ON_LINUX, reason="PR_SET_PDEATHSIG is Linux-only")
+def test_real_death_signal_is_armed_under_its_launcher():
+    returncode, stdout, stderr = _start_and_offer_one_job(
+        _WORKER_SOURCE, os.getpid(), _DEATH_SIGNAL_JOB
+    )
+    assert returncode == 0
+    assert json.loads(stdout)["ok"] is True
+    assert f"pdeathsig {int(signal.SIGKILL)}\n".encode() in stderr
+
+
+@pytest.mark.skipif(not _ON_LINUX, reason="PR_SET_PDEATHSIG is Linux-only")
+def test_real_death_signal_with_a_launcher_that_is_not_the_parent():
+    returncode, stdout, stderr = _start_and_offer_one_job(
+        _WORKER_SOURCE, _not_the_parent(), _DEATH_SIGNAL_JOB
+    )
+    assert returncode == _ORPHANED_AT_STARTUP
+    assert stdout == b""
+    assert b"pdeathsig" not in stderr

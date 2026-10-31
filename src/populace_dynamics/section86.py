@@ -6,11 +6,24 @@ Benefits must already reflect the adjustments in §86(d). The optional
 lump-sum election in §86(e) is outside this annual-tier calculation.
 
 Source: https://www.law.cornell.edu/uscode/text/26/86, §86(a)–(c), read
-24 October 2026. This module does not call PolicyEngine-US.
+24 October 2026. This module does not call PolicyEngine-US. Its arithmetic
+runs in a fixed decimal context of its own, so the caller's decimal context
+changes no result.
 """
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation, localcontext
+from decimal import (
+    MAX_EMAX,
+    MIN_EMIN,
+    ROUND_HALF_EVEN,
+    Context,
+    Decimal,
+    DivisionByZero,
+    Inexact,
+    InvalidOperation,
+    Overflow,
+    localcontext,
+)
 
 Amount = Decimal | int | float | str
 
@@ -35,9 +48,41 @@ class Section86Inclusions:
     combined_income: Decimal
 
 
+def exact_decimal_context(*amounts: Decimal) -> Context:
+    """Return a fresh decimal context that ignores the caller's own.
+
+    The precision covers every digit place from three below the lowest
+    exponent of the finite ``amounts`` to one above their highest leading
+    digit, and is never below 28. The exponent limits are the widest the
+    module allows, so no caller limit can overflow an ordinary amount.
+    Rounding is half-even, and ``Inexact`` is trapped with the default
+    traps: F1's sums, differences and statutory products of these amounts
+    stay within that span, so a result that would need rounding raises
+    instead.
+    """
+    precision = 28
+    if amounts:
+        highest_place = max(amount.adjusted() for amount in amounts)
+        lowest_place = min(amount.as_tuple().exponent for amount in amounts)
+        precision = max(precision, highest_place - lowest_place + 5)
+    return Context(
+        prec=precision,
+        rounding=ROUND_HALF_EVEN,
+        Emax=MAX_EMAX,
+        Emin=MIN_EMIN,
+        capitals=1,
+        clamp=0,
+        flags=[],
+        traps=[InvalidOperation, DivisionByZero, Overflow, Inexact],
+    )
+
+
 def _finite_decimal(value: Amount, name: str) -> Decimal:
+    # Converting in a fixed context, malformed input always raises here and
+    # never sets a flag in the caller's context.
     try:
-        amount = Decimal(str(value))
+        with localcontext(exact_decimal_context()):
+            amount = Decimal(str(value))
     except (InvalidOperation, TypeError, ValueError) as error:
         raise ValueError(f"{name} must be a finite number") from error
     if not amount.is_finite():
@@ -88,13 +133,13 @@ def section86_inclusions(
         if filing_status == "JOINT"
         else (Decimal("25000"), Decimal("34000"))
     )
-    # Reserve enough significant digits to align both inputs and multiply
-    # by the two statutory percentages without inheriting caller rounding.
-    amounts = (benefit_amount, modified_agi, adjusted_base)
-    highest_place = max(amount.adjusted() for amount in amounts)
-    lowest_place = min(amount.as_tuple().exponent for amount in amounts)
-    with localcontext() as context:
-        context.prec = max(28, highest_place - lowest_place + 5)
+    # Every intermediate is exact in this context, whatever the caller's:
+    # the products by 0.5 and 0.85 reach at most three places below the
+    # lowest input place, and combined income and the upper-tier sum at
+    # most one place above the highest (the adjusted base included).
+    with localcontext(
+        exact_decimal_context(benefit_amount, modified_agi, adjusted_base)
+    ):
         combined_income = modified_agi + _HALF * benefit_amount
         # §86(a)(1), applied without the paragraph (2) override.
         pre_1993 = min(

@@ -1,6 +1,18 @@
 """Invented liability arithmetic and named input refusals, no oracle."""
 
-from decimal import Decimal
+from decimal import (
+    ROUND_UP,
+    Clamped,
+    Context,
+    Decimal,
+    FloatOperation,
+    Inexact,
+    Rounded,
+    Subnormal,
+    localcontext,
+)
+from fractions import Fraction
+from types import SimpleNamespace
 
 import pytest
 from hypothesis import given, settings
@@ -14,6 +26,7 @@ from populace_dynamics.bridge.policyengine_us import (
 from populace_dynamics.section86 import section86_inclusions
 from populace_dynamics.tax_on_benefits import (
     LIABILITY_VARIABLES,
+    TAXABILITY_VARIABLES,
     TaxOnBenefitsInput,
     _interest_components,
     allocate_liabilities,
@@ -21,6 +34,7 @@ from populace_dynamics.tax_on_benefits import (
     tax_on_benefits,
     tax_on_benefits_batch,
 )
+from tests.test_section86 import _caller_contexts, _context_state
 
 
 def _components(ordinary, refundable, niit, payroll, recapture=0, penalty=0):
@@ -402,3 +416,164 @@ def test_moved_signed_itemizer_units(benefits, itemizes, expected):
         assert (split.oasdi, split.hi, split.total) == tuple(
             Decimal(value) for value in expected
         )
+
+
+def _tuples(*amounts):
+    return [amount.as_tuple() for amount in amounts]
+
+
+@given(
+    st.lists(st.integers(-(10**15), 10**15), min_size=3, max_size=3),
+    st.integers(0, 6),
+    _caller_contexts(),
+)
+@settings(deadline=None)
+def test_split_is_exact_and_independent_of_the_caller_context(
+    units, places, caller
+):
+    # INVENTED liabilities with up to six decimal places.
+    liabilities = [Decimal(f"{unit}E-{places}") for unit in units]
+    with localcontext(Context()):
+        expected = allocate_liabilities(*liabilities)
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        split = allocate_liabilities(*liabilities)
+        after = _context_state(active)
+    assert after == before
+    assert _tuples(split.oasdi, split.hi, split.total) == _tuples(
+        expected.oasdi, expected.hi, expected.total
+    )
+    none, pre_1993, current = map(Fraction, liabilities)
+    oasdi, hi, total = map(Fraction, (split.oasdi, split.hi, split.total))
+    assert (oasdi, hi, total) == (
+        pre_1993 - none,
+        current - pre_1993,
+        current - none,
+    )
+    assert oasdi + hi == total
+
+
+@given(
+    st.lists(st.integers(-(10**13), 10**13), min_size=6, max_size=6),
+    st.integers(0, 4),
+    _caller_contexts(),
+)
+@settings(deadline=None)
+def test_chapter_1_liability_independent_of_the_caller_context(
+    units, places, caller
+):
+    # INVENTED ordinary tax, refundable credits, NIIT, unreported payroll
+    # tax, recapture and penalty.
+    components = _components(*(Decimal(f"{u}E-{places}") for u in units))
+    with localcontext(Context()):
+        expected = chapter1_liability(components)
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        result = chapter1_liability(components)
+        after = _context_state(active)
+    assert after == before
+    assert _tuples(
+        result.before_refundable_credits, result.netted_sensitivity
+    ) == _tuples(
+        expected.before_refundable_credits, expected.netted_sensitivity
+    )
+    assert result.components == expected.components
+    exact = {name: Fraction(value) for name, value in components.items()}
+    outside = (
+        exact["net_investment_income_tax"] + exact["unreported_payroll_tax"]
+    )
+    assert Fraction(result.before_refundable_credits) == (
+        exact["income_tax_before_refundable_credits"] - outside
+    )
+    assert Fraction(result.netted_sensitivity) == (
+        exact["income_tax"] - outside
+    )
+
+
+_NARROWED_CONTEXTS = [
+    Context(prec=3),
+    Context(Emax=4, Emin=-4),
+    Context(Emax=8, clamp=1, traps=[Clamped, Subnormal]),
+    Context(
+        prec=1, rounding=ROUND_UP, traps=[Inexact, Rounded, FloatOperation]
+    ),
+]
+_NARROWED_IDS = ["prec-3", "emax-4", "clamped", "prec-1-traps"]
+
+
+@pytest.mark.parametrize("caller", _NARROWED_CONTEXTS, ids=_NARROWED_IDS)
+@pytest.mark.parametrize(
+    "facts",
+    [
+        {"tax_exempt_interest_income": 0.01},
+        {"taxable_interest_income": 123456.77},
+    ],
+    ids=["derived-taxable", "explicit-taxable"],
+)
+def test_interest_components_independent_of_the_caller_context(caller, facts):
+    # INVENTED: $123,456.78 of interest, $0.01 of it exempt. Before the
+    # fix, prec=3 sent $123,000 of taxable interest and Emax=4 overflowed.
+    expected = {"interest_income": {"2026": 123456.78}}
+    _interest_components(expected, facts, "2026")
+    entry = {"interest_income": {"2026": 123456.78}}
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        _interest_components(entry, facts, "2026")
+        after = _context_state(active)
+    assert after == before
+    assert entry == expected
+    assert entry["taxable_interest_income"]["2026"] == 123456.77
+
+
+# INVENTED native values for one single filer in place of the pinned
+# interpreter: $40,000 of benefits and $190,000 of modified AGI give
+# P = $20,000 and T = $34,000, and combined income of $210,000.
+_INVENTED_BASELINE = dict.fromkeys(TAXABILITY_VARIABLES, 0.0) | {
+    "tax_unit_social_security_for_taxability": 40000.0,
+    "taxable_ss_magi": 190000.0,
+    "tax_unit_taxable_social_security_pre_1993": 20000.0,
+    "tax_unit_taxable_social_security": 34000.0,
+}
+_INVENTED_STATES = {
+    "none": _components(23456.78, 1234.56, 345.67, 45.67),
+    "pre_1993": _components(27456.89, 1234.56, 345.67, 45.67),
+    "current": _components(31234.57, 1234.56, 345.67, 45.67),
+}
+
+
+def _invented_bridge(cases, *, variables, **_):
+    runs = {}
+    for case in cases:
+        label = next(
+            name
+            for name in ("baseline", *_INVENTED_STATES)
+            if case.case_id.endswith(f"_{name}")
+        )
+        values = _INVENTED_STATES.get(label, _INVENTED_BASELINE)
+        runs[case.case_id] = SimpleNamespace(
+            values={variable: (values[variable],) for variable in variables}
+        )
+    return SimpleNamespace(runs=runs, installation="INVENTED", source={})
+
+
+@pytest.mark.parametrize("caller", _NARROWED_CONTEXTS, ids=_NARROWED_IDS)
+def test_batch_split_independent_of_the_caller_context(caller):
+    units = {"u": TaxOnBenefitsInput(_household(), "SINGLE")}
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(
+            tob.bridge, "run_policyengine_us_variables", _invented_bridge
+        )
+        with localcontext(Context()):
+            expected = tax_on_benefits_batch(units, 2026)["u"]
+        with localcontext(caller) as active:
+            before = _context_state(active)
+            result = tax_on_benefits_batch(units, 2026)["u"]
+            after = _context_state(active)
+    assert after == before
+    assert result.inclusions == expected.inclusions
+    for reading in ("primary", "refundable_credits_netted_sensitivity"):
+        split, wanted = getattr(result, reading), getattr(expected, reading)
+        assert _tuples(split.oasdi, split.hi, split.total) == _tuples(
+            wanted.oasdi, wanted.hi, wanted.total
+        )
+        assert split.oasdi + split.hi == split.total

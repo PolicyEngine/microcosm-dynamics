@@ -1,12 +1,39 @@
 """Invented units exercise §86 independently of any tax interpreter."""
 
-from decimal import Decimal, localcontext
+from decimal import (
+    MAX_EMAX,
+    MIN_EMIN,
+    ROUND_05UP,
+    ROUND_CEILING,
+    ROUND_DOWN,
+    ROUND_FLOOR,
+    ROUND_HALF_DOWN,
+    ROUND_HALF_EVEN,
+    ROUND_HALF_UP,
+    ROUND_UP,
+    Clamped,
+    Context,
+    Decimal,
+    DivisionByZero,
+    FloatOperation,
+    Inexact,
+    InvalidOperation,
+    Overflow,
+    Rounded,
+    Subnormal,
+    Underflow,
+    localcontext,
+)
+from fractions import Fraction
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from populace_dynamics.section86 import section86_inclusions
+from populace_dynamics.section86 import (
+    exact_decimal_context,
+    section86_inclusions,
+)
 
 
 @pytest.mark.parametrize(
@@ -211,3 +238,205 @@ def test_below_adjusted_base_current_equals_paragraph_one(
     )
     if result.combined_income <= adjusted_base:
         assert result.current == result.pre_1993
+
+
+_SIGNALS = (
+    Clamped,
+    DivisionByZero,
+    FloatOperation,
+    Inexact,
+    InvalidOperation,
+    Overflow,
+    Rounded,
+    Subnormal,
+    Underflow,
+)
+_ROUNDINGS = (
+    ROUND_05UP,
+    ROUND_CEILING,
+    ROUND_DOWN,
+    ROUND_FLOOR,
+    ROUND_HALF_DOWN,
+    ROUND_HALF_EVEN,
+    ROUND_HALF_UP,
+    ROUND_UP,
+)
+
+
+@st.composite
+def _caller_contexts(draw):
+    """Any caller context: precision, rounding, limits, flags and traps."""
+    return Context(
+        prec=draw(st.integers(1, 40)),
+        rounding=draw(st.sampled_from(_ROUNDINGS)),
+        Emax=draw(st.one_of(st.integers(0, 12), st.just(MAX_EMAX))),
+        Emin=draw(st.one_of(st.integers(-12, 0), st.just(MIN_EMIN))),
+        capitals=draw(st.integers(0, 1)),
+        clamp=draw(st.integers(0, 1)),
+        flags=draw(st.lists(st.sampled_from(_SIGNALS), unique=True)),
+        traps=draw(st.lists(st.sampled_from(_SIGNALS), unique=True)),
+    )
+
+
+def _context_state(context):
+    return (
+        context.prec,
+        context.rounding,
+        context.Emax,
+        context.Emin,
+        context.capitals,
+        context.clamp,
+        dict(context.flags),
+        dict(context.traps),
+    )
+
+
+# INVENTED amounts over many digit places, built from exact strings, plus
+# integer and float inputs.
+_PLACED = st.builds(
+    lambda coefficient, exponent: Decimal(f"{coefficient}E{exponent}"),
+    st.integers(0, 10**24),
+    st.integers(-24, 8),
+)
+_ANY_BENEFITS = st.one_of(
+    _BENEFITS, _PLACED, st.integers(0, 10**12), st.floats(0, 1e12)
+)
+_ANY_MODIFIED_AGI = st.one_of(
+    _MODIFIED_AGI,
+    _PLACED,
+    _PLACED.map(Decimal.copy_negate),
+    st.integers(-(10**12), 10**12),
+    st.floats(-1e12, 1e12),
+)
+
+
+@given(
+    benefits=_ANY_BENEFITS,
+    modified_agi=_ANY_MODIFIED_AGI,
+    status=_STATUSES,
+    caller=_caller_contexts(),
+)
+@settings(deadline=None)
+def test_independent_of_the_caller_decimal_context(
+    benefits, modified_agi, status, caller
+):
+    with localcontext(Context()):
+        expected = section86_inclusions(
+            benefits, modified_agi, status, lived_apart_all_year=True
+        )
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        result = section86_inclusions(
+            benefits, modified_agi, status, lived_apart_all_year=True
+        )
+        after = _context_state(active)
+    assert after == before
+    for name in ("pre_1993", "current", "combined_income"):
+        # Same value and same representation, digits and exponent.
+        assert getattr(result, name).as_tuple() == (
+            getattr(expected, name).as_tuple()
+        )
+
+
+def _rational_tiers(benefits, modified_agi, status):
+    """The design's statute equations, in exact rationals."""
+    b = Fraction(Decimal(str(benefits)))
+    m = Fraction(Decimal(str(modified_agi)))
+    base, adjusted_base = (
+        (32000, 44000) if status == "JOINT" else (25000, 34000)
+    )
+    c = m + b / 2
+    p = min(b / 2, max(c - base, Fraction(0)) / 2)
+    q = min(p, Fraction(adjusted_base - base, 2))
+    eighty_five = Fraction(85, 100)
+    t = (
+        p
+        if c <= adjusted_base
+        else min(eighty_five * b, eighty_five * (c - adjusted_base) + q)
+    )
+    return p, t, c
+
+
+@given(
+    benefits=_ANY_BENEFITS,
+    modified_agi=_ANY_MODIFIED_AGI,
+    status=_STATUSES,
+    caller=_caller_contexts(),
+)
+@settings(deadline=None)
+def test_exact_against_rational_statute_arithmetic(
+    benefits, modified_agi, status, caller
+):
+    with localcontext(caller):
+        result = section86_inclusions(
+            benefits, modified_agi, status, lived_apart_all_year=True
+        )
+    assert (
+        Fraction(result.pre_1993),
+        Fraction(result.current),
+        Fraction(result.combined_income),
+    ) == _rational_tiers(benefits, modified_agi, status)
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [
+        Context(Emax=4, Emin=-4),
+        Context(Emin=-4, traps=[Subnormal]),
+        Context(Emax=8, clamp=1, traps=[Clamped]),
+        Context(
+            prec=1,
+            rounding=ROUND_UP,
+            traps=[Inexact, Rounded, FloatOperation, Underflow],
+        ),
+    ],
+    ids=["emax-4-emin-minus-4", "subnormal", "clamped", "prec-1-traps"],
+)
+@pytest.mark.parametrize(
+    ("benefits", "modified_agi"),
+    # INVENTED: combined income of $100,000 and of $210,000 overflowed a
+    # caller's Emax=4 before the fix, and $0.00005 was subnormal there.
+    [(0, 100000), (40000, 190000), ("0.0001", 0), (20000.02, 30000.03)],
+)
+def test_narrowed_caller_contexts_change_no_result(
+    caller, benefits, modified_agi
+):
+    expected = section86_inclusions(benefits, modified_agi, "SINGLE")
+    with localcontext(caller):
+        result = section86_inclusions(benefits, modified_agi, "SINGLE")
+    assert result == expected
+
+
+def test_invalid_input_leaves_the_caller_context_unchanged():
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(ValueError, match="benefits must be a finite"):
+            section86_inclusions("bad", 0, "SINGLE")
+        assert _context_state(active) == before
+
+
+def test_exact_context_precision_limits_and_traps():
+    assert exact_decimal_context().prec == 28
+    assert exact_decimal_context(Decimal("34000"), Decimal("0.01")).prec == (
+        28
+    )
+    # Places from three below 1E-10 to one above 1E+40: 40 + 10 + 5.
+    wide = exact_decimal_context(Decimal("1E+40"), Decimal("1E-10"))
+    assert wide.prec == 55
+    assert (wide.Emax, wide.Emin, wide.rounding, wide.clamp) == (
+        MAX_EMAX,
+        MIN_EMIN,
+        ROUND_HALF_EVEN,
+        0,
+    )
+    assert not any(wide.flags.values())
+    assert {signal for signal, on in wide.traps.items() if on} == {
+        InvalidOperation,
+        DivisionByZero,
+        Overflow,
+        Inexact,
+    }
+    # A result the precision cannot hold raises instead of rounding.
+    with localcontext(exact_decimal_context()):
+        with pytest.raises(Inexact):
+            Decimal(1) / 3

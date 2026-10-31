@@ -6,7 +6,9 @@ input, matching ``tob_revenue_oasdi.py:66-70`` without branch caches.
 The primary reading is the hub's ruling (b): Chapter 1 liability after
 nonrefundable credits and before refundable credits. Netting refundable
 credits (reading (a), 2.61.0's ``income_tax``) is reported only as a
-labeled sensitivity. See ``docs/design/f1_tax_on_benefits.md`` for the
+labeled sensitivity. Decimal sums and differences run in
+``section86.exact_decimal_context``, so the caller's decimal context
+changes no result. See ``docs/design/f1_tax_on_benefits.md`` for the
 statutory reading and limits.
 """
 
@@ -15,13 +17,14 @@ from __future__ import annotations
 from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import dataclass
-from decimal import Decimal
+from decimal import Decimal, localcontext
 from os import PathLike
 from typing import Any
 
 from populace_dynamics.bridge import policyengine_us as bridge
 from populace_dynamics.section86 import (
     Section86Inclusions,
+    exact_decimal_context,
     section86_inclusions,
 )
 
@@ -88,7 +91,8 @@ class Section86MismatchError(ValueError):
 
 
 def _decimal(value: Any) -> Decimal:
-    amount = Decimal(str(value))
+    with localcontext(exact_decimal_context()):
+        amount = Decimal(str(value))
     if not amount.is_finite():
         raise ValueError("Tax amounts must be finite")
     return amount
@@ -119,14 +123,17 @@ def chapter1_liability(components: Mapping[str, Any]) -> Chapter1Liability:
     amounts = {
         name: _decimal(components[name]) for name in LIABILITY_VARIABLES
     }
-    outside = sum((amounts[n] for n in NON_CHAPTER_1_COMPONENTS), Decimal(0))
-    return Chapter1Liability(
-        before_refundable_credits=(
-            amounts["income_tax_before_refundable_credits"] - outside
-        ),
-        netted_sensitivity=amounts["income_tax"] - outside,
-        components=amounts,
-    )
+    with localcontext(exact_decimal_context(*amounts.values())):
+        outside = sum(
+            (amounts[n] for n in NON_CHAPTER_1_COMPONENTS), Decimal(0)
+        )
+        return Chapter1Liability(
+            before_refundable_credits=(
+                amounts["income_tax_before_refundable_credits"] - outside
+            ),
+            netted_sensitivity=amounts["income_tax"] - outside,
+            components=amounts,
+        )
 
 
 @dataclass(frozen=True)
@@ -142,7 +149,10 @@ def allocate_liabilities(
     none: Decimal, pre_1993: Decimal, current: Decimal
 ) -> FundAllocation:
     """Apply the 42 U.S.C. 401 note's signed with-and-without split."""
-    return FundAllocation(pre_1993 - none, current - pre_1993, current - none)
+    with localcontext(exact_decimal_context(none, pre_1993, current)):
+        return FundAllocation(
+            pre_1993 - none, current - pre_1993, current - none
+        )
 
 
 @dataclass(frozen=True)
@@ -197,13 +207,16 @@ def _interest_components(entry, facts, period):
     exempt = _decimal(facts.get("tax_exempt_interest_income", 0))
     if "taxable_interest_income" in facts:
         taxable = _decimal(facts["taxable_interest_income"])
-        if total and abs(total - taxable - exempt) > Decimal("0.01"):
+        with localcontext(exact_decimal_context(total, taxable, exempt)):
+            gap = abs(total - taxable - exempt)
+        if total and gap > Decimal("0.01"):
             raise ValueError(
                 "interest_income disagrees with taxable_interest_income "
                 "and tax_exempt_interest_income"
             )
     else:
-        taxable = total - exempt
+        with localcontext(exact_decimal_context(total, exempt)):
+            taxable = total - exempt
         if taxable < 0:
             raise ValueError(
                 "tax_exempt_interest_income exceeds interest_income; "
@@ -358,7 +371,9 @@ def tax_on_benefits_batch(
                 Decimal("0.01"),
                 _decimal(4 * bridge.float32_step(float(expected))),
             )
-            if abs(pe[variable] - expected) > tolerance:
+            with localcontext(exact_decimal_context(pe[variable], expected)):
+                gap = abs(pe[variable] - expected)
+            if gap > tolerance:
                 raise Section86MismatchError(
                     f"{variable}: statute={expected}, PE-US={pe[variable]}"
                 )

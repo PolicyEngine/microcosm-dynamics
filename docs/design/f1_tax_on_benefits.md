@@ -54,6 +54,14 @@ current inclusion. The supported bases are:
 The independent Python implementation evaluates these equations directly.
 It does not import PolicyEngine or read its parameters.
 ([26 U.S.C. 86(a)–(c)](https://www.law.cornell.edu/uscode/text/26/86))
+It computes in exact decimal arithmetic, in a context of its own rather
+than the caller's: the precision spans from three places below the
+inputs' lowest place to one above their highest, the exponent limits are
+the widest the `decimal` module allows, and `Inexact` is trapped, so an
+intermediate that needed rounding would raise. F1's liability sums, fund
+differences, interest components and comparison with PE-US's inclusions
+use the same context, so a caller's precision, rounding, exponent limits
+or traps change no result.
 
 The following single-filer calculations expose each tier before any tax
 calculation. They hold `M` fixed within each row:
@@ -540,10 +548,10 @@ readings and determinism.
 
 | Verification | Test module | Result |
 |---|---|---|
-| Statutory tiers, boundaries, precision, inclusion bounds and refusals | `tests/test_section86.py` | 66 passed |
+| Statutory tiers, boundaries, precision, inclusion bounds and refusals; exactness against rational arithmetic and independence from the caller's decimal context | `tests/test_section86.py` | 86 passed |
 | Independent current and pre-1993 inclusions against PE-US, with the tier-1 meaning distinguished | `tests/test_section86_oracle.py` | 2 passed; 150 invented units |
-| Signed allocation identity, refundable-credit invariance, both hub checks, Chapter 1 classification, and the units moved to pure Python | `tests/test_tax_on_benefits.py` | 33 passed |
-| The persistent oracle worker dies with its launcher: idle, sleeping in a job, and inside a GIL-holding C call | `tests/test_tax_on_benefits_oracle_worker.py` | 3 passed |
+| Signed allocation identity, refundable-credit invariance, both hub checks, Chapter 1 classification, and the units moved to pure Python; the split, Chapter 1 sums, interest components and batch under narrowed caller decimal contexts | `tests/test_tax_on_benefits.py` | 47 passed |
+| The persistent oracle worker dies with its launcher: idle, sleeping in a job, and inside a GIL-holding C call; its Linux startup refuses a failed `PR_SET_PDEATHSIG` and exits when its launcher is not its parent | `tests/test_tax_on_benefits_oracle_worker.py` | 6 passed on macOS; 2 Linux-only tests run in CI |
 | The three witnesses, both hub checks, the payroll exclusion, joint, head of household, separate apart, the signed sequence at $0, $250, $1,000 and $2,000, determinism and intended native TOB differences | `tests/test_tax_on_benefits_oracle.py` | 13 passed live |
 | Native entities, enum values, fresh simulations and malformed-result refusals | `tests/bridge/test_policyengine_us_named.py`, `tests/bridge/test_policyengine_us_named_oracle.py` | 28 pure and 2 live tests passed |
 
@@ -575,8 +583,10 @@ The required recount completed: unit 18,125 to 18,255, artifact 4,261,
 integration 1,450 and legacy 520 unchanged, and oracle 308 to 325
 (24,664 to 24,811 overall). On full collection the manifest test passed:
 one passed, two modules skipped because `populace.fit` is not installed
-in the repository environment, and 24,810 deselected. Merge still waits
-for the coordinator's tier-count slot.
+in the repository environment, and 24,810 deselected. Review round 1's
+two fixes then added 39 unit tests to three of F1's modules, counted by
+tier over F1's five modules: unit 18,294 and 24,850 overall. Merge still
+waits for the coordinator's tier-count slot.
 
 The split oracle fixture memoizes the real installation check once per
 pytest process and executes the unchanged bridge runner source with fresh
@@ -601,14 +611,23 @@ once a second and exits when it changes. A C call that holds the GIL
 delays that thread until the call returns, so a kernel-side backstop
 does not wait for it: on Linux, `PR_SET_PDEATHSIG`; on macOS, a small
 guard process, holding none of the worker's pipes, that waits on kqueue
-exit events for the launcher and the worker. With invented jobs on the
-macOS build host, a launcher killed by its pid left no worker or guard
-behind, whether the worker was idle, sleeping in a job, or inside a
-GIL-holding C call (`tests/test_tax_on_benefits_oracle_worker.py`); the
-worker exited 0.3–0.5 seconds after the kill. With the thread alone, the
-worker in the GIL-holding call survived the 25-second check, and with
-neither mechanism every state did. The Linux branch was not exercised
-on this host.
+exit events for the launcher and the worker. The backstop is armed before
+the thread starts. On Linux, a failed `prctl` call ends the startup with
+an error naming its errno, and after a successful call the worker exits
+at once, with status 71, if its launcher is no longer its parent: a
+death signal armed after the parent has gone never arrives. With invented
+jobs on the macOS build host, a launcher killed by its pid left no worker
+or guard behind, whether the worker was idle, sleeping in a job, or
+inside a GIL-holding C call (`tests/test_tax_on_benefits_oracle_worker.py`);
+the worker exited 0.3–0.5 seconds after the kill. With the thread alone,
+the worker in the GIL-holding call survived the 25-second check, and with
+neither mechanism every state did. The same module injects the Linux
+startup's conditions: with a stand-in `prctl`, and `sys.platform` set
+before the worker source, a failed call, a launcher that is not the
+parent, and an armed call under the parent run on any host. Two tests
+with the real `PR_SET_PDEATHSIG`, one of which reads the armed signal back
+with `PR_GET_PDEATHSIG`, run only on Linux, in CI; the real Linux branch
+was not exercised on the macOS build host.
 
 There is no population run and no real-data statistic.
 PSID use follows the project's data-access record.
