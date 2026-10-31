@@ -436,6 +436,11 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # nothing in the historical projection imports them.
     Path("src/populace_dynamics/data/psid_income_wealth.py"),
     Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+    # The opt-in SIPP income, asset, pension and SSI readers (D2) and their
+    # registry are source readers; nothing in the historical projection
+    # imports them.
+    Path("src/populace_dynamics/data/sipp_income.py"),
+    Path("src/populace_dynamics/data/sipp_income_registry.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

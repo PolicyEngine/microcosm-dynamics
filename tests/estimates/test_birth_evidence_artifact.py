@@ -273,6 +273,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         # nothing in the historical projection imports them.
         Path("src/populace_dynamics/data/psid_income_wealth.py"),
         Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+        Path("src/populace_dynamics/data/sipp_income.py"),
+        Path("src/populace_dynamics/data/sipp_income_registry.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -558,6 +560,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in PSID income and wealth readers became reachable from "
         "the birth-evidence reducer: "
         f"{sorted(income_wealth_modules & reachable)}"
+    )
+    sipp_income_modules = {
+        "populace_dynamics.data.sipp_income",
+        "populace_dynamics.data.sipp_income_registry",
+    }
+    assert sipp_income_modules.issubset(module_paths)
+    assert sipp_income_modules.isdisjoint(reachable), (
+        "the opt-in SIPP income readers became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(sipp_income_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
