@@ -35,12 +35,17 @@ from .test_ssi_inventory import (
     ATTRIBUTE_ROUTES,
     CORE_DEFAULT_BINDINGS,
     CORE_DEFAULT_CHANGES,
+    ENUM_ALIAS_LAYOUTS,
     INVENTED_AGE_RECORD,
     INVENTED_EMPLOYMENT_INCOME,
+    INVENTED_ENCODE_MEMBER_CLASS,
+    NAMING_ATTRIBUTE_FORMS,
     REFUSED_FORMS,
     core_default_module,
     invented_age_module,
     invented_enum_module,
+    invented_package,
+    package_with_layout,
     package_with_trigger,
     read_attributes,
     read_members,
@@ -608,7 +613,8 @@ def test_engine_attributes_are_those_the_pinned_variable_reads():
         timeout=600,
         check=True,
     )
-    tree = ast.parse(Path(completed.stdout.strip()).read_bytes())
+    path = Path(completed.stdout.strip())
+    tree = ast.parse(path.read_bytes())
     variable = next(
         node
         for node in tree.body
@@ -637,6 +643,17 @@ def test_engine_attributes_are_those_the_pinned_variable_reads():
             assert isinstance(argument, ast.Constant)
             read.add(argument.value)
     assert read == inventory_script.ENGINE_ATTRIBUTES
+    # The constructor takes as formulas the names with this prefix, which
+    # the reader reads by its spelling.
+    config = ast.parse(path.with_name("config.py").read_bytes())
+    (prefix,) = [
+        item.value
+        for item in config.body
+        if isinstance(item, ast.Assign)
+        and [ast.unparse(target) for target in item.targets]
+        == ["FORMULA_NAME_PREFIX"]
+    ]
+    assert ast.literal_eval(prefix) == "formula"
 
 
 # Runs in the pinned interpreter. It loads each invented module through the
@@ -991,6 +1008,217 @@ def test_followed_variable_class_override_changes_what_the_engine_loads(
         match="Unread variable invented_trigger in variables/invented_tools.py",
     ):
         inventory_script.inventory_release(package)
+
+
+def test_variable_class_on_a_bound_enum_changes_what_the_engine_loads(
+    tmp_path,
+):
+    """Differential, round 10's M1 repro: invented_tools.py binds Enum to
+    Variable, so its class on Enum is a variable class whose override of
+    Variable.set the engine's walk runs before it loads employment_income.
+    The engine gives employment_income 7, and the reader refuses."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    files, refused, _ = ENUM_ALIAS_LAYOUTS["followed_assign"]
+    tree = tmp_path / "walk" / "variables"
+    for relative, source in files.items():
+        (tree / relative).parent.mkdir(parents=True, exist_ok=True)
+        (tree / relative).write_text(source)
+    engine = engine_walk(python, tree)
+    assert [Path(file) for file in engine["files"]] == [
+        tree / "invented_tools.py",
+        tree / "input/employment_income.py",
+    ]
+    assert engine["variables"]["invented_trigger"] == {
+        "default": 7,
+        "default_type": "int",
+    }
+    changed = engine["variables"]["employment_income"]
+    assert changed == {"default": 7, "default_type": "int"}
+    assert changed["default"] != inventory_script.TYPE_DEFAULTS["float"]
+    package = package_with_layout(tmp_path / "read", files)
+    with pytest.raises(
+        ValueError, match=f"^Unread module code in variables/{refused}$"
+    ):
+        inventory_script.inventory_release(package)
+
+
+# Runs in the pinned interpreter, importing only its Enum: the members, in
+# order, and whether the class's encode is still callable, for each
+# invented class source.
+ENUM_ENCODE_CHILD = """
+import json, sys
+from policyengine_core.enums import Enum
+
+observed = []
+for source in json.load(sys.stdin):
+    namespace = {"Enum": Enum}
+    exec(source, namespace)
+    cls = namespace["InventedStatus"]
+    observed.append({
+        "members": list(cls.__members__),
+        "canonical": [member.name for member in cls],
+        "indices": [member.index for member in cls],
+        "encode_callable": callable(cls.encode),
+    })
+json.dump(observed, sys.stdout)
+"""
+
+
+def test_enum_member_named_encode_replaces_the_engine_encode():
+    """Differential: the engine's own Enum loads a member named encode in
+    the order written, and that member takes the class's encode, which
+    formulas and the engine call by its spelling; the reader refuses the
+    class. Under another name the member leaves encode the method."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    renamed = INVENTED_ENCODE_MEMBER_CLASS.replace(
+        "    encode = ", "    INVENTED_ENCODE = "
+    )
+    completed = subprocess.run(
+        [str(python), "-I", "-c", ENUM_ENCODE_CHILD],
+        input=json.dumps([INVENTED_ENCODE_MEMBER_CLASS, renamed]),
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    member, control = json.loads(completed.stdout)
+    assert member == {
+        "members": ["INVENTED_FIRST", "encode"],
+        "canonical": ["INVENTED_FIRST", "encode"],
+        "indices": [0, 1],
+        "encode_callable": False,
+    }
+    assert control == {
+        "members": ["INVENTED_FIRST", "INVENTED_ENCODE"],
+        "canonical": ["INVENTED_FIRST", "INVENTED_ENCODE"],
+        "indices": [0, 1],
+        "encode_callable": True,
+    }
+    for source, read in (
+        (INVENTED_ENCODE_MEMBER_CLASS, None),
+        (renamed, control["members"]),
+    ):
+        module = invented_enum_module(
+            source, "InventedStatus", "INVENTED_FIRST"
+        )
+        assert read_members(module) == read
+
+
+# Runs in the pinned interpreter. It loads each invented module through the
+# engine's own loader and reports the adds, subtracts and defined_for the
+# engine holds for its one new variable, and what each formula it holds
+# returns when called with no arguments it reads.
+LOADED_ATTRIBUTES_CHILD = """
+import json, sys, tempfile
+from pathlib import Path
+from policyengine_us import CountryTaxBenefitSystem
+
+
+def plain(value):
+    if value is None or isinstance(value, str):
+        return value
+    return sorted(value) if isinstance(value, set) else list(value)
+
+
+system = CountryTaxBenefitSystem()
+observed = []
+with tempfile.TemporaryDirectory() as folder:
+    for index, source in enumerate(json.load(sys.stdin)):
+        path = Path(folder) / f"invented_loaded_{index}.py"
+        path.write_text(source)
+        before = set(system.variables)
+        try:
+            system.add_variables_from_file(str(path))
+            (name,) = set(system.variables) - before
+            variable = system.variables[name]
+            observed.append({
+                "adds": plain(variable.adds),
+                "subtracts": plain(variable.subtracts),
+                "defined_for": plain(variable.defined_for),
+                "formulas": [
+                    formula(None, None, None)
+                    for formula in variable.formulas.values()
+                ],
+            })
+        except Exception as error:
+            observed.append({"error": type(error).__name__})
+json.dump(observed, sys.stdout)
+"""
+# What the engine loads for each naming-attribute form that loads without
+# an error, as (attribute, value).
+LOADED_NAMING_ATTRIBUTES = {
+    "adds_name": ("adds", ["employment_income"]),
+    "adds_sum": ("adds", ["employment_income", "pension_income"]),
+    "adds_comprehension": ("adds", ["invented_one", "invented_two"]),
+    "subtracts_name": ("subtracts", ["pension_income"]),
+    "defined_for_name": ("defined_for", "employment_income"),
+    "defined_for_member": ("defined_for", "employment_income"),
+}
+INVENTED_FORMULAS_TWICE = [
+    (
+        "body_tail",
+        "def formula(person, period, parameters):\n"
+        '    return person("employment_income", period)',
+    ),
+    ("body_tail", "def formula(person, period, parameters):\n    return 0"),
+]
+
+
+def test_naming_attributes_and_formulas_load_as_the_engine_reads_them(
+    tmp_path,
+):
+    """Differential: each adds, subtracts or defined_for the reader refuses
+    for a variable that is not a boundary loads in the pinned engine naming
+    the variables the record would not list, and of two formulas of one
+    name the engine holds only the last, where the record would list two.
+    The plain module loads with none of them."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    kinds = sorted(LOADED_NAMING_ATTRIBUTES)
+    forms = [[]] + [NAMING_ATTRIBUTE_FORMS[kind][0] for kind in kinds]
+    forms.append(INVENTED_FORMULAS_TWICE)
+    sources = [invented_age_module(form) for form in forms]
+    completed = subprocess.run(
+        [str(python), "-I", "-c", LOADED_ATTRIBUTES_CHILD],
+        input=json.dumps(
+            [
+                source.replace("invented_age", f"invented_age_{index}")
+                for index, source in enumerate(sources)
+            ]
+        ),
+        capture_output=True,
+        text=True,
+        timeout=1800,
+        check=True,
+    )
+    plain, *naming, twice = json.loads(completed.stdout)
+    assert plain == {
+        "adds": None,
+        "subtracts": None,
+        "defined_for": None,
+        "formulas": [],
+    }
+    for index, (kind, engine) in enumerate(zip(kinds, naming, strict=True)):
+        attribute, value = LOADED_NAMING_ATTRIBUTES[kind]
+        assert "error" not in engine, kind
+        assert engine[attribute] == value, kind
+        package = invented_package(tmp_path / kind)
+        (package / "variables/input/invented_age.py").write_text(
+            sources[index + 1]
+        )
+        with pytest.raises(
+            ValueError, match=f"Unresolved {attribute} for invented_age"
+        ):
+            inventory_script.inventory_release(package)
+    # The last formula, which reads nothing, is the only one.
+    assert twice == plain | {"formulas": [0]}
+    assert read_attributes(sources[-1]) is None
+    assert read_attributes(invented_age_module(INVENTED_FORMULAS_TWICE[:1]))
 
 
 # Import-time code with no Call node, which the reader admits: each form

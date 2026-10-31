@@ -15,6 +15,7 @@ import importlib.util
 import json
 import os
 import py_compile
+import re
 import subprocess
 import symtable
 import sys
@@ -1137,6 +1138,50 @@ def test_enum_member_named_mro_is_unread():
     assert read_members(source) is None
 
 
+class InventedEncodingEnum(enum.Enum):
+    """Stands in for the engine's Enum, whose encode formulas and the
+    engine call by that spelling."""
+
+    @classmethod
+    def encode(cls, array):
+        return array
+
+
+INVENTED_ENCODE_MEMBER_CLASS = (
+    "class InventedStatus(Enum):\n"
+    '    INVENTED_FIRST = "first"\n'
+    '    encode = "invented encode"\n'
+)
+
+
+def test_enum_member_named_encode_refuses_inventory(tmp_path):
+    """The reader admits reads of the class's encode by its spelling. A
+    member of that name takes the name on the class, so encode is no
+    longer the method; see test_ssi_engine for the engine's own Enum."""
+    class_source = INVENTED_ENCODE_MEMBER_CLASS
+    namespace = {"Enum": InventedEncodingEnum}
+    exec(class_source, namespace)  # noqa: S102 - invented source only
+    cls = namespace["InventedStatus"]
+    assert list(cls.__members__) == ["INVENTED_FIRST", "encode"]
+    assert not callable(cls.encode)
+    source = invented_enum_module(
+        class_source, "InventedStatus", "INVENTED_FIRST"
+    )
+    assert read_members(source) is None
+    assert read_members(
+        source.replace("    encode = ", "    INVENTED_ENCODE = ")
+    ) == [
+        "INVENTED_FIRST",
+        "INVENTED_ENCODE",
+    ]
+    package = invented_package(tmp_path)
+    write_enum_module(package, source)
+    with pytest.raises(
+        ValueError, match="Unresolved enum members for invented_status"
+    ):
+        inventory.inventory_release(package)
+
+
 @pytest.mark.parametrize(
     ("kind", "message"),
     (
@@ -1534,9 +1579,9 @@ INVENTED_MODEL_API = {
 }
 
 
-def python_attributes(source):
-    """What Python binds the invented variable's class namespace to, in the
-    record's spellings, or None if the module fails.
+def python_namespace(source):
+    """The invented age variable's class namespace as Python binds it, with
+    stand-ins for the model API and Simulation; an exception propagates.
 
     Builtins are a copy, so a module that changes them changes only its own.
     """
@@ -1558,14 +1603,20 @@ def python_attributes(source):
     namespace = {
         "__builtins__": vars(builtins) | {"__import__": stand_in_import}
     }
+    exec(source, namespace)  # noqa: S102 - invented source only
+    return vars(namespace["invented_age"])
+
+
+def python_attributes(source):
+    """What Python binds the invented variable's class namespace to, in the
+    record's spellings, or None if the module fails."""
     spelled = {
         id(value): name
         for name, value in INVENTED_MODEL_API.items()
         if name != "entities"
     } | {id(kind): kind.__name__ for kind in (bool, int, float, str)}
     try:
-        exec(source, namespace)  # noqa: S102 - invented source only
-        attributes = vars(namespace["invented_age"])
+        attributes = python_namespace(source)
         return {
             "value_type": spelled[id(attributes["value_type"])],
             "entity": spelled[id(attributes["entity"])],
@@ -1877,6 +1928,168 @@ def test_required_attribute_absent_refuses_inventory(tmp_path, attribute):
         inventory.inventory_release(package)
 
 
+@pytest.mark.parametrize("name", ["formula", "formula_2020"])
+def test_formula_defined_twice_refuses_inventory(tmp_path, name):
+    """Python keeps the last of two formulas of one name, and so does the
+    engine, which copies the class namespace; the record would list both.
+    See test_ssi_engine for the formulas the engine loads."""
+    forms = [
+        (
+            "body_tail",
+            f"def {name}(person, period, parameters):\n"
+            '    return person("employment_income", period)',
+        ),
+        (
+            "body_tail",
+            f"def {name}(person, period, parameters):\n    return 0",
+        ),
+    ]
+    source = invented_age_module(forms)
+    # The second formula, which reads nothing.
+    assert python_namespace(source)[name](None, None, None) == 0
+    assert read_attributes(source) is None
+    assert read_attributes(invented_age_module(forms[:1])) is not None
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(
+        ValueError,
+        match="Unread variable invented_age in variables/input/invented_age.py",
+    ):
+        inventory.inventory_release(package)
+
+
+# Engine attributes whose values name the variables the engine reads for a
+# variable, bound outside a literal of strings: (forms, the attribute, and
+# what Python binds the attribute to). Each would hide the dependency from
+# the record; see test_ssi_engine for what the engine loads.
+NAMING_ATTRIBUTE_FORMS = {
+    "adds_name": (
+        [
+            ("head", 'INVENTED_SOURCES = ["employment_income"]'),
+            ("body_tail", "adds = INVENTED_SOURCES"),
+        ],
+        "adds",
+        ["employment_income"],
+    ),
+    "adds_sum": (
+        [("body_tail", 'adds = ["employment_income"] + ["pension_income"]')],
+        "adds",
+        ["employment_income", "pension_income"],
+    ),
+    # As social_security's adds in the pinned release, which is a boundary.
+    "adds_comprehension": (
+        [
+            (
+                "body_tail",
+                'adds = ["invented_" + kind for kind in ["one", "two"]]',
+            )
+        ],
+        "adds",
+        ["invented_one", "invented_two"],
+    ),
+    "adds_set": (
+        [("body_tail", 'adds = {"employment_income"}')],
+        "adds",
+        {"employment_income"},
+    ),
+    "adds_number": ([("body_tail", "adds = [1]")], "adds", [1]),
+    "subtracts_name": (
+        [
+            ("head", 'INVENTED_SOURCES = ["pension_income"]'),
+            ("body_tail", "subtracts = INVENTED_SOURCES"),
+        ],
+        "subtracts",
+        ["pension_income"],
+    ),
+    "defined_for_name": (
+        [
+            ("head", 'INVENTED_GATE = "employment_income"'),
+            ("body_tail", "defined_for = INVENTED_GATE"),
+        ],
+        "defined_for",
+        "employment_income",
+    ),
+    # The engine takes a member's value as defined_for.
+    "defined_for_member": (
+        [
+            (
+                "head",
+                "class InventedGate(Enum):\n"
+                '    INVENTED_EARNER = "employment_income"',
+            ),
+            ("body_tail", "defined_for = InventedGate.INVENTED_EARNER"),
+        ],
+        "defined_for",
+        "INVENTED_EARNER",
+    ),
+    "defined_for_list": (
+        [("body_tail", 'defined_for = ["employment_income"]')],
+        "defined_for",
+        ["employment_income"],
+    ),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(NAMING_ATTRIBUTE_FORMS))
+def test_attribute_naming_variables_outside_a_literal_refuses_inventory(
+    tmp_path, kind
+):
+    """invented_age is not a boundary, so the record's dependencies must
+    hold the variables its adds, subtracts and defined_for name."""
+    forms, attribute, bound = NAMING_ATTRIBUTE_FORMS[kind]
+    source = invented_age_module(forms)
+    value = python_namespace(source)[attribute]
+    assert getattr(value, "name", value) == bound
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(source)
+    with pytest.raises(
+        ValueError, match=f"Unresolved {attribute} for invented_age"
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize(
+    ("line", "dependency"),
+    [
+        ('adds = "gov.ssa.ssi.income.sources.earned"', "employment_income"),
+        ('adds = ["employment_income"]', "employment_income"),
+        ('adds = ("employment_income",)', "employment_income"),
+        ('subtracts = ["pension_income"]', "pension_income"),
+        ('defined_for = "employment_income"', "employment_income"),
+    ],
+)
+def test_attribute_naming_variables_by_literal_is_a_dependency(
+    tmp_path, line, dependency
+):
+    package = invented_package(tmp_path)
+    (package / "variables/input/invented_age.py").write_text(
+        invented_age_module([("body_tail", line)])
+    )
+    result = inventory.inventory_release(package)
+    record = next(
+        v for v in result["variables"] if v["name"] == "invented_age"
+    )
+    assert dependency in record["dependencies"]
+
+
+def test_boundary_with_computed_adds_is_read(tmp_path):
+    """A boundary's dependencies are bypassed, so its adds may be computed,
+    as social_security's are in the pinned release."""
+    package = invented_package(tmp_path)
+    path = package / "variables/input/employment_income.py"
+    path.write_text(
+        path.read_text()
+        + '    adds = ["invented_" + kind for kind in ["one", "two"]]\n'
+    )
+    record = next(
+        v
+        for v in inventory.inventory_release(package)["inputs"]
+        if v["name"] == "employment_income"
+    )
+    assert record["bypassed_formula_dependencies"] == []
+    assert record["reason"].startswith("Observed source listed by")
+
+
 # Module code the reader refuses, wherever the module sits in the closure:
 # (place, text) as in ATTRIBUTE_ROUTES.
 REFUSED_MODULE_FORMS = {
@@ -1989,6 +2202,9 @@ REFUSED_MODULE_FORMS = {
         "        value_type = float",
     ),
     "variable_bound": ("tail", "Variable = None"),
+    # Round 10's M1: with Enum bound to Variable, a class on Enum is a
+    # variable class that no rule spelled Variable reads.
+    "enum_bound": ("tail", "Enum = Variable"),
     # Code that runs as the module is imported and can change what another
     # module holds: calls, decorators, item stores and deletes, and
     # augmented assignments, at module level, in class bodies, and in the
@@ -2259,6 +2475,51 @@ def test_variable_class_in_a_followed_module_must_be_plain(
             inventory.inventory_release(package)
 
 
+INVENTED_PLAIN_CLASS = (
+    "class invented_after(Variable):\n"
+    "    value_type = float\n"
+    "    entity = Person\n"
+    "    definition_period = YEAR\n"
+    '    label = "Invented after"\n'
+)
+
+
+@pytest.mark.parametrize("position", ["tools", "init"])
+@pytest.mark.parametrize("order", ["not_plain_first", "plain_first"])
+def test_every_variable_class_in_a_followed_module_is_checked(
+    tmp_path, order, position
+):
+    """Round 10's Y1: the class rule reads every variable class in the
+    module, whichever comes first, and the engine's walk builds both."""
+    trigger = trigger_module("set_override")
+    if order == "not_plain_first":
+        source = f"{trigger}\n\n{INVENTED_PLAIN_CLASS}"
+    else:
+        header = "class invented_trigger(Variable):"
+        source = trigger.replace(header, f"{INVENTED_PLAIN_CLASS}\n\n{header}")
+    tree = ast.parse(source)
+    assert [
+        node.name for node in tree.body if isinstance(node, ast.ClassDef)
+    ] == (
+        ["invented_trigger", "invented_after"]
+        if order == "not_plain_first"
+        else ["invented_after", "invented_trigger"]
+    )
+    assert inventory.module_imports(tree) == []
+    if position == "tools":
+        package = package_importing_tools(tmp_path, source)
+        relative = "invented_tools.py"
+    else:
+        package = package_importing_tools(tmp_path, INVENTED_TOOLS, source)
+        relative = "__init__.py"
+    with pytest.raises(
+        ValueError,
+        match="Unread variable invented_trigger in "
+        f"variables/invented/{relative}",
+    ):
+        inventory.inventory_release(package)
+
+
 INVENTED_EMPLOYMENT_INCOME = """from policyengine_us.model_api import *
 from policyengine_us.variables.invented_tools import invented_tool
 
@@ -2302,6 +2563,208 @@ def test_followed_variable_class_that_overrides_set_refuses_inventory(
     with pytest.raises(
         ValueError,
         match="Unread variable invented_trigger in variables/invented_tools.py",
+    ):
+        inventory.inventory_release(package)
+
+
+# Round 10's M1 repros: a class whose base is spelled Enum, with Enum bound
+# to Variable or to a variable class, is a variable class with an override
+# of Variable.set, which no rule spelled Variable read. Each layout gives
+# the files under variables/, the module that binds Enum, and the line that
+# binds it; see test_ssi_engine for the default the engine then gives.
+INVENTED_MODEL_API_IMPORT = "from policyengine_us.model_api import *\n"
+INVENTED_ENUM_TRIGGER = trigger_module("set_override").replace(
+    "class invented_trigger(Variable):", "class invented_trigger(Enum):"
+)
+INVENTED_EMPLOYMENT_CLASS = INVENTED_EMPLOYMENT_INCOME.partition("\n\n\n")[2]
+INVENTED_ENUM_TRIGGER_CLASS = (
+    "class " + INVENTED_ENUM_TRIGGER.partition("\n\n\nclass ")[2]
+)
+ENUM_ALIAS_LAYOUTS = {
+    "followed_assign": (
+        {
+            "invented_tools.py": INVENTED_ENUM_TRIGGER.replace(
+                INVENTED_MODEL_API_IMPORT,
+                INVENTED_MODEL_API_IMPORT + "\nEnum = Variable\n",
+            ),
+            "input/employment_income.py": INVENTED_EMPLOYMENT_INCOME,
+        },
+        "invented_tools.py",
+        "Enum = Variable",
+    ),
+    "closure_assign": (
+        {
+            "input/employment_income.py": INVENTED_MODEL_API_IMPORT
+            + "\nEnum = Variable\n\n\n"
+            + INVENTED_ENUM_TRIGGER_CLASS
+            + "\n\n"
+            + INVENTED_EMPLOYMENT_CLASS,
+        },
+        "input/employment_income.py",
+        "Enum = Variable",
+    ),
+    "closure_import_alias": (
+        {
+            "invented_tools.py": INVENTED_MODEL_API_IMPORT
+            + "\n\n"
+            + INVENTED_TOOLS,
+            "input/employment_income.py": INVENTED_MODEL_API_IMPORT
+            + "from policyengine_us.variables.invented_tools import "
+            "Variable as Enum\n\n\n"
+            + INVENTED_ENUM_TRIGGER_CLASS
+            + "\n\n"
+            + INVENTED_EMPLOYMENT_CLASS,
+        },
+        "input/employment_income.py",
+        "from policyengine_us.variables.invented_tools import Variable as Enum",
+    ),
+    "closure_intermediate": (
+        {
+            "invented_tools.py": INVENTED_MODEL_API_IMPORT
+            + "\n\n"
+            + INVENTED_TOOLS
+            + "\n\n"
+            + INVENTED_PLAIN_CLASS.replace("invented_after", "invented_plain"),
+            "input/employment_income.py": INVENTED_MODEL_API_IMPORT
+            + "from policyengine_us.variables.invented_tools import "
+            "invented_plain as Enum\n\n\n"
+            + "class invented_trigger(Enum):\n    "
+            + INVENTED_TRIGGER_SET.replace("\n", "\n    ")
+            + "\n\n\n"
+            + INVENTED_EMPLOYMENT_CLASS,
+        },
+        "input/employment_income.py",
+        "from policyengine_us.variables.invented_tools import "
+        "invented_plain as Enum",
+    ),
+}
+
+
+def package_with_layout(tmp_path, files):
+    """The invented package with ``files`` written under variables/."""
+    package = invented_package(tmp_path)
+    for relative, source in files.items():
+        (package / "variables" / relative).write_text(source)
+    return package
+
+
+def python_class_on_enum(binding):
+    """Whether, after ``binding``, a class whose base is spelled Enum is a
+    subclass of a stand-in Variable, with stand-in imports."""
+
+    class InventedVariable:
+        """Stands in for the model API's Variable."""
+
+    class invented_plain(InventedVariable):
+        """Stands in for a plain variable class of a followed module."""
+
+    def stand_in_import(name, *args, **kwargs):
+        module = types.ModuleType(name)
+        module.Variable = InventedVariable
+        module.invented_plain = invented_plain
+        return module
+
+    namespace = {
+        "__builtins__": vars(builtins) | {"__import__": stand_in_import},
+        "Enum": enum.Enum,
+        "Variable": InventedVariable,
+    }
+    exec(  # noqa: S102 - invented source only
+        f"{binding}\n\n\nclass invented_trigger(Enum):\n    pass\n",
+        namespace,
+    )
+    return issubclass(namespace["invented_trigger"], InventedVariable)
+
+
+@pytest.mark.parametrize("layout", sorted(ENUM_ALIAS_LAYOUTS))
+def test_variable_class_on_a_bound_enum_refuses_inventory(tmp_path, layout):
+    """Round 10's M1 repros end to end: each binding makes the class on
+    Enum a Variable subclass, and the module that binds Enum refuses."""
+    files, refused, binding = ENUM_ALIAS_LAYOUTS[layout]
+    assert binding in files[refused]
+    assert python_class_on_enum(binding)
+    assert not python_class_on_enum("pass")
+    assert inventory.module_imports(ast.parse(files[refused])) is None
+    package = package_with_layout(tmp_path, files)
+    with pytest.raises(
+        ValueError, match=f"^Unread module code in variables/{refused}$"
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("layout", ["followed_assign", "closure_assign"])
+def test_class_on_an_unbound_enum_is_no_variable(tmp_path, layout):
+    """Without the binding the class is an Enum, which the engine's walk
+    does not build, and the reader reads the layout: employment_income
+    keeps the core type default."""
+    files, refused, binding = ENUM_ALIAS_LAYOUTS[layout]
+    unbound = files | {refused: files[refused].replace(f"\n{binding}\n", "\n")}
+    assert "Enum = " not in unbound[refused]
+    package = package_with_layout(tmp_path, unbound)
+    record = next(
+        v
+        for v in inventory.inventory_release(package)["inputs"]
+        if v["name"] == "employment_income"
+    )
+    assert record["default_origin"] == "core type"
+    assert record["default"] == 0 and type(record["default"]) is int
+
+
+def test_variable_class_on_a_bound_enum_in_the_ssi_tree_refuses_inventory(
+    tmp_path,
+):
+    """Round 10's SSI-tree layout: the class on Enum is a variable the
+    engine loads, which the reader neither recorded nor refused."""
+    hidden = (
+        "class invented_hidden_ssi(Enum):\n"
+        "    value_type = float\n"
+        "    entity = Person\n"
+        "    definition_period = MONTH\n"
+        '    label = "Invented hidden SSI"\n'
+    )
+    for name, binding in (("bound", "Enum = Variable\n\n\n"), ("plain", "")):
+        package = invented_package(tmp_path / name)
+        path = package / "variables/gov/ssa/ssi/invented_ssi.py"
+        path.write_text(path.read_text() + f"\n\n{binding}{hidden}")
+        if name == "plain":
+            # An Enum, which is no root.
+            result = inventory.inventory_release(package)
+            assert result["federal_ssi_variable_count"] == 2
+            assert "invented_hidden_ssi" not in {
+                v["name"] for v in result["variables"]
+            }
+            continue
+        with pytest.raises(
+            ValueError,
+            match="^Unread module code in variables/gov/ssa/ssi/invented_ssi.py$",
+        ):
+            inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("form", BINDING_FORMS)
+@pytest.mark.parametrize("name", inventory.MODEL_API_SPELLINGS)
+def test_model_api_spelling_bound_in_its_module_refuses_inventory(
+    tmp_path, name, form
+):
+    """The reader reads Enum and Variable by their spelling, so every
+    binding form of either refuses. Where the module rules admit the same
+    form binding another name, this rule is the one that refuses."""
+    binding, other_rule = spelling_binding(form, name)
+    control, _ = spelling_binding(form, "InventedName")
+    package = invented_package(tmp_path)
+    path = package / "variables/input/employment_income.py"
+    text = path.read_text()
+    if other_rule is None:
+        control_tree = ast.parse(f"{control}\n\n\n{text}")
+        assert inventory.module_imports(control_tree) is not None
+        assert inventory.binding_sites(ast.parse(binding), name)
+    assert (
+        inventory.module_imports(ast.parse(f"{binding}\n\n\n{text}")) is None
+    )
+    path.write_text(f"{binding}\n\n\n{text}")
+    with pytest.raises(
+        ValueError,
+        match="Unread module code in variables/input/employment_income.py",
     ):
         inventory.inventory_release(package)
 
@@ -2968,16 +3431,22 @@ def test_file_named_like_a_package_init_is_a_root(tmp_path):
     assert record["path"] == "variables/gov/ssa/ssi/invented__init__.py"
 
 
-def test_folder_whose_path_is_a_glob_pattern_refuses_inventory(tmp_path):
-    """Round 9's repro: the engine's walk of invented_a[b]/ globs
-    invented_a[b]/*.py, which matches invented_ab/__init__.py rather than
-    the path it joins for the folder's own init, so it loads that init as
-    variables. The reader refuses a folder whose path is a glob pattern.
-    See test_ssi_engine for what the engine's walk loads."""
+@pytest.mark.parametrize(
+    "folder", ["invented_a[b]", "invented_a?", "invented_a*"]
+)
+def test_folder_whose_path_is_a_glob_pattern_refuses_inventory(
+    tmp_path, folder
+):
+    """Round 9's repro, and round 10's Y3 for the other glob characters:
+    the engine's walk of invented_a[b]/ globs invented_a[b]/*.py, which
+    matches invented_ab/__init__.py rather than the path it joins for the
+    folder's own init, so it loads that init as variables; so do ? and *.
+    The reader refuses a folder whose path is a glob pattern. See
+    test_ssi_engine for what the engine's walk loads."""
     package = invented_package(tmp_path)
     ssi = package / "variables/gov/ssa/ssi"
-    (ssi / "invented_a[b]").mkdir()
-    (ssi / "invented_a[b]/NOTE.txt").write_text("Invented note\n")
+    (ssi / folder).mkdir()
+    (ssi / folder / "NOTE.txt").write_text("Invented note\n")
     (ssi / "invented_ab").mkdir()
     (ssi / "invented_ab/__init__.py").write_text(
         "class invented_glob_ssi(Variable):\n"
@@ -2985,18 +3454,18 @@ def test_folder_whose_path_is_a_glob_pattern_refuses_inventory(tmp_path):
         "    entity = Person\n"
         "    definition_period = YEAR\n"
     )
-    assert glob.glob(os.path.join(ssi / "invented_a[b]", "*.py")) == [
+    assert glob.glob(os.path.join(ssi / folder, "*.py")) == [
         str(ssi / "invented_ab/__init__.py")
     ]
     with pytest.raises(
         ValueError,
-        match=r"Glob pattern in variables folder .*/invented_a\[b\]$",
+        match=f"Glob pattern in variables folder .*/{re.escape(folder)}$",
     ):
         inventory.inventory_release(package)
     # Without that folder, the init is metadata and the read is the plain
     # package's.
-    (ssi / "invented_a[b]/NOTE.txt").unlink()
-    (ssi / "invented_a[b]").rmdir()
+    (ssi / folder / "NOTE.txt").unlink()
+    (ssi / folder).rmdir()
     assert inventory.inventory_release(package) == inventory.inventory_release(
         invented_package(tmp_path / "plain")
     )

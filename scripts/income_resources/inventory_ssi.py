@@ -11,36 +11,51 @@ binds, the value_type naming a primitive type or Enum, or the inventory
 refuses; its default is absent, a literal of its primitive type, or a
 member of its enum class, by one plain assignment, or the inventory
 refuses, and an int default of a float variable converts to the same float;
-an enum variable's members come only from a class whose membership a static
-read settles, and include its default, or the inventory refuses; source is
+the adds, subtracts and defined_for of a variable that is not a boundary,
+which name the variables the engine reads for it, are each one plain
+assignment of a string literal or, for adds and subtracts, a list or tuple
+of them, or the inventory refuses; an enum variable's members come only
+from a class whose membership a static read settles, include its default,
+and leave the class its encode method, or the inventory refuses; source is
 decoded as Python decodes it; the output is deterministic for the same
 source and distribution metadata.
 
 The static read covers each variable module's own code, and every module
 under ``policyengine_us/variables`` that it imports, found as the import
 system finds it, with the package ``__init__`` files that import runs; a
-step that is not Python source refuses. Every variable class in that code,
-whether or not the closure reads it, has no type parameters and a body of a
-leading docstring, single assignments to attributes the engine's
-constructor reads, and undecorated formulas, so it may not override a
-Variable method; the code may not store an attribute, or name a reflective
-builtin, a frame attribute or a dunder name; and the part of it that runs
-as the module is imported may not call anything, apply a decorator, store
-or delete an item, or assign in place. Imports are resolved in the reader's
-own interpreter, through its path hooks and the file suffixes, extension
-suffixes included, that their finders take. The resolution asks only the
-path-based finder, not the meta path finders an import statement asks
-first, and it refuses when the interpreter would match file names without
-regard to case, as ``PYTHONCASEOK`` makes it on a case-insensitive platform
-unless ``-I`` or ``-E`` is given. The read does not follow code in other
-modules: the model API, the one policyengine_core name a closure module may
-import (``Simulation``), and reflection through objects they export,
-including the implicit calls that operators, iteration and attribute or
-item reads make on them. The engine's directory walk also runs every module
-under ``policyengine_us/variables`` outside the closure, and such a module
-can change what the engine loads; the reader does not read those modules,
-and only the pinned-engine oracle covers them. Python's source loader can
-also run a module's cached bytecode instead of its source: the file that
+step that is not Python source refuses. That code binds neither ``Variable``
+nor ``Enum``, in any form, or the inventory refuses: the read trusts each
+spelling to name what the model API's star import binds only because no
+module it reads binds it, and so a base spelled ``Variable`` marks every
+variable class there and a base spelled ``Enum`` marks none. Every variable
+class in that code, whether or not the closure reads it, has no type
+parameters and a body of a leading docstring, single assignments to
+attributes the engine's constructor reads, and undecorated formulas, each
+formula name defined once, so it may not override a Variable method; the
+code may not store an attribute, or name a reflective builtin, a frame
+attribute or a dunder name; and the part of it that runs as the module is
+imported may not call anything, apply a decorator, store or delete an item,
+or assign in place. Imports are resolved in the reader's own interpreter,
+through its path hooks and the file suffixes, extension suffixes included,
+that their finders take. The resolution asks only the path-based finder, not
+the meta path finders an import statement asks first, and it refuses when
+the interpreter would match file names without regard to case, as
+``PYTHONCASEOK`` makes it on a case-insensitive platform unless ``-I`` or
+``-E`` is given. The read does not follow code in other modules: the model
+API, the one policyengine_core name a closure module may import
+(``Simulation``), and reflection through objects they export, including the
+implicit calls that operators, iteration and attribute or item reads make on
+them. Nor does it follow a formula's code: the record's dependencies are the
+variable names among the string literals of a variable's body and of the
+federal SSI helpers whose names it calls, whatever its module binds those
+names to, so a formula that reaches a variable through a function or
+constant its module binds, through a parameter's values or through a name it
+builds reads a variable the record does not list, and no test covers that.
+The engine's directory walk also runs every module under
+``policyengine_us/variables`` outside the closure, and such a module can
+change what the engine loads; the reader does not read those modules, and
+only the pinned-engine oracle covers them. Python's source loader can also
+run a module's cached bytecode instead of its source: the file that
 ``importlib.util.cache_from_source`` names, in ``__pycache__`` or under
 ``sys.pycache_prefix`` when that is set. It runs a timestamp file whose
 recorded modification time and size match the source's, and never compares
@@ -52,12 +67,12 @@ in the default mode, for every file under ``always``, and for none under
 covers cached bytecode too. The oracle tests cover what the read leaves out
 only for the pinned release: they check each inventoried variable's
 value_type, entity, period and default value, the type of the engine's
-default against the type the engine's conversion gives the record's
-default, and each enum variable's members, against what the engine loads.
-The engine holds one float for an explicit int, bool or float default of a
-float variable, so a test that runs no engine also compares each record's
-default, by value and type, with the literal the pinned source binds, or
-with the core type default where it binds none.
+default against the type the engine's conversion gives the record's default,
+and each enum variable's members, against what the engine loads. The engine
+holds one float for an explicit int, bool or float default of a float
+variable, so a test that runs no engine also compares each record's default,
+by value and type, with the literal the pinned source binds, or with the
+core type default where it binds none.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
 with the clone's interpreter, isolated from the environment, and point
@@ -180,6 +195,10 @@ def expression(node: ast.AST | None) -> Any:
 
 
 MODEL_API = "policyengine_us.model_api"
+# The model API names the reader reads by their spelling: class bases, and
+# Enum as a value_type. Each spelling names what the model API's star
+# import binds only because no module the reader reads binds it.
+MODEL_API_SPELLINGS = ("Enum", "Variable")
 # A variable module may import names from a module under FOLLOWED_IMPORTS,
 # which the inventory reads by the same rules, and only the names listed
 # here from any other module, which it does not read. The SSI closure
@@ -267,7 +286,18 @@ READ_ATTRIBUTES = (
     "possible_values",
     "adds",
     "subtracts",
+    "defined_for",
 )
+# The engine attributes whose values name the variables the engine reads
+# for a variable, and the literal types each may have: a parameter path or
+# variable names for adds and subtracts, and one variable name for
+# defined_for. The engine takes an Enum member's value as defined_for, and
+# a name the module binds as any value; the read refuses both.
+NAMING_ATTRIBUTES = {
+    "adds": (str, list, tuple),
+    "subtracts": (str, list, tuple),
+    "defined_for": (str,),
+}
 # The literal types each primitive's default may have. The engine converts
 # an int default of a float variable with float(), and the read admits one
 # only when that gives back the same number, so the recorded int equals the
@@ -309,6 +339,12 @@ def binding_sites(tree: ast.AST, name: str) -> list[ast.AST]:
         if name in names:
             sites.append(item)
     return sites
+
+
+def binds_model_api_spelling(tree: ast.AST) -> bool:
+    """Whether ``tree`` binds a name in ``MODEL_API_SPELLINGS``, in any
+    form ``binding_sites`` reads."""
+    return any(binding_sites(tree, name) for name in MODEL_API_SPELLINGS)
 
 
 def plain_attribute(variable: ast.ClassDef, attr: str) -> ast.expr | None:
@@ -366,7 +402,7 @@ def static_module(tree: ast.Module, cls: ast.ClassDef) -> bool:
                     name in REFLECTIVE or name.startswith("_")
                 ):
                     return False
-    return not (binding_sites(tree, "Enum") or binding_sites(tree, "Variable"))
+    return not binds_model_api_spelling(tree)
 
 
 def import_time_nodes(tree: ast.AST) -> list[ast.AST]:
@@ -427,7 +463,10 @@ def module_imports(tree: ast.Module) -> list[str] | None:
       ``UNFOLLOWED_IMPORTS`` lists for its module;
     - every class is a top-level statement that subclasses ``Variable`` or
       ``Enum`` alone, with no decorators or keywords, and the module binds
-      no ``Variable``, whose spelling the reader takes to be the model API's;
+      neither name, in any form ``binding_sites`` reads: the reader takes
+      each spelling to be the model API's, so that a class on ``Enum`` is
+      no variable and every variable class has a base spelled
+      ``Variable``;
     - it stores or deletes no attribute;
     - no identifier in it, or part of a dotted one, is a reflective builtin
       or frame attribute or starts with two underscores, as ``__builtins__``
@@ -480,7 +519,7 @@ def module_imports(tree: ast.Module) -> list[str] | None:
                     for part in name.split(".")
                 ):
                     return None
-    if binding_sites(tree, "Variable"):
+    if binds_model_api_spelling(tree):
         return None
     if any(runs_on_import(node) for node in import_time_nodes(tree)):
         return None
@@ -564,7 +603,10 @@ def check_module(
     reads its attributes: the engine's directory walk builds each variable
     class in a module it loads, and an override of a Variable method, such
     as ``set``, runs then and can change what the engine gives other
-    variables.
+    variables. A class is a variable class here when a base is spelled
+    ``Variable``; that finds every one, since ``module_imports`` admits
+    only bases spelled ``Variable`` or ``Enum`` in a module that binds
+    neither name.
     """
     pending = [(path, tree)]
     while pending:
@@ -603,7 +645,9 @@ def class_members(cls: ast.ClassDef) -> list[str] | None:
     distinct string or integer literals to public names, each named once.
     Methods are refused: a decorator can make one a member, and creation
     hooks such as ``__init__`` can add or drop members. An equal value would
-    make an alias, which the engine's ``Enum.encode`` does not accept.
+    make an alias, which the engine's ``Enum.encode`` does not accept. A
+    member named in ``ENUM_API`` would replace that method on the class,
+    where formulas and the engine read it by its spelling.
     """
     members = []
     values = []
@@ -628,7 +672,10 @@ def class_members(cls: ast.ClassDef) -> list[str] | None:
     # Enum itself refuses a member named ``mro``.
     if (
         not members
-        or any(name.startswith("_") or name == "mro" for name in members)
+        or any(
+            name.startswith("_") or name == "mro" or name in ENUM_API
+            for name in members
+        )
         or len(set(members)) < len(members)
         or len(set(values)) < len(values)
     ):
@@ -640,32 +687,36 @@ def plain_variable_body(variable: ast.ClassDef) -> bool:
     """Whether a variable's body holds only engine attributes and formulas.
 
     That is a leading docstring, single assignments to names in
-    ``ENGINE_ATTRIBUTES``, and formula functions with no decorators. Any
-    other binding could override one of ``Variable``'s methods, such as
-    ``set``, which the engine calls to read ``value_type``,
-    ``possible_values`` and ``default_value``. The engine refuses a name it
-    does not read, but an override can remove its own name first.
+    ``ENGINE_ATTRIBUTES``, and formula functions with no decorators, each
+    formula name defined once. Any other binding could override one of
+    ``Variable``'s methods, such as ``set``, which the engine calls to read
+    ``value_type``, ``possible_values`` and ``default_value``. The engine
+    refuses a name it does not read, but an override can remove its own
+    name first. The engine keeps only the last of two formulas of one name,
+    where the record would list both.
     """
-    return all(
-        (
+    formulas = []
+    for index, item in enumerate(variable.body):
+        if (
             index == 0
             and isinstance(item, ast.Expr)
             and isinstance(item.value, ast.Constant)
             and isinstance(item.value.value, str)
-        )
-        or (
+        ) or (
             isinstance(item, ast.Assign)
             and len(item.targets) == 1
             and isinstance(item.targets[0], ast.Name)
             and item.targets[0].id in ENGINE_ATTRIBUTES
-        )
-        or (
+        ):
+            continue
+        if not (
             isinstance(item, ast.FunctionDef)
             and item.name.startswith("formula")
             and not item.decorator_list
-        )
-        for index, item in enumerate(variable.body)
-    )
+        ):
+            return False
+        formulas.append(item.name)
+    return len(set(formulas)) == len(formulas)
 
 
 def enum_members(tree: ast.Module, variable: ast.ClassDef) -> list[str] | None:
@@ -826,6 +877,20 @@ def variable_attributes(
     return record | {"default": value}
 
 
+def names_variables(value: ast.expr, kinds: tuple[type, ...]) -> bool:
+    """Whether ``value`` is a literal of a type in ``kinds`` that holds only
+    strings: a string, or a list or tuple of strings. The record's
+    dependencies read those strings, and only literal ones."""
+    try:
+        literal = ast.literal_eval(value)
+    except (ValueError, TypeError):
+        return False
+    return type(literal) in kinds and (
+        isinstance(literal, str)
+        or all(isinstance(item, str) for item in literal)
+    )
+
+
 def exact_float(value: int) -> bool:
     """Whether ``float(value)``, which the engine applies to an int default
     of a float variable, gives back the same number; an int too large for
@@ -916,7 +981,9 @@ def parse_variables(
     The index holds the files the engine's walk loads, by stem, leaving out
     helper modules whose names start with an underscore. A dependency whose
     stem names more than one file refuses, since the reader could not say
-    which the engine's variable comes from.
+    which the engine's variable comes from. So does a variable, other than
+    a boundary, whose adds, subtracts or defined_for is not a literal that
+    ``names_variables`` admits.
     """
     # Folder listings the import system cached may predate this read.
     importlib.machinery.PathFinder.invalidate_caches()
@@ -945,6 +1012,8 @@ def parse_variables(
         visited.add(path)
         tree = ast.parse(path.read_bytes())
         check_module(package, path, tree, checked)
+        # check_module has refused a module that binds Variable or Enum, so
+        # a base spelled Variable finds every variable class in it.
         classes = [
             node
             for node in tree.body
@@ -960,6 +1029,16 @@ def parse_variables(
             # other than the one recorded.
             attrs = plain_variable(tree, node)
             fields = variable_attributes(tree, node)
+            # The engine reads the variables these attributes name, so any
+            # other value could hide a dependency. A boundary's dependencies
+            # are bypassed, as social_security's computed adds are.
+            for attr, kinds in NAMING_ATTRIBUTES.items():
+                if (
+                    node.name not in boundaries
+                    and attr in attrs
+                    and not names_variables(attrs[attr], kinds)
+                ):
+                    raise ValueError(f"Unresolved {attr} for {node.name}")
             bodies = [node]
             visited_helpers = set()
             for body in bodies:
