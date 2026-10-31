@@ -866,6 +866,12 @@ def test_real_date_axes_name_their_effective_date_clause(registry):
     assert axes["self_employment_conservation_reserve"] == {"payment_date"}
     assert axes["self_employment_public_office"] == {"payment_date"}
     assert axes["self_employment_options_dealers"] == {"taxable_year_start"}
+    # Review r3 M3: the families whose boundary clauses key on payment or
+    # taxable year, beyond the five the review found hard-coded here.
+    for family in PAYMENT_DATE_FAMILIES:
+        assert axes[family] == {"payment_date"}, family
+    for family in TAXABLE_YEAR_FAMILIES:
+        assert axes[family] == {"taxable_year_start"}, family
     # The notes give calendar dates (Oct. 4, 1976; Oct. 1, 2008), so both
     # wordings govern part of each boundary year.
     assert axes[PASSIVE] == {"payment_date"}
@@ -873,6 +879,213 @@ def test_real_date_axes_name_their_effective_date_clause(registry):
         assert len(registry.lookup(PASSIVE, year)) == 2
     with pytest.raises(UnknownIdentifierError):
         registry.lookup("self_employment_public_ofice", 2000)
+
+
+PAYMENT_DATE_FAMILIES = (
+    "agricultural_service",
+    "domestic_service",
+    "family_service",
+    "fishing_crew_share_service",
+    "self_employment_insurance_termination",
+)
+TAXABLE_YEAR_FAMILIES = (
+    "electing_church_employee_service",
+    "self_employment_church_sect_exemption",
+    "self_employment_clergy_gross_concept",
+    "self_employment_community_income",
+    "self_employment_farm_rental_participation",
+    "self_employment_foreign_911_income",
+    "self_employment_health_insurance_deduction",
+    "self_employment_limited_partner",
+    "self_employment_optional_methods",
+    "self_employment_qualified_joint_venture",
+    "self_employment_units",
+)
+MONTH_NAMES = (
+    "January February March April May June July August September October "
+    "November December"
+).split()
+MONTH_ABBREVIATIONS = (
+    "Jan. Feb. Mar. Apr. May June July Aug. Sept. Oct. Nov. Dec.".split()
+)
+CLAUSE_KINDS = (
+    (
+        "payment_date",
+        r"\b(paid|payments?( made)?|received)\s+(on or )?(after|before)",
+    ),
+    (
+        "taxable_year_start",
+        r"\btaxable years?\s+(beginning|that begin|which begin|that include"
+        r"|ending)(\s+(on or )?(after|before))?",
+    ),
+    ("service_date", r"\bservices?( performed)?\s+(on or )?(after|before)"),
+)
+
+
+def clause_kinds(text, days):
+    """The date axes the effective-date clauses printing these days use.
+
+    A clause is the 60 characters before a printed date (full or
+    abbreviated month). Kinds are payment, taxable-year or service.
+    """
+    found = set()
+    for day in days:
+        for names in (MONTH_NAMES, MONTH_ABBREVIATIONS):
+            printed = f"{names[day.month - 1]} {day.day}, {day.year}"
+            for hit in re.finditer(re.escape(printed), text):
+                before = text[max(0, hit.start() - 60) : hit.start()]
+                found |= {
+                    kind
+                    for kind, pattern in CLAUSE_KINDS
+                    if re.search(f"(?:{pattern})\\s*$", before, re.I)
+                }
+    return found
+
+
+def quote_kind(quote):
+    """The axis a pinned clause's own wording uses, or None for a date."""
+    for kind, pattern in CLAUSE_KINDS:
+        if re.search(pattern, quote, re.I):
+            return kind
+    return None
+
+
+def capture_text(name, cache):
+    if name not in cache:
+        path = CAPTURE_DIRECTORY / name
+        if path.suffix == ".pdf":
+            # A PDF's pinned text derivative, where it has one.
+            path = path.with_name(path.name + ".txt")
+        if not path.exists():
+            cache[name] = ""
+        elif path.suffix in {".txt", ".xml"}:
+            cache[name] = " ".join(path.read_text(errors="replace").split())
+        else:
+            cache[name] = source_text(path)
+    return cache[name]
+
+
+def axis_problems(rows, texts):
+    """Internal family boundaries whose clauses use another axis.
+
+    For each boundary, the later row's ``parameters.boundary_clause`` pins
+    the governing clause (quoted from a capture the row cites), and its
+    wording must use the family's axis, be a bare date, or come with an
+    ``axis_exception`` reason. Without a pin, the effective-date clauses
+    that the two rows' captures print for the boundary must include the
+    family's axis when they name any.
+    """
+    problems = []
+    by_family = {}
+    for row in rows:
+        by_family.setdefault(row["family"], []).append(row)
+    for members in by_family.values():
+        members.sort(key=lambda row: row["effective_start"])
+        axes = {
+            row["parameters"].get("effective_basis", "service_date")
+            for row in members
+        }
+        axis = axes.pop() if len(axes) == 1 else None
+        for left, right in zip(members, members[1:], strict=False):
+            boundary = date.fromisoformat(right["effective_start"])
+            pin = right["parameters"].get("boundary_clause")
+            if pin is not None:
+                cited = {c["capture"] for c in right["citations"]}
+                kind = quote_kind(pin["citation"]["quote"])
+                if pin["citation"]["capture"] not in cited:
+                    problems.append((right["rule_id"], "pin not cited"))
+                if (
+                    kind not in {None, axis}
+                    and not str(pin.get("axis_exception", "")).strip()
+                ):
+                    problems.append((right["rule_id"], f"pin uses {kind}"))
+                continue
+            captures = {
+                c["capture"] for row in (left, right) for c in row["citations"]
+            }
+            kinds = set()
+            for capture in captures:
+                kinds |= clause_kinds(
+                    capture_text(capture, texts),
+                    (boundary - timedelta(days=1), boundary),
+                )
+            if kinds and axis not in kinds:
+                problems.append((right["rule_id"], sorted(kinds)))
+    return problems
+
+
+def test_family_axes_follow_their_boundary_clauses():
+    """Review r3 M3: a family uses the axis its boundary clauses use.
+
+    At ea599b92 this flags 21 boundaries, among them the insurance
+    termination, agricultural, domestic and family payment boundaries and
+    the taxable-year boundaries the review lists.
+    """
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    assert axis_problems(rows, {}) == []
+    pinned = [
+        r["rule_id"] for r in rows if "boundary_clause" in r["parameters"]
+    ]
+    assert sorted(pinned) == [
+        "clergy_1982_2026",
+        "election_work_1978",
+        "nonresident_alien_vocational_service_1987",
+        "nonresident_alien_vocational_service_1989",
+        "state_local_1983_1991",
+    ]
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(sorted(EFFECTIVE_BASES)),
+    st.sampled_from(["payment", "taxable", "service", "none"]),
+    st.booleans(),
+    st.booleans(),
+)
+def test_axis_checker_flags_clauses_on_another_axis(
+    axis, wording, pinned, excepted
+):
+    """The M3 checker is the test's oracle."""
+    clause = {
+        "payment": "INVENTED amendment applicable to remuneration paid after",
+        "taxable": "INVENTED amendment applies to taxable years beginning "
+        "after",
+        "service": "INVENTED amendment applies to services performed after",
+        "none": "INVENTED amendment enacted",
+    }[wording]
+    kind = {
+        "payment": "payment_date",
+        "taxable": "taxable_year_start",
+        "service": "service_date",
+        "none": None,
+    }[wording]
+    capture = "INVENTED_note.html"
+    texts = {capture: f"{clause} December 31, 1987."}
+    rows = []
+    for start, end in (
+        ("1968-01-01", "1987-12-31"),
+        ("1988-01-01", "2026-12-31"),
+    ):
+        rows.append(
+            {
+                "rule_id": f"INVENTED_{start[:4]}",
+                "family": "INVENTED_family",
+                "effective_start": start,
+                "effective_end": end,
+                "citations": [{"capture": capture}],
+                "parameters": (
+                    {} if axis == "service_date" else {"effective_basis": axis}
+                ),
+            }
+        )
+    if pinned:
+        pin = {"citation": {"capture": capture, "quote": clause}}
+        if excepted:
+            pin["axis_exception"] = "INVENTED reason"
+        rows[1]["parameters"]["boundary_clause"] = pin
+    flagged = bool(axis_problems(rows, texts))
+    mismatch = kind is not None and kind != axis
+    assert flagged == (mismatch and not (pinned and excepted))
 
 
 QUOTED_CLAUSE = re.compile(r'"([^"]+)"')
@@ -899,7 +1112,7 @@ def test_date_axis_descriptions_quote_a_cited_capture(registry):
         for span in spans:
             assert any(span in text for text in texts), (rule.rule_id, span)
         checked += 1
-    assert checked == 11
+    assert checked == 55
 
 
 OPTION_RECORDS = re.compile(r"(^|_)(named_options|named_alternatives)$")
@@ -1225,6 +1438,7 @@ PARAMETER_EVIDENCE = {
     "later_edition_reliance",
     "case_free_basis",
     "condition_cases",
+    "boundary_clause",
 }
 # Review r3 M2: the words and keys reach "if", "when", "where" and
 # "requires", and the keys are the ones rows with cases tie.

@@ -1463,7 +1463,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "poms_rs_01901600.html",
+          "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e",
+          "authority": "POMS RS 01901.600 (2024-06-26)",
+          "location": "B.4.b",
+          "quote": "Effective 01/01/82, a cantor is treated as an ordained minister if the cantor and the congregation agree on the relationship"
+        }
+      }
     },
     "worked_examples": [
       {
@@ -1850,6 +1859,12 @@
         "sha256": "0d35cb8951fdab9a240bd0505dc015db87fd5604a1eee56442ea18c51dc17bc9",
         "authority": "POMS RS 01901.660 (2010-06-14)",
         "location": "A.1-A.4 and B"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "effective-date note"
       }
     ],
     "trigger_facts": [
@@ -1857,7 +1872,8 @@
       "clergy_or_religious_exemption",
       "amount",
       "reporting_unit",
-      "month_or_exposure"
+      "month_or_exposure",
+      "taxable_year_start"
     ],
     "consequence": "deferred",
     "identification_class": "awaiting_ce2",
@@ -1957,7 +1973,9 @@
             "1984"
           ]
         }
-      ]
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2024,7 +2042,8 @@
       "clergy_or_religious_exemption",
       "amount",
       "reporting_unit",
-      "month_or_exposure"
+      "month_or_exposure",
+      "taxable_year_start"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -2114,7 +2133,9 @@
             "1984"
           ]
         }
-      ]
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2197,7 +2218,8 @@
       "clergy_or_religious_exemption",
       "amount",
       "reporting_unit",
-      "month_or_exposure"
+      "month_or_exposure",
+      "taxable_year_start"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -2380,7 +2402,9 @@
             "1984"
           ]
         }
-      ]
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5104,6 +5128,12 @@
         "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
         "authority": "POMS SL 50001.501 (2020-01-29)",
         "location": "A-D"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(f)"
       }
     ],
     "trigger_facts": [
@@ -5182,6 +5212,15 @@
               "industry"
             ]
           }
+        }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_418.html",
+          "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+          "authority": "42 USC 418 current code and amendment notes",
+          "location": "418(f)",
+          "quote": "on or after April 20, 1983"
         }
       }
     },

@@ -61,7 +61,9 @@
             "agricultural_time_days"
           ]
         }
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -260,7 +262,9 @@
             "agricultural_employer_payroll"
           ]
         }
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\"."
     },
     "worked_examples": [
       {
@@ -1895,7 +1899,9 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1978,7 +1984,9 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2147,7 +2155,9 @@
         "rounding": {
           "not_a_coverage_condition": "42 U.S.C. 409(c) optional rounding of each cash payment changes the amount counted, not whether the service is covered."
         }
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
     },
     "worked_examples": [
       {
@@ -2562,7 +2572,17 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_418.html",
+          "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+          "authority": "42 USC 418 current code and amendment notes",
+          "location": "1977 amendment note",
+          "quote": "with respect to remuneration paid after December 31, 1977"
+        },
+        "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977, so 1977 service paid in 1978 must be classified by its payment date."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3262,7 +3282,9 @@
             "1987"
           ]
         }
-      ]
+      ],
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3464,7 +3486,9 @@
           ]
         }
       ],
-      "parent_child_trade_business_excluded": false
+      "parent_child_trade_business_excluded": false,
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\"."
     },
     "worked_examples": [
       {
@@ -3846,7 +3870,9 @@
           }
         }
       },
-      "family_service_priority": "Historical effective date remains unverified; neither open alternative is selected."
+      "family_service_priority": "Historical effective date remains unverified; neither open alternative is selected.",
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4286,7 +4312,9 @@
             ]
           }
         }
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4661,7 +4689,9 @@
             ]
           }
         }
-      }
+      },
+      "effective_basis": "payment_date",
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -7235,7 +7265,17 @@
       "unverified_dependency": "How section 151(d)'s limit to scholarships and fellowships granted after August 16, 1986 operates for the added M-class service exclusion.",
       "visa_classes": [
         "M-1"
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "ce1c_usc2024_26_1.html",
+          "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
+          "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
+          "location": "Tax Reform Act of 1986 section 151(d)",
+          "quote": "shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986"
+        },
+        "axis_exception": "Section 151(d) dates the M-class amendment by taxable years, while 410(a)(19) excludes service, so the family keeps the service-date axis; the open readings carry the taxable-year question, and for a calendar-year worker the first such year begins January 1, 1987."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -7437,7 +7477,16 @@
             "1988"
           ]
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+          "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6",
+          "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+          "location": "running head of the enacted text",
+          "quote": "PUBLIC LAW 100-647\u2014NOV. 10, 1988"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {

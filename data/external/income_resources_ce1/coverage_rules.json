@@ -822,6 +822,8 @@
           "employee_cash_at_least_150",
           "at_least_20_days_and_cash_pay_computed_on_time_basis"
         ],
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\".",
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -1025,6 +1027,8 @@
           "employee_cash_at_least_150",
           "employer_agricultural_expenditures_at_least_2500_unless_seasonal_exception"
         ],
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\".",
         "employer_paid_employee_fica_included_in_wages": false,
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
@@ -3172,6 +3176,15 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "boundary_clause": {
+          "citation": {
+            "authority": "POMS RS 01901.600 (2024-06-26)",
+            "capture": "poms_rs_01901600.html",
+            "location": "B.4.b",
+            "quote": "Effective 01/01/82, a cantor is treated as an ordained minister if the cantor and the congregation agree on the relationship",
+            "sha256": "e8863f3b23419a1ce7b0203a38c0f39e016cb7e71b4e548459b4d03765a4264e"
+          }
+        },
         "cantor": "Effective January 1, 1982, a cantor is treated as an ordained minister if the cantor and congregation agree on the relationship (RS 01901.600 B.4.b).",
         "code_edition_evidence": [
           {
@@ -4499,6 +4512,8 @@
           "calendar_quarter"
         ],
         "all_cash_covered_when_threshold_met": true,
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -4590,6 +4605,8 @@
           "quarter_of_coverage_threshold": 620
         },
         "domestic_farm_service": "apply_agricultural_rule_through_1994",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -4741,6 +4758,8 @@
           }
         },
         "domestic_farm_service": "domestic_service",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
         "employer_paid_employee_fica_included_in_wages": false,
         "rounding": {
           "authority": "42 USC 409(c)",
@@ -4842,6 +4861,12 @@
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "effective-date note",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
           "authority": "POMS RS 01901.540 (2008-08-29)",
@@ -4958,6 +4983,8 @@
           }
         ],
         "coverage_family": "nonprofit_service",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "employer_election_available": false,
         "ministerial_service_separate": true
       },
@@ -4996,7 +5023,8 @@
         "church_employee_service",
         "clergy_or_religious_exemption",
         "month_or_exposure",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -5127,6 +5155,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
         "employer_election_available": true,
         "employment_consequence": "Excluded employment under 410(a)(8)(B).",
@@ -5169,7 +5199,8 @@
         "church_employee_service",
         "clergy_or_religious_exemption",
         "month_or_exposure",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -5394,6 +5425,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
         "employer_election_available": true,
         "employment_consequence": "Excluded employment under 410(a)(8)(B).",
@@ -5435,7 +5468,8 @@
         "church_employee_service",
         "clergy_or_religious_exemption",
         "month_or_exposure",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -5739,6 +5773,16 @@
       "parameters": {
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
+        "boundary_clause": {
+          "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977, so 1977 service paid in 1978 must be classified by its payment date.",
+          "citation": {
+            "authority": "42 USC 418 current code and amendment notes",
+            "capture": "lii_42_418.html",
+            "location": "1977 amendment note",
+            "quote": "with respect to remuneration paid after December 31, 1977",
+            "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -6501,6 +6545,8 @@
           "child_in_home": "under_18_or_needs_adult_care_4_continuous_weeks_in_quarter",
           "employer": "widowed_or_divorced_not_remarried_or_spouse_incapacitated_4_continuous_weeks_in_quarter"
         },
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\".",
         "parent_child_nonbusiness_excluded": true,
         "partnership": "test_each_partner",
         "spouse_trade_business_excluded": true
@@ -6729,6 +6775,8 @@
           "child_in_home": "under_18_or_needs_adult_care_4_continuous_weeks_in_quarter",
           "employer": "widowed_or_divorced_not_remarried_or_spouse_incapacitated_4_continuous_weeks_in_quarter"
         },
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\".",
         "parent_child_nonbusiness_excluded": true,
         "parent_child_trade_business_excluded": false,
         "partnership": "test_each_partner",
@@ -8115,6 +8163,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\".",
         "family_service_priority": "Historical effective date remains unverified; neither open alternative is selected.",
         "historical_cash_and_crew_rules": {
           "1968_through_1984": {
@@ -8588,6 +8638,8 @@
           },
           "unless": "payor_treated_remuneration_when_paid_as_subject_to_FICA"
         },
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\".",
         "family_service_exclusion_first": true,
         "historical_default_cash_rule": "No compensation apart from catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies.",
         "named_options": {
@@ -8955,6 +9007,8 @@
         },
         "crew_average_comparison": "fewer_than_10",
         "crew_average_period": "preceding_4_calendar_quarters",
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\".",
         "family_service_exclusion_first": true,
         "named_options": {
           "current_statute_crew_test": {
@@ -12073,6 +12127,16 @@
       ],
       "open_reason": "VOCATIONAL_M_CLASS_START_UNSETTLED: Pub. L. 100-647 section 1019(a) makes section 1001(d)(2)(E), which adds M-class students to 410(a)(19), take effect as if included in Tax Reform Act of 1986 section 123, the provision section 1001(d) names. That Act's section 151(d) provides that the section 123 amendments \"shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986\". No capture settles how that limit applies to service pay, so M-1 service from 1987 through 1988 refuses.",
       "parameters": {
+        "boundary_clause": {
+          "axis_exception": "Section 151(d) dates the M-class amendment by taxable years, while 410(a)(19) excludes service, so the family keeps the service-date axis; the open readings carry the taxable-year question, and for a calendar-year worker the first such year begins January 1, 1987.",
+          "citation": {
+            "authority": "26 U.S.C. 1, United States Code 2024 edition, statutory notes",
+            "capture": "ce1c_usc2024_26_1.html",
+            "location": "Tax Reform Act of 1986 section 151(d)",
+            "quote": "shall apply to taxable years beginning after December 31, 1986, but only in the case of scholarships and fellowships granted after August 16, 1986",
+            "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -12246,6 +12310,15 @@
       "open_reason": null,
       "parameters": {
         "before_this_window": "nonresident_alien_vocational_service_1987 refuses 1987-1988 with two named readings; nonresident_alien_vocational_service_1968 returns the pre-amendment rule",
+        "boundary_clause": {
+          "citation": {
+            "authority": "Public Law 100-647, section 1001(d) heading, 102 Stat. 3350",
+            "capture": "govinfo_statute102_pg3342_extract.pdf.txt",
+            "location": "running head of the enacted text",
+            "quote": "PUBLIC LAW 100-647\u2014NOV. 10, 1988",
+            "sha256": "87fa18733770e9852c7f2cd600d38c6bdd9b158e6e9287a75f0f85fb7ab4d7b6"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -13384,6 +13457,12 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 USC 418 current code and amendment notes",
+          "capture": "lii_42_418.html",
+          "location": "418(f)",
+          "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0"
+        },
+        {
           "authority": "POMS SL 50001.501 (2020-01-29)",
           "capture": "poms_sl_50001501.html",
           "location": "A-D",
@@ -13408,6 +13487,15 @@
           "optional/required exclusion",
           "referendum and employee election where applicable"
         ],
+        "boundary_clause": {
+          "citation": {
+            "authority": "42 USC 418 current code and amendment notes",
+            "capture": "lii_42_418.html",
+            "location": "418(f)",
+            "quote": "on or after April 20, 1983",
+            "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -14150,6 +14238,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\".",
         "electingchurch_income_exists_from": 1984,
         "general1402g_exemption": "Applies when approved and effective"
       },
@@ -14168,7 +14258,8 @@
       "rule_id": "se_religious_sect_1968_1985",
       "trigger_facts": [
         "church_employee_service",
-        "clergy_or_religious_exemption"
+        "clergy_or_religious_exemption",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -14260,6 +14351,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\".",
         "named_options": [
           {
             "explanation": "SSA Handbook 1136 describes restriction as of 1986; the capture was not available in this subtask.",
@@ -14286,7 +14379,8 @@
       "rule_id": "se_religious_sect_1986_1989",
       "trigger_facts": [
         "church_employee_service",
-        "clergy_or_religious_exemption"
+        "clergy_or_religious_exemption",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -14461,7 +14555,9 @@
             }
           }
         },
-        "conditions": "1402(g)(1)-(2) recognized sect, belief, waiver, findings and effective period; do not confuse with the ministerial 1402(e) exemption"
+        "conditions": "1402(g)(1)-(2) recognized sect, belief, waiver, findings and effective period; do not confuse with the ministerial 1402(e) exemption",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\"."
       },
       "rare_exclusion": {
         "negligible_candidate": null,
@@ -14478,7 +14574,8 @@
       "rule_id": "se_religious_sect_1990_2026",
       "trigger_facts": [
         "church_employee_service",
-        "clergy_or_religious_exemption"
+        "clergy_or_religious_exemption",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -14642,6 +14739,8 @@
             }
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "foreign_exclusions_condition": {
           "any_of": [
             "religious service as employee of an American employer under 42 USC 410(e)",
@@ -14678,7 +14777,8 @@
         "clergy_retirement_benefit",
         "congregation_predominantly_us_citizens",
         "ministerial_service",
-        "place_of_work"
+        "place_of_work",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -14854,6 +14954,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "gross_income_exclusions_disregarded": [
           "26USC107",
           "26USC119",
@@ -14875,7 +14977,8 @@
         "clergy_remuneration",
         "clergy_retirement_benefit",
         "ministerial_service",
-        "retirement_payment"
+        "retirement_payment",
+        "taxable_year_start"
       ],
       "worked_examples": [
         {
@@ -14970,14 +15073,14 @@
       ],
       "consequence": "covered",
       "description": "Before the operational change for taxable years including October 1980, community business income follows the former statutory husband/wife management rule; partnership distributive shares remain assigned to their partners.",
-      "effective_end": "1979-12-31",
+      "effective_end": "1979-10-01",
       "effective_start": "1968-01-01",
       "family": "self_employment_community_income",
       "identification_class": "awaiting_ce2",
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
-        "calendar_year_mapping": "1968-1979; the successor rule applies to taxable years including October 1980",
+        "calendar_year_mapping": "Taxable years beginning before October 2, 1979: a 12-month taxable year beginning on or after that date includes October 1980. A 52-53 week year that begins earlier and still reaches October 1980 is not separated by this start date.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -15040,6 +15143,8 @@
             "not_a_coverage_condition": "States the row's window: taxable years that do not include October 1980 (POMS RS 01802.400 A), which the family's date axis applies."
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979.",
         "nonpartnership_assignment": "husband unless wife exercises substantially all management/control; then wife",
         "partnership_assignment": "partner whose distributive share it is",
         "taxable_year_condition": "does not include October 1980 and precedes that operational change"
@@ -15058,6 +15163,7 @@
         "partnership_status",
         "reporting_unit",
         "substantially_all_business_management_and_control",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -15088,7 +15194,7 @@
       "consequence": null,
       "description": "The statutory husband presumption ceased for taxable years including October 1980. POMS identifies a superseded Edwards court-order procedure, whose operative instructions are not captured; the later allocation procedure is not backcast.",
       "effective_end": "2004-03-01",
-      "effective_start": "1980-01-01",
+      "effective_start": "1979-10-02",
       "family": "self_employment_community_income",
       "identification_class": "awaiting_ce2",
       "open_alternatives": [
@@ -15204,6 +15310,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979.",
         "historical_procedure_source_status": "Obsolete RS 01802.410 and RS 01802.470 returned HTTP 404 on plain official requests; their contents were not reconstructed."
       },
       "rare_exclusion": null,
@@ -15219,6 +15327,7 @@
         "joint_business_distributive_shares",
         "partnership_status",
         "reporting_unit",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -15377,6 +15486,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\".",
         "joint_business_assignment": "respective_distributive_shares",
         "nonpartnership_assignment": "spouse carrying on business, or each respective share if jointly operated",
         "partnership_assignment": "partner whose distributive share it is",
@@ -15395,6 +15506,7 @@
         "joint_business_distributive_shares",
         "partnership_status",
         "reporting_unit",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -16507,6 +16619,8 @@
           "actual material participation, including services performed by employee or agent"
         ],
         "default_rental_treatment": "excluded from net earnings",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
         "real_estate_dealer_exception": "rentals received in course of real-estate-dealer trade or business are not excluded",
         "taxable_year_condition": {
           "taxable_year_begins_before": "1974-01-01",
@@ -16531,7 +16645,8 @@
         "amount",
         "material_participation",
         "real_estate_dealer_status",
-        "rental_arrangement_requires_material_participation"
+        "rental_arrangement_requires_material_participation",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -16699,6 +16814,8 @@
             }
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
         "required_conditions": [
           "arrangement provides agricultural/horticultural production by another individual",
           "arrangement provides material participation by owner/tenant",
@@ -16715,7 +16832,8 @@
         "agricultural_service",
         "amount",
         "material_participation",
-        "rental_arrangement_requires_material_participation"
+        "rental_arrangement_requires_material_participation",
+        "taxable_year_start"
       ],
       "worked_examples": [
         {
@@ -16837,6 +16955,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "general_411a10_override_not_yet_added": true,
         "named_options": [
           {
@@ -16861,6 +16981,7 @@
         "foreign_earned_income_exclusion",
         "residence_period",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -16948,6 +17069,8 @@
             }
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "effective_taxable_year_begin_after": "1972-12-31",
         "income_tax_exclusion_disregarded": "historical 26 USC 911(a)(2)",
         "individual_condition": "Resident of the United States during the entire taxable year",
@@ -16969,6 +17092,7 @@
         "foreign_earned_income_exclusion",
         "residence_period",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -16982,6 +17106,12 @@
           "capture": "govinfo_statute97_pg65_extract.pdf",
           "location": "section 323(b)(2)(B), (c)(2), 97 Stat 121",
           "sha256": "82029ba2e3610684e05e6b31f4a96586db4b723713ef3ed09741e68e9401dfad"
+        },
+        {
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "capture": "uscode_2024_42_411.html",
+          "location": "effective-date note",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
       "consequence": null,
@@ -17039,6 +17169,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "effective_taxable_year_begin_after": "1981-12-31",
         "effective_taxable_year_begin_before": "1984-01-01",
         "historical_qualifying_definition": "Not independently reconstructed; do not replace it with a current-law definition.",
@@ -17057,6 +17189,7 @@
         "foreign_earned_income_exclusion",
         "residence_period",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17169,6 +17302,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "effective_taxable_year_begin_after": "1983-12-31",
         "income_tax_exclusion_disregarded": "26 USC 911(a)(1)",
         "scope": "NESE computation override; citizenship, residency, service coverage and any agreement rules remain separate facts."
@@ -17185,6 +17320,7 @@
         "foreign_earned_income_exclusion",
         "residence_period",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17261,6 +17397,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
         "first_taxable_year_begin_after": "1986-12-31",
         "scope": "No assertion about all possible pre-1987 business-expense treatment.",
         "special_health_deduction_not_yet_added": true
@@ -17274,6 +17412,7 @@
       "trigger_facts": [
         "health_insurance_deduction",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17399,6 +17538,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
         "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
         "title26_se_tax_nese_health_deduction_allowed": false,
         "title42_coverage_nese_health_deduction_allowed": false
@@ -17412,6 +17553,7 @@
       "trigger_facts": [
         "health_insurance_deduction",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17505,6 +17647,8 @@
           }
         ],
         "conflation_forbidden": true,
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
         "named_concepts": [
           {
             "authority": "42 USC 411(a)(15)",
@@ -17529,6 +17673,7 @@
       "trigger_facts": [
         "health_insurance_deduction",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17623,6 +17768,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
         "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
         "title26_se_tax_nese_health_deduction_allowed": false,
         "title42_coverage_nese_health_deduction_allowed": false
@@ -17636,6 +17783,7 @@
       "trigger_facts": [
         "health_insurance_deduction",
         "taxable_year",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -17712,6 +17860,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\".",
         "exclusion_411_j_available": false
       },
       "rare_exclusion": null,
@@ -17833,6 +17983,8 @@
             }
           }
         },
+        "effective_basis": "payment_date",
+        "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\".",
         "exclusion_411_j_available": true,
         "required_conditions": [
           "payment after termination of company services agreement",
@@ -17916,6 +18068,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 95-216 section 313, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1977\".",
         "ordinary_partnership_income_rule": "411(a) introductory sentence",
         "special_limited_partner_exclusion": false
       },
@@ -17928,7 +18082,8 @@
       "trigger_facts": [
         "amount",
         "employee_self_or_mixed",
-        "partnership_status"
+        "partnership_status",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -18059,6 +18214,8 @@
             }
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 95-216 section 313, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1977\".",
         "excluded_concept": "limited partner distributive share as such",
         "included_exception": "707(c) guaranteed payments established as remuneration for actual services",
         "threshold_applied_later_in": "other_net_earnings"
@@ -18079,7 +18236,8 @@
       "trigger_facts": [
         "amount",
         "employee_self_or_mixed",
-        "partnership_status"
+        "partnership_status",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -18181,6 +18339,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "factor": {
           "denominator": 3,
           "numerator": 2
@@ -18203,7 +18363,8 @@
         "agricultural_service",
         "amount",
         "partnership_status",
-        "self_employment_optional_method_election"
+        "self_employment_optional_method_election",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -18375,6 +18536,8 @@
           }
         ],
         "combined_optional_method_maximum_cents": 160000,
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "factor": {
           "denominator": 3,
           "numerator": 2
@@ -18402,7 +18565,8 @@
         "agricultural_service",
         "amount",
         "partnership_status",
-        "self_employment_optional_method_election"
+        "self_employment_optional_method_election",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -18646,6 +18810,8 @@
           ]
         },
         "computed_value_provenance": "The 2026 pair uses the explicit published quarterly QC input named in supplied_index_inputs_cents; the 2026 upper limit is not an IRS-published optional limit.",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "factor": {
           "denominator": 3,
           "numerator": 2
@@ -18846,7 +19012,8 @@
         "agricultural_service",
         "amount",
         "partnership_status",
-        "self_employment_optional_method_election"
+        "self_employment_optional_method_election",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -20341,6 +20508,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 110-28 section 8215, as the 42 U.S.C. 411 notes summarize it, is \"applicable to taxable years beginning after Dec. 31, 2006\".",
         "qualified_joint_venture_411_a_16_available": false
       },
       "rare_exclusion": null,
@@ -20352,7 +20521,8 @@
       "trigger_facts": [
         "assignment",
         "partnership_status",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -20465,6 +20635,8 @@
             }
           }
         },
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 110-28 section 8215, as the 42 U.S.C. 411 notes summarize it, is \"applicable to taxable years beginning after Dec. 31, 2006\".",
         "eligibility_source_required": "26 USC 761(f) conditions and election must be established",
         "income_assignment": "each spouse share under 26 USC 761(f)",
         "qualified_joint_venture_411_a_16_available": true,
@@ -20488,6 +20660,7 @@
         "partnership_status",
         "qualified_joint_venture_election",
         "reporting_unit",
+        "taxable_year_start",
         "trade_or_business"
       ],
       "worked_examples": []
@@ -21542,6 +21715,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "units": [
           {
             "aggregation_scope": "person_taxable_year_statutory_unit",
@@ -21571,7 +21746,8 @@
       "trigger_facts": [
         "amount",
         "employee_self_or_mixed",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -21750,6 +21926,8 @@
           }
         ],
         "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "eligible_base_by_case": {
           "church_100_to_399_without_ordinary_loss": "qualifying_church_remuneration",
           "church_at_least_100_with_ordinary_loss": "combined_earnings",
@@ -21801,7 +21979,8 @@
         "amount",
         "church_employee_service",
         "employee_self_or_mixed",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -21874,6 +22053,8 @@
             ]
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "units": [
           {
             "aggregation_scope": "person_taxable_year_statutory_unit",
@@ -21919,7 +22100,8 @@
       "trigger_facts": [
         "amount",
         "employee_self_or_mixed",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
@@ -22096,6 +22278,8 @@
             "title": 42
           }
         ],
+        "effective_basis": "taxable_year_start",
+        "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
         "factor_history_support": "Public Law 98-21 section 124(a) sets the post-1989 12.4 percent plus 2.9 percent rates underlying section 411(a)(11); the 2011 and 2012 Schedule SE forms expressly retain the 92.35 percent base factor during those temporary rate-cut years.",
         "optional_method_factor": "do not multiply deemed optional-method earnings again: Schedule SE puts them on line 4b after the regular-method multiplication",
         "units": [
@@ -22143,7 +22327,8 @@
       "trigger_facts": [
         "amount",
         "employee_self_or_mixed",
-        "reporting_unit"
+        "reporting_unit",
+        "taxable_year_start"
       ],
       "worked_examples": []
     },
