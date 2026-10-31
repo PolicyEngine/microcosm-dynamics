@@ -204,11 +204,18 @@ def test_credit_route_keeps_refusal_even_with_complete_direct_envelope(
 
 @pytest.mark.parametrize("condition", FULLY_ROUTES)
 @pytest.mark.parametrize(
-    "exception,total",
-    [("blind", 3), ("unknown-prior", 3), ("unknown-prior", 6)],
+    "exception,total,last,possible",
+    [
+        ("blind", 3, 2021, True),
+        ("unknown-prior", 3, 2021, False),
+        # 404.130(c)-(d): Rule III needs an earlier Rule II period. Credits
+        # first earned at age 40 can't supply its six QCs before age 31.
+        ("unknown-prior", 6, 2021, False),
+        ("unknown-prior", 6, 2003, True),
+    ],
 )
 def test_fully_route_refuses_when_recent_credit_proof_does_not_apply(
-    condition, exception, total
+    condition, exception, total, last, possible
 ):
     person = _person(conditions=(condition,))
     if exception == "blind":
@@ -216,12 +223,11 @@ def test_fully_route_refuses_when_recent_credit_proof_does_not_apply(
     else:
         person = replace(person, prior_disability_periods_provenance=UNKNOWN)
     month = date(2023, 1, 1)
-    _assert_refusal(
-        person,
-        history(person, month, _counts(total)),
-        month,
-        _reason(condition),
-    )
+    years = history(person, month, _counts(total, last=last))
+    if not possible:
+        _assert_invalid(person, years, month)
+        return
+    _assert_refusal(person, years, month, _reason(condition))
 
 
 @pytest.mark.parametrize("total", [3, 20])

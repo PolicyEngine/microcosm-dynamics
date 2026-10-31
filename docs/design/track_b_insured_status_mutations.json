@@ -3840,5 +3840,532 @@
     }
   ],
   "round_12_note": "Ten deliberate isolated in-memory mutations were caught and discarded. All four new generated properties bite, including both recent-rule exactness properties, the alternate oracle, and strict relaxation. Every mutation run audited zero restricted opens or spawned processes and verified original implementation bytes unchanged. Standalone reproduction commands include their own audit hook and exact source pin.",
-  "round_12_final_source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018"
+  "round_12_final_source_sha256": "8ef822d784136ae3b821cb75ec270e945d1972d5cfa10f4ae533fd65f6c0f018",
+  "round_13_mutations": [
+    {
+      "name": "unknown_bypass_above_floor",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if fully_route and person.statutory_blindness:\n        return _outside_prior_periods(person, _qid(person.disability_onset))\n",
+          "after": "    if fully_route and (\n        person.statutory_blindness\n        or person.prior_disability_periods_provenance\n        is EarningsProvenance.UNKNOWN\n    ):\n        return _outside_prior_periods(person, _qid(person.disability_onset))\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-unknown_bypass_above_floor.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_review_unknown_prior_cannot_remove_six_qc_floor",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-unknown_bypass_above_floor.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_review_unknown_prior_cannot_remove_six_qc_floor > scratch/review/round13-mutation-unknown_bypass_above_floor.log 2>&1",
+      "log": "scratch/review/round13-mutation-unknown_bypass_above_floor.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_unknown_prior_cannot_remove_six_qc_floor[None]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_unknown_prior_cannot_remove_six_qc_floor[coverage_end1]"
+      ],
+      "failed": 2,
+      "pytest_summary": "2 failed in 1.76s",
+      "passed": 0,
+      "runtime_seconds": 1.76,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "lifetime_qcs_in_floor",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if horizon_qcs < 6:\n",
+          "after": "    if maximum_qcs < 6:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-lifetime_qcs_in_floor.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-lifetime_qcs_in_floor.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon > scratch/review/round13-mutation-lifetime_qcs_in_floor.log 2>&1",
+      "log": "scratch/review/round13-mutation-lifetime_qcs_in_floor.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_twenty_future_credits_cannot_repair_zero_by_start_horizon[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 4,
+      "pytest_summary": "4 failed in 2.07s",
+      "passed": 0,
+      "runtime_seconds": 2.07,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "blindness_after_floor",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if fully_route and person.statutory_blindness:\n        return _outside_prior_periods(person, _qid(person.disability_onset))\n",
+          "after": "    if False and fully_route and person.statutory_blindness:\n        return _outside_prior_periods(person, _qid(person.disability_onset))\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-blindness_after_floor.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-blindness_after_floor.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal > scratch/review/round13-mutation-blindness_after_floor.log 2>&1",
+      "log": "scratch/review/round13-mutation-blindness_after_floor.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_blind_fully_route_with_zero_credits_keeps_named_refusal[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 4,
+      "pytest_summary": "4 failed in 5.46s",
+      "passed": 0,
+      "runtime_seconds": 5.46,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "floor_applies_to_credit_routes",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if _flagged_establishment_possible(person, years):\n        return True\n",
+          "after": "    if _flagged_establishment_possible(person, years):\n        rows, _ = _world(person, credits, _qid(horizon), exit_month, False)\n        return sum(len(_assign_qcs(*row)) for row in rows.values()) >= 6\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-floor_applies_to_credit_routes.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-floor_applies_to_credit_routes.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor > scratch/review/round13-mutation-floor_applies_to_credit_routes.log 2>&1",
+      "log": "scratch/review/round13-mutation-floor_applies_to_credit_routes.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor[CoverageCondition.MILITARY_CREDITS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor[CoverageCondition.MEDICARE_GOVERNMENT_EMPLOYMENT]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor[CoverageCondition.RAILROAD_CREDITS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor[CoverageCondition.FISCAL_TAXABLE_YEAR]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_foreign_and_credit_adding_routes_precede_floor[CoverageCondition.SHORT_TAXABLE_YEAR]"
+      ],
+      "failed": 5,
+      "pytest_summary": "5 failed, 1 passed in 6.77s",
+      "passed": 1,
+      "runtime_seconds": 6.77,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "floor_at_five",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if horizon_qcs < 6:\n",
+          "after": "    if horizon_qcs < 5:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-floor_at_five.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-floor_at_five.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits > scratch/review/round13-mutation-floor_at_five.log 2>&1",
+      "log": "scratch/review/round13-mutation-floor_at_five.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[five-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[five-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[five-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[five-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[sixth-one-quarter-late-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[sixth-one-quarter-late-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[sixth-one-quarter-late-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[sixth-one-quarter-late-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 8,
+      "pytest_summary": "8 failed, 4 passed in 4.69s",
+      "passed": 4,
+      "runtime_seconds": 4.69,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "floor_at_seven",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if horizon_qcs < 6:\n",
+          "after": "    if horizon_qcs < 7:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-floor_at_seven.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-floor_at_seven.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits > scratch/review/round13-mutation-floor_at_seven.log 2>&1",
+      "log": "scratch/review/round13-mutation-floor_at_seven.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[six-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[six-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[six-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unknown_prior_fully_route_floor_uses_horizon_credits[six-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 4,
+      "pytest_summary": "4 failed, 8 passed in 5.74s",
+      "passed": 8,
+      "runtime_seconds": 5.74,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "drop_alternate_overlap_skip",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "        if person.current_disability_period_established and not (\n            _outside_prior_periods(person, quarter)\n        ):\n            continue\n",
+          "after": ""
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-drop_alternate_overlap_skip.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-drop_alternate_overlap_skip.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap > scratch/review/round13-mutation-drop_alternate_overlap_skip.log 2>&1",
+      "log": "scratch/review/round13-mutation-drop_alternate_overlap_skip.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end0-None]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end0-coverage_end1]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end1-None]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end1-coverage_end1]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end2-None]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_review_alternate_start_must_clear_same_prior_overlap[end2-coverage_end1]"
+      ],
+      "failed": 6,
+      "pytest_summary": "6 failed in 4.31s",
+      "passed": 0,
+      "runtime_seconds": 4.31,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "alternate_skip_unestablished",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "        if person.current_disability_period_established and not (\n            _outside_prior_periods(person, quarter)\n        ):\n            continue\n",
+          "after": "        if not _outside_prior_periods(person, quarter):\n            continue\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-alternate_skip_unestablished.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_unestablished_alternate_keeps_prior_treatment",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-alternate_skip_unestablished.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_unestablished_alternate_keeps_prior_treatment > scratch/review/round13-mutation-alternate_skip_unestablished.log 2>&1",
+      "log": "scratch/review/round13-mutation-alternate_skip_unestablished.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unestablished_alternate_keeps_prior_treatment[false]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_unestablished_alternate_keeps_prior_treatment[unknown]"
+      ],
+      "failed": 2,
+      "pytest_summary": "2 failed in 2.70s",
+      "passed": 0,
+      "runtime_seconds": 2.7,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "alternate_skip_wrong_quarter",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "        if person.current_disability_period_established and not (\n            _outside_prior_periods(person, quarter)\n        ):\n            continue\n",
+          "after": "        if person.current_disability_period_established and not (\n            _outside_prior_periods(person, _qid(person.disability_onset))\n        ):\n            continue\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-alternate_skip_wrong_quarter.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_alternate_uses_one_clear_candidate_after_prior_ending_quarter",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-alternate_skip_wrong_quarter.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_alternate_uses_one_clear_candidate_after_prior_ending_quarter > scratch/review/round13-mutation-alternate_skip_wrong_quarter.log 2>&1",
+      "log": "scratch/review/round13-mutation-alternate_skip_wrong_quarter.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_alternate_uses_one_clear_candidate_after_prior_ending_quarter[False]",
+        "tests/test_track_b_insured_status_fix_round_13.py::test_alternate_uses_one_clear_candidate_after_prior_ending_quarter[True]"
+      ],
+      "failed": 2,
+      "pytest_summary": "2 failed in 6.41s",
+      "passed": 0,
+      "runtime_seconds": 6.41,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    },
+    {
+      "name": "oracle_ordinary_recent_route_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if fully_route and _recent_rule_possible(\n        person, credits, horizon, exit_month, lower_credits=lower_credits\n    ):\n        return True\n",
+          "after": "    if False and fully_route and _recent_rule_possible(\n        person, credits, horizon, exit_month, lower_credits=lower_credits\n    ):\n        return True\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_ordinary_recent_route_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_ordinary_recent_route",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_ordinary_recent_route_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_ordinary_recent_route > scratch/review/round13-mutation-oracle_ordinary_recent_route_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_ordinary_recent_route_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_ordinary_recent_route"
+      ],
+      "failed": 1,
+      "pytest_summary": "1 failed in 5.56s",
+      "passed": 0,
+      "runtime_seconds": 5.56,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "oracle_alternate_route_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if _pre1956_alternate_possible(\n        person, credits, month, exit_month, lower_credits=lower_credits\n    ):\n        return True\n",
+          "after": "    if False and _pre1956_alternate_possible(\n        person, credits, month, exit_month, lower_credits=lower_credits\n    ):\n        return True\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_alternate_route_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_alternate_route",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_alternate_route_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_alternate_route > scratch/review/round13-mutation-oracle_alternate_route_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_alternate_route_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_requires_alternate_route"
+      ],
+      "failed": 1,
+      "pytest_summary": "1 failed in 5.01s",
+      "passed": 0,
+      "runtime_seconds": 5.01,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "oracle_unknown_joint_proof_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "        and _unknown_prior_joint_shortfall(person, rows, horizon, fully_route)\n",
+          "after": "        and False and _unknown_prior_joint_shortfall(person, rows, horizon, fully_route)\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_unknown_joint_proof_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_unknown_prior_must_jointly_insure_current",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_unknown_joint_proof_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_unknown_prior_must_jointly_insure_current > scratch/review/round13-mutation-oracle_unknown_joint_proof_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_unknown_joint_proof_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_unknown_prior_must_jointly_insure_current"
+      ],
+      "failed": 1,
+      "pytest_summary": "1 failed in 22.10s",
+      "passed": 0,
+      "runtime_seconds": 22.1,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "oracle_first_insured_start_repair_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "                        if _outside_prior_periods(person, quarter):\n                            return True\n                        break\n",
+          "after": "                        if _outside_prior_periods(person, quarter):\n                            return True\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_first_insured_start_repair_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_first_insured_start_repair_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset > scratch/review/round13-mutation-oracle_first_insured_start_repair_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_first_insured_start_repair_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_fully_flag_cannot_delay_an_insured_onset[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 4,
+      "pytest_summary": "4 failed in 4.71s",
+      "passed": 0,
+      "runtime_seconds": 4.71,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "oracle_blind_first_start_overlap_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if fully_route and person.statutory_blindness:\n        return _outside_prior_periods(person, _qid(person.disability_onset))\n",
+          "after": "    if fully_route and person.statutory_blindness:\n        return True\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_blind_first_start_overlap_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_blind_first_start_overlap_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start > scratch/review/round13-mutation-oracle_blind_first_start_overlap_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_blind_first_start_overlap_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_blind_fully_flag_still_has_one_first_start[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "failed": 4,
+      "pytest_summary": "4 failed in 2.73s",
+      "passed": 0,
+      "runtime_seconds": 2.73,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "oracle_annual_placement_retry_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "    if use_periods_only is None and not _outside_prior_periods(\n        person, _qid(quarter)\n    ):\n",
+          "after": "    if False and use_periods_only is None and not _outside_prior_periods(\n        person, _qid(quarter)\n    ):\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-oracle_annual_placement_retry_removed.json",
+      "node": "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_annual_placement_can_delay_first_insured_quarter",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-oracle_annual_placement_retry_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_annual_placement_can_delay_first_insured_quarter > scratch/review/round13-mutation-oracle_annual_placement_retry_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-oracle_annual_placement_retry_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_classification_oracle.py::test_classification_oracle_annual_placement_can_delay_first_insured_quarter"
+      ],
+      "failed": 1,
+      "pytest_summary": "1 failed in 7.07s",
+      "passed": 0,
+      "runtime_seconds": 7.07,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT.",
+      "oracle_test_sha256": "4ff36ba10c71ac077ec7a678353e420454e11bcb2f53b8b21816e4315d74b5f5"
+    },
+    {
+      "name": "public_disability_start_filling_carry_removed",
+      "source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+      "changes": [
+        {
+          "before": "        resolved.update(credits=credits, treatment=use_periods_only)\n",
+          "after": "        resolved.update()\n"
+        }
+      ],
+      "spec_path": "scratch/review/round13-mutation-public_disability_start_filling_carry_removed.json",
+      "node": "tests/test_track_b_insured_status_fix_round_13.py::test_disability_witness_uses_the_legal_annual_start_filling",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round13 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round13 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND13_MUTATION=scratch/review/round13-mutation-public_disability_start_filling_carry_removed.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round13_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_13.py::test_disability_witness_uses_the_legal_annual_start_filling > scratch/review/round13-mutation-public_disability_start_filling_carry_removed.log 2>&1",
+      "log": "scratch/review/round13-mutation-public_disability_start_filling_carry_removed.log",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_13.py::test_disability_witness_uses_the_legal_annual_start_filling"
+      ],
+      "failed": 1,
+      "pytest_summary": "1 failed in 3.93s",
+      "passed": 0,
+      "runtime_seconds": 3.93,
+      "exit_code": 1,
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Runner execs mutation in module namespace only and asserts source bytes unchanged before printing OPEN_AUDIT."
+    }
+  ],
+  "round_13_runner_source": "\"\"\"Run named invented-data conformance tests with open-event auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport sys\n\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\nBARRED = {\n    \"gates.yaml\", \"adjusted_poverty.py\", \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_cola_comparison.md\", \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\", \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\", \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\"POPULACE_DYNAMICS_PSID_DIR\", \"POPULACE_DYNAMICS_EPUF_DIR\"):\n        assert os.environ[name] == \"/nonexistent/trackb-round13\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND13_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = os.environ.get(\"TRACKB_ROUND13_MUTATION\")\n    if spec_path:\n        spec = json.loads(Path(spec_path).read_text())\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\"MUTATION\", spec[\"name\"], flush=True)\n    import pytest\n\n    try:\n        return pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+  "round_13_note": "Sixteen isolated in-memory mutations were caught against the final source. Every run used named invented-data tests with nonexistent data roots, bounded threads, zero restricted opens and zero spawned-process audit events. Original source bytes were checked unchanged after each mutation. Oracle route-removal controls, coupled prior/current checks, first-start and annual-placement repairs, and the DISABILITY carried-filling repair all bite.",
+  "round_13_oracle_test_sha256": "4ffa46ffb24f7b8793eb2395a08e9f7c1eea4f784019dc8f3e17351a7f25718e",
+  "round_13_replay": "Write round_13_runner_source to scratch/review/run_round13_named.py. For each record, write name/source_sha256/changes to its spec_path, then execute its exact command. Each mutation applies only in memory and the runner verifies unchanged source bytes.",
+  "round_13_final_source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d"
 }

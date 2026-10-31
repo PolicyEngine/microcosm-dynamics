@@ -439,8 +439,13 @@ def test_empty_windows_keep_fully_route_blindness_and_unknown_prior_bypasses(
         person = replace(person, statutory_blindness=True)
     else:
         person = replace(person, prior_disability_periods_provenance=UNKNOWN)
-    years = history(person, date(2001, 1, 1))
+    # Missing prior history can move a window, but cannot remove its floor.
+    # Six old credits keep this fixture about the empty recent windows.
+    counts = {1980: 4, 1981: 2} if exception == "unknown-prior" else {}
+    years = history(person, date(2001, 1, 1), counts)
     _refusal(person, years, _reason(condition))
+    if exception == "unknown-prior":
+        _invalid(person, history(person, date(2001, 1, 1)))
 
 
 @pytest.mark.parametrize("condition", FULLY_ROUTES)
