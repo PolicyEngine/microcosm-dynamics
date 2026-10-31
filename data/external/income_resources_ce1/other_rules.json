@@ -2999,6 +2999,13 @@
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
         "authority": "42 USC 418 current code and amendment notes",
         "location": "418(c)(8)"
+      },
+      {
+        "capture": "poms_sl_30001357.html",
+        "sha256": "d240e04da60ba92488e501f4f11b3e08cdce1fddfa3122deac5d8a08f090c278",
+        "authority": "SSA POMS SL 30001.357",
+        "location": "NOTE before A",
+        "quote": "NOTE: Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system or the services are excluded from mandatory coverage."
       }
     ],
     "trigger_facts": [
@@ -3153,17 +3160,28 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "agreement_with_lower_threshold",
+        "case_id": "agreement_with_lower_threshold_nonmember",
         "precedence": 1,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount"
+          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
-        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C)."
+        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
+      },
+      {
+        "case_id": "agreement_with_lower_threshold_member",
+        "precedence": 2,
+        "when": {
+          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
       },
       {
         "case_id": "agreement_with_statutory_threshold",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
         },
@@ -3172,7 +3190,7 @@
       },
       {
         "case_id": "agreement_without_election_exclusion",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
         },
@@ -3181,7 +3199,7 @@
       },
       {
         "case_id": "outside_agreement_nonmember",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
@@ -3191,7 +3209,7 @@
       },
       {
         "case_id": "outside_agreement_member",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"

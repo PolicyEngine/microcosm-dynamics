@@ -2222,31 +2222,39 @@ REQUIRED_CONDITIONS = [
             "legislative_ceased_coverage_after_1983",
         )
     ],
-    (
-        "election_work_1991_0702",
-        "agreement_with_lower_threshold_nonmember",
-        {
-            "section_218_position": ("below the statutory amount",),
-            "public_retirement_system_participation": ("not a member",),
-        },
-        "poms_sl_30001357.html",
-        "Beginning July 2, 1991, services optionally excluded from coverage "
-        "under a Section 218 Agreement may be mandatorily covered unless the "
-        "employee is a member of a public retirement system",
-    ),
-    (
-        "election_work_1991_0702",
-        "agreement_with_lower_threshold_member",
-        {
-            "section_218_position": ("below the statutory amount",),
-            "public_retirement_system_participation": (
-                "member of a retirement system",
-            ),
-        },
-        "poms_sl_30001357.html",
-        "In these States, the Social Security and Medicare tax applies when "
-        "the amount specified in the State’s agreement is met.",
-    ),
+    # The POMS NOTE has no end date, so it reaches the 1995 row too (r3c).
+    *[
+        (
+            rule_id,
+            "agreement_with_lower_threshold_nonmember",
+            {
+                "section_218_position": ("below the statutory amount",),
+                "public_retirement_system_participation": ("not a member",),
+            },
+            "poms_sl_30001357.html",
+            "Beginning July 2, 1991, services optionally excluded from "
+            "coverage under a Section 218 Agreement may be mandatorily "
+            "covered unless the employee is a member of a public retirement "
+            "system",
+        )
+        for rule_id in ("election_work_1991_0702", "election_work_1995")
+    ],
+    *[
+        (
+            rule_id,
+            "agreement_with_lower_threshold_member",
+            {
+                "section_218_position": ("below the statutory amount",),
+                "public_retirement_system_participation": (
+                    "member of a retirement system",
+                ),
+            },
+            "poms_sl_30001357.html",
+            "In these States, the Social Security and Medicare tax applies "
+            "when the amount specified in the State’s agreement is met.",
+        )
+        for rule_id in ("election_work_1991_0702", "election_work_1995")
+    ],
     (
         "foreign_agricultural_service_1968",
         "temporary_agricultural_admission_agricultural_labor",
@@ -2515,11 +2523,13 @@ def test_narrowed_rows_resolve_as_their_sources_say(
         assert rule.resolve(matched)["consequence"] == expected
 
 
-def test_election_nonmember_meets_either_threshold(registry):
+@pytest.mark.parametrize("year", [1992, 2000])
+def test_election_nonmember_meets_either_threshold(registry, year):
     """Review r3 low 6: from 1991-07-02 an optionally excluded nonmember is
     mandatorily covered unless 410(a)(7)(F)(iv) excepts the pay, so both the
-    agreement's amount and the statutory annual amount bear on it."""
-    (rule,) = registry.lookup("election_work", 1992)
+    agreement's amount and the statutory annual amount bear on it. The POMS
+    NOTE states no end date, so the 1995 row splits the case too (r3c)."""
+    (rule,) = registry.lookup("election_work", year)
     cases = {case["case_id"]: case for case in rule.cases}
     nonmember = cases["agreement_with_lower_threshold_nonmember"]
     assert "the agreement's amount" in nonmember["description"]
@@ -2631,6 +2641,41 @@ def test_section_410a19_rows_key_the_visa_class_alike(registry):
     for case in found:
         assert case["when"]["nonresident_alien_status"] == "nonresident alien"
         assert "nonimmigrant" in case["when"]["visa_status"]
+
+
+# Review r3 sibling rows (r3c): rows that share a low-6 row's defect, and
+# helper-batch lows on low-6 rows. What each returns for INVENTED fact
+# patterns, by the cases whose conditions they meet.
+SIBLING_OUTCOMES = [
+    # Nonmember and member election workers under a lower agreement amount.
+    (
+        "election_work",
+        2000,
+        {"agreement_with_lower_threshold_nonmember"},
+        "covered_above_threshold",
+    ),
+    (
+        "election_work",
+        2000,
+        {"agreement_with_lower_threshold_member"},
+        "covered_above_threshold",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("family", "year", "matched", "expected"),
+    SIBLING_OUTCOMES,
+    ids=[
+        f"{family}-{year}-{sorted(matched)}"
+        for family, year, matched, _ in SIBLING_OUTCOMES
+    ],
+)
+def test_sibling_rows_resolve_as_their_sources_say(
+    registry, family, year, matched, expected
+):
+    (rule,) = registry.lookup(family, year)
+    assert rule.resolve(matched)["consequence"] == expected
 
 
 @pytest.mark.parametrize(
