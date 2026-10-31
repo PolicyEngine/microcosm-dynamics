@@ -1658,7 +1658,15 @@ added UNKNOWN-history oracle lattice.
 
 For known priors, 404.321(a) fixes onset when insured then, otherwise the
 first insured quarter. A fully-route flag presumes that prerequisite and
-changes nothing else. The recent scan now holds one complete annual
+changes nothing else. The rule doesn't test when a flag's status began, and
+this reasoning doesn't need that date. Prior periods end before onset, so
+overlap reaches only the onset quarter, through a prior that ends there.
+That prior was itself insured, and 404.130(a) makes fully insured status
+part of every rule, so the person met it when the prior began. Fully
+insured status compares QCs with a requirement. QCs don't fall, and the
+elapsed-year count skips every year any part of which falls in the prior,
+so the status still holds in the onset quarter.
+The recent scan now holds one complete annual
 placement and prior treatment fixed before selecting that first quarter;
 a later clear quarter cannot repair an overlapping first quarter. A blind
 fully-route declaration is insured at onset and needs a clear onset
