@@ -1395,5 +1395,328 @@
     "source_diff": "--- before_unknown_sspa_dli_lower_correction\n+++ after_unknown_sspa_dli_lower_correction\n@@ -1231,6 +1231,11 @@\n             hi_censored = (\n                 coverage_end_month is None or coverage_end_month > month\n             ) and _qid(hi_date) == _qid(month)\n+        if applicability is None:\n+            # A guaranteed historical fully insured witness also needs\n+            # resolved section214(c) facts. Keep the QC-only upper date;\n+            # false current status cannot prove a positive DLI lower date.\n+            lo_date = None\n         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)\n     lo_rows, _ = _world(\n         lo_person,\n",
     "previous_log_archive_directory": "scratch/review/pre-sspa-dli-snapshot-ab89110b"
   },
-  "round_2_final_original_source_sha256": "3c213db1b6733d5e67566a815a93b62df58e8988dc206ae80784b494439ce3f1"
+  "round_2_final_original_source_sha256": "3c213db1b6733d5e67566a815a93b62df58e8988dc206ae80784b494439ce3f1",
+  "round_3_mutations": [
+    {
+      "name": "query_observation_is_fabricated_as_period_end",
+      "before": "    end = fra.replace(day=1) - timedelta(days=1)",
+      "after": "    end = min(fra.replace(day=1) - timedelta(days=1), _qend(_qid(month)))",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_periods.py -k test_ongoing_period_end_cannot_invent_a_credited_query_endpoint",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-round3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-round3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_periods.py::test_ongoing_period_end_cannot_invent_a_credited_query_endpoint"
+      ],
+      "summary": [
+        "1 failed, 65 deselected in 5.57s"
+      ],
+      "log": "scratch/review/round3-periods-mutation-query-end.log",
+      "restored": true
+    },
+    {
+      "name": "prior_disability_period_fra_cap_is_removed",
+      "before": "                replace(p, end=min(p.end, fra_end)) if p.start < fra else p",
+      "after": "                p",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_periods.py -k test_prior_period_is_capped_at_fra_for_status_and_requirement_helper",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-round3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-round3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_periods.py::test_prior_period_is_capped_at_fra_for_status_and_requirement_helper"
+      ],
+      "summary": [
+        "1 failed, 65 deselected in 13.82s"
+      ],
+      "log": "scratch/review/round3-periods-mutation-prior-fra.log",
+      "restored": true
+    },
+    {
+      "name": "post1959_cohort_fra_is_66_instead_of_67",
+      "before": "    elif cohort >= 1960:\n        months = 804",
+      "after": "    elif cohort >= 1960:\n        months = 792",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_periods.py -k test_fra_stepup_cohorts_and_first_second_birthdays_follow_416_l",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-round3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-round3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_periods.py::test_fra_stepup_cohorts_and_first_second_birthdays_follow_416_l[2-2022]"
+      ],
+      "summary": [
+        "1 failed, 47 passed, 18 deselected in 7.84s"
+      ],
+      "log": "scratch/review/round3-periods-mutation-fra-cohort.log",
+      "restored": true
+    },
+    {
+      "name": "known_current_start_at_or_after_fra_guard_is_disabled",
+      "before": "            and self.disability_onset >= fra",
+      "after": "            and False",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_periods.py -k test_known_establishment_at_or_after_fra_is_always_invalid",
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-round3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-round3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      },
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_periods.py::test_known_establishment_at_or_after_fra_is_always_invalid"
+      ],
+      "summary": [
+        "1 failed, 65 deselected in 33.30s"
+      ],
+      "log": "scratch/review/round3-periods-mutation-late-start.log",
+      "restored": true
+    },
+    {
+      "name": "skip_impossible_unknown_prior_establishment_validation",
+      "before": "and _unknown_prior_history_is_empty(\n",
+      "after": "and False and _unknown_prior_history_is_empty(\n",
+      "original_source_sha256": "5bb2853d18a5a6be0db14deed45bbd3c10aa175efd9c3e7f1e5eb9b285a20c72",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/insured-fix-r3 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/insured-fix-r3 PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/src:/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3 PYTHONDONTWRITEBYTECODE=1 HYPOTHESIS_STORAGE_DIRECTORY=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/scratch/review/hypothesis /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_validation.py -k impossible",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_validation.py::test_impossible_establishment_with_unknown_prior_history_is_input_error[onset0]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_validation.py::test_impossible_establishment_with_unknown_prior_history_is_input_error[onset1]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_validation.py::test_impossible_establishment_creates_no_evaluator_denominator_row",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_validation.py::test_impossible_unknown_history_validation_precedes_coverage_refusal"
+      ],
+      "summary": [
+        "4 failed, 2 deselected in 38.23s"
+      ],
+      "log": "scratch/review/mutation-r3-validation-skip_impossible_unknown_prior_establishment_validation.log",
+      "restored": true
+    },
+    {
+      "name": "collapse_possible_prior_history_as_empty",
+      "before": "and _unknown_prior_history_is_empty(\n",
+      "after": "and True or False and _unknown_prior_history_is_empty(\n",
+      "original_source_sha256": "2c2656505f5d99350cb10000f7917dd8eb4a8e10732b72fb828d8e29bdf3ef77",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/insured-fix-r3 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/insured-fix-r3 PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/src:/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3 PYTHONDONTWRITEBYTECODE=1 HYPOTHESIS_STORAGE_DIRECTORY=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/scratch/review/hypothesis /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_validation.py -k valid_prior_freeze",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_validation.py::test_valid_prior_freeze_filling_prevents_false_invalidity"
+      ],
+      "summary": [
+        "1 failed, 5 deselected in 19.66s"
+      ],
+      "log": "scratch/review/mutation-r3-validation-collapse_possible_prior_history_as_empty.log",
+      "restored": true
+    },
+    {
+      "id": "r3_simplified_pre1951_divisor",
+      "original": "wages // 400 + post1950",
+      "mutated": "wages // 401 + post1950",
+      "test": "test_raw_pre1951_wages_automatically_refuse_simplified_alternative",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_3_coverage.py::test_raw_pre1951_wages_automatically_refuse_simplified_alternative"
+      ],
+      "result": "1 failed in 10.57s",
+      "exit_code": 1,
+      "log": "scratch/review/r3_simplified_pre1951_divisor.log",
+      "name": "r3_simplified_pre1951_divisor",
+      "before": "wages // 400 + post1950",
+      "after": "wages // 401 + post1950",
+      "returncode": 1,
+      "summary": [
+        "1 failed in 10.57s"
+      ],
+      "restored": true,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_raw_pre1951_wages_automatically_refuse_simplified_alternative"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-r3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-r3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      }
+    },
+    {
+      "id": "r3_simplified_pre1951_unknown",
+      "original": "unknown_wages = any(",
+      "mutated": "unknown_wages = False and any(",
+      "test": "test_unknown_pre1951_wages_can_qualify_when_four_ordinary_qcs_cannot",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_3_coverage.py::test_unknown_pre1951_wages_can_qualify_when_four_ordinary_qcs_cannot"
+      ],
+      "result": "1 failed in 7.49s",
+      "exit_code": 1,
+      "log": "scratch/review/r3_simplified_pre1951_unknown.log",
+      "name": "r3_simplified_pre1951_unknown",
+      "before": "unknown_wages = any(",
+      "after": "unknown_wages = False and any(",
+      "returncode": 1,
+      "summary": [
+        "1 failed in 7.49s"
+      ],
+      "restored": true,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_unknown_pre1951_wages_can_qualify_when_four_ordinary_qcs_cannot"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-r3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-r3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      }
+    },
+    {
+      "id": "r3_pre1956_alternative_twenty",
+      "original": "len(assigned) >= 20",
+      "mutated": "len(assigned) >= 21",
+      "test": "test_pre1956_alternate_disability_path_is_detected_from_onset_and_qcs",
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1956_alternate_disability_path_is_detected_from_onset_and_qcs"
+      ],
+      "result": "1 failed in 6.25s",
+      "exit_code": 1,
+      "log": "scratch/review/r3_pre1956_alternative_twenty.log",
+      "name": "r3_pre1956_alternative_twenty",
+      "before": "len(assigned) >= 20",
+      "after": "len(assigned) >= 21",
+      "returncode": 1,
+      "summary": [
+        "1 failed in 6.25s"
+      ],
+      "restored": true,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1956_alternate_disability_path_is_detected_from_onset_and_qcs"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/insured-r3",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/insured-r3",
+        "PYTHONPATH": "$PWD/src:$PWD"
+      }
+    },
+    {
+      "name": "sam_design_fully_prerequisite_seven_becomes_eight",
+      "mutation_kind": "documentation",
+      "file": "docs/design/track_b_insured_status.md",
+      "before": "fully insured prerequisite of seven (the",
+      "after": "fully insured prerequisite of eight (the",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD POPULACE_DYNAMICS_PSID_DIR=/nonexistent/insured-r3-sam POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/insured-r3-sam /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py::test_sam_subsequent_poms_140_example_9_favorable_disregard_erratum",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status.py::test_sam_subsequent_poms_140_example_9_favorable_disregard_erratum"
+      ],
+      "summary": [
+        "1 failed in 24.93s"
+      ],
+      "log": "scratch/review/mutation-r3-sam-prerequisite.log",
+      "restored": true
+    },
+    {
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/insured-freeze-r3 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/insured-freeze-r3 PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/src:/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3 PYTHONDONTWRITEBYTECODE=1 HYPOTHESIS_STORAGE_DIRECTORY=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/scratch/review/hypothesis-freeze /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_coverage.py -k 'lower_frozen or bounds_every_known_freeze'",
+      "returncode": 1,
+      "summary": [
+        "3 failed, 16 deselected in 12.20s"
+      ],
+      "failed": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_considers_lower_frozen_fully_requirement[False]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_considers_lower_frozen_fully_requirement[True]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_bounds_every_known_freeze_requirement"
+      ],
+      "log": "scratch/review/pre1951-freeze-mutant.log",
+      "module_sha256": "7b39bfde6d1ebbfb1eb34494953829d4e34fecb4f52eb229b2f13af13a77cc4d",
+      "test_sha256": "98278b6b4d0ed0ebc6165c4dbd4a9388f66c14375f95067914c976acbd68a4a1",
+      "id": "r3_simplified_pre1951_freeze_requirement",
+      "original": "required = min(lo[6], _requirement(person, month, periods))",
+      "mutated": "required = max(lo[6], _requirement(person, month, periods))",
+      "restored_sha256": "25ea1b98acc684d0f4187de3da2fa781aeddac8d6931cf509c6344a89a57151d",
+      "name": "r3_simplified_pre1951_freeze_requirement",
+      "before": "required = min(lo[6], _requirement(person, month, periods))",
+      "after": "required = max(lo[6], _requirement(person, month, periods))",
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_considers_lower_frozen_fully_requirement[False]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_considers_lower_frozen_fully_requirement[True]",
+        "FAILED tests/test_track_b_insured_status_fix_round_3_coverage.py::test_pre1951_refusal_bounds_every_known_freeze_requirement"
+      ],
+      "restored": true
+    }
+  ],
+  "round_3_validation_restored_baseline": {
+    "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/insured-fix-r3 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/insured-fix-r3 PYTHONPATH=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/src:/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3 PYTHONDONTWRITEBYTECODE=1 HYPOTHESIS_STORAGE_DIRECTORY=/Users/maxghenis/.subfleet/worktrees/20261025-084543-trackb-fix-insured-3/scratch/review/hypothesis /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_fix_round_3_validation.py",
+    "returncode": 0,
+    "failed_tests": [],
+    "summary": [
+      "6 passed in 24.83s"
+    ],
+    "log": "scratch/review/mutation-r3-validation-restored-baseline.log"
+  },
+  "round_3_final_source_sha256": "7a99028e7e227e3311e3f0b547e25260a4ce3c5b24bdda41a7ae53212744c6c9",
+  "round_3_note": "Actual mutation execution records are retained. Narrow restoration preserved disjoint concurrent edits. Each implementation mutation was caught; Sam is a documentary mutation because the existing arithmetic was correct. Final scoped gates are recorded in scratch/review/fix-round-3-report.md.",
+  "round_3_source_transition": {
+    "previous_final_source_sha256": "a4f06ba3a5883f6b8e96a7887063499bc8e49512870f986c74355106d23b1b26",
+    "final_source_sha256": "a0d10a7fb495ecc48ee76d2d4b77eb4d9108db311246ec498604487ef2c3c37c",
+    "reason": "Append three optional ending fields after all original twenty Person fields, preserving positional-call meaning; no statutory rule or default changed. Existing provenance property pins this compatibility and failed before the reorder."
+  },
+  "round_3_additional_source_transitions": [
+    {
+      "previous_final_source_sha256": "a0d10a7fb495ecc48ee76d2d4b77eb4d9108db311246ec498604487ef2c3c37c",
+      "final_source_sha256": "7a99028e7e227e3311e3f0b547e25260a4ce3c5b24bdda41a7ae53212744c6c9",
+      "reason": "Conservatively compare simplified pre1951 credits against every known freeze prerequisite and the six-QC bound for UNKNOWN establishment; include derived current periods. Exact cents and prior/current regressions plus a caught min-to-max mutation pin the extension."
+    }
+  ],
+  "round_3_exact_head_replay": {
+    "head": "d21ece2d44e6a65239ec3cf861970225891aef36",
+    "summary": [
+      "10 failed in 6.19s"
+    ],
+    "restoration_exact": true,
+    "evidence": "scratch/review/round3-exact-head-replay.json",
+    "label": "Post-fix baseline replay; initial failing-first chronology remains in scratch notes."
+  }
 }

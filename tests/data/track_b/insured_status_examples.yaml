@@ -474,7 +474,7 @@ examples:
     lower_wages: '5500'
     lower_qcs: 13
   coverage: refused
-  note: Simplified pre-1951 aggregate credits require the named special credit condition.
+  note: Potentially decisive supplied pre-1951 wages trigger the named refusal automatically; filing and allocation facts remain unmodeled.
   refusal_reason: simplified_pre1951_unsupported
 - id: poms_315_retroactive
   source: poms_rs_00301_315

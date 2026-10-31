@@ -189,6 +189,15 @@ RULE_QUOTES = {
     ],
     "poms_rs_00301_315": [
         "The simplified method does not apply to disability claims.",
+        "Under the 1967 Amendments, use the simplified method if:",
+        "there are at least seven EYs; and",
+        "the NH is fully insured based on the number of QCs derived "
+        "under this method plus the number of QCs credited after 1950.",
+        "The NH is deemed to have one QC for each $400 of their total "
+        "wages before 1951.",
+        "If we find the NH is not insured or deemed to have one QC before "
+        "1951 under the simplified method, examine their record for the "
+        "1937-1950 period to determine the number of QCs posted.",
     ],
     "poms_rs_00301_320": [
         "$400 or more paid in a calendar year-all four quarters are QCs;",
@@ -246,6 +255,17 @@ RULE_QUOTES = {
         "However, we will count all the quarters in the prior period of "
         "disability established for you if by doing so you would be "
         "entitled to benefits or the amount of the benefit would be larger.",
+        "We do not count as part of the 13-quarter period any quarter "
+        "all or part of which is included in a period of disability "
+        "established for you, except that the first and last quarters "
+        "of the period of disability may be counted if they are QCs "
+        "(see § 404.146(d)).",
+        "The quarter is the first or the last quarter of this period; or",
+        "The period of disability is not taken into consideration "
+        "(see § 404.320(a)).",
+        "For purposes of paragraph (b) of this section, we may use the "
+        "following rules in crediting QCs based on your wages before "
+        "1951 instead of the rule in § 404.141(b)(1).",
     ],
     "ecfr_20cfr404_315": [
         "The 5-month waiting period begins with a month in which you were "
@@ -261,6 +281,9 @@ RULE_QUOTES = {
         "At least 5 consecutive months go by from the month in which "
         "your period of disability begins and before the month in which "
         "it would end.",
+        "You are insured for disability, as defined in § 404.130 in the "
+        "calendar quarter in which you became disabled, or in a later "
+        "calendar quarter in which you were disabled.",
     ],
     "ecfr_20cfr404_321": [
         "Your period of disability begins on the day your disability "
@@ -269,6 +292,17 @@ RULE_QUOTES = {
         "of disability will begin on the first day of the first calendar "
         "quarter after your disability began in which you become insured "
         "for disability.",
+        "Your period of disability may not begin after you have attained "
+        "full retirement age as defined in § 404.409.",
+        "Your period of disability ends with the close of whichever of "
+        "the following is the earliest",
+        "The month before the month in which you attain full retirement "
+        "age as defined in § 404.409.",
+        "The month immediately preceding your termination month "
+        "(§ 404.325); or",
+        "If you perform substantial gainful activity during the "
+        "reentitlement period described in § 404.1592a, the last month "
+        "for which you received benefits.",
     ],
     "lii_usc_42_413": [
         "with such product, if not a multiple of $10, being rounded "
@@ -277,6 +311,13 @@ RULE_QUOTES = {
         "of $10 in any other case.",
         "$10,800 in the case of a taxable year beginning after 1972 "
         "and before 1974",
+        "an individual shall be deemed to have one quarter of coverage "
+        "for each $400 of his total wages prior to 1951",
+        "except where such individual is not a fully insured individual "
+        "on the basis of the number of quarters of coverage so derived "
+        "plus the number of quarters of coverage derived from the wages "
+        "and self-employment income credited to such individual for "
+        "periods after 1950.",
     ],
     "lii_usc_42_414": [
         "one quarter of coverage (whenever acquired) for each calendar "
@@ -286,6 +327,33 @@ RULE_QUOTES = {
     "lii_usc_42_416": [
         "on the first day of the first quarter thereafter in which he "
         "satisfies such requirements.",
+        "no such period shall begin as to any individual after such "
+        "individual attains retirement age (as defined in subsection (l)).",
+        "A period of disability shall end with the close of whichever "
+        "of the following months is the earlier:",
+        "the month preceding the month in which the individual attains "
+        "retirement age (as defined in subsection (l))",
+        "the termination month (as defined in section 423(a)(1) of this "
+        "title )",
+        "such period is of not less than five full calendar months' "
+        "duration or such individual was entitled to benefits under "
+        "section 423 of this title for one or more months in such period.",
+        "before January 1, 2000 , 65 years of age;",
+        "after December 31, 1999 , and before January 1, 2005 , 65 years "
+        "of age plus the number of months in the age increase factor",
+        "after December 31, 2004 , and before January 1, 2017 , 66 years "
+        "of age;",
+        "after December 31, 2016 , and before January 1, 2022 , 66 years "
+        "of age plus the number of months in the age increase factor",
+        "after December 31, 2021 , 67 years of age.",
+        "The term “ early retirement age ” means age 62 in the case of "
+        "an old-age, wife' s, or husband' s insurance benefit",
+        "the 5-year period consisting of the calendar years 2000 through "
+        "2004, the age increase factor shall be equal to two-twelfths of "
+        "the number of months in the period beginning with January 2000",
+        "the 5-year period consisting of the calendar years 2017 through "
+        "2021, the age increase factor shall be equal to two-twelfths of "
+        "the number of months in the period beginning with January 2017",
     ],
     "lii_usc_42_423": [
         "not less than 20 quarters of coverage during the 40-quarter "

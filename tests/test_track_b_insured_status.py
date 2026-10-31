@@ -959,6 +959,14 @@ def test_sam_subsequent_poms_140_example_9_favorable_disregard_erratum():
     assert result.disability.insured
     assert result.disability.rule == "disability_20_of_40"
     assert result.disability.required == result.disability.qc_count_lower == 20
+    assert result.disability.fully_required == 7
+    design = (
+        Path(__file__).parents[1] / "docs/design/track_b_insured_status.md"
+    ).read_text()
+    assert (
+        "fully insured prerequisite of seven (the elapsed years "
+        "1986–1992)" in " ".join(design.split())
+    )
     assert tuple(
         q for q in result.disability.assigned_quarters if q // 4 == 1983
     ) == (qid(1983, 3), qid(1983, 4))
