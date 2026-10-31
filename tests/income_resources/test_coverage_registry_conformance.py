@@ -1497,6 +1497,20 @@ def test_tribal_council_cases_and_uncaptured_crp_history(registry):
         ),
         ("nonresident_alien_service", 2000, set(), "covered"),
         ("foreign_government_service", 2000, set(), "covered"),
+        # Review r3 H1: an existing employee who did not sign the Form
+        # SS-15a stays excluded under an actual waiver.
+        (
+            "nonprofit_service",
+            1975,
+            {"waiver_nonconcurring_existing_employee"},
+            "noncovered",
+        ),
+        (
+            "nonprofit_service",
+            1980,
+            {"waiver_nonconcurring_existing_employee"},
+            "noncovered",
+        ),
     ],
 )
 def test_failed_conditions_no_longer_exclude(
@@ -1504,6 +1518,59 @@ def test_failed_conditions_no_longer_exclude(
 ):
     (rule,) = registry.lookup(family, year)
     assert rule.resolve(matched)["consequence"] == expected
+
+
+NONPROFIT_WAIVER_WORKERS = {
+    # INVENTED workers of a 501(c)(3) employer, by the cases that hold.
+    "listed_existing_employee": (
+        {"effective_waiver_concurring_employee"},
+        "covered_above_threshold",
+    ),
+    "hired_after_certificate": (
+        {"effective_waiver_concurring_employee"},
+        "covered_above_threshold",
+    ),
+    "unlisted_existing_employee": (
+        {"waiver_nonconcurring_existing_employee"},
+        "noncovered",
+    ),
+    "deemed_waiver_employee": (
+        {"deemed_waiver_all_employees"},
+        "covered_above_threshold",
+    ),
+    "no_waiver": ({"no_effective_waiver"}, "noncovered"),
+    "not_a_501c3_employer": (set(), "covered"),
+}
+
+
+@pytest.mark.parametrize("worker", sorted(NONPROFIT_WAIVER_WORKERS))
+@pytest.mark.parametrize("year", [1975, 1980])
+def test_nonprofit_waiver_covers_only_listed_or_later_employees(
+    registry, year, worker
+):
+    """Review r3 H1: NPO503 covers "the employees who signed the SS-15a,
+    as well as those hired afterwards"; NPO505 excludes an existing
+    employee who did not sign; RS 01901.540 D.7 deems a constructive
+    waiver to cover all employees.
+    """
+    (rule,) = registry.lookup("nonprofit_service", year)
+    matched, expected = NONPROFIT_WAIVER_WORKERS[worker]
+    assert rule.resolve(matched)["consequence"] == expected
+    cases = {case["case_id"]: case for case in rule.cases}
+    unlisted = cases["waiver_nonconcurring_existing_employee"]["when"]
+    assert "not listed on the Form SS-15a" in (
+        unlisted["nonprofit_employee_concurrence"]
+    )
+    assert unlisted["nonprofit_coverage_waiver"].startswith("actual")
+    assert cases["effective_waiver_concurring_employee"]["when"][
+        "nonprofit_coverage_waiver"
+    ].startswith("actual")
+    deemed = cases["deemed_waiver_all_employees"]["when"]
+    assert "nonprofit_employee_concurrence" not in deemed
+    quotes = {c.quote for c in rule.citations if c.quote}
+    assert any("signed the Form SS-15a" in quote for quote in quotes)
+    assert any("covering all employees" in quote for quote in quotes)
+    assert "501(c)(3)" in rule.residual_default["description"]
 
 
 @settings(deadline=None)

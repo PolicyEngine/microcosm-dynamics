@@ -3471,6 +3471,20 @@
         "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
         "authority": "POMS NL 00902.500 (2004-05-27)",
         "location": "NPO501-NPO505"
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO505",
+        "quote": "However, persons employed at the time of the request could be eligible only if they had signed the Form SS-15a with the IRS."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "D.7",
+        "quote": "Organizations not obtaining a refund before 9/9/76 are deemed to have filed a valid waiver covering all employees."
       }
     ],
     "trigger_facts": [
@@ -3566,15 +3580,35 @@
         "case_id": "effective_waiver_concurring_employee",
         "precedence": 1,
         "consequence": "covered_above_threshold",
-        "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+        "description": "Under an actual waiver certificate, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and every employee hired after the certificate's effective date are covered (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1, C.4 and C.6).",
         "when": {
-          "nonprofit_coverage_waiver": "valid and effective",
-          "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective for the service",
+          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate's effective date"
+        }
+      },
+      {
+        "case_id": "deemed_waiver_all_employees",
+        "precedence": 2,
+        "consequence": "covered_above_threshold",
+        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it.",
+        "when": {
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76)"
+        }
+      },
+      {
+        "case_id": "waiver_nonconcurring_existing_employee",
+        "precedence": 3,
+        "consequence": "noncovered",
+        "description": "An actual waiver covers an employee on its filing date only if the employee signed the Form SS-15a (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1), so former 410(a)(8)(B) still excludes this employee's service.",
+        "when": {
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective",
+          "nonprofit_employee_concurrence": "employed on the certificate's filing date and not listed on the Form SS-15a as filed or amended"
         }
       },
       {
         "case_id": "no_effective_waiver",
-        "precedence": 2,
+        "precedence": 4,
         "consequence": "noncovered",
         "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
         "when": {
@@ -3586,7 +3620,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
+      "description": "No case holds, so the employer is not an organization described in 501(c)(3) and exempt under 501(a): former 410(a)(8)(B) does not exclude the service; apply the other families."
     }
   },
   {
@@ -3624,6 +3658,20 @@
         "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27",
         "authority": "42 USC 409, official 1994 United States Code edition",
         "location": "409(p)(1); 1977 amendment note; Public Law 95-216 section 351(d) effective-date note"
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO505",
+        "quote": "However, persons employed at the time of the request could be eligible only if they had signed the Form SS-15a with the IRS."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "D.7",
+        "quote": "Organizations not obtaining a refund before 9/9/76 are deemed to have filed a valid waiver covering all employees."
       }
     ],
     "trigger_facts": [
@@ -3753,15 +3801,35 @@
         "case_id": "effective_waiver_concurring_employee",
         "precedence": 1,
         "consequence": "covered_above_threshold",
-        "description": "Coverage under pre 1984 waiver, including certificates deemed filed under statutory constructive-filing provisions.",
+        "description": "Under an actual waiver certificate, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and every employee hired after the certificate's effective date are covered (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1, C.4 and C.6).",
         "when": {
-          "nonprofit_coverage_waiver": "valid and effective",
-          "nonprofit_employee_concurrence": "concurring existing employee or employee hired after effective certificate date"
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective for the service",
+          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate's effective date"
+        }
+      },
+      {
+        "case_id": "deemed_waiver_all_employees",
+        "precedence": 2,
+        "consequence": "covered_above_threshold",
+        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it.",
+        "when": {
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76)"
+        }
+      },
+      {
+        "case_id": "waiver_nonconcurring_existing_employee",
+        "precedence": 3,
+        "consequence": "noncovered",
+        "description": "An actual waiver covers an employee on its filing date only if the employee signed the Form SS-15a (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1), so former 410(a)(8)(B) still excludes this employee's service.",
+        "when": {
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective",
+          "nonprofit_employee_concurrence": "employed on the certificate's filing date and not listed on the Form SS-15a as filed or amended"
         }
       },
       {
         "case_id": "no_effective_waiver",
-        "precedence": 2,
+        "precedence": 4,
         "consequence": "noncovered",
         "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
         "when": {
@@ -3773,7 +3841,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "The employer is not a 501(c)(3) organization within former 410(a)(8)(B), so this exclusion does not apply; apply the other families."
+      "description": "No case holds, so the employer is not an organization described in 501(c)(3) and exempt under 501(a): former 410(a)(8)(B) does not exclude the service; apply the other families."
     }
   },
   {
