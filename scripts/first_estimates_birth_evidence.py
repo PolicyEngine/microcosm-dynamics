@@ -436,6 +436,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # nothing in the historical projection imports them.
     Path("src/populace_dynamics/data/psid_income_wealth.py"),
     Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+    # The income-and-resources aggregate-table readers (D4) are opt-in
+    # source readers; nothing in the historical projection imports them.
+    Path("src/populace_dynamics/income_resources/__init__.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_coverage.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
