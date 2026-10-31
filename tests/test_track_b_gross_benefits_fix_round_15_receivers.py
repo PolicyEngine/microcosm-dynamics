@@ -17,6 +17,28 @@ from tests.test_track_b_gross_benefits_fix_round_12_contract import (
     LAYERS,
     _outcome,
 )
+from tests.test_track_b_gross_benefits_fix_round_13_audit import (
+    _declaration_cases,
+    _sealed_samples,
+)
+
+
+@pytest.fixture(autouse=True)
+def _restore_hypothesis_settings_after_parameter(request):
+    # The pinned pytest plugin replaces this setting with a child for each
+    # parameter, but does not restore its parent. With derandomize=True the
+    # database is None, so settings.database recursively traverses every
+    # parent instead of caching. A Hypothesis-only reproducer (no repository
+    # imports) raises RecursionError after 998 such parents. Preserve the
+    # original settings between parameters; keep every case and health check.
+    original = getattr(
+        request.function, "_hypothesis_internal_use_settings", None
+    )
+    try:
+        yield
+    finally:
+        if original is not None:
+            request.function._hypothesis_internal_use_settings = original
 
 
 class Foreign:
@@ -212,13 +234,11 @@ def test_nested_evaluator_rejects_foreign_callback_result_without_class_hook():
 @pytest.fixture(scope="module")
 def reader_samples():
     from tests.test_track_b_gross_benefits_fix_round_10_api import _world
-    from tests.test_track_b_gross_benefits_fix_round_13_audit import (
-        _sealed_samples,
-    )
     from tests.test_track_b_r3_fix_round_13 import MUTATION_CASES
 
     samples, _, guard = _world(100)
     samples.update(_sealed_samples())
+    samples.update(_declaration_cases())
     samples[type(guard).__name__] = guard
     for _, factory, _, _, _ in MUTATION_CASES:
         value = factory()

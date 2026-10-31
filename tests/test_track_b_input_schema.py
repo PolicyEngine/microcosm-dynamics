@@ -21,6 +21,7 @@ from hypothesis import strategies as st
 from populace_dynamics.track_b import _provenance as provenance
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
+from populace_dynamics.track_b import insured_status as insured
 from populace_dynamics.track_b import recompute as r
 from populace_dynamics.track_b import ret_grace as grace
 from populace_dynamics.track_b import ret_ledger as ret
@@ -420,7 +421,7 @@ def test_valid_review_controls_keep_their_original_refusal_and_money(layer):
         )
 
 
-MODULES = (g, grace, ret, a, r)
+MODULES = (g, grace, ret, a, r, insured)
 GUARD_PROPERTIES = tuple(
     name
     for name, descriptor in vars(g.SavingsClauseGuard).items()
@@ -470,6 +471,29 @@ def public_world():
         layer: (EVALUATE[layer]("valid", 1, COMPUTE[layer]),)
         for layer in LAYERS
     }
+    insured_person = insured.Person(
+        date(2000, 1, 2),
+        prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+    )
+    insured_years = {
+        year: insured.CoverageYear(
+            insured.EarningsProvenance.OBSERVED, qc_count=4
+        )
+        for year in range(2000, 2027)
+    }
+
+    def compute_insured():
+        return insured.insured_status(
+            insured_person,
+            insured_years,
+            date(2026, 1, 1),
+            test=insured.InsuredTest.FULLY,
+        )
+
     return {
         g: g_world,
         grace: {
@@ -531,6 +555,19 @@ def public_world():
             "december_cola_percent": {2020: 0},
             "death_month": None,
             "fra_month": None,
+        },
+        insured: {
+            "nawi": F("72800.33"),
+            "prior_amount": 1890,
+            "person": insured_person,
+            "years": insured_years,
+            "month": date(2026, 1, 1),
+            "test": insured.InsuredTest.FULLY,
+            "coverage_end_month": None,
+            "totalization_credits": (),
+            "key": "valid-insured",
+            "weight": F(1),
+            "compute": compute_insured,
         },
     }
 
@@ -1207,7 +1244,16 @@ def test_all_valid_public_argument_controls_still_compute(pia):
             if not inspect.isfunction(reader):
                 continue
             arguments = set(inspect.signature(reader).parameters) - {"self"}
-            inherited = INHERITED_METHOD_ARGUMENTS.get(cls.__name__, {})
+            inherited = INHERITED_METHOD_ARGUMENTS.get(
+                cls.__name__,
+                (
+                    INHERITED_METHOD_ARGUMENTS[
+                        "FamilyConfigurationUnsupported"
+                    ]
+                    if issubclass(cls, g.FamilyConfigurationUnsupported)
+                    else {}
+                ),
+            )
             if name in inherited:
                 assert arguments == set(inherited[name])
                 kwargs = inherited[name]
