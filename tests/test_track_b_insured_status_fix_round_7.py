@@ -103,12 +103,9 @@ def test_fra_month_witness_keeps_reviewed_refusal_and_denominator(variant):
 def test_reviewed_fra_neighbours_preserve_their_public_results(fra_month):
     person, years = _case(fra_month=fra_month)
     row = _row(person, years)
-    if fra_month == 3:
-        _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
-    else:
-        _assert_row(row)
-        assert row.result.fully.insured
-        assert row.result.current_disability_period_start == date(1960, 4, 1)
+    # Even the May-FRA ending admits February recovery, before April's
+    # first 20/40 witness. It cannot exclude the alternate in every filling.
+    _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
 
 
 @pytest.mark.parametrize("fra_month", range(1, 13))
@@ -122,14 +119,9 @@ def test_fra_quarter_stays_only_when_it_begins_before_fra_month(fra_month):
         witness_quarter=quarter,
     )
     row = _row(person, years)
-    if fra_month in (1, 4, 7, 10):
-        _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
-    else:
-        _assert_row(row)
-        assert row.result.fully.insured
-        assert row.result.current_disability_period_start == date(
-            1959, (quarter - 1) * 3 + 1, 1
-        )
+    # A possible recovery two months before the FRA ending precedes this
+    # quarter even when it begins before FRA. The FRA bound still applies.
+    _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
 
 
 def _unestablished(person, state):
@@ -193,9 +185,14 @@ def test_independent_date_oracle_classifies_both_alternate_scan_directions(
     # The oracle uses calendar dates alone, not production FRA/quarter helpers.
     # The 19 recent QCs become 20 only in the supplied witness quarter.
     witness_start = date(witness_year, (witness_quarter - 1) * 3 + 1, 1)
-    excludes_alternate = witness_start < date(
-        1960, fra_month, 1
-    ) and witness_start < date(1960, 10, 1)
+    end = date(1960, fra_month, 1) - timedelta(days=1)
+    index = end.year * 12 + end.month - 1 - 2
+    covered = date(index // 12, index % 12 + 1, 1)
+    excludes_alternate = (
+        witness_start <= covered
+        and witness_start < date(1960, fra_month, 1)
+        and witness_start < date(1960, 10, 1)
+    )
     person, years = _case(
         fra_month=fra_month,
         witness_year=witness_year,

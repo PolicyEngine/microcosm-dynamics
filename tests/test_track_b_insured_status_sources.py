@@ -115,6 +115,14 @@ RULE_QUOTES = {
     "poms_rs_00301_132": [
         "Do not use a freeze period if it would cause a denial of or "
         "reduced benefits.",
+        "Do not count any quarter all or part of which is in a period "
+        "of disability, except the beginning or ending quarters if they "
+        "are QCs, in determining the:",
+        "period of continuous QCs under the alternate insured status "
+        "provision.",
+        "When there are two or more prior periods of disability, either "
+        "all must be disregarded or all must be used for the current "
+        "period of disability when computing insured status.",
     ],
     "poms_rs_00301_140": [
         "Are under a disability which began before the quarter in which "
@@ -286,6 +294,10 @@ RULE_QUOTES = {
         "calendar quarter in which you were disabled.",
     ],
     "ecfr_20cfr404_321": [
+        "Your period of disability ends on the last day of the month "
+        "before the month in which you become 65 years old or, if earlier, "
+        "the last day of the second month following the month in which "
+        "your disability ended.",
         "Your period of disability begins on the day your disability "
         "begins if you are insured for disability on that day.",
         "If you are not insured for disability on that day, your period "

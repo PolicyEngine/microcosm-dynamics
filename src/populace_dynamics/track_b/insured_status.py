@@ -13,8 +13,14 @@ ending includes every candidate end quarter from insured start through
 query/cap and permitted continuation. The cap never establishes the end.
 The alternate test's 20/40 exclusion uses only quarters beginning before
 the FRA month, whether or not a period is declared established. For an
-established period, the witness quarter must also begin by the declared
-end, known continuity date, or onset when neither date is known. UNKNOWN
+established period, the exclusion witness must also begin by the declared
+end or continuity month minus two, clamped at onset, or onset when neither
+date is known. This earliest-completion bound also applies to FRA/death
+endings without inferring recovery from them. For ordinary validity only,
+a historical recovery ending supplies the latest disabled month, two months
+before the end. Endings from February 1981, FRA endings and death endings
+imply no recovery month. Prior periods are all used or all disregarded in
+the alternate continuous-QC clock, retaining credited endpoints. UNKNOWN
 establishment before FRA uses onset too: an established completion can end
 before a later DISABILITY witness. FULLY and CURRENTLY retain favorable
 disregard of the period. Declared absence keeps the ordinary result. Where
@@ -26,7 +32,11 @@ Disability tests
 scan onset and later quarters; period establishment and section 214(c)
 applicability carry explicit provenance. A declaration is rejected only
 when every ordinary and possible specialist completion is impossible;
-short DIB-entitled prior periods remain possible. Observable specialist credit
+assignment-independent minimum-QC proofs precede boundary complexity, skip
+unknown prior histories and stop at six QCs for blindness. Foreign credits
+preserve an unmodeled route after the own-QC floor; no totalized rule is
+claimed here.
+Short DIB-entitled prior periods remain possible. Observable specialist credit
 alternatives cannot silently produce ordinary-only uninsured answers. The
 query month is a hypothetical entitlement month, not medical or
 administrative adjudication. Annual QC assignment is favorable and
@@ -177,6 +187,33 @@ def _attain(birth, age):
     year = birth.year + age
     day = min(birth.day, calendar.monthrange(year, birth.month)[1])
     return date(year, birth.month, day) - timedelta(days=1)
+
+
+def _two_months_before(value):
+    """First day of the calendar month two months before a dated fact."""
+    index = value.year * 12 + value.month - 1 - 2
+    year, month = divmod(index, 12)
+    return date(year, month + 1, 1)
+
+
+def _historical_recovery_month(person):
+    """Infer recovery only when 404.321(b) leaves no other ending cause."""
+    # Source conflict us:oasdi-insured-historical-end-recovery-month
+    end = person.current_disability_period_end
+    # February 1981 is the first possible paragraph (c) ending. Infer
+    # nothing about recovery for an ending governed by that paragraph.
+    if end is None or end >= date(1981, 2, 1):
+        return None
+    ending_month = end.replace(day=1)
+    fra_end = _fra_date(person).replace(day=1) - timedelta(days=1)
+    if ending_month >= fra_end.replace(day=1):
+        return None
+    if (
+        person.death_date is not None
+        and ending_month >= person.death_date.replace(day=1)
+    ):
+        return None
+    return _two_months_before(end)
 
 
 def _fact_provenance(provenance, convention_id, label):
@@ -376,8 +413,6 @@ class Person:
                 raise InvalidFamilyInput(
                     "Period end must close a calendar month"
                 )
-            if end < self.disability_onset:
-                raise InvalidFamilyInput("Current period ends before onset")
         if not 1870 <= self.birth_date.year <= 9900:
             raise InvalidFamilyInput("Birth year outside supported calendar")
         if self.birth_date < date(1913, 1, 2) and self.sex is None:
@@ -392,6 +427,16 @@ class Person:
         ):
             raise InvalidFamilyInput("Disability onset follows death")
         fra = _fra_date(self)
+        if (
+            self.current_disability_period_end is not None
+            and self.current_disability_period_end < self.disability_onset
+        ):
+            raise InvalidFamilyInput("Current period ends before onset")
+        recovery = _historical_recovery_month(self)
+        if recovery is not None and recovery < self.disability_onset.replace(
+            day=1
+        ):
+            raise InvalidFamilyInput("Current period recovery precedes onset")
         if (
             self.current_disability_period_established
             and self.disability_onset >= fra.replace(day=1)
@@ -839,15 +884,24 @@ def _pre1956_alternate_possible(
         person.current_disability_period_established
         or _current_period_establishment_unknown(person)
     ):
-        # 404.321(b): a pre-1980 period ends after disability ended or at 65.
+        # 404.321(b): the earliest recovery compatible with either dated
+        # period fact is two months earlier, including FRA/death endings.
+        # This is a universal-exclusion bound, not a recovery inference.
         # UNKNOWN establishment admits an early end and cannot supply
         # either an end or continuity date, so only onset is shared.
-        last = min(
-            last,
+        dated = (
             person.current_disability_period_end
             or person.current_disability_period_continues_through
-            or person.disability_onset,
         )
+        covered = (
+            max(
+                person.disability_onset.replace(day=1),
+                _two_months_before(dated),
+            )
+            if dated is not None
+            else person.disability_onset
+        )
+        last = min(last, covered)
     lower = credits if lower_credits is None else lower_credits
     # Source conflict us:oasdi-insured-pre1956-alternate-any-quarter-scan
     for quarter in range(
@@ -874,19 +928,30 @@ def _pre1956_alternate_possible(
     first = max(_qid(person.disability_onset), 1952 * 4 + 2)
     last = min(_qid(month), 1955 * 4 + 3)
     for quarter in range(first, last + 1):
-        rows, _ = _world(person, credits, quarter, exit_month, False)
-        continuous = tuple(range(1951 * 4, quarter))
-        assigned = {
-            qc
-            for row in rows.values()
-            for qc in _assign_qcs(*row, window=continuous)
-        }
-        if (
-            len(assigned) >= 20
-            and len(continuous) >= 6
-            and set(continuous) <= assigned
+        # RS00301.132 B.2/C.2: all prior periods are used or disregarded
+        # for the continuous clock too; credited endpoints stay eligible.
+        for use_periods in (
+            (True, False) if person.prior_disability_periods else (True,)
         ):
-            return True
+            rows, periods = _world(
+                person, credits, quarter, exit_month, use_periods
+            )
+            target = tuple(range(1951 * 4, quarter))
+            for boundary in _boundary_variants(rows, periods):
+                assigned = set(_assignment(rows, target, boundary))
+                continuous = tuple(
+                    q
+                    for q in target
+                    if not any(
+                        a <= q <= b and q not in assigned for a, b in periods
+                    )
+                )
+                if (
+                    len(assigned) >= 20
+                    and len(continuous) >= 6
+                    and set(continuous) <= assigned
+                ):
+                    return True
     return False
 
 
@@ -1360,6 +1425,9 @@ def _with_current_period(person, credits, month, exit_month):
         end = min(end, person.death_date)
     if end < start:
         raise InvalidFamilyInput("Current period ends before insured start")
+    recovery = _historical_recovery_month(person)
+    if recovery is not None and start.replace(day=1) > recovery:
+        raise InvalidFamilyInput("Current period starts after recovery month")
     if (
         person.current_disability_period_continues_through is not None
         and person.current_disability_period_continues_through < start
@@ -1386,6 +1454,9 @@ def _current_period_completions(person, completed, start, month):
     End days within one quarter have identical insurance semantics.
     A continuity observation removes earlier endings; it never supplies
     an ending, including when observed later than the query.
+    Historical candidates may include an ending invalid under the recovery
+    offset. Over-inclusion can only prevent agreement and retain a refusal;
+    it cannot certify a status that fails a valid completion.
     """
     if (
         start is None
@@ -1418,7 +1489,8 @@ def _current_period_start_horizon(person, month):
     """Latest possible insured start under immutable period facts."""
     horizon = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))
     for fixed_bound in (
-        person.current_disability_period_end,
+        _historical_recovery_month(person)
+        or person.current_disability_period_end,
         person.current_disability_period_continues_through,
         person.death_date,
     ):
@@ -1427,10 +1499,8 @@ def _current_period_start_horizon(person, month):
     return horizon
 
 
-def _specialist_establishment_possible(
-    person, years, credits, month, exit_month, *, lower_credits=None
-):
-    """Overapproximate flagged/observable alternatives to ordinary insurance.
+def _flagged_establishment_possible(person, years):
+    """Overapproximate flagged alternatives to ordinary insurance.
 
     Final direct QC declarations already supply the credited quarters;
     unknown years already permit four. RR annual credits after 1977 use
@@ -1447,9 +1517,40 @@ def _specialist_establishment_possible(
         ):
             continue
         return True
-    return _pre1956_alternate_possible(
-        person, credits, month, exit_month, lower_credits=lower_credits
+    return False
+
+
+def _minimum_current_period_qcs(person):
+    """Lower bound across ordinary and alternate establishment routes.
+
+    404.130(b)(2) and RS00301.480 require twenty QCs. The under31 and
+    subsequent-special rules may require fewer (404.130(c)/(d)). Their
+    elapsed-quarter count is smallest at onset with every prior-period
+    quarter removed, including credited endpoints. Actual treatments can
+    only restore quarters, and later starts can only increase elapsed
+    quarters. Ignoring fully insured prerequisites further lowers the
+    bound; this helper proves impossibility, never insurance.
+
+    Blindness and unknown prior histories are excluded by the caller:
+    blindness needs only fully insured status, while missing prior
+    periods may supply additional exclusions or special eligibility.
+    """
+    end = _qid(person.disability_onset)
+    young = end < _qid(_attain(person.birth_date, 31))
+    subsequent = any(
+        p.special_insured for p in person.prior_disability_periods
     )
+    if not (young or subsequent):
+        return 20
+    first = max(1937 * 4, _qid(_attain(person.birth_date, 21)) + 1)
+    elapsed = sum(
+        not any(
+            _qid(period.start) <= quarter <= _qid(period.end)
+            for period in person.prior_disability_periods
+        )
+        for quarter in range(first, end + 1)
+    )
+    return min(20, max(6, elapsed // 2))
 
 
 def _could_establish_current_period(
@@ -1462,6 +1563,7 @@ def _could_establish_current_period(
     *,
     lower_credits=None,
     deferred_years=(),
+    totalization_credits=(),
 ):
     """Reject only a declaration impossible under every possible route.
 
@@ -1485,12 +1587,28 @@ def _could_establish_current_period(
         for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1)
     ):
         return False
-    if _specialist_establishment_possible(
-        person, years, credits, month, exit_month, lower_credits=lower_credits
-    ):
+    if _flagged_establishment_possible(person, years):
         return True
     if maximum_qcs < 6:
         return False
+    # Foreign coverage is an unmodeled route. After the existing own-QC
+    # floor, preserve its named refusal without claiming how it qualifies.
+    if totalization_credits:
+        return True
+    # This proof must precede the alternate's boundary enumeration and
+    # unknown-prior feasibility search: either can otherwise refuse before
+    # an assignment-independent impossibility has been established.
+    if (
+        not person.statutory_blindness
+        and person.prior_disability_periods_provenance
+        is not EarningsProvenance.UNKNOWN
+        and maximum_qcs < _minimum_current_period_qcs(person)
+    ):
+        return False
+    if _pre1956_alternate_possible(
+        person, credits, month, exit_month, lower_credits=lower_credits
+    ):
+        return True
     rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
     if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:
         return False
@@ -1628,7 +1746,11 @@ def insured_status(
     An alternate for disability before 1956 is excluded only by 20/40 in a
     quarter beginning before the FRA month, independently of establishment.
     For established periods it must also begin by every completion's
-    covered date: the declared end, continuity date, or otherwise onset.
+    disabled month: the declared end or continuity month minus two, clamped
+    at onset, or otherwise onset. Validity instead uses the latest possible
+    disabled month: a historical recovery end minus two, without inferring
+    recovery from FRA, death, or paragraph (c) endings. The alternate's
+    continuous clock uses all prior periods or disregards all of them.
     UNKNOWN establishment before FRA uses onset for the same bound and
     cannot bypass the alternate with a later positive DISABILITY witness.
     FULLY and CURRENTLY retain true favorable-disregard witnesses; declared
@@ -1637,6 +1759,9 @@ def insured_status(
     alternate refusal; post-1980 endings can differ under 404.321(c).
     Establishment is an input error only if no ordinary, observable, or
     flagged specialist route could validate any completion of the facts.
+    After the six-QC floor foreign credits preserve an unmodeled route;
+    no totalized rule is claimed. A conservative minimum-QC proof precedes
+    boundary complexity, except for blindness and unknown prior history.
     History validation runs first. Uncomputable QC rows use bounded
     unknown credits only for this proof; a possible declaration retains
     its original conversion refusal, including its reason and detail.
@@ -1683,6 +1808,7 @@ def insured_status(
             maximum_qcs,
             lower_credits=lower,
             deferred_years=tuple(deferred),
+            totalization_credits=totalization_credits,
         )
     except InsuredConfigurationUnsupported:
         if deferred:

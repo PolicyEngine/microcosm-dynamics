@@ -96,9 +96,9 @@ def _early_case(year, *, relevant):
         end = date(onset.year, 12, 31)
         counts = {1951 if year < 1952 else year + 1: 2}
     if not relevant:
-        # A January ending with at most one ordinary quarter cannot be
-        # established; later facts cannot repair that immutable bound.
-        onset, end, counts = birth, date(birth.year, 2, 28), {}
+        # No credits precede this early bound. The historical ending has
+        # the required two-month onset gap; later facts cannot repair it.
+        onset, end, counts = birth, date(birth.year, 4, 30), {}
     person = i.Person(
         birth,
         disability_onset=onset,
@@ -246,7 +246,8 @@ def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
     )
     # The supplied prior has the captured alternate's 20 total QCs and
     # all six continuous 1951 Q1--1952 Q2 credits. For the current onset,
-    # both 0000 and 1111 are invalid; seven middle fillings clear overlap.
+    # Removing prior-period gaps opens the alternate for 0000 too. All
+    # eight Q1-uncredited fillings remain possible; credited Q1 overlaps.
     flags = [
         flags
         for flags in product((False, True), repeat=4)
@@ -260,9 +261,7 @@ def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
         )
         for f in flags
     ]
-    assert valid == (
-        [False] * 8 if fixed_first else [False] + [True] * 7 + [False] * 8
-    )
+    assert valid == ([False] * 8 if fixed_first else [True] * 8 + [False] * 8)
     years[1954] = i.CoverageYear(
         OBSERVED,
         agricultural_wages=Fraction(100),

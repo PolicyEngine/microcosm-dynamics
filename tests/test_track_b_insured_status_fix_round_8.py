@@ -92,8 +92,9 @@ def test_declared_end_quarter_includes_witness_but_next_quarter_refuses(
 ):
     person, years = _case(date(1956, witness_month, 1), end=end)
     row = _row(person, years)
-    _assert_row(row, refused=witness_month == 7)
-    if witness_month == 4:
+    refused = witness_month == 7 or end.month == 5
+    _assert_row(row, refused=refused)
+    if not refused:
         assert row.result.current_disability_period_start == date(1956, 4, 1)
 
 
@@ -122,7 +123,8 @@ def test_continuity_quarter_includes_witness_but_later_quarter_refuses(
     person, years = _case(
         date(1956, witness_month, 1), through=date(1956, 5, 15)
     )
-    _assert_row(_row(person, years), refused=witness_month == 7)
+    # A May continuity observation permits a March recovery completion.
+    _assert_row(_row(person, years), refused=True)
 
 
 def test_later_disabled_quarters_with_unknown_end_keep_named_refusal():
@@ -217,7 +219,7 @@ def test_round_seven_declared_end_comparison_retains_named_refusal():
 )
 @given(
     mode=st.sampled_from(["declared", "unknown", "continuity"]),
-    covered=st.dates(min_value=date(1955, 7, 31), max_value=date(1960, 1, 31)),
+    covered=st.dates(min_value=date(1955, 9, 30), max_value=date(1960, 1, 31)),
     witness_year=st.sampled_from([1956, 1959, 1960]),
     witness_quarter=st.integers(1, 4),
     fra_month=st.integers(1, 12),
@@ -238,9 +240,13 @@ def test_independent_date_oracle_classifies_covered_quarters_both_directions(
         )
     if mode == "unknown":
         covered = date(1955, 7, 15)
+    else:
+        index = covered.year * 12 + covered.month - 1 - 2
+        guaranteed = date(index // 12, index % 12 + 1, 1)
+        covered_for_oracle = max(date(1955, 7, 1), guaranteed)
     witness = date(witness_year, (witness_quarter - 1) * 3 + 1, 1)
     excludes = (
-        witness <= covered
+        witness <= (covered if mode == "unknown" else covered_for_oracle)
         and witness < fra_month_start
         and witness < date(1960, 10, 1)
     )
@@ -257,7 +263,7 @@ def test_independent_date_oracle_classifies_covered_quarters_both_directions(
 
 
 @settings(max_examples=12, deadline=None)
-@given(witness_month=st.integers(1, 12), ending_month=st.integers(7, 12))
+@given(witness_month=st.integers(1, 12), ending_month=st.integers(9, 12))
 def test_unknown_end_cannot_return_status_when_declared_completion_refuses(
     witness_month, ending_month
 ):

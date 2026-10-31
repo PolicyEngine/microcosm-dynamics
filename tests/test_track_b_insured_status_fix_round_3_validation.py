@@ -65,10 +65,12 @@ def test_impossible_unknown_history_validation_precedes_coverage_refusal():
         conditions=(i.CoverageCondition.RAILROAD_CREDITS,),
     )
     month = date(2029, 4, 1)
+    # Three own QCs cannot pass the floor even when foreign coverage is
+    # declared. Six own QCs leave that unmodeled route unresolved.
     with pytest.raises(i.InvalidFamilyInput):
         i.insured_status(
             person,
-            history(person, month, {2028: 4, 2029: 2}),
+            history(person, month, {2028: 3}),
             month,
             totalization_credits=("invented-foreign-credit",),
         )

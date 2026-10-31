@@ -230,7 +230,7 @@ def _immutable_overlap_case():
         prior_disability_periods_provenance=OBSERVED,
         current_disability_period_established=True,
         current_disability_period_provenance=OBSERVED,
-        current_disability_period_end=date(1977, 3, 31),
+        current_disability_period_end=date(1977, 4, 30),
         current_disability_period_end_provenance=OBSERVED,
         sspa211_applies=False,
         sspa211_provenance=OBSERVED,
@@ -247,7 +247,7 @@ def test_fixed_same_quarter_overlap_precedes_large_filling_refusal():
 
 @settings(max_examples=12, deadline=None)
 @given(
-    ending_month=st.sampled_from([2, 3]),
+    ending_month=st.sampled_from([4, 5]),
     extra_unknown=st.sampled_from([None, 1973, 1978]),
 )
 def test_immutable_overlap_is_independent_of_credit_uncertainty(

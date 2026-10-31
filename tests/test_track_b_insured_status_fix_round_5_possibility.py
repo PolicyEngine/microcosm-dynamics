@@ -160,7 +160,7 @@ def test_unknown_declaration_exactly_matches_all_concrete_qc_fillings(
 @given(
     missing_year=st.integers(1968, 1971),
     ending=st.sampled_from(
-        [date(1972, 3, 31), date(1972, 12, 31), date(1973, 1, 31)]
+        [date(1972, 4, 30), date(1972, 12, 31), date(1973, 1, 31)]
     ),
     prior_ends_in_onset_quarter=st.booleans(),
 )
@@ -187,7 +187,7 @@ def test_different_fillings_cannot_separately_satisfy_end_and_overlap():
     person, years, month = _prior_overlap_unknown_earnings_case()
     person = replace(
         person,
-        current_disability_period_end=date(1972, 3, 31),
+        current_disability_period_end=date(1972, 4, 30),
         current_disability_period_end_provenance=OBSERVED,
     )
     valid = _assert_exact_classification(person, years, month)
@@ -227,7 +227,7 @@ def test_exact_classification_keeps_each_independent_flagged_route(condition):
             prior_disability_periods_provenance=OBSERVED,
             current_disability_period_established=True,
             current_disability_period_provenance=OBSERVED,
-            current_disability_period_end=date(1952, 8, 31),
+            current_disability_period_end=date(1952, 9, 30),
             current_disability_period_end_provenance=OBSERVED,
             sspa211_applies=False,
             sspa211_provenance=OBSERVED,
@@ -330,7 +330,9 @@ def test_automatic_pre1956_start_obeys_fixed_end_and_continuity(fact, bound):
     assert not i._decision_witness(
         person, upper, bound, None, i.InsuredTest.DISABILITY
     )[0][0]
-    possible = bound >= date(1952, 7, 1)
+    # Historical recovery ends trail the last disabled month by two months.
+    earliest_bound = date(1952, 9 if fact == "end" else 7, 1)
+    possible = bound >= earliest_bound
     assert _classification(person, years, month) is possible
     assert (
         i._pre1956_alternate_possible(person, upper, month, None) is possible
@@ -342,7 +344,7 @@ def test_automatic_pre1956_start_obeys_fixed_end_and_continuity(fact, bound):
 @example(month=6, fact="continuity")
 @example(month=7, fact="end")
 @example(month=7, fact="continuity")
-@given(month=st.integers(1, 12), fact=st.sampled_from(["end", "continuity"]))
+@given(month=st.integers(3, 12), fact=st.sampled_from(["end", "continuity"]))
 def test_automatic_pre1956_start_respects_immutable_bound_property(
     month, fact
 ):

@@ -174,7 +174,7 @@ def test_unknown_establishment_cannot_compute_when_completion_refuses(
     # witness occurs after the earliest possible declared ending.
     completions = [
         _row(_completion(person, end), years)
-        for end in (date(1955, 1, 31), None)
+        for end in (date(1955, 3, 31), None)
     ]
     assert any(
         row.unsupported is not None and row.unsupported.reason is ALTERNATE
@@ -191,7 +191,7 @@ def test_unknown_establishment_cannot_compute_when_completion_refuses(
 
 
 @settings(max_examples=6, deadline=None)
-@given(ending_month=st.integers(1, 12))
+@given(ending_month=st.integers(3, 12))
 def test_unknown_establishment_keeps_agreed_completion_status(ending_month):
     person, years = _onset_case()
     end = date(1955, ending_month, calendar.monthrange(1955, ending_month)[1])

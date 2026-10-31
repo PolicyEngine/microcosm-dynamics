@@ -2709,5 +2709,380 @@
     }
   ],
   "round_9_note": "Three isolated in-memory implementation mutations were caught and discarded against the final source. Restoring the positive DISABILITY return for UNKNOWN establishment fails the reviewed status table; dropping UNKNOWN establishment from the covered-date bound fails the one-quarter-after-onset refusal; applying the alternate refusal to UNKNOWN FULLY fails its favorable ordinary-witness test. Every foreground process checked the same source SHA-256 before and after. No implementation mutation was written to disk and no existing assertion was weakened.",
-  "round_9_final_source_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5"
+  "round_9_final_source_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+  "round_10_mutations": [
+    {
+      "name": "complexity_before_impossibility_proof",
+      "source_sha256": "3c23dc33ffd2deb08201d3a42dccf8d58d2ee82f03f43b045c6d91b6bdadfb11",
+      "mutated_source_sha256": "92c26edb199c23bb4484dcb0b0e54aace33823963afe758b009f392bc108f234",
+      "before": "    # This proof must precede the alternate's boundary enumeration and\n",
+      "after": "    _with_current_period(person, credits, horizon, exit_month)\n    # This proof must precede the alternate's boundary enumeration and\n",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_proof_mutation.py complexity_before_impossibility_proof",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_impossible_fifteen_qcs_precede_boundary_complexity_without_a_row"
+      ],
+      "result": "2 failed in 9.85s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_impossible_fifteen_qcs_precede_boundary_complexity_without_a_row[InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_impossible_fifteen_qcs_precede_boundary_complexity_without_a_row[InsuredTest.DISABILITY]"
+      ],
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = \"    # This proof must precede the alternate's boundary enumeration and\\n\"\nafter = \"    _with_current_period(person, credits, horizon, exit_month)\\n    # This proof must precede the alternate's boundary enumeration and\\n\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10_proof.py::test_impossible_fifteen_qcs_precede_boundary_complexity_without_a_row'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "minimum_requirement_raised_by_one",
+      "source_sha256": "3c23dc33ffd2deb08201d3a42dccf8d58d2ee82f03f43b045c6d91b6bdadfb11",
+      "mutated_source_sha256": "f04abf91977e1f2713aed1e0616f8d7b113d0584f3c442dce770cb534da4b3db",
+      "before": "        and maximum_qcs < _minimum_current_period_qcs(person)\n",
+      "after": "        and maximum_qcs < _minimum_current_period_qcs(person) + 1\n",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_proof_mutation.py minimum_requirement_raised_by_one",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_exact_minimum_qcs_are_not_rejected_by_the_proof"
+      ],
+      "result": "2 failed in 12.85s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_exact_minimum_qcs_are_not_rejected_by_the_proof[False]",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_exact_minimum_qcs_are_not_rejected_by_the_proof[True]"
+      ],
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "property_check": {
+        "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_proof_mutation.py minimum_requirement_raised_by_one tests/test_track_b_insured_status_fix_round_10_proof.py::test_minimum_qc_proof_never_rejects_an_enumerated_witness",
+        "result": "1 failed in 7.40s",
+        "exit_code": 1,
+        "failing_tests": [
+          "tests/test_track_b_insured_status_fix_round_10_proof.py::test_minimum_qc_proof_never_rejects_an_enumerated_witness"
+        ],
+        "counterexample": {
+          "age": 42,
+          "earlier": 4,
+          "unknowns": [
+            2020,
+            2021
+          ],
+          "prior": true,
+          "blind": false,
+          "maximum_qcs": 12
+        },
+        "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '        and maximum_qcs < _minimum_current_period_qcs(person)\\n'\nafter = '        and maximum_qcs < _minimum_current_period_qcs(person) + 1\\n'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10_proof.py::test_minimum_qc_proof_never_rejects_an_enumerated_witness'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '        and maximum_qcs < _minimum_current_period_qcs(person)\\n'\nafter = '        and maximum_qcs < _minimum_current_period_qcs(person) + 1\\n'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10_proof.py::test_exact_minimum_qcs_are_not_rejected_by_the_proof'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "blindness_carveout_removed",
+      "source_sha256": "3c23dc33ffd2deb08201d3a42dccf8d58d2ee82f03f43b045c6d91b6bdadfb11",
+      "mutated_source_sha256": "890724524c1d631d38a20066c1100246de876b295ded5484965fe8ed1ae78449",
+      "before": "        not person.statutory_blindness\n        and person.prior_disability_periods_provenance\n",
+      "after": "        person.prior_disability_periods_provenance\n",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_proof_mutation.py blindness_carveout_removed",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_blindness_keeps_six_qc_concrete_short_prior_period_route"
+      ],
+      "result": "1 failed in 5.22s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_blindness_keeps_six_qc_concrete_short_prior_period_route"
+      ],
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '        not person.statutory_blindness\\n        and person.prior_disability_periods_provenance\\n'\nafter = '        person.prior_disability_periods_provenance\\n'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10_proof.py::test_blindness_keeps_six_qc_concrete_short_prior_period_route'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "totalization_route_removed",
+      "source_sha256": "3c23dc33ffd2deb08201d3a42dccf8d58d2ee82f03f43b045c6d91b6bdadfb11",
+      "mutated_source_sha256": "abe2b2ecde7e7b60833c66ef5dffc33795ef04f509557424bd257540ca9ae4b0",
+      "before": "    if totalization_credits:\n        return True\n",
+      "after": "    if totalization_credits:\n        pass\n",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_proof_mutation.py totalization_route_removed",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_ten_own_qcs_and_foreign_credits_keep_named_refusal_and_weight"
+      ],
+      "result": "1 failed in 5.75s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10_proof.py::test_ten_own_qcs_and_foreign_credits_keep_named_refusal_and_weight"
+      ],
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '    if totalization_credits:\\n        return True\\n'\nafter = '    if totalization_credits:\\n        pass\\n'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10_proof.py::test_ten_own_qcs_and_foreign_credits_keep_named_refusal_and_weight'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "use_end_in_start_horizon",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "bffe30d9997f0d7249ca189c9a091206df775f17326a3cebe138a39478d1ced7",
+      "before": "_historical_recovery_month(person)\n        or person.current_disability_period_end,",
+      "after": "person.current_disability_period_end,",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py use_end_in_start_horizon",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_recovery_horizon_cannot_open_first_statutory_alternate_quarter"
+      ],
+      "result": "1 failed, 1 passed in 6.77s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_recovery_horizon_cannot_open_first_statutory_alternate_quarter[False]"
+      ],
+      "log": "scratch/review/round-10-use_end_in_start_horizon.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '_historical_recovery_month(person)\\n        or person.current_disability_period_end,'\nafter = 'person.current_disability_period_end,'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_recovery_horizon_cannot_open_first_statutory_alternate_quarter'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "drop_1981_recovery_bound",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "8d1145a3251a74402816478595e28ca458d832df60bb7e0115e0d4a004455eb5",
+      "before": "if end is None or end >= date(1981, 2, 1):",
+      "after": "if end is None:",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py drop_1981_recovery_bound",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_january_1981_recovery_bound_stops_at_first_paragraph_c_end"
+      ],
+      "result": "1 failed, 1 passed in 7.19s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_january_1981_recovery_bound_stops_at_first_paragraph_c_end[True]"
+      ],
+      "log": "scratch/review/round-10-drop_1981_recovery_bound.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = 'if end is None or end >= date(1981, 2, 1):'\nafter = 'if end is None:'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_january_1981_recovery_bound_stops_at_first_paragraph_c_end'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "drop_fra_recovery_carveout",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "54a1b926bde51040d222fdcc78799037b57e41b9196e9f3f070e296e32aae478",
+      "before": "if ending_month >= fra_end.replace(day=1):",
+      "after": "if False:",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py drop_fra_recovery_carveout",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_fra_ending_month_does_not_imply_recovery"
+      ],
+      "result": "1 failed, 1 passed in 3.71s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_fra_ending_month_does_not_imply_recovery[True]"
+      ],
+      "log": "scratch/review/round-10-drop_fra_recovery_carveout.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = 'if ending_month >= fra_end.replace(day=1):'\nafter = 'if False:'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_fra_ending_month_does_not_imply_recovery'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "drop_death_recovery_carveout",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "d20907958c7853279438ca9f378c67e7f566963f68dad5244ab03a71655bbc89",
+      "before": "        person.death_date is not None\n        and ending_month >= person.death_date.replace(day=1)",
+      "after": "        False\n        and ending_month >= person.death_date.replace(day=1)",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py drop_death_recovery_carveout",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_death_ending_month_does_not_imply_recovery"
+      ],
+      "result": "1 failed, 1 passed in 5.94s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_death_ending_month_does_not_imply_recovery[True]"
+      ],
+      "log": "scratch/review/round-10-drop_death_recovery_carveout.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '        person.death_date is not None\\n        and ending_month >= person.death_date.replace(day=1)'\nafter = '        False\\n        and ending_month >= person.death_date.replace(day=1)'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_death_ending_month_does_not_imply_recovery'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "subtract_one_month_in_alternate_scan",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "96997687af49779db397949dbea13cabe4c618d3a85f8f379b95378f785abbaa",
+      "before": "_two_months_before(dated),",
+      "after": "_two_months_before(dated + timedelta(days=32 - dated.day)),",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py subtract_one_month_in_alternate_scan",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_plain_date_oracle_applies_two_month_offset_in_both_directions"
+      ],
+      "result": "5 failed in 4.99s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal[declared-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal[declared-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal[continuity-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal[continuity-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_plain_date_oracle_applies_two_month_offset_in_both_directions"
+      ],
+      "log": "scratch/review/round-10-subtract_one_month_in_alternate_scan.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '_two_months_before(dated),'\nafter = '_two_months_before(dated + timedelta(days=32 - dated.day)),'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_review_recovery_grace_witness_keeps_alternate_refusal', 'tests/test_track_b_insured_status_fix_round_10.py::test_plain_date_oracle_applies_two_month_offset_in_both_directions'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "drop_continuous_clock_use_periods",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "b595c35efc64239936d9deccdae6f3470889d1d96bc946b37cac182cae2f22b3",
+      "before": "(True, False) if person.prior_disability_periods else (True,)\n        ):\n            rows, periods = _world(\n                person, credits, quarter, exit_month, use_periods",
+      "after": "(False,)\n        ):\n            rows, periods = _world(\n                person, credits, quarter, exit_month, use_periods",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py drop_continuous_clock_use_periods",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_prior_period_exclusions_open_alternate_continuous_clock",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs"
+      ],
+      "result": "21 failed in 21.47s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_review_prior_period_exclusions_open_alternate_continuous_clock",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[0]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[1]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[2]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[3]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[4]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[5]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[6]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[7]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[8]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[9]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[10]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[11]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[12]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[13]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[14]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[15]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[16]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[17]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[18]",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs[19]"
+      ],
+      "log": "scratch/review/round-10-drop_continuous_clock_use_periods.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '(True, False) if person.prior_disability_periods else (True,)\\n        ):\\n            rows, periods = _world(\\n                person, credits, quarter, exit_month, use_periods'\nafter = '(False,)\\n        ):\\n            rows, periods = _world(\\n                person, credits, quarter, exit_month, use_periods'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_review_prior_period_exclusions_open_alternate_continuous_clock', 'tests/test_track_b_insured_status_fix_round_10.py::test_continuous_alternate_clock_requires_each_of_twenty_qcs'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "replace_recovery_month_with_end_for_classification",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "abaaa0a092a21410adad02990d9ed267bd6caf58957b655f527ca0cdaccbd2eb",
+      "before": "return _two_months_before(end)",
+      "after": "return end.replace(day=1)",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py replace_recovery_month_with_end_for_classification",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_historical_end_exact_classification_matches_every_witness_filling"
+      ],
+      "result": "1 failed in 9.47s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_historical_end_exact_classification_matches_every_witness_filling"
+      ],
+      "log": "scratch/review/round-10-replace_recovery_month_with_end_for_classification.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = 'return _two_months_before(end)'\nafter = 'return end.replace(day=1)'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_historical_end_exact_classification_matches_every_witness_filling'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "use_latest_end_for_unknown_completion",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "0c8c400270cce473695ea1a8197d00f8d892733758a8fc3f382b4566f007840e",
+      "before": "            else person.disability_onset\n        )",
+      "after": "            else _current_period_start_horizon(person, month)\n        )",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py use_latest_end_for_unknown_completion",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses",
+        "tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_cannot_compute_when_completion_refuses"
+      ],
+      "result": "2 failed in 190.08s (0:03:10)",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses",
+        "tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_cannot_compute_when_completion_refuses"
+      ],
+      "log": "scratch/review/round-10-use_latest_end_for_unknown_completion.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = '            else person.disability_onset\\n        )'\nafter = '            else _current_period_start_horizon(person, month)\\n        )'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_8.py::test_unknown_end_cannot_return_status_when_declared_completion_refuses', 'tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_cannot_compute_when_completion_refuses'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    },
+    {
+      "name": "remove_recovery_onset_check",
+      "source_sha256": "c85e6f53b0e4598509939733b67e214b4710870890c33a554dacd253b63e6228",
+      "mutated_source_sha256": "d09a949b2f38a6db2f8af8ccb9490c54da2f78c20d6e9dad622da643f5da7f1a",
+      "before": "if recovery is not None and recovery < self.disability_onset.replace(\n            day=1\n        ):",
+      "after": "if False and recovery < self.disability_onset.replace(\n            day=1\n        ):",
+      "command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round_10_recovery_mutation.py remove_recovery_onset_check",
+      "pytest_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_insured_status_fix_round_10.py::test_recovery_month_onset_requires_smallest_two_month_gap"
+      ],
+      "result": "1 failed, 1 passed in 10.31s",
+      "exit_code": 1,
+      "failing_tests": [
+        "tests/test_track_b_insured_status_fix_round_10.py::test_recovery_month_onset_requires_smallest_two_month_gap[False]"
+      ],
+      "log": "scratch/review/round-10-remove_recovery_onset_check.log",
+      "mechanism": "Compile modified module in memory only; source SHA-256 unchanged after execution",
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10-epuf /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\np = Path(i.__file__)\noriginal = p.read_text()\nprint('source_before_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nbefore = 'if recovery is not None and recovery < self.disability_onset.replace(\\n            day=1\\n        ):'\nafter = 'if False and recovery < self.disability_onset.replace(\\n            day=1\\n        ):'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', 'tests/test_track_b_insured_status_fix_round_10.py::test_recovery_month_onset_requires_smallest_two_month_gap'])\nassert p.read_text() == original\nprint('source_after_sha256', hashlib.sha256(p.read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "restored": true
+    }
+  ],
+  "round_10_note": "Thirteen deliberate in-memory mutations were caught and discarded. Required recovery, continuous-clock, proof-order, minimum, blindness, totalization, historical-classification and completion properties bite. Each run verified the implementation file remained unchanged. Recorded per-run source hashes identify the exact source used, before the final capitalization-only module-docstring correction. Reproduction commands are self-contained and apply to the final source. No committed mutation remains.",
+  "round_10_final_source_sha256": "5f4dcca84c5a5b37c0092c7eb7198a8a05fed8f2cc7088deb6192575b39f1f7a"
 }
