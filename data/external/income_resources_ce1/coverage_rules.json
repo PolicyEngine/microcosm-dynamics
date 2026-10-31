@@ -23631,7 +23631,8 @@
           "consequence": "covered",
           "description": "For a State or local school, the 218 agreement decides (POMS RS 01901.720 A).",
           "overrides": [
-            "enrolled_student_at_employing_school"
+            "enrolled_student_before_2024_08_15",
+            "enrolled_student_from_2024_08_15"
           ],
           "precedence": 1,
           "when": {
@@ -23639,14 +23640,27 @@
           }
         },
         {
-          "case_id": "enrolled_student_at_employing_school",
+          "case_id": "enrolled_student_before_2024_08_15",
           "consequence": "noncovered",
-          "description": "42 U.S.C. 410(a)(10); POMS RS 01901.720 A and C.",
+          "description": "42 U.S.C. 410(a)(10); POMS RS 01901.720 A and C.1. The captured POMS edition takes effect 08/15/2024, and no capture holds an earlier one, so its C.2-C.3 criteria are not projected to earlier service.",
           "precedence": 2,
           "when": {
             "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it",
             "enrollment": "enrolled and regularly attending classes",
+            "services_performed_date": "before 2024-08-15",
             "statutory_student_service": "service as a student"
+          }
+        },
+        {
+          "case_id": "enrolled_student_from_2024_08_15",
+          "consequence": "noncovered",
+          "description": "42 U.S.C. 410(a)(10) with POMS RS 01901.720 C.2-C.3, TN 62 (08-24), whose effective dates run from 08/15/2024. A worker failing a C.2 criterion is not a student, and C.3 confines the exclusion to the attendance periods it names, so the residual decides.",
+          "precedence": 3,
+          "when": {
+            "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it",
+            "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), or on holidays, weekends or between semesters within the academic year when classes are not scheduled; not during a school break of more than five weeks while the student is not attending school",
+            "services_performed_date": "on or after 2024-08-15",
+            "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; not eligible to participate in a retirement plan or annuity established or maintained by the institution (or eligible once age and service requirements are met), not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern"
           }
         }
       ],
@@ -23675,10 +23689,52 @@
           "capture": "poms_rs_01901720.html",
           "location": "A; C",
           "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720",
+          "capture": "poms_rs_01901720.html",
+          "location": "C.2 NOTE",
+          "quote": "NOTE: Postdoctoral students, postdoctoral fellows, medical residents, and medical interns, are not considered students because the services they perform are not incidental to, and for the purpose of, participating in a course of study.",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720",
+          "capture": "poms_rs_01901720.html",
+          "location": "C.2.a",
+          "quote": "If the student's main purpose is pursuing a course of study rather than earning a livelihood, SSA considers this person to be a student and their work is not considered employment. Also, the student must carry at least a half-time academic workload.",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720",
+          "capture": "poms_rs_01901720.html",
+          "location": "C.2.b",
+          "quote": "A worker is not considered a student if the individual is: \u2022 eligible to participate in a retirement plan or annuity established or maintained by the institution, or would be eligible to participate if age and service requirements are met, or; \u2022 eligible for reduced tuition, or; \u2022 classified by the institution as a career employee.",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720",
+          "capture": "poms_rs_01901720.html",
+          "location": "C.3",
+          "quote": "The exclusion applies only during periods of regular school attendance, including the regular academic year and summer session. The exclusion does not apply to work done during school breaks of more than five weeks if the student is not attending school.",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720",
+          "capture": "poms_rs_01901720.html",
+          "location": "C.3",
+          "quote": "Services performed on holidays, weekends, and between semesters falling within the academic year when classes are not scheduled are excluded.",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+        },
+        {
+          "authority": "SSA POMS RS 01901.720, TN 62 (08-24)",
+          "capture": "poms_rs_01901720.html",
+          "location": "page header, effective dates",
+          "quote": "Effective Dates: 08/15/2024 - Present",
+          "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
         }
       ],
       "consequence": "covered",
-      "description": "The student-school exclusion extends to section 509(a)(3) auxiliary organizations organized and operated exclusively for the school purposes and operated, supervised or controlled by or in connection with that school. Student must be enrolled and regularly attending classes at that school. A state/local Section 218 agreement can cover student services.",
+      "description": "The student-school exclusion extends to section 509(a)(3) auxiliary organizations organized and operated exclusively for the school purposes and operated, supervised or controlled by or in connection with that school. Student must be enrolled and regularly attending classes at that school. A state/local Section 218 agreement can cover student services. From 2024-08-15, the captured POMS edition's C.2-C.3 student criteria also apply.",
       "effective_end": "2026-12-31",
       "effective_start": "1973-01-01",
       "family": "student_service",
@@ -23791,7 +23847,26 @@
             "title": 42
           }
         ],
-        "current_poms_student_criteria": "Do not project the 2024 administrative criteria backwards without regulation history.",
+        "current_poms_student_criteria": {
+          "before": "No capture holds an earlier POMS edition of these criteria, so service before 2024-08-15 keeps the statutory test of 410(a)(10) without them; the criteria are not projected backwards.",
+          "citation": {
+            "authority": "SSA POMS RS 01901.720, TN 62 (08-24)",
+            "capture": "poms_rs_01901720.html",
+            "location": "page header, effective dates",
+            "quote": "Effective Dates: 08/15/2024 - Present",
+            "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423"
+          },
+          "date_axis": {
+            "basis": "CE1's ruling, as for SSR 95-3P in agricultural_service_1988: the captured page gives only the edition's effective dates, and CE1's cases key to the service date, so the criteria decide service performed on or after 2024-08-15.",
+            "named_options": {
+              "determination_date": "The edition's start is tested against the date SSA determines coverage, whatever year the service fell in.",
+              "services_performed_date": "The edition's 08/15/2024 start is tested against the date the services were performed."
+            },
+            "operative": "services_performed_date"
+          },
+          "service_from": "2024-08-15",
+          "source": "POMS RS 01901.720 C.2-C.3, TN 62 (08-24)"
+        },
         "public_school_section_218_override": true
       },
       "rare_exclusion": {
@@ -23852,7 +23927,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "The worker is not an enrolled, regularly attending student of the employing school, so 410(a)(10) does not exclude the service; apply the other families."
+        "description": "The worker is not an enrolled, regularly attending student of the employing school, or, for service on or after 2024-08-15, fails a POMS RS 01901.720 C.2 student criterion or works outside the attendance periods C.3 names, so 410(a)(10) does not exclude the service; apply the other families."
       },
       "rule_id": "student_service_1973",
       "trigger_facts": [
@@ -23860,6 +23935,7 @@
         "enrollment",
         "section_218_group",
         "section_218_position",
+        "services_performed_date",
         "statutory_student_service"
       ],
       "worked_examples": []

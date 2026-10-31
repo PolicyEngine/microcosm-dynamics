@@ -2361,18 +2361,57 @@ REQUIRED_CONDITIONS = [
         "for the period he is temporarily present in the United States as a "
         "nonimmigrant",
     ),
+    *[
+        (
+            "student_service_1973",
+            case_id,
+            {
+                "employer_school_nexus": (
+                    "organized, and at all times thereafter is operated",
+                    "operated, supervised or controlled by or in connection",
+                )
+            },
+            "lii_42_410.html",
+            "if the organization is organized, and at all times thereafter "
+            "is operated, exclusively for the benefit of",
+        )
+        for case_id in (
+            "enrolled_student_before_2024_08_15",
+            "enrolled_student_from_2024_08_15",
+        )
+    ],
+    # Review r3 sibling (r3c): POMS RS 01901.720 C.2-C.3, effective
+    # 08/15/2024, apply to service from that date and not before.
     (
         "student_service_1973",
-        "enrolled_student_at_employing_school",
+        "enrolled_student_before_2024_08_15",
+        {"services_performed_date": ("before 2024-08-15",)},
+        "poms_rs_01901720.html",
+        "Effective Dates: 08/15/2024 - Present",
+    ),
+    (
+        "student_service_1973",
+        "enrolled_student_from_2024_08_15",
         {
-            "employer_school_nexus": (
-                "organized, and at all times thereafter is operated",
-                "operated, supervised or controlled by or in connection",
-            )
+            "services_performed_date": ("on or after 2024-08-15",),
+            "statutory_student_service": (
+                "main purpose is pursuing a course of study",
+                "half-time academic workload",
+                "retirement plan or annuity",
+                "reduced tuition",
+                "career employee",
+                "postdoctoral student, postdoctoral fellow",
+                "medical resident or medical intern",
+            ),
+            "enrollment": (
+                "regular academic year or a summer session",
+                "between semesters",
+                "more than five weeks",
+            ),
         },
-        "lii_42_410.html",
-        "if the organization is organized, and at all times thereafter is "
-        "operated, exclusively for the benefit of",
+        "poms_rs_01901720.html",
+        "Also, the student must carry at least a half-time academic "
+        "workload.",
     ),
 ]
 REQUIRED_CONDITION_ROWS = {
@@ -2746,6 +2785,22 @@ SIBLING_OUTCOMES = [
         },
         "noncovered",
     ),
+    # A covering section 218 agreement displaces the 2024 criteria case.
+    (
+        "student_service",
+        2025,
+        {
+            "section_218_agreement_covers_students",
+            "enrolled_student_from_2024_08_15",
+        },
+        "covered",
+    ),
+    (
+        "student_service",
+        2025,
+        {"enrolled_student_from_2024_08_15"},
+        "noncovered",
+    ),
 ]
 
 
@@ -2980,6 +3035,66 @@ def test_title_v_contract_clause_applies_before_july_18_1984(
     assert "title V of the Agricultural Act of 1949" in quotes
 
 
+POMS_STUDENT_EDITION = date(2024, 8, 15)
+# INVENTED workers, each an enrolled, regularly attending student of the
+# employing school, by the POMS RS 01901.720 C.2-C.3 phrase each fails.
+STUDENT_WORKERS = {
+    "meets_every_criterion": None,
+    "career_employee": "career employee",
+    "eligible_for_reduced_tuition": "reduced tuition",
+    "medical_resident": "medical resident",
+    "under_half_time": "half-time academic workload",
+    "six_week_break_not_attending": "more than five weeks",
+}
+
+
+def student_cases_met(rule, service_day, fails):
+    """Student cases whose date holds and whose `when` the worker meets: a
+    worker failing a criterion misses every case whose text names it."""
+    return {
+        c["case_id"]
+        for c in rule.cases
+        if "services_performed_date" in c["when"]
+        and service_date_condition_holds(
+            c["when"]["services_performed_date"], service_day
+        )
+        and not (
+            fails and any(fails in str(value) for value in c["when"].values())
+        )
+    }
+
+
+@example(date(2023, 6, 15), "career_employee")
+@example(POMS_STUDENT_EDITION - timedelta(days=1), "medical_resident")
+@example(POMS_STUDENT_EDITION, "medical_resident")
+@example(POMS_STUDENT_EDITION, "meets_every_criterion")
+@given(
+    st.dates(date(2020, 1, 1), date(2026, 12, 31)),
+    st.sampled_from(sorted(STUDENT_WORKERS)),
+)
+@settings(deadline=None)
+def test_poms_2024_student_criteria_decide_from_august_15_2024(
+    registry, service_day, worker
+):
+    """Review r3 sibling (r3c): the captured POMS RS 01901.720 is TN 62
+    (08-24), effective 08/15/2024, and no capture holds an earlier edition.
+    Its criteria decide service from that date; before it, the statutory
+    test alone does, as the row has said since round 2."""
+    (rule,) = registry.lookup("student_service", service_day.year)
+    fails = STUDENT_WORKERS[worker]
+    matched = student_cases_met(rule, service_day, fails)
+    assert len(matched) <= 1
+    excluded = service_day < POMS_STUDENT_EDITION or fails is None
+    expected = "noncovered" if excluded else "covered"
+    assert rule.resolve(matched)["consequence"] == expected
+    criteria = rule.parameters["current_poms_student_criteria"]
+    assert criteria["service_from"] == POMS_STUDENT_EDITION.isoformat()
+    assert criteria["date_axis"]["operative"] == "services_performed_date"
+    assert criteria["citation"]["quote"] == (
+        "Effective Dates: 08/15/2024 - Present"
+    )
+
+
 def test_small_boat_fishing_date_comes_from_section_1207f4(registry):
     """Review r3 low 4: no 1976 effective-date note is captured; section
     1207(f)(4)(A) applies the 411 amendment to taxable years ending after
@@ -3085,7 +3200,7 @@ def test_conservation_reserve_payments_follow_one_rule(registry, year):
             1980,
             {
                 "section_218_agreement_covers_students",
-                "enrolled_student_at_employing_school",
+                "enrolled_student_before_2024_08_15",
             },
             "covered",
         ),
