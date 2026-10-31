@@ -1,4 +1,4 @@
-"""R2 part (a): an exact, single-record calendar-year RET ledger.
+"""R2: an exact, single-record calendar-year RET ledger.
 
 Verification class: statutory conformance. Admitted scope: retirement
 earnings-test mechanics on invented cases and published statutory examples;
@@ -16,9 +16,19 @@ loss is consequently not an additional work deduction or crediting month.
 Worker protections apply to that worker's excess, not another worker's
 excess charged against their benefit (Act 203(f)(1); RS 02501.140). In
 particular a deemed-entitled CDB recipient can be charged the NH's excess.
-Auxiliary work that would free binding family-maximum room is refused for
-part (b), as are other deduction events. No unsupported row is dropped
+Auxiliary work readjusts binding family-maximum rates through G when the
+caller supplies the monthly statutory and household facts. Other deduction
+events remain refused. No unsupported row is dropped
 from an outcome denominator or silently computed as a single worker.
+G's declared monthly own-benefit facts establish two-record entitlement;
+an optional annual declaration must agree with those facts. Actual or
+estimated excess on two records remains refused (RS 02501.145-.150).
+Supplied G cohorts constrain the RET FRA declaration to the whole possible
+attainment-month interval, for the NH and every auxiliary. The old-age FRA
+governs all roles, including survivors (Act 203(f)(9); RS 02501.021B.3).
+Applied own delayed credits establish FRA by the supplied context month;
+age reductions and the deceased worker's credits do not establish a
+survivor's current age. Contradictions error before coverage refusals.
 Every raw month-set element must be an integer month before deduplication;
 malformed input raises before a coverage refusal can become an outcome.
 
@@ -58,11 +68,13 @@ from fractions import Fraction
 from math import ceil, floor
 from types import MappingProxyType
 
+from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b._provenance import (
     _check_refusal,
     _check_seal,
     _checked_result,
     _computed,
+    _construct_declared,
     _declared_input,
     _detached_result,
     _exact_number,
@@ -99,7 +111,7 @@ class RETUnsupportedReason(Enum):
     PRORATED_SUSPENSION = "prorated_work_suspension"
     DEFERRED_SUSPENSION = "deferred_work_suspension"
     PROTEST_PARTIAL_SUSPENSION = "protested_partial_work_suspension"
-    DEDUCTION_BEFORE_REDUCTION = "deduction_before_reduction_part_b"
+    FAMILY_CONTEXT_REQUIRED = "deduction_readjustment_requires_family_context"
     TWO_RECORD_EARNINGS = "excess_earnings_on_two_records"
     FOREIGN_WORK = "noncovered_foreign_work"
     VOCATIONAL_REHABILITATION = "vocational_rehabilitation_refusal"
@@ -240,6 +252,9 @@ class RETBeneficiary:
     ``deemed_child_age_18_months``; that Act/CFR coverage difference is
     refused pending judgment. Broader unmarried-child wording in
     RS 02501.140 is also refused. Own two-record excess is still refused.
+    ``two_record_entitlement=None`` derives entitlement from supplied G
+    monthly own-benefit facts, or asserts no known two-record entitlement
+    without context. An explicit boolean must agree with those G facts.
     ``own_work_exempt_months`` supplies other Act
     203(f)(1)(C)-(D) protections (entitled child who has attained 18 /
     widow(er) entitled before 60). It defaults to empty under the CFR's
@@ -267,7 +282,7 @@ class RETBeneficiary:
     )
     death_month: int | None = None
     own_work_exempt_months: frozenset[int] = field(default_factory=frozenset)
-    two_record_entitlement: bool = False
+    two_record_entitlement: bool | None = None
 
     def __post_init__(self):
         _identity(self.beneficiary_id, "A beneficiary")
@@ -289,10 +304,16 @@ class RETBeneficiary:
             "nh_entitled_before_divorce",
             "deemed_entitled",
             "deemed_married_to_nh",
-            "two_record_entitlement",
         ):
             if type(getattr(self, name)) is not bool:
                 raise InvalidFamilyInput(f"{name} must be boolean")
+        if (
+            self.two_record_entitlement is not None
+            and type(self.two_record_entitlement) is not bool
+        ):
+            raise InvalidFamilyInput(
+                "two_record_entitlement must be boolean or None"
+            )
         _fra(self.fra_month)
         if not isinstance(self.earnings, WorkEarnings) or (
             self.estimated_earnings is not None
@@ -368,6 +389,86 @@ class RETBeneficiary:
 
 @_declared_input
 @dataclass(frozen=True)
+class RETFamilyMonth:
+    """G's declared monthly inputs, including household memberships.
+
+    Ordered beneficiaries accept tuple/list; household keys and values are
+    nonempty built-in strings. These are the same dated inputs used to
+    compute the RET beneficiary's gross/original rates, not inferred from
+    those rates. Household membership is the caller's GN 02603.090 fact.
+    """
+
+    state: g.RecordState
+    beneficiaries: tuple[g.Beneficiary, ...]
+    params: g.SSAParameters
+    households: Mapping[str, str]
+    standalone: bool = True
+
+    def __post_init__(self):
+        ids = tuple(b.beneficiary_id for b in self.beneficiaries)
+        if len(set(ids)) != len(ids):
+            raise InvalidFamilyInput("Duplicate monthly family beneficiary")
+        if set(self.households) != set(ids):
+            raise InvalidFamilyInput(
+                "Households must identify every monthly family beneficiary"
+            )
+        for key, household in self.households.items():
+            _identity(key, "Household beneficiary")
+            _identity(household, "Household")
+        object.__setattr__(self, "households", dict(self.households))
+
+
+def _check_fra_facts(
+    beneficiary: RETBeneficiary,
+    year: int,
+    month: int,
+    birth_year: int | None,
+    own: g.OwnBenefit | None,
+    params: g.SSAParameters,
+) -> None:
+    """Reject only FRA declarations impossible under supplied G facts.
+
+    Act 203(f)(9), CFR .430(b)/.434(c), RS 02501.021B.3: every role uses
+    old-age FRA, not the widow's age-reduction schedule. SSA cohort years
+    run Jan 2 through the following Jan 1 (RS 00615.003); age attainment
+    precedes the birthday, so the possible FRA months span eleven months
+    after the earliest one. Missing dates leave the entire interval open.
+    Own DRCs establish only that FRA has occurred by this snapshot; do
+    not infer an exact FRA date or use another person's inherited DRCs.
+    """
+    if own is not None and own.birth_year is not None:
+        if birth_year is not None and birth_year != own.birth_year:
+            raise InvalidFamilyInput(
+                "G own and beneficiary birth cohorts differ"
+            )
+        birth_year = own.birth_year
+    earliest = latest = None
+    if birth_year is not None:
+        earliest = birth_year * 12 + g._fra_months(birth_year, params)
+        latest = earliest + 11
+    if own is not None and own.delayed_credit_months:
+        known_by = year * 12 + month - 1
+        latest = known_by if latest is None else min(latest, known_by)
+    fra = beneficiary.fra_month
+    if fra is None:
+        consistent = latest is None or latest >= (year + 1) * 12
+    elif fra == 0:
+        consistent = earliest is None or earliest < year * 12
+    else:
+        declared = year * 12 + fra - 1
+        consistent = (earliest is None or earliest <= declared) and (
+            latest is None or declared <= latest
+        )
+    if earliest is not None and latest is not None and earliest > latest:
+        consistent = False
+    if not consistent:
+        raise InvalidFamilyInput(
+            "RET FRA declaration contradicts G birth cohort or own delayed credits"
+        )
+
+
+@_declared_input
+@dataclass(frozen=True)
 class RecordYear:
     year: int
     nh_id: str
@@ -382,6 +483,7 @@ class RecordYear:
     suspension_method: SuspensionMethod = SuspensionMethod.FULL_MONTH
     foreign_work: bool = False
     vocational_rehabilitation_refusal: bool = False
+    family_months: Mapping[int, RETFamilyMonth] = field(default_factory=dict)
 
     def __post_init__(self):
         if type(self.year) is not int or self.year < 1:
@@ -456,6 +558,77 @@ class RecordYear:
                 ):
                     raise InvalidFamilyInput("A living NH receives RIB or DIB")
         object.__setattr__(self, "beneficiaries", beneficiaries)
+        _months(self.family_months, "Family context months")
+        expected_kind = {
+            RecordKind.RETIREMENT: g.FamilyKind.RETIREMENT,
+            RecordKind.DISABILITY: g.FamilyKind.DISABILITY,
+            RecordKind.DECEASED: g.FamilyKind.SURVIVOR,
+        }[self.kind]
+        contextual_people = set()
+        contextual_two_records = set()
+        for month, context in self.family_months.items():
+            if context.state.kind is not expected_kind:
+                raise InvalidFamilyInput("G and RET record kinds differ")
+            auxiliary_ids = {
+                b.beneficiary_id
+                for b in beneficiaries
+                if b.beneficiary_id != self.nh_id
+                and month in b.entitled_months
+            }
+            if {
+                b.beneficiary_id for b in context.beneficiaries
+            } != auxiliary_ids:
+                raise InvalidFamilyInput(
+                    "G context must include every entitled RET auxiliary"
+                )
+            role_types = {
+                g.Role.SPOUSE: (BenefitType.SPOUSE,),
+                g.Role.SPOUSE_CHILD_IN_CARE: (BenefitType.SPOUSE,),
+                g.Role.DIVORCED_SPOUSE: (BenefitType.DIVORCED_SPOUSE,),
+                g.Role.CHILD: (BenefitType.CHILD, BenefitType.CDB),
+                g.Role.WIDOW: (BenefitType.WIDOW,),
+                g.Role.SURVIVING_DIVORCED_SPOUSE: (BenefitType.WIDOW,),
+                g.Role.MOTHER_FATHER: (BenefitType.MOTHER_FATHER,),
+                g.Role.DISABLED_WIDOW: (BenefitType.DWB,),
+            }
+            ret_people = {b.beneficiary_id: b for b in beneficiaries}
+            if self.kind is not RecordKind.DECEASED:
+                _check_fra_facts(
+                    ret_people[self.nh_id],
+                    self.year,
+                    month,
+                    context.state.worker_birth_year,
+                    context.state.worker,
+                    context.params,
+                )
+            for auxiliary in context.beneficiaries:
+                _check_fra_facts(
+                    ret_people[auxiliary.beneficiary_id],
+                    self.year,
+                    month,
+                    auxiliary.birth_year,
+                    auxiliary.own_benefit,
+                    context.params,
+                )
+                contextual_people.add(auxiliary.beneficiary_id)
+                if auxiliary.own_benefit is not None:
+                    contextual_two_records.add(auxiliary.beneficiary_id)
+                if ret_people[auxiliary.beneficiary_id].benefit_types[
+                    month - 1
+                ] not in role_types.get(auxiliary.role, ()):
+                    raise InvalidFamilyInput("G and RET benefit types differ")
+        for beneficiary in beneficiaries:
+            key = beneficiary.beneficiary_id
+            if (
+                key in contextual_people
+                and beneficiary.two_record_entitlement is not None
+                and beneficiary.two_record_entitlement
+                != (key in contextual_two_records)
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET two-record entitlement facts differ"
+                )
+        object.__setattr__(self, "family_months", dict(self.family_months))
 
 
 @_validated_entry
@@ -677,6 +850,76 @@ class BeneficiaryMonth(_SealedResult):
 
 @_sealed_result
 @dataclass(frozen=True)
+class RedistributedBeneficiaryMonth(_SealedResult):
+    """A month with separately determined final and provisional gross.
+
+    GN 02603.050C/D and RS 02501.160 can give different final and
+    provisional gross rates. Delay of a household increase is not a work
+    deduction. NH partial shares can also make the reconstructed gross an
+    exact fraction of a dime. This separate sealed result preserves the
+    original BeneficiaryMonth serialization for previously supported rows.
+    """
+
+    beneficiary_id: str
+    month: int
+    gross: Fraction
+    net_due: Fraction
+    deduction: Fraction
+    payment: int
+    provisional_net: Fraction
+    provisional_deduction: Fraction
+    provisional_payment: int
+    nh_deduction: Fraction
+    own_deduction: Fraction
+    provisional_gross: Fraction
+
+    def __post_init__(self):
+        _identity(self.beneficiary_id, "A monthly result")
+        _months((self.month,), "Result month")
+        for name in (
+            "gross",
+            "net_due",
+            "deduction",
+            "provisional_gross",
+            "provisional_net",
+            "provisional_deduction",
+            "nh_deduction",
+            "own_deduction",
+        ):
+            value = _exact(getattr(self, name), name)
+            if value < 0:
+                raise InvalidFamilyInput("Monthly amounts must be nonnegative")
+            object.__setattr__(self, name, value)
+        if (
+            self.gross != self.net_due + self.deduction
+            or self.provisional_gross
+            != self.provisional_net + self.provisional_deduction
+            or self.deduction != self.nh_deduction + self.own_deduction
+        ):
+            raise InvalidFamilyInput(
+                "Readjusted gross, net and deductions do not reconcile"
+            )
+        for amount, payment in (
+            (self.net_due, self.payment),
+            (self.provisional_net, self.provisional_payment),
+        ):
+            if type(payment) is not int or payment != _whole_dollars_validated(
+                amount
+            ):
+                raise InvalidFamilyInput(
+                    "Monthly check must floor its exact net amount"
+                )
+
+
+def _checked_month(row):
+    if type(row) not in (BeneficiaryMonth, RedistributedBeneficiaryMonth):
+        raise InvalidFamilyInput("Expected a sealed RET monthly result")
+    _check_seal(row)
+    return row
+
+
+@_sealed_result
+@dataclass(frozen=True)
 class WorkerLedger(_SealedResult):
     """Excess charged and the separate unpaid allocation residual.
 
@@ -744,7 +987,7 @@ class WorkerLedger(_SealedResult):
 @dataclass(frozen=True)
 class RETLedger(_SealedResult):
     year: int
-    months: tuple[BeneficiaryMonth, ...]
+    months: tuple[BeneficiaryMonth | RedistributedBeneficiaryMonth, ...]
     workers: tuple[WorkerLedger, ...]
     crediting_months: Mapping[str, frozenset[int]]
     reconciliation: Mapping[str, int]
@@ -755,7 +998,7 @@ class RETLedger(_SealedResult):
                 "RET results require a supported calendar year"
             )
         months = tuple(
-            _checked_result(row, BeneficiaryMonth, "monthly result")
+            _checked_month(row)
             for row in _sequence(self.months, "Monthly results")
         )
         workers = tuple(
@@ -828,7 +1071,7 @@ class RETLedger(_SealedResult):
     @_validated_entry
     def for_beneficiary(
         self, beneficiary_id: str
-    ) -> tuple[BeneficiaryMonth, ...]:
+    ) -> tuple[BeneficiaryMonth | RedistributedBeneficiaryMonth, ...]:
         _check_seal(self)
         _identity(beneficiary_id, "Beneficiary lookup")
         return tuple(
@@ -899,15 +1142,74 @@ def apply_ret_year(
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
     if parameters is not None and not isinstance(parameters, RETParameters):
         raise InvalidFamilyInput("Use R1 RETParameters")
+    # Retain the G facts needed for money-changing readjustment. A caller's
+    # reduced rates cannot identify age reductions or dual entitlement.
+    held_family_refusals = []
+    for month, context in sorted(record.family_months.items()):
+        try:
+            baseline = g._family_benefits_validated(
+                context.state,
+                context.beneficiaries,
+                payment_month=_construct_declared(
+                    g.YearMonth, record.year, month
+                ),
+                params=context.params,
+                standalone=context.standalone,
+            )
+        except FamilyConfigurationUnsupported as error:
+            held_family_refusals.append(error)
+            continue
+        baseline_rows = {b.beneficiary_id: b for b in baseline.beneficiaries}
+        if record.kind is not RecordKind.DECEASED:
+            nh = next(
+                b
+                for b in record.beneficiaries
+                if b.beneficiary_id == record.nh_id
+            )
+            if (baseline.worker_benefit is not None) != (
+                month in nh.entitled_months
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET NH entitlement facts differ"
+                )
+        if baseline.family_maximum_binding != (
+            month in record.family_maximum_binding_months
+        ):
+            raise InvalidFamilyInput("G and RET binding maximum facts differ")
+        for beneficiary in record.beneficiaries:
+            key = beneficiary.beneficiary_id
+            if month not in beneficiary.entitled_months:
+                continue
+            if key == record.nh_id:
+                gross = baseline.worker_benefit
+                original = baseline.pia
+            else:
+                if not baseline_rows[key].entitled:
+                    raise InvalidFamilyInput(
+                        "G and RET auxiliary entitlement facts differ"
+                    )
+                gross = baseline_rows[key].auxiliary_payable
+                original = baseline_rows[key].original_benefit
+            if (
+                gross != beneficiary.gross_rates[month - 1]
+                or original != beneficiary.original_rates[month - 1]
+            ):
+                raise InvalidFamilyInput("G context does not match RET rates")
+    # R1 availability is an input requirement, so a held G coverage
+    # refusal cannot turn a missing supported year into a denominator row.
+    year = None
+    if record.year >= 2000:
+        year = (
+            parameters if parameters is not None else load_ret_parameters()
+        ).for_year(record.year)
+    if held_family_refusals:
+        raise held_family_refusals[0]
     if record.year < 2000:
         raise _computed(
             RETConfigurationUnsupported,
             UnsupportedReason.YEAR_BEFORE_2000,
             "FRA-year rules in this form start in 2000",
         )
-    year = (
-        parameters if parameters is not None else load_ret_parameters()
-    ).for_year(record.year)
     refusals = (
         (record.fiscal_year, UnsupportedReason.FISCAL_YEAR),
         (record.short_taxable_year, UnsupportedReason.SHORT_TAXABLE_YEAR),
@@ -938,7 +1240,7 @@ def apply_ret_year(
             raise _computed(
                 RETConfigurationUnsupported,
                 reason,
-                "Outside R2 part (a)'s admitted scope",
+                "Outside R2's admitted scope",
             )
     for b in record.beneficiaries:
         # Source conflict us:oasdi-ret-deemed-entitlement-basis
@@ -965,6 +1267,12 @@ def apply_ret_year(
         for b in sorted(record.beneficiaries, key=lambda b: b.beneficiary_id)
     }
     facts = {}
+    contextual_two_records = {
+        b.beneficiary_id
+        for context in record.family_months.values()
+        for b in context.beneficiaries
+        if b.own_benefit is not None
+    }
     for key, b in people.items():
         higher = b.fra_month is not None and b.fra_month > 0
         exempt = (
@@ -997,7 +1305,9 @@ def apply_ret_year(
             exempt,
             rate,
         )
-        if b.two_record_entitlement and (excess or estimate):
+        if (b.two_record_entitlement or key in contextual_two_records) and (
+            excess or estimate
+        ):
             raise _computed(
                 RETConfigurationUnsupported,
                 UnsupportedReason.TWO_RECORD_EARNINGS,
@@ -1055,22 +1365,6 @@ def apply_ret_year(
                 total = sum(caps.values(), Fraction(0))
                 if not total:
                     continue
-                if (
-                    not is_nh
-                    and m in record.family_maximum_binding_months
-                    and any(
-                        m in other.entitled_months
-                        and other.original_rates[m - 1] > 0
-                        for k, other in people.items()
-                        if k != key
-                    )
-                ):
-                    raise _computed(
-                        RETConfigurationUnsupported,
-                        UnsupportedReason.DEDUCTION_BEFORE_REDUCTION,
-                        "Auxiliary work frees binding maximum room; part (b) readjustment required",
-                        beneficiary_id=key,
-                    )
                 taken = min(remaining, total)
                 if provisional or taken == total:
                     payments = {k: Fraction(0) for k in caps}
@@ -1092,28 +1386,104 @@ def apply_ret_year(
                 if not provisional:
                     charged[key] += taken
                 remaining -= taken
-        return net, nh_deductions, own_deductions, charged, residuals
+        gross = {
+            (k, m): b.gross_rates[m - 1]
+            for k, b in people.items()
+            for m in range(1, 13)
+        }
+        # RS 02501.155A.2: charge every worker against their own adjusted
+        # rate first. Redistribute only after all that month's workers have
+        # been charged, so changing beneficiary order cannot change excess.
+        for m in sorted(record.family_maximum_binding_months):
+            deductees = {
+                k: net[k, m]
+                for k in people
+                if k != record.nh_id and own_deductions[k, m] > 0
+            }
+            if not deductees:
+                continue
+            if not any(
+                m in b.entitled_months and b.original_rates[m - 1] > 0
+                for k, b in people.items()
+                if k not in deductees
+            ):
+                continue
+            if m not in record.family_months:
+                raise _computed(
+                    RETConfigurationUnsupported,
+                    UnsupportedReason.FAMILY_CONTEXT_REQUIRED,
+                    "Deduction readjustment needs G age, dual-entitlement, "
+                    "maximum and household facts for this month",
+                )
+            context = record.family_months[m]
+            events = {
+                k: _construct_declared(
+                    g.BenefitDeduction,
+                    g.DeductionReason.OWN_EARNINGS_TEST,
+                    payable,
+                    not provisional,
+                )
+                for k, payable in deductees.items()
+            }
+            worker_deductions = {
+                b.beneficiary_id: nh_deductions[b.beneficiary_id, m]
+                for b in context.beneficiaries
+                if nh_deductions[b.beneficiary_id, m]
+            }
+            adjusted = g._family_benefits_after_deductions_validated(
+                context.state,
+                context.beneficiaries,
+                payment_month=_construct_declared(g.YearMonth, record.year, m),
+                params=context.params,
+                deductions=events,
+                households=context.households,
+                standalone=context.standalone,
+                worker_deductions=worker_deductions,
+            )
+            for row in adjusted.beneficiaries:
+                k = row.beneficiary_id
+                net[k, m] = row.auxiliary_payable
+                gross[k, m] = (
+                    net[k, m] + nh_deductions[k, m] + own_deductions[k, m]
+                )
+        return net, nh_deductions, own_deductions, charged, residuals, gross
 
-    final, nh, own, charged, residuals = charge(False)
-    provisional, _, _, suspended, _ = charge(True)
-    rows = tuple(
-        _computed(
-            BeneficiaryMonth,
+    final, nh, own, charged, residuals, gross = charge(False)
+    (
+        provisional,
+        provisional_nh,
+        provisional_own,
+        suspended,
+        _,
+        provisional_gross,
+    ) = charge(True)
+
+    def monthly_row(k, m):
+        values = (
             k,
             m,
-            b.gross_rates[m - 1],
+            gross[k, m],
             final[k, m],
-            b.gross_rates[m - 1] - final[k, m],
+            nh[k, m] + own[k, m],
             _whole_dollars_validated(final[k, m]),
             provisional[k, m],
-            b.gross_rates[m - 1] - provisional[k, m],
+            provisional_nh[k, m] + provisional_own[k, m],
             _whole_dollars_validated(provisional[k, m]),
             nh[k, m],
             own[k, m],
         )
-        for k, b in people.items()
-        for m in range(1, 13)
-    )
+        if (
+            gross[k, m] != provisional_gross[k, m]
+            or (gross[k, m] * 10).denominator != 1
+        ):
+            return _computed(
+                RedistributedBeneficiaryMonth,
+                *values,
+                provisional_gross[k, m],
+            )
+        return _computed(BeneficiaryMonth, *values)
+
+    rows = tuple(monthly_row(k, m) for k in people for m in range(1, 13))
     workers = tuple(
         _computed(
             WorkerLedger,

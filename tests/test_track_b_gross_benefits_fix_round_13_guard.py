@@ -89,7 +89,9 @@ def test_guard_rejects_uninitialized_instances_at_every_public_entry(entry):
 )
 def test_guard_denies_copy_and_serialization(operation, populated):
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     if populated:
         guard.admit(_family(1))
@@ -112,7 +114,9 @@ def test_guard_rejects_undeclared_subclasses():
 
 def test_review_next_month_mutation_cannot_skip_qualifying_february():
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     january, february, march = (
         _family(1, children=1),
@@ -135,7 +139,9 @@ def test_review_next_month_mutation_cannot_skip_qualifying_february():
     assert guard.protected_total == F("1.90")
     assert g.count_family_outcomes([outcome]).unsupported_rows == 1
     skipped = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     skipped.admit(january)
     skipped.skip(g.YearMonth(2026, 2), pia=F("1.10"))
@@ -162,7 +168,9 @@ def test_review_next_month_mutation_cannot_skip_qualifying_february():
 def test_guard_every_public_snapshot_is_detached(accessor, changed_month):
     guards = [
         g.SavingsClauseGuard(
-            g.YearMonth(2026, 1), earlier_months_unknown=False
+            g.YearMonth(2026, 1),
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
         )
         for _ in range(2)
     ]
@@ -206,9 +214,15 @@ def test_guard_admitted_objects_cannot_change_later_decisions(
 ):
     first_month = g.YearMonth(2026, 1)
     guards = [
-        g.SavingsClauseGuard(first_month, earlier_months_unknown=False),
         g.SavingsClauseGuard(
-            g.YearMonth(2026, 1), earlier_months_unknown=False
+            first_month,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        ),
+        g.SavingsClauseGuard(
+            g.YearMonth(2026, 1),
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
         ),
     ]
     january = _family(1)
@@ -256,7 +270,9 @@ def test_review_live_fraction_cannot_change_qualifying_pia_increase():
             return self.value > other
 
     control = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     control.admit(_family(1))
     assert _decision(control, _family(2, F("1.20")))[1] is (
@@ -269,7 +285,9 @@ def test_review_live_fraction_cannot_change_qualifying_pia_increase():
     except g.InvalidFamilyInput:
         return  # Numeric subclasses may be rejected at the first boundary.
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     guard.admit(january)
     pia.value = F("1.30")
@@ -285,7 +303,9 @@ def test_review_live_fraction_cannot_change_qualifying_pia_increase():
 def test_guard_detaches_weight_before_calling_computation(numerator, changed):
     weight = F(numerator, 3)
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
 
     def compute():

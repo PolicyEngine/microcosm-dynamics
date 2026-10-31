@@ -1,14 +1,14 @@
-# Track B R2 (part a): the retirement earnings test ledger
+# Track B R2: the retirement earnings test ledger
 
 **Verification class: statutory conformance. Admitted scope: retirement
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, R2 rules revised 2026-10-14 after PR #528 review
-rounds 1–6; shared input boundary revised 2026-10-18 for PR #530 round 15.
-No real-data computation.** This is the
-single-record ledger core. Deduction before reduction, which can change
-the other beneficiaries' gross rates, remains part (b).
+**Status: build-only, R2 part (b) revised 2026-10-23 following ruling
+d1802; prior R2 review and the G v2 shared boundary remain in force.
+No real-data computation.** The single-record ledger now calls G for
+deduction-before-reduction readjustment when monthly statutory and
+household inputs are supplied (Act 203(a)(4); RS 02501.155A.3–4).
 
 The approved Track B design, revision 3, defines R2 in §3.1 as the
 `apply_ret_year` ledger: entitlement, provisional suspension, final
@@ -31,7 +31,8 @@ makes no Axiom or population conformance claim.
   `tests/test_track_b_ret_ledger_readings.py` checks the ledger money
   consequences and properties of simultaneous RIB/DIB readings;
   `tests/test_track_b_ret_ledger_sources.py` pins source bytes, quotations
-  and monetary worked examples.
+  and monetary worked examples; `tests/test_track_b_ret_ledger_deductions.py`
+  covers binding maximum readjustment, household timing and R3 credits.
 - Source helper: `tests/track_b_ret_ledger_support.py`.
 - Captures: `tests/data/track_b/ret_ledger_sources/`. The manifest records
   the URL, UTC retrieval time, byte count and SHA-256 of each capture,
@@ -412,17 +413,19 @@ executes the property at computation, sealing and lookup;
 `test_ret_identity_slots_reject_string_enum_subclasses` covers each
 identity slot. This changes no apportionment for declared valid inputs.
 
-The binding-survivor fixture now states its original no-care assumption
-explicitly. Both `child_in_care=False` and the positive attestation
-`child_in_care="cdb"` produce a $796.40 widow rate and $0 CDB auxiliary
-rate, retain the entitled CDB's $750 original share, and refuse auxiliary
-work as `deduction_before_reduction_part_b`. This is the paired
-`test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b`.
-G v2 requires the child's identity for positive care; literal boolean
-`True` is an input error, pinned by
-`test_survivor_care_requires_child_identity_not_boolean_true`.
-RS 00615.340's mother/father comparison does not increase this particular
-widow rate. No statutory reading changed.
+The binding-survivor fixture states its care facts explicitly. Both
+`child_in_care=False` and `child_in_care="cdb"` produce a $796.40 widow
+rate and $0 CDB auxiliary rate, retaining the entitled CDB's $750 original
+share. Part (b) now computes widow excess $100: January final payable
+$696.40/check $696 and provisional payable $0. The CDB remains at $0,
+because GN 02603.050A.2 excludes a zero dual-entitlement rate regardless
+of other deductions. No work deduction or ARF credit is attributed to the
+CDB. `test_binding_survivor_maximum_with_zero_rate_cdb_computes_part_b`
+executes both care assertions. The former claim that the CDB necessarily
+regains room was too broad; technical entitlement still matters to the
+separate NH partial-allocation rule. G still requires the child's identity
+for positive care, and RS 00615.340's mother/father comparison does not
+increase this widow's rate.
 
 ## Authority and inputs
 
@@ -454,7 +457,15 @@ Each beneficiary also supplies actual earnings, optional estimated
 earnings, the RIB FRA month, the actual grace-helper decision and an
 optional `estimated_grace` decision for the current-year forecast,
 death and divorced-spouse facts, and flags for established statutory
-own-work protections or entitlement on two records. For ledger inputs,
+own-work protections or entitlement on two records. The optional
+`two_record_entitlement` declaration defaults to `None`: supplied G
+monthly own-benefit facts establish two-record entitlement, while an
+explicit boolean must agree with the contextual facts for that person
+over the year. With no supplied G context, `None` retains the absence of
+a declared second entitlement. An own benefit present in any supplied
+month establishes the annual exposure; a later cessation does not erase
+it. Own actual or estimated excess remains refused because RS
+02501.145-.150 require charging across both records. For ledger inputs,
 `fra_month=None` means FRA after the year, `0` means FRA before the year,
 and `1` through `12` identifies the attainment month. Survivors use the
 RIB FRA, even when their survivor-benefit FRA is earlier (RS
@@ -526,10 +537,13 @@ prior year's amount or relabelled as a statutory coverage refusal.
    404.415(b), .420, .434; RS 02501.021B.5.b, .095B.2 and .140).
 5. **Other workers' charging.** After NH charging, charge each auxiliary
    or survivor's excess against that person's remaining benefit only.
-   Do not charge an already exhausted month again. If this would free
-   binding family-maximum room for another beneficiary, refuse the
-   record for part (b) (20 CFR 404.434(b)(2)-(3); RS 02501.095B.3-4,
-   .155A.3-4; GN 02603.020-.050).
+   Do not charge an already exhausted month again. When this frees
+   binding family-maximum room for another beneficiary, readjust through
+   G using that month's declared `RETFamilyMonth` statutory and household
+   facts. Without those facts, retain the named refusal
+   `deduction_readjustment_requires_family_context` (20 CFR
+   404.434(b)(2)-(3); RS 02501.095B.3-4, .155A.3-4;
+   GN 02603.020-.050).
 6. **Protected months.** A worker's own excess cannot be charged in an
    unentitled month, a protected grace-year NSM, the FRA month or later,
    a DIB/DWB/CDB payment month, or an explicitly established own-work
@@ -798,7 +812,7 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Calendar record-year from 2000 with an available R1 year | Supported | Act 203(f); RS 02501.021B.6 |
 | Living RIB worker and spouse/divorced-spouse/child beneficiaries | Supported with the supplied G rates | RS 02501.095 |
 | Disability NH, or DIB/DWB/CDB elected payment months | Supported own-work exemption; RIB elections remain tested | RS 02501.021B.5.a |
-| Deceased record and widow(er), mother/father or child own work | Supported without binding-maximum readjustment | RS 02501.095B.3 |
+| Deceased record and widow(er), mother/father or child own work | Supported; binding readjustment requires monthly G facts | RS 02501.095B.3, .155A.3–4 |
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
 | Pre-1978 entitlement history | Supported for carried legal types and breaks; pre-1978 NSMs never consume initial grace | Act 203(f)(1)(E)'s first qualifying month after December 1977 |
 | DIB-only months between section 202 entitlements | Supported; preserve the previous section 202 type and its break, so only a genuinely different later section 202 type creates after-break eligibility | Act 203(f)(1)(E); 20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 |
@@ -815,7 +829,10 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Requested prorated suspensions | `PRORATED_SUSPENSION` / `prorated_work_suspension` | RS 02501.100B.5, .120-.125 |
 | Requested deferred suspensions | `DEFERRED_SUSPENSION` / `deferred_work_suspension` | RS 02501.100B.4 |
 | Protested partial current-year suspension | `PROTEST_PARTIAL_SUSPENSION` / `protested_partial_work_suspension` | RS 02501.100B.3 requires a different provisional path |
-| Auxiliary/survivor own deduction with a binding maximum and another entitled positive original share, including a zero payable rate | `DEDUCTION_BEFORE_REDUCTION` / `deduction_before_reduction_part_b` | Others may gain gross rate; RS 02501.155A.3-4, GN 02603 |
+| Auxiliary/survivor own deduction with a binding maximum and complete monthly G facts | Supported full/partial permanent deductions and full estimated suspensions | Act 203(a)(4); RS 02501.155A.2–4; GN 02603.050C/D |
+| Separate-household nondeductees | Final increases are paid; estimated increases wait unless in the worker's household | RS 02501.160; GN 02603.090 |
+| Binding readjustment without monthly G facts | `FAMILY_CONTEXT_REQUIRED` / `deduction_readjustment_requires_family_context` | Reduced rates do not identify original age and dual-entitlement facts |
+| NH reservation combined with auxiliary age reduction | G `deduction_age_work_interaction` | GN 02603.050C/D reserves both amounts; current captures do not settle the interacting reduced-rate derivation |
 | Two-record entitlement with actual or estimated excess | `TWO_RECORD_EARNINGS` / `excess_earnings_on_two_records` | RS 02501.145-.150 require coordinated records |
 | Noncovered foreign work | `FOREIGN_WORK` / `noncovered_foreign_work` | Act 203(c); 20 CFR 404.417-.418 |
 | Refusal of vocational rehabilitation | `VOCATIONAL_REHABILITATION` / `vocational_rehabilitation_refusal` | RS 02501.130 |
@@ -823,13 +840,12 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Unmarried purported deemed entitlement | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | RS 02501.140's wording is broader than Act 203(b)(1)/20 CFR 404.420 |
 | Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Act 203(b)(1)'s adult-child wording is broader than CFR .420's disabled-child basis |
 
-The binding-maximum guard is conservative. This annual interface accepts
-a record-month binding flag but does not reconstruct each beneficiary's
-maximum membership from post-reduction rates. It therefore refuses an
-own deduction with any other entitled positive original share, including
-mixed divorced-spouse configurations where a later G-aware interface
-could establish that no room is released. Part (b) must retain G's
-`subject_to_family_maximum` metadata to narrow that coverage boundary.
+The monthly G context establishes maximum membership, original age
+reduction and dual entitlement. Its declared baseline must match the R2
+rates, original shares and binding flag. Missing contexts are named
+coverage refusals; mismatched contexts are input errors. An earlier G
+coverage refusal is held until every supplied month's consistency checks
+finish, so later invalid inputs cannot enter a refusal denominator.
 
 Each coverage refusal is a `RETConfigurationUnsupported`, a subclass of
 G's `FamilyConfigurationUnsupported`, and has the common
@@ -864,7 +880,7 @@ In the table, unqualified property test names are in
 
 | Invariant | Executing tests |
 | --- | --- |
-| Per beneficiary-month, `gross = net_due + deduction`; both actual and provisional deductions lie between zero and gross; the check floors net | `test_every_month_conserves_exact_money_and_checks_are_floored`; `test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months` |
+| Per beneficiary-month, `gross = net_due + deduction`; both actual and provisional deductions lie between zero and their respective gross rates; the check floors net | `test_every_month_conserves_exact_money_and_checks_are_floored`; `test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months` |
 | A worker's charged excess is capped by chargeable benefits; charged plus uncharged equals excess; final deductions attributable to that worker equal charged plus the undistributed residual; no charge exceeds excess | `test_exact_final_charges_are_excess_capped_by_chargeable_benefits`; `test_number_holders_excess_is_charged_before_auxiliarys_own`; `test_auxiliary_own_deductions_are_monotone_with_protected_months_fixed` |
 | Earlier chargeable months are exhausted before later months | `test_earlier_chargeable_months_are_exhausted_before_later_months`; `test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months` |
 | Excess cannot carry between years | `test_excess_is_year_local_and_cannot_change_a_clean_later_year`; unit `test_uncharged_excess_does_not_carry_into_the_next_year` |
@@ -886,6 +902,10 @@ In the table, unqualified property test names are in
 | R1 annual amounts and exact rates match every supported bundled year, with zero tolerance | `test_r1_differential_matches_every_supported_year_exactly`; `test_r1_differential_statutory_default_is_exactly_one_twelfth` |
 | The default statutory monthly limit is exactly annual/12, with zero tolerance; wages above it cannot protect a grace month | `test_r1_differential_statutory_default_is_exactly_one_twelfth`; readings `test_property_default_monthly_limit_is_exact_twelfth_and_controls_grace_wages`; unit `test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling`; source `test_act_203_f_8_d_v_vi_monthly_amounts_are_quoted_and_equal_annual_twelfths` |
 | Missing R1 years raise rather than substitute | `test_r1_differential_missing_year_raises_without_substitution`; unit `test_missing_parameter_year_is_not_carried_forward` |
+| G monthly own-benefit facts establish annual two-record exposure, including own-benefit onset or cessation between supplied months, independently of month, beneficiary and household order; an omitted flag cannot admit actual or estimated excess | review `test_contextual_own_rib_requires_two_record_refusal`; property `test_two_record_derivation_is_order_independent` |
+| A declared two-record flag contradicting supplied G facts is an input error and creates no outcome or denominator row | review `test_declared_two_record_contradiction_is_input_error` |
+| Missing supported R1 years precede held G coverage refusals and create no outcome or denominator row | review `test_missing_r1_parameter_precedes_held_g_refusal`; property `test_unavailable_supported_r1_year_is_never_a_coverage_row` |
+| R2 emits G own-work events only for positive actual deductions; a person with zero excess never becomes a deductee in either actual or estimated runs | review property `test_r2_emits_only_positive_actual_deduction_events` |
 | Every outcome row and weight stays in the coverage denominator; any refusal blocks an aggregate | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_coverage_denominator_keeps_refusals_and_blocks_aggregate` |
 | Exact 1/2 and 1/3 excess rates use an integer floor: excess is nonnegative and differs from the unrounded amount by less than $1 | readings `test_property_excess_uses_exact_statutory_rate_and_dollar_floor`; unit `test_lower_threshold_and_whole_dollar_floor`; unit `test_fra_threshold_uses_one_third_and_floors`; R1 differential above |
 | Invalid input is never counted as a statutory coverage gap | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_invalid_wage_inputs_raise_before_coverage_refusal`; `test_invalid_rates_raise_before_coverage_refusal`; `test_duplicate_identity_is_invalid_even_in_an_unsupported_record`; `test_invalid_inputs_are_not_counted_as_coverage_gaps` |
@@ -979,14 +999,17 @@ the residual field never creates a standalone crediting event.
 `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share`
 executes that zero-cap result. This example keeps the zero cap in the
 allocation; the former complete-redistribution result is unavailable.
-In a second G-generated survivor
-record, PIA $1,000/max $1,500 gives a widow $796.40 and an entitled CDB
-recipient $0 after a $650 own disability benefit, with originals $1,000
-and $750. Widow excess $100 must refuse for part (b): the CDB recipient
-can gain family-maximum room despite the current zero payable rate.
-`test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share`
-and `test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b`
-both failed against the restored early implementation before the fixes.
+The second G-generated survivor counterexample is now computed by part
+(b). PIA $1,000/max $1,500 gives a widow $796.40 and a technically
+entitled CDB recipient $0 after a $650 own disability benefit, with
+originals $1,000/$750. Widow age reduction is
+`ceil_dime(1000 * 60 * .285 / 84) = 203.60`; widow excess $100 leaves
+$696.40. GN 02603.050A.2 says to disregard the zero dual recipient
+"regardless of other deductions that may apply for any other beneficiary
+on record". The CDB stays $0. The remaining maximum room is unused;
+there is no unsupported revival of its auxiliary benefit. Both care
+variants execute in
+`test_binding_survivor_maximum_with_zero_rate_cdb_computes_part_b`.
 
 ## Monetary worked examples
 
@@ -1484,73 +1507,166 @@ as excluding any simultaneous RET deductee would instead refuse the
 example, not produce a different computed amount. This scope reading
 needs confirmation if the intended part-(a) boundary was broader.
 
-## What part (b) needs from G
+## Deduction before reduction and the G contract
 
-The current G entry point is:
+Act 203(a)(4) requires deductions before reduction for the maximum.
+RS 02501.155A.1–2 first charges each working auxiliary or survivor's own
+adjusted rate. Full deductees then leave the redistribution denominator;
+partial deductees reserve their payable amount. G applies GN 02603.050C/D
+and retained Parisi treatment. R2 charges NH excess first, then each
+auxiliary's own excess, and submits the complete monthly event mapping
+once all workers have been charged. Nonworkers alone receive readjustment.
+This preserves statutory ordering and beneficiary order independence.
+
+The public monthly entry point is:
 
 ```python
-family_benefits(
+family_benefits_after_deductions(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
     *,
     payment_month: YearMonth,
     params: SSAParameters,
+    deductions: Mapping[str, BenefitDeduction],
+    households: Mapping[str, str],
     standalone: bool,
+    worker_deductions: Mapping[str, Fraction] | None = None,
 ) -> FamilyBenefits
 ```
 
-It computes gross rates on the assumption that no deduction event has
-changed available maximum room. Part (a) uses its monthly results and
-refuses deduction-before-reduction cases. No G function is changed here.
+R2's `RecordYear.family_months` maps exact integer months to declared
+`RETFamilyMonth(state, beneficiaries, params, households, standalone=True)`
+values. Ordered beneficiaries accept tuple/list; household maps contain
+nonempty built-in string identities. G/RET record kind, beneficiary IDs,
+benefit types, original shares, rates and binding status must agree.
+The nested declarations follow the shared single-validation boundary.
+Computation uses G's private validated entry and privately constructs
+owned `BenefitDeduction` declarations. G/RET provenance seals, canonical
+enums, one refusal class per reason enum and denominator retention remain
+in force. Evaluators still establish provenance, not attribution or freshness.
 
-Part (b) needs an exact monthly entry point with the following proposed
-contract, subject to the G lane's implementation:
+Final own events use `OWN_EARNINGS_TEST`, their exact post-NH partial
+payable and `permanent=True`. Provisional full-month suspensions use
+`permanent=False`. `worker_deductions` carries deductions imposed on
+auxiliaries for NH work: these amounts reserve maximum room and are not
+redistributed. RS 02501.155B.3.c limits increases to the auxiliary's own
+charge. G uses the pre-deduction allocated pool in this interaction so
+preexisting dime-rounding slack cannot become an extra increase.
 
-```python
-family_benefits_after_deductions(
-    state,
-    beneficiaries,
-    *,
-    payment_month,
-    params,
-    deduction_events,
-    households,
-    standalone,
-) -> FamilyBenefits
-```
+NH charging is retained on fixed Parisi and outside-maximum beneficiaries.
+The G adapter does not restore their pre-NH payables. Only subject NH
+charges enter the maximum reserve, and a fixed dual payable reserves its
+post-NH amount so the same charge is not counted twice. The NH property
+also checks ordinary spouse $90/children $105/$105, then NH-partial
+$60/$60/$60: one child's own $30 leaves it $30, the spouse $60 and the
+other child $90. For an outside-maximum divorced spouse $300 and three
+$100 children, NH excess $600 leaves $100 each; a child's own $30 leaves
+it $70 and raises the other children to $115 while the divorced spouse
+stays $100. Own work confined to the outside-maximum recipient changes
+none of the children's rates. These explicit examples and generated own
+excesses $1–$59 execute in the existing NH-reservation Hypothesis test.
 
-It must retain G's original metadata rather than accepting only reduced
-rates: `RecordState` contains PIA, family maximum, worker/RIB-LIM and
-eligibility facts; each `Beneficiary` retains original-share role, age
-reduction, dual-entitlement and maximum-membership facts. The R2 input
-rate alone cannot recover that information.
+`BeneficiaryMonth` retains its prior declared shape for every previously
+supported output. The new sealed `RedistributedBeneficiaryMonth` is used
+only when final/provisional gross differs or reconstructed gross is an
+exact non-dime amount after NH proration. It has an explicit
+`provisional_gross`: final gross equals final net plus actual deduction;
+provisional gross equals provisional net plus provisional deduction.
+A delayed household increase is never mislabeled as a work deduction or
+an ARF credit. Final credits alone flow to R3.
 
-For every deductee and month, `deduction_events` must identify the
-beneficiary, reason, exact full or partial deduction and partial payable
-amount, whether it is NH-wide or the beneficiary's own event, and
-whether it is an estimated current-year suspension or an actual
-closed-year permanent deduction. `households` must identify monthly
-household membership, including any established historical configuration
-needed for separate-household timing. `standalone` retains G's explicit
-one-record assertion; two-record entitlement still needs the household
-entry point rather than silent independent calculations.
+### Worked cases and invariants
 
-The new function must apply Act 203(a)(4)'s first sentence and GN
-02603.050C/D, including the differing permanent and temporary formula
-inputs, full and partial deductee treatment, capped readjusted original
-benefits and retained G age/dual-entitlement order. It must return
-recomputed rates for all beneficiaries and the room released by the
-deductions, preserving exact arithmetic and G's refusal and validation
-contracts. R2 then charges eligible workers against the appropriate
-readjusted rates in the statutory order (RS 02501.130, .155).
+RS 02501.160 gives PIA $213.10, maximum $396, original benefits $159.90,
+four adjusted benefits $99 and C3 excess $555. Permanent charges are
+$99 in January–May and $60 in June. C3 receives $0 then $39; the other
+three receive $132 then $119. C2's January–May $33 increase is immediate
+when it shares C3's household; E/C1's $33 increases wait for final
+adjustment. Their final reconciliation is `5 * 33 + 20 = $185` each.
+The source's original $159.90 is an upward dime rounding of its stated
+PIA share; the capture does not date the example or establish why it used
+that rounding. G's modern `floor_dime(213.10 * 3/4)` is $159.80. Both values are pinned
+explicitly; equal original shares reproduce every listed payment exactly.
+No altered PIA or unreported rounding override is used.
 
-For separate households, increased amounts attributable to provisional
-work deductions are delayed until the deductions become final, while
-same-household increases can be paid sooner (RS 02501.160; GN
-02603.090). The proposed contract must therefore preserve provisional
-and final monthly states separately. Facility of payment itself ended
-after December 1995 and is outside the supported payment years (GN
-02603.075); it must not be restored from historical GN 02603.100 examples.
+`test_rs_02501_160_permanent_full_and_partial_months` and
+`test_rs_02501_160_separate_household_increases_wait_for_final_deduction`
+execute those results. Source quotes and figures are checked against the
+listed capture in `test_track_b_ret_ledger_sources.py` and
+`test_captured_original_rounding_and_worked_payment_figures_are_explicit`.
+An invented .155A.2 case charges C1/C3 $99 each in January; February
+partials are $48/$98 and the other two rates $125. An invented NH-partial
+case has PIA $600/max $900, NH gross $600 and three $100 auxiliaries.
+NH excess $600 leaves $120/$60/$60/$60; one auxiliary's own $30 charge
+leaves $30 and raises the other two to $75 each, retaining their $40 NH
+deductions (`test_rs_02501_155_nh_partial_month_preserves_nh_deductions`).
+
+The new executed invariants are:
+
+| Invariant | Executed test |
+| --- | --- |
+| No own deduction means identical old result fields/types, with or without G context | `test_property_unused_g_context_preserves_original_result_fields` |
+| Actual and provisional deductions reconcile separately to charged/withheld worker totals | `test_property_readjustment_conserves_deductions_and_preserves_order` |
+| In generated unreduced survivor families, nondeductees do not lose rates; they never exceed OB, gain deduction credits, or raise family payable over its maximum | Same property |
+| Separate-household temporary amounts retain the original $99 rate | Same property and separate-household worked case |
+| Result amounts are deterministic and beneficiary order independent | Same property |
+| Actual positive deductions alone supply crediting months | Same property and `test_readjusted_deductions_flow_to_r3_without_household_delay_credits` |
+| Multiple workers are charged before their common monthly redistribution | `test_rs_02501_155_multiple_workers_charge_before_redistribution` |
+| NH work retains its charge and cannot release room | NH-partial worked case |
+| Invalid later context precedes an earlier G coverage refusal | `test_later_family_input_error_precedes_earlier_g_coverage_refusal` |
+
+Absolute non-deductee monotonicity does not extend across GN .050A.1's
+single-full-deduction exception: adding a second deductee restores the
+age reserve required by GN .050C and can lower other rates. G's
+`test_single_full_permanent_exception_disregards_age_reduction` pins the
+minimized PIA $48/MAX $78 example, where the other children's rates fall
+from $10 to $9.90 after a child's $0.10 deduction. The G note and final
+report give the exact source conditions and derivation.
+
+### Reading taken: temporary partial payment wording
+
+This is the session's reading under Max's 2026-10-20 delegation, logged in
+the source-conflict rulings as `us:oasdi-ret-temporary-partial-deduction`:
+G follows RS 02501.160's explicit worked example (the specific case over
+GN 02603.050D.2's general statement), and R2 keeps its full-month
+provisional suspension, refusing the partial provisional path by name.
+
+GN 02603.050D.2 says: "The worker's rate will always be $0.00 because
+there are no partial deductions for temporary work deductions."
+RS 02501.160 Example 2 nevertheless gives June C3 "$ 39", C2 "$119"
+and says the extra "$20" is immediate while E/C1 wait until permanent.
+R2 retains its existing full-month estimated suspension (GN .050D.2):
+June C3 provisional $0, same-household C2 $132; final C3 $39/C2 $119.
+The .160 partial illustration instead pays C3 $39/C2 $119 provisionally,
+a difference of +$39/−$13 for those two people. G directly reproduces the
+published partial-payable illustration. Selecting an administrative
+partial-suspension path in R2 remains a named
+`protested_partial_work_suspension` refusal rather than silently changing
+the existing estimated ledger. Admitting provisional partial payments
+into R2 would be a further reading, not taken here.
+
+Facility of payment ended after December 1995 (GN 02603.075) and remains
+outside supported R2 payment years. Two-record charging, combined maxima,
+multiple auxiliary records and other deduction events remain refused.
+
+## Part (b) differential and mutation evidence
+
+`scripts/track_b_r2_cross_head.py --baseline-root <local origin/master tree>`
+compares every declared field and result type at zero tolerance. The pinned
+seed 53014 reproduces 240 previously supported R2 ledgers and their 240
+same-record R3 RIB computations byte for byte. Canonical output SHA-256 is
+`799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55`.
+Six binding conformance inputs, with own excess $1/$60/$99/$100/$555/$1,188,
+all move from `deduction_before_reduction_part_b` to supported; none move
+to another refusal. Both source trees are local and both subprocesses set
+the staged-data roots to nonexistent paths.
+
+Three isolated one-line R2 mutations were killed and then restored:
+dropping the redistributed payable failed the .160 permanent example;
+marking temporary events permanent failed separate-household timing;
+dropping NH reservations failed the NH-partial example. Identical selected
+tests passed after each restoration. The final lane verification artifact
+records commands, counts, hashes and the back-to-back cost comparison.
 
 ## Build verification
 
@@ -1726,6 +1842,91 @@ other tests deselected. Both staged microdata directory overrides pointed
 to nonexistent paths for every whole-suite collection and the selected
 policy test; that test's temporary directory was inside the workspace.
 
+## Round-3 consistency of declared FRA and G facts
+
+Verification class remains statutory conformance on invented record-years
+and captured rules. No population, behavioral or forecast claim is added.
+
+`RecordYear` checks each supplied G monthly context before any annual or
+G coverage refusal. For the NH it uses `worker_birth_year` and the own
+worker benefit; for auxiliaries it uses the beneficiary and own-benefit
+cohorts. A contradiction raises `InvalidFamilyInput`, so an evaluator
+cannot count that input as a coverage gap. Missing birth facts remain
+supported. No earnings or annual parameter lookup is needed to classify
+the supplied age facts, and validation runs once per public ledger call.
+
+The earnings test uses RIB FRA for every role. Act 203(f)(9) specifies the
+retirement age "which is applicable in the case of old-age insurance
+benefits, regardless of whether or not the particular benefits" are
+old-age benefits. RS 02501.021B.3 says "Always use the FRA for retirement
+insurance benefits (RIB) when applying the ET for RIB or widow(er)'s
+insurance benefits (WIB)." The captured 20 CFR 404.430(b) and 404.434(c)
+also point to 404.409(a). Thus the distinct widow age-reduction schedule
+under 216(l) does not create a competing RET reading. No new refusal or
+orchestrator ruling is needed.
+
+Under the cohort convention in RS 00615.003/.010, the possible FRA months
+run from `birth_year * 12 + RIB_FRA_months` through eleven months later.
+`fra_month=0` intersects dates before this calendar year; `None` intersects
+dates after this year; values 1 through 12 specify the corresponding
+month. A declaration is invalid only if its intersection with the whole
+cohort interval is empty. Both endpoints and every interior declaration
+remain accepted. The test enumerates every possible birthday independently
+of the implementation's interval arithmetic and FRA lookup.
+
+Positive own delayed credits prove only that FRA occurred by the G
+snapshot month. Act 202(w)(2) permits increment months from the FRA month
+itself. This check does not reconstruct credit dates, an exact birthday or
+a benefit-effective-date calendar; the staged captures do not supply the
+additional effective-date chronology for such a reconstruction. Own age
+reductions can persist after FRA and establish no current age. A larger
+survivor basis can reflect the deceased worker's credits and establishes
+no FRA date for the survivor.
+
+| Fact pattern classified as `InvalidFamilyInput` | Source proving impossibility | What would falsify the premise |
+|---|---|---|
+| NH or auxiliary FRA declaration has no overlap with the supplied G cohort interval | Act 203(f)(8)(E), (9); 20 CFR 404.430(b), 404.434(c); RS 02501.021B.3 and 00615.003/.010 | A birthday inside the cohort consistent with the declaration; all such intersections remain accepted |
+| An auxiliary's cohort disagrees with that same person's own-benefit cohort, even when FRA 0 fits each cohort separately | Act 202(q)(6); RS 00615.003/.010 and G's existing single-person cohort-consistency contract | Different people or different declared cohort conventions; neither is admitted for these two fields |
+| FRA is declared after a snapshot carrying that person's positive own delayed credits | Act 202(w)(2); RS 00615.692 | Only age-reduction months or inherited deceased-worker credits were supplied; these do not constrain the person's current FRA |
+
+### Examples and executed invariants
+
+The sole-widow regression has January 2024 PIA/MAX/OB $1 and cohort 1950.
+With `fra_month=None` the input errors without a denominator row. With
+`fra_month=0` it pays $1 with no own deduction, as required by Act
+203(f)(8)(E). The nearby spouse/child case and actual/estimated cases for
+cohorts 1930, 1950 and 1957 with declarations `None` and 12 also error.
+Consistent facts preserve existing named refusals and their full weights.
+
+The new `tests/test_track_b_ret_fra_facts.py` executes these invariants:
+
+- `test_every_cohort_interval_endpoint_and_every_inside_declaration`
+  covers both NH and auxiliary facts across every FRA cohort band.
+- Hypothesis
+  `test_fra_classification_matches_independent_birthday_enumeration`
+  checks acceptance exactly when at least one legal birthday agrees,
+  over all declaration values and both roles.
+- `test_missing_cohort_preserves_every_fra_declaration` and
+  `test_own_delayed_credits_prove_only_fra_by_context_month` preserve
+  uncertainty and the limited own-credit implication.
+- `test_every_auxiliary_role_uses_rib_fra_not_widow_reduction_age`
+  pins the role-specific source conclusion.
+- `test_fra_contradiction_precedes_coverage_refusal` and
+  `test_consistent_fra_keeps_named_coverage_refusal_in_denominator`
+  check both directions of input/refusal classification.
+- `test_paired_auxiliary_birth_cohorts_error_at_declaration_before_refusal`
+  and Hypothesis
+  `test_one_auxiliary_cannot_have_two_individually_post_fra_cohorts`
+  reject contradictory cohorts before a coverage refusal even when FRA 0
+  fits each separately. The NH's corresponding identity check already
+  runs in G's `RecordState` constructor.
+- `test_fra_facts_validate_once_per_public_ledger_call` checks the
+  public-call validation count. The source test independently recomputes
+  capture hashes and checks each quoted rule verbatim.
+
+No source capture, manifest, published worked-example figure, annual
+earnings formula or existing assertion changes in this round.
+
 ## Not in scope
 
 No real microdata, population pipeline, behavioral response or forecast
@@ -1738,7 +1939,7 @@ optimization (RS 02501.070).
 
 The ledger does not implement requested suspension prorating or
 deferral, protested partial current-year withholding, two-record excess
-charging, deduction before reduction, household readjustment timing,
+charging, other deduction-event readjustment,
 Medicare premiums, overpayment collection, ARF calculation, DRCs,
 recomputation, or monthly assembly I. It reports estimated-versus-actual
 check differences and actual deduction months so later milestones can

@@ -47,7 +47,11 @@ def _gpo_divorced_spouse():
 @pytest.mark.parametrize("route", ROUTES)
 @pytest.mark.parametrize("pia", (F(0), F(1000)))
 def test_review_unclaimed_eligibility_error_precedes_gpo_and_guard(route, pia):
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     with pytest.raises(
         g.InvalidFamilyInput, match="eligibility_year exceeds birth year"
     ):
@@ -83,7 +87,11 @@ def test_review_unclaimed_eligibility_error_precedes_gpo_and_guard(route, pia):
 @pytest.mark.parametrize("built", (False, True))
 def test_valid_unclaimed_eligibility_gpo_stays_in_denominator(built):
     state = _unclaimed(eligibility=1997, built=built)
-    guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        NOW,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     outcome = g.household_month_outcome(
         {
             "record": g.HouseholdRecord(
@@ -254,7 +262,11 @@ def _capture(compute):
 
 def _guarded(records, month):
     guards = {
-        key: g.SavingsClauseGuard(month, earlier_months_unknown=False)
+        key: g.SavingsClauseGuard(
+            month,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         for key in records
     }
     try:

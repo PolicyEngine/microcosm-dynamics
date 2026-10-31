@@ -742,6 +742,84 @@
       "sha256": "2015c4840633e813391f43cb82324e5c46855a78c9459d78ad8003ed6340ffcd",
       "poms_transmittal": "TN 39 (11-23)",
       "page_date": "11/14/2023"
+    },
+    {
+      "id": "poms_rs_02501_130",
+      "citation": "POMS RS 02501.130",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0302501130",
+      "retrieved_at_utc": "2026-10-11T11:35:42Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_rs_02501_130.html",
+      "bytes": 23095,
+      "sha256": "084beacc236c33fc88217486dccfeff7c23e564bf66717ebf8ab8d91818fbf82",
+      "poms_transmittal": "TN 40 (11-23)",
+      "page_date": "09/28/2011",
+      "title": "RS 02501.130 - Preclude Charging Excess Earnings When Individual Not Entitled to Benefits - 09/"
+    },
+    {
+      "id": "poms_rs_02501_155",
+      "citation": "POMS RS 02501.155",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0302501155",
+      "retrieved_at_utc": "2026-10-11T11:35:44Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_rs_02501_155.html",
+      "bytes": 25236,
+      "sha256": "4bd6fc3e1485d5d9c8e89c50c08071abb23af8031893671339f4e0e44b6fb554",
+      "poms_transmittal": "TN 33 (11-23)",
+      "page_date": "11/01/2023",
+      "title": "RS 02501.155 - Adjustment for the Maximum Involving the Annual Earnings Test (AET) - 11/"
+    },
+    {
+      "id": "poms_rs_02501_160",
+      "citation": "POMS RS 02501.160",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0302501160",
+      "retrieved_at_utc": "2026-10-11T11:35:45Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_rs_02501_160.html",
+      "bytes": 24146,
+      "sha256": "cd65f137741b83ba729b693f0c6f3fda118847b455c1c4d8ba33bbb1e404bca2",
+      "poms_transmittal": "TN 45 (11-23)",
+      "page_date": "11/15/2023",
+      "title": "RS 02501.160 - Adjusting for Family Maximum for Separate Households - 11/"
+    },
+    {
+      "id": "poms_gn_02603_020",
+      "citation": "POMS GN 02603.020",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0202603020",
+      "retrieved_at_utc": "2026-10-11T11:35:46Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_gn_02603_020.html",
+      "bytes": 21454,
+      "sha256": "e397fd07d847f24c160e138de901dd89aca17e3fa7e06727de9a572f1c9eb508",
+      "poms_transmittal": "TN 6 (09-11)",
+      "page_date": "09/27/2011",
+      "title": "GN 02603.020 - Deduction before Reduction and Facility of Payment - 09/"
+    },
+    {
+      "id": "poms_gn_02603_040",
+      "citation": "POMS GN 02603.040",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0202603040",
+      "retrieved_at_utc": "2026-10-11T11:35:47Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_gn_02603_040.html",
+      "bytes": 24924,
+      "sha256": "fec22e461e8cb1bb7829c717c5fbbc474b72ad7225e782a46b0f97c50b4bb16d",
+      "poms_transmittal": "TN 15 (09-25)",
+      "page_date": "09/27/2011",
+      "title": "GN 02603.040 - Events Subject to Deduction before Reduction - 09/"
+    },
+    {
+      "id": "poms_gn_02603_090",
+      "citation": "POMS GN 02603.090",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0202603090",
+      "retrieved_at_utc": "2026-10-11T11:35:51Z",
+      "capture": "http_body",
+      "file": "../ret_ledger_sources/poms_gn_02603_090.html",
+      "bytes": 30943,
+      "sha256": "fc544d57f3e2ec998a54b54ca4e7267dcd95b536463cabd94f00494c64f3269c",
+      "poms_transmittal": "TN 10 (07-23)",
+      "page_date": "12/16/2011",
+      "title": "GN 02603.090 - Same or Separate Household - 12/"
     }
   ]
 }

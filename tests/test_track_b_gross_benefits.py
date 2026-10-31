@@ -1397,7 +1397,11 @@ NOV, DEC, JAN, FEB = (
 
 
 def _guard(first=NOV, *, unknown=False):
-    return g.SavingsClauseGuard(first, earlier_months_unknown=unknown)
+    return g.SavingsClauseGuard(
+        first,
+        earlier_months_unknown=unknown,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
 
 
 def _refusal(guard, result):
@@ -1692,9 +1696,15 @@ def test_savings_clause_guard_needs_every_month_in_order():
             )
         )
     with pytest.raises(TypeError):
-        g.SavingsClauseGuard(NOV, earlier_months_unknown=None)
+        g.SavingsClauseGuard(
+            NOV,
+            earlier_months_unknown=None,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
     with pytest.raises(TypeError):
-        g.SavingsClauseGuard(NOV)
+        g.SavingsClauseGuard(
+            NOV, reading=g.SavingsClauseReading.LITERAL_REFUSAL
+        )
     # Invalid inputs in a month still propagate out of evaluate.
     with pytest.raises(g.InvalidFamilyInput):
         guard.evaluate(
@@ -1927,6 +1937,25 @@ def _unsupported_cases():
         g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: lambda: (
             _guard(NOV, unknown=True).admit(_review_m2_path()[0])
         ),
+        **{
+            reason: lambda reason=reason: _operational_savings_case(reason)
+            for reason in (
+                g.UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE,
+                g.UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE,
+            )
+        },
+        **{
+            reason: lambda reason=reason: _deduction_refusal_case(reason)
+            for reason in (
+                g.UnsupportedReason.PRISONER_SUSPENSION,
+                g.UnsupportedReason.DRUG_ADDICTION_SUSPENSION,
+                g.UnsupportedReason.FOREIGN_WORK_DEDUCTION,
+                g.UnsupportedReason.PENALTY_DEDUCTION,
+                g.UnsupportedReason.MARITIME_DEDUCTION,
+                g.UnsupportedReason.ELECTION_CERTIFICATE_SUSPENSION,
+                g.UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
+            )
+        },
         g.UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE: lambda: _family(
             dataclasses.replace(
                 _survivor_state(), widow_drc_savings_clause=True
@@ -2022,6 +2051,42 @@ def _savings_clause_case():
     before, after = _two_months(F("1000.10"), F(1500))
     guard.admit(before)
     guard.admit(after)
+
+
+def _operational_savings_case(reason):
+    from tests.test_track_b_gross_benefits_savings import refusal_case
+
+    return refusal_case(reason)
+
+
+def _deduction_refusal_case(reason):
+    """Exercise every new event refusal through the public G computation."""
+    events = {
+        g.UnsupportedReason.PRISONER_SUSPENSION: g.DeductionReason.PRISONER_SUSPENSION,
+        g.UnsupportedReason.DRUG_ADDICTION_SUSPENSION: g.DeductionReason.DRUG_ADDICTION_SUSPENSION,
+        g.UnsupportedReason.FOREIGN_WORK_DEDUCTION: g.DeductionReason.FOREIGN_WORK,
+        g.UnsupportedReason.PENALTY_DEDUCTION: g.DeductionReason.PENALTY,
+        g.UnsupportedReason.MARITIME_DEDUCTION: g.DeductionReason.MARITIME,
+        g.UnsupportedReason.ELECTION_CERTIFICATE_SUSPENSION: g.DeductionReason.ELECTION_CERTIFICATE_SUSPENSION,
+        g.UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION: g.DeductionReason.OWN_EARNINGS_TEST,
+    }
+    mixed = reason is g.UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION
+    return g.family_benefits_after_deductions(
+        _retired(400, 600),
+        (
+            g.Beneficiary(
+                "B", g.Role.SPOUSE, reduction_months=12 if mixed else 0
+            ),
+            g.Beneficiary("C1", g.Role.CHILD),
+            g.Beneficiary("C2", g.Role.CHILD),
+        ),
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={"C1": g.BenefitDeduction(events[reason])},
+        households={},
+        standalone=True,
+        worker_deductions={"C1": F(1)} if mixed else None,
+    )
 
 
 def test_every_unsupported_reason_has_a_refusal_case():

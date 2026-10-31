@@ -848,7 +848,11 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
     except g.FamilyConfigurationUnsupported:
         assume(False)
     total = g.savings_clause_total
-    guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        COLA_MONTHS[0],
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     assert guard.admit(before) is before
     try:
         guard.admit(after)
@@ -914,7 +918,11 @@ def test_formula_maximum_colas_preserve_available_room_and_guard_contract(
         after = _compute(after_state, raised_members, COLA_MONTHS[1])
     except g.FamilyConfigurationUnsupported:
         assume(False)
-    guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        COLA_MONTHS[0],
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     assert after.available_for_auxiliaries >= before.available_for_auxiliaries
     total = g.savings_clause_total
     qualifying_increase = after.pia > before.pia and _qualifies(before)
@@ -1002,7 +1010,9 @@ def test_savings_clause_guard_along_month_paths(path):
     * a path whose PIA never rises is never refused.
     """
     guard = g.SavingsClauseGuard(
-        path[0].payment_month, earlier_months_unknown=False
+        path[0].payment_month,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     total = g.savings_clause_total
     protected = []
@@ -1091,7 +1101,9 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
         assume(False)
     total = g.savings_clause_total
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 10), earlier_months_unknown=False
+        g.YearMonth(2026, 10),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     guard.admit(path[0])
     prior_refused = False

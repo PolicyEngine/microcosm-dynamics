@@ -372,7 +372,9 @@ def test_review_child_departure_six_months_after_cola_refuses_later_widow():
         g.Beneficiary("c2", g.Role.CHILD),
     ]
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2020, 1), earlier_months_unknown=False
+        g.YearMonth(2020, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     for month in _months_between(g.YearMonth(2020, 1), g.YearMonth(2025, 11)):
         guard.admit(_family(state, members, month))
@@ -429,7 +431,11 @@ def test_review_guarded_household_keeps_refused_record_and_denominator(
     if reverse:
         records = dict(reversed(list(records.items())))
     guards = {
-        key: g.SavingsClauseGuard(first, earlier_months_unknown=False)
+        key: g.SavingsClauseGuard(
+            first,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         for key in records
     }
     admitted = g.household_month_outcome(
@@ -476,7 +482,11 @@ def test_review_guarded_household_input_error_does_not_advance_guards(reverse):
     if reverse:
         records = dict(reversed(list(records.items())))
     guards = {
-        key: g.SavingsClauseGuard(month, earlier_months_unknown=False)
+        key: g.SavingsClauseGuard(
+            month,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         for key in records
     }
     with pytest.raises(g.InvalidFamilyInput):
@@ -499,7 +509,11 @@ def test_review_guard_aliases_are_input_errors_before_any_advance(
     }
     if reverse:
         records = dict(reversed(list(records.items())))
-    shared = g.SavingsClauseGuard(month, earlier_months_unknown=False)
+    shared = g.SavingsClauseGuard(
+        month,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     with pytest.raises(g.InvalidFamilyInput):
         g.household_month_outcome(
             records,
@@ -514,7 +528,11 @@ def test_review_guard_aliases_are_input_errors_before_any_advance(
     child = g.Beneficiary("c", g.Role.CHILD)
     records["second"] = g.HouseholdRecord("b", _retired(), [child, child])
     distinct_guards = {
-        key: g.SavingsClauseGuard(month, earlier_months_unknown=False)
+        key: g.SavingsClauseGuard(
+            month,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         for key in records
     }
     with pytest.raises(g.InvalidFamilyInput):
