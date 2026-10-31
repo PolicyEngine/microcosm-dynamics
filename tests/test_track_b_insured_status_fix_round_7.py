@@ -158,15 +158,22 @@ def test_unestablished_period_keeps_alternate_after_fra(
     _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
 
 
-@pytest.mark.parametrize("state", ["none", "unknown"])
-def test_unestablished_period_pre_fra_neighbour_keeps_ordinary_result(state):
+def test_unestablished_period_pre_fra_neighbour_keeps_ordinary_result():
     person, years = _case(fra_month=5)
     row = _row(
-        _unestablished(person, state), years, test=i.InsuredTest.DISABILITY
+        _unestablished(person, "none"), years, test=i.InsuredTest.DISABILITY
     )
     _assert_row(row)
     assert row.result.disability.insured
     assert row.result.disability.qualifying_quarter == date(1960, 4, 1)
+
+
+def test_unknown_establishment_pre_fra_neighbour_keeps_alternate_refusal():
+    person, years = _case(fra_month=5)
+    row = _row(
+        _unestablished(person, "unknown"), years, test=i.InsuredTest.DISABILITY
+    )
+    _assert_row(row, i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956)
 
 
 @settings(max_examples=16, deadline=None)

@@ -14,7 +14,10 @@ query/cap and permitted continuation. The cap never establishes the end.
 The alternate test's 20/40 exclusion uses only quarters beginning before
 the FRA month, whether or not a period is declared established. For an
 established period, the witness quarter must also begin by the declared
-end, known continuity date, or onset when neither date is known. Where
+end, known continuity date, or onset when neither date is known. UNKNOWN
+establishment before FRA uses onset too: an established completion can end
+before a later DISABILITY witness. FULLY and CURRENTLY retain favorable
+disregard of the period. Declared absence keeps the ordinary result. Where
 the literal and period-covered readings of RS00301.480 A differ, the
 alternate route retains its named refusal.
 Dated continuity restricts possible endings without establishing an end;
@@ -723,6 +726,16 @@ def _coverage_checks(person, years, month, credits):
             )
 
 
+def _current_period_establishment_unknown(person):
+    """Whether a missing establishment fact admits a pre-FRA completion."""
+    return (
+        person.disability_onset is not None
+        and person.disability_onset < _fra_date(person).replace(day=1)
+        and person.current_disability_period_provenance
+        is EarningsProvenance.UNKNOWN
+    )
+
+
 def _observable_coverage_paths(
     person, years, month, exit_month, kind, lo, quarter, upper, lower
 ):
@@ -740,10 +753,12 @@ def _observable_coverage_paths(
     path from onset and earnings; its application facts remain unmodeled.
     """
     # A successful witness at or after FRA cannot resolve an earlier
-    # alternate route requiring a freeze or DIB month before FRA.
+    # alternate route requiring a freeze or DIB month before FRA. UNKNOWN
+    # establishment also admits a period ending before a later witness.
     if lo[0] and (
         kind is not InsuredTest.DISABILITY
         or quarter < _fra_date(person).replace(day=1)
+        and not _current_period_establishment_unknown(person)
     ):
         return
     if kind is InsuredTest.FULLY:
@@ -820,8 +835,13 @@ def _pre1956_alternate_possible(
     # A witness must allow a freeze or DIB before FRA (Act 216(i)(2)(D),
     # 404.315(a), 404.321(a)-(b)), regardless of declared establishment.
     last = min(month, _fra_date(person).replace(day=1) - timedelta(days=1))
-    if person.current_disability_period_established:
+    if (
+        person.current_disability_period_established
+        or _current_period_establishment_unknown(person)
+    ):
         # 404.321(b): a pre-1980 period ends after disability ended or at 65.
+        # UNKNOWN establishment admits an early end and cannot supply
+        # either an end or continuity date, so only onset is shared.
         last = min(
             last,
             person.current_disability_period_end
@@ -1609,6 +1629,10 @@ def insured_status(
     quarter beginning before the FRA month, independently of establishment.
     For established periods it must also begin by every completion's
     covered date: the declared end, continuity date, or otherwise onset.
+    UNKNOWN establishment before FRA uses onset for the same bound and
+    cannot bypass the alternate with a later positive DISABILITY witness.
+    FULLY and CURRENTLY retain true favorable-disregard witnesses; declared
+    absence and onset at or after FRA admit no established completion.
     Disagreement with the literal any-quarter reading retains the named
     alternate refusal; post-1980 endings can differ under 404.321(c).
     Establishment is an input error only if no ordinary, observable, or
@@ -1638,12 +1662,7 @@ def insured_status(
         person.prior_disability_periods_provenance
         is EarningsProvenance.UNKNOWN
     )
-    current_unknown = (
-        person.disability_onset is not None
-        and person.disability_onset < _fra_date(person).replace(day=1)
-        and person.current_disability_period_provenance
-        is EarningsProvenance.UNKNOWN
-    )
+    current_unknown = _current_period_establishment_unknown(person)
     end_unknown = _period_end_unknown(person, month)
     max_rows, _ = _world(
         person,

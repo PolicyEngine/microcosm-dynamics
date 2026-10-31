@@ -2615,5 +2615,99 @@
     }
   ],
   "round_8_note": "Six isolated in-memory implementation mutations were caught and discarded against the final source. Removing the declared-end bound, removing the continuity bound, bypassing the continuity ceiling for an UNKNOWN end, substituting query for onset, stopping one quarter early, and binding only declared ends each fail named public-path tests. The continuity removal catches loss of a covered-quarter witness, while bypassing the ceiling catches unsafe extension to a later quarter. The declared-end-only mutation is caught by the UNKNOWN-end completion invariant. Every foreground child verified the disk source SHA-256 stayed unchanged. No implementation mutation was written to disk and no existing assertion was weakened.",
-  "round_8_final_source_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d"
+  "round_8_final_source_sha256": "c8ce8ed630e946c5c46121ed9c26150f6f4744df82066ccbea9ece08069b049d",
+  "round_9_mutations": [
+    {
+      "name": "restore_positive_disability_return_for_unknown_establishment",
+      "before": "        and not _current_period_establishment_unknown(person)\n",
+      "after": "",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_9.py::test_reviewed_status_table_retains_rows_and_weights[InsuredTest.DISABILITY-unknown]"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_9.py::test_reviewed_status_table_retains_rows_and_weights[InsuredTest.DISABILITY-unknown]"
+      ],
+      "summary": [
+        "1 failed in 4.39s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9-epuf",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round9-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round9-epuf PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nprint('source_before_sha256', hashlib.sha256(original.encode()).hexdigest())\nbefore = \"        and not _current_period_establishment_unknown(person)\\n\"\nafter = \"\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', \"tests/test_track_b_insured_status_fix_round_9.py::test_reviewed_status_table_retains_rows_and_weights[InsuredTest.DISABILITY-unknown]\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "source_after_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "output_file": "scratch/review/round-9-mutation-restore_positive_disability_return_for_unknown_establishment.txt"
+    },
+    {
+      "name": "drop_unknown_establishment_from_covered_date_bound",
+      "before": "    if (\n        person.current_disability_period_established\n        or _current_period_establishment_unknown(person)\n    ):\n        # 404.321(b):",
+      "after": "    if person.current_disability_period_established:\n        # 404.321(b):",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_refuses_witness_one_quarter_after_onset"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_refuses_witness_one_quarter_after_onset"
+      ],
+      "summary": [
+        "1 failed in 2.39s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9-epuf",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round9-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round9-epuf PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nprint('source_before_sha256', hashlib.sha256(original.encode()).hexdigest())\nbefore = \"    if (\\n        person.current_disability_period_established\\n        or _current_period_establishment_unknown(person)\\n    ):\\n        # 404.321(b):\"\nafter = \"    if person.current_disability_period_established:\\n        # 404.321(b):\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', \"tests/test_track_b_insured_status_fix_round_9.py::test_unknown_establishment_refuses_witness_one_quarter_after_onset\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "source_after_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "output_file": "scratch/review/round-9-mutation-drop_unknown_establishment_from_covered_date_bound.txt"
+    },
+    {
+      "name": "apply_unknown_alternate_refusal_to_fully",
+      "before": "    if (\n        person.current_disability_period_established\n        and _pre1956_alternate_possible(",
+      "after": "    if (\n        (person.current_disability_period_established\n         or _current_period_establishment_unknown(person))\n        and _pre1956_alternate_possible(",
+      "pytest_selectors": [
+        "tests/test_track_b_insured_status_fix_round_9.py::test_unknown_fully_keeps_favorable_ordinary_witness"
+      ],
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_9.py::test_unknown_fully_keeps_favorable_ordinary_witness"
+      ],
+      "summary": [
+        "1 failed in 5.01s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9-epuf",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round9-psid POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round9-epuf PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport hashlib\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nprint('source_before_sha256', hashlib.sha256(original.encode()).hexdigest())\nbefore = \"    if (\\n        person.current_disability_period_established\\n        and _pre1956_alternate_possible(\"\nafter = \"    if (\\n        (person.current_disability_period_established\\n         or _current_period_establishment_unknown(person))\\n        and _pre1956_alternate_possible(\"\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', \"tests/test_track_b_insured_status_fix_round_9.py::test_unknown_fully_keeps_favorable_ordinary_witness\"])\nassert Path(i.__file__).read_text() == original\nprint('source_after_sha256', hashlib.sha256(Path(i.__file__).read_bytes()).hexdigest())\nraise SystemExit(result)\nPY",
+      "source_before_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "source_after_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5",
+      "output_file": "scratch/review/round-9-mutation-apply_unknown_alternate_refusal_to_fully.txt"
+    }
+  ],
+  "round_9_note": "Three isolated in-memory implementation mutations were caught and discarded against the final source. Restoring the positive DISABILITY return for UNKNOWN establishment fails the reviewed status table; dropping UNKNOWN establishment from the covered-date bound fails the one-quarter-after-onset refusal; applying the alternate refusal to UNKNOWN FULLY fails its favorable ordinary-witness test. Every foreground process checked the same source SHA-256 before and after. No implementation mutation was written to disk and no existing assertion was weakened.",
+  "round_9_final_source_sha256": "2cc1ffae363bc7334d5e50fdc088b858ab60a28130cde20fa581690088459aa5"
 }
