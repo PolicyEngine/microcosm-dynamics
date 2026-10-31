@@ -50,7 +50,10 @@ variable names among the string literals of a variable's body and of the
 federal SSI helpers whose names it calls, whatever its module binds those
 names to, so a formula that reaches a variable through a function or
 constant its module binds, through a parameter's values or through a name it
-builds reads a variable the record does not list, and no test covers that.
+builds reads a variable the record does not list. An oracle test checks the
+pinned release's records against the engine's trace over invented
+households; a code path those households don't reach, and any other release,
+stay outside that test.
 The engine's directory walk also runs every module under
 ``policyengine_us/variables`` outside the closure, and such a module can
 change what the engine loads; the reader does not read those modules, and

@@ -5,6 +5,7 @@ tier substring without reusing the older bridge environment variable.
 """
 
 import ast
+import copy
 import hashlib
 import json
 import os
@@ -28,7 +29,7 @@ from populace_dynamics.income_resources.ssi.runner import (
     SSIRunner,
 )
 
-from .ssi_invented import invented_case
+from .ssi_invented import INVENTED_INPUTS, invented_case
 from .test_ssi_inventory import (
     ADMITTED_AGE_FORMS,
     ADMITTED_FORMS,
@@ -1305,3 +1306,304 @@ def test_admitted_import_time_forms_load_as_the_reader_reads_them():
         assert read == INVENTED_AGE_RECORD | {"default": read["default"]}
         assert engine == plain | {"default": read["default"]}
         assert type(engine["default"]) is type(read["default"])
+
+
+TRACE_CHILD = r"""
+import json
+import sys
+
+from policyengine_us import Simulation
+
+job = json.load(sys.stdin)
+names, parameters, edges = set(), set(), set()
+
+
+def walk(node):
+    names.add(node.name)
+    parameters.update(row.name for row in node.parameters)
+    for child in node.children:
+        edges.add((node.name, child.name))
+        walk(child)
+
+
+for case in job["cases"]:
+    simulation = Simulation(situation=case, trace=True)
+    for name, period in job["targets"]:
+        simulation.calculate(name, period)
+    for tree in simulation.tracer.trees:
+        walk(tree)
+json.dump(
+    {
+        "variables": sorted(names),
+        "parameters": sorted(parameters),
+        "edges": sorted(edges),
+    },
+    sys.stdout,
+)
+"""
+
+# The engine's own route for three inputs, which no record names. At start
+# a simulation moves each one's values to its _before_lsr variable
+# (policyengine_us/system.py), and each input's adds then sum that and a
+# behavioral response, which is 0 without a reform.
+ENGINE_INPUT_ROUTE = frozenset(
+    {
+        "employment_income_before_lsr",
+        "employment_income_behavioral_response",
+        "labor_supply_behavioral_response",
+        "self_employment_income_before_lsr",
+        "self_employment_income_behavioral_response",
+        "sstb_self_employment_income_before_lsr",
+        "sstb_self_employment_income_behavioral_response",
+    }
+)
+# The engine reads gov.abolitions.<name> before it calculates any variable
+# (policyengine_core/simulations/simulation.py), so a trace holds one for
+# each variable and these are no formula's dependency.
+ENGINE_GATE_PREFIX = "gov.abolitions."
+TRACE_YEAR = "2026"
+
+
+def trace_person(**changes):
+    """Every input of one invented person, for the trace's one year."""
+    row = INVENTED_INPUTS | {"is_tax_unit_head": False} | changes
+    return {name: {TRACE_YEAR: value} for name, value in row.items()}
+
+
+def trace_case(people, couples=()):
+    """One invented household of ``people``, married as ``couples`` say."""
+    names = list(people)
+    paired = {name for pair in couples for name in pair}
+    units = {
+        f"couple_{i}": {"members": list(p)} for i, p in enumerate(couples)
+    }
+    units |= {
+        f"single_{name}": {"members": [name]}
+        for name in names
+        if name not in paired
+    }
+    return {
+        "people": people,
+        "marital_units": units,
+        "tax_units": {"unit": {"members": names}},
+        "families": {"unit": {"members": names}},
+        "spm_units": {"unit": {"members": names}},
+        "households": {
+            "unit": {"members": names, "state_name": {TRACE_YEAR: "TX"}}
+        },
+    }
+
+
+# Invented households that between them reach every listed name: aged,
+# disabled, blind and student claimants, a couple, deeming from a spouse and
+# from parents, the living arrangements and a noncitizen.
+INVENTED_TRACE_CASES = (
+    trace_case(
+        {
+            "claimant": trace_person(
+                is_tax_unit_head=True,
+                social_security=9000,
+                interest_income=400,
+            )
+        }
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                age=40,
+                is_tax_unit_head=True,
+                meets_ssi_disability_criteria=True,
+                employment_income=6000,
+                self_employment_income=500,
+            )
+        }
+    ),
+    trace_case(
+        {
+            "first": trace_person(is_tax_unit_head=True, pension_income=3000),
+            "second": trace_person(
+                is_tax_unit_spouse=True, rental_income=1200
+            ),
+        },
+        [("first", "second")],
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                is_tax_unit_head=True, social_security=6000
+            ),
+            "spouse": trace_person(
+                age=55, is_tax_unit_spouse=True, employment_income=14000
+            ),
+        },
+        [("claimant", "spouse")],
+    ),
+    trace_case(
+        {
+            "parent": trace_person(
+                age=38, is_tax_unit_head=True, employment_income=30000
+            ),
+            "other": trace_person(
+                age=36, is_tax_unit_spouse=True, dividend_income=800
+            ),
+            "child": trace_person(
+                age=9,
+                meets_ssi_disability_criteria=True,
+                child_support_received=900,
+            ),
+        },
+        [("parent", "other")],
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                is_tax_unit_head=True,
+                ssi_lives_in_another_persons_household=True,
+                ssi_receives_food_from_others=True,
+                ssi_receives_shelter_from_others_in_household=True,
+                ssi_shelter_support_value=2400,
+                gi_cash_assistance=300,
+            ),
+            "host": trace_person(age=30, employment_income=45000),
+        }
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                age=50,
+                is_blind=True,
+                is_tax_unit_head=True,
+                is_in_medicaid_facility=True,
+                ssi_lives_in_medical_treatment_facility=True,
+                ssi_medicaid_pays_majority_of_care=True,
+                workers_compensation=500,
+            )
+        }
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                age=20,
+                is_tax_unit_head=True,
+                meets_ssi_disability_criteria=True,
+                is_full_time_college_student=True,
+                employment_income=4000,
+                bank_account_assets=900,
+                stock_assets=800,
+                bond_assets=700,
+            )
+        }
+    ),
+    trace_case(
+        {
+            "claimant": trace_person(
+                is_tax_unit_head=True,
+                immigration_status="LEGAL_PERMANENT_RESIDENT",
+                ssi_qualifying_quarters_earnings=12,
+                veterans_benefits=600,
+                survivor_benefits=300,
+                unemployment_compensation=200,
+                alimony_income=100,
+                financial_assistance=50,
+                disability_benefits=70,
+                retirement_distributions=90,
+                sstb_self_employment_income=20,
+            )
+        }
+    ),
+)
+
+
+def trace_gaps(inventory, trace):
+    """Every way the engine's trace and the inventory disagree."""
+    records = {row["name"]: row for row in inventory["variables"]}
+    inputs = {row["name"] for row in inventory["inputs"]}
+    bypassed = inputs | set(inventory["explicit_formula_boundaries"])
+    listed = set(records) | inputs
+    read = set(trace["variables"])
+    parameters = [row["name"] for row in inventory["parameters"]]
+    return {
+        "unlisted": sorted(read - listed - ENGINE_INPUT_ROUTE),
+        "unread": sorted((listed | ENGINE_INPUT_ROUTE) - read),
+        "edges": sorted(
+            f"{parent} -> {child}"
+            for parent, child in trace["edges"]
+            if parent in records and parent not in bypassed
+            # A variable can read itself at another period.
+            and child != parent
+            and child not in records[parent]["dependencies"]
+        ),
+        "parameters": sorted(
+            name
+            for name in trace["parameters"]
+            if not name.startswith(ENGINE_GATE_PREFIX)
+            and not any(
+                name == parameter or name.startswith(f"{parameter}.")
+                for parameter in parameters
+            )
+        ),
+    }
+
+
+def test_engine_trace_reads_only_what_the_inventory_lists():
+    """Differential: the record's dependencies come from a static read of
+    string literals, so a formula could reach a variable the record leaves
+    out. Over invented households, with every input the contract names set,
+    the pinned engine's tracer reads exactly the listed variables and the
+    named route for three inputs, and every edge and parameter it reads is
+    on the record."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    inventory = json.loads(
+        CONTRACT_PATH.with_name("inventory.json").read_text()
+    )
+    assert {row["name"] for row in inventory["inputs"]} == set(INVENTED_INPUTS)
+    job = {
+        "cases": INVENTED_TRACE_CASES,
+        "targets": [
+            [
+                row["name"],
+                f"{TRACE_YEAR}-01" if row["period"] == "MONTH" else TRACE_YEAR,
+            ]
+            for row in inventory["variables"]
+        ],
+    }
+    completed = subprocess.run(
+        [str(python), "-I", "-c", TRACE_CHILD],
+        input=json.dumps(job),
+        capture_output=True,
+        text=True,
+        timeout=1800,
+        check=True,
+    )
+    trace = json.loads(completed.stdout)
+    assert trace_gaps(inventory, trace) == {
+        "unlisted": [],
+        "unread": [],
+        "edges": [],
+        "parameters": [],
+    }
+
+    # Controls: each kind of gap would show on these traces.
+    target = "ssi_countable_income"
+    without_record = copy.deepcopy(inventory)
+    without_record["variables"] = [
+        row for row in inventory["variables"] if row["name"] != target
+    ]
+    assert trace_gaps(without_record, trace)["unlisted"] == [target]
+    without_edge = copy.deepcopy(inventory)
+    record = next(
+        row for row in without_edge["variables"] if row["name"] == target
+    )
+    assert record["dependencies"]
+    dropped = record["dependencies"].pop()
+    assert trace_gaps(without_edge, trace)["edges"] == [
+        f"{target} -> {dropped}"
+    ]
+    unread = copy.deepcopy(inventory)
+    unread["variables"].append(unread["variables"][0] | {"name": "invented"})
+    assert trace_gaps(unread, trace)["unread"] == ["invented"]
+    without_parameter = copy.deepcopy(inventory)
+    without_parameter["parameters"] = []
+    assert trace_gaps(without_parameter, trace)["parameters"]
