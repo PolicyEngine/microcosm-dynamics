@@ -717,7 +717,7 @@ def _coverage_checks(person, years, month, credits):
 
 
 def _observable_coverage_paths(
-    person, years, month, exit_month, kind, lo, upper
+    person, years, month, exit_month, kind, lo, upper, lower
 ):
     """Refuse favorable specialist paths revealed by ordinary declarations.
 
@@ -784,7 +784,7 @@ def _observable_coverage_paths(
                 "Act213(c); filing and retroactivity facts are unmodeled",
             )
     elif kind is InsuredTest.DISABILITY and _pre1956_alternate_possible(
-        person, upper, month, exit_month
+        person, upper, month, exit_month, lower_credits=lower
     ):
         _refuse(
             InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
@@ -793,12 +793,41 @@ def _observable_coverage_paths(
         )
 
 
-def _pre1956_alternate_possible(person, credits, month, exit_month):
+def _pre1956_alternate_possible(
+    person, credits, month, exit_month, *, lower_credits=None
+):
     """RS00301.480 possibility, without guessing filing eligibility."""
     if person.disability_onset is None or person.disability_onset >= date(
         1956, 1, 1
     ):
         return False
+    # RS00301.480 A excludes anyone with 20/40 in any disabled quarter
+    # before October 1960. Only the lower filling can exclude every
+    # completion. Use the ordinary disability window, including favorable
+    # consideration or disregard of all prior periods (404.130(f)).
+    lower = credits if lower_credits is None else lower_credits
+    for quarter in range(
+        _qid(person.disability_onset), min(_qid(month), 1960 * 4 + 2) + 1
+    ):
+        # Use the established-period disability scan's FRA boundary.
+        if (
+            person.current_disability_period_established
+            and quarter > _fra_quarter(person)
+        ):
+            break
+        for use_periods in (
+            (True, False) if person.prior_disability_periods else (True,)
+        ):
+            rows, periods = _world(
+                person, lower, quarter, exit_month, use_periods
+            )
+            for boundary in _boundary_variants(rows, periods):
+                window = _window(quarter, 40, periods, boundary)
+                if (
+                    len(set(_assignment(rows, window, boundary)) & set(window))
+                    >= 20
+                ):
+                    return False
     if person.current_disability_period_established:
         # RS00301.480 B.1: a freeze cannot begin before 1952-07-01.
         # An independent alternate route still must start before the
@@ -853,6 +882,32 @@ def _credits(year, row, upper):
         )
     except _UnsupportedQC as error:
         _refuse(InsuredUnsupportedReason(error.reason), str(error))
+
+
+def _deferred_credit_bounds(year, row):
+    """Possibility-only bounds; never replace a refused ordinary result."""
+    if year > 2027:
+        # Act 213(d)(2): an increment cannot fall below captured 2027's.
+        return ((), 0), (
+            (),
+            _post1977_qc_count(
+                2027,
+                row.wages or Fraction(0),
+                row.self_employment or Fraction(0),
+            ),
+        )
+    if year == 1937:
+        # Act 213(b)'s half-year allocation prevents fixing raw wage slots.
+        return ((), 0), ((), 4)
+    # Unsupported annual AG/SE allocation cannot remove independently
+    # credited ordinary wages or supported calendar-year SE quarters.
+    fixed, flexible = _pre1978_qc_credits(
+        year,
+        row.quarterly_wages or (Fraction(0),) * 4,
+        (row.self_employment or Fraction(0)) if year >= 1951 else Fraction(0),
+        Fraction(0),
+    )
+    return (fixed, flexible), (fixed, 4 - len(fixed))
 
 
 def _world(
@@ -1059,7 +1114,9 @@ def _witness(person, credits, at, exit_month, kind, *, onset=True):
     return best[1]
 
 
-def _unknown_prior_history_is_empty(person, credits, month, exit_month):
+def _unknown_prior_history_is_empty(
+    person, credits, month, exit_month, *, lower_credits=None
+):
     """Prove infeasibility of the earliest nonempty prior period only.
 
     The earliest period must begin insured without any earlier exclusions
@@ -1112,7 +1169,11 @@ def _unknown_prior_history_is_empty(person, credits, month, exit_month):
             current_disability_period_continues_through_convention_id=None,
         )
         if _pre1956_alternate_possible(
-            possible_prior, credits, start, exit_month
+            possible_prior,
+            credits,
+            start,
+            exit_month,
+            lower_credits=lower_credits,
         ):
             return False
         if _witness(
@@ -1329,7 +1390,7 @@ def _current_period_start_horizon(person, month):
 
 
 def _specialist_establishment_possible(
-    person, years, credits, month, exit_month
+    person, years, credits, month, exit_month, *, lower_credits=None
 ):
     """Overapproximate flagged/observable alternatives to ordinary insurance.
 
@@ -1348,11 +1409,21 @@ def _specialist_establishment_possible(
         ):
             continue
         return True
-    return _pre1956_alternate_possible(person, credits, month, exit_month)
+    return _pre1956_alternate_possible(
+        person, credits, month, exit_month, lower_credits=lower_credits
+    )
 
 
 def _could_establish_current_period(
-    person, years, credits, month, exit_month, maximum_qcs
+    person,
+    years,
+    credits,
+    month,
+    exit_month,
+    maximum_qcs,
+    *,
+    lower_credits=None,
+    deferred_years=(),
 ):
     """Reject only a declaration impossible under every possible route.
 
@@ -1361,18 +1432,27 @@ def _could_establish_current_period(
     prior-quarter overlap must be cleared by that same concrete filling.
     Calendar/schema contradictions have already been rejected. Ordinary
     premises cannot exclude a specialist route or a short DIB-entitled
-    prior period. Unresolved prior histories and more than 4096 overlap
-    fillings remain explicitly outside the exact ordinary predicate.
+    prior period. Fixed quarter overlap is checked before searching.
+    Unresolved prior histories and more than 4096 overlap fillings that
+    survive that check remain outside the exact ordinary predicate.
     """
     if not person.current_disability_period_established:
         return True
+    horizon = _current_period_start_horizon(person, month)
+    if person.prior_disability_periods and not any(
+        all(
+            not _qid(period.start) <= quarter <= _qid(period.end)
+            for period in person.prior_disability_periods
+        )
+        for quarter in range(_qid(person.disability_onset), _qid(horizon) + 1)
+    ):
+        return False
     if _specialist_establishment_possible(
-        person, years, credits, month, exit_month
+        person, years, credits, month, exit_month, lower_credits=lower_credits
     ):
         return True
     if maximum_qcs < 6:
         return False
-    horizon = _current_period_start_horizon(person, month)
     rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
     if sum(len(_assign_qcs(*row)) for row in rows.values()) < 6:
         return False
@@ -1380,7 +1460,7 @@ def _could_establish_current_period(
         person.prior_disability_periods_provenance
         is EarningsProvenance.UNKNOWN
         and not _unknown_prior_history_is_empty(
-            person, credits, month, exit_month
+            person, credits, month, exit_month, lower_credits=lower_credits
         )
     ):
         return True
@@ -1405,13 +1485,17 @@ def _could_establish_current_period(
     unknown = tuple(
         year
         for year, row in sorted(years.items())
-        if row.provenance is EarningsProvenance.UNKNOWN
+        if (
+            row.provenance is EarningsProvenance.UNKNOWN
+            or year in deferred_years
+        )
         and year <= horizon.year
     )
     if not unknown:
         return False
-    lower = dict(credits)
-    lower.update({year: ((), 0) for year in unknown})
+    lower = dict(credits if lower_credits is None else lower_credits)
+    if lower_credits is None:
+        lower.update({year: ((), 0) for year in unknown})
     try:
         _with_current_period(plain, lower, horizon, exit_month)
     except InvalidFamilyInput:
@@ -1425,22 +1509,34 @@ def _could_establish_current_period(
     for year in unknown:
         allowed = rows.get(year, ((), 0, ()))[2]
         if year < 1978:
+            fixed = tuple(q for q in lower[year][0] if q in allowed)
+            vacant = tuple(q for q in allowed if q not in fixed)
             options.append(
                 tuple(
                     (
                         tuple(
-                            q
-                            for q, flag in zip(allowed, flags, strict=True)
-                            if flag
+                            sorted(
+                                fixed
+                                + tuple(
+                                    q
+                                    for q, flag in zip(
+                                        vacant, flags, strict=True
+                                    )
+                                    if flag
+                                )
+                            )
                         ),
                         0,
                     )
-                    for flags in product((False, True), repeat=len(allowed))
+                    for flags in product((False, True), repeat=len(vacant))
                 )
             )
         else:
             options.append(
-                tuple(((), count) for count in range(len(allowed) + 1))
+                tuple(
+                    ((), count)
+                    for count in range(min(len(allowed), credits[year][1]) + 1)
+                )
             )
     if prod(map(len, options)) > 4096:
         _refuse(
@@ -1492,13 +1588,22 @@ def insured_status(
     query, and the first insured quarter supplies the witness (404.131).
     Establishment is an input error only if no ordinary, observable, or
     flagged specialist route could validate any completion of the facts.
+    History validation runs first. Uncomputable QC rows use bounded
+    unknown credits only for this proof; a possible declaration retains
+    its original conversion refusal, including its reason and detail.
     No entry date, imputation, or pre-entry zero convention exists.
     """
     _validate_history(
         person, years, month, coverage_end_month, totalization_credits
     )
-    lower = {y: _credits(y, row, False) for y, row in sorted(years.items())}
-    upper = {y: _credits(y, row, True) for y, row in sorted(years.items())}
+    lower, upper, deferred = {}, {}, {}
+    for year, row in sorted(years.items()):
+        try:
+            lower[year] = _credits(year, row, False)
+            upper[year] = _credits(year, row, True)
+        except InsuredConfigurationUnsupported as error:
+            deferred[year] = error
+            lower[year], upper[year] = _deferred_credit_bounds(year, row)
     unknown = tuple(
         y
         for y, row in sorted(years.items())
@@ -1524,17 +1629,32 @@ def insured_status(
         include_zero=True,
     )
     maximum_qcs = sum(len(_assign_qcs(*row)) for row in max_rows.values())
-    if not _could_establish_current_period(
-        person, years, upper, month, coverage_end_month, maximum_qcs
-    ):
+    try:
+        possible = _could_establish_current_period(
+            person,
+            years,
+            upper,
+            month,
+            coverage_end_month,
+            maximum_qcs,
+            lower_credits=lower,
+            deferred_years=tuple(deferred),
+        )
+    except InsuredConfigurationUnsupported:
+        if deferred:
+            raise next(iter(deferred.values())) from None
+        raise
+    if not possible:
         raise InvalidFamilyInput(
             "Established current period has no possible insured disabled quarter"
         )
+    if deferred:
+        raise next(iter(deferred.values()))
     _coverage_checks(person, years, month, totalization_credits)
     if (
         person.current_disability_period_established
         and _pre1956_alternate_possible(
-            person, upper, month, coverage_end_month
+            person, upper, month, coverage_end_month, lower_credits=lower
         )
     ):
         _refuse(
@@ -1663,7 +1783,14 @@ def insured_status(
             decision_lo_people, lo_candidates, strict=True
         ):
             _observable_coverage_paths(
-                p, years, month, coverage_end_month, kind, witness, upper
+                p,
+                years,
+                month,
+                coverage_end_month,
+                kind,
+                witness,
+                upper,
+                lower,
             )
         if lo[0] != hi[0]:
             _refuse(

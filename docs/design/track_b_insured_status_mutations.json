@@ -2082,5 +2082,225 @@
     }
   ],
   "round_5_note": "Ordinary fixed-date and same-filling validity, source-permitted SSPA exemptions and retained birth/assignment contradictions, continuity candidate intersection and validation, and automatic historical/FRA chronology. Every deliberate mutation was caught and discarded or reverted; no existing test assertion was weakened.",
-  "round_5_final_source_sha256": "04964886c402b0ff44dd958fa0b82b6055730f463fdf660a6e346999e13fd493"
+  "round_5_final_source_sha256": "04964886c402b0ff44dd958fa0b82b6055730f463fdf660a6e346999e13fd493",
+  "round_6_mutations": [
+    {
+      "name": "conversion_refusal_before_impossibility",
+      "before": "deferred[year] = error",
+      "after": "raise error",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unrelated_uncaptured_increment_cannot_hide_impossible_fixed_end[False-0-birth0]",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unrelated_uncaptured_increment_cannot_hide_impossible_fixed_end[False-0-birth0]"
+      ],
+      "summary": [
+        "1 failed in 18.84s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'deferred[year] = error'\nafter = 'raise error'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unrelated_uncaptured_increment_cannot_hide_impossible_fixed_end[False-0-birth0]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "drop_nondecreasing_increment_bound",
+      "before": "2027,\n                row.wages",
+      "after": "1978,\n                row.wages",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_ordering.py::test_uncaptured_increment_bounds_preserve_both_classifications[3939]",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_ordering.py::test_uncaptured_increment_bounds_preserve_both_classifications[3939]"
+      ],
+      "summary": [
+        "1 failed in 13.12s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = '2027,\\n                row.wages'\nafter = '1978,\\n                row.wages'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_ordering.py::test_uncaptured_increment_bounds_preserve_both_classifications[3939]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "exclude_alternate_using_upper_filling",
+      "before": "lower = credits if lower_credits is None else lower_credits",
+      "after": "lower = credits",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_routes.py::test_some_twenty_of_forty_fillings_keep_named_alternate_refusal",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_routes.py::test_some_twenty_of_forty_fillings_keep_named_alternate_refusal"
+      ],
+      "summary": [
+        "1 failed in 21.02s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'lower = credits if lower_credits is None else lower_credits'\nafter = 'lower = credits'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_routes.py::test_some_twenty_of_forty_fillings_keep_named_alternate_refusal'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "include_october_1960_in_exclusion",
+      "before": "min(_qid(month), 1960 * 4 + 2)",
+      "after": "min(_qid(month), 1960 * 4 + 3)",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_routes.py::test_twenty_of_forty_alternate_exclusion_stops_before_october_1960",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_routes.py::test_twenty_of_forty_alternate_exclusion_stops_before_october_1960[4]"
+      ],
+      "summary": [
+        "1 failed, 1 passed in 20.12s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'min(_qid(month), 1960 * 4 + 2)'\nafter = 'min(_qid(month), 1960 * 4 + 3)'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_routes.py::test_twenty_of_forty_alternate_exclusion_stops_before_october_1960'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "skip_immutable_quarter_overlap",
+      "before": "if person.prior_disability_periods and not any(",
+      "after": "if False and not any(",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_routes.py::test_fixed_same_quarter_overlap_precedes_large_filling_refusal",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_routes.py::test_fixed_same_quarter_overlap_precedes_large_filling_refusal"
+      ],
+      "summary": [
+        "1 failed in 14.63s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'if person.prior_disability_periods and not any('\nafter = 'if False and not any('\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_routes.py::test_fixed_same_quarter_overlap_precedes_large_filling_refusal'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "omit_deferred_overlap_fillings",
+      "before": "or year in deferred_years",
+      "after": "or False",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle"
+      ],
+      "summary": [
+        "1 failed in 129.36s (0:02:09)"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'or year in deferred_years'\nafter = 'or False'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "drop_guaranteed_quarter_minimum",
+      "before": "fixed = tuple(q for q in lower[year][0] if q in allowed)",
+      "after": "fixed = ()",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle"
+      ],
+      "summary": [
+        "1 failed in 105.17s (0:01:45)"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'fixed = tuple(q for q in lower[year][0] if q in allowed)'\nafter = 'fixed = ()'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_ordering.py::test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "replace_original_refusal_with_complexity",
+      "before": "raise next(iter(deferred.values())) from None",
+      "after": "raise",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unresolved_overlap_keeps_original_deferred_refusal",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unresolved_overlap_keeps_original_deferred_refusal"
+      ],
+      "summary": [
+        "1 failed in 20.20s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'raise next(iter(deferred.values())) from None'\nafter = 'raise'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_ordering.py::test_unresolved_overlap_keeps_original_deferred_refusal'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    },
+    {
+      "name": "ignore_established_period_fra_scan_boundary",
+      "before": "and quarter > _fra_quarter(person)",
+      "after": "and False",
+      "pytest_selector": "tests/test_track_b_insured_status_fix_round_6_routes.py::test_alternate_exclusion_uses_existing_disability_scan_fra_boundary[3]",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_fix_round_6_routes.py::test_alternate_exclusion_uses_existing_disability_scan_fra_boundary[3]"
+      ],
+      "summary": [
+        "1 failed in 23.12s"
+      ],
+      "restored": true,
+      "method": "Isolated in-memory module mutation; implementation file never changed.",
+      "environment": {
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "OMP_NUM_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round6",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round6"
+      },
+      "reproduction_command": "env PYTHONPATH=\"$PWD/src:$PWD\" OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round6 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round6 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python - <<'PY'\nfrom pathlib import Path\nimport pytest\nfrom populace_dynamics.track_b import insured_status as i\noriginal = Path(i.__file__).read_text()\nbefore = 'and quarter > _fra_quarter(person)'\nafter = 'and False'\nassert original.count(before) == 1\nexec(compile(original.replace(before, after), i.__file__, 'exec'), i.__dict__)\nresult = pytest.main(['-p', 'no:xdist', '-p', 'no:cacheprovider', '-q', '--tb=short', 'tests/test_track_b_insured_status_fix_round_6_routes.py::test_alternate_exclusion_uses_existing_disability_scan_fra_boundary[3]'])\nassert Path(i.__file__).read_text() == original\nraise SystemExit(result)\nPY"
+    }
+  ],
+  "round_6_note": "Nine isolated in-memory implementation mutations were caught and discarded against the final source. No implementation mutation was written to disk; every child verified the final source SHA-256 stayed unchanged. The original sorted-year conversion refusal, bounded unknown fillings, fixed quarterly minimum, lower-credit 20/40 exclusion with its existing FRA boundary and October 1960 cutoff, and immutable overlap check remain enforced. No existing test assertion was weakened.",
+  "round_6_final_source_sha256": "223fb5e5b436a12b049d948c9cfdcf9827c606f403ab5ae419a37e2024dc174f"
 }
