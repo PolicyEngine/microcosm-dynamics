@@ -72,6 +72,7 @@ def invented_case(monkeypatch):
 
 
 @given(st.text().filter(lambda value: value != "6.10.2"))
+@settings(deadline=None)
 def test_version_mismatch_refuses(actual):
     with pytest.raises(ValueError, match="pinned"):
         check_versions(
@@ -116,6 +117,7 @@ _OUTSIDE_LINE = st.builds(
     st.lists(_OUTSIDE_LINE, max_size=3),
     st.lists(_OUTSIDE_LINE, max_size=3),
 )
+@settings(deadline=None)
 def test_record_digest_ignores_install_location(inside, here, there):
     # Console scripts outside site-packages carry the interpreter's path.
     from populace_dynamics.income_resources.ssi import _child
@@ -126,6 +128,7 @@ def test_record_digest_ignores_install_location(inside, here, there):
 
 
 @given(st.lists(_RECORD_LINE, min_size=1, max_size=6), st.data())
+@settings(deadline=None)
 def test_record_digest_binds_package_files(inside, data):
     from populace_dynamics.income_resources.ssi import _child
 
@@ -213,6 +216,7 @@ def test_periodic_payment_branch_refuses_even_with_zero_balance(invented_case):
 
 
 @given(st.integers(min_value=1, max_value=20))
+@settings(deadline=None)
 def test_batch_accounting_retains_all_refusals(count):
     # Invalid annual period refuses before touching a contract or interpreter.
     cases = [
@@ -227,6 +231,7 @@ def test_batch_accounting_retains_all_refusals(count):
 
 
 @given(st.one_of(st.none(), st.integers(), st.lists(st.integers())))
+@settings(deadline=None)
 def test_malformed_population_is_counted(population):
     from .ssi_invented import invented_case
 

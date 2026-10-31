@@ -1,48 +1,69 @@
 """Inventory installed SSI source without importing the country model.
 
 Invariants: every variable and parameter in the federal SSI trees appears;
-the variable files are those the engine's directory walk loads, and a
-dependency whose file stem names more than one of them refuses; every
-dependency reaches another inventoried variable or an explicit input;
-formula boundaries are named, rather than allowing an implicit model default;
-each variable's value_type, entity and period are one plain assignment each,
-of a name its module never binds, the value_type naming a primitive type or
-Enum, or the inventory refuses; its default is absent, a literal of its
-primitive type, or a member of its enum class, by one plain assignment, or
-the inventory refuses, and an int default of a float variable converts to
-the same float; an enum variable's members come only from a class whose
-membership a static read settles, and include its default, or the
-inventory refuses; source is decoded as Python decodes it; the output is
-deterministic for the same source and distribution metadata.
+the variable files are those the engine's directory walk loads, a folder
+whose path has a glob character refuses, and a dependency whose file stem
+names more than one of them refuses; every dependency reaches another
+inventoried variable or an explicit input; formula boundaries are named,
+rather than allowing an implicit model default; each variable's value_type,
+entity and period are one plain assignment each, of a name its module never
+binds, the value_type naming a primitive type or Enum, or the inventory
+refuses; its default is absent, a literal of its primitive type, or a
+member of its enum class, by one plain assignment, or the inventory
+refuses, and an int default of a float variable converts to the same float;
+an enum variable's members come only from a class whose membership a static
+read settles, and include its default, or the inventory refuses; source is
+decoded as Python decodes it; the output is deterministic for the same
+source and distribution metadata.
 
 The static read covers each variable module's own code, and every module
 under ``policyengine_us/variables`` that it imports, found as the import
 system finds it, with the package ``__init__`` files that import runs; a
-step that is not Python source refuses. That code may not override a
-Variable method, store an attribute, or name a reflective builtin, a frame
-attribute or a dunder name, and the part of it that runs as the module is
-imported may not call anything, apply a decorator, store or delete an
-item, or assign in place. The read does not follow code in other modules:
-the model API, the one policyengine_core name a closure module may import
-(``Simulation``), and reflection through objects they export, including
-the implicit calls that operators, iteration and attribute or item reads
-make on them. The engine's directory walk also runs every module under
-``policyengine_us/variables`` outside the closure, and such a module can
-change what the engine loads; the reader does not read those modules, and
-only the pinned-engine oracle covers them. Python's source loader can also
-run a module's cached bytecode in ``__pycache__`` instead of its source: a
-timestamp file that records the source's modification time and size, or
-an unchecked hash-based file, is never compared with the source. The reader
-reads only source, so only the pinned-engine oracle covers cached bytecode
-too. The oracle tests cover what the
-read leaves out only for the pinned release: they check each inventoried
-variable's value_type, default (its value and type), entity and period,
-and each enum variable's members, against what the engine loads.
+step that is not Python source refuses. Every variable class in that code,
+whether or not the closure reads it, has no type parameters and a body of a
+leading docstring, single assignments to attributes the engine's
+constructor reads, and undecorated formulas, so it may not override a
+Variable method; the code may not store an attribute, or name a reflective
+builtin, a frame attribute or a dunder name; and the part of it that runs
+as the module is imported may not call anything, apply a decorator, store
+or delete an item, or assign in place. Imports are resolved in the reader's
+own interpreter, through its path hooks and the file suffixes, extension
+suffixes included, that their finders take. The resolution asks only the
+path-based finder, not the meta path finders an import statement asks
+first, and it refuses when the interpreter would match file names without
+regard to case, as ``PYTHONCASEOK`` makes it on a case-insensitive platform
+unless ``-I`` or ``-E`` is given. The read does not follow code in other
+modules: the model API, the one policyengine_core name a closure module may
+import (``Simulation``), and reflection through objects they export,
+including the implicit calls that operators, iteration and attribute or
+item reads make on them. The engine's directory walk also runs every module
+under ``policyengine_us/variables`` outside the closure, and such a module
+can change what the engine loads; the reader does not read those modules,
+and only the pinned-engine oracle covers them. Python's source loader can
+also run a module's cached bytecode instead of its source: the file that
+``importlib.util.cache_from_source`` names, in ``__pycache__`` or under
+``sys.pycache_prefix`` when that is set. It runs a timestamp file whose
+recorded modification time and size match the source's, and never compares
+that file's code with the source. It runs a hash-based file unless it
+compares the file's recorded hash with the source's and they differ, and it
+compares them, under ``--check-hash-based-pycs``, for a file marked checked
+in the default mode, for every file under ``always``, and for none under
+``never``. The reader reads only source, so only the pinned-engine oracle
+covers cached bytecode too. The oracle tests cover what the read leaves out
+only for the pinned release: they check each inventoried variable's
+value_type, entity, period and default value, the type of the engine's
+default against the type the engine's conversion gives the record's
+default, and each enum variable's members, against what the engine loads.
+The engine holds one float for an explicit int, bool or float default of a
+float variable, so a test that runs no engine also compares each record's
+default, by value and type, with the literal the pinned source binds, or
+with the core type default where it binds none.
 
 This is source inspection only. SSI calculations use policyengine.py. Run
-with the clone's interpreter and point ``--package`` at installed source::
+with the clone's interpreter, isolated from the environment, and point
+``--package`` at installed source::
 
-    .venv/bin/python scripts/income_resources/inventory_ssi.py \
+    .venv/bin/python -I scripts/income_resources/inventory_ssi.py \
       --package /path/to/site-packages/policyengine_us \
       --compare /path/to/other/site-packages/policyengine_us \
       --policyengine-version 6.10.2 --output /path/to/inventory.json
@@ -60,6 +81,7 @@ import ast
 import copy
 import glob
 import hashlib
+import importlib._bootstrap_external
 import importlib.machinery
 import json
 import os
@@ -487,7 +509,15 @@ def import_sources(package: Path, module: str, names: set[str]) -> list[Path]:
     module, which is not a package, and a name that a submodule of the
     imported package could supply, since the import would run that
     submodule when the package's own code does not bind the name.
+
+    The finder runs in this interpreter, with its path hooks and suffixes.
+    When ``_relax_case`` holds, as ``PYTHONCASEOK`` makes it on a
+    case-insensitive platform, its file finder matches names without
+    regard to case and can find a file that an import matching by case,
+    such as the engine's under ``-I``, would not run; so this refuses.
     """
+    if importlib._bootstrap_external._relax_case():
+        raise ValueError(f"Case-insensitive import resolution of {module}")
     directory = package
     sources = []
     spec = None
@@ -522,11 +552,19 @@ def import_sources(package: Path, module: str, names: set[str]) -> list[Path]:
 def check_module(
     package: Path, path: Path, tree: ast.Module, checked: set[Path]
 ) -> None:
-    """Refuse a module that ``module_imports`` refuses, or one it imports.
+    """Refuse a module that ``module_imports`` refuses, one that defines a
+    variable class that is not plain, or one it imports.
 
     A module imported from under ``FOLLOWED_IMPORTS`` is read by the same
     rules, with the package ``__init__`` files its import runs, as
-    ``import_sources`` finds them.
+    ``import_sources`` finds them. A variable class is plain when it has no
+    type parameters and meets ``plain_variable_body``, as ``plain_variable``
+    requires of each variable the closure reads. The rule covers every
+    class that ``import_time_nodes`` reaches, whether or not the closure
+    reads its attributes: the engine's directory walk builds each variable
+    class in a module it loads, and an override of a Variable method, such
+    as ``set``, runs then and can change what the engine gives other
+    variables.
     """
     pending = [(path, tree)]
     while pending:
@@ -538,6 +576,17 @@ def check_module(
         if followed is None:
             relative = relative_path(package, path)
             raise ValueError(f"Unread module code in {relative}")
+        for node in import_time_nodes(tree):
+            if (
+                isinstance(node, ast.ClassDef)
+                and any(expression(base) == "Variable" for base in node.bases)
+                and (
+                    getattr(node, "type_params", None)
+                    or not plain_variable_body(node)
+                )
+            ):
+                relative = relative_path(package, path)
+                raise ValueError(f"Unread variable {node.name} in {relative}")
         names = defaultdict(set)
         for item in tree.body:
             if isinstance(item, ast.ImportFrom) and item.module in followed:
@@ -840,12 +889,19 @@ def variable_files(directory: Path) -> list[Path]:
 
     ``add_variables_from_directory`` takes each folder's ``*.py`` and then
     its ``*/`` glob matches, which skip names with a leading dot, and reads
-    a folder's ``__init__.py`` as metadata, not as variables.
+    as metadata, not as variables, only the match equal to the path it
+    joins for the folder's own ``__init__.py``; so does this. Its globs
+    read the folder's path as a pattern, so a folder whose path has a glob
+    character refuses: ``a[b]/*.py`` matches ``ab/__init__.py``, which is
+    not ``a[b]/__init__.py``, and the walk loads it as variables.
     """
+    if glob.has_magic(str(directory)):
+        raise ValueError(f"Glob pattern in variables folder {directory}")
+    init = os.path.join(directory, "__init__.py")
     files = [
         Path(name)
         for name in glob.glob(os.path.join(directory, "*.py"))
-        if os.path.basename(name) != "__init__.py"
+        if name != init
     ]
     for subdirectory in glob.glob(os.path.join(directory, "*/")):
         files.extend(variable_files(Path(subdirectory)))

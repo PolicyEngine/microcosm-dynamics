@@ -9,8 +9,10 @@ from __future__ import annotations
 import ast
 import builtins
 import enum
+import glob
 import importlib.machinery
 import importlib.util
+import json
 import os
 import py_compile
 import subprocess
@@ -1710,6 +1712,10 @@ ADMITTED_AGE_FORMS = {
     # Function and lambda bodies run only when called, so calls, item
     # stores and in-place assignments there are admitted.
     "helper_call": ("tail", "def invented_caller():\n    return max_(1, 2)"),
+    "async_helper_call": (
+        "tail",
+        "async def invented_async_caller():\n    return max_(1, 2)",
+    ),
     "lambda_body_call": ("tail", "INVENTED_LATER = lambda: max_(1, 2)"),
     "function_body_store": (
         "tail",
@@ -1758,6 +1764,16 @@ def test_static_attributes_agree_with_python(admitted, route, position):
         assert read is None
     else:
         assert read is not None
+
+
+@pytest.mark.parametrize("kind", sorted(ADMITTED_AGE_FORMS))
+def test_each_admitted_form_is_read_as_python_binds_it(kind):
+    """Each admitted form alone, so none rests on Hypothesis drawing it;
+    see test_ssi_engine for what the pinned engine loads."""
+    source = invented_age_module([ADMITTED_AGE_FORMS[kind]])
+    read = read_attributes(source)
+    assert read is not None
+    assert read == python_attributes(source)
 
 
 @pytest.mark.parametrize(
@@ -1960,6 +1976,18 @@ REFUSED_MODULE_FORMS = {
         "if True:\n    class invented_spare(Variable):\n"
         "        value_type = float",
     ),
+    # The other statements whose bodies run as the module is imported.
+    "try_class": (
+        "tail",
+        "try:\n    class invented_spare(Variable):\n"
+        "        value_type = float\n"
+        "except ImportError:\n    pass",
+    ),
+    "with_class": (
+        "tail",
+        "with invented_context:\n    class invented_spare(Variable):\n"
+        "        value_type = float",
+    ),
     "variable_bound": ("tail", "Variable = None"),
     # Code that runs as the module is imported and can change what another
     # module holds: calls, decorators, item stores and deletes, and
@@ -1996,6 +2024,10 @@ REFUSED_MODULE_FORMS = {
         "tail",
         "@invented_decorator\ndef invented_helper():\n    return 1",
     ),
+    "decorated_async_function": (
+        "tail",
+        "@invented_decorator\nasync def invented_helper():\n    return 1",
+    ),
     "default_argument_call": (
         "tail",
         "def invented_helper(value=max_(1, 2)):\n    return value",
@@ -2015,6 +2047,10 @@ REFUSED_MODULE_FORMS = {
     "lambda_default_call": (
         "tail",
         "INVENTED_SPARE = lambda value=max_(1, 2): value",
+    ),
+    "lambda_keyword_default_call": (
+        "tail",
+        "INVENTED_SPARE = lambda *, value=max_(1, 2): value",
     ),
 }
 
@@ -2122,6 +2158,150 @@ def test_imported_variables_module_is_read_by_the_same_rules(tmp_path):
     (package / "variables/__init__.py").write_text("import invented_module\n")
     with pytest.raises(
         ValueError, match="Unread module code in variables/__init__.py"
+    ):
+        inventory.inventory_release(package)
+
+
+# Round 9's repro: a module the closure imports defines a variable class
+# of its own. The engine's walk builds that class too, and an override of
+# Variable.set runs as it does, here changing policyengine_core's float
+# default; see test_ssi_engine for the default the engine then gives.
+INVENTED_TRIGGER = """from policyengine_us.model_api import *
+
+
+def invented_tool():
+    return 1
+
+
+class invented_trigger(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+    label = "Invented trigger"
+"""
+INVENTED_TRIGGER_SET = (
+    "def set(self, attributes, attribute_name, **options):\n"
+    '    attributes.pop("set", None)\n'
+    '    warnings.sys.modules["policyengine_core.variables.config"]'
+    ".VALUE_TYPES[\n"
+    "        float\n"
+    '    ]["default"] = 7\n'
+    "    return Variable.set(self, attributes, attribute_name, **options)"
+)
+# Variable classes a followed module may not define, as a replacement
+# class line, or None, and a body tail, or None: each has type parameters
+# or fails plain_variable_body, while the module rules admit the module.
+NOT_PLAIN_TRIGGERS = {
+    "set_override": (None, INVENTED_TRIGGER_SET),
+    "other_method": (None, "def invented_method(self):\n    return 0"),
+    "annotated_default": (None, "default_value: float = 7"),
+    "chained_attributes": (None, 'label = documentation = "Invented"'),
+    "unread_attribute": (None, "invented_note = 1"),
+    "type_parameters": (
+        "class invented_trigger[InventedType](Variable):",
+        None,
+    ),
+}
+
+
+def trigger_module(kind=None):
+    """The invented trigger module, plain or with a NOT_PLAIN_TRIGGERS
+    form."""
+    header, body = NOT_PLAIN_TRIGGERS[kind] if kind else (None, None)
+    source = INVENTED_TRIGGER
+    if header is not None:
+        source = source.replace("class invented_trigger(Variable):", header)
+    if body is not None:
+        source += "\n    " + body.replace("\n", "\n    ") + "\n"
+    return source
+
+
+@pytest.mark.parametrize("position", ["tools", "init"])
+@pytest.mark.parametrize(
+    "kind",
+    [
+        pytest.param(
+            kind,
+            marks=pytest.mark.skipif(
+                kind == "type_parameters" and sys.version_info < (3, 12),
+                reason="PEP 695 syntax",
+            ),
+        )
+        for kind in sorted(NOT_PLAIN_TRIGGERS)
+    ],
+)
+def test_variable_class_in_a_followed_module_must_be_plain(
+    tmp_path, kind, position
+):
+    """A followed module's variable class, or one in the package init its
+    import runs, meets the rules a closure variable meets, though the
+    closure reads none of its attributes."""
+    trigger = trigger_module(kind)
+    assert inventory.module_imports(ast.parse(trigger)) == []
+    for name, source in (("plain", trigger_module()), ("form", trigger)):
+        if position == "tools":
+            package = package_importing_tools(tmp_path / name, source)
+        else:
+            package = package_importing_tools(
+                tmp_path / name, INVENTED_TOOLS, source
+            )
+        if name == "plain":
+            assert inventory.inventory_release(package)
+            continue
+        relative = (
+            "invented_tools.py" if position == "tools" else "__init__.py"
+        )
+        with pytest.raises(
+            ValueError,
+            match="Unread variable invented_trigger in "
+            f"variables/invented/{relative}",
+        ):
+            inventory.inventory_release(package)
+
+
+INVENTED_EMPLOYMENT_INCOME = """from policyengine_us.model_api import *
+from policyengine_us.variables.invented_tools import invented_tool
+
+
+class employment_income(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+    label = "Invented employment income"
+"""
+
+
+def package_with_trigger(tmp_path, trigger):
+    """An invented package whose employment_income imports from
+    ``variables/invented_tools.py``, which the engine's walk also loads."""
+    package = invented_package(tmp_path)
+    (package / "variables/invented_tools.py").write_text(trigger)
+    (package / "variables/input/employment_income.py").write_text(
+        INVENTED_EMPLOYMENT_INCOME
+    )
+    return package
+
+
+def test_followed_variable_class_that_overrides_set_refuses_inventory(
+    tmp_path,
+):
+    """Round 9's repro, end to end: with a plain trigger the inventory
+    records employment_income's core type default; with the override it
+    refuses, where it had admitted the module and recorded that default."""
+    package = package_with_trigger(tmp_path / "plain", trigger_module())
+    record = next(
+        v
+        for v in inventory.inventory_release(package)["inputs"]
+        if v["name"] == "employment_income"
+    )
+    assert record["default_origin"] == "core type"
+    assert record["default"] == 0 and type(record["default"]) is int
+    package = package_with_trigger(
+        tmp_path / "override", trigger_module("set_override")
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unread variable invented_trigger in variables/invented_tools.py",
     ):
         inventory.inventory_release(package)
 
@@ -2325,7 +2505,9 @@ def test_name_a_submodule_supplies_refuses_inventory(tmp_path, init):
     [
         # A step past a module, which is not a package.
         ("invented_more", "invented.invented_tools.invented_more"),
-        # The import system matches names by case, as the folder lists them.
+        # The import system matches names by case, as the folder lists them,
+        # unless PYTHONCASEOK reaches it, when the reader refuses; see
+        # test_case_insensitive_import_resolution_refuses_inventory.
         ("Invented_Tools", "invented.invented_tools"),
     ],
 )
@@ -2354,6 +2536,86 @@ def test_import_python_cannot_resolve_refuses_inventory(
         match=f"Unresolved import of policyengine_us.variables.{module}",
     ):
         inventory.inventory_release(package)
+
+
+# Runs without -I, so the environment reaches the interpreter: the reader,
+# loaded from its path, on an invented package, with what the interpreter's
+# file finder takes for the invented tools module.
+CASE_CHILD = """
+import importlib._bootstrap_external, importlib.machinery, importlib.util
+import json, sys
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location("ssi_inventory", sys.argv[1])
+inventory = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(inventory)
+package = Path(sys.argv[2])
+found = importlib.machinery.PathFinder.find_spec(
+    "invented_tools", [str(package / "variables/invented")]
+)
+try:
+    inventory.inventory_release(package)
+    refusal = None
+except ValueError as error:
+    refusal = str(error)
+json.dump(
+    {
+        "relax_case": importlib._bootstrap_external._relax_case(),
+        "origin": found.origin,
+        "refusal": refusal,
+    },
+    sys.stdout,
+)
+"""
+
+
+@pytest.mark.skipif(
+    not sys.platform.startswith(("cygwin", "darwin", "win")),
+    reason="Python matches file names by case on this platform",
+)
+def test_case_insensitive_import_resolution_refuses_inventory(tmp_path):
+    """Round 9's repro: the frame-walking invented_tools.py beside a
+    benign INVENTED_TOOLS/__init__.py. With PYTHONCASEOK set and no -I,
+    the interpreter's file finder matches names without regard to case, so
+    on a case-insensitive file system it takes the package, which an
+    import matching by case, as the engine's under -I does, never runs;
+    the reader refuses. Without PYTHONCASEOK it reads, and refuses, the
+    module that import runs."""
+    package = package_importing_tools(tmp_path, INVENTED_SHADOW_INIT)
+    folder = package / "variables/invented"
+    (folder / "INVENTED_TOOLS").mkdir()
+    (folder / "INVENTED_TOOLS/__init__.py").write_text(INVENTED_TOOLS)
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if key != "PYTHONCASEOK"
+    }
+    outcomes = {}
+    for caseok in (False, True):
+        completed = subprocess.run(
+            [sys.executable, "-c", CASE_CHILD, str(SCRIPT), str(package)],
+            env=environment | ({"PYTHONCASEOK": "1"} if caseok else {}),
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=120,
+        )
+        outcomes[caseok] = json.loads(completed.stdout)
+    assert outcomes[False]["relax_case"] is False
+    assert Path(outcomes[False]["origin"]) == folder / "invented_tools.py"
+    assert outcomes[False]["refusal"] == (
+        "Unread module code in variables/invented/invented_tools.py"
+    )
+    assert outcomes[True]["relax_case"] is True
+    assert outcomes[True]["refusal"] == (
+        "Case-insensitive import resolution of "
+        "policyengine_us.variables.invented.invented_tools"
+    )
+    if (folder / "invented_tools").is_dir():
+        # A case-insensitive file system: the finder takes the package.
+        assert Path(outcomes[True]["origin"]) == (
+            folder / "invented_tools/__init__.py"
+        )
 
 
 @pytest.mark.parametrize("position", ["tools", "init"])
@@ -2546,6 +2808,23 @@ CORE_DEFAULT_CHANGES = {
         'INVENTED_DEFAULTS |= {"default": 7}',
         7,
     ),
+    # Round 9's witnesses for two of its mutants: a decorator applied to an
+    # async helper, and a lambda's keyword-only default, both evaluated as
+    # the module is imported.
+    "async_decorator": (
+        "float",
+        "@(lambda invented_function: VALUE_TYPES[float].update(default=7))\n"
+        "async def invented_helper():\n"
+        "    pass",
+        7,
+    ),
+    "lambda_keyword_default": (
+        "float",
+        "INVENTED_SPARE = lambda *, value=VALUE_TYPES[float].update(\n"
+        "    default=7\n"
+        "): value",
+        7,
+    ),
 }
 
 
@@ -2666,6 +2945,77 @@ def test_package_init_in_the_ssi_tree_is_not_a_root(tmp_path):
     assert result == inventory.inventory_release(
         invented_package(tmp_path / "plain")
     )
+
+
+def test_file_named_like_a_package_init_is_a_root(tmp_path):
+    """The walk leaves out only the path it joins for a folder's own
+    __init__.py, so a file whose name merely ends in __init__.py is loaded
+    as variables and is an SSI root. See test_ssi_engine for the walk."""
+    package = invented_package(tmp_path)
+    (package / "variables/gov/ssa/ssi/invented__init__.py").write_text(
+        "class invented_init_named_ssi(Variable):\n"
+        "    value_type = float\n"
+        "    entity = Person\n"
+        "    definition_period = YEAR\n"
+    )
+    result = inventory.inventory_release(package)
+    assert result["federal_ssi_variable_count"] == 3
+    record = next(
+        v
+        for v in result["variables"]
+        if v["name"] == "invented_init_named_ssi"
+    )
+    assert record["path"] == "variables/gov/ssa/ssi/invented__init__.py"
+
+
+def test_folder_whose_path_is_a_glob_pattern_refuses_inventory(tmp_path):
+    """Round 9's repro: the engine's walk of invented_a[b]/ globs
+    invented_a[b]/*.py, which matches invented_ab/__init__.py rather than
+    the path it joins for the folder's own init, so it loads that init as
+    variables. The reader refuses a folder whose path is a glob pattern.
+    See test_ssi_engine for what the engine's walk loads."""
+    package = invented_package(tmp_path)
+    ssi = package / "variables/gov/ssa/ssi"
+    (ssi / "invented_a[b]").mkdir()
+    (ssi / "invented_a[b]/NOTE.txt").write_text("Invented note\n")
+    (ssi / "invented_ab").mkdir()
+    (ssi / "invented_ab/__init__.py").write_text(
+        "class invented_glob_ssi(Variable):\n"
+        "    value_type = float\n"
+        "    entity = Person\n"
+        "    definition_period = YEAR\n"
+    )
+    assert glob.glob(os.path.join(ssi / "invented_a[b]", "*.py")) == [
+        str(ssi / "invented_ab/__init__.py")
+    ]
+    with pytest.raises(
+        ValueError,
+        match=r"Glob pattern in variables folder .*/invented_a\[b\]$",
+    ):
+        inventory.inventory_release(package)
+    # Without that folder, the init is metadata and the read is the plain
+    # package's.
+    (ssi / "invented_a[b]/NOTE.txt").unlink()
+    (ssi / "invented_a[b]").rmdir()
+    assert inventory.inventory_release(package) == inventory.inventory_release(
+        invented_package(tmp_path / "plain")
+    )
+
+
+def test_package_below_a_glob_pattern_path_refuses_inventory(tmp_path):
+    """The walk globs the whole joined path, so a glob character in a
+    folder above the variables folder makes its globs match other folders,
+    here none at all; the reader refuses."""
+    package = invented_package(tmp_path / "invented[x]")
+    pattern = os.path.join(package / "variables/gov/ssa/ssi", "*.py")
+    assert glob.glob(pattern) == []
+    assert (package / "variables/gov/ssa/ssi/invented_ssi.py").is_file()
+    with pytest.raises(
+        ValueError,
+        match=r"Glob pattern in variables folder "
+        r".*/invented\[x\]/policyengine_us/variables$",
+    ):
+        inventory.inventory_release(package)
 
 
 @pytest.mark.parametrize("root", ["invented_aa_dup", "invented_zz_dup"])
