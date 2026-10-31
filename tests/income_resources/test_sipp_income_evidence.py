@@ -1413,7 +1413,7 @@ def test_identifier_value_window_is_forty_characters(width, refused):
     assert record_bearing_note(body) == refused
 
 
-# Invented pages of 200 to 600 kB in forms that a quadratic pattern reads
+# Invented pages of 200 to 780 kB in forms that a quadratic pattern reads
 # for minutes: a long word in a tag, escaped quotes after an unpaired quote
 # in a script, tags and comments that never close, script start tags with
 # no end tag, and table rows and cells that name an identifier.
@@ -1429,7 +1429,7 @@ INVENTED_LONG_PAGES = {
         "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
     ),
     "identifier_cells_in_row": (
-        "<table><tr><td>x</td></tr><tr>" + "<td>PNUM</td>" * 30_000
+        "<table><tr><td>x</td></tr><tr>" + "<td>PNUM</td>" * 60_000
     ),
 }
 LINEAR_TIME_CHILD = """
@@ -1449,10 +1449,12 @@ print(time.process_time() - start)
 def test_guard_reads_long_pages_in_linear_time(kind):
     # The guard read each page in under a second of CPU time, and the
     # quadratic patterns it replaced, by their growth over a tenth of each
-    # page, would take two to five minutes on the same host. The guard runs
-    # in a child process that the operating system stops after 6 s of CPU
-    # time, so a slow pattern fails here instead of stalling the run; CPU
-    # time, unlike wall time, grows little with host load.
+    # page, would take from about two minutes to half an hour on the same
+    # host. The row of identifier cells is long enough that summing the row
+    # once per identifier cell also runs past the limit. The guard runs in a
+    # child process that the operating system stops after 6 s of CPU time,
+    # so a slow pattern fails here instead of stalling the run; CPU time,
+    # unlike wall time, grows little with host load.
     child = subprocess.run(
         [
             sys.executable,

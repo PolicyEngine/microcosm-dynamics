@@ -84,7 +84,7 @@ reading takes time linear in the page's length. The forms found to take
 quadratic time before (a long word in a tag, escaped quotes after an
 unpaired quote in a script, unclosed tags and comments, script start tags
 with no end tag, and table rows and cells that name an identifier) are
-timed by a test on invented pages of 200 to 600 kB.
+timed by a test on invented pages of 200 to 780 kB.
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
