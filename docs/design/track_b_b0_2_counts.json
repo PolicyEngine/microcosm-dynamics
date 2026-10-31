@@ -1,0 +1,2201 @@
+{
+  "b0_1_counts_sha256": "e93826d4c535a41ea28155b837307a1a941f9ac9d205f8e8bf60421481e54f99",
+  "counts": {
+    "b3": {
+      "by_wave": {
+        "1999": {
+          "62_64": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 60,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 200,
+            "kish_n_eff": 170,
+            "persons": 210,
+            "valid_rows": 210
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 50,
+            "design_strata": 30,
+            "household_cluster_worst_n_eff": 110,
+            "households": 150,
+            "kish_n_eff": 120,
+            "persons": 160,
+            "valid_rows": 160
+          },
+          "67_69": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 160,
+            "households": 210,
+            "kish_n_eff": 200,
+            "persons": 240,
+            "valid_rows": 240
+          }
+        },
+        "2001": {
+          "62_64": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 230,
+            "kish_n_eff": 190,
+            "persons": 250,
+            "valid_rows": 250
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 60,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 100,
+            "households": 130,
+            "kish_n_eff": 110,
+            "persons": 140,
+            "valid_rows": 140
+          },
+          "67_69": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 60,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 220,
+            "kish_n_eff": 190,
+            "persons": 240,
+            "valid_rows": 240
+          }
+        },
+        "2003": {
+          "62_64": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 170,
+            "households": 240,
+            "kish_n_eff": 200,
+            "persons": 260,
+            "valid_rows": 260
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 60,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 110,
+            "households": 150,
+            "kish_n_eff": 120,
+            "persons": 160,
+            "valid_rows": 160
+          },
+          "67_69": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 60,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 140,
+            "households": 190,
+            "kish_n_eff": 160,
+            "persons": 210,
+            "valid_rows": 210
+          }
+        },
+        "2005": {
+          "62_64": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 170,
+            "households": 250,
+            "kish_n_eff": 220,
+            "persons": 280,
+            "valid_rows": 280
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 110,
+            "households": 170,
+            "kish_n_eff": 130,
+            "persons": 170,
+            "valid_rows": 170
+          },
+          "67_69": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 140,
+            "households": 200,
+            "kish_n_eff": 160,
+            "persons": 210,
+            "valid_rows": 210
+          }
+        },
+        "2007": {
+          "62_64": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 200,
+            "households": 310,
+            "kish_n_eff": 240,
+            "persons": 330,
+            "valid_rows": 330
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 120,
+            "households": 170,
+            "kish_n_eff": 140,
+            "persons": 180,
+            "valid_rows": 180
+          },
+          "67_69": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 220,
+            "kish_n_eff": 180,
+            "persons": 240,
+            "valid_rows": 240
+          }
+        },
+        "2009": {
+          "62_64": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 270,
+            "households": 370,
+            "kish_n_eff": 330,
+            "persons": 410,
+            "valid_rows": 410
+          },
+          "65_66": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 150,
+            "households": 200,
+            "kish_n_eff": 180,
+            "persons": 220,
+            "valid_rows": 220
+          },
+          "67_69": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 70,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 190,
+            "households": 230,
+            "kish_n_eff": 200,
+            "persons": 250,
+            "valid_rows": 250
+          }
+        },
+        "2011": {
+          "62_64": {
+            "accuracy_positive_rows": 30,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 330,
+            "households": 500,
+            "kish_n_eff": 410,
+            "persons": 570,
+            "valid_rows": 570
+          },
+          "65_66": {
+            "accuracy_positive_rows": "<10",
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 200,
+            "kish_n_eff": 170,
+            "persons": 210,
+            "valid_rows": 210
+          },
+          "67_69": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 180,
+            "households": 270,
+            "kish_n_eff": 220,
+            "persons": 300,
+            "valid_rows": 300
+          }
+        },
+        "2013": {
+          "62_64": {
+            "accuracy_positive_rows": 30,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 360,
+            "households": 520,
+            "kish_n_eff": 430,
+            "persons": 580,
+            "valid_rows": 580
+          },
+          "65_66": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 220,
+            "households": 320,
+            "kish_n_eff": 260,
+            "persons": 350,
+            "valid_rows": 350
+          },
+          "67_69": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 210,
+            "households": 300,
+            "kish_n_eff": 250,
+            "persons": 330,
+            "valid_rows": 330
+          }
+        },
+        "2015": {
+          "62_64": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 380,
+            "households": 590,
+            "kish_n_eff": 450,
+            "persons": 650,
+            "valid_rows": 650
+          },
+          "65_66": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 230,
+            "households": 340,
+            "kish_n_eff": 260,
+            "persons": 360,
+            "valid_rows": 360
+          },
+          "67_69": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 260,
+            "households": 370,
+            "kish_n_eff": 320,
+            "persons": 420,
+            "valid_rows": 420
+          }
+        },
+        "2017": {
+          "62_64": {
+            "accuracy_positive_rows": 40,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 110,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 420,
+            "households": 640,
+            "kish_n_eff": 490,
+            "persons": 710,
+            "valid_rows": 710
+          },
+          "65_66": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 250,
+            "households": 370,
+            "kish_n_eff": 280,
+            "persons": 400,
+            "valid_rows": 400
+          },
+          "67_69": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 310,
+            "households": 450,
+            "kish_n_eff": 370,
+            "persons": 510,
+            "valid_rows": 510
+          }
+        },
+        "2019": {
+          "62_64": {
+            "accuracy_positive_rows": 40,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 110,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 350,
+            "households": 610,
+            "kish_n_eff": 420,
+            "persons": 680,
+            "valid_rows": 680
+          },
+          "65_66": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 90,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 250,
+            "households": 420,
+            "kish_n_eff": 280,
+            "persons": 450,
+            "valid_rows": 450
+          },
+          "67_69": {
+            "accuracy_positive_rows": 10,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 100,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 320,
+            "households": 480,
+            "kish_n_eff": 350,
+            "persons": 530,
+            "valid_rows": 530
+          }
+        },
+        "2021": {
+          "62_64": {
+            "accuracy_positive_rows": 30,
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 110,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 320,
+            "households": 570,
+            "kish_n_eff": 390,
+            "persons": 640,
+            "valid_rows": 640
+          },
+          "65_66": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 100,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 250,
+            "households": 400,
+            "kish_n_eff": 280,
+            "persons": 420,
+            "valid_rows": 420
+          },
+          "67_69": {
+            "accuracy_positive_rows": 20,
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 100,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 340,
+            "households": 560,
+            "kish_n_eff": 410,
+            "persons": 630,
+            "valid_rows": 630
+          }
+        },
+        "2023": {
+          "62_64": {
+            "accuracy_positive_rows": 60,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 110,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 340,
+            "households": 570,
+            "kish_n_eff": 390,
+            "persons": 630,
+            "valid_rows": 630
+          },
+          "65_66": {
+            "accuracy_positive_rows": 30,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 90,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 210,
+            "households": 360,
+            "kish_n_eff": 240,
+            "persons": 390,
+            "valid_rows": 390
+          },
+          "67_69": {
+            "accuracy_positive_rows": 40,
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 100,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 320,
+            "households": 530,
+            "kish_n_eff": 380,
+            "persons": 600,
+            "valid_rows": 600
+          }
+        }
+      },
+      "distinct_persons_by_band": {
+        "62_64": 4430,
+        "65_66": 3550,
+        "67_69": 3380
+      },
+      "lag_pairs": {
+        "2": {
+          "1999_2001": {
+            "62_64": 240,
+            "65_66": 130,
+            "67_69": 230
+          },
+          "2001_2003": {
+            "62_64": 250,
+            "65_66": 150,
+            "67_69": 200
+          },
+          "2003_2005": {
+            "62_64": 270,
+            "65_66": 170,
+            "67_69": 210
+          },
+          "2005_2007": {
+            "62_64": 330,
+            "65_66": 180,
+            "67_69": 230
+          },
+          "2007_2009": {
+            "62_64": 400,
+            "65_66": 210,
+            "67_69": 250
+          },
+          "2009_2011": {
+            "62_64": 560,
+            "65_66": 210,
+            "67_69": 300
+          },
+          "2011_2013": {
+            "62_64": 570,
+            "65_66": 340,
+            "67_69": 320
+          },
+          "2013_2015": {
+            "62_64": 630,
+            "65_66": 350,
+            "67_69": 420
+          },
+          "2015_2017": {
+            "62_64": 660,
+            "65_66": 390,
+            "67_69": 490
+          },
+          "2017_2019": {
+            "62_64": 660,
+            "65_66": 440,
+            "67_69": 510
+          },
+          "2019_2021": {
+            "62_64": 630,
+            "65_66": 420,
+            "67_69": 610
+          },
+          "2021_2023": {
+            "62_64": 620,
+            "65_66": 380,
+            "67_69": 590
+          }
+        },
+        "4": {
+          "1999_2003": {
+            "62_64": 250,
+            "65_66": 150,
+            "67_69": 200
+          },
+          "2001_2005": {
+            "62_64": 270,
+            "65_66": 160,
+            "67_69": 200
+          },
+          "2003_2007": {
+            "62_64": 320,
+            "65_66": 180,
+            "67_69": 230
+          },
+          "2005_2009": {
+            "62_64": 400,
+            "65_66": 210,
+            "67_69": 240
+          },
+          "2007_2011": {
+            "62_64": 550,
+            "65_66": 210,
+            "67_69": 290
+          },
+          "2009_2013": {
+            "62_64": 570,
+            "65_66": 330,
+            "67_69": 320
+          },
+          "2011_2015": {
+            "62_64": 620,
+            "65_66": 350,
+            "67_69": 410
+          },
+          "2013_2017": {
+            "62_64": 640,
+            "65_66": 380,
+            "67_69": 490
+          },
+          "2015_2019": {
+            "62_64": 620,
+            "65_66": 420,
+            "67_69": 500
+          },
+          "2017_2021": {
+            "62_64": 620,
+            "65_66": 410,
+            "67_69": 610
+          },
+          "2019_2023": {
+            "62_64": 610,
+            "65_66": 380,
+            "67_69": 580
+          }
+        }
+      }
+    },
+    "b3l": {
+      "later_support": {
+        "2009": {
+          "25_44": {
+            "kish_n_eff": 3210,
+            "persons": 5210
+          },
+          "45_61": {
+            "kish_n_eff": 2950,
+            "persons": 4350
+          },
+          "62_64": {
+            "kish_n_eff": 300,
+            "persons": 400
+          },
+          "65_66": {
+            "kish_n_eff": 160,
+            "persons": 210
+          },
+          "67_69": {
+            "kish_n_eff": 190,
+            "persons": 250
+          }
+        },
+        "2011": {
+          "25_44": {
+            "kish_n_eff": 2860,
+            "persons": 4710
+          },
+          "45_61": {
+            "kish_n_eff": 2790,
+            "persons": 4140
+          },
+          "62_64": {
+            "kish_n_eff": 410,
+            "persons": 550
+          },
+          "65_66": {
+            "kish_n_eff": 160,
+            "persons": 210
+          },
+          "67_69": {
+            "kish_n_eff": 220,
+            "persons": 290
+          }
+        },
+        "2013": {
+          "25_44": {
+            "kish_n_eff": 2490,
+            "persons": 4160
+          },
+          "45_61": {
+            "kish_n_eff": 2630,
+            "persons": 3930
+          },
+          "62_64": {
+            "kish_n_eff": 410,
+            "persons": 560
+          },
+          "65_66": {
+            "kish_n_eff": 250,
+            "persons": 330
+          },
+          "67_69": {
+            "kish_n_eff": 240,
+            "persons": 320
+          }
+        },
+        "2015": {
+          "25_44": {
+            "kish_n_eff": 2090,
+            "persons": 3470
+          },
+          "45_61": {
+            "kish_n_eff": 2410,
+            "persons": 3630
+          },
+          "62_64": {
+            "kish_n_eff": 430,
+            "persons": 610
+          },
+          "65_66": {
+            "kish_n_eff": 250,
+            "persons": 340
+          },
+          "67_69": {
+            "kish_n_eff": 310,
+            "persons": 410
+          }
+        },
+        "2017": {
+          "25_44": {
+            "kish_n_eff": 1800,
+            "persons": 3000
+          },
+          "45_61": {
+            "kish_n_eff": 2230,
+            "persons": 3390
+          },
+          "62_64": {
+            "kish_n_eff": 430,
+            "persons": 620
+          },
+          "65_66": {
+            "kish_n_eff": 270,
+            "persons": 370
+          },
+          "67_69": {
+            "kish_n_eff": 350,
+            "persons": 480
+          }
+        },
+        "2019": {
+          "25_44": {
+            "kish_n_eff": 1450,
+            "persons": 2450
+          },
+          "45_61": {
+            "kish_n_eff": 2070,
+            "persons": 3180
+          },
+          "62_64": {
+            "kish_n_eff": 410,
+            "persons": 600
+          },
+          "65_66": {
+            "kish_n_eff": 280,
+            "persons": 400
+          },
+          "67_69": {
+            "kish_n_eff": 330,
+            "persons": 470
+          }
+        },
+        "2021": {
+          "25_44": {
+            "kish_n_eff": 1090,
+            "persons": 1860
+          },
+          "45_61": {
+            "kish_n_eff": 1880,
+            "persons": 2910
+          },
+          "62_64": {
+            "kish_n_eff": 360,
+            "persons": 550
+          },
+          "65_66": {
+            "kish_n_eff": 260,
+            "persons": 370
+          },
+          "67_69": {
+            "kish_n_eff": 400,
+            "persons": 570
+          }
+        },
+        "2023": {
+          "25_44": {
+            "kish_n_eff": 820,
+            "persons": 1410
+          },
+          "45_61": {
+            "kish_n_eff": 1820,
+            "persons": 2840
+          },
+          "62_64": {
+            "kish_n_eff": 360,
+            "persons": 550
+          },
+          "65_66": {
+            "kish_n_eff": 230,
+            "persons": 340
+          },
+          "67_69": {
+            "kish_n_eff": 380,
+            "persons": 520
+          }
+        }
+      },
+      "origin_wave": 2007,
+      "rosters": {
+        "D2006": {
+          "by_age_band": {
+            "1_24": {
+              "design_cluster_worst_n_eff": 50,
+              "design_clusters": 90,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 470,
+              "households": 840,
+              "kish_n_eff": 560,
+              "persons": 980
+            },
+            "25_44": {
+              "design_cluster_worst_n_eff": 70,
+              "design_clusters": 130,
+              "design_strata": 60,
+              "household_cluster_worst_n_eff": 2300,
+              "households": 3980,
+              "kish_n_eff": 3550,
+              "persons": 5760
+            },
+            "45_61": {
+              "design_cluster_worst_n_eff": 60,
+              "design_clusters": 120,
+              "design_strata": 60,
+              "household_cluster_worst_n_eff": 1920,
+              "households": 3030,
+              "kish_n_eff": 2970,
+              "persons": 4370
+            },
+            "62_64": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 200,
+              "households": 310,
+              "kish_n_eff": 240,
+              "persons": 330
+            },
+            "65_66": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 70,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 120,
+              "households": 170,
+              "kish_n_eff": 140,
+              "persons": 180
+            },
+            "67_69": {
+              "design_cluster_worst_n_eff": 50,
+              "design_clusters": 70,
+              "design_strata": 40,
+              "household_cluster_worst_n_eff": 150,
+              "households": 220,
+              "kish_n_eff": 180,
+              "persons": 240
+            },
+            "70_79": {
+              "design_cluster_worst_n_eff": 50,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 350,
+              "households": 500,
+              "kish_n_eff": 490,
+              "persons": 620
+            },
+            "80_plus": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 70,
+              "design_strata": 40,
+              "household_cluster_worst_n_eff": 240,
+              "households": 320,
+              "kish_n_eff": 310,
+              "persons": 370
+            }
+          },
+          "overall": {
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 130,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 5050,
+            "households": 8290,
+            "kish_n_eff": 8210,
+            "persons": 12840
+          },
+          "unknown_age": {
+            "design_cluster_worst_n_eff": 0,
+            "design_clusters": 0,
+            "design_strata": 0,
+            "household_cluster_worst_n_eff": 0,
+            "households": 0,
+            "kish_n_eff": 0,
+            "persons": 0
+          }
+        },
+        "R2006_FULL": {
+          "by_age_band": {
+            "1_24": {
+              "design_cluster_worst_n_eff": 70,
+              "design_clusters": 120,
+              "design_strata": 60,
+              "household_cluster_worst_n_eff": 2170,
+              "households": 4590,
+              "kish_n_eff": 5320,
+              "persons": 9310
+            },
+            "25_44": {
+              "design_cluster_worst_n_eff": 70,
+              "design_clusters": 130,
+              "design_strata": 60,
+              "household_cluster_worst_n_eff": 2500,
+              "households": 4360,
+              "kish_n_eff": 3870,
+              "persons": 6330
+            },
+            "45_61": {
+              "design_cluster_worst_n_eff": 60,
+              "design_clusters": 120,
+              "design_strata": 60,
+              "household_cluster_worst_n_eff": 1990,
+              "households": 3150,
+              "kish_n_eff": 3070,
+              "persons": 4560
+            },
+            "62_64": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 210,
+              "households": 320,
+              "kish_n_eff": 250,
+              "persons": 350
+            },
+            "65_66": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 130,
+              "households": 190,
+              "kish_n_eff": 150,
+              "persons": 200
+            },
+            "67_69": {
+              "design_cluster_worst_n_eff": 50,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 150,
+              "households": 230,
+              "kish_n_eff": 190,
+              "persons": 250
+            },
+            "70_79": {
+              "design_cluster_worst_n_eff": 50,
+              "design_clusters": 90,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 370,
+              "households": 560,
+              "kish_n_eff": 520,
+              "persons": 670
+            },
+            "80_plus": {
+              "design_cluster_worst_n_eff": 40,
+              "design_clusters": 80,
+              "design_strata": 50,
+              "household_cluster_worst_n_eff": 260,
+              "households": 370,
+              "kish_n_eff": 330,
+              "persons": 420
+            }
+          },
+          "overall": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 130,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 4570,
+            "households": 8290,
+            "kish_n_eff": 13360,
+            "persons": 22100
+          },
+          "unknown_age": {
+            "design_cluster_worst_n_eff": "<10",
+            "design_clusters": "<10",
+            "design_strata": "<10",
+            "household_cluster_worst_n_eff": "<10",
+            "households": "<10",
+            "kish_n_eff": "<10",
+            "persons": "<10"
+          }
+        }
+      }
+    },
+    "outside_b2": {
+      "b2_households_by_wave": {
+        "2013": 8270,
+        "2015": 7730
+      },
+      "by_age_band": {
+        "1_24": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "25_44": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "45_61": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "62_64": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "65_66": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "67_69": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "70_79": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        },
+        "80_plus": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        }
+      },
+      "overall": {
+        "design_cluster_worst_n_eff": 0,
+        "design_clusters": 0,
+        "design_strata": 0,
+        "household_cluster_worst_n_eff": 0,
+        "households": 0,
+        "kish_n_eff": 0,
+        "persons": 0
+      },
+      "unknown_age": {
+        "design_cluster_worst_n_eff": 0,
+        "design_clusters": 0,
+        "design_strata": 0,
+        "household_cluster_worst_n_eff": 0,
+        "households": 0,
+        "kish_n_eff": 0,
+        "persons": 0
+      }
+    },
+    "rosters": {
+      "R_B2": {
+        "by_age_band": {
+          "1_24": {
+            "design_cluster_worst_n_eff": 60,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 430,
+            "households": 830,
+            "kish_n_eff": 500,
+            "persons": 950
+          },
+          "25_44": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 120,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 2380,
+            "households": 4230,
+            "kish_n_eff": 3600,
+            "persons": 6090
+          },
+          "45_61": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 120,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 1920,
+            "households": 3110,
+            "kish_n_eff": 2870,
+            "persons": 4400
+          },
+          "62_64": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 330,
+            "households": 500,
+            "kish_n_eff": 410,
+            "persons": 570
+          },
+          "65_66": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 150,
+            "households": 200,
+            "kish_n_eff": 170,
+            "persons": 210
+          },
+          "67_69": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 180,
+            "households": 270,
+            "kish_n_eff": 220,
+            "persons": 300
+          },
+          "70_79": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 330,
+            "households": 500,
+            "kish_n_eff": 460,
+            "persons": 590
+          },
+          "80_plus": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 70,
+            "design_strata": 40,
+            "household_cluster_worst_n_eff": 270,
+            "households": 360,
+            "kish_n_eff": 350,
+            "persons": 420
+          }
+        },
+        "overall": {
+          "design_cluster_worst_n_eff": 70,
+          "design_clusters": 130,
+          "design_strata": 60,
+          "household_cluster_worst_n_eff": 5250,
+          "households": 8910,
+          "kish_n_eff": 8350,
+          "persons": 13540
+        },
+        "unknown_age": {
+          "design_cluster_worst_n_eff": "<10",
+          "design_clusters": "<10",
+          "design_strata": "<10",
+          "household_cluster_worst_n_eff": "<10",
+          "households": "<10",
+          "kish_n_eff": "<10",
+          "persons": "<10"
+        }
+      },
+      "R_FULL": {
+        "by_age_band": {
+          "1_24": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 130,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 2110,
+            "households": 4700,
+            "kish_n_eff": 5150,
+            "persons": 9510
+          },
+          "25_44": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 120,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 2590,
+            "households": 4640,
+            "kish_n_eff": 3920,
+            "persons": 6730
+          },
+          "45_61": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 130,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 1990,
+            "households": 3250,
+            "kish_n_eff": 2980,
+            "persons": 4620
+          },
+          "62_64": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 350,
+            "households": 540,
+            "kish_n_eff": 430,
+            "persons": 610
+          },
+          "65_66": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 160,
+            "households": 220,
+            "kish_n_eff": 180,
+            "persons": 240
+          },
+          "67_69": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 190,
+            "households": 310,
+            "kish_n_eff": 230,
+            "persons": 340
+          },
+          "70_79": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 350,
+            "households": 530,
+            "kish_n_eff": 480,
+            "persons": 630
+          },
+          "80_plus": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 290,
+            "households": 400,
+            "kish_n_eff": 370,
+            "persons": 460
+          }
+        },
+        "overall": {
+          "design_cluster_worst_n_eff": 70,
+          "design_clusters": 130,
+          "design_strata": 60,
+          "household_cluster_worst_n_eff": 4680,
+          "households": 8910,
+          "kish_n_eff": 13450,
+          "persons": 23130
+        },
+        "unknown_age": {
+          "design_cluster_worst_n_eff": "<10",
+          "design_clusters": "<10",
+          "design_strata": "<10",
+          "household_cluster_worst_n_eff": "<10",
+          "households": "<10",
+          "kish_n_eff": "<10",
+          "persons": "<10"
+        }
+      },
+      "R_TA_PROXY": {
+        "by_age_band": {
+          "1_24": {
+            "design_cluster_worst_n_eff": 0,
+            "design_clusters": 0,
+            "design_strata": 0,
+            "household_cluster_worst_n_eff": 0,
+            "households": 0,
+            "kish_n_eff": 0,
+            "persons": 0
+          },
+          "25_44": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 120,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 1860,
+            "households": 3340,
+            "kish_n_eff": 2800,
+            "persons": 4680
+          },
+          "45_61": {
+            "design_cluster_worst_n_eff": 70,
+            "design_clusters": 130,
+            "design_strata": 60,
+            "household_cluster_worst_n_eff": 1990,
+            "households": 3250,
+            "kish_n_eff": 2980,
+            "persons": 4620
+          },
+          "62_64": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 350,
+            "households": 540,
+            "kish_n_eff": 430,
+            "persons": 610
+          },
+          "65_66": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 160,
+            "households": 220,
+            "kish_n_eff": 180,
+            "persons": 240
+          },
+          "67_69": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 190,
+            "households": 310,
+            "kish_n_eff": 230,
+            "persons": 340
+          },
+          "70_79": {
+            "design_cluster_worst_n_eff": 50,
+            "design_clusters": 90,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 350,
+            "households": 530,
+            "kish_n_eff": 480,
+            "persons": 630
+          },
+          "80_plus": {
+            "design_cluster_worst_n_eff": 40,
+            "design_clusters": 80,
+            "design_strata": 50,
+            "household_cluster_worst_n_eff": 290,
+            "households": 400,
+            "kish_n_eff": 370,
+            "persons": 460
+          }
+        },
+        "overall": {
+          "design_cluster_worst_n_eff": 70,
+          "design_clusters": 130,
+          "design_strata": 60,
+          "household_cluster_worst_n_eff": 4330,
+          "households": 7240,
+          "kish_n_eff": 7350,
+          "persons": 11570
+        },
+        "unknown_age": {
+          "design_cluster_worst_n_eff": 0,
+          "design_clusters": 0,
+          "design_strata": 0,
+          "household_cluster_worst_n_eff": 0,
+          "households": 0,
+          "kish_n_eff": 0,
+          "persons": 0
+        }
+      }
+    }
+  },
+  "disclosure": {
+    "base": 10,
+    "coarsening_rule": "0 stays 0; 1 to B-1 is <B; otherwise the nearest multiple of B, halves up; effective sizes alike, from their own values",
+    "protection_rule": "every atom and published-set difference of true size 1-9 has an integer range of width >= 4, shown by two exactly verified integer points, under the published values, the guaranteed cross-type relations and every target the release discloses to lie outside 1-9, or is exempt: its proven least and greatest sizes under those are the ones B0.1's published counts alone give it; every program is set from the publications alone, and a target not shown wide or exempt within 300 seconds per program is narrow",
+    "status": "released"
+  },
+  "geometry": {
+    "age_convention": "collection_wave",
+    "collection_waves": [
+      1999,
+      2001,
+      2003,
+      2005,
+      2007,
+      2009,
+      2011,
+      2013,
+      2015,
+      2017,
+      2019,
+      2021,
+      2023
+    ],
+    "lag_years": [
+      2,
+      4
+    ],
+    "reference_years": [
+      1998,
+      2000,
+      2002,
+      2004,
+      2006,
+      2008,
+      2010,
+      2012,
+      2014,
+      2016,
+      2018,
+      2020,
+      2022
+    ]
+  },
+  "psid_files_opened_sha256": {
+    "family/1999/FAM1999ER.sps": "7afad10e0da6969cd434a588f7d336923451d7a2fa8a71959c6edf376b023a9b",
+    "family/1999/FAM1999ER.txt": "92d7bef0eb5794cccb9137a4fe177dadfb2ba92709628b5cbc4004f8e7d786a0",
+    "family/2001/FAM2001ER.sps": "c6dc0e81131ece42ebeb70a67ee58082b939049815bd359724e745780d0afc12",
+    "family/2001/FAM2001ER.txt": "cc55d16f2fd44bcc89c1ab812e21f3f4f7bc26b15645b3170e590f55d1320ca5",
+    "family/2003/FAM2003ER.sps": "09f96449a9410a2478c0c24c042b5510ea0a75e7c97d83102a60d1faab747ac3",
+    "family/2003/FAM2003ER.txt": "f06914b61c017d34c471343d9667d2c19ad5d59f78890ee26ff613d465555ef1",
+    "family/2005/FAM2005ER.sps": "9a3440f8c3ba8af3ab2a40bde19b3a7382e20b82b0d91bd7b4ccf5e36ee7ec0d",
+    "family/2005/FAM2005ER.txt": "29e9d9a3eb7cdf33df8831cc55f27ab6e230e8202b4cdd982da79b759c0a749f",
+    "family/2007/FAM2007ER.sps": "4c8bd5b1d7bdce8a9d596e191f2791004ceb3413bf0b88c68cadccd33277977d",
+    "family/2007/FAM2007ER.txt": "f811e277303fe90a42edef602ad1a92405e8df0c9ee0dd36eff4ff531202ebbf",
+    "family/2009/FAM2009ER.sps": "4faa45e30b5a4719a3fa12f9d5d48568f644f315457ee3eed3e4ff8872459e4c",
+    "family/2009/FAM2009ER.txt": "59cf31106cf4c3d2e62903bd841b1689c9229e15674bdc5fd896453286b085f2",
+    "family/2011/FAM2011ER.sps": "6a994d8b65803a515eaa3bf62c74e278dd5943b8b578428ef4fd462d96cba45c",
+    "family/2011/FAM2011ER.txt": "3253586567a76a43d3e4a568dd5ca8af0f8a3c69db829d6a55bdf0942c60992f",
+    "family/2013/FAM2013ER.sps": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5",
+    "family/2013/FAM2013ER.txt": "0406aed042d660f51712d0f18a6e80f939717c0c2fc68b8d3a8d6dcbf48180e1",
+    "family/2015/FAM2015ER.sps": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff",
+    "family/2015/FAM2015ER.txt": "e4a64b275a9c6dbe8e7b562be7ed0906d4082b0c49cad79d764c69b8de318ec2",
+    "family/2017/FAM2017ER.sps": "24abae319022d4e3da9bce8052455dfee6b00b7b9c642004eddcfa06cb8d59e5",
+    "family/2017/FAM2017ER.txt": "c4220fe0569f3dbb8e110029a9d4d896c41635c50c86b7cb9edd0e7a5de82b0f",
+    "family/2019/FAM2019ER.sps": "c9f8ba8698779aeaf239c0eea4b1f98d32975b1c77767acfd35601fcb883a5b0",
+    "family/2019/FAM2019ER.txt": "80602015789c552cff3b75dfec6813204e918837f767f2e71744f51c07a9056d",
+    "family/2021/FAM2021ER.sps": "50526906dafd86271074ba15fd426ab7030c2b62f29acf3d819b577fdc9442e2",
+    "family/2021/FAM2021ER.txt": "c8a7a0589962bd3e6300e99595be16cb198ef48b3bb2b9b626743fe44cd185ae",
+    "family/2023/FAM2023ER.sps": "915755685965a41743e96e42abbbfdddd7eab1df33234e462b0813b25d4df169",
+    "family/2023/FAM2023ER.txt": "384c63924b6667ecebd7b3ca797bfae94fcea4c0de1708c46ab25659a16432b2",
+    "ind2023er/IND2023ER.sps": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462",
+    "ind2023er/IND2023ER.txt": "d68554ac828a690491572f37323eba1d8488e8b0001ed2aa89df4d4ade26c869"
+  },
+  "repository_head": "e8a9fac09b600ddfdaa586f962a49a351d9386b7",
+  "requested_label_allowlist": {
+    "anchor_2011": {
+      "age": {
+        "label": "AGE OF INDIVIDUAL 11",
+        "variable": "ER34104"
+      },
+      "interview": {
+        "label": "2011 INTERVIEW NUMBER",
+        "variable": "ER34101"
+      },
+      "interview_1968": {
+        "label": "1968 INTERVIEW NUMBER",
+        "variable": "ER30001"
+      },
+      "person_number": {
+        "label": "PERSON NUMBER 68",
+        "variable": "ER30002"
+      },
+      "relationship": {
+        "label": "RELATION TO HEAD 11",
+        "variable": "ER34103"
+      },
+      "reported_birth_year": {
+        "label": "YEAR INDIVIDUAL BORN 11",
+        "variable": "ER34106"
+      },
+      "sequence": {
+        "label": "SEQUENCE NUMBER 11",
+        "variable": "ER34102"
+      },
+      "weight": {
+        "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11",
+        "variable": "ER34155"
+      }
+    },
+    "design": {
+      "cluster": {
+        "label": "SAMPLING ERROR CLUSTER",
+        "variable": "ER31997"
+      },
+      "interview_1968": {
+        "label": "1968 INTERVIEW NUMBER",
+        "variable": "ER30001"
+      },
+      "person_number": {
+        "label": "PERSON NUMBER 68",
+        "variable": "ER30002"
+      },
+      "stratum": {
+        "label": "SAMPLING ERROR STRATUM",
+        "variable": "ER31996"
+      }
+    },
+    "family": {
+      "1999": {
+        "head_accuracy": [
+          {
+            "label": "ACC LABOR INCOME-HD",
+            "variable": "ER16464"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME-HEAD",
+          "variable": "ER16463"
+        },
+        "interview": {
+          "label": "1999 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER13002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME-WF",
+            "variable": "ER16466"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME-WIFE",
+          "variable": "ER16465"
+        }
+      },
+      "2001": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2000",
+            "variable": "ER20426"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2000",
+            "variable": "ER20440"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2000",
+          "variable": "ER20443"
+        },
+        "interview": {
+          "label": "2001 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER17002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2000",
+            "variable": "ER20448"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2000",
+          "variable": "ER20447"
+        }
+      },
+      "2003": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD LAST YEAR",
+            "variable": "ER24118"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD LAST YEAR",
+            "variable": "ER24134"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD LAST YEAR",
+          "variable": "ER24116"
+        },
+        "interview": {
+          "label": "2003 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER21002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE LAST YEAR",
+            "variable": "ER24136"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE LAST YEAR",
+          "variable": "ER24135"
+        }
+      },
+      "2005": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2004",
+            "variable": "ER27914"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2004",
+            "variable": "ER27930"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2004",
+          "variable": "ER27931"
+        },
+        "interview": {
+          "label": "2005 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER25002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2004",
+            "variable": "ER27944"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2004",
+          "variable": "ER27943"
+        }
+      },
+      "2007": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2006",
+            "variable": "ER40904"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2006",
+            "variable": "ER40920"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2006",
+          "variable": "ER40921"
+        },
+        "interview": {
+          "label": "2007 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER36002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2006",
+            "variable": "ER40934"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2006",
+          "variable": "ER40933"
+        }
+      },
+      "2009": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2008",
+            "variable": "ER46812"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2008",
+            "variable": "ER46828"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2008",
+          "variable": "ER46829"
+        },
+        "interview": {
+          "label": "2009 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER42002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2008",
+            "variable": "ER46842"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2008",
+          "variable": "ER46841"
+        }
+      },
+      "2011": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2010",
+            "variable": "ER52220"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2010",
+            "variable": "ER52236"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2010",
+          "variable": "ER52237"
+        },
+        "interview": {
+          "label": "2011 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER47302"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2010",
+            "variable": "ER52250"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2010",
+          "variable": "ER52249"
+        }
+      },
+      "2013": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2012",
+            "variable": "ER58021"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2012",
+            "variable": "ER58037"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2012",
+          "variable": "ER58038"
+        },
+        "interview": {
+          "label": "2013 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER53002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC LABOR INCOME OF WIFE-2012",
+            "variable": "ER58051"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF WIFE-2012",
+          "variable": "ER58050"
+        }
+      },
+      "2015": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF HEAD-2014",
+            "variable": "ER65201"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF HEAD-2014",
+            "variable": "ER65215"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF HEAD-2014",
+          "variable": "ER65216"
+        },
+        "interview": {
+          "label": "2015 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER60002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF SPOUSE-2014",
+            "variable": "ER65229"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF SPOUSE-2014",
+            "variable": "ER65243"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF SPOUSE-2014",
+          "variable": "ER65244"
+        }
+      },
+      "2017": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF RP-2016",
+            "variable": "ER71278"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF RP-2016",
+            "variable": "ER71292"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF REF PERSON-2016",
+          "variable": "ER71293"
+        },
+        "interview": {
+          "label": "2017 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER66002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF SPOUSE-2016",
+            "variable": "ER71306"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF SPOUSE-2016",
+            "variable": "ER71320"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF SPOUSE-2016",
+          "variable": "ER71321"
+        }
+      },
+      "2019": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF RP-2018",
+            "variable": "ER77300"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF RP-2018",
+            "variable": "ER77314"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF REF PERSON-2018",
+          "variable": "ER77315"
+        },
+        "interview": {
+          "label": "2019 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER72002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF SPOUSE-2018",
+            "variable": "ER77328"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF SPOUSE-2018",
+            "variable": "ER77342"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF SPOUSE-2018",
+          "variable": "ER77343"
+        }
+      },
+      "2021": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF RP-2020",
+            "variable": "ER81627"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF RP-2020",
+            "variable": "ER81641"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF REF PERSON-2020",
+          "variable": "ER81642"
+        },
+        "interview": {
+          "label": "2021 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER78002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF SPOUSE-2020",
+            "variable": "ER81655"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF SPOUSE-2020",
+            "variable": "ER81669"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF SPOUSE-2020",
+          "variable": "ER81670"
+        }
+      },
+      "2023": {
+        "head_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF RP-2022",
+            "variable": "ER85481"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF RP-2022",
+            "variable": "ER85495"
+          }
+        ],
+        "head_labor": {
+          "label": "LABOR INCOME OF REF PERSON-2022",
+          "variable": "ER85496"
+        },
+        "interview": {
+          "label": "2023 FAMILY INTERVIEW (ID) NUMBER",
+          "variable": "ER82002"
+        },
+        "spouse_accuracy": [
+          {
+            "label": "ACC WAGES AND SALARIES OF SPOUSE-2022",
+            "variable": "ER85509"
+          },
+          {
+            "label": "ACC MISC LABOR INCOME OF SPOUSE-2022",
+            "variable": "ER85523"
+          }
+        ],
+        "spouse_labor": {
+          "label": "LABOR INCOME OF SPOUSE-2022",
+          "variable": "ER85524"
+        }
+      }
+    },
+    "individual": {
+      "by_wave": {
+        "1999": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 99",
+            "variable": "ER33504"
+          },
+          "interview": {
+            "label": "1999 INTERVIEW NUMBER",
+            "variable": "ER33501"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 99",
+            "variable": "ER33503"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 99",
+            "variable": "ER33502"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 99",
+            "variable": "ER33547"
+          }
+        },
+        "2001": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 01",
+            "variable": "ER33604"
+          },
+          "interview": {
+            "label": "2001 INTERVIEW NUMBER",
+            "variable": "ER33601"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 01",
+            "variable": "ER33603"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 01",
+            "variable": "ER33602"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 01",
+            "variable": "ER33639"
+          }
+        },
+        "2003": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 03",
+            "variable": "ER33704"
+          },
+          "interview": {
+            "label": "2003 INTERVIEW NUMBER",
+            "variable": "ER33701"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 03",
+            "variable": "ER33703"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 03",
+            "variable": "ER33702"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 03",
+            "variable": "ER33742"
+          }
+        },
+        "2005": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 05",
+            "variable": "ER33804"
+          },
+          "interview": {
+            "label": "2005 INTERVIEW NUMBER",
+            "variable": "ER33801"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 05",
+            "variable": "ER33803"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 05",
+            "variable": "ER33802"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 05",
+            "variable": "ER33849"
+          }
+        },
+        "2007": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 07",
+            "variable": "ER33904"
+          },
+          "interview": {
+            "label": "2007 INTERVIEW NUMBER",
+            "variable": "ER33901"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 07",
+            "variable": "ER33903"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 07",
+            "variable": "ER33902"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 07",
+            "variable": "ER33951"
+          }
+        },
+        "2009": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 09",
+            "variable": "ER34004"
+          },
+          "interview": {
+            "label": "2009 INTERVIEW NUMBER",
+            "variable": "ER34001"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 09",
+            "variable": "ER34003"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 09",
+            "variable": "ER34002"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 09",
+            "variable": "ER34046"
+          }
+        },
+        "2011": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 11",
+            "variable": "ER34104"
+          },
+          "interview": {
+            "label": "2011 INTERVIEW NUMBER",
+            "variable": "ER34101"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 11",
+            "variable": "ER34103"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 11",
+            "variable": "ER34102"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11",
+            "variable": "ER34155"
+          }
+        },
+        "2013": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 13",
+            "variable": "ER34204"
+          },
+          "interview": {
+            "label": "2013 INTERVIEW NUMBER",
+            "variable": "ER34201"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 13",
+            "variable": "ER34203"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 13",
+            "variable": "ER34202"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 13",
+            "variable": "ER34269"
+          }
+        },
+        "2015": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 15",
+            "variable": "ER34305"
+          },
+          "interview": {
+            "label": "2015 INTERVIEW NUMBER",
+            "variable": "ER34301"
+          },
+          "relationship": {
+            "label": "RELATION TO HEAD 15",
+            "variable": "ER34303"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 15",
+            "variable": "ER34302"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 15",
+            "variable": "ER34414"
+          }
+        },
+        "2017": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 17",
+            "variable": "ER34504"
+          },
+          "interview": {
+            "label": "2017 INTERVIEW NUMBER",
+            "variable": "ER34501"
+          },
+          "relationship": {
+            "label": "RELATION TO REFERENCE PERSON 17",
+            "variable": "ER34503"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 17",
+            "variable": "ER34502"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 17",
+            "variable": "ER34651"
+          }
+        },
+        "2019": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 19",
+            "variable": "ER34704"
+          },
+          "interview": {
+            "label": "2019 INTERVIEW NUMBER",
+            "variable": "ER34701"
+          },
+          "relationship": {
+            "label": "RELATION TO REFERENCE PERSON 19",
+            "variable": "ER34703"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 19",
+            "variable": "ER34702"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 19",
+            "variable": "ER34864"
+          }
+        },
+        "2021": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 21",
+            "variable": "ER34904"
+          },
+          "interview": {
+            "label": "2021 INTERVIEW NUMBER",
+            "variable": "ER34901"
+          },
+          "relationship": {
+            "label": "RELATION TO REFERENCE PERSON 21",
+            "variable": "ER34903"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 21",
+            "variable": "ER34902"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 21",
+            "variable": "ER35065"
+          }
+        },
+        "2023": {
+          "age": {
+            "label": "AGE OF INDIVIDUAL 23",
+            "variable": "ER35104"
+          },
+          "interview": {
+            "label": "2023 INTERVIEW NUMBER",
+            "variable": "ER35101"
+          },
+          "relationship": {
+            "label": "RELATION TO REFERENCE PERSON 23",
+            "variable": "ER35103"
+          },
+          "sequence": {
+            "label": "SEQUENCE NUMBER 23",
+            "variable": "ER35102"
+          },
+          "weight": {
+            "label": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 23",
+            "variable": "ER35265"
+          }
+        }
+      },
+      "concepts": {
+        "age": [
+          "^AGE OF INDIVIDUAL"
+        ],
+        "interview": [
+          "INTERVIEW NUMBER"
+        ],
+        "relationship": [
+          "^RELATION(SHIP)? TO (HEAD|REFERENCE PERSON)"
+        ],
+        "sequence": [
+          "^SEQUENCE NUMBER"
+        ],
+        "weight": [
+          "^INDIVIDUAL WEIGHT|CROSS-SECTION WT",
+          "^CORE IND WEIGHT",
+          "LONGITUDINAL W"
+        ]
+      },
+      "identifiers": {
+        "interview_1968": {
+          "label": "1968 INTERVIEW NUMBER",
+          "variable": "ER30001"
+        },
+        "person_number": {
+          "label": "PERSON NUMBER 68",
+          "variable": "ER30002"
+        }
+      }
+    }
+  },
+  "schema": "track_b_b0_2_counts.v1",
+  "script_sha256": "647b52fd7c260a1e46887f8781a92990cae2fa38165f740d65f530703cc96321",
+  "worktree_clean": true
+}

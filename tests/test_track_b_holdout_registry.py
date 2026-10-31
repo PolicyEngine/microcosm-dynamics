@@ -2718,18 +2718,20 @@ def test_a_push_compares_with_its_before_commit(
     assert registry.base_registry(repository) == middle
 
 
+@pytest.mark.parametrize("digits", [40, 64])
 @pytest.mark.parametrize("created", [None, False, "true", 1])
 def test_a_zero_push_boundary_needs_a_created_branch(
-    tmp_path, no_ci_env, monkeypatch, created
+    tmp_path, no_ci_env, monkeypatch, created, digits
 ):
     """GitHub sends an all-zero ``before`` when a push creates its branch,
     and says so with ``created: true``. Without that the boundary is
     unknown, so the push raises rather than fall back to the merge base,
-    which would check less history."""
+    which would check less history. A SHA-256 repository's zero has 64
+    digits."""
     repository = init_repository(tmp_path)
     first = registered(["candidate"])
     commit_registry(repository, first, "registry")
-    payload = {"before": "0" * 40}
+    payload = {"before": "0" * digits}
     if created is not None:
         payload["created"] = created
     event = tmp_path / "event.json"
@@ -2751,6 +2753,35 @@ def test_an_unset_event_path_raises(
     repository = init_repository(tmp_path)
     commit_registry(repository, registered(["candidate"]), "registry")
     monkeypatch.setenv("GITHUB_EVENT_NAME", event_name)
+    with pytest.raises(LookupError):
+        if event_name == "push":
+            registry.base_commit(repository)
+        else:
+            registry.pull_request_head()
+
+
+@pytest.mark.parametrize("event_name", ["push", "pull_request"])
+def test_a_too_deeply_nested_event_raises(
+    tmp_path, no_ci_env, monkeypatch, event_name
+):
+    """An event nested too deeply for the JSON parser cannot be read: a
+    push and a pull request each raise ``LookupError``, never
+    ``RecursionError``, though the payload would otherwise resolve."""
+    repository = init_repository(tmp_path)
+    commit_registry(repository, registered(["candidate"]), "registry")
+    nested = "[" * 200_000 + "]" * 200_000
+    with pytest.raises(RecursionError):
+        json.loads(nested)
+    if event_name == "push":
+        outer = {"before": "0" * 40, "created": True}
+    else:
+        outer = {"pull_request": {"head": {"sha": "a" * 40}}}
+    event = tmp_path / "event.json"
+    event.write_text(
+        json.dumps(outer)[:-1] + ', "deep": ' + nested + "}", encoding="utf-8"
+    )
+    monkeypatch.setenv("GITHUB_EVENT_NAME", event_name)
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
     with pytest.raises(LookupError):
         if event_name == "push":
             registry.base_commit(repository)
