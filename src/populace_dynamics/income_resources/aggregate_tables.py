@@ -188,7 +188,11 @@ class _HTMLTree(HTMLParser):
     everything after a ``plaintext`` start tag as text, as HTML does, and
     3.13 reads it as markup, so a page with one is refused. So is a page
     holding "<!-->" or "<!--->", an empty comment that HTML closes at that
-    ``>``: 3.14 closes it there, and 3.13 runs on to a later "-->".
+    ``>``: 3.14 closes it there, and 3.13 runs on to a later "-->". So is a
+    page whose script text holds "<!--" and then a script start tag
+    (``<script`` and a space, "/" or ">"): HTML's script data escape
+    states run that script on past its next ``</script>``, and both Pythons
+    end it there.
 
     An ``html`` start tag builds the html element only as the document's
     first content. HTML ignores any later one, apart from adding the
@@ -246,9 +250,12 @@ class _HTMLTree(HTMLParser):
     another); a self-closing slash on a non-void element, which HTML
     ignores and which closes the element here; a head or body start tag
     after the page's head, which HTML ignores and which here starts an
-    element (no pinned capture has more than one of either); and a CDATA
+    element (no pinned capture has more than one of either); a CDATA
     section in HTML content, which HTML reads as a comment ending at the
-    first ``>`` and which here holds no text.
+    first ``>`` and which here holds no text; and HTML's script data escape
+    states, in which a script holding "<!--" and then a script start tag
+    runs on past its next ``</script>``: here the script ends there, so a
+    page whose script text holds both is refused (no pinned script does).
     """
 
     # HTML's raw text elements; Python versions differ (see above).
@@ -469,6 +476,15 @@ def parse_html(payload: bytes | str) -> ET.Element:
     parser = _HTMLTree()
     parser.feed(text)
     parser.close()
+    for script in parser.root.iter("script"):
+        # After "<!--" and a script start tag, HTML's script data runs on
+        # past the next "</script>" (its double-escaped state), which no
+        # supported Python reads, so the page is refused.
+        opened = (script.text or "").find("<!--")
+        if opened >= 0 and re.search(
+            r"<script[\s/>]", script.text[opened:], re.IGNORECASE
+        ):
+            raise TableStructureError("HTML script holds an escaped script")
     return parser.root
 
 

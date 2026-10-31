@@ -5,6 +5,7 @@ import subprocess
 import sys
 import unicodedata
 from dataclasses import replace
+from datetime import date
 from decimal import Decimal
 from hashlib import sha256
 
@@ -39,6 +40,12 @@ INVENTED_HEADER = (
     "<tr><th>Federal Code</th><th>State OS Code</th><th>Category</th>"
     "<th>FBR</th><th>State Supplement Level</th>"
     "<th>Total Payment Levels</th></tr>"
+)
+# Runs a line of prose on past 80 characters, so it is no short line; it
+# names no State, claimant word or date.
+INVENTED_LONG_TAIL = (
+    " (invented filler that runs this line of prose on past eighty"
+    " characters)"
 )
 INVENTED_PREFIX = (
     "<p>Effective Dates: 02/03/2040 - Present</p>"
@@ -361,16 +368,27 @@ def test_invented_merged_numeric_header_levels_are_distinct():
     assert cells[0].column_key == "Invented payment levels | FBR"
 
 
-def test_invented_unrelated_program_prose_does_not_replace_chart_date():
+@pytest.mark.parametrize("long", [True, False])
+def test_invented_unrelated_program_prose_does_not_replace_chart_date(long):
+    """Prose that dates another program never dates the chart. A paragraph
+    of 80 characters or more leaves the chart's date standing; since round
+    11 a shorter one names a date no sentence states, so the chart refuses
+    rather than carry an earlier date past it."""
     spec, payload = invented_spec(
         "<tr><td>A</td><td>A</td><td>All</td>"
         "<td>100</td><td>10</td><td>110</td></tr>"
     )
+    prose = "A separate invented program was effective August 2029"
+    prose += INVENTED_LONG_TAIL + "." if long else "."
     payload = payload.replace(
         b"<h4>a. Individual payment levels for California</h4>",
-        b"<p>A separate invented program was effective August 2029.</p>"
-        b"<h4>a. Individual payment levels for California</h4>",
+        f"<p>{prose}</p>".encode()
+        + b"<h4>a. Individual payment levels for California</h4>",
     )
+    if not long:
+        with pytest.raises(TableStructureError, match="no effective-date"):
+            describe_poms_tables(payload)
+        return
     selector = describe_poms_tables(payload)[0]
     assert selector["effective_from"] == "2030-01-01"
 
@@ -1085,9 +1103,10 @@ def test_invented_claimant_line_before_any_state_heading_is_not_refused():
     [
         ("Individual payment levels for Washington, D.C.", "individual"),
         ("Couple for Washington, D.C.", "couple"),
-        # Round 9 pinned this line as individual, its first word. It names
-        # two claimant types and is no claimant line, so it names neither,
-        # and the chart, with no claimant line of its own, refuses.
+        # Round 9 pinned this line as individual, its first word, and round
+        # 10 as prose that names no claimant, so the chart refused "lacks
+        # state or claimant context". A heading that holds two claimant
+        # types refuses as naming two, claimant line or not.
         ("Individual or couple for Washington, D.C.", None),
     ],
 )
@@ -1100,7 +1119,7 @@ def test_invented_washington_dc_names_the_district(line, claimant):
         )
     )
     if claimant is None:
-        with pytest.raises(TableStructureError, match="lacks state or claim"):
+        with pytest.raises(TableStructureError, match="two claimants"):
             describe_poms_tables(payload)
         return
     (context,) = describe_poms_tables(payload)
@@ -1434,8 +1453,9 @@ def test_invented_later_heading_line_naming_another_state_is_refused(block):
         # A later heading line may name the section's own State.
         "<h4>Invented note<br>Invented note on California</h4>",
         "<h4>Invented note<br>Invented note (CA)</h4>",
-        # A paragraph that names another State is prose, not a heading.
-        "<p>Invented note on Nevada</p>",
+        # A long paragraph that names another State is prose, not a
+        # heading; a short one refuses (the short-line State net).
+        f"<p>Invented note on Nevada{INVENTED_LONG_TAIL}</p>",
     ],
 )
 def test_invented_later_heading_line_own_state_or_paragraph_is_admitted(
@@ -2487,43 +2507,75 @@ def invented_nevada_after(claimant: str, fragment: str) -> bytes:
     )
 
 
+# The round-9 review's A1, A2, A3 and A6, each read as its first claimant
+# word before round 10, and more prose forms: each holds a claimant word
+# and is no claimant line.
+PROSE_CLAIMANT_FRAGMENTS = [
+    # The opening, and whether it holds both claimant types.
+    (
+        "Couple",
+        "<p>A recipient or couple qualifies if invented conditions hold",
+        True,
+    ),
+    ("Couple", "<p>Invented payments go to an eligible individual", False),
+    ("Individual", "<p>Invented payments go to each eligible couple", False),
+    ("Couple", "<p>Individual or couple", True),
+    # Its list item and "eligibility rules" forms.
+    ("Couple", "<ul><li>Invented supplement for the recipient", False),
+    ("Couple", "<p>Invented eligibility rules: Individual", False),
+    ("Couple", "<div>Invented note<br>Couple or individual notes", True),
+    # A claimant word after a date sentence that ends with neither a date
+    # nor a State, or after other text that ends with a State.
+    (
+        "Individual",
+        "<p>Payment levels effective January 1, 2030 for each eligible"
+        " Couple",
+        False,
+    ),
+    ("Individual", "<p>Invented eligibility rules for Nevada Couple", False),
+]
+
+
+def invented_prose_fragment(opening: str, tail: str) -> str:
+    """Close a fragment of PROSE_CLAIMANT_FRAGMENTS after ``tail``."""
+    closes = {"<p>": "</p>", "<ul><li>": "</li></ul>", "<div>": "</div>"}
+    start = next(tag for tag in closes if opening.startswith(tag))
+    return opening + tail + closes[start]
+
+
 @pytest.mark.parametrize(
-    ("claimant", "fragment"),
-    [
-        # The review's A1, A2, A3 and A6, each read as its first claimant
-        # word before.
-        (
-            "Couple",
-            "<p>A recipient or couple qualifies if invented conditions"
-            " hold</p>",
-        ),
-        ("Couple", "<p>Invented payments go to an eligible individual</p>"),
-        ("Individual", "<p>Invented payments go to each eligible couple</p>"),
-        ("Couple", "<p>Individual or couple</p>"),
-        # Its list item and "eligibility rules" forms.
-        ("Couple", "<ul><li>Invented supplement for the recipient</li></ul>"),
-        ("Couple", "<p>Invented eligibility rules: Individual</p>"),
-        ("Couple", "<div>Invented note<br>Couple or individual notes</div>"),
-        # A claimant word after a date sentence that ends with neither a
-        # date nor a State, or after other text that ends with a State.
-        (
-            "Individual",
-            "<p>Payment levels effective January 1, 2030 for each eligible"
-            " Couple</p>",
-        ),
-        ("Individual", "<p>Invented eligibility rules for Nevada Couple</p>"),
-    ],
+    ("claimant", "opening", "two"), PROSE_CLAIMANT_FRAGMENTS
 )
-def test_invented_prose_mentioning_a_claimant_names_none(claimant, fragment):
+def test_invented_prose_mentioning_a_claimant_names_none(
+    claimant, opening, two
+):
     """Only a claimant line names a chart's claimant: a heading form, or a
-    caption after a date. Prose that mentions a claimant word names none,
-    so the claimant heading before it stands."""
+    caption after a date. Prose of 80 characters or more that mentions a
+    claimant word names none, so the claimant heading before it stands."""
+    fragment = invented_prose_fragment(opening, INVENTED_LONG_TAIL)
     assert invented_selector(invented_nevada_after(claimant, fragment)) == (
         "Nevada",
         claimant.lower(),
         "2030-01-01",
         [0],
     )
+
+
+@pytest.mark.parametrize(
+    ("claimant", "opening", "two"), PROSE_CLAIMANT_FRAGMENTS
+)
+def test_invented_short_prose_mentioning_a_claimant_leaves_it_unread(
+    claimant, opening, two
+):
+    """Regression (the round-10 review's Medium 2): a line under 80
+    characters that holds a claimant word but is no claimant line names a
+    claimant the reader does not read, so the heading before it no longer
+    stands: the chart refuses, and a line that holds both types refuses as
+    naming two."""
+    fragment = invented_prose_fragment(opening, "")
+    message = "two claimants" if two else "lacks state or claimant"
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_after(claimant, fragment))
 
 
 @pytest.mark.parametrize(
@@ -2677,25 +2729,40 @@ def test_invented_footnote_body_between_charts_keeps_the_date(body):
             ("Nevada Effective 7/1/31", "2031-07-01"),
         ]
     ),
-    st.sampled_from(["<sup>{w}</sup>", "<a href='#fn{w}'>{w}</a>"]),
-    st.text("0123456789x*", min_size=1, max_size=3),
-    st.data(),
+    st.lists(
+        st.tuples(
+            st.sampled_from(
+                [
+                    "<sup>{w}</sup>",
+                    "<a href='#fn{w}'>{w}</a>",
+                    "<a href='x.html#fn{w}'>{w}</a>",
+                ]
+            ),
+            st.text("0123456789x*", min_size=1, max_size=3),
+            st.floats(0, 1),
+        ),
+        min_size=1,
+        max_size=4,
+    ),
 )
-def test_invented_footnote_marker_never_changes_a_date(
-    sentence, marker, w, data
-):
-    """Property: a footnote marker anywhere in an effective-date sentence
-    leaves its date as it is or refuses. Only a marker that leads the line
-    makes it a footnote body, which dates nothing, so the section's earlier
-    date stands."""
+def test_invented_footnote_marker_never_changes_a_date(sentence, markers):
+    """Property (the round-10 review's Low 4): one to four footnote markers,
+    by either marker rule, anywhere in an effective-date sentence leave its
+    date as it is or refuse. Only markers that all lead the line make it a
+    footnote body, which dates nothing, so the section's earlier date
+    stands."""
     text, expected = sentence
-    at = data.draw(st.integers(0, len(text)))
-    line = text[:at] + marker.format(w=w) + text[at:]
+    cuts = sorted(int(at * len(text)) for _, _, at in markers)
+    pieces, last = [], 0
+    for (marker, w, _), at in zip(markers, cuts, strict=True):
+        pieces += [text[last:at], marker.format(w=w)]
+        last = at
+    line = "".join(pieces) + text[last:]
     try:
         selector = invented_selector(invented_nevada_with(f"<p>{line}</p>"))
     except TableStructureError:
         return
-    if at == 0 and text.startswith("Nevada"):
+    if all(at == 0 for at in cuts) and text.startswith("Nevada"):
         assert selector[2] == "2030-01-01"
     else:
         assert selector[2] == expected
@@ -2705,21 +2772,24 @@ def test_invented_footnote_marker_never_changes_a_date(
     ("fragment", "expected"),
     [
         # The review's C1 and C3: a link elsewhere is text, so the bare
-        # reading keeps it and names no State heading or claimant.
+        # reading keeps it and names no State heading or claimant. Each is
+        # a short line, so since round 11 C1 refuses as naming another
+        # State, and C3 names a claimant the reader does not read; read
+        # without the link, C1 would head Utah and C3 name an individual.
         (
             "<p><a href='https://www.fns.usda.gov/invented'>Invented note"
             " on</a> Utah</p><h4>Individual</h4>",
-            ("Nevada", "individual", "2030-01-01", [0]),
+            "short line names another State",
         ),
         (
             "<h4>Couple</h4><p>Individual <a"
             " href='https://www.fns.usda.gov/invented'>invented note</a></p>",
-            ("Nevada", "couple", "2030-01-01", [0]),
+            "lacks state or claimant",
         ),
         # The control.
         (
             "<p>Invented note on Utah</p>",
-            ("Nevada", "individual", "2030-01-01", [0]),
+            "short line names another State",
         ),
         # C2 and C2b: a long sup and a link elsewhere no longer vanish, so
         # the paragraph heads nothing; it opens as Utah's caption, so the
@@ -2823,7 +2893,10 @@ def test_invented_lower_case_two_letter_word_names_no_state(word):
     """The review's O6: a lower-case word that spells a postal code, as in
     "de facto", names no State, in prose that mentions a claimant or in a
     date sentence; the upper-case code does."""
-    prose = f"<p>Couple payment levels for Nevada {word} facto</p>"
+    prose = (
+        f"<p>Couple payment levels for Nevada {word} facto"
+        f"{INVENTED_LONG_TAIL}</p>"
+    )
     assert invented_selector(invented_nevada_with(prose))[:2] == (
         "Nevada",
         "individual",
@@ -2902,9 +2975,10 @@ def test_invented_caption_name_forms_are_netted(caption):
         # The section's own State.
         "<p>Nevada (continued)</p>",
         "<p>State of Nevada</p>",
-        # Another State, not at the line's start, or in a line of 80
-        # characters or more.
-        "<p>Invented note on Utah</p>",
+        # Another State in a line of 80 characters or more, at its start
+        # or not. A short line that names it anywhere refuses (the
+        # short-line State net).
+        f"<p>Invented note on Utah{INVENTED_LONG_TAIL}</p>",
         "<p>Utah " + "invented " * 9 + "note</p>",
         # A lower-case word that spells a postal code.
         "<p>ut infra, invented note</p>",
@@ -3048,3 +3122,576 @@ def test_invented_carriage_returns_read_as_newlines():
     root = parse_html("<pre>w0\r\nw1\rw2</pre><script>w3\r\nw4</script>")
     assert root.find(".//pre").text == "w0\nw1\nw2"
     assert root.find(".//script").text == "w3\nw4"
+
+
+# The round-10 review's findings, invented pages only.
+
+
+def invented_after_a_chart(fragment: str) -> bytes:
+    """Nevada's section and its Individual chart, then ``fragment`` and a
+    second chart."""
+    return invented_nevada_with("") + (
+        f"{fragment}<table>{INVENTED_HEADER}</table>".encode()
+    )
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The review's Medium 1 table, each after a first chart.
+        "<h4>Individual<br>or couple</h4>",
+        "<h4>Individual<br>and couple</h4>",
+        "<h4>Couple</h4><p>Individual<br>or couple</p>",
+        "<h4>Couple<br>Eligible individual</h4>",
+        "<h4>Couple<div>Invented note on each individual</div></h4>",
+        # Its control, one line, refuses the same way.
+        "<h4>Individual or couple</h4>",
+        # A plural counts, in a claimant line's block as elsewhere.
+        "<h4>Individual<br>Couples</h4>",
+    ],
+)
+def test_invented_block_with_a_claimant_line_counts_every_view(fragment):
+    """Regression (the round-10 review's Medium 1): the words of a block
+    with a claimant line were counted only in its claimant lines, so a
+    second type in prose across a ``br`` read as one type. Every view of
+    such a block counts, its whole text included."""
+    with pytest.raises(TableStructureError, match="two claimants"):
+        describe_poms_tables(invented_after_a_chart(fragment))
+
+
+@pytest.mark.parametrize(
+    ("first", "fragment", "expected"),
+    [
+        # The review's m1 repros: K1 to K26 after a first claimant heading,
+        # then its captions C1 to C8. Each refuses or reads right.
+        ("Couple", "<h5>Eligible individual</h5>", "lacks state or claimant"),
+        ("Couple", "<h5>Individual living alone</h5>", "lacks state or"),
+        ("Individual", "<h4>Couple (both eligible)</h4>", "lacks state or"),
+        ("Couple", "<h4>Individual or couple for Nevada</h4>", "two claim"),
+        ("Couple", "<p>Individual and couple</p>", "two claimants"),
+        ("Individual", "<h4>Couple:</h4>", "lacks state or claimant"),
+        ("Individual", "<h4>Couple payment levels:</h4>", "lacks state or"),
+        ("Individual", "<h4>Couple Payment Level</h4>", "couple"),
+        (
+            "Individual",
+            "<h4>Couple payment levels for Nevada:</h4>",
+            "lacks state or claimant",
+        ),
+        ("Individual", "<h4>Couple - Nevada</h4>", "lacks state or claimant"),
+        ("Individual", "<h4>Couples</h4>", "lacks state or claimant"),
+        ("Individual", "<h4>Eligible couple</h4>", "lacks state or claimant"),
+        ("Individual", "<h4>Couple (continued)</h4>", "lacks state or"),
+        ("Individual", "<h4>Payment levels: couple</h4>", "lacks state or"),
+        (
+            "Individual",
+            f"<table>{INVENTED_HEADER}</table><h4>Couple payment levels</h4>",
+            "couple",
+        ),
+        ("Individual", "<h4>(b) Couple</h4>", "lacks state or claimant"),
+        ("Individual", "<h4>b) Couple</h4>", "couple"),
+        ("Individual", "<h4>B. COUPLE</h4>", "couple"),
+        ("Individual", "<h4>Couple&nbsp;payment levels</h4>", "couple"),
+        (
+            "Individual",
+            "<h4>Couple payment levels for the State of Nevada</h4>",
+            "lacks state or claimant",
+        ),
+        (
+            "Individual",
+            "<h4>Couple payment levels in Nevada</h4>",
+            "lacks state or claimant",
+        ),
+        (
+            "Individual",
+            "<h4>Couple payment levels for NV</h4>",
+            "lacks state or claimant",
+        ),
+        (
+            "Individual",
+            "<h4>Couple payment levels for Nev.</h4>",
+            "lacks state or claimant",
+        ),
+        ("Individual", "<h4>Recipient couple</h4>", "two claimants"),
+        ("Individual", "<h4>Couple recipient</h4>", "two claimants"),
+        ("Couple", "<h4>Individual recipient</h4>", "lacks state or claim"),
+        (
+            "Individual",
+            "<p>Couple payment levels effective January 1, 2030 Couple</p>",
+            "couple",
+        ),
+        (
+            "Individual",
+            "<p>Nevada Effective January 1, 2030 for Utah Couple</p>",
+            "section heading",
+        ),
+        (
+            "Individual",
+            "<p>Effective January 1, 2031 Utah Couple</p>",
+            "section heading",
+        ),
+        (
+            "Couple",
+            "<p>Payment levels effective for invented cases until January 1,"
+            " 2030 Individual</p>",
+            "individual",
+        ),
+        ("Couple", "<p>Nevada Effective 1/1/30 Individual</p>", "individual"),
+        (
+            "Couple",
+            "<p>Effective January 1, 2030, individual</p>",
+            "lacks state or claimant",
+        ),
+        (
+            "Couple",
+            "<p>Effective January 1, 2030: Individual</p>",
+            "lacks state or claimant",
+        ),
+        (
+            "Couple",
+            "<p>Effective January 1, 2030 - Individual</p>",
+            "lacks state or claimant",
+        ),
+        # The review's realistic shape.
+        (
+            "Individual",
+            "<p>No supplement.</p><h4>Couple payment levels for Nevada:</h4>",
+            "lacks state or claimant",
+        ),
+    ],
+)
+def test_invented_unread_claimant_heading_leaves_no_earlier_claimant(
+    first, fragment, expected
+):
+    """Regression (the round-10 review's Medium 2): a heading or short line
+    that the claimant pattern does not admit left the claimant line before
+    it standing, so the chart read that earlier type silently. Such a line
+    now names a claimant the reader does not read, and the chart refuses
+    unless a later claimant line names one; a line that holds both types
+    refuses as naming two, as K4 does."""
+    payload = invented_nevada_after(first, fragment)
+    if expected in {"individual", "couple"}:
+        *_, last = describe_poms_tables(payload)
+        assert (last["state"], last["claimant_type"]) == ("Nevada", expected)
+    else:
+        with pytest.raises(TableStructureError, match=expected):
+            describe_poms_tables(payload)
+
+
+UNREAD_CLAIMANT_FORMS = [
+    "{w}:",
+    "{w}s",
+    "Eligible {w}",
+    "{w} (continued)",
+    "{w} payment levels:",
+    "Payment levels: {w}",
+    "(b) {w}",
+    "{w} payment levels in Nevada",
+    "{w} - Nevada",
+    "{w} payment levels for the State of Nevada",
+    "Invented eligibility rules: {w}",
+    "Effective January 1, 2030, {w}",
+]
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    st.sampled_from(["Individual", "Couple"]),
+    st.sampled_from(["h4", "h5", "p", "div", "blockquote"]),
+    st.sampled_from(UNREAD_CLAIMANT_FORMS + ["{w}", "{w} payment levels"]),
+    st.sampled_from([str, str.lower, str.upper]),
+)
+def test_invented_later_claimant_line_never_charts_the_earlier_type(
+    first, tag, form, case
+):
+    """Property: after a claimant heading, a heading or short line that
+    names the other claimant type, in a form the claimant pattern admits
+    or not, never charts the first type: the chart reads the other type or
+    refuses."""
+    other = "Couple" if first == "Individual" else "Individual"
+    line = case(form.format(w=other))
+    payload = invented_nevada_after(first, f"<{tag}>{line}</{tag}>")
+    try:
+        *_, last = describe_poms_tables(payload)
+    except TableStructureError:
+        return
+    assert last["claimant_type"] == other.lower()
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # The review's E9 and E10, and more forms that name another State
+        # past a short line's start.
+        "Supplements for Utah",
+        "Optional supplement: Utah",
+        "Invented note on Utah",
+        "Payment levels in UT",
+        "Notes on N.J. cases",
+        "Residents who move from California",
+    ],
+)
+def test_invented_short_line_naming_another_state_is_refused(line):
+    """Regression (round 11's carry-over sweep): a short line that named
+    another State past its start, as a section may open, charted the
+    section before it on. Any line under 80 characters that names another
+    State now refuses."""
+    with pytest.raises(TableStructureError, match="short line names another"):
+        describe_poms_tables(
+            invented_nevada_with(f"<p>{line}</p><p>Couple</p>")
+        )
+
+
+@settings(deadline=None, max_examples=150)
+@given(
+    st.sampled_from(GLUED_NAMES),
+    st.sampled_from(
+        [
+            "Supplements for {}",
+            "Invented note on {}",
+            "Payment levels in {}",
+            "Optional supplement: {}",
+            "Residents who move from {} here",
+            "{} (continued)",
+            "The State of {}",
+        ]
+    ),
+    st.sampled_from(INVENTED_BLOCK_KINDS),
+)
+def test_invented_short_line_naming_another_state_never_charts_nevada(
+    named, form, kind
+):
+    """Property: a line under 80 characters, in a block of any kind, that
+    names another State anywhere never charts under Nevada's selector."""
+    text, _ = named
+    line = invented_block("p", form.format(text), kind, False)
+    assert invented_nevada_outcome(line + "<p>Couple</p>") is None
+
+
+def test_invented_long_line_naming_another_state_is_prose():
+    """A Limit: a line of 80 characters or more that names another State in
+    other words is prose, and the section reads on."""
+    payload = invented_nevada_with(
+        f"<p>Supplements for Utah{INVENTED_LONG_TAIL}</p><p>Couple</p>"
+    )
+    assert invented_selector(payload)[:2] == ("Nevada", "couple")
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # Round 11's carry-over sweep: a heading or short line that names a
+        # date in a form no effective-date sentence takes.
+        "<p>Payment levels as of January 1, 2031</p>",
+        "<p>Effective: January 1, 2031</p>",
+        "<h5>January 1, 2031</h5>",
+        "<p>Eff. 1/1/2031</p>",
+        "<p>Beginning March 1, 2031</p>",
+        "<h5>Payment levels beginning 3/1/31</h5>",
+        "<p>Revised March 1, 2031</p>",
+        "<div>Invented note<br>Payments as of 4/1/2031</div>",
+        # The date split across a line break, which only the whole text
+        # dates.
+        "<p>Payment levels as of January 1,<br>2031</p>",
+        # Dates in forms no sentence reads, in a sentence or not.
+        "<p>Payment levels as of Jan. 1, 2031</p>",
+        "<p>Payment levels effective January 2031</p>",
+        "<p>Effective 1 March 2031</p>",
+        "<h5>Payment levels 2031-03-01</h5>",
+        "<p>Revised 3-1-2031</p>",
+    ],
+)
+def test_invented_unread_date_line_makes_the_next_chart_refuse(fragment):
+    """Regression (round 11's carry-over sweep): a later line that named a
+    new date in a form the reader does not read left the section's earlier
+    date standing, so the chart carried it silently. Such a line now
+    leaves the date unread, and the next chart refuses."""
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+def test_invented_unread_date_stands_until_a_sentence_dates_the_section():
+    """An unread date line refuses every later chart of the section until
+    an effective-date sentence dates it again, and a State heading starts
+    afresh."""
+    unread = (
+        invented_nevada_with("")
+        + (
+            "<p>Revised March 1, 2031</p><h4>Couple</h4>"
+            f"<table>{INVENTED_HEADER}</table>"
+        ).encode()
+    )
+    with pytest.raises(TableStructureError, match="table 2 follows a date"):
+        describe_poms_tables(unread)
+    redated = invented_nevada_with(
+        "<p>Revised March 1, 2031</p>"
+        "<p>Payment levels effective April 1, 2031</p>"
+    )
+    assert invented_selector(redated)[2] == "2031-04-01"
+
+
+@pytest.mark.parametrize(
+    ("fragment", "date"),
+    [
+        # The section's own date, a footnote body that opens with its
+        # marker, and the revision line date no chart.
+        ("<p>Payment levels as of January 1, 2030</p>", "2030-01-01"),
+        ("<p><sup>1</sup>Revised March 1, 2031</p>", "2030-01-01"),
+        ("<p>Effective Dates: 02/03/2041 - Present</p>", "2030-01-01"),
+        # A Limit: a line of 80 characters or more that dates in another
+        # form is prose.
+        (
+            f"<p>Invented note dated March 1, 2031{INVENTED_LONG_TAIL}</p>",
+            "2030-01-01",
+        ),
+        # A later sentence dates the chart.
+        ("<p>Effective March 1, 2031</p>", "2031-03-01"),
+    ],
+)
+def test_invented_other_date_lines_leave_the_date_read(fragment, date):
+    assert invented_selector(invented_nevada_with(fragment))[2] == date
+
+
+@settings(deadline=None, max_examples=200)
+@given(
+    st.dates(min_value=date(2031, 1, 1), max_value=date(2039, 12, 28)),
+    st.sampled_from(["{long}", "{numeric}"]),
+    st.sampled_from(
+        [
+            "Payment levels as of {}",
+            "Effective: {}",
+            "{}",
+            "Revised {}",
+            "Eff. {}",
+            "Beginning {}",
+            "Payment levels effective {}",
+            "Effective {}",
+            "Nevada Effective {}",
+        ]
+    ),
+    st.sampled_from(["p", "h5", "div", "li"]),
+)
+def test_invented_later_date_line_never_charts_the_earlier_date(
+    day, style, form, tag
+):
+    """Property: after the section's date sentence, a heading or short line
+    that names another date, as a sentence or not, never charts the
+    earlier date: the chart reads the new date or refuses."""
+    text = style.format(
+        long=f"{day:%B} {day.day}, {day.year}",
+        numeric=f"{day.month}/{day.day}/{day.year}",
+    )
+    line = form.format(text)
+    block = (
+        f"<ul><li>{line}</li></ul>"
+        if tag == "li"
+        else f"<{tag}>{line}</{tag}>"
+    )
+    try:
+        selector = invented_selector(invented_nevada_with(block))
+    except TableStructureError:
+        return
+    assert selector[2] == day.isoformat()
+
+
+@pytest.mark.parametrize(
+    "date",
+    [
+        # The review's Low 1 (D1, D2): a marker whose script or style the
+        # bare reading dropped joined the day.
+        "January 1<sup>5<script>x</script></sup>, 2031",
+        "January 1<sup>5<style>x</style></sup>, 2031",
+        # Its Note 1 (D3 to D5): links by the table cells' rule.
+        "January 1<a href='https://www.ssa.gov/invented/0501415010#fn5'>5</a>,"
+        " 2031",
+        "January 1<a href='0501415010#fn5'>5</a>, 2031",
+        "January 1<a href=' #fn5'>5</a>, 2031",
+        # A longer sup, and an ordinal (Note 6).
+        "January 1<sup>1234</sup>, 2031",
+        "January 1<sup>st</sup>, 2031",
+    ],
+)
+def test_invented_marker_by_either_rule_inside_a_date_is_refused(date):
+    """Regression: a marker holding a script joined a date, and a link to a
+    footnote by a full or relative URL changed one, silently. A date
+    sentence must read the same without any element either marker rule
+    counts."""
+    payload = invented_nevada_with("").replace(
+        b"effective January 1, 2030", f"effective {date}".encode(), 1
+    )
+    with pytest.raises(TableStructureError, match="reads differently"):
+        describe_poms_tables(payload)
+
+
+def test_invented_marker_text_drops_script_and_style():
+    """A marker's text holds no script or style text, as no reading does,
+    so the bare reading drops ``<sup>1<script>x</script></sup>``."""
+    for inner in ("<script>x</script>", "<style>x</style>"):
+        element = next(
+            iter(parse_html(f"<p>Utah<sup>1{inner}</sup></p>").iter("p"))
+        )
+        ((joined, bare, _),) = _line_renderings(element)
+        assert (joined, bare) == ("Utah1", "Utah")
+
+
+@pytest.mark.parametrize(
+    "caption",
+    [
+        # The review's Low 2 forms: list labels and leading punctuation.
+        "<p>1. Utah (continued)</p>",
+        "<p>2) Utah</p>",
+        "<p>(b) Utah</p>",
+        "<p>b) Utah</p>",
+        "<p>- Utah</p>",
+        "<p>&bull; Utah</p>",
+        "<p>&ldquo;Utah&rdquo; (continued)</p>",
+        "<p>(Utah)</p>",
+        "<p>The State of Utah</p>",
+        # The review's M21 witness: only the bare reading opens with Utah.
+        "<p><sup>1</sup>Utah (continued)</p>",
+    ],
+)
+def test_invented_caption_net_takes_labels_and_punctuation(caption):
+    """Regression (the round-10 review's Low 2): the caption net took only
+    an "A." label, so these captions of another State read under Nevada's
+    selector."""
+    with pytest.raises(TableStructureError, match="another State's caption"):
+        describe_poms_tables(invented_nevada_with(caption + "<p>Couple</p>"))
+
+
+@pytest.mark.parametrize(
+    "script",
+    [
+        # The review's Low 3 (S1) and a legacy document.write form (S2).
+        "<script><!--<script></script><h3>Utah</h3><h4>Couple</h4>-->"
+        "</script>",
+        "<script type='text/javascript'><!--\ndocument.write(\"<script"
+        " src='x.js'></script>\");\n</script><h3>Utah</h3><h4>Couple</h4>"
+        "//--></script>",
+        "<SCRIPT><!-- <SCRIPT/></script>",
+    ],
+)
+def test_invented_script_with_an_escaped_script_refuses_the_page(script):
+    """Regression (the round-10 review's Low 3): after "<!--" and a script
+    start tag, HTML runs a script on past its next end tag, which neither
+    Python does, so the tree read text as markup."""
+    with pytest.raises(TableStructureError, match="escaped script"):
+        describe_poms_tables(invented_nevada_with(script))
+
+
+@pytest.mark.parametrize(
+    "script",
+    [
+        "<script><!-- invented() --></script>",
+        "<script><!--<scriptx></script>",
+        "<script>var w0 = '<script>';</script>",
+    ],
+)
+def test_invented_other_scripts_are_read_as_before(script):
+    root = parse_html(f"<p>w0{script}w1</p>")
+    assert normalized_text(root.find(".//p")).endswith("w1")
+
+
+@pytest.mark.parametrize(
+    ("fragment", "message"),
+    [
+        # The review's M4 witness: only the bare reading is a dated
+        # sentence, and its joined reading holds no date.
+        (
+            "<p>Eff<sup>1</sup>ective January 1<sup>2</sup>, 20<sup>3</sup>31"
+            "</p>",
+            "reads only without its footnote markers",
+        ),
+        # M20's witness: a caption whose State date line holds "Effective
+        # Dates:" names its claimant; a date there that no sentence states
+        # leaves the chart's date unread.
+        (
+            "<p>Nevada Effective Dates: 1/1/2031 Couple</p>",
+            "no effective-date sentence states",
+        ),
+    ],
+)
+def test_invented_round_10_mutant_witnesses_are_refused(fragment, message):
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    ("fragment", "expected"),
+    [
+        # M20's: "Effective Dates:" keeps a State date line from being an
+        # effective-date line, but the caption still names its claimant.
+        (
+            "<p>Nevada Effective Dates: for Nevada Couple</p>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+    ],
+)
+def test_invented_round_10_mutant_witnesses_read(fragment, expected):
+    assert invented_selector(invented_nevada_with(fragment)) == expected
+
+
+def test_invented_repeated_date_is_one_date():
+    """The review's M16 witness: a sentence that states one date twice
+    dates the chart, with no alternatives."""
+    payload = invented_nevada_with("").replace(
+        b"effective January 1, 2030",
+        b"effective January 1, 2031 (January 1, 2031)",
+        1,
+    )
+    (context,) = describe_poms_tables(payload)
+    assert (context["effective_from"], context["date_options"]) == (
+        "2031-01-01",
+        {},
+    )
+
+
+@pytest.mark.parametrize(
+    ("block", "dates"),
+    [
+        # The review's Note 2 (D29): a block of 400 characters or more with
+        # two date sentences that differ.
+        (
+            "<p>Monthly payment levels effective January 1, 2031<br>"
+            + "Invented filler " * 30
+            + "<br>Payment levels effective February 1, 2031</p>",
+            ("2031-01-01", "2031-02-01"),
+        ),
+        # Two ranges in one sentence, and a range beside another date.
+        (
+            "<p>Payment levels effective from March 1, 2031 to June 30, 2031"
+            " and from July 1, 2031 to December 31, 2031</p>",
+            ("2031-03-01", "2031-06-30", "2031-07-01", "2031-12-31"),
+        ),
+        (
+            "<p>Payment levels effective from March 1, 2031 to June 30, 2031"
+            + INVENTED_FILLER
+            + "Payment levels effective July 1, 2031</p>",
+            ("2031-03-01", "2031-06-30", "2031-07-01"),
+        ),
+    ],
+)
+def test_invented_conflicting_dates_remain_named_alternatives(block, dates):
+    """Regression (the round-10 review's Note 2): a long block took its
+    first date sentence silently, and a range with other than two dates
+    named none. Their dates now remain named alternatives, with no chosen
+    date."""
+    (context,) = describe_poms_tables(invented_nevada_with(block))
+    assert context["effective_from"] is None
+    assert context["effective_to"] is None
+    assert context["date_options"] == {
+        f"source_date_{i + 1}": value for i, value in enumerate(dates)
+    }
+
+
+def test_invented_long_block_whose_sentences_agree_dates_the_chart():
+    block = (
+        "<p>Monthly payment levels effective January 1, 2031"
+        + INVENTED_FILLER
+        + "Payment levels for each invented case effective January 1, 2031"
+        "</p>"
+    )
+    (context,) = describe_poms_tables(invented_nevada_with(block))
+    assert context["effective_from"] == "2031-01-01"
+    assert context["parameter_effective_date_text"] == (
+        "Monthly payment levels effective January 1, 2031"
+    )
