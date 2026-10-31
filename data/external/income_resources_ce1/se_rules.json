@@ -609,7 +609,16 @@
           "amendment_year_entries_verified_present": [],
           "effective_date_note_support": "411c6_cross_reference_does_not_establish_section_1882a_timing"
         }
-      ]
+      ],
+      "condition_cases": {
+        "conditions": {
+          "cases": {
+            "effective_1402g_exemption": [
+              "clergy_or_religious_exemption"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -772,7 +781,17 @@
             "2004"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "foreign_exclusions_condition": {
+          "cases": {
+            "foreign_minister_without_qualification": [
+              "place_of_work",
+              "citizenship"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1718,13 +1737,44 @@
       "conservation_reserve_payment",
       "amount",
       "retirement_payment",
-      "benefit_type"
+      "benefit_type",
+      "real_estate_dealer_status",
+      "rental_income"
     ],
     "worked_examples": [],
     "cases": [
       {
-        "case_id": "crp_payment_to_beneficiary",
+        "case_id": "crp_payment_in_real_estate_dealer_business",
         "precedence": 1,
+        "consequence": "covered",
+        "overrides": [
+          "crp_payment_to_beneficiary"
+        ],
+        "description": "411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; apply the other families.",
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+        }
+      },
+      {
+        "case_id": "crp_payment_under_farm_arrangement",
+        "precedence": 2,
+        "consequence": "deferred",
+        "defers_to": [
+          "self_employment_farm_rental_participation"
+        ],
+        "overrides": [
+          "crp_payment_to_beneficiary"
+        ],
+        "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
+        "when": {
+          "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+        }
+      },
+      {
+        "case_id": "crp_payment_to_beneficiary",
+        "precedence": 3,
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
           "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
@@ -2510,7 +2560,34 @@
             "1974"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "actual_material_participation_required": {
+          "cases": {
+            "no_actual_material_participation": [
+              "material_participation"
+            ],
+            "participation_under_required_arrangement": [
+              "material_participation"
+            ]
+          }
+        },
+        "covered_rental_conditions": {
+          "cases": {
+            "participation_under_required_arrangement": [
+              "rental_arrangement_requires_material_participation",
+              "material_participation"
+            ]
+          }
+        },
+        "real_estate_dealer_exception": {
+          "cases": {
+            "real_estate_dealer_rentals": [
+              "real_estate_dealer_status"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_material_participation_1968_1973",
@@ -2699,7 +2776,17 @@
             "1974"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "required_conditions": {
+          "cases": {
+            "participation_under_required_arrangement": [
+              "material_participation",
+              "rental_arrangement_requires_material_participation"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_material_participation_1974_2026",
@@ -2970,7 +3057,16 @@
             "1997"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "required_conditions": {
+          "cases": {
+            "qualifying_termination_payment": [
+              "insurance_sales_termination_payment"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -3170,7 +3266,16 @@
             "1977"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "included_exception": {
+          "cases": {
+            "guaranteed_payment_for_services": [
+              "partnership_status"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -4266,7 +4371,18 @@
             "1968"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "covered_exception_conditions": {
+          "cases": {
+            "state_local_fee_basis_office": [
+              "government_level",
+              "public_office_fee_basis",
+              "section_218_position"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_public_office_1968_2026",
@@ -4533,7 +4649,29 @@
         "spouses file a joint return for the taxable year",
         "both spouses materially participate under 469(h), disregarding paragraph (5)",
         "both spouses elect section 761(f) treatment"
-      ]
+      ],
+      "condition_cases": {
+        "eligibility_source_required": {
+          "cases": {
+            "qualified_joint_venture": [
+              "qualified_joint_venture_election",
+              "joint_return",
+              "partnership_status",
+              "material_participation"
+            ]
+          }
+        },
+        "required_conditions": {
+          "cases": {
+            "qualified_joint_venture": [
+              "qualified_joint_venture_election",
+              "joint_return",
+              "partnership_status",
+              "material_participation"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_joint_venture_2007_2026",
@@ -4793,7 +4931,18 @@
             "1968"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "required_conditions": {
+          "cases": {
+            "qualifying_retirement_payment": [
+              "partner_no_services",
+              "partner_no_other_obligation",
+              "partner_capital_paid"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -4818,13 +4967,13 @@
         "case_id": "qualifying_retirement_payment",
         "precedence": 1,
         "when": {
-          "retirement_payment": "periodic payment on account of retirement under a written partnership plan, continuing at least until the partner's death",
+          "retirement_payment": "periodic payment on account of retirement under a written partnership plan that meets such requirements as are prescribed by the Secretary of the Treasury and pays partners generally or a class or classes of partners, continuing at least until the partner's death",
           "partner_no_services": true,
           "partner_no_other_obligation": true,
           "partner_capital_paid": true
         },
         "consequence": "noncovered",
-        "description": "411(a)(9)(A)-(C)."
+        "description": "411(a)(9): the plan conditions and (A)-(C) must all hold; a payment failing any of them is not excluded by it."
       }
     ],
     "open_alternatives": [],

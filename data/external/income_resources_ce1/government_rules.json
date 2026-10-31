@@ -34,6 +34,20 @@
         "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
         "authority": "POMS RS 01802.064 (2024-03-22)",
         "location": "Operating policy"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(b), opening clause",
+        "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(c), closing sentence",
+        "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him."
       }
     ],
     "trigger_facts": [
@@ -53,7 +67,7 @@
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
-      "foreign_ministry": "For taxable years beginning after 1967 through 1972, a US citizen serving abroad must be an employee of a US employer or serve a congregation predominantly composed of US citizens (POMS NL 00711.065 1331.1).",
+      "foreign_ministry": "Case nonresident_alien_ministry applies 411(b) to a nonresident alien. For a United States citizen abroad, former 411(a)(7) disregarded the 911 and 931 exclusions only for an American employer's employee or a minister to a congregation composed predominantly of United States citizens (POMS NL 00711.065 1331.1); the self_employment_clergy_gross_concept family decides that computation.",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -488,8 +502,18 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "ministry_without_exemption_or_vow",
+        "case_id": "nonresident_alien_ministry",
         "precedence": 1,
+        "consequence": "noncovered",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "when": {
+          "ministerial_service": "qualifying ministry or order duties",
+          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+        }
+      },
+      {
+        "case_id": "ministry_without_exemption_or_vow",
+        "precedence": 2,
         "consequence": "covered",
         "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -499,16 +523,26 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
-        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
         "when": {
-          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          "clergy_or_religious_exemption": "effective 1402(e) exemption",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "case_id": "non_ministerial_service",
+        "precedence": 4,
+        "consequence": "covered",
+        "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+        "when": {
+          "ministerial_service": "not ministry, order duties or Christian Science practice"
         }
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 3,
+        "precedence": 5,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -557,6 +591,20 @@
         "sha256": "51ae4de722370c6eb694b8161574ca0c6c98a056b6fb57a114a0dcd0d26cd6f3",
         "authority": "POMS RS 01802.064 (2024-03-22)",
         "location": "Operating policy"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(b), opening clause",
+        "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(c), closing sentence",
+        "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him."
       }
     ],
     "trigger_facts": [
@@ -576,7 +624,7 @@
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
-      "foreign_ministry": "Covered if a US citizen, subject to minister exemption and other 411 rules; nationality and residency facts remain necessary.",
+      "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income.",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -1011,8 +1059,18 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "ministry_without_exemption_or_vow",
+        "case_id": "nonresident_alien_ministry",
         "precedence": 1,
+        "consequence": "noncovered",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "when": {
+          "ministerial_service": "qualifying ministry or order duties",
+          "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+        }
+      },
+      {
+        "case_id": "ministry_without_exemption_or_vow",
+        "precedence": 2,
         "consequence": "covered",
         "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -1022,16 +1080,26 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
-        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
         "when": {
-          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          "clergy_or_religious_exemption": "effective 1402(e) exemption",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "case_id": "non_ministerial_service",
+        "precedence": 4,
+        "consequence": "covered",
+        "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+        "when": {
+          "ministerial_service": "not ministry, order duties or Christian Science practice"
         }
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 3,
+        "precedence": 5,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -1086,6 +1154,20 @@
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025)",
         "location": "Coverage of Members of the Clergy: Ministers; Ministerial Services: Ministers; Exemption From Self-Employment (SE) Tax: Members of the Clergy and Requesting Exemption-Form 4361 (the text of the PDF edition's printed pages 4-7)"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(b), opening clause",
+        "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+        "location": "411(c), closing sentence",
+        "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him."
       }
     ],
     "trigger_facts": [
@@ -1105,7 +1187,7 @@
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
-      "foreign_ministry": "Nationality, residency, and totalization rules of 411 apply; clergy exemption facts remain necessary.",
+      "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens).",
       "cantor": "Effective January 1, 1982, a cantor is treated as an ordained minister if the cantor and congregation agree on the relationship (RS 01901.600 B.4.b).",
       "code_edition_evidence": [
         {
@@ -1691,8 +1773,18 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "ministry_without_exemption_or_vow",
+        "case_id": "nonresident_alien_ministry",
         "precedence": 1,
+        "consequence": "noncovered",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "when": {
+          "ministerial_service": "qualifying ministry or order duties",
+          "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+        }
+      },
+      {
+        "case_id": "ministry_without_exemption_or_vow",
+        "precedence": 2,
         "consequence": "covered",
         "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -1702,16 +1794,26 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
-        "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
+        "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
         "when": {
-          "clergy_or_religious_exemption": "effective 1402(e) exemption"
+          "clergy_or_religious_exemption": "effective 1402(e) exemption",
+          "ministerial_service": "qualifying ministry or order duties"
+        }
+      },
+      {
+        "case_id": "non_ministerial_service",
+        "precedence": 4,
+        "consequence": "covered",
+        "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+        "when": {
+          "ministerial_service": "not ministry, order duties or Christian Science practice"
         }
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 3,
+        "precedence": 5,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -4196,6 +4298,13 @@
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
         "location": "Coverage of Members of the Clergy: Members of Religious Orders; Ministerial Services: Members of Religious Orders; Exemption From Self-Employment (SE) Tax (the text of the PDF edition's printed pages 4-7)"
+      },
+      {
+        "capture": "poms_rs_01901620.html",
+        "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f",
+        "authority": "POMS RS 01901.620 (2024-07-02)",
+        "location": "B.4",
+        "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and"
       }
     ],
     "trigger_facts": [
@@ -4203,7 +4312,8 @@
       "clergy_or_religious_exemption",
       "clergy_remuneration",
       "nonresident_alien_status",
-      "place_of_work"
+      "place_of_work",
+      "citizenship"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -4224,7 +4334,7 @@
         "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
         "threshold_id": "religious_order_deemed_wages_monthly_floor"
       },
-      "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+      "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: the member must be a United States citizen.",
       "lay_employee_coordination": "Before 1984, former 3121(r)(4) requires an existing 3121(k) waiver to become irrevocable or a new waiver to be filed with an effective date no later than the order coverage election.",
       "code_edition_evidence": [
         {
@@ -4316,7 +4426,16 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "retroactive_election": {
+          "cases": {
+            "vow_duties_with_3121r_election": [
+              "clergy_or_religious_exemption"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4350,23 +4469,35 @@
         "consequence": "noncovered",
         "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
         "when": {
-          "clergy_or_religious_exemption": "no effective 3121(r) election",
+          "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
       {
-        "case_id": "vow_duties_with_3121r_election",
+        "case_id": "election_member_abroad_not_covered",
         "precedence": 2,
+        "consequence": "noncovered",
+        "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if the member must be a United States citizen; otherwise the vow-of-poverty exclusion still applies.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+          "place_of_work": "outside the United States",
+          "citizenship": "not a United States citizen"
+        }
+      },
+      {
+        "case_id": "vow_duties_with_3121r_election",
+        "precedence": 3,
         "consequence": "covered",
         "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
         "when": {
-          "clergy_or_religious_exemption": "effective 3121(r) election",
+          "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 3,
+        "precedence": 4,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -4375,7 +4506,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },
@@ -4445,6 +4576,13 @@
         "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
         "authority": "IRS Publication 517 (2025)",
         "location": "Members of Religious Orders; Pat Brown and Chris Green example, Pat third-party employment"
+      },
+      {
+        "capture": "poms_rs_01901620.html",
+        "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f",
+        "authority": "POMS RS 01901.620 (2024-07-02)",
+        "location": "B.4",
+        "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and"
       }
     ],
     "trigger_facts": [
@@ -4473,7 +4611,7 @@
         "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
         "threshold_id": "religious_order_deemed_wages_monthly_floor"
       },
-      "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+      "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: from January 1, 1984 the member must be a United States citizen or a resident alien.",
       "lay_employee_coordination": "Former 3121(r)(4) was repealed by Public Law 98-21 section 102(b)(3)(B), effective for services after 1983.",
       "code_edition_evidence": [
         {
@@ -4652,7 +4790,16 @@
           ]
         }
       ],
-      "third_party_ordinary_employment_excluded_by_vow": false
+      "third_party_ordinary_employment_excluded_by_vow": false,
+      "condition_cases": {
+        "retroactive_election": {
+          "cases": {
+            "vow_duties_with_3121r_election": [
+              "clergy_or_religious_exemption"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [
       {
@@ -4731,23 +4878,35 @@
         "consequence": "noncovered",
         "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
         "when": {
-          "clergy_or_religious_exemption": "no effective 3121(r) election",
+          "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
       {
-        "case_id": "vow_duties_with_3121r_election",
+        "case_id": "election_member_abroad_not_covered",
         "precedence": 2,
+        "consequence": "noncovered",
+        "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if from January 1, 1984 the member must be a United States citizen or a resident alien; otherwise the vow-of-poverty exclusion still applies.",
+        "when": {
+          "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+          "place_of_work": "outside the United States",
+          "nonresident_alien_status": "neither a United States citizen nor a resident alien"
+        }
+      },
+      {
+        "case_id": "vow_duties_with_3121r_election",
+        "precedence": 3,
         "consequence": "covered",
         "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
         "when": {
-          "clergy_or_religious_exemption": "effective 3121(r) election",
+          "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 3,
+        "precedence": 4,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -4756,7 +4915,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },
@@ -4868,7 +5027,16 @@
             "1990"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "covered_transportation_exception": {
+          "cases": {
+            "covered_transportation_service": [
+              "industry"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -5006,7 +5174,16 @@
             "1990"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "covered_transportation_exception": {
+          "cases": {
+            "covered_transportation_service": [
+              "industry"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -5227,6 +5404,15 @@
       "section_218_divided_vote_same_group_return": {
         "state_existing_member": "retains_prior_vote",
         "state_new_member": "compulsorily_covered"
+      },
+      "condition_cases": {
+        "covered_transportation_exception": {
+          "cases": {
+            "covered_transportation_service": [
+              "industry"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [

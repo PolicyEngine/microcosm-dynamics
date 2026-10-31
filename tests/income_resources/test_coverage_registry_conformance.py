@@ -1224,6 +1224,7 @@ PARAMETER_EVIDENCE = {
     "code_edition_evidence",
     "later_edition_reliance",
     "case_free_basis",
+    "condition_cases",
 }
 CONDITION_KEY = re.compile(
     r"(^|_)(conditions?|requires_all|any_of|exceptions?)$"
@@ -1311,6 +1312,334 @@ def test_condition_detector_flags_every_signal(consequence, words, key):
     assert bool(flagged) == bool(expected)
     with_case = {**row, "rule_id": "INVENTED", "cases": [{"case_id": "a"}]}
     assert rows_missing_condition_cases([with_case]) == {}
+
+
+# Review r3 M1: on rows with cases, a parameter that names a condition must
+# say where the condition is decided: in named cases (whose `when` carries
+# the listed facts), by cited thresholds, or nowhere, with the reason.
+CASE_CONDITION_KEY = re.compile(
+    r"(^|_)(conditions?|requires_all|requires?|required|any_of|"
+    r"exceptions?|if_applies)$"
+)
+TIE_KINDS = {"cases", "threshold_ids", "not_a_coverage_condition"}
+
+
+def condition_parameters(parameters):
+    """Top-level parameter keys holding a condition-named leaf.
+
+    Named option records are readings, which the operative-reading checker
+    covers, so they are skipped here.
+    """
+    return {
+        path[0]
+        for path, _ in parameter_leaves(parameters)
+        if path
+        and not OPTION_RECORDS.search(path[0])
+        and CASE_CONDITION_KEY.search(path[-1])
+    }
+
+
+def condition_case_problems(row, threshold_ids):
+    """Condition parameters on a closed row with cases left untied.
+
+    ``parameters.condition_cases`` maps each such key to one record:
+    ``cases`` (case ID to the facts its ``when`` must carry),
+    ``threshold_ids`` (thresholds the registry defines) or
+    ``not_a_coverage_condition`` (the reason, in text).
+    """
+    if row["open_reason"] is not None or not row["cases"]:
+        return []
+    parameters = row["parameters"]
+    ties = parameters.get("condition_cases", {})
+    when = {case["case_id"]: set(case["when"]) for case in row["cases"]}
+    problems = [
+        (key, "untied")
+        for key in sorted(condition_parameters(parameters))
+        if key not in ties
+    ]
+    for key, tie in ties.items():
+        if key not in parameters or key == "condition_cases":
+            problems.append((key, "names no parameter"))
+        if not (isinstance(tie, dict) and len(tie) == 1):
+            problems.append((key, "one tie record"))
+            continue
+        ((kind, value),) = tie.items()
+        if kind not in TIE_KINDS:
+            problems.append((key, f"tie kind {kind}"))
+        elif kind == "cases":
+            if not value:
+                problems.append((key, "no cases"))
+            for case_id, facts in value.items():
+                if case_id not in when:
+                    problems.append((key, f"unknown case {case_id}"))
+                elif not facts or not set(facts) <= when[case_id]:
+                    problems.append((key, f"{case_id} lacks {facts}"))
+        elif kind == "threshold_ids":
+            if not value or not set(value) <= threshold_ids:
+                problems.append((key, "unknown threshold"))
+        elif not (isinstance(value, str) and value.strip()):
+            problems.append((key, "reason"))
+    return problems
+
+
+def test_condition_parameters_on_case_rows_name_their_cases():
+    """Review r3 M1: the detector reaches rows that have cases.
+
+    At ea599b92 no row recorded these ties, so it flagged all 32.
+    """
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    threshold_ids = {t["threshold_id"] for t in raw["thresholds"]}
+    problems = {
+        row["rule_id"]: found
+        for row in raw["rules"]
+        if (found := condition_case_problems(row, threshold_ids))
+    }
+    assert problems == {}
+    tied = [
+        row for row in raw["rules"] if "condition_cases" in row["parameters"]
+    ]
+    assert len(tied) == 32
+    assert all(row["cases"] and row["open_reason"] is None for row in tied)
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(
+        ["required_conditions", "exception", "notes", "if_applies"]
+    ),
+    st.sampled_from(
+        [
+            None,
+            "cases",
+            "missing_fact",
+            "unknown_case",
+            "threshold",
+            "unknown_threshold",
+            "reason",
+            "blank_reason",
+            "two_records",
+        ]
+    ),
+    st.booleans(),
+    st.booleans(),
+)
+def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
+    """The M1 checker is the test's oracle."""
+    row = {
+        "open_reason": "INVENTED question" if is_open else None,
+        "cases": (
+            [{"case_id": "invented_case", "when": {"amount": "INVENTED"}}]
+            if with_cases
+            else []
+        ),
+        "parameters": {key: ["INVENTED condition"]},
+    }
+    records = {
+        "cases": {"cases": {"invented_case": ["amount"]}},
+        "missing_fact": {"cases": {"invented_case": ["occupation"]}},
+        "unknown_case": {"cases": {"invented_other": ["amount"]}},
+        "threshold": {"threshold_ids": ["INVENTED_threshold"]},
+        "unknown_threshold": {"threshold_ids": ["INVENTED_missing"]},
+        "reason": {"not_a_coverage_condition": "INVENTED reason"},
+        "blank_reason": {"not_a_coverage_condition": " "},
+        "two_records": {
+            "threshold_ids": ["INVENTED_threshold"],
+            "not_a_coverage_condition": "INVENTED reason",
+        },
+    }
+    if tie is not None:
+        row["parameters"]["condition_cases"] = {key: records[tie]}
+    problems = condition_case_problems(row, {"INVENTED_threshold"})
+    if is_open or not with_cases:
+        assert problems == []
+        return
+    flagged = key != "notes" and tie is None
+    bad = tie in {
+        "missing_fact",
+        "unknown_case",
+        "unknown_threshold",
+        "blank_reason",
+        "two_records",
+    }
+    assert bool(problems) == (flagged or bad)
+
+
+# Review r3 M1: statutory conditions the review found outside `when`, each
+# pinned to the passage that imposes it (capture, quoted text) and to the
+# case facts, and phrases in their values, that must carry it.
+REQUIRED_CONDITIONS = [
+    *[
+        (
+            rule_id,
+            "effective_1402e_exemption",
+            {"clergy_or_religious_exemption": (), "ministerial_service": ()},
+            "lii_42_411.html",
+            "The provisions of paragraph (4) or (5) shall not apply to "
+            "service",
+        )
+        for rule_id in (
+            "clergy_1968_1972",
+            "clergy_1973_1981",
+            "clergy_1982_2026",
+        )
+    ],
+    *[
+        (
+            rule_id,
+            "nonresident_alien_ministry",
+            {
+                "ministerial_service": (),
+                "nonresident_alien_status": ("nonresident alien",),
+            },
+            "lii_42_411.html",
+            "(other than a nonresident alien individual, except as provided "
+            "by an agreement under section 433 of this title",
+        )
+        for rule_id in (
+            "clergy_1968_1972",
+            "clergy_1973_1981",
+            "clergy_1982_2026",
+        )
+    ],
+    (
+        "religious_order_1968_1983",
+        "election_member_abroad_not_covered",
+        {
+            "clergy_or_religious_exemption": ("3121(r) election",),
+            "place_of_work": ("outside the United States",),
+            "citizenship": ("not a United States citizen",),
+        },
+        "poms_rs_01901620.html",
+        "the member is a U.S. citizen, or effective January 1, 1984, a "
+        "resident alien",
+    ),
+    (
+        "religious_order_1984_2026",
+        "election_member_abroad_not_covered",
+        {
+            "clergy_or_religious_exemption": ("3121(r) election",),
+            "place_of_work": ("outside the United States",),
+            "nonresident_alien_status": ("nor a resident alien",),
+        },
+        "poms_rs_01901620.html",
+        "the member is a U.S. citizen, or effective January 1, 1984, a "
+        "resident alien",
+    ),
+    *[
+        (
+            rule_id,
+            "vow_duties_with_3121r_election",
+            {"clergy_or_religious_exemption": ("living on the first day",)},
+            "uscode_119_120_26_3121.html",
+            "only if the member performing such services was a member at the "
+            "time such services were performed and is living on the first day "
+            "of the quarter in which such certificate is filed",
+        )
+        for rule_id in (
+            "religious_order_1968_1983",
+            "religious_order_1984_2026",
+        )
+    ],
+    (
+        "se_retired_partner_1968_2026",
+        "qualifying_retirement_payment",
+        {
+            "retirement_payment": (
+                "requirements as are prescribed by the Secretary",
+                "a class or classes of partners",
+                "until the partner's death",
+            ),
+            "partner_no_services": (),
+            "partner_no_other_obligation": (),
+            "partner_capital_paid": (),
+        },
+        "lii_42_411.html",
+        "which meets such requirements as are prescribed by the Secretary of "
+        "the Treasury or his delegate",
+    ),
+    (
+        "se_conservation_reserve_2008_2026",
+        "crp_payment_in_real_estate_dealer_business",
+        {"real_estate_dealer_status": ("real estate dealer",)},
+        "lii_42_411.html",
+        "unless such rentals are received in the course of a trade or "
+        "business as a real estate dealer",
+    ),
+    (
+        "se_conservation_reserve_2008_2026",
+        "crp_payment_under_farm_arrangement",
+        {"rental_income": ("agricultural or horticultural commodities",)},
+        "lii_42_411.html",
+        "shall not apply to any income derived by the owner or tenant of "
+        "land if",
+    ),
+    (
+        "fishing_crew_share_service_1989",
+        "catch_share_1996_clarification",
+        {
+            "historical_fica_treatment": ("did not treat",),
+            "fishing_catch_share_arrangement": (
+                "$100 per trip",
+                "contingent on a minimum catch",
+                "solely for additional duties",
+                "preceding 4 calendar quarters",
+            ),
+        },
+        "ce1c_plaw104_188.html",
+        "which is contingent on a minimum catch",
+    ),
+    (
+        "tribal_council_service_2018_0920",
+        "section_418a_retroactive_inclusion",
+        {
+            "tribal_coverage_agreement": ("before the agreement's",),
+            "historical_fica_treatment": ("timely paid in good faith",),
+        },
+        "ce1c_plaw115_243.html",
+        "timely paid in good faith (and not subsequently refunded)",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("rule_id", "case_id", "facts", "capture", "passage"),
+    REQUIRED_CONDITIONS,
+    ids=[f"{entry[0]}-{entry[1]}" for entry in REQUIRED_CONDITIONS],
+)
+def test_statutory_conditions_sit_in_their_cases(
+    registry, rule_id, case_id, facts, capture, passage
+):
+    """Review r3 M1: each listed condition is a `when` fact of its case,
+    and the row cites the capture whose passage imposes it."""
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    case = next(c for c in rule.cases if c["case_id"] == case_id)
+    for fact, phrases in facts.items():
+        assert fact in case["when"], (rule_id, case_id, fact)
+        for phrase in phrases:
+            assert phrase in str(case["when"][fact]), (fact, phrase)
+    assert capture in {c.capture for c in rule.citations}
+    text = source_text(CAPTURE_DIRECTORY / capture)
+    assert " ".join(passage.split()) in text
+
+
+@pytest.mark.parametrize(
+    "rule_id", ["clergy_1968_1972", "clergy_1973_1981", "clergy_1982_2026"]
+)
+def test_clergy_exemption_reaches_only_ministry(registry, rule_id):
+    """Review r3 M1: an exempt minister's secular earnings are not excluded
+    by the clergy family, and a nonresident alien's ministry is."""
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    exempt_ministry = {"effective_1402e_exemption"}
+    assert rule.resolve(exempt_ministry)["consequence"] == "noncovered"
+    secular = {"non_ministerial_service"}
+    assert rule.resolve(secular)["consequence"] == "covered"
+    nonresident = {
+        "nonresident_alien_ministry",
+        "ministry_without_exemption_or_vow",
+    }
+    assert rule.resolve(nonresident)["consequence"] == "noncovered"
+    citizen_abroad = {"ministry_without_exemption_or_vow"}
+    assert rule.resolve(citizen_abroad)["consequence"] == "covered"
 
 
 def test_consequences_live_in_cases_not_parameters():
@@ -1640,10 +1969,10 @@ def test_government_level_conditions_name_a_level_of_government():
         for case in row["cases"]
         if "government_level" in case["when"]
     ]
-    assert len(found) == 6
     assert [
         entry for entry in found if not GOVERNMENT_LEVEL.search(entry[2])
     ] == []
+    assert len(found) == 6
 
 
 @settings(deadline=None)

@@ -53,6 +53,14 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "condition_cases": {
+        "coverage_any_of": {
+          "threshold_ids": [
+            "agricultural_employee_cash",
+            "agricultural_time_days"
+          ]
+        }
       }
     },
     "worked_examples": [],
@@ -244,6 +252,14 @@
           "determination_date"
         ],
         "basis": "POMS RS 01402.020 A says certain noncash transfers are wages 'Effective August 7, 1995' without naming the date that test keys to. Both date cases key to the service date, as the existing from-1995-08-07 case already did."
+      },
+      "condition_cases": {
+        "coverage_any_of": {
+          "threshold_ids": [
+            "agricultural_employee_cash",
+            "agricultural_employer_payroll"
+          ]
+        }
       }
     },
     "worked_examples": [
@@ -697,7 +713,16 @@
             "1956"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "arrangement_requires_all": {
+          "cases": {
+            "qualifying_sharefarmer_arrangement": [
+              "agricultural_share_arrangement"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1261,7 +1286,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "commercial_enterprise_excluded_from_exception": {
+          "cases": {
+            "commercial_enterprise": [
+              "domestic_service"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2108,7 +2142,12 @@
           ]
         }
       ],
-      "employer_paid_employee_fica_included_in_wages": false
+      "employer_paid_employee_fica_included_in_wages": false,
+      "condition_cases": {
+        "rounding": {
+          "not_a_coverage_condition": "42 U.S.C. 409(c) optional rounding of each cash payment changes the amount counted, not whether the service is covered."
+        }
+      }
     },
     "worked_examples": [
       {
@@ -4015,7 +4054,11 @@
           "crew_average_period": "preceding_4_calendar_quarters",
           "crew_average_comparison": "fewer_than_10",
           "additional_cash_limit_per_trip": 100,
-          "threshold_id": "fishing_additional_cash_per_trip"
+          "threshold_id": "fishing_additional_cash_per_trip",
+          "additional_cash_conditions": [
+            "contingent_on_a_minimum_catch",
+            "solely_for_traditional_additional_duties_such_as_mate_engineer_or_cook"
+          ]
         },
         "if_does_not_apply": {
           "additional_cash": "none_except_catch_share",
@@ -4219,6 +4262,30 @@
       "source_disagreement_resolution": {
         "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition, dated only from 1995) is recorded as poms_crew_test and is not operative.",
         "operative_current_text": "conditional_1996_clarification"
+      },
+      "condition_cases": {
+        "catch_share_conditions": {
+          "cases": {
+            "catch_share_1996_clarification": [
+              "fishing_catch_share_arrangement"
+            ],
+            "catch_share_payor_treated_as_fica": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "conditional_1996_clarification": {
+          "cases": {
+            "catch_share_1996_clarification": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ],
+            "catch_share_payor_treated_as_fica": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -4316,13 +4383,24 @@
         ]
       },
       {
-        "case_id": "qualifying_catch_share_arrangement",
+        "case_id": "catch_share_1996_clarification",
         "precedence": 2,
-        "when": {
-          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, meeting the additional-cash and crew tests that the conditional_1996_clarification parameter selects by the payor's FICA treatment"
-        },
         "consequence": "covered",
-        "description": "410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment."
+        "description": "Pub. L. 104-188 section 1116(a)(2)-(3): for remuneration paid after 1984 and before 1995 that the payor did not treat as FICA wages, 410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
+        "when": {
+          "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax",
+          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew averaged fewer than 10 over the preceding 4 calendar quarters, with no other pay except cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry"
+        }
+      },
+      {
+        "case_id": "catch_share_payor_treated_as_fica",
+        "precedence": 3,
+        "consequence": "covered",
+        "description": "Where the payor treated the remuneration as FICA wages when paid, the 1996 amendments do not apply, and the earlier test allows no pay apart from the catch share: 410(a)(20) and 411(c)(2)(F) make the service self-employment.",
+        "when": {
+          "historical_fica_treatment": "payor treated the remuneration, when paid, as subject to FICA tax",
+          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, with no pay apart from that share"
+        }
       }
     ],
     "open_alternatives": [],
@@ -4567,7 +4645,23 @@
             "1976"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "additional_cash_requires_all": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "catch_share_conditions": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5008,7 +5102,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "instrumentality_conditions": {
+          "cases": {
+            "qualifying_wholly_owned_instrumentality": [
+              "foreign_government_service"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5169,7 +5272,19 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "exclusion_any_of": {
+          "cases": {
+            "foreign_craft_noncitizen": [
+              "citizenship"
+            ],
+            "foreign_craft_non_american_employer": [
+              "american_employer"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5612,7 +5727,19 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "organization_designation_required": {
+          "cases": {
+            "designated_international_organization": [
+              "international_organization_service"
+            ]
+          }
+        },
+        "transferred_federal_employee_exception": {
+          "not_a_coverage_condition": "Records that this row has no 410(r) transferred-employee case; the 1995 row carries that exception."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5743,7 +5870,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "organization_designation_required": {
+          "cases": {
+            "designated_international_organization": [
+              "international_organization_service"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6030,7 +6166,19 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "fixed_margin_retail_vendor": {
+          "cases": {
+            "fixed_price_vendor_adult": [
+              "newspaper_service_arrangement"
+            ],
+            "fixed_price_vendor_minor": [
+              "newspaper_service_arrangement"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6284,7 +6432,26 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "direct_seller_requires_all": {
+          "cases": {
+            "section_3508_direct_seller": [
+              "direct_seller_contract"
+            ]
+          }
+        },
+        "fixed_margin_retail_vendor": {
+          "cases": {
+            "fixed_price_vendor_adult": [
+              "newspaper_service_arrangement"
+            ],
+            "fixed_price_vendor_minor": [
+              "newspaper_service_arrangement"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8288,7 +8455,20 @@
             "2018"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "benefit_credit_posting_rule": {
+          "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+        },
+        "later_418a_retroactive_coverage": {
+          "cases": {
+            "later_418a_retroactive_coverage": [
+              "tribal_coverage_agreement",
+              "historical_fica_treatment"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8471,7 +8651,20 @@
             "2018"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "benefit_credit_posting_rule": {
+          "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+        },
+        "later_418a_retroactive_coverage": {
+          "cases": {
+            "section_418a_retroactive_inclusion": [
+              "tribal_coverage_agreement",
+              "historical_fica_treatment"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8512,12 +8705,22 @@
         "precedence": 1,
         "consequence": "covered",
         "when": {
-          "tribal_coverage_agreement": "council-capacity services included under an effective section 418a agreement"
+          "tribal_coverage_agreement": "council-capacity services performed on or after the effective date of an effective section 418a agreement"
+        }
+      },
+      {
+        "case_id": "section_418a_retroactive_inclusion",
+        "precedence": 2,
+        "consequence": "covered",
+        "description": "418a(c)(2) as added by Pub. L. 115-243: at the tribe's request the agreement may reach earlier services for which FICA-equivalent amounts were timely paid in good faith and not refunded.",
+        "when": {
+          "tribal_coverage_agreement": "council-capacity services before the agreement's effective date that the tribe asked the agreement to include",
+          "historical_fica_treatment": "FICA-equivalent amounts were timely paid in good faith and not subsequently refunded"
         }
       },
       {
         "case_id": "no_section_418a_inclusion",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
         "when": {
           "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement",

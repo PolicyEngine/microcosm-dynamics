@@ -810,6 +810,14 @@
       "open_reason": null,
       "parameters": {
         "all_cash_covered_when_test_met": true,
+        "condition_cases": {
+          "coverage_any_of": {
+            "threshold_ids": [
+              "agricultural_employee_cash",
+              "agricultural_time_days"
+            ]
+          }
+        },
         "coverage_any_of": [
           "employee_cash_at_least_150",
           "at_least_20_days_and_cash_pay_computed_on_time_basis"
@@ -1005,6 +1013,14 @@
       "open_reason": null,
       "parameters": {
         "all_cash_covered_when_test_met": true,
+        "condition_cases": {
+          "coverage_any_of": {
+            "threshold_ids": [
+              "agricultural_employee_cash",
+              "agricultural_employer_payroll"
+            ]
+          }
+        },
         "coverage_any_of": [
           "employee_cash_at_least_150",
           "employer_agricultural_expenditures_at_least_2500_unless_seasonal_exception"
@@ -1456,6 +1472,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "arrangement_requires_all": {
+            "cases": {
+              "qualifying_sharefarmer_arrangement": [
+                "agricultural_share_arrangement"
+              ]
+            }
+          }
+        },
         "fixed_pay_or_fixed_commodity_quantity_independent_of_production": "not_the_section_410a16_sharefarmer_arrangement",
         "historical_basis": {
           "CFR_2024_role": "current explanation; the 1956 statute and Code notes establish the historical range",
@@ -1924,10 +1949,20 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "nonresident_alien_ministry",
+          "consequence": "noncovered",
+          "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+          "precedence": 1,
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year"
+          }
+        },
+        {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
@@ -1936,17 +1971,27 @@
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
-          "precedence": 2,
+          "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+            "clergy_or_religious_exemption": "effective 1402(e) exemption",
+            "ministerial_service": "qualifying ministry or order duties"
+          }
+        },
+        {
+          "case_id": "non_ministerial_service",
+          "consequence": "covered",
+          "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+          "precedence": 4,
+          "when": {
+            "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
         },
         {
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 3,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -1960,9 +2005,23 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(b), opening clause",
+          "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_411.html",
           "location": "411(c)(4)-(5) and closing sentence",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c), closing sentence",
+          "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him.",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -2139,7 +2198,7 @@
           }
         ],
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "For taxable years beginning after 1967 through 1972, a US citizen serving abroad must be an employee of a US employer or serve a congregation predominantly composed of US citizens (POMS NL 00711.065 1331.1).",
+        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b) to a nonresident alien. For a United States citizen abroad, former 411(a)(7) disregarded the 911 and 931 exclusions only for an American employer's employee or a minister to a congregation composed predominantly of United States citizens (POMS NL 00711.065 1331.1); the self_employment_clergy_gross_concept family decides that computation.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -2447,10 +2506,20 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "nonresident_alien_ministry",
+          "consequence": "noncovered",
+          "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+          "precedence": 1,
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+          }
+        },
+        {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
@@ -2459,17 +2528,27 @@
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
-          "precedence": 2,
+          "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+            "clergy_or_religious_exemption": "effective 1402(e) exemption",
+            "ministerial_service": "qualifying ministry or order duties"
+          }
+        },
+        {
+          "case_id": "non_ministerial_service",
+          "consequence": "covered",
+          "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+          "precedence": 4,
+          "when": {
+            "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
         },
         {
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 3,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2483,9 +2562,23 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(b), opening clause",
+          "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_411.html",
           "location": "411(c)(4)-(5) and closing sentence",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c), closing sentence",
+          "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him.",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -2662,7 +2755,7 @@
           }
         ],
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "Covered if a US citizen, subject to minister exemption and other 411 rules; nationality and residency facts remain necessary.",
+        "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -2970,10 +3063,20 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "nonresident_alien_ministry",
+          "consequence": "noncovered",
+          "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+          "precedence": 1,
+          "when": {
+            "ministerial_service": "qualifying ministry or order duties",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+          }
+        },
+        {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
             "ministerial_service": "qualifying ministry or order duties"
@@ -2982,17 +3085,27 @@
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
-          "description": "Exemption applies to qualifying ministerial earnings only, not unrelated work.",
-          "precedence": 2,
+          "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "effective 1402(e) exemption"
+            "clergy_or_religious_exemption": "effective 1402(e) exemption",
+            "ministerial_service": "qualifying ministry or order duties"
+          }
+        },
+        {
+          "case_id": "non_ministerial_service",
+          "consequence": "covered",
+          "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
+          "precedence": 4,
+          "when": {
+            "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
         },
         {
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 3,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -3012,9 +3125,23 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(b), opening clause",
+          "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_411.html",
           "location": "411(c)(4)-(5) and closing sentence",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c), closing sentence",
+          "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him.",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -3322,7 +3449,7 @@
           }
         ],
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "Nationality, residency, and totalization rules of 411 apply; clergy exemption facts remain necessary.",
+        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens).",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -3770,7 +3897,16 @@
           }
         ],
         "college_club_or_local_chapter": true,
-        "commercial_enterprise_excluded_from_exception": true
+        "commercial_enterprise_excluded_from_exception": true,
+        "condition_cases": {
+          "commercial_enterprise_excluded_from_exception": {
+            "cases": {
+              "commercial_enterprise": [
+                "domestic_service"
+              ]
+            }
+          }
+        }
       },
       "rare_exclusion": {
         "negligible_candidate": null,
@@ -4599,6 +4735,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "rounding": {
+            "not_a_coverage_condition": "42 U.S.C. 409(c) optional rounding of each cash payment changes the amount counted, not whether the service is covered."
+          }
+        },
         "domestic_farm_service": "domestic_service",
         "employer_paid_employee_fica_included_in_wages": false,
         "rounding": {
@@ -8127,12 +8268,23 @@
           }
         },
         {
-          "case_id": "qualifying_catch_share_arrangement",
+          "case_id": "catch_share_1996_clarification",
           "consequence": "covered",
-          "description": "410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
+          "description": "Pub. L. 104-188 section 1116(a)(2)-(3): for remuneration paid after 1984 and before 1995 that the payor did not treat as FICA wages, 410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
           "precedence": 2,
           "when": {
-            "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, meeting the additional-cash and crew tests that the conditional_1996_clarification parameter selects by the payor's FICA treatment"
+            "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew averaged fewer than 10 over the preceding 4 calendar quarters, with no other pay except cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry",
+            "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax"
+          }
+        },
+        {
+          "case_id": "catch_share_payor_treated_as_fica",
+          "consequence": "covered",
+          "description": "Where the payor treated the remuneration as FICA wages when paid, the 1996 amendments do not apply, and the earlier test allows no pay apart from the catch share: 410(a)(20) and 411(c)(2)(F) make the service self-employment.",
+          "precedence": 3,
+          "when": {
+            "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, with no pay apart from that share",
+            "historical_fica_treatment": "payor treated the remuneration, when paid, as subject to FICA tax"
           }
         }
       ],
@@ -8392,10 +8544,38 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "catch_share_conditions": {
+            "cases": {
+              "catch_share_1996_clarification": [
+                "fishing_catch_share_arrangement"
+              ],
+              "catch_share_payor_treated_as_fica": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          },
+          "conditional_1996_clarification": {
+            "cases": {
+              "catch_share_1996_clarification": [
+                "historical_fica_treatment",
+                "fishing_catch_share_arrangement"
+              ],
+              "catch_share_payor_treated_as_fica": [
+                "historical_fica_treatment",
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          }
+        },
         "conditional_1996_clarification": {
           "and_before": "1995-01-01",
           "applies_to_remuneration_paid_after": "1984-12-31",
           "if_applies": {
+            "additional_cash_conditions": [
+              "contingent_on_a_minimum_catch",
+              "solely_for_traditional_additional_duties_such_as_mate_engineer_or_cook"
+            ],
             "additional_cash_limit_per_trip": 100,
             "crew_average_comparison": "fewer_than_10",
             "crew_average_period": "preceding_4_calendar_quarters",
@@ -8757,6 +8937,22 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "additional_cash_requires_all": {
+            "cases": {
+              "qualifying_catch_share_arrangement": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          },
+          "catch_share_conditions": {
+            "cases": {
+              "qualifying_catch_share_arrangement": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          }
+        },
         "crew_average_comparison": "fewer_than_10",
         "crew_average_period": "preceding_4_calendar_quarters",
         "family_service_exclusion_first": true,
@@ -9236,6 +9432,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "instrumentality_conditions": {
+            "cases": {
+              "qualifying_wholly_owned_instrumentality": [
+                "foreign_government_service"
+              ]
+            }
+          }
+        },
         "direct_foreign_government": "employment_excluded",
         "instrumentality_conditions": [
           "wholly_owned",
@@ -9388,6 +9593,18 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "exclusion_any_of": {
+            "cases": {
+              "foreign_craft_non_american_employer": [
+                "american_employer"
+              ],
+              "foreign_craft_noncitizen": [
+                "citizenship"
+              ]
+            }
+          }
+        },
         "exclusion_any_of": [
           "employee_not_us_citizen",
           "employer_not_american"
@@ -9835,6 +10052,18 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "organization_designation_required": {
+            "cases": {
+              "designated_international_organization": [
+                "international_organization_service"
+              ]
+            }
+          },
+          "transferred_federal_employee_exception": {
+            "not_a_coverage_condition": "Records that this row has no 410(r) transferred-employee case; the 1995 row carries that exception."
+          }
+        },
         "organization_designation_required": true,
         "transferred_federal_employee_exception": false,
         "us_citizen_service_in_us": "covered_self_employment"
@@ -9974,6 +10203,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "organization_designation_required": {
+            "cases": {
+              "designated_international_organization": [
+                "international_organization_service"
+              ]
+            }
+          }
+        },
         "organization_designation_required": true,
         "transferred_federal_employee_exception": {
           "immediately_prior_federal_service_covered": true,
@@ -10249,6 +10487,18 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "fixed_margin_retail_vendor": {
+            "cases": {
+              "fixed_price_vendor_adult": [
+                "newspaper_service_arrangement"
+              ],
+              "fixed_price_vendor_minor": [
+                "newspaper_service_arrangement"
+              ]
+            }
+          }
+        },
         "fixed_margin_retail_vendor": {
           "employee_service_included_in_SE_trade_or_business_from_age": 18,
           "minimum_compensation_guarantee_or_credit_for_unsold_items": "does_not_defeat_exclusion",
@@ -10498,6 +10748,25 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "direct_seller_requires_all": {
+            "cases": {
+              "section_3508_direct_seller": [
+                "direct_seller_contract"
+              ]
+            }
+          },
+          "fixed_margin_retail_vendor": {
+            "cases": {
+              "fixed_price_vendor_adult": [
+                "newspaper_service_arrangement"
+              ],
+              "fixed_price_vendor_minor": [
+                "newspaper_service_arrangement"
+              ]
+            }
+          }
+        },
         "direct_seller_requires_all": [
           "newspaper_or_shopping_news_delivery_distribution_trade_or_business_including_related_services",
           "substantially_all_remuneration_related_to_sales_or_other_output_not_hours",
@@ -12235,7 +12504,19 @@
           "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
           "precedence": 1,
           "when": {
-            "clergy_or_religious_exemption": "no effective 3121(r) election",
+            "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+          }
+        },
+        {
+          "case_id": "election_member_abroad_not_covered",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if the member must be a United States citizen; otherwise the vow-of-poverty exclusion still applies.",
+          "precedence": 2,
+          "when": {
+            "citizenship": "not a United States citizen",
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+            "place_of_work": "outside the United States",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
@@ -12243,9 +12524,9 @@
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
           "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election",
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
@@ -12253,7 +12534,7 @@
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -12265,7 +12546,7 @@
             "clergy_religious_service"
           ],
           "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -12306,6 +12587,13 @@
           "authority": "POMS RS 01901.620 (2024-07-02)",
           "capture": "poms_rs_01901620.html",
           "location": "A-B",
+          "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f"
+        },
+        {
+          "authority": "POMS RS 01901.620 (2024-07-02)",
+          "capture": "poms_rs_01901620.html",
+          "location": "B.4",
+          "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and",
           "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f"
         },
         {
@@ -12415,6 +12703,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "retroactive_election": {
+            "cases": {
+              "vow_duties_with_3121r_election": [
+                "clergy_or_religious_exemption"
+              ]
+            }
+          }
+        },
         "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
         "deemed_wages": {
           "aggregation_unit": "member_month",
@@ -12425,7 +12722,7 @@
         },
         "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
         "election_irrevocable": true,
-        "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+        "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: the member must be a United States citizen.",
         "lay_employee_coordination": "Before 1984, former 3121(r)(4) requires an existing 3121(k) waiver to become irrevocable or a new waiver to be filed with an effective date no later than the order coverage election.",
         "poverty_vow_self_employment_excluded": true,
         "retroactive_election": {
@@ -12461,6 +12758,7 @@
       },
       "rule_id": "religious_order_1968_1983",
       "trigger_facts": [
+        "citizenship",
         "clergy_or_religious_exemption",
         "clergy_remuneration",
         "nonresident_alien_status",
@@ -12478,7 +12776,19 @@
           "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
           "precedence": 1,
           "when": {
-            "clergy_or_religious_exemption": "no effective 3121(r) election",
+            "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
+            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+          }
+        },
+        {
+          "case_id": "election_member_abroad_not_covered",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if from January 1, 1984 the member must be a United States citizen or a resident alien; otherwise the vow-of-poverty exclusion still applies.",
+          "precedence": 2,
+          "when": {
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+            "nonresident_alien_status": "neither a United States citizen nor a resident alien",
+            "place_of_work": "outside the United States",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
@@ -12486,9 +12796,9 @@
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
           "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election",
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
             "religious_order_service": "qualifying duties of an active member under a vow of poverty"
           }
         },
@@ -12496,7 +12806,7 @@
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -12508,7 +12818,7 @@
             "clergy_religious_service"
           ],
           "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -12555,6 +12865,13 @@
           "authority": "POMS RS 01901.620 (2024-07-02)",
           "capture": "poms_rs_01901620.html",
           "location": "A-B",
+          "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f"
+        },
+        {
+          "authority": "POMS RS 01901.620 (2024-07-02)",
+          "capture": "poms_rs_01901620.html",
+          "location": "B.4",
+          "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and",
           "sha256": "d7817351e80aa0f2f463ee661859e333d08ef91868e2fb09dad521ab658bdb6f"
         },
         {
@@ -12750,6 +13067,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "retroactive_election": {
+            "cases": {
+              "vow_duties_with_3121r_election": [
+                "clergy_or_religious_exemption"
+              ]
+            }
+          }
+        },
         "coverage_election_introduced": "Public Law 92-603 section 123, enacted October 30, 1972; the permitted 20 quarter retroactivity can reach 1968 services.",
         "deemed_wages": {
           "aggregation_unit": "member_month",
@@ -12760,7 +13086,7 @@
         },
         "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
         "election_irrevocable": true,
-        "foreign_member": "Citizens may be covered; resident aliens may be covered from January 1, 1984, subject to the US order retaining control.",
+        "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: from January 1, 1984 the member must be a United States citizen or a resident alien.",
         "lay_employee_coordination": "Former 3121(r)(4) was repealed by Public Law 98-21 section 102(b)(3)(B), effective for services after 1983.",
         "poverty_vow_self_employment_excluded": true,
         "retroactive_election": {
@@ -12971,6 +13297,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "covered_transportation_exception": {
+            "cases": {
+              "covered_transportation_service": [
+                "industry"
+              ]
+            }
+          }
+        },
         "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
         "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
         "section_218_first": true
@@ -13109,6 +13444,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "covered_transportation_exception": {
+            "cases": {
+              "covered_transportation_service": [
+                "industry"
+              ]
+            }
+          }
+        },
         "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
         "scope": "States and political subdivisions other than District of Columbia, Guam, and American Samoa; special territorial histories are a separate unresolved family.",
         "section_218_first": true
@@ -13363,6 +13707,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "covered_transportation_exception": {
+            "cases": {
+              "covered_transportation_service": [
+                "industry"
+              ]
+            }
+          }
+        },
         "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
         "mandatory_exclusions": [
           "unemployment relief",
@@ -14089,6 +14442,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "conditions": {
+            "cases": {
+              "effective_1402g_exemption": [
+                "clergy_or_religious_exemption"
+              ]
+            }
+          }
+        },
         "conditions": "1402(g)(1)-(2) recognized sect, belief, waiver, findings and effective period; do not confuse with the ministerial 1402(e) exemption"
       },
       "rare_exclusion": {
@@ -14260,6 +14622,16 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "foreign_exclusions_condition": {
+            "cases": {
+              "foreign_minister_without_qualification": [
+                "place_of_work",
+                "citizenship"
+              ]
+            }
+          }
+        },
         "foreign_exclusions_condition": {
           "any_of": [
             "religious service as employee of an American employer under 42 USC 410(e)",
@@ -15116,10 +15488,39 @@
       "alternative": null,
       "cases": [
         {
+          "case_id": "crp_payment_in_real_estate_dealer_business",
+          "consequence": "covered",
+          "description": "411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; apply the other families.",
+          "overrides": [
+            "crp_payment_to_beneficiary"
+          ],
+          "precedence": 1,
+          "when": {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+          }
+        },
+        {
+          "case_id": "crp_payment_under_farm_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
+          "overrides": [
+            "crp_payment_to_beneficiary"
+          ],
+          "precedence": 2,
+          "when": {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
           "case_id": "crp_payment_to_beneficiary",
           "consequence": "noncovered",
           "description": "411(a)(1) excludes these payments with rentals from real estate.",
-          "precedence": 1,
+          "precedence": 3,
           "when": {
             "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423",
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
@@ -15207,6 +15608,8 @@
         "amount",
         "benefit_type",
         "conservation_reserve_payment",
+        "real_estate_dealer_status",
+        "rental_income",
         "retirement_payment"
       ],
       "worked_examples": []
@@ -16006,6 +16409,33 @@
             ]
           }
         ],
+        "condition_cases": {
+          "actual_material_participation_required": {
+            "cases": {
+              "no_actual_material_participation": [
+                "material_participation"
+              ],
+              "participation_under_required_arrangement": [
+                "material_participation"
+              ]
+            }
+          },
+          "covered_rental_conditions": {
+            "cases": {
+              "participation_under_required_arrangement": [
+                "rental_arrangement_requires_material_participation",
+                "material_participation"
+              ]
+            }
+          },
+          "real_estate_dealer_exception": {
+            "cases": {
+              "real_estate_dealer_rentals": [
+                "real_estate_dealer_status"
+              ]
+            }
+          }
+        },
         "covered_rental_conditions": [
           "arrangement calls for agricultural or horticultural production by the other person",
           "arrangement provides owner/tenant material participation in production or management",
@@ -16194,6 +16624,16 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "required_conditions": {
+            "cases": {
+              "participation_under_required_arrangement": [
+                "material_participation",
+                "rental_arrangement_requires_material_participation"
+              ]
+            }
+          }
+        },
         "required_conditions": [
           "arrangement provides agricultural/horticultural production by another individual",
           "arrangement provides material participation by owner/tenant",
@@ -16434,6 +16874,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "individual_condition": {
+            "cases": {
+              "us_resident_entire_taxable_year": [
+                "residence_period"
+              ]
+            }
+          }
+        },
         "effective_taxable_year_begin_after": "1972-12-31",
         "income_tax_exclusion_disregarded": "historical 26 USC 911(a)(2)",
         "individual_condition": "Resident of the United States during the entire taxable year",
@@ -17290,6 +17739,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "required_conditions": {
+            "cases": {
+              "qualifying_termination_payment": [
+                "insurance_sales_termination_payment"
+              ]
+            }
+          }
+        },
         "exclusion_411_j_available": true,
         "required_conditions": [
           "payment after termination of company services agreement",
@@ -17507,6 +17965,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "included_exception": {
+            "cases": {
+              "guaranteed_payment_for_services": [
+                "partnership_status"
+              ]
+            }
+          }
+        },
         "excluded_concept": "limited partner distributive share as such",
         "included_exception": "707(c) guaranteed payments established as remuneration for actual services",
         "threshold_applied_later_in": "other_net_earnings"
@@ -19476,6 +19943,17 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "covered_exception_conditions": {
+            "cases": {
+              "state_local_fee_basis_office": [
+                "government_level",
+                "public_office_fee_basis",
+                "section_218_position"
+              ]
+            }
+          }
+        },
         "covered_exception_conditions": [
           "State/local public office",
           "Compensated solely on a fee basis",
@@ -19842,6 +20320,28 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "eligibility_source_required": {
+            "cases": {
+              "qualified_joint_venture": [
+                "qualified_joint_venture_election",
+                "joint_return",
+                "partnership_status",
+                "material_participation"
+              ]
+            }
+          },
+          "required_conditions": {
+            "cases": {
+              "qualified_joint_venture": [
+                "qualified_joint_venture_election",
+                "joint_return",
+                "partnership_status",
+                "material_participation"
+              ]
+            }
+          }
+        },
         "eligibility_source_required": "26 USC 761(f) conditions and election must be established",
         "income_assignment": "each spouse share under 26 USC 761(f)",
         "qualified_joint_venture_411_a_16_available": true,
@@ -20320,6 +20820,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "real_estate_dealer_exception": {
+            "cases": {
+              "real_estate_dealer_rentals": [
+                "real_estate_dealer_status"
+              ]
+            }
+          }
+        },
         "evidence_only_boundaries": [
           {
             "citation": {
@@ -20367,13 +20876,13 @@
         {
           "case_id": "qualifying_retirement_payment",
           "consequence": "noncovered",
-          "description": "411(a)(9)(A)-(C).",
+          "description": "411(a)(9): the plan conditions and (A)-(C) must all hold; a payment failing any of them is not excluded by it.",
           "precedence": 1,
           "when": {
             "partner_capital_paid": true,
             "partner_no_other_obligation": true,
             "partner_no_services": true,
-            "retirement_payment": "periodic payment on account of retirement under a written partnership plan, continuing at least until the partner's death"
+            "retirement_payment": "periodic payment on account of retirement under a written partnership plan that meets such requirements as are prescribed by the Secretary of the Treasury and pays partners generally or a class or classes of partners, continuing at least until the partner's death"
           }
         }
       ],
@@ -20485,6 +20994,17 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "required_conditions": {
+            "cases": {
+              "qualifying_retirement_payment": [
+                "partner_no_services",
+                "partner_no_other_obligation",
+                "partner_capital_paid"
+              ]
+            }
+          }
+        },
         "eligible_concept": "periodic retirement payments under written partnership plan continuing at least until partner death",
         "partnership_year_timing": "year ending within or with recipient taxable year",
         "required_conditions": [
@@ -20759,6 +21279,22 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "member_activity_condition": {
+            "cases": {
+              "section_7873_exempt_income": [
+                "tribal_fishing_member_activity"
+              ]
+            }
+          },
+          "qualified_entity_conditions": {
+            "cases": {
+              "section_7873_exempt_income": [
+                "tribal_fishing_qualified_entity"
+              ]
+            }
+          }
+        },
         "effective_periods": "All periods beginning before, on, or after 1988-11-10",
         "excluded_income_reference": "26 USC 7873",
         "member_activity_condition": "Substantially all harvesting in the fishing rights-related activity must be performed by members of the tribe (26 U.S.C. 7873(b)(1)).",
@@ -22630,6 +23166,19 @@
             ]
           }
         ],
+        "condition_cases": {
+          "benefit_credit_posting_rule": {
+            "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+          },
+          "later_418a_retroactive_coverage": {
+            "cases": {
+              "later_418a_retroactive_coverage": [
+                "tribal_coverage_agreement",
+                "historical_fica_treatment"
+              ]
+            }
+          }
+        },
         "historical_legal_basis": "POMS RS 01901.700C.1 expressly bases council-service noncoverage on Revenue Ruling 59-354; the 2018 Act adds the statutory exclusion and agreement route.",
         "later_2018_agreement_can_validate_qualifying_prior_services": true,
         "later_418a_retroactive_coverage": {
@@ -22700,13 +23249,23 @@
           "consequence": "covered",
           "precedence": 1,
           "when": {
-            "tribal_coverage_agreement": "council-capacity services included under an effective section 418a agreement"
+            "tribal_coverage_agreement": "council-capacity services performed on or after the effective date of an effective section 418a agreement"
+          }
+        },
+        {
+          "case_id": "section_418a_retroactive_inclusion",
+          "consequence": "covered",
+          "description": "418a(c)(2) as added by Pub. L. 115-243: at the tribe's request the agreement may reach earlier services for which FICA-equivalent amounts were timely paid in good faith and not refunded.",
+          "precedence": 2,
+          "when": {
+            "historical_fica_treatment": "FICA-equivalent amounts were timely paid in good faith and not subsequently refunded",
+            "tribal_coverage_agreement": "council-capacity services before the agreement's effective date that the tribe asked the agreement to include"
           }
         },
         {
           "case_id": "no_section_418a_inclusion",
           "consequence": "noncovered",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "tribal_council_service": "service as a member of an Indian tribal council, in that capacity, for the tribal government",
             "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"
@@ -22803,6 +23362,19 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "benefit_credit_posting_rule": {
+            "not_a_coverage_condition": "POMS RS 01901.700 directs that earnings already posted through 2005 be used in benefit computations; it does not change whether council service is covered."
+          },
+          "later_418a_retroactive_coverage": {
+            "cases": {
+              "section_418a_retroactive_inclusion": [
+                "tribal_coverage_agreement",
+                "historical_fica_treatment"
+              ]
+            }
+          }
+        },
         "default_council_service": "noncovered_without_agreement",
         "historical_legal_basis": "POMS RS 01901.700C.1 expressly bases council-service noncoverage on Revenue Ruling 59-354; the 2018 Act adds the statutory exclusion and agreement route.",
         "later_418a_retroactive_coverage": {

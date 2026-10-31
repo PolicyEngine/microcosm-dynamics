@@ -312,7 +312,16 @@
           },
           "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law."
         }
-      ]
+      ],
+      "condition_cases": {
+        "real_estate_dealer_exception": {
+          "cases": {
+            "real_estate_dealer_rentals": [
+              "real_estate_dealer_status"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1368,6 +1377,15 @@
       "nonresident_reading": {
         "candidate": "411(a) starts from subtitle A gross income, so a 911 exclusion this clause does not override would keep the excluded amount out of net earnings.",
         "status": "not verified: the 1973-1981 text of the 411(a) gross-income clause is not captured"
+      },
+      "condition_cases": {
+        "individual_condition": {
+          "cases": {
+            "us_resident_entire_taxable_year": [
+              "residence_period"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -1899,7 +1917,23 @@
           ]
         }
       ],
-      "member_activity_condition": "Substantially all harvesting in the fishing rights-related activity must be performed by members of the tribe (26 U.S.C. 7873(b)(1))."
+      "member_activity_condition": "Substantially all harvesting in the fishing rights-related activity must be performed by members of the tribe (26 U.S.C. 7873(b)(1)).",
+      "condition_cases": {
+        "member_activity_condition": {
+          "cases": {
+            "section_7873_exempt_income": [
+              "tribal_fishing_member_activity"
+            ]
+          }
+        },
+        "qualified_entity_conditions": {
+          "cases": {
+            "section_7873_exempt_income": [
+              "tribal_fishing_qualified_entity"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
