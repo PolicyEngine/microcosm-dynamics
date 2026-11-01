@@ -602,6 +602,22 @@ def _spouse_entitlement_case(
     )
 
 
+def _expect_fact_classification(call, fact, held, message):
+    """Round 5: a protected fact retains its precise counted refusal."""
+    unsettled = held is g.RecordCondition.ADMINISTRATIVE_FINALITY or (
+        held is g.RecordCondition.WORKERS_COMPENSATION_OFFSET and fact == "F2"
+    )
+    if not unsettled:
+        _expect_no_row(call, message)
+        return
+    outcome = r.evaluate_ret("protected-fact", 7, call)
+    denominator = r.count_ret_outcomes([outcome])
+    assert not outcome.supported
+    assert outcome.unsupported.reason is g._RECORD_CONDITION_REASONS[held][0]
+    assert (denominator.rows, denominator.weight) == (1, 7)
+    assert denominator.unsupported_weight == 7
+
+
 @pytest.mark.parametrize("role", SPOUSE_ROLES)
 @pytest.mark.parametrize("own_kind", list(g.OwnBenefitKind))
 @pytest.mark.parametrize("money", [0, 4])
@@ -612,7 +628,7 @@ def _spouse_entitlement_case(
 def test_declared_spouse_pia_disqualification_precedes_held_refusal(
     role, own_kind, money, held, reverse
 ):
-    _expect_no_row(
+    _expect_fact_classification(
         lambda: r.apply_ret_year(
             _spouse_entitlement_case(
                 role,
@@ -623,6 +639,8 @@ def test_declared_spouse_pia_disqualification_precedes_held_refusal(
             ),
             PARAMS,
         ),
+        "F5",
+        held,
         "G and RET auxiliary entitlement facts differ",
     )
 
@@ -692,7 +710,7 @@ def test_no_held_coverage_condition_masks_spouse_pia_contradiction(
     role, own_kind, scale, extra, month, held, reverse
 ):
     for condition in (None, held):
-        _expect_no_row(
+        _expect_fact_classification(
             lambda condition=condition: r.apply_ret_year(
                 _spouse_entitlement_case(
                     role,
@@ -705,6 +723,8 @@ def test_no_held_coverage_condition_masks_spouse_pia_contradiction(
                 ),
                 PARAMS,
             ),
+            "F5",
+            condition,
             "G and RET auxiliary entitlement facts differ",
         )
 
@@ -800,7 +820,7 @@ def _direct_nh_rate_case(kind, pia, declared, *, month=1, held=None):
 def test_declared_nh_original_pia_mismatch_precedes_held_refusal(
     pia, month, held
 ):
-    _expect_no_row(
+    _expect_fact_classification(
         lambda: r.apply_ret_year(
             _direct_nh_rate_case(
                 "original",
@@ -811,6 +831,8 @@ def test_declared_nh_original_pia_mismatch_precedes_held_refusal(
             ),
             PARAMS,
         ),
+        "F1",
+        held,
         "G context does not match RET rates",
     )
 
@@ -823,7 +845,7 @@ def test_declared_nh_original_pia_mismatch_precedes_held_refusal(
 def test_declared_dib_nh_gross_pia_mismatch_precedes_held_refusal(
     gross, month, held
 ):
-    _expect_no_row(
+    _expect_fact_classification(
         lambda: r.apply_ret_year(
             _direct_nh_rate_case(
                 "dib_gross",
@@ -834,6 +856,8 @@ def test_declared_dib_nh_gross_pia_mismatch_precedes_held_refusal(
             ),
             PARAMS,
         ),
+        "F2",
+        held,
         "G context does not match RET rates",
     )
 
@@ -910,13 +934,15 @@ def test_no_held_coverage_condition_masks_direct_nh_rate_contradiction(
     pia = 4 * scale
     declared = F(pia) + direction * F(gap, 10)
     for condition in (None, held):
-        _expect_no_row(
+        _expect_fact_classification(
             lambda condition=condition: r.apply_ret_year(
                 _direct_nh_rate_case(
                     kind, pia, declared, month=month, held=condition
                 ),
                 PARAMS,
             ),
+            ("F1" if kind == "original" else "F2"),
+            condition,
             "G context does not match RET rates",
         )
 

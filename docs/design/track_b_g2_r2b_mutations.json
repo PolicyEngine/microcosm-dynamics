@@ -2,12 +2,13 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 50,
+  "confirmed_mutation_count": 80,
   "counts_by_layer": {
-    "shared_provenance": 1,
     "g_deductions": 18,
-    "r2": 19,
-    "g_savings": 12
+    "g_preflight": 21,
+    "g_savings": 12,
+    "r2": 28,
+    "shared_provenance": 1
   },
   "environment_contract": {
     "OMP_NUM_THREADS": "1",
@@ -2720,6 +2721,1686 @@
         "reverted": true,
         "final_source_sha256": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
       }
+    },
+    {
+      "id": "round5-differential_f1_equality",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if settled(\"F1\") and nh.original_rates[month - 1] != state.pia:",
+        "after": "if settled(\"F1\") and nh.original_rates[month - 1] == state.pia:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_preflight_changes_no_valid_outcome_or_refusal"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "differential_f1_equality"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-differential_f1_equality/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-differential_f1_equality",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-differential_f1_equality"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_preflight_changes_no_valid_outcome_or_refusal"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-differential_f1_equality.log",
+        "sha256": "0330f494aca44f0ebdc67c8670a8a2a30b35ed06ef78b3d7aaa2a67a04559a3d",
+        "failure_summary": "1 failed in 271.17s (0:04:31)"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-drop_beneficiary_finality",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "BeneficiaryCondition.RATE_PROTECTED_BY_FINALITY: frozenset({'F4', 'F5', 'F6'})\nUnsupportedReason.ADMINISTRATIVE_FINALITY: frozenset({'F1', 'F2', 'F3', 'F4', 'F5', 'F6'})",
+        "after": "for _hold in (BeneficiaryCondition.RATE_PROTECTED_BY_FINALITY, UnsupportedReason.ADMINISTRATIVE_FINALITY): _PREFLIGHT_FACT_UNSETTLERS[_hold] = frozenset()"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_beneficiary_finality_protects_its_own_unsettled_fact"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_beneficiary_finality"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_beneficiary_finality/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_beneficiary_finality",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_beneficiary_finality"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_beneficiary_finality_protects_its_own_unsettled_fact[F4]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_beneficiary_finality.log",
+        "sha256": "c76c7069b28fd5578f75a16eac23fd006614f8dda69df8af4acd13deca55efee",
+        "failure_summary": "1 failed in 19.53s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_beneficiary_widow_drc_survivor_scope",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        BeneficiaryCondition.WIDOW_DRC_SAVINGS_CLAUSE,\n",
+        "after": ""
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_widow_drc_condition_on_a_living_child_keeps_ob_settled"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_beneficiary_widow_drc_survivor_scope"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_beneficiary_widow_drc_survivor_scope/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_beneficiary_widow_drc_survivor_scope",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_beneficiary_widow_drc_survivor_scope"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_widow_drc_condition_on_a_living_child_keeps_ob_settled[True-0]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_beneficiary_widow_drc_survivor_scope.log",
+        "sha256": "8a8ef510e8d082ad777c3561a88707ceea58a96d9d09f1dcbfdfc0d054b295dd",
+        "failure_summary": "1 failed, 2 passed in 11.74s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "06ab2a071acbddfb531e8ad6be9ee8d088f12c17cbf56a7b7f18bf6bd202324e",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_dib_after_rib_f2",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "RecordCondition.DIB_AFTER_REDUCED_RIB: frozenset({'F2'})",
+        "after": "_PREFLIGHT_FACT_UNSETTLERS[RecordCondition.DIB_AFTER_REDUCED_RIB] = frozenset()"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_lawful_dib_gross_changes_remain_counted_refusals"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_dib_after_rib_f2"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_dib_after_rib_f2/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_dib_after_rib_f2",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_dib_after_rib_f2"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_lawful_dib_gross_changes_remain_counted_refusals[RecordCondition.DIB_AFTER_REDUCED_RIB-800]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_dib_after_rib_f2.log",
+        "sha256": "78c16f4a31f1bb93e403f07df97b75f66cbbb6b9b5d0a7ea6330da0e3378fd38",
+        "failure_summary": "1 failed in 19.41s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_finality_f1",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "RecordCondition.ADMINISTRATIVE_FINALITY: frozenset({'F1', 'F2', 'F3', 'F4', 'F5', 'F6'})",
+        "after": "_PREFLIGHT_FACT_UNSETTLERS[RecordCondition.ADMINISTRATIVE_FINALITY] -= {\"F1\"}"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_first_administrative_finality_example_keeps_nh_rate"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_finality_f1"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_finality_f1/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_finality_f1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_finality_f1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_first_administrative_finality_example_keeps_nh_rate"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_finality_f1.log",
+        "sha256": "a0032cd62fcedfa4205a2471c92ab3cebc21800df2e89fb244569d2868f82401",
+        "failure_summary": "1 failed in 12.26s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_historical_child_ob_uncertainty",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "\n                < FIRST_SUPPORTED_PAYMENT_MONTH",
+        "after": "\n                < (1900, 1)"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_child_ob_uncertainty_preserves_old_refusals_for_odd_dime_pias"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_historical_child_ob_uncertainty"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_historical_child_ob_uncertainty/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_historical_child_ob_uncertainty",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_historical_child_ob_uncertainty"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_child_ob_uncertainty_preserves_old_refusals_for_odd_dime_pias"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_historical_child_ob_uncertainty.log",
+        "sha256": "94466ac946113e91a6425c4512d5f444c9e57fead91a2acbdb8f49bb4728530b",
+        "failure_summary": "1 failed in 8.09s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_historical_wib_carryover_f6",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            and own.pia > 0",
+        "after": "            and False"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_aged_widow_sequence_refusal_only_unsettles_possible_carryover"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_historical_wib_carryover_f6"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_historical_wib_carryover_f6/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_historical_wib_carryover_f6",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_historical_wib_carryover_f6"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_aged_widow_sequence_refusal_only_unsettles_possible_carryover[None-4-1920]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_historical_wib_carryover_f6.log",
+        "sha256": "249a7a6038a9a735a42423c9d67f1898c0c50c17dd445ac047455926c5d5c8ab",
+        "failure_summary": "1 failed, 2 passed in 8.45s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "73ebc6a9dac1d9d05d2ef1aca002dc0505755d466b2c0153fb1f929cd0f1b690",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_historical_widow_gross_uncertainty",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": ") or _historical_widow_gross_bound_unsettled(",
+        "after": ") or False and _historical_widow_gross_bound_unsettled("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_historical_widow_gross_uncertainty_preserves_refusals_across_months"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_historical_widow_gross_uncertainty"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_historical_widow_gross_uncertainty/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_historical_widow_gross_uncertainty",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_historical_widow_gross_uncertainty"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_historical_widow_gross_uncertainty_preserves_refusals_across_months"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_historical_widow_gross_uncertainty.log",
+        "sha256": "089fd3a8047e231460f8f715fe52d5e7980a35d64f8045193dd9ad9fff23e5ac",
+        "failure_summary": "1 failed in 7.89s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_historical_widow_original_fact_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                ) < (1973, 1)",
+        "after": "                ) < (1900, 1)"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_historical_widow_original_benefit_uses_the_payment_period"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_historical_widow_original_fact_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_historical_widow_original_fact_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_historical_widow_original_fact_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_historical_widow_original_fact_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_historical_widow_original_benefit_uses_the_payment_period[1972]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_historical_widow_original_fact_hold.log",
+        "sha256": "52a6159eb672808735efe563f71de2c38b0140c5227fad9c14cb63e36cab9f90",
+        "failure_summary": "1 failed in 8.00s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_missing_widow_cohort_guard",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "                    and resolved.birth_year is None",
+        "after": "                    and False"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_missing_both_widow_cohorts_remains_canonical_input_error"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_missing_widow_cohort_guard"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_missing_widow_cohort_guard/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_missing_widow_cohort_guard",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_missing_widow_cohort_guard"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_missing_both_widow_cohorts_remains_canonical_input_error[None]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_missing_widow_cohort_guard.log",
+        "sha256": "9c0339b2b61bf160d9a95063dd14ee4e6149f6eee4adf2b8530bbac873491e66",
+        "failure_summary": "1 failed in 13.99s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "73ebc6a9dac1d9d05d2ef1aca002dc0505755d466b2c0153fb1f929cd0f1b690",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_parent_upper_bound_context",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if original_benefit_upper_bound:",
+        "after": "        if False:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_parent_upper_bound_holds_across_scales_months_and_deferred_holds"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_parent_upper_bound_context"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_parent_upper_bound_context/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_parent_upper_bound_context",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_parent_upper_bound_context"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_parent_upper_bound_holds_across_scales_months_and_deferred_holds"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_parent_upper_bound_context.log",
+        "sha256": "d3cd25bdbcf7fce7dce44f6b7c3fc18fd858f41ea35a29d9b6d5216f66d2ce11",
+        "failure_summary": "1 failed in 7.54s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_wc_f2",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "RecordCondition.WORKERS_COMPENSATION_OFFSET: frozenset({'F2', 'F3'})",
+        "after": "_PREFLIGHT_FACT_UNSETTLERS[RecordCondition.WORKERS_COMPENSATION_OFFSET] -= {\"F2\"}"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_lawful_dib_gross_changes_remain_counted_refusals"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_wc_f2"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_wc_f2/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_wc_f2",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_wc_f2"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_lawful_dib_gross_changes_remain_counted_refusals[RecordCondition.WORKERS_COMPENSATION_OFFSET-600]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_wc_f2.log",
+        "sha256": "c0e8153a9fec972835c071e7ec7c32e0278ce9cf1a8549bc183de68837670e4a",
+        "failure_summary": "1 failed, 1 passed in 16.26s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-drop_wc_f3",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "RecordCondition.WORKERS_COMPENSATION_OFFSET: frozenset({'F2', 'F3'})",
+        "after": "_PREFLIGHT_FACT_UNSETTLERS[RecordCondition.WORKERS_COMPENSATION_OFFSET] -= {\"F3\"}"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_held_against_unheld_fact_classification"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "drop_wc_f3"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-drop_wc_f3/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-drop_wc_f3",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-drop_wc_f3"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_held_against_unheld_fact_classification"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-drop_wc_f3.log",
+        "sha256": "d72fc8ee34fb4fc18386304a22ba4d910a118bfe26504b586d50575db92c97df",
+        "failure_summary": "1 failed in 16.60s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-exclude_protected_widow_by_ordinary_entitlement",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            if not _fact_is_settled(",
+        "after": "            if False and not _fact_is_settled("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_protected_widow_cannot_be_excluded_from_unknown_drc_history"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "exclude_protected_widow_by_ordinary_entitlement"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-exclude_protected_widow_by_ordinary_entitlement/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-exclude_protected_widow_by_ordinary_entitlement",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-exclude_protected_widow_by_ordinary_entitlement"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_protected_widow_cannot_be_excluded_from_unknown_drc_history[None-basis0-ret]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-exclude_protected_widow_by_ordinary_entitlement.log",
+        "sha256": "1c2914de95c03952f9328ae2ad11c518abf4fb61bea3a6d2b7ebfc12b066693e",
+        "failure_summary": "1 failed in 18.30s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-f6_without_own_mba",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "auxiliary, state.pia, own_mba, parent_ob=original",
+        "after": "auxiliary, state.pia, None, parent_ob=original"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "f6_without_own_mba"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-f6_without_own_mba/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-f6_without_own_mba",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-f6_without_own_mba"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling[RecordCondition.NON_AIME_FORMULA_PIA-0-F6]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-f6_without_own_mba.log",
+        "sha256": "d63844ddf4159f8bbf87f2aea8e2269420415cf7c0f3da475825e9a37ba16a4b",
+        "failure_summary": "1 failed, 8 passed in 12.27s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-matching_declarations_f1_equality",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "if settled(\"F1\") and nh.original_rates[month - 1] != state.pia:",
+        "after": "if settled(\"F1\") and nh.original_rates[month - 1] == state.pia:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_matching_declarations_never_raise_input_errors"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "matching_declarations_f1_equality"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-matching_declarations_f1_equality/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-matching_declarations_f1_equality",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-matching_declarations_f1_equality"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_matching_declarations_never_raise_input_errors"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-matching_declarations_f1_equality.log",
+        "sha256": "f0e6fbe0169248ed4367344945d5361db7ecebdad131308433357d908e5d89ad",
+        "failure_summary": "1 failed in 125.43s (0:02:05)"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-restore_blanket_dual_f6_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if beneficiary is None:",
+        "after": "        if True:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_modern_disabled_widow_own_rib_eligibility_is_settled"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "restore_blanket_dual_f6_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-restore_blanket_dual_f6_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-restore_blanket_dual_f6_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-restore_blanket_dual_f6_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_modern_disabled_widow_own_rib_eligibility_is_settled[None-0]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-restore_blanket_dual_f6_hold.log",
+        "sha256": "8cb072244d70f320b9a6a51d05ba3bbbf110ab5e983982bbedf41a5656384914",
+        "failure_summary": "1 failed in 6.92s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "73ebc6a9dac1d9d05d2ef1aca002dc0505755d466b2c0153fb1f929cd0f1b690",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-restore_global_own_history_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "            _own_monthly_benefit_validated(own, params)\n        except FamilyConfigurationUnsupported:\n            return True\n        return False",
+        "after": "            _own_monthly_benefit_validated(own, params)\n        except FamilyConfigurationUnsupported:\n            return True\n        return True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "restore_global_own_history_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-restore_global_own_history_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-restore_global_own_history_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-restore_global_own_history_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope[True-0-F3-UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-restore_global_own_history_hold.log",
+        "sha256": "86a24ffec78d4d4af24bef3a76d6852aeebb0226d9fbf98d6b038c6c49567ff4",
+        "failure_summary": "1 failed, 19 passed in 9.75s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "cd71ea6dd462b711f3341ce8fec2c8a0b15214672989b831cd0e0d7e780542ca",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-restore_global_parent_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if beneficiary is None or beneficiary.role is not Role.PARENT:\n            return False",
+        "after": "        if beneficiary is None or beneficiary.role is not Role.PARENT:\n            return True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "restore_global_parent_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-restore_global_parent_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-restore_global_parent_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-restore_global_parent_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope[True-0-F4-UnsupportedReason.PARENT_BENEFIT]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-restore_global_parent_hold.log",
+        "sha256": "51ad54bad77bbc8d468a4eddfde1ee725e00e7c7e8347e72826c9813b784c9f9",
+        "failure_summary": "1 failed, 18 passed in 9.77s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "cd71ea6dd462b711f3341ce8fec2c8a0b15214672989b831cd0e0d7e780542ca",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-restore_global_payment_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "\n            < FIRST_SUPPORTED_PAYMENT_MONTH",
+        "after": "\n            < (9999, 1)"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "restore_global_payment_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-restore_global_payment_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-restore_global_payment_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-restore_global_payment_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope[True-0-F3-UnsupportedReason.PAYMENT_MONTH_BEFORE_1983]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-restore_global_payment_hold.log",
+        "sha256": "46b9198f9fa953c24a59ffccac24a51ec336f43e71f584317bbe7e092b14a988",
+        "failure_summary": "1 failed, 23 passed in 8.36s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-restore_global_widow_drc_hold",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        return state.kind is FamilyKind.SURVIVOR",
+        "after": "        return True"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "restore_global_widow_drc_hold"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-restore_global_widow_drc_hold/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-restore_global_widow_drc_hold",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-restore_global_widow_drc_hold"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_deferred_reason_unsettles_only_the_fact_within_its_scope[True-0-F4-UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-restore_global_widow_drc_hold.log",
+        "sha256": "44705e1a3599b8bb9709ab0f01307430af6e847b098fe99a9ed19f5f6baa23b1",
+        "failure_summary": "1 failed, 25 passed in 10.48s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "cd71ea6dd462b711f3341ce8fec2c8a0b15214672989b831cd0e0d7e780542ca",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-share_beneficiary_finality_recordwide",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "            return g._fact_is_settled(",
+        "after": "            return not any(g.BeneficiaryCondition.RATE_PROTECTED_BY_FINALITY in b.conditions for b in context.beneficiaries) and g._fact_is_settled("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_one_beneficiary_finality_does_not_protect_the_nh"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "share_beneficiary_finality_recordwide"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-share_beneficiary_finality_recordwide/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-share_beneficiary_finality_recordwide",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-share_beneficiary_finality_recordwide"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_one_beneficiary_finality_does_not_protect_the_nh[F1]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-share_beneficiary_finality_recordwide.log",
+        "sha256": "6e96ef3a01d0b3f2dcb77aa0091beb86bd4c68b586b50b7e682c2d88fe374d1f",
+        "failure_summary": "1 failed in 11.10s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-skip_f3",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "elif settled(\"F3\"):",
+        "after": "elif False:"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "skip_f3"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-skip_f3/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-skip_f3",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-skip_f3"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling[RecordCondition.NON_AIME_FORMULA_PIA-0-F3]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-skip_f3.log",
+        "sha256": "c02b583a9b6131ad4ce8c505e9f19ed20a246801d4a30764167a4159cc143a9c",
+        "failure_summary": "1 failed, 6 passed in 9.27s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-skip_f4",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                settled(\"F4\", auxiliary)\n                and original is not None",
+        "after": "                False\n                and original is not None"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "skip_f4"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-skip_f4/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-skip_f4",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-skip_f4"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling[RecordCondition.NON_AIME_FORMULA_PIA-0-F4]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-skip_f4.log",
+        "sha256": "64bf193af89d43a12adc5195f037927310c806eb3250a823252c49a107497059",
+        "failure_summary": "1 failed, 7 passed in 8.30s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-skip_f6",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "            if settled(fact, auxiliary) and not (",
+        "after": "            if fact != \"F6\" and settled(fact, auxiliary) and not ("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "skip_f6"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-skip_f6/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-skip_f6",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-skip_f6"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_review_counterexamples_follow_finality_ruling[RecordCondition.NON_AIME_FORMULA_PIA-0-F6]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-skip_f6.log",
+        "sha256": "18dc9de306bcc978aa19d1ca368b82db5a9928098a139e997eb418e99b53cd90",
+        "failure_summary": "1 failed, 8 passed in 7.43s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "06ab2a071acbddfb531e8ad6be9ee8d088f12c17cbf56a7b7f18bf6bd202324e",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-skip_specific_auxiliary_entitlement_error",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "                    if not entitled:",
+        "after": "                    if not entitled and fact != \"F5\":"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_deductions.py::test_family_context_invalidity_precedes_record_refusal"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "skip_specific_auxiliary_entitlement_error"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-skip_specific_auxiliary_entitlement_error/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-skip_specific_auxiliary_entitlement_error",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-skip_specific_auxiliary_entitlement_error"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_deductions.py::test_family_context_invalidity_precedes_record_refusal"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-skip_specific_auxiliary_entitlement_error.log",
+        "sha256": "740ec64585a6e799fc5fd68ca96336d6d4db0c5ad4ca586e8a332254ede8aebc",
+        "failure_summary": "1 failed in 10.77s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "06ab2a071acbddfb531e8ad6be9ee8d088f12c17cbf56a7b7f18bf6bd202324e",
+          "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-swallow_input_error",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": {
+        "before": "except FamilyConfigurationUnsupported:\n                        pass",
+        "after": "except (FamilyConfigurationUnsupported, InvalidFamilyInput):\n                        pass"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_canonical_input_error_is_never_caught_as_a_coverage_refusal"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "swallow_input_error"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-swallow_input_error/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-swallow_input_error",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-swallow_input_error"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_canonical_input_error_is_never_caught_as_a_coverage_refusal[F3-_own_monthly_benefit_validated]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-swallow_input_error.log",
+        "sha256": "061bb72ae2ff6631a0daeaa4b6124576f2eabdac962d64f03b5c89bc33d9f6fe",
+        "failure_summary": "1 failed in 5.50s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round5-table_completeness_missing_reason",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "UnsupportedReason.PENALTY_DEDUCTION: frozenset()",
+        "after": "del _PREFLIGHT_FACT_UNSETTLERS[UnsupportedReason.PENALTY_DEDUCTION]"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_fact_table_explicitly_covers_all_conditions_and_held_g_reasons"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "table_completeness_missing_reason"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-table_completeness_missing_reason/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-table_completeness_missing_reason",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-table_completeness_missing_reason"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_fact_table_explicitly_covers_all_conditions_and_held_g_reasons"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-table_completeness_missing_reason.log",
+        "sha256": "957a945dbef81ed6bb62ef8b493a995ea90a955b33f4f6332b63a9db0b832618",
+        "failure_summary": "1 failed in 10.26s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-unconditional_deduction_ob_bound",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "        if not _fact_is_settled(",
+        "after": "        if False and not _fact_is_settled("
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_protected_deduction_rate_is_not_bounded_by_correct_pia_ob"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "unconditional_deduction_ob_bound"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-unconditional_deduction_ob_bound/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-unconditional_deduction_ob_bound",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-unconditional_deduction_ob_bound"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_protected_deduction_rate_is_not_bounded_by_correct_pia_ob[payable0-reserved0-RecordCondition.ADMINISTRATIVE_FINALITY-False]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-unconditional_deduction_ob_bound.log",
+        "sha256": "0c1273291a0f21e3faaf9f888b3dfde5997a29682ce5519da53bb4f165f5f2fc",
+        "failure_summary": "1 failed in 9.37s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round5-unsettle_non_aime_f1",
+      "round": 5,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": {
+        "before": "RecordCondition.NON_AIME_FORMULA_PIA: frozenset()",
+        "after": "_PREFLIGHT_FACT_UNSETTLERS[RecordCondition.NON_AIME_FORMULA_PIA] = frozenset({\"F1\"})"
+      },
+      "command": [
+        "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python",
+        "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5_guarded.py",
+        "pytest",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-x",
+        "--tb=short",
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_each_fact_contradiction_is_classified_by_its_declared_condition"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round5_mutation_check.py",
+        "unsettle_non_aime_f1"
+      ],
+      "environment": {
+        "PYTHONPATH": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-hook:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-mutation-unsettle_non_aime_f1/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/src:/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "OMP_WAIT_POLICY": "PASSIVE",
+        "POPULACE_DYNAMICS_PSID_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/nonexistent",
+        "TRACK_B_AUDIT_DIR": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-audit-mutation-unsettle_non_aime_f1",
+        "HYPOTHESIS_STORAGE_DIRECTORY": "/Users/maxghenis/.subfleet/worktrees/20261031-181530-trackb-fix-g2-5/scratch/review/round5-hypothesis-mutation-unsettle_non_aime_f1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_5.py::test_each_fact_contradiction_is_classified_by_its_declared_condition[RecordCondition.NON_AIME_FORMULA_PIA-0-F1]"
+      ],
+      "log": {
+        "path": "scratch/review/round5-mutation-unsettle_non_aime_f1.log",
+        "sha256": "678857dece286ef8d5e7748ed667d1155cf54373a5d836b4336ff2330135fb33",
+        "failure_summary": "1 failed, 24 passed in 8.52s"
+      },
+      "mutation_method": "One-line semantic mutation in an isolated named-source overlay; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "f5ec2a1a16572eb4997d9f8b88110d6c24b6ac9f99251067ca0022ae55603355",
+          "src/populace_dynamics/track_b/ret_ledger.py": "dfddbc2d8f752a3df1a1f6b7e2949b0b44de0cc714b0066af852743075223bad"
+        }
+      },
+      "layer": "g_preflight"
     }
   ],
   "restoration_verification_snapshot": {
@@ -2763,5 +4444,11 @@
     "src/populace_dynamics/track_b/gross_benefits.py": "6ed10a1f4c637ab136511792d574dc49236acb726818532c4a3c865781af14d0",
     "src/populace_dynamics/track_b/ret_ledger.py": "e9b01a765a7951937a7035da3ab2ef29b13dc1efa663e35e224ae558d622515b"
   },
-  "round_4_environment_note": "The older isolated-source imports contract describes historical rounds. Round 4 records identify foreground, reversible workspace mutations and their environments. Final restoration hashes include the completed declared-fact audit extension."
+  "round_4_environment_note": "The older isolated-source imports contract describes historical rounds. Round 4 records identify foreground, reversible workspace mutations and their environments. Final restoration hashes include the completed declared-fact audit extension.",
+  "round_5_head": "e3315bafb592e29031d72b5ef368ca428e4a0b55",
+  "round_5_note": "30 fresh one-line semantic mutations caught by named public-path tests; isolated copied rules restored, production sources unchanged. Earlier records remain historical.",
+  "round_5_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "d51f5d77c7aa7cf6004392e27187ce89523151fef12148088565226f7444fb64",
+    "src/populace_dynamics/track_b/ret_ledger.py": "2aa5eff5e4f88f4a7dd3104c7aafeac60f6460faa132a53f8834ce0b0ef72587"
+  }
 }

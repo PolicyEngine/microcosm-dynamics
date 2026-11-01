@@ -31,10 +31,11 @@ age reductions and the deceased worker's credits do not establish a
 survivor's current age. Contradictions error before coverage refusals.
 Every known cohort for one person agrees across monthly contexts,
 including record and own-benefit fields; missing cohorts add no constraint.
-Declared NH entitlement and spouse eligibility under the raw own-PIA
-threshold agree with RET before any G computation or held coverage refusal.
-NH original benefits and DIB gross benefits copy the declared PIA directly;
-those comparisons also precede G computation.
+Declared NH entitlement agrees with RET before any coverage refusal.
+Rate and own-benefit eligibility comparisons precede a held refusal only
+when no declared condition can change that fact. G's explicit fact table
+and canonical benefit helpers establish those comparisons; protected or
+otherwise unresolved facts retain their original coverage refusal.
 Every raw month-set element must be an integer month before deduplication;
 malformed input raises before a coverage refusal can become an outcome.
 
@@ -1144,6 +1145,128 @@ def _divorced_excluded(b: RETBeneficiary, month: int) -> bool:
     )
 
 
+def _check_settled_family_facts(record: RecordYear) -> None:
+    """Compare declarations only where G can establish the underlying fact.
+
+    Entitlement to the NH benefit is an identity between declarations.
+    Money and own-benefit eligibility use G's canonical rules and its
+    condition table. A rule's coverage refusal leaves that fact unsettled;
+    an input error always propagates. Whole-family allocations stay after G.
+    """
+    people = {b.beneficiary_id: b for b in record.beneficiaries}
+    # These identities hold even under protected monetary rates.
+    if record.kind is not RecordKind.DECEASED:
+        nh = people[record.nh_id]
+        for month, context in record.family_months.items():
+            if g._declared_worker_entitled(context.state) != (
+                month in nh.entitled_months
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET NH entitlement facts differ"
+                )
+    for month, context in record.family_months.items():
+        state = context.state
+        payment_month = _construct_declared(g.YearMonth, record.year, month)
+
+        def settled(
+            fact,
+            member=None,
+            *,
+            state=state,
+            payment_month=payment_month,
+            context=context,
+        ):
+            return g._fact_is_settled(
+                fact,
+                state,
+                member,
+                payment_month=payment_month,
+                beneficiaries=context.beneficiaries,
+                params=context.params,
+            )
+
+        if record.kind is not RecordKind.DECEASED:
+            nh = people[record.nh_id]
+            if month in nh.entitled_months:
+                if settled("F1") and nh.original_rates[month - 1] != state.pia:
+                    raise InvalidFamilyInput(
+                        "G context does not match RET rates"
+                    )
+                if record.kind is RecordKind.DISABILITY:
+                    if (
+                        settled("F2")
+                        and nh.gross_rates[month - 1] != state.pia
+                    ):
+                        raise InvalidFamilyInput(
+                            "G context does not match RET rates"
+                        )
+                elif settled("F3"):
+                    try:
+                        gross = g._own_monthly_benefit_validated(
+                            state.worker, context.params
+                        )[1]
+                    except FamilyConfigurationUnsupported:
+                        pass
+                    else:
+                        if nh.gross_rates[month - 1] != gross:
+                            raise InvalidFamilyInput(
+                                "G context does not match RET rates"
+                            )
+        parent_count = None
+        parent_count_known = False
+        for auxiliary in context.beneficiaries:
+            auxiliary = g._with_effective_cohort(auxiliary)
+            person = people[auxiliary.beneficiary_id]
+            original = None
+            if settled("F4", auxiliary) or settled("F6", auxiliary):
+                try:
+                    if auxiliary.role is g.Role.PARENT:
+                        if not parent_count_known:
+                            parent_count = g._entitled_parent_count(
+                                state, context.beneficiaries, context.params
+                            )
+                            parent_count_known = True
+                    original = g._original_benefit_validated(
+                        auxiliary.role,
+                        state.kind,
+                        state.pia,
+                        auxiliary.original_benefit_basis,
+                        parent_count=(
+                            parent_count
+                            if auxiliary.role is g.Role.PARENT
+                            else None
+                        ),
+                    )
+                except FamilyConfigurationUnsupported:
+                    pass
+            fact = "F5" if auxiliary.role in g._SPOUSE_ROLES else "F6"
+            if settled(fact, auxiliary) and not (
+                auxiliary.role is g.Role.PARENT and original is None
+            ):
+                try:
+                    own_mba = None
+                    if auxiliary.own_benefit is not None and fact == "F6":
+                        own_mba = g._own_monthly_benefit_validated(
+                            auxiliary.own_benefit, context.params
+                        )[1]
+                    entitled, _ = g._is_entitled(
+                        auxiliary, state.pia, own_mba, parent_ob=original
+                    )
+                except FamilyConfigurationUnsupported:
+                    pass
+                else:
+                    if not entitled:
+                        raise InvalidFamilyInput(
+                            "G and RET auxiliary entitlement facts differ"
+                        )
+            if (
+                settled("F4", auxiliary)
+                and original is not None
+                and person.original_rates[month - 1] != original
+            ):
+                raise InvalidFamilyInput("G context does not match RET rates")
+
+
 @_validated_entry
 def apply_ret_year(
     record: RecordYear,
@@ -1170,49 +1293,7 @@ def apply_ret_year(
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
     if parameters is not None and not isinstance(parameters, RETParameters):
         raise InvalidFamilyInput("Use R1 RETParameters")
-    # Entitlement is a declared fact, including a zero-rate entitlement.
-    # Check every context before computing any G money or holding a refusal.
-    if record.kind is not RecordKind.DECEASED:
-        nh = next(
-            b for b in record.beneficiaries if b.beneficiary_id == record.nh_id
-        )
-        for month, context in record.family_months.items():
-            if g._declared_worker_entitled(context.state) != (
-                month in nh.entitled_months
-            ):
-                raise InvalidFamilyInput(
-                    "G and RET NH entitlement facts differ"
-                )
-            if month in nh.entitled_months:
-                # G copies these NH facts directly from the declared PIA.
-                # RIB gross still needs G's age/DRC computation.
-                if nh.original_rates[month - 1] != context.state.pia:
-                    raise InvalidFamilyInput(
-                        "G context does not match RET rates"
-                    )
-                if (
-                    record.kind is RecordKind.DISABILITY
-                    and nh.gross_rates[month - 1] != context.state.pia
-                ):
-                    raise InvalidFamilyInput(
-                        "G context does not match RET rates"
-                    )
-    # Act 202(b)(1)(D), (c)(1)(D); RS 00202.005: spouse eligibility uses
-    # raw own PIA, not a computed own MBA. Other own-benefit roles need G's
-    # computed MBA/OB, so their entitlement comparison stays after G.
-    for context in record.family_months.values():
-        for auxiliary in context.beneficiaries:
-            if (
-                auxiliary.own_benefit is None
-                or auxiliary.role in g._SPOUSE_ROLES
-            ):
-                entitled, _ = g._is_entitled(
-                    auxiliary, context.state.pia, None
-                )
-                if not entitled:
-                    raise InvalidFamilyInput(
-                        "G and RET auxiliary entitlement facts differ"
-                    )
+    _check_settled_family_facts(record)
     # Retain the G facts needed for money-changing readjustment. A caller's
     # reduced rates cannot identify age reductions or dual entitlement.
     held_family_refusals = []

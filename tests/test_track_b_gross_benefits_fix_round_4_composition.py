@@ -213,37 +213,61 @@ def test_outside_independence_with_nh_only_reservations(
 
 
 @pytest.mark.parametrize("household", (False, True))
-@pytest.mark.parametrize("held", (False, True))
+@pytest.mark.parametrize(
+    "held", (False, True, g.RecordCondition.NON_AIME_FORMULA_PIA)
+)
 def test_nh_only_acceptance_still_rejects_impossible_reservation(
     household, held
 ):
     state, _ = state_and_members(F(400), F(600))
     if held:
         state = replace(
-            state, conditions={g.RecordCondition.ADMINISTRATIVE_FINALITY}
+            state,
+            conditions={
+                (
+                    g.RecordCondition.ADMINISTRATIVE_FINALITY
+                    if held is True
+                    else held
+                )
+            },
         )
     members = [g.Beneficiary(name, g.Role.CHILD) for name in ("B", "C0")]
     for outside in (False, True):
         outcomes = []
-        with pytest.raises(g.InvalidFamilyInput):
-            outcomes.append(
-                outcome(
-                    state,
-                    members + ([outside_member()] if outside else []),
-                    (
-                        {
-                            "D": g.BenefitDeduction(
-                                g.DeductionReason.OWN_EARNINGS_TEST
-                            )
-                        }
-                        if outside
-                        else {}
-                    ),
-                    household=household,
-                    worker_deductions={"B": F(201)},
-                )
+
+        def evaluate(outside=outside):
+            return outcome(
+                state,
+                members + ([outside_member()] if outside else []),
+                (
+                    {
+                        "D": g.BenefitDeduction(
+                            g.DeductionReason.OWN_EARNINGS_TEST
+                        )
+                    }
+                    if outside
+                    else {}
+                ),
+                household=household,
+                worker_deductions={"B": F(201)},
             )
-        assert g.count_family_outcomes(outcomes).rows == 0
+
+        if held is True:
+            outcomes.append(evaluate())
+            assert outcomes[0].unsupported.reason is (
+                g.UnsupportedReason.ADMINISTRATIVE_FINALITY
+            )
+            counts = g.count_family_outcomes(outcomes)
+            assert (counts.rows, counts.weight, counts.unsupported_weight) == (
+                1,
+                7,
+                7,
+            )
+        else:
+            with pytest.raises(g.InvalidFamilyInput):
+                outcomes.append(evaluate())
+            counts = g.count_family_outcomes(outcomes)
+            assert (counts.rows, counts.weight) == (0, 0)
 
 
 @pytest.mark.parametrize("household", (False, True))

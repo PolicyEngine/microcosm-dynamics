@@ -1890,8 +1890,8 @@ no FRA date for the survivor.
 | FRA is declared after a snapshot carrying that person's positive own delayed credits | Act 202(w)(2); RS 00615.692 | Only age-reduction months or inherited deceased-worker credits were supplied; these do not constrain the person's current FRA |
 | G and RET declare opposite NH entitlement for the same person and month | Act 202(a), 203(b); G's record kind and `WORKER_NOT_ENTITLED` state entitlement independently of cash, while RET `entitled_months` states the same month's entitlement | Different people or months, or confusion between zero payment and no entitlement; neither applies to these fields |
 | One person's known SSA cohort differs across monthly contexts or across explicit and own-benefit cohort fields | Act 202(q)(6); RS 00615.003/.010; G's existing single-person cohort-consistency contract | Different people or cohort conventions; neither is admitted for one identifier. A missing cohort remains unknown |
-| RET declares an entitled spouse whose own RIB/DIB PIA is at least half the NH's PIA | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's spouse entitlement test uses the declared PIAs without an own-MBA calculation | No own entitlement that month, a different person's benefit, or a different PIA basis; none matches these fields |
-| An entitled NH's original RET rate, or a DIB NH's gross RET rate, differs from G's declared PIA | RS 02501.110's 100%-of-PIA NH original share; Social Security Bulletin 75(3), Table 2's DIB worker benefit at 100% of PIA; G's direct PIA assignments | An unentitled month or a different person/month/rate concept; original rates for unentitled months remain valid without this constraint |
+| RET declares an entitled spouse whose own RIB/DIB PIA is at least half the NH's PIA, with F5 settled | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's spouse entitlement test uses the declared PIAs without an own-MBA calculation | Administrative finality or that beneficiary's protected rate can rest on another PIA; the round-5 table below keeps the coverage refusal |
+| An entitled NH's original RET rate, or a DIB NH's gross RET rate, differs from G's declared PIA, with F1 or F2 settled | RS 02501.110's 100%-of-PIA NH original share; Social Security Bulletin 75(3), Table 2's DIB worker benefit at 100% of PIA; G's direct PIA assignments | Finality can protect a different PIA; prior reduced RIB and WC can change DIB gross. The round-5 table below records the exceptions |
 
 ### Examples and executed invariants
 
@@ -1981,10 +1981,12 @@ The former NH entitlement check depended only on declarations and now
 runs in a separate pass before any G computation. The audit also found a
 spouse subcase of the auxiliary entitlement check: own PIA at least half
 the NH PIA rules out spouse entitlement without computing own MBA. That
-subcase uses G's canonical `_is_entitled` predicate before any held
-refusal. At PIA/MAX $0/$0 with own PIA $0, and at $4/$6 with own PIA $2,
-administrative finality previously changed this contradiction from an
-input error into one refused row of weight 7; it now produces zero rows.
+subcase uses G's canonical `_is_entitled` predicate before a held
+refusal only when F5 is settled under the round-5 table below. At PIA/MAX
+$0/$0 with own PIA $0, and at $4/$6 with own PIA $2, a held maximum-only
+refusal cannot mask the contradiction. Administrative finality can protect
+a rate established using another PIA, so those declarations retain one
+refused row of weight 7.
 This also covers spouse-with-child-in-care and divorced-spouse roles and
 both own RIB and DIB. A spouse with no own entitlement is not subject to
 that threshold, so matching zero-cash entitlement remains valid.
@@ -1992,19 +1994,23 @@ that threshold, so matching zero-cash entitlement remains valid.
 The NH original-rate comparison also reads a declaration directly:
 G supplies `state.pia` as the original rate. The DIB NH gross rate is the
 same direct PIA assignment. Both validate before a held refusal, only in
-entitled months. RS 02501.110 states that the NH original benefit is 100%
+entitled months and only when the corresponding fact is settled under the
+round-5 table below. RS 02501.110 states that the NH original benefit is 100%
 of PIA; the captured Bulletin Table 2 shows the DIB worker benefit at
 100% of PIA before and after the maximum. An original rate $.10 against
-PIA $0, or $4.10 against PIA $4, is therefore an input error even with
-administrative finality. A DIB gross rate $3 against PIA $4 is likewise
-an input error. Unentitled-month original rates retain their existing
+PIA $0, or $4.10 against PIA $4, is an input error when F1 is settled.
+Administrative finality can protect a rate established using a different
+PIA, so it preserves the named refusal. A DIB gross rate $3 against PIA $4
+is an input error only when F2 is settled; prior reduced RIB and WC offset
+can also explain the difference. Unentitled-month original rates retain their existing
 freedom because the original post-G comparison did not constrain them.
 
-Maximum binding requires statutory original and payable rates. Other
-auxiliary entitlement branches need computed own MBA and, for parents,
-the original-benefit threshold. Retirement NH gross and auxiliary gross
-and original rates need G's monetary computation. Those checks stay after successful G
-computation. Record-kind, monthly roster,
+Maximum binding and auxiliary gross depend on the whole family
+computation, including maximum allocation, age reduction, dual entitlement
+and redistribution, so those comparisons stay after successful G.
+Round 5 checks the remaining settled facts early using G's canonical own
+MBA, original-benefit and entitlement helpers. Parent OBs additionally
+need an entitled-parent count that computes without a coverage refusal. Record-kind, monthly roster,
 role/type, cohort, FRA and explicit dual-entitlement consistency checks
 already run in `RecordYear` before coverage. R1 year availability remains
 an input requirement checked before re-raising a held G refusal.
@@ -2028,9 +2034,9 @@ retain their independently declared coverage refusal and weight.
 | Invariant | Executing test |
 | --- | --- |
 | No held coverage condition masks an NH entitlement contradiction; no outcome row is constructed | `test_nh_entitlement_contradiction_never_becomes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_nh_contradiction` |
-| No held coverage condition masks a spouse's disqualifying declared own PIA | `test_declared_spouse_pia_disqualification_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_spouse_pia_contradiction` |
+| No held coverage condition that leaves F5 settled masks a spouse's disqualifying declared own PIA; finality retains its refusal | `test_declared_spouse_pia_disqualification_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_spouse_pia_contradiction` |
 | A spouse's own PIA strictly below half the NH PIA retains eligibility, and absence of own entitlement retains valid zero cash | `test_strictly_lower_spouse_own_pia_preserves_eligible_entitlement`; `test_spouse_without_own_entitlement_keeps_zero_and_positive_payments`; Hypothesis `test_own_pia_strictly_below_half_never_triggers_spouse_preflight` |
-| Entitled NH original rates and DIB gross rates agree with their directly declared PIA before any held refusal | `test_declared_nh_original_pia_mismatch_precedes_held_refusal`; `test_declared_dib_nh_gross_pia_mismatch_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_direct_nh_rate_contradiction` |
+| Entitled NH original rates and DIB gross rates agree with their directly declared PIA before a held refusal when F1/F2 remain settled | `test_declared_nh_original_pia_mismatch_precedes_held_refusal`; `test_declared_dib_nh_gross_pia_mismatch_precedes_held_refusal`; Hypothesis `test_no_held_coverage_condition_masks_direct_nh_rate_contradiction` |
 | Matching direct NH rates and unentitled-month original-rate declarations retain their existing outcomes | `test_matching_direct_nh_rates_keep_zero_and_positive_payments`; `test_unentitled_nh_original_share_is_not_a_payable_rate_declaration`; Hypothesis `test_direct_nh_rate_preflight_preserves_every_matching_declaration` |
 | All monthly NH declarations validate before the first G computation | `test_later_nh_contradiction_precedes_every_g_computation` |
 | Record kind determines DIB entitlement even without an own RIB declaration | `test_disability_nh_entitlement_comes_from_record_kind` |
@@ -2042,3 +2048,272 @@ The premise table above records each new fact-pattern input error and its
 falsifier. This round introduces no additional RET statutory reading.
 The A.1/A.2 G composition refusal and its two source quotations are
 recorded in the G design note. Earlier statutory readings stand.
+
+## PR 563 round 5: facts settled before a coverage refusal
+
+Verification class remains statutory conformance on invented declarations
+and captured published examples. No population, behavioral or forecast
+claim is admitted.
+
+The preflight compares a monetary or monetary-entitlement fact only when
+nothing declared on the record or that beneficiary can lawfully change
+it. A condition that changes the comparison's PIA, rate or entitlement
+basis makes that fact unsettled. In that case the preflight skips the
+comparison and the existing G coverage refusal keeps its original place,
+reason, one outcome row and full declared weight. If the capture does not
+establish that a condition leaves a fact unchanged, the preflight treats
+that fact as unsettled. A genuine contradiction still raises
+`InvalidFamilyInput`, without an outcome row. Zero payable remains distinct
+from no entitlement.
+
+### The six facts and their canonical rules
+
+| Fact | Comparison | Existing G rule reused |
+| --- | --- | --- |
+| F1 | Entitled NH original rate equals the declared PIA | `state.pia`, the NH original share in RS 02501.110: "their original benefit is equal to 100% of the PIA" |
+| F2 | DIB NH gross equals the declared PIA | G's disability worker rate, before the separately declared prior-RIB reduction or WC offset |
+| F3 | RIB NH gross equals the worker's own monthly benefit | `_own_monthly_benefit_validated`, including the declared age reduction and own delayed credits; RS 00615.101: "The MBA is equal to the PIA reduced by 5/9 of 1%" |
+| F4 | An entitled auxiliary's original rate equals its role/PIA/basis OB | `_original_benefit_validated`; parent OB additionally requires `_entitled_parent_count` to complete without a refusal |
+| F5 | Spouse entitlement passes the raw own-PIA test | `_is_entitled` for all spouse roles; Act 202(b)(1)(D), (c)(1)(D), RS 00202.005 |
+| F6 | Other own-benefit entitlement: widow(er), mother/father, parent | `_own_monthly_benefit_validated` supplies the real own MBA to `_is_entitled`; parent entitlement also receives the resolved parent OB |
+
+The helpers perform no second monetary implementation. A canonical helper
+that raises `FamilyConfigurationUnsupported` leaves that fact unsettled
+for that row. The preflight catches only that coverage refusal;
+`InvalidFamilyInput` continues to propagate. NH entitlement against RET,
+cohort identity, RIB FRA, monthly roster and record-kind agreement remain
+unconditional: each compares two declarations of one person's fact, and
+none of the monetary conditions reconciles opposite declarations.
+
+### Declared-condition table
+
+G's `_PREFLIGHT_FACT_UNSETTLERS` table has explicit entries for every
+`RecordCondition`, `BeneficiaryCondition` and G `UnsupportedReason`;
+`_fact_is_settled` applies it to each fact and beneficiary.
+An empty fact set is an affirmative statement that the condition acts on
+a different quantity. Multiple conditions combine by union. Record-level
+conditions apply to the whole context; beneficiary conditions apply only
+to that beneficiary. A protected beneficiary does not exempt the NH or
+another auxiliary. The table is consulted separately in each monthly
+context, so a condition in one month does not exempt another month.
+
+The following quotations are from the existing manifest-listed captures
+in `tests/data/track_b/gross_benefit_sources/`, except the separately
+identified RET capture. The columns describe F1–F6 only; maximum binding
+and auxiliary gross remain comparisons against a completed G result.
+
+| Declared condition | Facts unsettled | Captured quotation and inference |
+| --- | --- | --- |
+| `ADMINISTRATIVE_FINALITY` | F1–F6 for the record | RS 00615.754A.3 says "the rate to the NH is protected by administrative finality and cannot be changed" and requires recording "the PIA and maximum used to arrive at those rates". The second example protects both NH and child on "the protected PIA and maximum". The declared correct PIA need not be the protected-rate basis. |
+| `DIB_AFTER_REDUCED_RIB` | F2 | Captured Act 202(q)(2): "such disability insurance benefit for each month shall be reduced by the amount such old-age insurance benefit would be reduced". This changes the DIB payable rather than its original PIA share. |
+| `WORKERS_COMPENSATION_OFFSET` | F2, F3 | Captured Act 215(g) places rounding "after any reduction under sections 203(a) and 224". GN 02603.050C separately lists the "Workers’ compensation (WC) or public disability benefit (PDB) offset amount" after defining OB. The ordinary own-benefit amount cannot establish the offset amount. |
+| `DIB_GUARANTEE_PIA` | None | RS 00615.736B.2 begins "To establish a family maximum for a DIB Guarantee PIA". G is supplied the applicable PIA; the refused calculation is its maximum. |
+| `NON_AIME_FORMULA_PIA` | None | RS 00615.740B.1 says "The PIA is an AIME, OS, Special Minimum or Frozen Minimum PIA." The page concerns "determining the total amount of the family maximum benefit"; it does not replace the declared applicable PIA. |
+| `WORKER_NOT_ENTITLED` | None | RS 00202.100 says "the NH is eligible but has not filed for benefits". This changes the declared NH entitlement and permitted roster; those identities are checked separately before money. |
+| `WINDFALL_ELIMINATION_PROVISION` | None | RS 00202.100 says an IEDS "is subject to the number holder’s (NH) WEP PIA although the NH is not yet entitled". The supplied applicable PIA remains the OB basis; unsupported pre-repeal IEDS processing keeps its refusal. |
+| `RATE_PROTECTED_BY_FINALITY` | F4–F6 for that beneficiary | RS 00615.754A.3 directs SSA to document "which rates are protected by administrative finality". Protection is specific to the beneficiary declared with this condition; the NH and other auxiliary facts remain subject to their own settlement checks. |
+| `WIDOW_DRC_SAVINGS_CLAUSE` | F4 for that survivor | RS 00615.712 protects "beneficiaries who were entitled for the month of 5/78"; its example says "the child is protected by the savings clause and the child's rate will remain at $300". The protected rate basis is not silently reconstructed. |
+| `ENTITLED_ON_ANOTHER_RECORD` | None | RS 00615.770: "Maximums from all SSNs that the child is entitled on may be combined on the SSN where payment is actually made." This changes the maximum allocation rather than the role's OB or own-PIA eligibility test. |
+| `DEEMED_OR_PUTATIVE_SPOUSE` | None | RS 00615.684: "The deemed or putative spouse and all other beneficiaries on the record are reduced for the maximum." Its original spouse rate and raw own-PIA test remain the same quantities. |
+| `LEGAL_SPOUSE_WITH_DEEMED_SPOUSE` | None | RS 00615.684: "the legal spouse is paid outside the family maximum" and "the legal spouse will receive the OB" when DMAX applies. This changes maximum membership. |
+| `GOVERNMENT_PENSION_OFFSET` | None | GN 02608.100 defines offset as "a reduction of spouse's benefits due to the receipt of a federal, state, or local government pension". It separately defines entitlement as having "proven his or her rights to them for a given period". The offset changes payable, not the raw own-PIA entitlement test. The existing repeal boundary remains January 2024. |
+| `DIB_BETWEEN_SPOUSE_BENEFIT_AND_RIB` | None | RS 00615.260B.2: "Reduce the spouse's reduced benefit further by the amount of the RIB reduction." Its example retains OB 400 while changing the excess from 30 to 20. The excess is not F1–F6. |
+
+The finality scope follows the delegated ruling
+`us:oasdi-finality-protected-rates-before-coverage`, marked by that exact
+source-conflict identifier in code. It explicitly permits the protected
+rate to differ from a rate obtained from the declared correct PIA. This
+is a classification decision, not implementation of protected payments.
+The original `administrative_finality` refusal remains.
+
+### Refusals without a declared condition
+
+A held refusal can originate from G's own-benefit helper, record history,
+beneficiary history or an explicitly deferred reason. The table includes
+those reasons as well. A reason is never a blanket exemption for facts
+which its capture leaves unchanged. The following groups record the
+source basis for the decisions; the executable table contains every enum
+member separately.
+
+| Held refusal or origin | Facts whose comparison can be unsettled | Captured basis |
+| --- | --- | --- |
+| `_refuse_own_benefit`: reduced own DIB; historical own RIB; pre-1917 delayed credits | The affected own MBA used for F3 or F6; F2 for the NH reduced-DIB reason | Act 202(q)(2) expressly reduces DIB. RS 00615.005C.2 requires the money-history method in "all cases involving single entitlement to actuarially reduced benefits prior to 1/78". RS 00615.692D gives "Before 01/02/17" a "1/12%" monthly credit. The canonical helper refuses rather than fabricating an MBA. |
+| `PAYMENT_MONTH_BEFORE_1983` | Historical own MBA used for F3/F6; nonwidow auxiliary OB in actual pre-1983 months; survivor widow OB before January 1973 | RS 00615.101 says "Round the result down to the next dime for benefits after 5/82 and up to the next dime for benefits prior to 6/82." The captures do not establish unchanged modern dime-floored nonwidow OB throughout G's refused historical interval. RS 00615.005A.2 says "Raised the unreduced benefit amount for widow(er)s to 82 1/2% at age 62." Its A.5 says "Changed WIB to 100% of the deceased worker's PIA" effective January 1973. Actual payment dates determine which exact facts remain unsettled; a deferred payment reason cannot manufacture an earlier date. |
+| `ELIGIBILITY_BEFORE_1983`, `DI_ENTITLEMENT_BEFORE_JULY_1980` | None | RS 00615.736 gives the historical maximum procedure; RS 00615.740B.2 says DMAX does not apply when "The NH was ever entitled to DIB before July 1980". These maximum histories do not replace role OB or current own-benefit facts. |
+| `PARENT_BENEFIT` | F4/F6 when parent count refuses | RS 00209.001 excludes own RIB "equal to or exceeding the amount of the parent's original benefit (One parent = 82 1/2%; Two parents = 75%)". RS 00209.015 states "Benefit rate equals 75% of the worker's PIA for each month both are entitled." An unresolved entitled-parent count leaves both threshold and OB unsettled. |
+| `DISABLED_WIDOW_UNDER_60` | No additional fact beyond a separately refusing own MBA | RS 00615.310C first says "Determine the WIB OB", then separately determines and subtracts reductions. The historical extra reduction changes gross, not F4's OB. |
+| `DUAL_ENTITLEMENT_SEQUENCE` | F6 only where historical carryover can change own RIB | RS 00615.005A.8 says "Eliminated the carry-over reduction in RIB or DIB due to WIB before age 62" and applies the RIB change to workers born January 2, 1928 or later. RS 00615.010 preserves the earlier rule: "If there was prior entitlement to a reduced WIB in any month before the month of attainment of age 62 reduce the RIB per RS 00615.160 and RS 00615.170." The schema omits that history. Modern WIB/DWB election instead requires "if all eligibility requirements are met" and preserves "the PIA and the reduction factors remain the same" (RS 00615.315). It does not waive F6. A nonnegative own RIB cannot be less than a zero deemed-death PIA. The spouse raw own-PIA test stays F5. |
+| `REDUCED_BENEFIT_HISTORY_BEFORE_1978` | No additional fact beyond a separately refusing own MBA | RS 00615.005C.2 requires historical money reductions. That does not change the original benefit determined before reduction. |
+| `INDEPENDENT_DIVORCED_SPOUSE` | None | RS 00202.100 identifies the unfiled NH and requires the applicable WEP PIA; the declared PIA and eligibility facts are still the inputs. |
+| `COMBINED_FAMILY_MAXIMUM`, `MULTIPLE_AUXILIARY_RECORDS`, `DEEMED_SPOUSE`, `NON_AIME_FORMULA_PIA`, `DIB_GUARANTEE_PIA`, `GOVERNMENT_PENSION_OFFSET` | None | The condition table's captured maximum-membership, maximum-formula and payable-offset rules apply equally when the reason is deferred. |
+| `PARISI_AMBIGUOUS`, `PARISI_BEFORE_OCTOBER_1999` | None | RS 00615.768E says the change affects benefits "after reduction for the maximum" and "Beneficiaries will still be limited by the original benefit amount." |
+| `WIDOW_DRC_SAVINGS_CLAUSE`, `WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN` | F4 for the potentially protected survivor | RS 00615.712's protection is specific to May 1978 survivors and can preserve a different original rate basis. Unknown history does not establish absence of that protection. |
+| `WIDOW_CHILD_IN_CARE_UNKNOWN`, `DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN`, `DIVORCED_SPOUSE_CARE_HISTORY` | None | RS 00615.340 begins with a person already "receiving a reduced widow(er) benefit" and says "The benefit amount is raised for all months the child is in care." RS 00615.201 changes age reduction/conversion when care ends. These change gross or reduction history after OB and entitlement. |
+| `SAVINGS_CLAUSE`, `SAVINGS_CLAUSE_HISTORY_UNKNOWN`, `SAVINGS_CLAUSE_MEMBERSHIP_CHANGE`, `SAVINGS_CLAUSE_RATE_PROCEDURE` | None for F1–F6 | RS 00630.400 says "Any person's benefit may not exceed the original benefit (OB)" and adds "the new PIA in a life case" to the savings maximum. The refusal concerns carried allocation/rate procedure rather than the ordinary OB, NH own benefit or raw own-benefit entitlement. |
+| `PRISONER_SUSPENSION`, `DRUG_ADDICTION_SUSPENSION`, `FOREIGN_WORK_DEDUCTION`, `PENALTY_DEDUCTION`, `MARITIME_DEDUCTION`, `ELECTION_CERTIFICATE_SUSPENSION` | None | GN 02603.040 calls these "deductions" and suspensions. GN 02603.050B first applies the maximum, then deductions, then redistribution. They do not alter the pre-reduction facts F1–F6. |
+| `DEDUCTION_AGE_WORK_INTERACTION`, `SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION` | None | GN 02603.050A and C concern deduction exceptions and reserved age reductions during redistribution. The unresolved composition changes family cash after the original rates and entitlement tests. |
+| Deferred `ADMINISTRATIVE_FINALITY`, `DIB_AFTER_REDUCED_RIB`, `WORKERS_COMPENSATION_OFFSET` | Same scoped facts as the named condition | Deferring a known reason does not turn its potentially lawful monetary difference into an input error. |
+
+Maximum binding and auxiliary gross deliberately stay after G. Maximum
+binding depends on all entitled subject OBs, the available maximum and
+worker entitlement. Auxiliary gross additionally depends on maximum
+allocation, age reduction, dual entitlement, care floors and Parisi
+redistribution. An early local check cannot settle these family outcomes.
+The shared `_original_entitlement_rows` helper resolves only original
+benefits and own-benefit entitlement for G and the preflight. Its
+`_possible_widow_drc_protection` predicate counts entitled subject rows,
+so a disqualified own-RIB widow cannot create protected-history uncertainty
+for a child. `_widow_drc_history_unknown` is shared with G; an omitted
+attestation does not exempt modern metadata that rules out protection.
+`_declared_widow_drc_protection_possible` first bounds protection from
+the declared roster, then resolves each relevant member independently
+through the same canonical original/entitlement rows. A roster with no
+possible DRC widow or fewer than two possible subject survivors establishes
+absence before unrelated own-MBA refusals are consulted. An unresolved
+entitlement remains possible without hiding another member's independently
+settled disqualification. Beneficiary and own-benefit cohorts first use G's
+`_with_effective_cohort` normalization in both directions.
+Implicit beneficiary history is inspected with conditions cleared after
+classifying every explicit condition, so an earlier condition cannot hide
+a later implicit hold or broaden a condition through a shared reason code.
+Deferred own-RIB and delayed-credit history reasons unsettle an own MBA
+only when its canonical helper refuses that person's actual declaration.
+A deferred parent reason cannot unsettle a child's OB, and parent
+uncertainty requires a canonical parent-count refusal. Widow DRC
+protection applies to survivor records; its reason cannot change a living
+record's child OB. An expressly deferred survivor protection is not
+excluded merely because no widow is currently on the roster: the capture
+does not rule out carried protection. These contextual checks preserve
+the table's possible fact sets without extending a reason to unrelated
+people, record kinds or dates.
+The preflight adds no maximum-allocation computation and changes no
+refusal precedence.
+When a settled auxiliary entitlement test fails, its existing entitlement
+diagnostic precedes a consequent original-rate mismatch. G reports zero
+OB for an ineligible row, so comparing that declared zero with the role's
+raw OB first would hide the more specific contradiction. The monthly
+roster requires every G auxiliary to be declared entitled in RET; an
+ineligible auxiliary cannot instead be admitted as an unentitled matching
+row. `test_family_context_invalidity_precedes_record_refusal` retains its
+unchanged assertion for this ordering.
+
+### Audit of new input errors before a refusal
+
+The audit covers every PR-added `InvalidFamilyInput` check that can run
+before a held refusal in the declared-input and monthly computation paths.
+Sealed result identities run after computation and are not preflights over
+caller declarations.
+
+| Check or input-error family | Can a declared condition make the forbidden input lawful? | Round-5 action |
+| --- | --- | --- |
+| NH original/PIA; DIB gross/PIA; RIB gross/own MBA; auxiliary OB; spouse own-PIA eligibility; other own-benefit eligibility | Yes, for exactly the unsettlers in the fact table | Compare only settled F1–F6 with the canonical G helper; skip only a canonical coverage refusal |
+| `_check_deduction_amount_bounds`: NH reservation above OB; payable plus reservation above OB | Yes. RS 00615.754A.3 protects rates based on another PIA/maximum; RS 00615.010's historical sole-survivor minimum can also exceed ordinary OB | Classify whether OB is a conservative gross upper bound, separately from exact F4. An unresolved parent count still permits the 82.5% upper bound; historical widow gross can remain unsettled even when exact post-1972 OB is known. Preserve the named refusal when the upper bound is unsettled |
+| `_check_deduction_amount_bounds`: own-work payable plus reservation equals OB | Yes, when the gross upper bound is unsettled. Equality to ordinary OB need not mean zero withholding from a larger protected or historical rate | Apply the strict early bound only when its upper-bound premise is settled. After successful G, the strict actual-gross bound remains unconditional |
+| `_check_fra_facts`: cohort/FRA interval has no intersection; own DRCs require FRA by the snapshot | No. These are the same person's dated age facts, not rate protection; Act 203(f)(9), RS 02501.021B.3 and Act 202(w)(2) still govern | Keep unchanged before every refusal; inherited credits and age reductions still prove no current FRA |
+| `RecordYear`: one person's explicit/own-benefit cohorts disagree within or across months | No. One identifier and the same SSA cohort convention describe one birth cohort | Keep unchanged, including missing-cohort uncertainty |
+| G versus RET NH entitlement, record kind, monthly auxiliary roster and role/type | No. These are opposite declarations of one person's same-month entitlement/type | Keep unchanged before all monetary computation; zero cash remains entitled |
+| Explicit two-record boolean disagrees with G own-benefit presence | No. The fields declare whether own entitlement exists; offsets/finality do not delete that declaration | Keep unchanged; actual or estimated two-record earnings remain the existing named refusal |
+| Nonzero gross without declared entitlement, or positive gross with a zero declared original share | No. These compare the person's own entitlement and actual declared rate basis, including any protected basis. Protection may change the PIA used for that original share; it cannot produce a positive benefit from a zero original share | Keep unchanged in the beneficiary declaration; this does not compare either rate to `state.pia` |
+| Deduction keys/household identities; missing own benefit for a dual marker; no-care role, age, under-FRA status or current-care contradictions; negative reservations/payables | No. These are schema, event-kind and dated factual contradictions independent of the disputed monetary basis | Keep unchanged before coverage; a supported no-care attestation never overrides supplied cohort/credit facts |
+| Exact scalar/enum/container schemas, raw month memberships, one-time snapshots and sealed result provenance | No. A statutory condition does not change the API's declaration or provenance contract | Keep unchanged; validation still runs once per public call |
+| Supported R1 year availability | No. It is an input requirement, independent of G's supported money scope | Keep the existing lookup before re-raising a held G refusal |
+
+The strict own-earnings rule itself is unchanged: a declared own-work event
+must withhold a positive amount from actual gross after NH reservations.
+Only the premature inference from an unsettled OB has changed. The
+outside-beneficiary independence fix, A.1/A.2 composition refusal, NH-only
+cash correction, saving-clause default/literal reading and cohort checks
+remain in force.
+
+The deduction audit distinguishes exact rate from a conservative upper
+bound. Parent count uncertainty cannot raise a rate above the one-parent
+82.5% OB (RS 00209.001/.015). At PIA $4, two unresolved parent own benefits
+of $3.10 leave the exact count uncertain, but neither a $3.40 payable nor
+NH reservation is lawful against the $3.30 upper bound. Finality still
+unsettles this bound independently.
+
+For historical widow gross, RS 00615.010 instead gives "Sole Surviving
+Widow(er) $84.50 reduced for months of entitlement, if any, prior to age
+62 or, if higher, the WIB computed without regard to this sole survivor's
+provision". It states "The sole survivor's rate was eliminated when NH
+died after 1981 and was not eligible for RIB or DIB". The captured condition
+does not establish ordinary OB as a gross upper bound on a declared legacy
+path. Old eligibility, payment or first-DIB metadata and an explicitly
+deferred old-eligibility or pre-1980 DIB refusal keep that inference
+unsettled, even for a modern payment. This preserves the original refusal and does not compute
+the minimum or expand G's historical cash scope. The exact widow OB remains
+100% after January 1973. Current-domain omitted cohorts retain the existing
+scope; this helper does not purport to adjudicate every undated historical
+award. The rejected ordinary-OB upper-bound inference and conservative
+coverage treatment, including the unsupported initial probe, are recorded
+in the round-5 report.
+
+### Published finality examples
+
+RS 00615.754A.3's first example declares correct PIA $750.00 and maximum
+$1,312.50, protected NH rate $1,000.00, new child rate $375.50 and total
+$1,375.50. The capture says "the correct PIA is really $750.00" and the
+NH rate "cannot be changed". Its printed $375.50 child figure is retained
+verbatim even though half of $750.00 is $375.00. This test preserves the
+published declaration and its coverage refusal; it does not assert that
+the refused path computes that arithmetic.
+
+The second example starts with NH $1,000.00, old maximum $1,750.00 and
+first child $500.00. Correct PIA/maximum become $750.00/$1,312.50. The
+protected first child is recomputed using the old PIA/maximum to $375.00;
+the new child's correct-rate share is $281.20. The published resulting
+rates $1,000.00/$375.00/$281.20 sum to $1,656.20. Both examples retain
+`administrative_finality`, one row and the full declared weight. Every
+quoted phrase and figure is checked against the unchanged capture.
+
+The invented DIB declarations PIA $1,000/gross $800 with
+`DIB_AFTER_REDUCED_RIB` and PIA $1,000/gross $600 with
+`WORKERS_COMPENSATION_OFFSET` likewise retain the original named refusal.
+Matching declarations at zero and positive money remain valid under every
+condition. Contradictory settled declarations error with or without an
+unrelated held refusal.
+
+### New executed invariants
+
+The round-5 public-path tests execute these invariants beside named
+examples and Hypothesis properties:
+
+| Invariant | Executing tests in `test_track_b_ret_ledger_fix_round_5.py` |
+| --- | --- |
+| Every record condition, beneficiary condition and G refusal reason is classified explicitly | `test_fact_table_explicitly_covers_all_conditions_and_held_g_reasons` |
+| A settled contradiction errors held and unheld with zero rows; an unsettled declaration retains its named refusal, row and weight | `test_each_fact_contradiction_is_classified_by_its_declared_condition`; Hypothesis `test_held_against_unheld_fact_classification`; `test_review_counterexamples_follow_finality_ruling` |
+| Canonically matching zero and positive declarations never raise a preflight input error under any condition | Hypothesis `test_matching_declarations_never_raise_input_errors` |
+| Valid outcomes and refusal reasons equal the path with preflight removed, exactly | Hypothesis `test_preflight_changes_no_valid_outcome_or_refusal` |
+| Deferred reason labels do not unsettle unrelated canonical facts, roles, record kinds or actual payment dates | `test_deferred_reason_unsettles_only_the_fact_within_its_scope` |
+| Widow DRC protection applies to survivors; its beneficiary flag leaves a living child's OB settled | `test_widow_drc_condition_on_a_living_child_keeps_ob_settled`; `test_survivor_widow_drc_protection_keeps_its_original_refusal`; explicit Hypothesis example in `test_held_against_unheld_fact_classification` |
+| A pre-1973 widow's 82.5% OB preserves the historical refusal; the same declaration contradicts the 100% OB from January 1973 | `test_historical_widow_original_benefit_uses_the_payment_period` |
+| Protection remains local to its declared beneficiary, month and condition union | `test_beneficiary_finality_protects_its_own_unsettled_fact`; `test_one_beneficiary_finality_does_not_protect_the_nh`; `test_protected_auxiliary_does_not_protect_another_auxiliary`; `test_finality_is_resolved_for_each_month`; `test_two_declared_conditions_preserve_finality_protection` |
+| A shared reason does not broaden an explicit condition or hide a later implicit sequence refusal | `test_spouse_sequence_condition_does_not_unsettle_other_own_eligibility`; `test_implicit_widow_history_remains_unsettled_behind_explicit_hold` |
+| Generic dual-sequence refusal leaves F6 unsettled only for genuinely possible historical carryover; modern DWB and cohort 1928 retain the own-RIB eligibility check | `test_aged_widow_sequence_refusal_only_unsettles_possible_carryover`; `test_modern_disabled_widow_own_rib_eligibility_is_settled`; `test_eligible_disabled_widow_retains_own_sequence_refusal` |
+| A disqualified widow or unrelated refusing child cannot create DRC-protection uncertainty for another auxiliary | `test_disqualified_widow_does_not_unsettle_a_child_original_benefit`; `test_unrelated_refused_child_does_not_invent_widow_protection` |
+| Ordinary eligibility or OB cannot exclude a protected widow from independently unknown DRC history; an explicit no-protection declaration still settles that absence | `test_protected_widow_cannot_be_excluded_from_unknown_drc_history` |
+| A cohort supplied only by the beneficiary or own-benefit field receives the same canonical normalization as G | `test_widow_own_cohort_alone_matches_the_resolved_cohort_control`; `test_auxiliary_cohort_supplies_own_rib_historical_refusal` |
+| Missing both aged own-RIB widow cohorts remains G's canonical input error before implicit coverage inspection | `test_missing_both_widow_cohorts_remains_canonical_input_error` |
+| WEP and IEDS preserve settled auxiliary facts while keeping the declared NH unentitled | `test_wep_declaration_alone_changes_none_of_the_six_facts`; `test_worker_not_entitled_declares_an_ieds_record_without_nh_rate`; `test_ieds_does_not_mask_settled_auxiliary_facts` |
+| Canonical money-rule refusals remain refusals; input errors propagate | `test_historical_rib_gross_rule_refusal_leaves_original_reason`; `test_canonical_input_error_is_never_caught_as_a_coverage_refusal` |
+| F6 uses real own MBA, including reductions, rather than `None` or raw PIA | `test_other_own_entitlement_uses_real_reduced_monthly_benefit` |
+| Direct and household deduction paths retain protected rates that exceed the correct-PIA OB bound | `test_protected_deduction_rate_is_not_bounded_by_correct_pia_ob` |
+| Unresolved parent count retains the conservative one-parent upper bound; independent finality and zero events keep their original refusals | `test_parent_count_uncertainty_keeps_the_one_parent_upper_bound`; Hypothesis `test_parent_upper_bound_holds_across_scales_months_and_deferred_holds`; `test_zero_parent_deduction_retains_parent_count_refusal`; `test_finality_can_unsettle_the_parent_upper_bound` |
+| Historical nonwidow rounding uncertainty retains the old refusal only in actual historical payment months | `test_child_ob_uncertainty_is_limited_to_pre1983_payment_months`; Hypothesis `test_child_ob_uncertainty_preserves_old_refusals_for_odd_dime_pias` |
+| Historical widow gross uncertainty is distinct from exact post-1972 OB and preserves the original refusal across payment months | `test_historical_widow_gross_uncertainty_retains_original_refusal`; Hypothesis `test_historical_widow_gross_uncertainty_preserves_refusals_across_months`; later-payment carryover controls in the same module |
+| Published finality figures, all table quotations and capture hashes remain verbatim | `test_finality_examples_are_verbatim_and_the_capture_hash_matches`; `test_fact_table_source_quotations_and_capture_hashes` |
+
+Protected eligibility can affect another survivor indirectly: an ordinary
+own-RIB disqualification cannot exclude a finality-protected widow from
+possible May 1978 DRC protection. A protected OB likewise cannot establish
+absence of a larger protected basis. Unknown history therefore retains the
+original finality refusal. An explicit `widow_drc_savings_clause=False`
+settles that absence and leaves the other child's F4 checked. This is a
+dependency through independently unknown history, not a record-wide
+finality exemption (RS 00615.712 and .754A.3).
+
+Maximum binding and auxiliary gross comparisons remain after successful
+G. Public validation still runs once; no monetary rule is reimplemented.
+The exact first-failure evidence, deliberate mutations and adversarial
+cases are recorded in `scratch/review/fix-round-5-report.md` and the
+existing machine-readable verification and mutation records.

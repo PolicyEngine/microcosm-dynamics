@@ -1,7 +1,8 @@
 """Statutory conformance: positive own-work events on invented records.
 
-GN 02603.050A caps deduction-before-reduction rates at OB. Invalid events
-precede coverage refusals and never enter the shared denominator. No
+GN 02603.050A caps ordinary rates at a settled OB. Finality can protect a
+rate based on another PIA (RS 00615.754A.3); those cases retain their named
+refusal. Settled invalid events never enter the shared denominator. No
 population, behavioral or forecast claim.
 """
 
@@ -71,32 +72,49 @@ def compute(
     )
 
 
+def _expect_cap_classification(call, protected):
+    outcomes = []
+    if protected:
+        outcomes.append(g.evaluate_family("protected cap", 7, call))
+        assert outcomes[0].unsupported.reason is (
+            g.UnsupportedReason.ADMINISTRATIVE_FINALITY
+        )
+        counts = g.count_family_outcomes(outcomes)
+        assert (counts.rows, counts.weight, counts.unsupported_weight) == (
+            1,
+            7,
+            7,
+        )
+    else:
+        with pytest.raises(g.InvalidFamilyInput, match="positive"):
+            outcomes.append(g.evaluate_family("settled cap", 7, call))
+        counts = g.count_family_outcomes(outcomes)
+        assert (counts.rows, counts.weight) == (0, 0)
+
+
 @pytest.mark.parametrize("household", (False, True))
 @pytest.mark.parametrize("combined", (False, True))
 @pytest.mark.parametrize("reservation", (F(0), F(1)))
 @pytest.mark.parametrize("permanent", (False, True))
+@pytest.mark.parametrize("held", (False, True))
 def test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row(
-    household, combined, reservation, permanent
+    household, combined, reservation, permanent, held
 ):
-    outcomes = []
-    with pytest.raises(g.InvalidFamilyInput, match="positive"):
-        outcomes.append(
-            g.evaluate_family(
-                "zero cap",
-                7,
-                lambda: compute(
-                    household=household,
-                    combined=combined,
-                    reservation=reservation,
-                    permanent=permanent,
-                ),
-            )
-        )
-    assert g.count_family_outcomes(outcomes).rows == 0
+    _expect_cap_classification(
+        lambda: compute(
+            household=household,
+            combined=combined,
+            reservation=reservation,
+            permanent=permanent,
+            held=held,
+        ),
+        protected=held and not combined,
+    )
 
 
 @pytest.mark.parametrize("household", (False, True))
 @pytest.mark.parametrize("combined", (False, True))
+@pytest.mark.parametrize("held", (False, True))
 @settings(max_examples=20, deadline=None)
 @given(
     pia=st.integers(0, 100),
@@ -104,31 +122,29 @@ def test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row(
     reserved_fraction=st.fractions(min_value=0, max_value=1),
 )
 def test_upper_bound_equality_is_invalid_for_every_exact_reservation(
-    household, combined, pia, role, reserved_fraction
+    household, combined, held, pia, role, reserved_fraction
 ):
     upper = g.original_benefit(role, g.FamilyKind.SURVIVOR, F(pia))
-    outcomes = []
-    with pytest.raises(g.InvalidFamilyInput, match="positive"):
-        outcomes.append(
-            g.evaluate_family(
-                "exact cap",
-                7,
-                lambda: compute(
-                    household=household,
-                    combined=combined,
-                    pia=F(pia),
-                    role=role,
-                    reservation=upper * reserved_fraction,
-                ),
-            )
-        )
-    assert g.count_family_outcomes(outcomes).rows == 0
+    _expect_cap_classification(
+        lambda: compute(
+            household=household,
+            combined=combined,
+            pia=F(pia),
+            role=role,
+            reservation=upper * reserved_fraction,
+            held=held,
+        ),
+        protected=held and not combined,
+    )
 
 
 @pytest.mark.parametrize("household", (False, True))
-def test_zero_pia_maximum_and_ob_cannot_hide_own_event(household):
-    with pytest.raises(g.InvalidFamilyInput, match="positive"):
-        compute(household=household, pia=F(0))
+@pytest.mark.parametrize("held", (False, True))
+def test_zero_pia_maximum_and_ob_cannot_hide_own_event(household, held):
+    _expect_cap_classification(
+        lambda: compute(household=household, pia=F(0), held=held),
+        protected=held,
+    )
 
 
 @pytest.mark.parametrize("household", (False, True))

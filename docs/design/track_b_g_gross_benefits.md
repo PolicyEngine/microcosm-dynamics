@@ -3141,15 +3141,18 @@ Verification class: statutory conformance on invented cases and captured
 rules. This round adds no population, behavioral or forecast claim.
 
 The own-work input bound applies before either family or household
-coverage refusal. `OWN_EARNINGS_TEST` requires payable plus NH reservation
-strictly below the original-benefit upper bound: equality leaves no room
-for a positive own deduction. GN 02603.050A says "In all cases,
+coverage refusal only when the original-benefit bound is settled.
+`OWN_EARNINGS_TEST` requires payable plus NH reservation strictly below
+that upper bound: equality leaves no room for a positive own deduction. GN 02603.050A says "In all cases,
 beneficiaries are still limited to the original benefit amount." The
-deduction entry points take `RecordState` and compute ordinary G before
-any `SavingsClauseGuard`; a carried protected payment cannot enter this
-check. A future combined protected-payment/deduction procedure would need
-its own bound. Current above-OB protected-rate requests already refuse as
-`savings_clause_rate_procedure` rather than entering this path.
+deduction entry points take `RecordState` before a `SavingsClauseGuard`,
+but can receive an administrative-finality condition. RS 00615.754A.3
+protects rates established using another PIA and maximum; those rates can
+exceed the OB from the correct declared PIA. The round-5 fact table in the
+RET design note therefore suppresses this early bound when record finality
+or the affected beneficiary's protection unsettles F4. G then retains the
+original named coverage refusal. The source-conflict identifier is
+`us:oasdi-finality-protected-rates-before-coverage`.
 
 The bound uses a widow's supplied larger OB basis and a parent's
 conservative one-parent OB (Act 202(e)/(f)(2), 202(h)(2)). On PIA $4, a
@@ -3167,18 +3170,21 @@ rounds have these premises. RET uses the same table in its design note.
 | RET NH or auxiliary FRA declaration lies outside every possible attainment month in the supplied G cohort | Act 203(f)(8)(E), (9); 20 CFR 404.430(b), 404.434(c); RS 02501.021B.3; cohort/attainment conventions in RS 00615.003/.010 | A birthday within the cohort whose RIB FRA satisfies the declaration; every such intersecting declaration remains admitted |
 | An auxiliary and that same person's own benefit supply different SSA birth cohorts, even if their FRA declaration fits both separately | Act 202(q)(6); RS 00615.003/.010; G's existing single-person cohort-consistency contract | The fields describe different people or different declared cohort conventions; this interface permits neither |
 | RET declaration places FRA after a supplied own DRC-increased G snapshot | Act 202(w)(2); RS 00615.692 | Credits belonging only to the deceased NH, or an own age reduction without own delayed credits; neither proves the survivor's age |
-| Own-work payable plus NH reservation equals the applicable OB upper bound | GN 02603.050A's OB limit and a strictly positive own-work deduction | A supported entry route carrying gross above that OB; this API has none, and larger widow OBs and one-parent rates are explicitly preserved |
+| Own-work payable plus NH reservation equals the applicable settled OB upper bound | GN 02603.050A's OB limit and a strictly positive own-work deduction | Administrative finality can protect a rate based on another PIA; the early bound is skipped for that affected scope. Larger widow OBs and one-parent rates remain preserved |
 | G and RET declare opposite NH entitlement for the same person and month | Act 202(a), 203(b); `WORKER_NOT_ENTITLED` explicitly declares no RIB/DIB entitlement, while RET `entitled_months` declares entitlement; G's record kind also determines whether an NH benefit exists | Different people or months, or a declaration about cash rather than entitlement; this interface distinguishes zero cash from absence of entitlement |
 | A person's known SSA cohort differs between monthly contexts, including between an explicit cohort and an own-benefit cohort | Act 202(q)(6); RS 00615.003/.010 define one birth cohort for one person; G already requires the same identity across household records | Different people or cohort conventions; neither is allowed for one identifier. Missing cohort facts do not imply a conflicting cohort |
-| RET declares an entitled spouse whose declared own RIB/DIB PIA equals or exceeds half the insured person's PIA | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's canonical spouse entitlement predicate compares the declared PIAs directly | No own entitlement in that month, a different person's own PIA, or a different PIA basis; the supplied G own benefit describes this person's current entitlement |
-| An entitled NH's RET original rate differs from G's declared PIA, or a DIB NH's gross rate differs from that PIA | RS 02501.110 states the NH original benefit is 100% of PIA; Social Security Bulletin 75(3), Table 2 shows DIB worker benefit at 100% of PIA; the G/RET interface copies these declared rates directly | An unentitled month, a different person/month, or a different rate definition; unentitled original-rate declarations remain unconstrained by this comparison |
+| RET declares an entitled spouse whose declared own RIB/DIB PIA equals or exceeds half the insured person's PIA, with F5 settled | Act 202(b)(1)(D), (c)(1)(D); RS 00202.005; G's canonical spouse entitlement predicate compares the declared PIAs directly | No own entitlement in that month, a different person's own PIA, or administrative finality protecting a rate based on another PIA |
+| An entitled NH's RET original rate differs from G's declared PIA, or a DIB NH's gross rate differs from that PIA, with F1/F2 settled | RS 02501.110 states the NH original benefit is 100% of PIA; Social Security Bulletin 75(3), Table 2 shows DIB worker benefit at 100% of PIA; the G/RET interface copies these declared rates directly | An unentitled month, a different person/month, or an unsettler in the round-5 fact table: finality, prior reduced RIB or WC offset as applicable |
 
 ### Reproduced cases and invariants
 
 With survivor PIA $4/MAX $6 and child OB $3, own-work payable $3, or NH
-reservation $1 plus payable $2, is invalid even with administrative finality
-or another-record entitlement. PIA/MAX/OB $0 with payable $0 is also
-invalid. Both public forms produce no outcome or denominator row. The
+reservation $1 plus payable $2, is invalid with another-record entitlement
+or another condition that leaves F4 settled. With administrative finality,
+the ordinary-PIA bound is unsettled and the named refusal retains its row
+and weight. PIA/MAX/OB $0 with payable $0 is also
+invalid when F4 is settled; protected-rate conditions retain their named
+refusal. Both public forms produce no outcome or denominator row. The
 test `test_own_event_at_ob_cap_errors_before_coverage_and_has_no_row`
 pins actual and estimated events; Hypothesis
 `test_upper_bound_equality_is_invalid_for_every_exact_reservation` varies
@@ -3314,3 +3320,61 @@ readings remain in effect.
 Only named Track B test modules are run locally. Tier-policy and
 birth-evidence checks remain with CI. The conformance report is regenerated
 after the final rule, witness and report-input edits.
+
+
+## PR 563 round 5: protected rates and early deduction bounds
+
+Verification class remains statutory conformance on invented declarations
+and captured rules. No population, behavioral or forecast claim is added.
+
+The ordinary OB bound in `_check_deduction_amount_bounds` now uses G's
+shared `_PREFLIGHT_FACT_UNSETTLERS` table and `_fact_is_settled` predicate,
+with a separate request for a conservative upper bound rather than an
+exact original rate.
+The full fact and refusal table, source quotations and input-error audit
+are in the RET design note's round-5 section. Administrative finality can
+protect a rate based on a different PIA and maximum (RS 00615.754A.3).
+Accordingly an amount exceeding, or an own-work amount equal to, the OB
+from the correct PIA is not necessarily impossible. The early bound skips
+that affected scope and G retains its named coverage refusal, outcome row
+and full declared weight. Protection on one auxiliary does not exempt an
+unprotected auxiliary from the bound.
+
+Deferred reason labels retain their actual role, record-kind and date
+scope. A parent reason does not change a child's OB, and widow DRC
+protection applies to survivors (RS 00615.712). An unresolved parent count
+leaves the exact rate uncertain between 75% and 82.5%, while the one-parent
+82.5% upper bound remains usable (RS 00209.001/.015). Both direct and
+household paths reject a reservation or payable above that bound unless
+a separate rate protection unsettles it.
+
+Historical gross and exact OB require different inferences. Before January
+1973, the modern widow OB is unsettled: RS 00615.005A.2/.5 records the
+change from 82.5% to 100% of PIA. After that date the exact ordinary OB
+remains checked. But RS 00615.010 gives a sole surviving widow(er)
+"$84.50 reduced for months of entitlement" or the higher ordinary WIB,
+and says the sole-survivor rate was eliminated when the NH "died after
+1981 and was not eligible for RIB or DIB". Ordinary OB therefore does not
+establish a gross upper bound on a declared historical path. Old payment,
+eligibility or first-DIB metadata, or an expressly deferred historical
+eligibility or pre-1980 DIB refusal, keep that bound unsettled, including in
+a later payment month. The original coverage refusal remains. This is conservative
+handling of declared historical paths, not a complete adjudication of
+RS 00615.650; no minimum or protected payment formula is added. Undated
+current-domain snapshots retain their existing admitted scope.
+
+For nonwidow auxiliaries in actual pre-1983 payment months, the captures
+do not establish that the modern dime-floored OB is unchanged across the
+historical rounding rules. Their F4 comparison therefore remains unsettled.
+Modern payment dates keep that comparison, even with an older maximum
+eligibility refusal.
+
+This changes the inference from a potentially wrong OB basis. It preserves
+the strict own-work requirement against actual computed gross, the
+canonical one-parent upper bound, larger widow OBs, all positive-withholding
+money rules and every post-G amount check. The direct and household paths
+are pinned by
+`test_protected_deduction_rate_is_not_bounded_by_correct_pia_ob` in
+`tests/test_track_b_ret_ledger_fix_round_5.py`. The source conflict is
+`us:oasdi-finality-protected-rates-before-coverage`, following the delegated
+ruling. No protected cash payment is newly implemented.
