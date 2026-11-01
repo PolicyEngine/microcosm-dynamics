@@ -2414,7 +2414,8 @@
       "public_retirement_system_participation",
       "reporting_unit",
       "section_218_group",
-      "section_218_position"
+      "section_218_position",
+      "remuneration_paid_date"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -2493,11 +2494,25 @@
             "outside_agreement": [
               "election_work",
               "government_level"
+            ],
+            "agreement_with_statutory_threshold_paid_after_1977": [
+              "election_work",
+              "government_level"
+            ]
+          }
+        },
+        "threshold_id_by_case": {
+          "cases": {
+            "agreement_with_statutory_threshold_paid_after_1977": [
+              "remuneration_paid_date"
             ]
           }
         }
       },
-      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
+      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families.",
+      "threshold_id_by_case": {
+        "agreement_with_statutory_threshold_paid_after_1977": "election_remuneration_annual"
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2581,8 +2596,20 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "agreement_with_lower_threshold",
+        "case_id": "agreement_with_statutory_threshold_paid_after_1977",
         "precedence": 1,
+        "when": {
+          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker",
+          "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "The 1977 amendment applies \"with respect to remuneration paid after December 31, 1977\", so remuneration for 1977 service paid in 1978 takes the 1978 statutory amount: threshold election_remuneration_annual, as threshold_id_by_case names, not this row's quarterly amount."
+      },
+      {
+        "case_id": "agreement_with_lower_threshold",
+        "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -2593,7 +2620,7 @@
       },
       {
         "case_id": "agreement_with_statutory_threshold",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -2604,7 +2631,7 @@
       },
       {
         "case_id": "agreement_without_election_exclusion",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
         },
@@ -2613,7 +2640,7 @@
       },
       {
         "case_id": "outside_agreement",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "section_218_position": "not covered",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -2734,7 +2761,7 @@
           "location": "1977 amendment note",
           "quote": "with respect to remuneration paid after December 31, 1977"
         },
-        "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977, so 1977 service paid in 1978 must be classified by its payment date."
+        "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977. 1977 service paid in 1978 reaches the earlier row, whose case agreement_with_statutory_threshold_paid_after_1977 carries the payment date and names the annual threshold."
       },
       "condition_cases": {
         "agreement_has_no_exclusion": {

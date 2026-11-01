@@ -2046,8 +2046,9 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     tied = [
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
-    # The review r5 fix ties the four federal rows' scope.
-    assert len(tied) == 93
+    # The review r5 fix ties the four federal rows' scope and the
+    # church cases se_units_1968_1983 now carries.
+    assert len(tied) == 94
     assert all(row["open_reason"] is None for row in tied)
     # H-C: the 2018 tribal row's scope parameter names the case that reads
     # federal recognition.
@@ -2846,8 +2847,31 @@ def test_federal_rows_carry_section_2601_c_d3_and_e(registry, rule_id):
     )
     delay = rule.parameters.get("section_2601d3_delay")
     assert (delay is None) == (rule_id == "federal_1984_1986")
+    # Review r5 H-7: both rows' (G)(ii) and (G)(iii) cases carry the
+    # 2601(d)(3) delay, which has no outer date under (d)(2).
+    cases = {case["case_id"]: case for case in rule.cases}
+    for case_id in (
+        "legislative_lump_sum_after_1983",
+        "legislative_ceased_coverage_after_1983",
+    ):
+        text = cases[case_id]["when"]["federal_retirement_system"]
+        assert text.endswith(SECTION_2601D3_CLAUSE), case_id
     if delay is not None:
-        assert "before 1987" in delay
+        ties = rule.parameters["condition_cases"]["section_2601d3_delay"]
+        assert set(ties["cases"]) == {
+            "legislative_lump_sum_after_1983",
+            "legislative_ceased_coverage_after_1983",
+        }
+
+
+SECTION_2601D3_CLAUSE = (
+    "; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and "
+    "(B) and did not again become subject to subchapter III (or "
+    "effectively apply for it) before July 18, 1984 or within the 30-day "
+    "period of section 2601(d)(1) or (2), the service is performed in or "
+    "after the first month beginning after that 30-day period (section "
+    "2601(d)(3))"
+)
 
 
 SECTION_8015C3_ENACTED = (
@@ -4605,7 +4629,7 @@ def test_government_level_conditions_name_a_level_of_government():
     # Six before round 5, which adds 20: the 1991 State and local row's
     # three mandatory-rule cases, 16 election cases and the 1968
     # public-office election. The review r5 fix adds 32 federal cases.
-    assert len(found) == 58
+    assert len(found) == 59
 
 
 # Round 5: 410(a)(7) excludes "Service performed in the employ of a State,
@@ -4709,7 +4733,7 @@ def test_state_and_local_exclusions_name_the_level_their_law_reaches(
                         ELECTION_WORKER
                     ), key
                     assert "election_work" in ties[case["case_id"]], key
-    assert len(limited) == 22
+    assert len(limited) == 23
     office = next(
         r for r in registry.rules if r.rule_id == "se_public_office_1968_2026"
     )
@@ -4797,6 +4821,15 @@ STATE_LOCAL_CASE_FACTS = {
             ),
             ("outside_agreement", "not covered"),
         )
+    },
+    # A 1977 poll worker paid in 1978 (review r5 M-1).
+    (
+        "election_work_1968",
+        "agreement_with_statutory_threshold_paid_after_1977",
+    ): {
+        "section_218_position": STATUTORY_AGREEMENT_AMOUNT,
+        "election_work": ELECTION_WORKER,
+        "remuneration_paid_date": "remuneration paid on or after 1978-01-01",
     },
     # Poll workers from 1991-07-02, by agreement position and membership.
     **{
@@ -4913,7 +4946,7 @@ def test_only_the_state_or_local_level_meets_these_cases(
     decided = rule.resolve(met)
     assert "case_id" not in decided
     assert decided["consequence"] == "covered"
-    assert len(LEVEL_LIMITED_CASES) == 22
+    assert len(LEVEL_LIMITED_CASES) == 23
 
 
 # Round 5: an INVENTED State or local employee whose work is not election
@@ -5314,6 +5347,184 @@ def test_federal_rows_leave_non_federal_workers_to_other_families(
     decided = rule.resolve(cases_met(rule, facts))
     assert decided["consequence"] == "covered"
     assert "case_id" not in decided
+
+
+# Review r5 H-7: INVENTED House staffers who took a CSRS refund in May
+# 1984. 2601(d)(2) reaches one "not in the employ of the United States"
+# on July 18, 1984; its 30 days run from the first return to the
+# legislative branch, here 1987-02-02, so (d)(3) delays (G) coverage to
+# April 1987. A staffer in the Foreign Service on July 18, 1984 has only
+# (d)(1)'s period, which ended in 1984.
+FED_LEGISLATIVE_STAFF = (
+    "service in the legislative branch other than as a Member, Delegate or "
+    "Resident Commissioner"
+)
+FED_LUMP_SUM_WITH_DELAY = (
+    "received, at any time after 1983-12-31, a lump-sum payment under 5 "
+    "U.S.C. 8342(a) or the corresponding provision of the other Federal "
+    "retirement system" + SECTION_2601D3_CLAUSE
+)
+DELAYED_STAFFERS = {
+    # Out of Federal employ on 1984-07-18; Commerce 1985-1986; back on
+    # House staff 1987-02-02 without applying. February 1987 falls inside
+    # the (d)(2) period, so the 1983 exclusion still reaches the service.
+    "returned_1987_service_in_february": (
+        {
+            "government_level": FEDERAL_LEVEL,
+            "federal_service": (
+                FED_LEGISLATIVE_STAFF,
+                FED_GRANDFATHERED_CONTINUOUS,
+            ),
+            "federal_retirement_system": (
+                "received a lump-sum payment after 1983 and is within the "
+                "section 2601(d)(3) delay"
+            ),
+        },
+        "noncovered",
+        "grandfathered_continuous_service",
+    ),
+    # The same staffer's April 1987 service.
+    "returned_1987_service_in_april": (
+        {
+            "government_level": FEDERAL_LEVEL,
+            "federal_service": (
+                FED_LEGISLATIVE_STAFF,
+                FED_GRANDFATHERED_CONTINUOUS,
+            ),
+            "federal_retirement_system": FED_LUMP_SUM_WITH_DELAY,
+        },
+        "covered",
+        "legislative_lump_sum_after_1983",
+    ),
+    # The review's staffer, in the Foreign Service on 1984-07-18, back on
+    # House staff 1987-02-02: (d)(2) does not reach him, and the (d)(1)
+    # delay ended in September 1984, so February 1987 is covered.
+    "foreign_service_on_enactment_date": (
+        {
+            "government_level": FEDERAL_LEVEL,
+            "federal_service": (
+                FED_LEGISLATIVE_STAFF,
+                FED_GRANDFATHERED_CONTINUOUS,
+            ),
+            "federal_retirement_system": FED_LUMP_SUM_WITH_DELAY,
+        },
+        "covered",
+        "legislative_lump_sum_after_1983",
+    ),
+}
+
+
+@pytest.mark.parametrize("staffer", sorted(DELAYED_STAFFERS))
+def test_section_2601d3_delay_reaches_service_after_1986(registry, staffer):
+    """Review r5 H-7: 2601(d)(3) makes (G) coverage "effective with the
+    first month beginning after such 30-day period", and (d)(2)'s period
+    can fall in any later year."""
+    facts, expected, decides = DELAYED_STAFFERS[staffer]
+    (rule,) = registry.lookup_date(
+        "federal_retirement_service", date(1987, 2, 9)
+    )
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided["consequence"] == expected
+    assert decided.get("case_id", "residual") == decides
+
+
+# Review r5 M-1: no code reads axis_exception, so the rows a fiscal year
+# that began in 1983 reaches carry the 1984 church cases with the service
+# date. INVENTED: a church secretary paid $80 by an electing church for
+# January 1984 service, in a fiscal year that began 1983-07-01.
+ELECTING_CHURCH_SERVICE = (
+    "service for an electing church or qualified church controlled "
+    "organization, outside an unrelated trade or business, and outside "
+    "ministry or order duties"
+)
+CHURCH_REMUNERATION = (
+    "qualifying electing-church remuneration from an employer paying at "
+    "least $100 in the taxable year"
+)
+
+
+@pytest.mark.parametrize(
+    ("service_date", "expected", "decides"),
+    [
+        (
+            "on or after 1984-01-01",
+            "covered_above_threshold",
+            "electing_church_nonministerial_service",
+        ),
+        ("before 1984-01-01", "deferred", "residual"),
+    ],
+)
+def test_fiscal_year_church_service_after_1983_takes_the_1984_cases(
+    registry, service_date, expected, decides
+):
+    """Review r5 M-1: Pub. L. 98-369 section 2603(e) applies the church
+    election to "service performed after December 31, 1983"; a fiscal
+    year that began in 1983 reaches the 1968-1983 row, whose cases carry
+    that date. Below the $100 employer gate the pay is excluded, so the
+    review's $80 is noncovered; earlier service defers to nonprofit."""
+    (rule,) = registry.lookup_date(
+        "electing_church_employee_service", date(1983, 7, 1)
+    )
+    facts = {
+        "church_employee_service": ELECTING_CHURCH_SERVICE,
+        "services_performed_date": service_date,
+    }
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided["consequence"] == expected
+    assert decided.get("case_id", "residual") == decides
+    if expected == "covered_above_threshold":
+        gate = rule.parameters["church_se_threshold_cents"]
+        assert 8000 < gate == 10000
+    (units,) = registry.lookup_date("self_employment_units", date(1983, 7, 1))
+    unit_facts = {
+        "church_employee_service": CHURCH_REMUNERATION,
+        "services_performed_date": service_date,
+        "amount": "combined earnings below $100",
+    }
+    decided = units.resolve(cases_met(units, unit_facts))
+    if expected == "covered_above_threshold":
+        assert decided.get("case_id") == "church_combined_below_100"
+        assert decided["consequence"] == "noncovered"
+    else:
+        assert "case_id" not in decided
+
+
+@pytest.mark.parametrize(
+    ("paid", "decides", "threshold_id"),
+    [
+        (
+            "remuneration paid on or after 1978-01-01",
+            "agreement_with_statutory_threshold_paid_after_1977",
+            "election_remuneration_annual",
+        ),
+        (
+            "remuneration paid before 1978-01-01",
+            "agreement_with_statutory_threshold",
+            "election_remuneration_quarterly",
+        ),
+    ],
+)
+def test_1977_election_pay_follows_its_payment_date(
+    registry, paid, decides, threshold_id
+):
+    """Review r5 M-1 check of every off-axis pin: the 1977 amendment
+    applies "with respect to remuneration paid after December 31, 1977",
+    on a service-date family. INVENTED: a poll worker's November 1977
+    service under an agreement with the statutory exclusion."""
+    (rule,) = registry.lookup_date("election_work", date(1977, 11, 8))
+    facts = {
+        "section_218_position": STATUTORY_AGREEMENT_AMOUNT,
+        "government_level": STATE_EMPLOYEE,
+        "election_work": ELECTION_WORKER,
+        "remuneration_paid_date": paid,
+    }
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided.get("case_id") == decides
+    assert decided["consequence"] == "covered_above_threshold"
+    by_case = rule.parameters.get("threshold_id_by_case", {})
+    assert by_case.get(decides, rule.parameters["threshold_id"]) == (
+        threshold_id
+    )
 
 
 FEDERAL_OTHER_EMPLOYERS = (

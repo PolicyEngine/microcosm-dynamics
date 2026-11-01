@@ -5693,7 +5693,7 @@
       }
     ],
     "consequence": "covered_above_threshold",
-    "description": "One taxable-year unit of other net earnings, with $400 minimum; church employee income did not yet arise from the 410(a)(8)(B) election.",
+    "description": "One taxable-year unit of other net earnings, with $400 minimum; church employee income did not yet arise from the 410(a)(8)(B) election. For a fiscal year that began in 1983, the 1984 church cases apply to remuneration for electing-church service performed on or after 1984-01-01.",
     "effective_end": "1983-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_units",
@@ -5768,7 +5768,63 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\"."
+      "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\".",
+      "church_remuneration_employer_gate_cents": 10000,
+      "church_gate_aggregation_scope": "person_employer_taxable_year",
+      "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least 100 dollars in the taxable year",
+      "eligible_base_by_case": {
+        "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero",
+        "church_combined_below_100": "zero",
+        "church_100_to_399_without_ordinary_loss": "qualifying_church_remuneration",
+        "church_at_least_100_with_ordinary_loss": "combined_earnings",
+        "church_at_least_400_without_ordinary_loss": "combined_earnings"
+      },
+      "condition_cases": {
+        "church_gate_aggregation_scope": {
+          "cases": {
+            "church_combined_below_100": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_100_to_399_without_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_at_least_100_with_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_at_least_400_without_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ]
+          }
+        },
+        "eligible_base_by_case": {
+          "cases": {
+            "church_combined_below_100": [
+              "church_employee_service",
+              "amount",
+              "services_performed_date"
+            ],
+            "church_100_to_399_without_ordinary_loss": [
+              "church_employee_service",
+              "amount",
+              "services_performed_date"
+            ],
+            "church_at_least_100_with_ordinary_loss": [
+              "church_employee_service",
+              "amount",
+              "services_performed_date"
+            ],
+            "church_at_least_400_without_ordinary_loss": [
+              "church_employee_service",
+              "amount",
+              "services_performed_date"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1968_1983",
@@ -5776,10 +5832,57 @@
       "employee_self_or_mixed",
       "amount",
       "reporting_unit",
-      "taxable_year_start"
+      "taxable_year_start",
+      "church_employee_service",
+      "services_performed_date"
     ],
     "worked_examples": [],
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "church_combined_below_100",
+        "precedence": 1,
+        "consequence": "noncovered",
+        "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings below $100",
+          "services_performed_date": "on or after 1984-01-01"
+        }
+      },
+      {
+        "case_id": "church_100_to_399_without_ordinary_loss",
+        "precedence": 2,
+        "consequence": "covered",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
+          "services_performed_date": "on or after 1984-01-01"
+        }
+      },
+      {
+        "case_id": "church_at_least_100_with_ordinary_loss",
+        "precedence": 3,
+        "consequence": "covered",
+        "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
+          "services_performed_date": "on or after 1984-01-01"
+        }
+      },
+      {
+        "case_id": "church_at_least_400_without_ordinary_loss",
+        "precedence": 4,
+        "consequence": "covered",
+        "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "when": {
+          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
+          "services_performed_date": "on or after 1984-01-01"
+        }
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
@@ -5981,7 +6084,7 @@
           "location": "Effective Date of 1984 Amendment note (Pub. L. 98-369 section 2603(e))",
           "quote": "Amendment by section 2603(c)(1), (d)(1) of Pub. L. 98\u2013369 applicable to service performed after Dec. 31, 1983"
         },
-        "axis_exception": "Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to service performed after December 31, 1983, while the family's units, minimums and later boundaries (411(i) from 1986, 411(a)(11) from 1990) run by taxable year, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 applies this row's church cases to remuneration for electing-church service performed after December 31, 1983."
+        "axis_exception": "Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to service performed after December 31, 1983, while the family's units, minimums and later boundaries (411(i) from 1986, 411(a)(11) from 1990) run by taxable year, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984. A fiscal-year worker whose taxable year began in 1983 reaches the earlier row, whose church cases carry services_performed_date \"on or after 1984-01-01\"."
       },
       "condition_cases": {
         "aggregation_scope": {

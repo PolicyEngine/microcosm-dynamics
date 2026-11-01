@@ -233,6 +233,9 @@ CE1_FIELD_PURPOSES = (
     # Noncash agricultural transfers: control and economic cash equivalence.
     "noncash_transfer_cash_equivalence",
     "noncash_transfer_dominion_control",
+    # The date remuneration is paid, where an amendment keys on payment and
+    # the family on service (election work, 1977 amendment).
+    "remuneration_paid_date",
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 CONSEQUENCES = frozenset(

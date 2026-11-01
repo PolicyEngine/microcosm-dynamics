@@ -5149,7 +5149,28 @@
       ]
     },
     {
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "electing_church_nonministerial_service",
+          "consequence": "covered_above_threshold",
+          "description": "Treated as a trade or business under 411(c)(2)(G); the church employee threshold applies. Pub. L. 98-369 section 2603(e) applies the church election to \"service performed after December 31, 1983\", so this row, which a fiscal year that began in 1983 reaches on the family's taxable-year axis, applies the 1984 row's case to such service performed on or after 1984-01-01.",
+          "precedence": 1,
+          "when": {
+            "church_employee_service": "service for an electing church or qualified church controlled organization, outside an unrelated trade or business, and outside ministry or order duties",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        },
+        {
+          "case_id": "unrelated_trade_or_business",
+          "consequence": "covered",
+          "description": "Not excluded from employment by 410(a)(8)(B); apply other families. Pub. L. 98-369 section 2603(e) applies the church election to \"service performed after December 31, 1983\", so this row, which a fiscal year that began in 1983 reaches on the family's taxable-year axis, applies the 1984 row's case to such service performed on or after 1984-01-01.",
+          "precedence": 2,
+          "when": {
+            "church_employee_service": "unrelated trade or business",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -5177,7 +5198,7 @@
         }
       ],
       "consequence": "deferred",
-      "description": "The 3121(w) church employer election did not exist; ordinary church employee coverage follows the then effective nonprofit employer waiver and small remuneration rules.",
+      "description": "The 3121(w) church employer election did not exist for service performed before 1984; ordinary church employee coverage follows the then effective nonprofit employer waiver and small remuneration rules. For a fiscal year that began in 1983, the 1984 church cases apply to its service performed on or after 1984-01-01.",
       "effective_end": "1983-12-31",
       "effective_start": "1968-01-01",
       "family": "electing_church_employee_service",
@@ -5185,6 +5206,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "church_se_threshold_cents": 10000,
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -5278,15 +5300,29 @@
           }
         ],
         "condition_cases": {
+          "church_se_threshold_cents": {
+            "cases": {
+              "electing_church_nonministerial_service": [
+                "church_employee_service",
+                "services_performed_date"
+              ]
+            }
+          },
           "employer_election_available": {
-            "not_a_coverage_condition": "The church employer election reaches only service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)). This row's residual defers earlier service to nonprofit_service; for a taxable year that began in 1983, the 1984 row's boundary_clause axis_exception routes service performed after 1983 to that row's cases."
+            "not_a_coverage_condition": "The church employer election reaches only service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)). This row's residual defers earlier service to nonprofit_service. For a fiscal year that began in 1983, which the family's taxable-year axis sends to this row, its two cases apply the 1984 row's church cases to service performed on or after 1984-01-01; no code reads the 1984 row's axis_exception, so the cases, not the pin, carry the service date."
+          },
+          "threshold_concept": {
+            "threshold_ids": [
+              "church_employee_minimum_historical"
+            ]
           }
         },
         "coverage_family": "nonprofit_service",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The family uses the taxable-year axis because Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) begins the election, for \"service performed after December 31, 1983\".",
         "employer_election_available": false,
-        "ministerial_service_separate": true
+        "ministerial_service_separate": true,
+        "threshold_concept": "Remuneration from one employer described in 410(a)(8)(B); less than $100 is excluded and the 411(b)(2) $400 threshold does not apply."
       },
       "rare_exclusion": {
         "negligible_candidate": null,
@@ -5324,6 +5360,7 @@
         "clergy_or_religious_exemption",
         "month_or_exposure",
         "reporting_unit",
+        "services_performed_date",
         "taxable_year_start"
       ],
       "worked_examples": []
@@ -5379,7 +5416,7 @@
       "open_reason": null,
       "parameters": {
         "boundary_clause": {
-          "axis_exception": "Pub. L. 98-369 section 2603(e) applies the church employer election amendments to service performed after December 31, 1983, while the family's 1986 boundary (411(i)) applies to remuneration paid or derived in taxable years beginning after Dec. 31, 1985, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 classifies electing-church service performed after December 31, 1983 by this row's cases, and earlier service by the earlier row.",
+          "axis_exception": "Pub. L. 98-369 section 2603(e) applies the church employer election amendments to service performed after December 31, 1983, while the family's 1986 boundary (411(i)) applies to remuneration paid or derived in taxable years beginning after Dec. 31, 1985, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984. A fiscal-year worker whose taxable year began in 1983 reaches the earlier row, whose cases carry services_performed_date \"on or after 1984-01-01\" and apply this row's rule to that service; earlier service takes the earlier row's residual.",
           "citation": {
             "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
             "capture": "lii_42_410.html",
@@ -5812,10 +5849,22 @@
     {
       "cases": [
         {
+          "case_id": "agreement_with_statutory_threshold_paid_after_1977",
+          "consequence": "covered_above_threshold",
+          "description": "The 1977 amendment applies \"with respect to remuneration paid after December 31, 1977\", so remuneration for 1977 service paid in 1978 takes the 1978 statutory amount: threshold election_remuneration_annual, as threshold_id_by_case names, not this row's quarterly amount.",
+          "precedence": 1,
+          "when": {
+            "election_work": "election official or election worker",
+            "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+            "remuneration_paid_date": "remuneration paid on or after 1978-01-01",
+            "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount"
+          }
+        },
+        {
           "case_id": "agreement_with_lower_threshold",
           "consequence": "covered_above_threshold",
           "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C).",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
             "election_work": "election official or election worker",
             "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -5826,7 +5875,7 @@
           "case_id": "agreement_with_statutory_threshold",
           "consequence": "covered_above_threshold",
           "description": "418(c)(8); the referenced statutory threshold applies.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "election_work": "election official or election worker",
             "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -5837,7 +5886,7 @@
           "case_id": "agreement_without_election_exclusion",
           "consequence": "covered",
           "description": "Taxes apply from the first dollar (POMS SL 30001.357 C).",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
           }
@@ -5846,7 +5895,7 @@
           "case_id": "outside_agreement",
           "consequence": "noncovered",
           "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "election_work": "election official or election worker",
             "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
@@ -5956,9 +6005,20 @@
                 "election_work",
                 "government_level"
               ],
+              "agreement_with_statutory_threshold_paid_after_1977": [
+                "election_work",
+                "government_level"
+              ],
               "outside_agreement": [
                 "election_work",
                 "government_level"
+              ]
+            }
+          },
+          "threshold_id_by_case": {
+            "cases": {
+              "agreement_with_statutory_threshold_paid_after_1977": [
+                "remuneration_paid_date"
               ]
             }
           }
@@ -5966,7 +6026,10 @@
         "mandatory_nonmember_coverage": false,
         "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families.",
         "service_date_transition": null,
-        "threshold_id": "election_remuneration_quarterly"
+        "threshold_id": "election_remuneration_quarterly",
+        "threshold_id_by_case": {
+          "agreement_with_statutory_threshold_paid_after_1977": "election_remuneration_annual"
+        }
       },
       "rare_exclusion": {
         "negligible_candidate": null,
@@ -6057,6 +6120,7 @@
         "government_level",
         "month_or_exposure",
         "public_retirement_system_participation",
+        "remuneration_paid_date",
         "reporting_unit",
         "section_218_group",
         "section_218_position"
@@ -6146,7 +6210,7 @@
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
         "boundary_clause": {
-          "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977, so 1977 service paid in 1978 must be classified by its payment date.",
+          "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977. 1977 service paid in 1978 reaches the earlier row, whose case agreement_with_statutory_threshold_paid_after_1977 carries the payment date and names the annual threshold.",
           "citation": {
             "authority": "42 USC 418 current code and amendment notes",
             "capture": "lii_42_418.html",
@@ -8795,7 +8859,7 @@
           ],
           "precedence": 13,
           "when": {
-            "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system",
+            "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
             "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
           }
         },
@@ -8809,7 +8873,7 @@
           ],
           "precedence": 14,
           "when": {
-            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))",
+            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
             "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner"
           }
         },
@@ -9137,6 +9201,16 @@
                 "government_level"
               ]
             }
+          },
+          "section_2601d3_delay": {
+            "cases": {
+              "legislative_ceased_coverage_after_1983": [
+                "federal_retirement_system"
+              ],
+              "legislative_lump_sum_after_1983": [
+                "federal_retirement_system"
+              ]
+            }
           }
         },
         "continuity_maximum_separation_days": 365,
@@ -9204,7 +9278,7 @@
         },
         "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H).",
         "scope": "410(a)(5) and (a)(6) reach only service \"in the employ of the United States or any instrumentality of the United States\", so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide and the reemployed annuitant open cases rest on POMS RS 01901.340, which addresses Federal employment.",
-        "section_2601d3_delay": "Section 2601(d)(3) delays 410(a)(5)(G) coverage to the first month after the 30-day period of 2601(d)(1), which ends 30 days after July 18, 1984, or of 2601(d)(2), which ends 30 days after the individual first returns to legislative-branch service after July 18, 1984, a return that must fall within 365 days after the individual \"was last in the employ of the United States\". The (d)(1) delay, and a (d)(2) delay whose last Federal employment ended by July 18, 1984, end before 1987. A (d)(2) delay runs later only where Federal employment elsewhere continued after that date; this row's legislative_ceased_coverage_after_1983 case does not carry that narrow case.",
+        "section_2601d3_delay": "Section 2601(d)(3) delays 410(a)(5)(G) coverage to the first month after the 30-day period of 2601(d)(1), which ends 30 days after July 18, 1984, or of 2601(d)(2), which reaches an individual \"not in the employ of the United States or an instrumentality thereof\" on July 18, 1984 and ends 30 days after the individual first returns to legislative-branch service after that date, a return that must fall within 365 days after the individual \"was last in the employ of the United States\". The (d)(1) delay ends before 1987; a (d)(2) delay has no outer date. Cases legislative_lump_sum_after_1983 and legislative_ceased_coverage_after_1983 carry the clause, as the 1984-1986 row's do.",
         "section_2601e_nonprofit_service": {
           "citation": {
             "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -25320,7 +25394,52 @@
       "worked_examples": []
     },
     {
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "church_combined_below_100",
+          "consequence": "noncovered",
+          "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+          "precedence": 1,
+          "when": {
+            "amount": "combined earnings below $100",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        },
+        {
+          "case_id": "church_100_to_399_without_ordinary_loss",
+          "consequence": "covered",
+          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+          "precedence": 2,
+          "when": {
+            "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        },
+        {
+          "case_id": "church_at_least_100_with_ordinary_loss",
+          "consequence": "covered",
+          "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+          "precedence": 3,
+          "when": {
+            "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        },
+        {
+          "case_id": "church_at_least_400_without_ordinary_loss",
+          "consequence": "covered",
+          "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+          "precedence": 4,
+          "when": {
+            "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
+            "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+            "services_performed_date": "on or after 1984-01-01"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -25336,7 +25455,7 @@
         }
       ],
       "consequence": "covered_above_threshold",
-      "description": "One taxable-year unit of other net earnings, with $400 minimum; church employee income did not yet arise from the 410(a)(8)(B) election.",
+      "description": "One taxable-year unit of other net earnings, with $400 minimum; church employee income did not yet arise from the 410(a)(8)(B) election. For a fiscal year that began in 1983, the 1984 church cases apply to remuneration for electing-church service performed on or after 1984-01-01.",
       "effective_end": "1983-12-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_units",
@@ -25344,6 +25463,8 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "church_gate_aggregation_scope": "person_employer_taxable_year",
+        "church_remuneration_employer_gate_cents": 10000,
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -25392,8 +25513,62 @@
             ]
           }
         ],
+        "condition_cases": {
+          "church_gate_aggregation_scope": {
+            "cases": {
+              "church_100_to_399_without_ordinary_loss": [
+                "church_employee_service",
+                "services_performed_date"
+              ],
+              "church_at_least_100_with_ordinary_loss": [
+                "church_employee_service",
+                "services_performed_date"
+              ],
+              "church_at_least_400_without_ordinary_loss": [
+                "church_employee_service",
+                "services_performed_date"
+              ],
+              "church_combined_below_100": [
+                "church_employee_service",
+                "services_performed_date"
+              ]
+            }
+          },
+          "eligible_base_by_case": {
+            "cases": {
+              "church_100_to_399_without_ordinary_loss": [
+                "church_employee_service",
+                "amount",
+                "services_performed_date"
+              ],
+              "church_at_least_100_with_ordinary_loss": [
+                "church_employee_service",
+                "amount",
+                "services_performed_date"
+              ],
+              "church_at_least_400_without_ordinary_loss": [
+                "church_employee_service",
+                "amount",
+                "services_performed_date"
+              ],
+              "church_combined_below_100": [
+                "church_employee_service",
+                "amount",
+                "services_performed_date"
+              ]
+            }
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\".",
+        "eligible_base_by_case": {
+          "church_100_to_399_without_ordinary_loss": "qualifying_church_remuneration",
+          "church_at_least_100_with_ordinary_loss": "combined_earnings",
+          "church_at_least_400_without_ordinary_loss": "combined_earnings",
+          "church_combined_below_100": "zero",
+          "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero"
+        },
+        "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least 100 dollars in the taxable year",
         "units": [
           {
             "aggregation_scope": "person_taxable_year_statutory_unit",
@@ -25422,8 +25597,10 @@
       "rule_id": "se_units_1968_1983",
       "trigger_facts": [
         "amount",
+        "church_employee_service",
         "employee_self_or_mixed",
         "reporting_unit",
+        "services_performed_date",
         "taxable_year_start"
       ],
       "worked_examples": []
@@ -25542,7 +25719,7 @@
       "parameters": {
         "aggregation_scope": "person_taxable_year_combined_historical_computation",
         "boundary_clause": {
-          "axis_exception": "Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to service performed after December 31, 1983, while the family's units, minimums and later boundaries (411(i) from 1986, 411(a)(11) from 1990) run by taxable year, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 applies this row's church cases to remuneration for electing-church service performed after December 31, 1983.",
+          "axis_exception": "Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to service performed after December 31, 1983, while the family's units, minimums and later boundaries (411(i) from 1986, 411(a)(11) from 1990) run by taxable year, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984. A fiscal-year worker whose taxable year began in 1983 reaches the earlier row, whose church cases carry services_performed_date \"on or after 1984-01-01\".",
           "citation": {
             "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
             "capture": "lii_42_411.html",
