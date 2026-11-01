@@ -42,9 +42,10 @@ those sources; nothing here feeds a blind role.
   coefficient, no contrast between categories, no life expectancy and no
   comparison between sources' gradients, and it prints no source table
   value. It names tables, pages, age bands, years and categories only.
-  Every number in it is a year, an age, a page, a count of table cells or
-  targets, a code from a codebook, a tolerance the design or S0.1 sets, or
-  a rule this record sets.
+  Every number in it is a year, an age, a page, a count of table cells,
+  targets, PDF objects or drawing operators, a code from a codebook, a
+  tolerance the design or S0.1 sets, a rule or seed this record sets, or a
+  constant it derives from those (the Bonferroni critical value).
 - **Data.** This job opened no PSID, HRS, SIPP or NHIS microdata file and
   computed nothing on real data. PSID use follows the project's
   data-access record. This record uses and compares no DYNASIM, Urban
@@ -201,7 +202,8 @@ year.
   2021 titles only; the fit job's loader checks every year's layout.
 - **Limits stated by the source.** No data below 25 (schooling may be
   incomplete) and none at 65 and over ("reporting quality is poorer at
-  older ages"); data "about 97% complete" (NVSR 74(4) p. 127). The
+  older ages"), with completeness the technical notes state (NVSR 74(4)
+  p. 127). The
   denominators come from 1-year ACS PUMS adjusted to July 1 resident
   control totals (p. 132), and the rates' standard errors combine Poisson
   variation in deaths with the ACS standard error (Formulas 9 and 10,
