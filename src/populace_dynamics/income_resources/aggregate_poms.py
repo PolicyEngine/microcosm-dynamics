@@ -118,23 +118,35 @@ names a date no effective-date sentence of its block or the section states,
 as "Payment levels as of January 1, 2031", "Effective: January 1, 2031" or
 "January 1, 2031", leaves the date unread, and the next chart refuses unless
 a later sentence dates it. So does one that holds a date in a form no
-sentence reads: an abbreviated month ("Jan. 1, 2031"), a month and year
-("January 2031"), a day before its month ("1 January 2031"), or an ISO or
-dashed date ("2031-01-01", "1-1-2031"). So does a heading that holds a year
-from 1900 to 2099, in four digits with no digit beside them, outside the
-years of the dates in force, and a line under 80 characters that holds such
-a year after them, as in a section dated 2030 "Payment levels as of January
-1st, 2031", "January 1,2031", "Payment levels for 2031", "1/2031",
-"01.01.2031", "2031/01/01", "FY2031" or "Calendar year 2031 payment levels";
-with no date in force, every such year counts. Each line names its own
-dates, and a block's whole text adds only those no single line names, as a
-date split across a ``br``. A footnote body dates no chart: a line, or a
-block's whole text, that opens with footnote markers by either marker rule,
-every word they hold of a marker's size, and holds none after them, as
-"<sup>1</sup>Revised March 1, 2031". A block whose whole text is one dates
-no chart in any line. Nor does the section's revision range ("Effective
-Dates: 02/03/2040 - Present"): the net drops it from a line before naming
-the line's dates and years, so the rest of the line still names its own.
+sentence reads, the section's own date included: an abbreviated month
+("Jan. 1, 2031"), a month and year ("January 2031"), a day before its
+month ("1 January 2031"), an ISO or dashed date ("2031-01-01",
+"1-1-2031"), an ordinal day ("July 1st, 2030", "1st of July"), a comma with
+no space after it or a space before it ("July 1,2030", "July 1 , 2030"), a
+dotted date ("07.01.2030"), a date that opens with its year ("2030/07/01"),
+a month and year in numbers ("7/2030"), or a month glued to the word before
+it ("as ofJuly 1, 2030"). So does a heading that holds a year from 1900 to
+2099, in four digits with no digit beside them, outside the years of the
+dates in force, and a line under 80 characters that holds such a year after
+them, or before them with a dating word ("payment", "level", "effective",
+"as of" or "rate", inside another word too, in any case), as in a section
+dated 2030 "Payment levels for 2031", "FY2031", "Calendar year 2031 payment
+levels", "Payment levels for 2029" or "Rates for 2029"; with no date in
+force, every such year counts. Each line names its own dates, and a block's
+whole text adds those it names more often, in one reading, than its lines
+together do, as a date split across a ``br``, so a footnote line that names
+the same date does not cover a split one. Outside a heading, a footnote
+body dates no chart: a line, or a block's whole text, that opens with
+footnote markers by either marker rule, every word they drop one to three
+digits or footnote signs or a single letter, and holds none after them, as
+"<sup>1</sup>Revised March 1, 2031" or "<sup>a</sup>Revised March 1, 2031".
+A leading ``sup`` or ``#`` link that holds another word, as
+``<sup>As of</sup>`` or ``<a href="#new">New</a>``, makes no footnote body.
+A block other than a heading whose whole text is one dates no chart in any
+line, and a heading is never one. Nor does the section's revision range
+("Effective Dates: 02/03/2040 - Present", in any case) date a chart: the
+net drops it from a line before naming the line's dates and years, so the
+rest of the line still names its own.
 
 Every definition table of a section precedes its first chart; a definition
 table after a chart refuses, because the source does not say which earlier
@@ -153,8 +165,8 @@ names nor resets a State, claimant or date; and text that HTML or CSS
 hides, other than script and style, such as the ``hidden`` attribute, which
 is read as text, so ``Utah<span hidden>x</span> Effective January 1, 2031``
 is read as prose, as "Utahx Effective January 1, 2031" would be. The tree's
-own gaps, HTML's script data escape states among them, are listed in
-``aggregate_tables``.
+own gaps, HTML's script data escape states and foreign content among them,
+are listed in ``aggregate_tables``, with the pages it refuses for them.
 
 Limits: the nets over-refuse in several places, and no pinned page meets
 any of them.
@@ -173,15 +185,23 @@ any of them.
   states makes the next chart refuse, even where the date concerns
   something else, as "Revised March 1, 2031", and a date in a form no
   sentence reads does so even when it is the section's own date, as "Jan.
-  1, 2030", or stands in a sentence, as "Payment levels effective January
-  2031".
+  1, 2030" or "July 1st, 2030", or stands in a sentence, as "Payment levels
+  effective January 2031". So does a number shaped as a dotted date, as
+  "Section 2.1.10".
 - A heading that holds a year outside the years of the dates in force, or a
-  line under 80 characters that holds a later year, makes the next chart
-  refuse even where the year concerns something else, as "Revised 2031" or
-  "Section 2031 rules"; with no date in force, so does any year. A sentence
-  whose date takes a form no sentence reads, as "Payment levels effective
-  January 1st, 2031", states no date, so the year it holds refuses the next
-  chart rather than leave its date unstated.
+  line under 80 characters that holds a later year, or an earlier one and a
+  dating word, makes the next chart refuse even where the year concerns
+  something else, as "Revised 2031", "Section 2031 rules" or "Separate
+  programs for 2029", whose "Separate" holds "rate"; with no date in force,
+  so does any year. A sentence whose date takes a form no sentence reads,
+  as "Payment levels effective January 1st, 2031", states no date, so the
+  date it holds refuses the next chart rather than leave its date
+  unstated.
+- A footnote marker that is neither one to three digits or footnote signs
+  nor a single letter, as ``<sup>ii</sup>`` or ``<sup>1a</sup>``, makes no
+  footnote body, and a heading is never one, so a date in such a line, as
+  ``<h5><sup>1</sup>Revised March 1, 2031</h5>``, leaves the section's date
+  unread.
 - A footnote marker after a date's year, as "January 1, 2031<sup>1</sup>",
   or an ordinal marker, as "January 1<sup>st</sup>, 2031", makes the
   sentence date differently without it, so the page refuses, and so does a
@@ -190,8 +210,8 @@ any of them.
 - A range from a date to the same date refuses, though it may mean a single
   day.
 - Footnote markers that lead a line with no space between them, as
-  ``<sup>12</sup><sup>34</sup>Revised March 1, 2031``, join into a word
-  longer than a marker's, so the line is no footnote body, and a date in it
+  ``<sup>12</sup><sup>34</sup>Revised March 1, 2031``, join into a word of
+  more than three digits, so the line is no footnote body, and a date in it
   leaves the section's date unread.
 
 A line of 80 characters or more, outside a heading, names a claimant only
@@ -206,20 +226,29 @@ These forms also leave the claimant or date before them standing:
   "Married pair" after an "Individual" heading, names none, so the earlier
   claimant line still names the chart's claimant;
 - a date whose year has two digits in a form no sentence reads, as "January
-  1, 31", names no date and holds no year, and a year split across a
-  ``br``, as "20<br>31", holds none;
+  1, 31", names no date and holds no year; a year split across a ``br``, as
+  "20<br>31", holds none; and a date split across two blocks, as
+  ``<p>Payment levels as of March 1,</p><p>2031</p>`` in a section dated
+  2031, names none in either;
+- an effective-date sentence of 80 characters or more, outside a heading,
+  names only the dates in a sentence's date form, so in "Monthly payment
+  levels effective January 1, 2030 and July 1st, 2030" run on past 80
+  characters the second date is dropped;
 - a line under 80 characters, outside a heading, that holds only years
-  before the dates in force, as "Payment levels for 2029" in a section dated
-  2030, leaves the date standing, since one pinned page has such a line on a
-  State-administered program for the year before ahead of a chart;
-- a line after a footnote body's first line in the same block, as the
-  second line of ``<sup>1</sup>Revised March 1, 2031<br>Payment levels as of
-  March 1, 2031``, is part of that footnote body and dates no chart.
+  before the dates in force and no dating word, as "State-administered
+  programs: For Calendar Year 2029 -" in a section dated 2030, leaves the
+  date standing, as one pinned page's line on a State-administered program
+  for the year before does ahead of a chart;
+- a line after a footnote body's first line in the same block, outside a
+  heading, as the second line of ``<sup>1</sup>Revised March 1, 2031<br>
+  Payment levels as of March 1, 2031``, is part of that footnote body and
+  dates no chart.
 """
 
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import replace
 from datetime import date, datetime
 from decimal import Decimal
@@ -303,13 +332,26 @@ _DATE = re.compile(
 )
 # Other ways to write a date, which no effective-date sentence reads: an
 # abbreviated month, a month and year with no day, a day before its month,
-# and an ISO or dashed date. To the unread-date net they name a date.
+# an ISO or dashed date, an ordinal day ("July 1st, 2030", "1st of July"),
+# a comma with no space after it or a space before it ("July 1,2030",
+# "July 1 , 2030"), a dotted date ("07.01.2030"), a date that opens with
+# its year ("2030/07/01"), a month and year in numbers ("7/2030"), and a
+# month glued to the word before it ("as ofJuly 1, 2030"). To the
+# unread-date net they name a date.
 _SHORT_MONTHS = r"(?:Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)"
+_ANY_MONTH = rf"(?:{'|'.join(_MONTHS)}|{_SHORT_MONTHS})"
 _OTHER_DATE = re.compile(
     rf"\b{_SHORT_MONTHS}\.?\s+\d{{1,2}},?\s+\d{{4}}\b"
-    rf"|\b(?:{'|'.join(_MONTHS)}|{_SHORT_MONTHS})\.?,?\s+\d{{4}}\b"
-    rf"|\b\d{{1,2}}\s+(?:{'|'.join(_MONTHS)}|{_SHORT_MONTHS})\.?,?\s+\d{{4}}\b"
-    r"|\b\d{4}-\d{1,2}-\d{1,2}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b",
+    rf"|\b{_ANY_MONTH}\.?,?\s+\d{{4}}\b"
+    rf"|\b\d{{1,2}}\s+{_ANY_MONTH}\.?,?\s+\d{{4}}\b"
+    r"|\b\d{4}-\d{1,2}-\d{1,2}\b|\b\d{1,2}-\d{1,2}-\d{2,4}\b"
+    rf"|\b{_ANY_MONTH}\.?\s+\d{{1,2}}\s*(?:st|nd|rd|th)\b,?\s*\d{{4}}\b"
+    rf"|\b\d{{1,2}}\s*(?:st|nd|rd|th)\s+(?:of\s+)?{_ANY_MONTH}\b"
+    rf"|\b{_ANY_MONTH}\.?\s+\d{{1,2}}(?:,|\s+,\s*)\d{{4}}\b"
+    r"|\b\d{1,2}\.\d{1,2}\.\d{2,4}\b"
+    r"|\b\d{4}\s*[/.]\s*\d{1,2}\s*[/.]\s*\d{1,2}\b"
+    r"|(?<![/\d])(?<![/\d]\s)\b\d{1,2}\s*/\s*\d{4}\b"
+    rf"|(?<=\w)(?:{'|'.join(_MONTHS)})\s+\d{{1,2}},?\s+\d{{4}}\b",
     re.IGNORECASE,
 )
 _HEADINGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
@@ -333,8 +375,15 @@ _UNRENDERED = frozenset({"script", "style"})
 # A footnote marker's text: one to three word characters or footnote signs.
 _MARKER_LENGTH = 3
 _MARKER_TEXT = re.compile(rf"[\w*†‡§]{{1,{_MARKER_LENGTH}}}")
+# A word that markers drop from a footnote body: one to three digits or
+# footnote signs, or a single letter, so a marker-sized word such as "New"
+# or "As" makes no footnote body.
+_FOOTNOTE_WORD = re.compile(rf"[\d*†‡§]{{1,{_MARKER_LENGTH}}}|[A-Za-z]")
 # A year from 1900 to 2099 in four digits, with no digit beside it.
 _YEAR = re.compile(r"(?<!\d)(?:19|20)\d\d(?!\d)")
+# Words that make a short line's earlier year count: the line speaks of
+# payment levels, rates or effective dates, inside another word too.
+_DATING_WORDS = re.compile(r"payment|level|effective|as of|rate", re.I)
 
 
 def _short_texts(element: ET.Element, short: dict[int, str | None]) -> None:
@@ -583,7 +632,7 @@ def _state_date_line(text: str) -> str | None:
 def _effective_line(text: str) -> bool:
     return (
         "effective" in text.lower()
-        and "Effective Dates:" not in text
+        and "effective dates:" not in text.lower()
         and len(text) < 400
         and bool(
             re.search(r"payments? levels?", text, re.I)
@@ -782,10 +831,12 @@ _DATE_RANGE = re.compile(
     rf",?\s+(?:to|through)\s+(?P<end>(?:{_DATE.pattern}))",
     re.IGNORECASE,
 )
-# The section's revision range, as "Effective Dates: 02/03/2040 - Present".
+# The section's revision range, as "Effective Dates: 02/03/2040 - Present",
+# in any case, as ``_effective_line`` excludes it.
 _REVISION = re.compile(
     r"Effective Dates:\s*(\d{2}/\d{2}/\d{4})\s*-\s*"
-    r"(Present|\d{2}/\d{2}/\d{4})"
+    r"(Present|\d{2}/\d{2}/\d{4})",
+    re.IGNORECASE,
 )
 
 
@@ -811,20 +862,48 @@ def _date_reading(text: str) -> tuple[tuple[str, ...], bool]:
     return dates, bool(ranges)
 
 
+# The readings the date checks read: joined, bare, unmarked and unlinked.
+_DATE_READINGS = (0, 1, 3, 4)
+
+
+def _date_counts(text: str) -> Counter[str]:
+    """How many times a text names each date. A date the reader cannot
+    parse, and one written in a form no effective-date sentence reads
+    (``_OTHER_DATE``), names itself by its text, so no sentence states
+    it."""
+    counts: Counter[str] = Counter()
+    for match in _DATE.finditer(text):
+        try:
+            counts[_date_string(match[0])] += 1
+        except TableStructureError:
+            counts[match[0]] += 1
+    counts.update(match[0] for match in _OTHER_DATE.finditer(text))
+    return counts
+
+
 def _named_dates(view: tuple[str, ...]) -> set[str]:
-    """The dates a whole text or line names in its joined, bare, unmarked
-    or unlinked reading. A date the reader cannot parse, and one written in
-    a form no effective-date sentence reads (``_OTHER_DATE``), names itself
-    by its text, so no sentence states it."""
-    named = set()
-    for text in (view[0], view[1], view[3], view[4]):
-        for match in _DATE.finditer(text):
-            try:
-                named.add(_date_string(match[0]))
-            except TableStructureError:
-                named.add(match[0])
-        named.update(match[0] for match in _OTHER_DATE.finditer(text))
-    return named
+    """The dates a whole text or line names (``_date_counts``) in its
+    joined, bare, unmarked or unlinked reading."""
+    return set().union(*(_date_counts(view[k]) for k in _DATE_READINGS))
+
+
+def _split_dates(full: list[tuple[str, ...]]) -> set[str]:
+    """The dates a block's whole text, without the revision range, names
+    more often in one of those readings than its lines together do there,
+    as a date split across a ``br``. So a line that names the same date,
+    a footnote body's included, does not cover a split one."""
+    whole = _unrevised(full[0])
+    split = set()
+    for k in _DATE_READINGS:
+        by_lines: Counter[str] = Counter()
+        for line in full[1:]:
+            by_lines.update(_date_counts(line[k]))
+        split |= {
+            day
+            for day, count in _date_counts(whole[k]).items()
+            if count > by_lines[day]
+        }
+    return split
 
 
 def _named_years(view: tuple[str, ...]) -> set[str]:
@@ -841,14 +920,16 @@ def _named_years(view: tuple[str, ...]) -> set[str]:
 def _footnote_body(view: tuple[str, ...]) -> bool:
     """Whether a whole text or line opens with footnote markers, by either
     marker rule, and holds none after them, as a footnote body does. Each
-    word the markers drop must have a marker's size (``_MARKER_TEXT``), so
-    a longer ``sup`` or link to a footnote that opens a line, or wraps it
-    whole, makes no footnote body."""
+    word the markers drop must be one to three digits or footnote signs, or
+    a single letter (``_FOOTNOTE_WORD``), so a longer ``sup`` or link to a
+    footnote that opens a line, or wraps it whole, makes no footnote body,
+    and nor does a word such as "New" or "As" in a leading ``sup`` or
+    ``#`` link."""
     return any(
         view[0] != text
         and view[0].endswith(text)
         and all(
-            _MARKER_TEXT.fullmatch(word)
+            _FOOTNOTE_WORD.fullmatch(word)
             for word in view[0][: len(view[0]) - len(text)].split()
         )
         for text in (view[1], view[3])
@@ -880,7 +961,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
     revision_start = _date_string(revision[1]) if revision else None
     revision_end = (
         _date_string(revision[2])
-        if revision and revision[2] != "Present"
+        if revision and revision[2].lower() != "present"
         else None
     )
     state = None
@@ -1101,34 +1182,40 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 # next chart refuses unless a sentence dates it. So does a
                 # heading that holds a year outside the years of the dates in
                 # force, or a line under 80 characters that holds a year after
-                # them, as "Payment levels for 2031" in a section dated 2030;
-                # an earlier year in a short line outside a heading, as one
-                # pinned page's note on a State-administered program for the
-                # year before, dates no chart. A footnote body that opens with
-                # its marker, a block whose whole text is one, and the
-                # section's revision range date no chart. Each line names its
-                # own dates, and the whole text adds only those no single line
-                # names, as a date split across a br.
+                # them, as "Payment levels for 2031" in a section dated 2030,
+                # or an earlier year and a dating word (_DATING_WORDS), as
+                # "Payment levels for 2029"; one pinned page's short note on a
+                # State-administered program for the year before holds none,
+                # and dates no chart. Outside a heading, a footnote body that
+                # opens with its marker dates no chart, and nor does any line
+                # of a block whose whole text is one; nor does the section's
+                # revision range. Each line names its own dates, and the whole
+                # text adds those it names more often than its lines do, as a
+                # date split across a br.
                 stated: set[str] = set()
                 years: set[str] = set()
                 in_force = {day[:4] for day in dates}
-                if not _footnote_body(full[0]):
-                    by_lines: set[str] = set()
+                heading = element.tag in _HEADINGS
+                if heading or not _footnote_body(full[0]):
                     for view in full[1:]:
-                        by_lines |= _named_dates(view)
-                        if _footnote_body(view) or not (
-                            element.tag in _HEADINGS or len(view[0]) < 80
+                        if not heading and (
+                            _footnote_body(view) or len(view[0]) >= 80
                         ):
                             continue
-                        stated |= _named_dates(_unrevised(view))
+                        unrevised = _unrevised(view)
+                        stated |= _named_dates(unrevised)
                         years |= {
                             year
-                            for year in _named_years(_unrevised(view))
-                            if element.tag in _HEADINGS
+                            for year in _named_years(unrevised)
+                            if heading
                             or year > max(in_force, default="")
+                            or any(
+                                _DATING_WORDS.search(unrevised[k])
+                                for k in _DATE_READINGS
+                            )
                         }
-                    if element.tag in _HEADINGS or len(full[0][0]) < 80:
-                        stated |= _named_dates(_unrevised(full[0])) - by_lines
+                    if heading or len(full[0][0]) < 80:
+                        stated |= _split_dates(full)
                 if stated - set(dates) or years - in_force:
                     unread_date = True
             # Before any State heading a claimant line names nothing: the

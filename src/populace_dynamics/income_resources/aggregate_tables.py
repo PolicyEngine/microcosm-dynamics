@@ -268,18 +268,33 @@ class _HTMLTree(HTMLParser):
     the tree refuses a page whose script text holds both (no pinned script
     does);
     and foreign content, the elements inside ``svg`` or ``math``, which
-    HTML parses by other rules and which are HTML elements here. Outside an
-    HTML integration point such as svg's ``foreignObject``, HTML reads the
-    content of a script, style, title or textarea there as markup, ends the
-    svg or math at an HTML start tag such as ``h3`` or ``p``, and honours a
-    self-closing slash, so in ``<svg><script><h3>Utah</h3></script></svg>``
-    HTML reads a Utah heading that this tree holds as script text. The
-    tree refuses a page whose svg or math holds a raw text or RCDATA
-    element whose text holds "<", even where HTML reads the same text, as
-    in ``<svg><style>a < b</style></svg>`` or a script in a foreignObject,
-    and its refusal of a self-closed raw text tag covers those HTML closes
-    there, as ``<svg><title/></svg>`` (no pinned svg, all icons, holds
-    either, and no pinned page holds math).
+    HTML parses by other rules. HTML ends an open svg or math at the start
+    tag of one of its breakout elements, among them h1 to h6, p, div, li,
+    table, b and span, and at a font start tag with a color, face or size
+    attribute; it builds any other start tag there, such as section, td or
+    form, as a foreign element, which it does not render as a block or
+    cell. Inside svg's foreignObject, desc or title, MathML's mi, mo, mn,
+    ms or mtext, or an annotation-xml whose encoding is text/html, it
+    builds HTML elements again, and an end tag there, as ``</h5>`` in
+    ``<h5><math><mi></h5>``, does not end the heading outside them. The
+    tree models none of this, so it refuses a page on which a start tag
+    other than an svg or MathML element of ``_FOREIGN_VOCABULARY`` comes
+    inside svg or math, or on which svg or math ends other than at its own
+    end tag, the end of the page included. It refuses
+    ``<svg><h3>Utah</h3></svg>``, whose h3 HTML builds after the svg, as it
+    refuses ``<svg><section>Couple</section></svg>`` and ``<svg><td>``,
+    which HTML builds as foreign elements. Outside those integration
+    points, HTML reads the content of a script, style, title or textarea
+    there as markup and honours a self-closing slash, so in
+    ``<svg><script><h3>Utah</h3></script></svg>`` HTML reads a Utah heading
+    that this tree holds as script text. The tree refuses a page whose svg
+    or math holds a raw text or RCDATA element whose text holds "<", even
+    where HTML reads the same text, as in
+    ``<svg><style>a < b</style></svg>`` or a script in a foreignObject, and
+    its refusal of a self-closed raw text tag covers those HTML closes
+    there, as ``<svg><title/></svg>``. No pinned svg, all icons of path,
+    title and desc elements, meets any of these refusals, and no pinned
+    page holds math.
     """
 
     # HTML's raw text elements; Python versions differ (see above).
@@ -325,6 +340,15 @@ class _HTMLTree(HTMLParser):
 
     # Start tags after which HTML drops a newline that comes next.
     _NEWLINE_DROPPING = frozenset({"pre", "listing", "textarea"})
+    # The svg and MathML elements that may start inside svg or math, in
+    # HTMLParser's lower case; any other start tag there refuses the page.
+    _FOREIGN_VOCABULARY = frozenset(
+        """svg math path g title desc circle rect line polyline polygon
+        ellipse use defs symbol clippath lineargradient radialgradient stop
+        mask pattern text tspan image metadata style script foreignobject mi
+        mo mn ms mtext mrow msup msub msubsup mfrac msqrt mroot mstyle mspace
+        mtable mtr mtd semantics annotation annotation-xml""".split()
+    )
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -332,6 +356,21 @@ class _HTMLTree(HTMLParser):
         self.stack = [self.root]
         # Whether the last token built one of _NEWLINE_DROPPING.
         self._drop_newline = False
+        # The open svg and math elements, each with its place on the stack.
+        self._foreign: list[tuple[int, ET.Element]] = []
+
+    def _open_foreign(self) -> int:
+        """How many svg and math elements are open.
+
+        The stack only grows or loses its top, so an entry whose place no
+        longer holds its element was popped, and so was every later one.
+        """
+        while self._foreign:
+            place, element = self._foreign[-1]
+            if place < len(self.stack) and self.stack[place] is element:
+                break
+            self._foreign.pop()
+        return len(self._foreign)
 
     def _close_paragraph(self) -> None:
         for i in range(len(self.stack) - 1, 0, -1):
@@ -354,6 +393,13 @@ class _HTMLTree(HTMLParser):
         self._drop_newline = False
         if tag == "plaintext":
             raise TableStructureError("HTML plaintext element is not read")
+        if self._open_foreign() and tag not in self._FOREIGN_VOCABULARY:
+            # HTML ends the svg or math at some HTML start tags and keeps
+            # the others there as foreign elements; the tree models neither.
+            raise TableStructureError(
+                "HTML element other than svg or MathML starts inside svg or "
+                "math"
+            )
         if tag == "html" and (
             len(self.root) or (self.root.text or "").strip("\t\n\f\r ")
         ):
@@ -424,6 +470,10 @@ class _HTMLTree(HTMLParser):
         el = ET.SubElement(self.stack[-1], tag, {k: v or "" for k, v in attrs})
         if tag not in self._VOID:
             self.stack.append(el)
+            if tag in {"svg", "math"}:
+                # The check above dropped every entry popped before this
+                # tag, and an svg or math start tag pops nothing.
+                self._foreign.append((len(self.stack) - 1, el))
         self._drop_newline = tag in self._NEWLINE_DROPPING
 
     def handle_startendtag(self, tag, attrs):
@@ -439,6 +489,25 @@ class _HTMLTree(HTMLParser):
 
     def handle_endtag(self, tag):
         self._drop_newline = False
+        open_foreign = self._open_foreign()
+        innermost = self._foreign[-1][1].tag if open_foreign else None
+        self._end_tag(tag)
+        ended = open_foreign - self._open_foreign()
+        if ended > 1 or ended and tag != innermost:
+            # Only its own end tag ends an svg or math as HTML ends it.
+            raise TableStructureError(
+                "HTML svg or math ends without its own end tag"
+            )
+
+    def close(self):
+        super().close()
+        if self._open_foreign():
+            raise TableStructureError(
+                "HTML svg or math ends without its own end tag"
+            )
+
+    def _end_tag(self, tag):
+        """Close what an end tag closes, by the rules above."""
         if tag in self._HEADINGS:
             # Any h1-h6 end tag ends the open heading in scope.
             self._close_open(self._HEADINGS, self._SCOPE)
