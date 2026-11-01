@@ -1,8 +1,11 @@
 """Invented units exercise §86 independently of any tax interpreter."""
 
+import tracemalloc
 from decimal import (
     MAX_EMAX,
+    MAX_PREC,
     MIN_EMIN,
+    MIN_ETINY,
     ROUND_05UP,
     ROUND_CEILING,
     ROUND_DOWN,
@@ -31,7 +34,11 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.section86 import (
+    MAX_DIGIT_SPAN,
+    MAX_PLACE,
+    MIN_PLACE,
     exact_decimal_context,
+    exact_decimal_operands,
     section86_inclusions,
 )
 
@@ -440,3 +447,241 @@ def test_exact_context_precision_limits_and_traps():
     with localcontext(exact_decimal_context()):
         with pytest.raises(Inexact):
             Decimal(1) / 3
+
+
+# The validated domain's edges, as exact_decimal_context documents them.
+_NARROWED_CALLERS = [
+    Context(prec=3),
+    Context(Emax=4, Emin=-4),
+    Context(Emax=8, clamp=1, traps=[Clamped, Subnormal]),
+    Context(
+        prec=1, rounding=ROUND_UP, traps=[Inexact, Rounded, FloatOperation]
+    ),
+]
+_NARROWED_CALLER_IDS = ["prec-3", "emax-4", "clamped", "prec-1-traps"]
+
+
+def test_precision_counts_nonzero_places_and_lowers_etiny():
+    # Zeros widen nothing, at either extreme.
+    zeros = (Decimal(f"0E+{MAX_EMAX}"), Decimal(f"0E{MIN_ETINY}"))
+    assert exact_decimal_context(*zeros).prec == 28
+    assert exact_decimal_context(Decimal("34000"), *zeros).prec == 28
+    # A lowest place 28 below Emin puts Etiny three places under it.
+    edge = exact_decimal_context(Decimal(f"1E{MIN_EMIN - 28}"))
+    assert (edge.prec, edge.Etiny()) == (32, MIN_EMIN - 31)
+    # The lowest admitted place needs decimal's largest precision.
+    lowest = exact_decimal_context(Decimal(f"1E{MIN_PLACE}"))
+    assert (lowest.prec, lowest.Etiny()) == (MAX_PREC, MIN_ETINY)
+    # Same-scale amounts at the highest admitted place need few digits.
+    assert exact_decimal_context(Decimal(f"9E+{MAX_PLACE}")).prec == 28
+
+
+@pytest.mark.parametrize(
+    "zero_exponent",
+    [
+        MIN_ETINY,
+        MIN_EMIN - 2000,
+        MIN_EMIN - 1004,
+        MIN_EMIN - 1003,
+        0,
+        MAX_EMAX,
+    ],
+    ids=["min-etiny", "far-below", "just-below", "at-etiny", "zero", "top"],
+)
+def test_operands_move_only_zeros_below_etiny_and_change_no_result(
+    zero_exponent,
+):
+    # INVENTED amount at place MIN_EMIN - 1000, so the precision is 1,004
+    # and even an unmoved zero costs about a thousand digits here.
+    low = MIN_EMIN - 1000
+    amount = Decimal((0, (7,), low))
+    zero = Decimal((1, (0,), zero_exponent))
+    context, (same, moved) = exact_decimal_operands(amount, zero)
+    assert (context.prec, context.Etiny()) == (1004, low - 3)
+    assert same is amount
+    assert moved.as_tuple() == (1, (0,), max(zero_exponent, low - 3))
+    operations = (
+        lambda a, z: a - z,
+        lambda a, z: z + a,
+        lambda a, z: z - z,
+        lambda a, z: Decimal("0.5") * z,
+        lambda a, z: Decimal("0.85") * z + a,
+    )
+    with localcontext(context):
+        for operation in operations:
+            assert operation(amount, zero).as_tuple() == (
+                operation(amount, moved).as_tuple()
+            )
+
+
+_EXTREME_ZEROS = [
+    f"0E+{MAX_PREC - 4}",
+    f"0E-{MAX_PREC - 8}",
+    f"0E+{MAX_EMAX}",
+    f"-0E{MIN_ETINY}",
+]
+_EXTREME_ZERO_IDS = ["review-high", "review-low", "max-emax", "min-etiny"]
+
+
+@pytest.mark.parametrize("zero", _EXTREME_ZEROS, ids=_EXTREME_ZERO_IDS)
+@pytest.mark.parametrize(
+    ("benefits", "modified_agi"),
+    # INVENTED: None marks where the zero goes, alone or beside ordinary
+    # nonzero amounts in each tier.
+    [
+        (None, 0),
+        (None, 40000),
+        (None, "-30000.03"),
+        (20000, None),
+        (100000, None),
+    ],
+    ids=["alone", "agi", "negative-agi", "benefits", "upper-tier"],
+)
+def test_a_zero_at_an_extreme_exponent_gives_the_plain_zero_results(
+    zero, benefits, modified_agi
+):
+    inputs = (benefits, modified_agi)
+    plain = section86_inclusions(
+        *(0 if value is None else value for value in inputs), "SINGLE"
+    )
+    with localcontext(Context()) as active:
+        before = _context_state(active)
+        result = section86_inclusions(
+            *(zero if value is None else value for value in inputs), "SINGLE"
+        )
+        assert _context_state(active) == before
+    assert result == plain
+
+
+# Zero exponents from the ordinary band to the top, and from the bottom
+# band, where the rule before this fix asked for more than MAX_PREC digits
+# and so raised at once. The band between, where it asked for gigabytes,
+# stays out, so a regression fails fast instead of exhausting the host.
+_ZERO_EXPONENTS = st.one_of(
+    st.integers(-10_000, MAX_EMAX), st.integers(MIN_ETINY, 8 - MAX_PREC)
+)
+
+
+@given(
+    zero_exponent=_ZERO_EXPONENTS,
+    sign=st.integers(0, 1),
+    benefits=_ANY_BENEFITS,
+    modified_agi=_ANY_MODIFIED_AGI,
+    zero_is_benefits=st.booleans(),
+    status=_STATUSES,
+    caller=_caller_contexts(),
+)
+@settings(deadline=None)
+def test_a_zero_at_any_scale_gives_the_plain_zero_results(
+    zero_exponent,
+    sign,
+    benefits,
+    modified_agi,
+    zero_is_benefits,
+    status,
+    caller,
+):
+    zero = Decimal((sign, (0,), zero_exponent))
+    if zero_is_benefits:
+        benefits, plain = zero, (0, modified_agi)
+    else:
+        modified_agi, plain = zero, (benefits, 0)
+    with localcontext(Context()):
+        expected = section86_inclusions(
+            *plain, status, lived_apart_all_year=True
+        )
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        result = section86_inclusions(
+            benefits, modified_agi, status, lived_apart_all_year=True
+        )
+        after = _context_state(active)
+    assert after == before
+    assert result == expected
+
+
+# INVENTED: benefits at place _SPAN_LOW, beside the adjusted base's places
+# 0 to 4, span exactly MAX_DIGIT_SPAN places.
+_SPAN_LOW = 5 - MAX_DIGIT_SPAN
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [Context(), *_NARROWED_CALLERS],
+    ids=["default", *_NARROWED_CALLER_IDS],
+)
+def test_a_call_just_inside_the_span_limit_is_exact(caller):
+    assert exact_decimal_context(
+        Decimal(f"1E{_SPAN_LOW}"), Decimal("34000")
+    ).prec == (MAX_DIGIT_SPAN + 4)
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        result = section86_inclusions(f"1E{_SPAN_LOW}", 40000, "SINGLE")
+        assert _context_state(active) == before
+    # $40,000 plus half the benefits: a 4, zeros, then a 5.
+    combined = result.combined_income.as_tuple()
+    assert combined.exponent == _SPAN_LOW - 1
+    assert len(combined.digits) == MAX_DIGIT_SPAN + 1
+    assert (combined.digits[0], combined.digits[-1]) == (4, 5)
+    assert sum(combined.digits) == 9
+    # Half the benefits is the paragraph (1) amount; the 85% cap binds.
+    assert result.pre_1993.as_tuple() == (0, (5,), _SPAN_LOW - 1)
+    assert result.current.as_tuple() == (0, (8, 5), _SPAN_LOW - 2)
+
+
+@pytest.mark.parametrize(
+    ("benefits", "modified_agi"),
+    # INVENTED: one place past the limit at each end of the span.
+    [(f"1E{_SPAN_LOW - 1}", 40000), (f"1E+{MAX_DIGIT_SPAN}", 0)],
+    ids=["low-end", "high-end"],
+)
+@pytest.mark.parametrize("caller", _NARROWED_CALLERS, ids=_NARROWED_CALLER_IDS)
+def test_a_call_just_past_the_span_limit_is_refused_by_name(
+    benefits, modified_agi, caller
+):
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        with pytest.raises(
+            ValueError, match=f"MAX_DIGIT_SPAN = {MAX_DIGIT_SPAN:,}"
+        ) as error:
+            section86_inclusions(benefits, modified_agi, "SINGLE")
+        assert _context_state(active) == before
+    assert f"span {MAX_DIGIT_SPAN + 1:,}" in str(error.value)
+
+
+def test_a_refusal_comes_before_any_arithmetic():
+    # A call just inside the limit builds intermediates of about a
+    # hundred thousand digits; a refusal one place past it builds none.
+    tracemalloc.start()
+    try:
+        with pytest.raises(ValueError, match="MAX_DIGIT_SPAN"):
+            section86_inclusions(f"1E{_SPAN_LOW - 1}", 40000, "SINGLE")
+        refused = tracemalloc.get_traced_memory()[1]
+        tracemalloc.reset_peak()
+        section86_inclusions(f"1E{_SPAN_LOW}", 40000, "SINGLE")
+        computed = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert refused < 16_000 < computed
+
+
+def test_amounts_that_could_overflow_are_refused_by_name():
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(
+            ValueError, match=f"MAX_PLACE = {MAX_PLACE}"
+        ) as error:
+            section86_inclusions(f"9E+{MAX_EMAX}", f"9E+{MAX_EMAX}", "SINGLE")
+        assert _context_state(active) == before
+    assert f"reaches place {MAX_EMAX}" in str(error.value)
+
+
+def test_amounts_below_the_lowest_place_are_refused_by_name():
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(
+            ValueError, match=f"MIN_PLACE = {MIN_PLACE}"
+        ) as error:
+            exact_decimal_context(Decimal(f"1E{MIN_PLACE - 1}"))
+        assert _context_state(active) == before
+    assert f"reaches place {MIN_PLACE - 1}" in str(error.value)

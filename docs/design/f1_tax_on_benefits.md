@@ -56,12 +56,44 @@ It does not import PolicyEngine or read its parameters.
 ([26 U.S.C. 86(a)–(c)](https://www.law.cornell.edu/uscode/text/26/86))
 It computes in exact decimal arithmetic, in a context of its own rather
 than the caller's: the precision spans from three places below the
-inputs' lowest place to one above their highest, the exponent limits are
-the widest the `decimal` module allows, and `Inexact` is trapped, so an
-intermediate that needed rounding would raise. F1's liability sums, fund
-differences, interest components and comparison with PE-US's inclusions
-use the same context, so a caller's precision, rounding, exponent limits
-or traps change no result.
+nonzero inputs' lowest place to one above their highest, and reaches far
+enough that the context's smallest exponent lies three places below the
+lowest; the exponent limits are the widest the `decimal` module allows;
+and `Inexact` is trapped, so an intermediate that needed rounding would
+raise. F1's liability sums, fund differences, interest components and
+comparison with PE-US's inclusions use the same context, so a caller's
+precision, rounding, exponent limits or traps change no result.
+
+Exactness holds on a validated domain, which the docstring of
+`section86.exact_decimal_context` defines:
+
+- **Amounts are finite.**
+- **A zero widens nothing.** It holds no digits, so it may sit at any
+  exponent. Before any arithmetic, `exact_decimal_operands` moves a zero
+  below the context's smallest exponent up to it; no result can lie below
+  that exponent, so the move changes none, and no addend has to align
+  with the zero one digit per place.
+- **Among the nonzero amounts,** the highest leading-digit place is at
+  most `MAX_EMAX - 1`, so a sum cannot overflow. The lowest place is at
+  least `MIN_ETINY + 3`, so a product three places further down stays
+  representable. From lowest to highest, the amounts span at most
+  `MAX_DIGIT_SPAN`, 100,000 places.
+
+The span sets the storage a call needs, and the absolute exponent
+doesn't: same-scale amounts at an extreme exponent need few digits.
+Outside the domain, a call raises a `ValueError` that names the limit,
+before any arithmetic, and leaves the caller's context unchanged.
+
+F1's amounts sit far inside that span. PE-US's float32 values, read as
+Python floats, lie between digit places -60 and 38. All finite Python
+floats together span 633 places, from the last place of `5e-324` to
+the leading place of `1.7976931348623157e+308`. The earlier tests'
+generated inputs span at most 357 places. A 100,000-place intermediate
+takes about 42 kB.
+
+Because a zero's exponent no longer sets the precision, a result whose
+exponent came from a zero below the nonzero inputs can carry fewer
+trailing zeros than before. Its value is unchanged.
 
 The following single-filer calculations expose each tier before any tax
 calculation. They hold `M` fixed within each row:
@@ -548,9 +580,9 @@ readings and determinism.
 
 | Verification | Test module | Result |
 |---|---|---|
-| Statutory tiers, boundaries, precision, inclusion bounds and refusals; exactness against rational arithmetic and independence from the caller's decimal context | `tests/test_section86.py` | 86 passed |
+| Statutory tiers, boundaries, precision, inclusion bounds and refusals; exactness against rational arithmetic and independence from the caller's decimal context; the validated domain's edges: zeros at any exponent, the span limit, and refusals by name | `tests/test_section86.py` | 130 passed |
 | Independent current and pre-1993 inclusions against PE-US, with the tier-1 meaning distinguished | `tests/test_section86_oracle.py` | 2 passed; 150 invented units |
-| Signed allocation identity, refundable-credit invariance, both hub checks, Chapter 1 classification, and the units moved to pure Python; the split, Chapter 1 sums, interest components and batch under narrowed caller decimal contexts | `tests/test_tax_on_benefits.py` | 47 passed |
+| Signed allocation identity, refundable-credit invariance, both hub checks, Chapter 1 classification, and the units moved to pure Python; the split, Chapter 1 sums, interest components and batch under narrowed caller decimal contexts; the split and Chapter 1 sums near the smallest exponent, zeros at either extreme, the span limit, and refusals by name | `tests/test_tax_on_benefits.py` | 77 passed |
 | The persistent oracle worker dies with its launcher: idle, sleeping in a job, and inside a GIL-holding C call; its Linux startup refuses a failed `PR_SET_PDEATHSIG` and exits when its launcher is not its parent | `tests/test_tax_on_benefits_oracle_worker.py` | 6 passed on macOS; 2 Linux-only tests run in CI |
 | The three witnesses, both hub checks, the payroll exclusion, joint, head of household, separate apart, the signed sequence at $0, $250, $1,000 and $2,000, determinism and intended native TOB differences | `tests/test_tax_on_benefits_oracle.py` | 13 passed live |
 | Native entities, enum values, fresh simulations and malformed-result refusals | `tests/bridge/test_policyengine_us_named.py`, `tests/bridge/test_policyengine_us_named_oracle.py` | 28 pure and 2 live tests passed |
@@ -585,8 +617,10 @@ integration 1,450 and legacy 520 unchanged, and oracle 308 to 325
 one passed, two modules skipped because `populace.fit` is not installed
 in the repository environment, and 24,810 deselected. Review round 1's
 two fixes then added 39 unit tests to three of F1's modules, counted by
-tier over F1's five modules: unit 18,294 and 24,850 overall. Merge still
-waits for the coordinator's tier-count slot.
+tier over F1's five modules: unit 18,294 and 24,850 overall. The fix for
+the review at `6332570d` added 74 unit tests to two of them, counted
+by tier over the six modules it ran: unit 18,368 and 24,924 overall.
+Merge still waits for the coordinator's tier-count slot.
 
 The split oracle fixture memoizes the real installation check once per
 pytest process and executes the unchanged bridge runner source with fresh

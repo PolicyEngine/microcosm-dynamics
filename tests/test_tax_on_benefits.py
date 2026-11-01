@@ -1,6 +1,11 @@
 """Invented liability arithmetic and named input refusals, no oracle."""
 
+import tracemalloc
 from decimal import (
+    MAX_EMAX,
+    MAX_PREC,
+    MIN_EMIN,
+    MIN_ETINY,
     ROUND_UP,
     Clamped,
     Context,
@@ -23,7 +28,12 @@ from populace_dynamics.bridge.policyengine_us import (
     BridgeHousehold,
     BridgePerson,
 )
-from populace_dynamics.section86 import section86_inclusions
+from populace_dynamics.section86 import (
+    MAX_DIGIT_SPAN,
+    MAX_PLACE,
+    MIN_PLACE,
+    section86_inclusions,
+)
 from populace_dynamics.tax_on_benefits import (
     LIABILITY_VARIABLES,
     TAXABILITY_VARIABLES,
@@ -577,3 +587,237 @@ def test_batch_split_independent_of_the_caller_context(caller):
             wanted.oasdi, wanted.hi, wanted.total
         )
         assert split.oasdi + split.hi == split.total
+
+
+# The validated domain's edges, as section86.exact_decimal_context
+# documents them.
+@pytest.mark.parametrize(
+    "exponent",
+    [MIN_EMIN - 27, MIN_EMIN - 28, MIN_EMIN - 29, MIN_PLACE],
+    ids=["emin-27", "emin-28", "emin-29", "lowest-place"],
+)
+def test_split_at_the_smallest_exponents_is_exact(exponent):
+    # The review's minimized split, INVENTED: no liability without
+    # benefits, and the same one-unit liability with either inclusion.
+    zero, unit = Decimal(f"0E{exponent}"), Decimal(f"1E{exponent}")
+    with localcontext(Context()) as active:
+        before = _context_state(active)
+        split = allocate_liabilities(zero, unit, unit)
+        assert _context_state(active) == before
+    assert _tuples(split.oasdi, split.hi, split.total) == [
+        (0, (1,), exponent),
+        (0, (0,), exponent),
+        (0, (1,), exponent),
+    ]
+
+
+def test_split_below_the_lowest_place_is_refused_by_name():
+    unit = Decimal(f"1E{MIN_PLACE - 1}")
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(ValueError, match=f"MIN_PLACE = {MIN_PLACE}"):
+            allocate_liabilities(Decimal(0), unit, unit)
+        assert _context_state(active) == before
+
+
+_EXTREME_ZEROS = [f"0E+{MAX_EMAX}", f"-0E{MIN_ETINY}"]
+_EXTREME_ZERO_IDS = ["top", "bottom"]
+
+
+@pytest.mark.parametrize("zero", _EXTREME_ZEROS, ids=_EXTREME_ZERO_IDS)
+@pytest.mark.parametrize("position", [0, 1, 2])
+def test_a_zero_at_an_extreme_exponent_splits_like_a_plain_zero(
+    zero, position
+):
+    # INVENTED liabilities of $5,000.25 and $7,000.50 around the zero.
+    ordinary = [Decimal("5000.25"), Decimal("7000.50")]
+    values = [*ordinary[:position], Decimal(zero), *ordinary[position:]]
+    plain = [*ordinary[:position], Decimal(0), *ordinary[position:]]
+    assert allocate_liabilities(*values) == allocate_liabilities(*plain)
+
+
+@pytest.mark.parametrize("zero", _EXTREME_ZEROS, ids=_EXTREME_ZERO_IDS)
+@pytest.mark.parametrize(
+    "name",
+    [
+        "income_tax",
+        "income_tax_before_refundable_credits",
+        "net_investment_income_tax",
+    ],
+)
+def test_a_zero_component_at_an_extreme_exponent_changes_no_liability(
+    zero, name
+):
+    components = _INVENTED_STATES["current"]
+    plain = chapter1_liability(components | {name: 0})
+    result = chapter1_liability(components | {name: Decimal(zero)})
+    assert (result.before_refundable_credits, result.netted_sensitivity) == (
+        plain.before_refundable_credits,
+        plain.netted_sensitivity,
+    )
+
+
+@pytest.mark.parametrize("zero", _EXTREME_ZEROS, ids=_EXTREME_ZERO_IDS)
+@pytest.mark.parametrize(
+    "facts",
+    [{}, {"taxable_interest_income": 30000}],
+    ids=["derived-taxable", "explicit-taxable"],
+)
+def test_interest_components_with_a_zero_at_an_extreme_exponent(zero, facts):
+    # INVENTED: $30,000 of interest, none of it exempt.
+    expected = {"interest_income": {"2026": 30000}}
+    _interest_components(expected, facts, "2026")
+    entry = {"interest_income": {"2026": 30000}}
+    exempt = {"tax_exempt_interest_income": Decimal(zero)}
+    _interest_components(entry, facts | exempt, "2026")
+    assert entry == expected
+
+
+def test_split_just_inside_and_just_past_the_span_limit():
+    # INVENTED: liabilities of $1 and of 10**(1 - MAX_DIGIT_SPAN) dollars
+    # span exactly MAX_DIGIT_SPAN places.
+    tiny = Decimal(f"1E{1 - MAX_DIGIT_SPAN}")
+    split = allocate_liabilities(tiny, Decimal(1), Decimal(1))
+    nines = (0, (9,) * (MAX_DIGIT_SPAN - 1), 1 - MAX_DIGIT_SPAN)
+    assert _tuples(split.oasdi, split.hi, split.total) == [
+        nines,
+        (0, (0,), 0),
+        nines,
+    ]
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(
+            ValueError, match=f"MAX_DIGIT_SPAN = {MAX_DIGIT_SPAN:,}"
+        ):
+            allocate_liabilities(
+                Decimal(f"1E-{MAX_DIGIT_SPAN}"), Decimal(1), Decimal(1)
+            )
+        assert _context_state(active) == before
+
+
+def test_split_that_could_overflow_is_refused_by_name():
+    # INVENTED: before the fix, this difference overflowed.
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(ValueError, match=f"MAX_PLACE = {MAX_PLACE}"):
+            allocate_liabilities(
+                Decimal(f"-9E+{MAX_EMAX}"),
+                Decimal(f"9E+{MAX_EMAX}"),
+                Decimal(0),
+            )
+        assert _context_state(active) == before
+
+
+def test_a_far_zero_beside_deep_liabilities_takes_no_digit_per_place():
+    # INVENTED liabilities 100,000 places below Emin raise the precision
+    # to about 100,000. Aligned digit by digit with a zero at decimal's
+    # smallest exponent, one subtraction would take about 85 kB.
+    deep = Decimal(f"1E{MIN_EMIN - 100_000}")
+    far = Decimal(f"0E{MIN_ETINY}")
+    tracemalloc.start()
+    try:
+        split = allocate_liabilities(far, deep, deep)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert peak < 16_000
+    assert split == allocate_liabilities(Decimal(0), deep, deep)
+
+
+def _shifted(amount, places):
+    """The same sign and digits, ``places`` further along; no context."""
+    sign, digits, exponent = amount.as_tuple()
+    return Decimal((sign, digits, exponent + places))
+
+
+# INVENTED distances below Emin: across the subnormal edge, and down to
+# MIN_PLACE for amounts with up to six decimal places.
+_EDGE_DEPTHS = st.one_of(
+    st.integers(-40, 60), st.integers(MAX_PREC - 110, MAX_PREC - 10)
+)
+
+
+@given(
+    st.lists(st.integers(-(10**15), 10**15), min_size=3, max_size=3),
+    st.integers(0, 6),
+    _EDGE_DEPTHS,
+    _caller_contexts(),
+)
+@settings(deadline=None)
+def test_split_is_exact_near_the_smallest_exponent(
+    units, places, depth, caller
+):
+    # INVENTED liabilities with up to six decimal places, and the same
+    # digits moved `depth` places below Emin. The extreme results are
+    # compared by tuple parts, never through an int or a Fraction.
+    reference = [Decimal(f"{unit}E-{places}") for unit in units]
+    shift = MIN_EMIN - depth
+    edge = [_shifted(amount, shift) for amount in reference]
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        split = allocate_liabilities(*edge)
+        after = _context_state(active)
+    assert after == before
+    expected = allocate_liabilities(*reference)
+    results = (split.oasdi, split.hi, split.total)
+    wanted = (expected.oasdi, expected.hi, expected.total)
+    if any(units):
+        assert _tuples(*results) == _tuples(
+            *(_shifted(amount, shift) for amount in wanted)
+        )
+    else:
+        assert all(result.is_zero() for result in results)
+    none, pre_1993, current = map(Fraction, reference)
+    assert tuple(map(Fraction, wanted)) == (
+        pre_1993 - none,
+        current - pre_1993,
+        current - none,
+    )
+
+
+@given(
+    st.lists(st.integers(-(10**13), 10**13), min_size=6, max_size=6),
+    st.integers(0, 4),
+    _EDGE_DEPTHS,
+    _caller_contexts(),
+)
+@settings(deadline=None)
+def test_chapter_1_liability_is_exact_near_the_smallest_exponent(
+    units, places, depth, caller
+):
+    # INVENTED components with up to four decimal places, and the same
+    # digits moved `depth` places below Emin.
+    reference = {
+        name: Decimal(value)
+        for name, value in _components(
+            *(Decimal(f"{unit}E-{places}") for unit in units)
+        ).items()
+    }
+    shift = MIN_EMIN - depth
+    edge = {
+        name: _shifted(amount, shift) for name, amount in reference.items()
+    }
+    with localcontext(caller) as active:
+        before = _context_state(active)
+        result = chapter1_liability(edge)
+        after = _context_state(active)
+    assert after == before
+    expected = chapter1_liability(reference)
+    readings = (result.before_refundable_credits, result.netted_sensitivity)
+    wanted = (expected.before_refundable_credits, expected.netted_sensitivity)
+    if any(units):
+        assert _tuples(*readings) == _tuples(
+            *(_shifted(amount, shift) for amount in wanted)
+        )
+    else:
+        assert all(reading.is_zero() for reading in readings)
+
+
+@pytest.mark.parametrize("text", ["NaN", "sNaN", "Infinity", "-Infinity"])
+def test_a_split_with_a_non_finite_liability_is_refused_by_name(text):
+    # Before the fix, this was a TypeError comparing a str with an int.
+    with localcontext(Context(traps=[])) as active:
+        before = _context_state(active)
+        with pytest.raises(ValueError, match="needs finite amounts"):
+            allocate_liabilities(Decimal(text), Decimal(1), Decimal(1))
+        assert _context_state(active) == before

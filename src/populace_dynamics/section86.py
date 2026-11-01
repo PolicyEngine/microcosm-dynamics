@@ -8,13 +8,14 @@ lump-sum election in §86(e) is outside this annual-tier calculation.
 Source: https://www.law.cornell.edu/uscode/text/26/86, §86(a)–(c), read
 24 October 2026. This module does not call PolicyEngine-US. Its arithmetic
 runs in a fixed decimal context of its own, so the caller's decimal context
-changes no result.
+changes no result. ``exact_decimal_context`` states the validated domain.
 """
 
 from dataclasses import dataclass
 from decimal import (
     MAX_EMAX,
     MIN_EMIN,
+    MIN_ETINY,
     ROUND_HALF_EVEN,
     Context,
     Decimal,
@@ -26,6 +27,11 @@ from decimal import (
 )
 
 Amount = Decimal | int | float | str
+
+# The validated domain's three limits; exact_decimal_context explains them.
+MAX_DIGIT_SPAN = 100_000
+MAX_PLACE = MAX_EMAX - 1
+MIN_PLACE = MIN_ETINY + 3
 
 _ZERO = Decimal("0")
 _HALF = Decimal("0.5")
@@ -51,20 +57,46 @@ class Section86Inclusions:
 def exact_decimal_context(*amounts: Decimal) -> Context:
     """Return a fresh decimal context that ignores the caller's own.
 
-    The precision covers every digit place from three below the lowest
-    exponent of the finite ``amounts`` to one above their highest leading
-    digit, and is never below 28. The exponent limits are the widest the
+    Validated domain. The ``amounts`` are finite. A zero holds no digits,
+    so it may sit at any exponent and counts toward no limit. Among the
+    nonzero amounts, the highest leading-digit place (``adjusted()``) is
+    at most ``MAX_PLACE``, ``decimal.MAX_EMAX - 1``; the lowest place (the
+    exponent) is at least ``MIN_PLACE``, ``decimal.MIN_ETINY + 3``; and
+    the span from lowest to highest, both places counted, is at most
+    ``MAX_DIGIT_SPAN`` places. The span sets the storage a call needs; the
+    absolute exponent doesn't.
+
+    Inside the domain, F1's sums and differences of the amounts and its
+    products of them by 0.5 and 0.85 are exact: they reach at most one
+    place above the highest place and three below the lowest, and this
+    context holds every place between. Computed with the operands that
+    ``exact_decimal_operands`` returns, no such call raises ``Inexact``,
+    ``Overflow`` or ``MemoryError``. Outside the domain, this raises a
+    ``ValueError`` that names the limit, before any arithmetic, leaving
+    the caller's context as it was.
+
+    The precision is never below 28. It covers every place from three
+    below the lowest nonzero place to one above the highest, and it is
+    large enough that the smallest exponent, ``Etiny()``, is at least
+    three places below the lowest. The exponent limits are the widest the
     module allows, so no caller limit can overflow an ordinary amount.
     Rounding is half-even, and ``Inexact`` is trapped with the default
-    traps: F1's sums, differences and statutory products of these amounts
-    stay within that span, so a result that would need rounding raises
-    instead.
+    traps, so a result that would need rounding raises instead.
     """
     precision = 28
-    if amounts:
-        highest_place = max(amount.adjusted() for amount in amounts)
-        lowest_place = min(amount.as_tuple().exponent for amount in amounts)
-        precision = max(precision, highest_place - lowest_place + 5)
+    if not all(amount.is_finite() for amount in amounts):
+        raise ValueError("Exact decimal arithmetic needs finite amounts")
+    nonzero = [amount for amount in amounts if not amount.is_zero()]
+    if nonzero:
+        highest_place = max(amount.adjusted() for amount in nonzero)
+        lowest_place = min(amount.as_tuple().exponent for amount in nonzero)
+        _check_places(highest_place, lowest_place)
+        precision = max(
+            precision,
+            highest_place - lowest_place + 5,
+            # Etiny = MIN_EMIN - precision + 1 <= lowest_place - 3.
+            MIN_EMIN - lowest_place + 4,
+        )
     return Context(
         prec=precision,
         rounding=ROUND_HALF_EVEN,
@@ -74,6 +106,54 @@ def exact_decimal_context(*amounts: Decimal) -> Context:
         clamp=0,
         flags=[],
         traps=[InvalidOperation, DivisionByZero, Overflow, Inexact],
+    )
+
+
+def _check_places(highest_place: int, lowest_place: int) -> None:
+    # Refuse by name before any context or arithmetic exists.
+    if highest_place > MAX_PLACE:
+        raise ValueError(
+            "Exact decimal arithmetic needs every nonzero amount's leading "
+            f"digit at or below place MAX_PLACE = {MAX_PLACE} "
+            "(decimal.MAX_EMAX - 1), so that a sum cannot overflow; an "
+            f"amount reaches place {highest_place}"
+        )
+    if lowest_place < MIN_PLACE:
+        raise ValueError(
+            "Exact decimal arithmetic needs every nonzero amount's lowest "
+            f"digit at or above place MIN_PLACE = {MIN_PLACE} "
+            "(decimal.MIN_ETINY + 3), so that a statutory product stays "
+            f"representable; an amount reaches place {lowest_place}"
+        )
+    span = highest_place - lowest_place + 1
+    if span > MAX_DIGIT_SPAN:
+        raise ValueError(
+            "Exact decimal arithmetic supports nonzero amounts spanning at "
+            f"most MAX_DIGIT_SPAN = {MAX_DIGIT_SPAN:,} digit places; these "
+            f"span {span:,}, from place {lowest_place} to {highest_place}"
+        )
+
+
+def exact_decimal_operands(
+    *amounts: Decimal,
+) -> tuple[Context, tuple[Decimal, ...]]:
+    """Return ``exact_decimal_context(*amounts)`` and the amounts to use.
+
+    A zero below the context's smallest exponent, ``Etiny()``, moves up to
+    it with its sign; every other amount comes back unchanged. No result
+    in the context can sit below ``Etiny()``, so the move changes none.
+    Without it, when the lowest nonzero place has raised the precision, an
+    addend aligned with such a zero takes a digit for every place between.
+    """
+    context = exact_decimal_context(*amounts)
+    etiny = context.Etiny()
+    return context, tuple(
+        (
+            Decimal((amount.as_tuple().sign, (0,), etiny))
+            if amount.is_zero() and amount.as_tuple().exponent < etiny
+            else amount
+        )
+        for amount in amounts
     )
 
 
@@ -137,9 +217,10 @@ def section86_inclusions(
     # the products by 0.5 and 0.85 reach at most three places below the
     # lowest input place, and combined income and the upper-tier sum at
     # most one place above the highest (the adjusted base included).
-    with localcontext(
-        exact_decimal_context(benefit_amount, modified_agi, adjusted_base)
-    ):
+    context, (benefit_amount, modified_agi, adjusted_base) = (
+        exact_decimal_operands(benefit_amount, modified_agi, adjusted_base)
+    )
+    with localcontext(context):
         combined_income = modified_agi + _HALF * benefit_amount
         # §86(a)(1), applied without the paragraph (2) override.
         pre_1993 = min(

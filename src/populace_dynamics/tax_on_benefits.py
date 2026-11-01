@@ -7,9 +7,10 @@ The primary reading is the hub's ruling (b): Chapter 1 liability after
 nonrefundable credits and before refundable credits. Netting refundable
 credits (reading (a), 2.61.0's ``income_tax``) is reported only as a
 labeled sensitivity. Decimal sums and differences run in
-``section86.exact_decimal_context``, so the caller's decimal context
-changes no result. See ``docs/design/f1_tax_on_benefits.md`` for the
-statutory reading and limits.
+``section86.exact_decimal_context`` on the operands that
+``section86.exact_decimal_operands`` returns, so the caller's decimal
+context changes no result inside the domain that function documents. See
+``docs/design/f1_tax_on_benefits.md`` for the statutory reading and limits.
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ from populace_dynamics.bridge import policyengine_us as bridge
 from populace_dynamics.section86 import (
     Section86Inclusions,
     exact_decimal_context,
+    exact_decimal_operands,
     section86_inclusions,
 )
 
@@ -123,15 +125,15 @@ def chapter1_liability(components: Mapping[str, Any]) -> Chapter1Liability:
     amounts = {
         name: _decimal(components[name]) for name in LIABILITY_VARIABLES
     }
-    with localcontext(exact_decimal_context(*amounts.values())):
-        outside = sum(
-            (amounts[n] for n in NON_CHAPTER_1_COMPONENTS), Decimal(0)
-        )
+    context, operands = exact_decimal_operands(*amounts.values())
+    exact = dict(zip(amounts, operands, strict=True))
+    with localcontext(context):
+        outside = sum((exact[n] for n in NON_CHAPTER_1_COMPONENTS), Decimal(0))
         return Chapter1Liability(
             before_refundable_credits=(
-                amounts["income_tax_before_refundable_credits"] - outside
+                exact["income_tax_before_refundable_credits"] - outside
             ),
-            netted_sensitivity=amounts["income_tax"] - outside,
+            netted_sensitivity=exact["income_tax"] - outside,
             components=amounts,
         )
 
@@ -149,7 +151,10 @@ def allocate_liabilities(
     none: Decimal, pre_1993: Decimal, current: Decimal
 ) -> FundAllocation:
     """Apply the 42 U.S.C. 401 note's signed with-and-without split."""
-    with localcontext(exact_decimal_context(none, pre_1993, current)):
+    context, (none, pre_1993, current) = exact_decimal_operands(
+        none, pre_1993, current
+    )
+    with localcontext(context):
         return FundAllocation(
             pre_1993 - none, current - pre_1993, current - none
         )
@@ -207,7 +212,10 @@ def _interest_components(entry, facts, period):
     exempt = _decimal(facts.get("tax_exempt_interest_income", 0))
     if "taxable_interest_income" in facts:
         taxable = _decimal(facts["taxable_interest_income"])
-        with localcontext(exact_decimal_context(total, taxable, exempt)):
+        context, (total, taxable, exempt) = exact_decimal_operands(
+            total, taxable, exempt
+        )
+        with localcontext(context):
             gap = abs(total - taxable - exempt)
         if total and gap > Decimal("0.01"):
             raise ValueError(
@@ -215,7 +223,8 @@ def _interest_components(entry, facts, period):
                 "and tax_exempt_interest_income"
             )
     else:
-        with localcontext(exact_decimal_context(total, exempt)):
+        context, (total, exempt) = exact_decimal_operands(total, exempt)
+        with localcontext(context):
             taxable = total - exempt
         if taxable < 0:
             raise ValueError(
@@ -371,8 +380,11 @@ def tax_on_benefits_batch(
                 Decimal("0.01"),
                 _decimal(4 * bridge.float32_step(float(expected))),
             )
-            with localcontext(exact_decimal_context(pe[variable], expected)):
-                gap = abs(pe[variable] - expected)
+            context, (native, statute) = exact_decimal_operands(
+                pe[variable], expected
+            )
+            with localcontext(context):
+                gap = abs(native - statute)
             if gap > tolerance:
                 raise Section86MismatchError(
                     f"{variable}: statute={expected}, PE-US={pe[variable]}"
