@@ -34,20 +34,30 @@ from .ssi_invented import INVENTED_INPUTS, INVENTED_POLICY, invented_case
 from .test_ssi_inventory import (
     ADMITTED_AGE_FORMS,
     ADMITTED_FORMS,
+    ADMITTED_NAMING_FORMS,
     ATTRIBUTE_ROUTES,
     CORE_DEFAULT_BINDINGS,
     CORE_DEFAULT_CHANGES,
+    DEFINED_FOR_GATES,
     ENUM_ALIAS_LAYOUTS,
+    INPUT_RULE_FORMS,
     INVENTED_AGE_RECORD,
+    INVENTED_AMOUNT,
+    INVENTED_AMOUNT_PATH,
     INVENTED_EMPLOYMENT_INCOME,
     INVENTED_ENCODE_MEMBER_CLASS,
+    INVENTED_TWIN,
+    MIXED_MODE_FORMS,
     NAMING_ATTRIBUTE_FORMS,
     REFUSED_FORMS,
+    REFUSED_NAMING_FORMS,
+    SINGLE_MODE_FORMS,
     core_default_module,
     invented_age_module,
     invented_enum_module,
     invented_package,
     package_with_layout,
+    package_with_named_lines,
     package_with_trigger,
     read_attributes,
     read_members,
@@ -238,11 +248,14 @@ def test_inventory_enum_members_match_the_pinned_enum_classes():
 
 # Runs in the pinned interpreter: what the engine gives each named variable,
 # with its entity and period in every spelling the model API binds them to,
-# as the inventory records them.
+# as the inventory records them; whether it holds the variable to be an
+# input; and the adds, subtracts and defined_for it holds, with the names
+# each dated value of a parameter that a string adds or subtracts names.
 ATTRIBUTE_CHILD = """
 import enum, json, sys
 import policyengine_us.model_api as model_api
 from policyengine_core.entities import Entity
+from policyengine_core.parameters import get_parameter
 from policyengine_us import CountryTaxBenefitSystem
 
 spellings = {}
@@ -253,6 +266,21 @@ for spelling in ("DAY", "MONTH", "YEAR", "ETERNITY"):
     value = getattr(model_api, spelling)
     spellings.setdefault(("period", value), []).append(spelling)
 system = CountryTaxBenefitSystem()
+
+
+def naming(value):
+    if value is None or not isinstance(value, str):
+        return None if value is None else list(value)
+    return value
+
+
+def listed(value):
+    if not isinstance(value, str):
+        return None
+    parameter = get_parameter(system.parameters, value)
+    return sorted({item for row in parameter.values_list for item in row.value})
+
+
 observed = []
 for name in json.load(sys.stdin):
     variable = system.variables[name]
@@ -268,6 +296,12 @@ for name in json.load(sys.stdin):
         ),
         "entity": spellings.get(("entity", variable.entity.key)),
         "period": spellings.get(("period", variable.definition_period)),
+        "is_input": variable.is_input_variable(),
+        "adds": naming(variable.adds),
+        "subtracts": naming(variable.subtracts),
+        "defined_for": variable.defined_for,
+        "adds_listed": listed(variable.adds),
+        "subtracts_listed": listed(variable.subtracts),
     })
 json.dump(observed, sys.stdout)
 """
@@ -330,6 +364,11 @@ def test_inventory_attributes_match_the_pinned_engine():
         and type(r["default"]) is int
         for r in records
     )
+    inputs = {r["name"] for r in inventory["inputs"]}
+    boundaries = set(inventory["explicit_formula_boundaries"])
+    # Round 12's M1 and L1 need both kinds, and a string adds.
+    assert {pinned["is_input"] for pinned in observed} == {False, True}
+    assert any(isinstance(pinned["adds"], str) for pinned in observed)
     for record, pinned in zip(records, observed, strict=True):
         assert pinned["name"] == record["name"]
         assert pinned["value_type"] == record["value_type"]
@@ -339,6 +378,34 @@ def test_inventory_attributes_match_the_pinned_engine():
         # the one the source names.
         assert pinned["entity"] == [record["entity"]]
         assert pinned["period"] == [record["period"]]
+        name = record["name"]
+        if name in boundaries:
+            # A boundary is an input by the contract's choice, whatever
+            # the engine computes for it, and its dependencies are bypassed.
+            assert name in inputs
+            continue
+        # Round 12's M1: an input exactly when the engine holds it to be.
+        assert (name in inputs) == pinned["is_input"], name
+        # Round 12's L1: the tracer records no parameter that a string adds
+        # or subtracts names, so the attributes are compared here. Each
+        # names a parameter on the record, and the names the parameter lists
+        # on any date are its dependencies; each list item names a variable
+        # among them, or, holding a period, a parameter on the record.
+        for attribute in ("adds", "subtracts"):
+            value = pinned[attribute]
+            if isinstance(value, str):
+                assert value in record["parameter_dependencies"], name
+                assert set(pinned[f"{attribute}_listed"]) <= set(
+                    record["dependencies"]
+                ), name
+            for item in value if isinstance(value, list) else ():
+                assert item in (
+                    record["parameter_dependencies"]
+                    if "." in item
+                    else record["dependencies"]
+                ), name
+        if pinned["defined_for"] is not None:
+            assert pinned["defined_for"] in record["dependencies"], name
 
 
 # Runs in the pinned interpreter: where the installed policyengine_us is.
@@ -656,6 +723,67 @@ def test_engine_attributes_are_those_the_pinned_variable_reads():
         == ["FORMULA_NAME_PREFIX"]
     ]
     assert ast.literal_eval(prefix) == "formula"
+
+
+def core_constant(path, name):
+    """The value of the one top-level assignment of ``name`` in ``path``,
+    read statically: a literal, or the literal a re.compile call takes."""
+    (value,) = [
+        item.value
+        for item in ast.parse(path.read_bytes()).body
+        if isinstance(item, ast.Assign)
+        and [ast.unparse(target) for target in item.targets] == [name]
+    ]
+    if isinstance(value, ast.Call):
+        assert ast.unparse(value.func) == "re.compile"
+        (value,) = value.args
+    if isinstance(value, ast.Tuple):
+        return {ast.unparse(item) for item in value.elts}
+    return ast.literal_eval(value)
+
+
+def test_parameter_tree_rules_are_the_pinned_cores():
+    """The constants the reader mirrors against the pinned core's source,
+    read statically: the suffixes the parameter node walk loads, the names
+    it skips, an index file as a node's metadata, the pattern of dated
+    keys, and the value types a defined_for may name."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    completed = subprocess.run(
+        [
+            str(python),
+            "-I",
+            "-c",
+            "import policyengine_core.variables.variable as module; "
+            "print(module.__file__)",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    core = Path(completed.stdout.strip()).parents[1]
+    parameters = core / "parameters"
+    assert core_constant(parameters / "config.py", "FILE_EXTENSIONS") == set(
+        inventory_script.PARAMETER_SUFFIXES
+    )
+    skipped = core_constant(
+        parameters / "parameter_node.py", "EXCLUDED_PARAMETER_CHILD_NAMES"
+    )
+    walk = ast.unparse(
+        ast.parse((parameters / "parameter_node.py").read_bytes())
+    )
+    assert "if child_name == 'index':" in walk
+    assert set(skipped) | {"index"} == inventory_script.PARAMETER_SKIPPED
+    assert (
+        core_constant(core / "periods/config.py", "INSTANT_PATTERN")
+        == inventory_script.INSTANT_PATTERN.pattern
+    )
+    assert (
+        core_constant(core / "variables/variable.py", "NUMERIC_VALUE_TYPES")
+        == inventory_script.NUMERIC_VALUE_TYPES
+    )
 
 
 # Runs in the pinned interpreter. It loads each invented module through the
@@ -1223,6 +1351,302 @@ def test_naming_attributes_and_formulas_load_as_the_engine_reads_them(
     assert read_attributes(invented_age_module(INVENTED_FORMULAS_TWICE[:1]))
 
 
+# An invented stand-in for the model API, for the core harness below: the
+# names invented modules take, bound to policyengine_core directly, so that
+# no country system is built.
+INVENTED_SHIM_MODEL_API = """from policyengine_core.entities import build_entity
+from policyengine_core.enums import Enum
+from policyengine_core.periods import ETERNITY, MONTH, YEAR
+from policyengine_core.variables import Variable
+
+Person = build_entity(
+    key="person", plural="people", label="Person", is_person=True
+)
+Household = build_entity(
+    key="household",
+    plural="households",
+    label="Household",
+    roles=[{"key": "member", "plural": "members", "label": "Member"}],
+)
+ENTITIES = [Person, Household]
+"""
+INVENTED_SHIM_IMPORT = "from policyengine_us.model_api import *\n\n\n"
+# Runs in the pinned interpreter with the shim first on its path, and builds
+# no country system: policyengine_core's own TaxBenefitSystem loads each
+# invented package through its walks of variables/ and parameters/, and a
+# simulation of one invented person calculates invented_named for 2026. It
+# reports the error that stopped the load, or whether the engine holds
+# invented_named to be an input, whether it holds a parameter
+# gov.ssa.ssi.invented, and the value or the error of the calculation.
+CORE_HARNESS_CHILD = """
+import json, sys
+sys.path.insert(0, sys.argv[1])
+from policyengine_core.parameters import get_parameter
+from policyengine_core.simulations import Simulation
+from policyengine_core.taxbenefitsystems import TaxBenefitSystem
+from policyengine_us.model_api import ENTITIES
+
+observed = []
+for root in json.load(sys.stdin):
+    class InventedSystem(TaxBenefitSystem):
+        variables_dir = root + "/variables"
+        parameters_dir = root + "/parameters"
+
+    try:
+        system = InventedSystem(ENTITIES)
+    except Exception as error:
+        observed.append({"load_error": type(error).__name__})
+        continue
+    row = {"is_input": system.variables["invented_named"].is_input_variable()}
+    try:
+        get_parameter(system.parameters, "gov.ssa.ssi.invented")
+        row["invented_parameter"] = True
+    except Exception:
+        row["invented_parameter"] = False
+    person = {"employment_income": {"2026": 5.0}, "invented_age": {"2026": 41}}
+    situation = {
+        "people": {"invented": person},
+        "households": {"unit": {"members": ["invented"]}},
+    }
+    try:
+        simulation = Simulation(tax_benefit_system=system, situation=situation)
+        values = simulation.calculate("invented_named", "2026")
+        row["value"] = [float(value) for value in values]
+    except Exception as error:
+        row["error"] = type(error).__name__
+    observed.append(row)
+json.dump(observed, sys.stdout)
+"""
+
+
+def engine_ready(source):
+    """An invented variables module the pinned core can load: with the
+    model API's star import, and a label in each variable class that has
+    none, since the engine refuses a variable without one. The reader
+    admits both, and neither changes a record."""
+    lines = source.splitlines(keepends=True)
+    for node in reversed(ast.parse(source).body):
+        if (
+            isinstance(node, ast.ClassDef)
+            and [ast.unparse(base) for base in node.bases] == ["Variable"]
+            and not any(
+                isinstance(item, ast.Assign)
+                and [ast.unparse(target) for target in item.targets]
+                == ["label"]
+                for item in node.body
+            )
+        ):
+            lines.insert(node.lineno, '    label = "Invented label"\n')
+    return INVENTED_SHIM_IMPORT + "".join(lines)
+
+
+def core_harness(tmp_path, cases):
+    """The pinned core's load and calculation, and the reader's record of
+    invented_named or its refusal, for each invented package that
+    ``cases``, a list of (body lines, files), gives. Every variables file
+    is made ``engine_ready``, so both read the same bytes."""
+    python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
+    if not python.is_file():
+        pytest.skip(f"SSI0 interpreter absent: {python}")
+    shim = tmp_path / "shim" / "policyengine_us"
+    shim.mkdir(parents=True)
+    (shim / "__init__.py").write_text("")
+    (shim / "model_api.py").write_text(INVENTED_SHIM_MODEL_API)
+    packages = []
+    for index, (lines, files) in enumerate(cases):
+        package = package_with_named_lines(
+            tmp_path / f"case_{index}", lines, files
+        )
+        for path in sorted((package / "variables").rglob("*.py")):
+            path.write_text(engine_ready(path.read_text()))
+        packages.append(package)
+    completed = subprocess.run(
+        [str(python), "-I", "-c", CORE_HARNESS_CHILD, str(shim.parent)],
+        input=json.dumps([str(package) for package in packages]),
+        capture_output=True,
+        text=True,
+        timeout=1800,
+        check=True,
+    )
+    read = []
+    for package in packages:
+        try:
+            result = inventory_script.inventory_release(package)
+        except ValueError as error:
+            read.append(f"refused: {error}")
+            continue
+        inputs = {row["name"] for row in result["inputs"]}
+        (record,) = [
+            row
+            for row in result["variables"]
+            if row["name"] == "invented_named"
+        ]
+        read.append(record | {"is_input": "invented_named" in inputs})
+    return json.loads(completed.stdout), read
+
+
+# What the pinned core does with each form of INPUT_RULE_FORMS: the value it
+# gives invented_named for one invented person, aged 41, with no other input.
+ENGINE_INPUT_RULE_VALUES = {
+    "plain": 0.0,
+    "defined_for_only": 7.0,
+    "label_equal_to_a_stem": 7.0,
+    "formula_only": 41.0,
+    "adds_parameters_only": 3.0,
+    "string_adds_empty_list": 0.0,
+    "adds_empty_list": 7.0,
+    "subtracts_only": -41.0,
+}
+
+
+def test_inputs_are_those_the_core_engine_holds_to_be_inputs(tmp_path):
+    """Differential, round 12's M1: for each invented form, the reader's
+    input status against the pinned core's is_input_variable, with no
+    country build. The engine gives the default of an unsupplied input,
+    defined_for or not, and calculates every form that sets adds or
+    subtracts, so a record read the old way would leave its default to the
+    calculation or supply data over a value the engine computes."""
+    kinds = sorted(INPUT_RULE_FORMS)
+    engine, read = core_harness(
+        tmp_path, [INPUT_RULE_FORMS[kind][:2] for kind in kinds]
+    )
+    for kind, observed, record in zip(kinds, engine, read, strict=True):
+        assert observed == {
+            "is_input": INPUT_RULE_FORMS[kind][2],
+            "invented_parameter": False,
+            "value": [ENGINE_INPUT_RULE_VALUES[kind]],
+        }, kind
+        assert record["is_input"] == observed["is_input"], kind
+
+
+# What the pinned core does with each form of REFUSED_NAMING_FORMS, which
+# the reader refuses: raises as it calculates, refuses to load, or reads.
+ENGINE_REFUSED_NAMING = {
+    "string_empty_part": {"error": "ValueError"},
+    "string_other_case": {"error": "ValueError"},
+    "list_names_itself": {"error": "CycleError"},
+    "defined_for_names_itself": {"error": "RecursionError"},
+    "list_item_absent": {"error": "ValueError"},
+    "list_item_folder": {"error": "ValueError"},
+    "list_item_node_key": {"value": [44.0]},
+    "subtracts_names_itself": {"error": "CycleError"},
+    "string_lists_itself": {"value": [41.0]},
+    "list_item_other_case": {"error": "ValueError"},
+    "list_item_empty_part": {"error": "ValueError"},
+    "list_item_file_beside_folder": {"load_error": "ValueError"},
+    "list_item_yaml_beside_yml": {"load_error": "ValueError"},
+    "string_folder": {"error": "ValueError"},
+    "string_node_file": {"error": "ValueError"},
+    "string_dated_keys_only": {"value": [41.0]},
+    "string_yml": {"value": [41.0]},
+    "string_expected_entry": {"value": [41.0]},
+    "string_lists_a_parameter": {"value": [44.0]},
+    "list_item_top_level": {"value": [44.0]},
+    "string_empty": {"value": [0.0]},
+    "list_item_built_parameter": {"value": [41.0]},
+    "string_empty_values": {"load_error": "ParameterParsingError"},
+    "string_undated_key": {"load_error": "ParameterParsingError"},
+    "string_repeated_key": {"load_error": "ParameterParsingError"},
+    "string_number": {"error": "TypeError"},
+    "string_skipped_name": {"error": "ValueError"},
+    "defined_for_names_a_parameter": {"error": "ValueError"},
+    "string_lists_a_class_of_another_stem": {"value": [7.0]},
+    "gate_of_another_stem_beside_adds": {"value": [41.0]},
+}
+# The value the pinned core gives for each form of ADMITTED_NAMING_FORMS.
+# Where the record's names differ from the engine's reads, the record lists
+# more: the union over dates, and a repeated item once, which the engine
+# sums twice.
+ENGINE_ADMITTED_NAMING = {
+    "list_item_parameter": 44.0,
+    "list_item_outside_gov": -44.0,
+    "string_union_over_dates": 41.0,
+    "string_value_mappings": 41.0,
+    "string_repeated_item": 82.0,
+    "gate_beside_adds": 0.0,
+}
+
+
+def test_naming_forms_load_in_the_core_engine_as_the_reader_reads_them(
+    tmp_path,
+):
+    """Differential, round 12's M3, with no country build: every name the
+    reader refuses makes the pinned core raise, refuse to load, or read a
+    value, which is the safe direction; every name it admits calculates."""
+    refused = sorted(REFUSED_NAMING_FORMS)
+    admitted = sorted(ADMITTED_NAMING_FORMS)
+    engine, read = core_harness(
+        tmp_path,
+        [REFUSED_NAMING_FORMS[kind][:2] for kind in refused]
+        + [ADMITTED_NAMING_FORMS[kind][:2] for kind in admitted],
+    )
+    rows = dict(
+        zip(refused + admitted, zip(engine, read, strict=True), strict=True)
+    )
+    # The review's six forms and the self-names: the engine raises on all
+    # but the key inside a YAML node, which it reads.
+    for kind in refused:
+        observed, record = rows[kind]
+        assert record == f"refused: {REFUSED_NAMING_FORMS[kind][2]}", kind
+        expected = ENGINE_REFUSED_NAMING[kind]
+        assert {key: observed[key] for key in expected} == expected, kind
+    for kind in admitted:
+        observed, record = rows[kind]
+        assert observed["value"] == [ENGINE_ADMITTED_NAMING[kind]], kind
+        assert record["dependencies"] == ADMITTED_NAMING_FORMS[kind][2]
+
+
+def test_load_time_refusals_are_the_core_engines(tmp_path):
+    """Differential, with no country build: the pinned core refuses to load
+    a defined_for that names an Enum or str variable, a variable of two
+    computation modes, a variable name in two files and a parameter file
+    that repeats a key, and the reader refuses each; each control loads in
+    both. A .yml file in the federal SSI tree loads as a parameter in the
+    engine, which the reader's table would leave out, so it refuses."""
+    cases = {}
+    for gate, (files, numeric) in DEFINED_FOR_GATES.items():
+        cases[f"gate_{gate}"] = (
+            [f'defined_for = "{gate}"'],
+            files,
+            not numeric,
+        )
+    for kind, lines in MIXED_MODE_FORMS.items():
+        cases[kind] = (lines, {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT}, True)
+    for kind, lines in SINGLE_MODE_FORMS.items():
+        cases[kind] = (lines, {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT}, False)
+    cases["class_in_two_files"] = (
+        ['adds = ["invented_other", "invented_twin"]'],
+        {
+            "variables/input/invented_twin.py": INVENTED_TWIN,
+            "variables/input/invented_other.py": (
+                INVENTED_TWIN.replace("invented_twin", "invented_other")
+                + "\n\n"
+                + INVENTED_TWIN
+            ),
+        },
+        True,
+    )
+    cases["repeated_key"] = (
+        [],
+        {INVENTED_AMOUNT_PATH: "values:\n  2020-01-01: 3\n  2020-01-01: 4\n"},
+        True,
+    )
+    kinds = sorted(cases)
+    engine, read = core_harness(tmp_path, [cases[kind][:2] for kind in kinds])
+    for kind, observed, record in zip(kinds, engine, read, strict=True):
+        refused = cases[kind][2]
+        assert ("load_error" in observed) == refused, (kind, observed)
+        assert isinstance(record, str) == refused, (kind, record)
+        if not refused:
+            assert "error" not in observed, (kind, observed)
+    (yml,), (yml_read,) = core_harness(
+        tmp_path / "yml",
+        [([], {"parameters/gov/ssa/ssi/invented.yml": INVENTED_AMOUNT})],
+    )
+    assert yml["invented_parameter"] is True
+    assert yml_read.startswith("refused: Unread .yml parameter file under")
+
+
 # Import-time code with no Call node, which the reader admits: each form
 # reaches policyengine_core's type defaults only by reads, through the
 # model API's warnings module. Round 9 tried eleven such forms and found
@@ -1327,7 +1751,7 @@ def walk(node, names, parameters, edges):
 
 
 def trace(**options):
-    names, parameters, edges = set(), set(), set()
+    names, parameters, edges, amounts = set(), set(), set(), set()
     response = 0.0
     for case in job["cases"]:
         simulation = Simulation(situation=case, trace=True, **options)
@@ -1339,11 +1763,16 @@ def trace(**options):
             "labor_supply_behavioral_response", job["year"]
         )
         response = max(response, float(abs(values).max()))
+        # Read from the simulation's own tree, past the tracer, so that the
+        # reform shows it took: an empty one would leave the baseline.
+        tree = simulation.tax_benefit_system.parameters(f"{job['year']}-01-01")
+        amounts.add(float(tree.gov.ssa.ssi.amount.individual))
     return {
         "variables": sorted(names),
         "parameters": sorted(parameters),
         "edges": sorted(edges),
         "response": response,
+        "amounts": sorted(amounts),
     }
 
 
@@ -1356,7 +1785,9 @@ json.dump(
 # a simulation moves each one's values to its _before_lsr variable
 # (policyengine_us/system.py), and each input's adds then sum that and a
 # behavioral response. Without a reform the response returns 0 at once.
-# Under one, as the runner always passes, it reads its elasticities first.
+# Under one it reads its elasticities first. The runner passes a reform
+# whenever a case has an override: policyengine's compile_reform gives none
+# for no overrides, and each scalar override from 1 January of the year.
 ENGINE_INPUT_ROUTE = frozenset(
     {
         "employment_income_before_lsr",
@@ -1537,6 +1968,13 @@ def trace_gaps(inventory, trace, engine_prefixes=(ENGINE_GATE_PREFIX,)):
     parameters = [row["name"] for row in inventory["parameters"]]
     return {
         "unlisted": sorted(read - listed - ENGINE_INPUT_ROUTE),
+        # Round 12's N5: this can fail on a correct record, in the safe
+        # direction, when the record lists a name the engine skips here: a
+        # list member dated after 2026, since the record lists the union
+        # over dates; a variable a formula reads under a defined_for mask
+        # false for all nine households; a read made only outside January,
+        # where MONTH targets run at 2026-01; and an input's dependency or a
+        # body literal no code reads, which the inventory follows.
         "unread": sorted((listed | ENGINE_INPUT_ROUTE) - read),
         "edges": sorted(
             f"{parent} -> {child}"
@@ -1564,9 +2002,13 @@ def test_engine_trace_reads_only_what_the_inventory_lists():
     out. Over invented households, with every input the contract names set
     and only the federal SSI variables calculated, the pinned engine's tracer
     reads exactly the listed variables and the named route for three inputs,
-    and every edge and parameter it reads is on the record. So it does under
-    the reform of every override the runner admits, apart from the elasticity
-    parameters the route then reads, which leave the response at 0."""
+    and every edge, and every parameter the tracer records, is on the record.
+    The tracer records only a formula's reads, and no parameter that adds or
+    subtracts names, which test_inventory_attributes_match_the_pinned_engine
+    compares instead. So it does under the reform of every override the
+    runner admits, apart from the elasticity parameters the route then
+    reads, which leave the response at 0; the reformed tree holds the
+    reform's individual FBR."""
     python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
     if not python.is_file():
         pytest.skip(f"SSI0 interpreter absent: {python}")
@@ -1595,6 +2037,9 @@ def test_engine_trace_reads_only_what_the_inventory_lists():
             if row["path"].startswith("variables/gov/ssa/ssi/")
         ],
     }
+    # Round 12's L5: the targets are the federal SSI roots, and only those,
+    # so the check that the engine reads every listed name can fail.
+    assert len(job["targets"]) == inventory["federal_ssi_variable_count"]
     completed = subprocess.run(
         [str(python), "-I", "-c", TRACE_CHILD],
         input=json.dumps(job),
@@ -1623,6 +2068,11 @@ def test_engine_trace_reads_only_what_the_inventory_lists():
     assert gated and all(
         name.startswith(ENGINE_RESPONSE_PREFIX) for name in gated
     )
+    # Round 12's L2: the reform took, which an empty one would not; the
+    # branch above shows only that a reform was passed.
+    individual = INVENTED_POLICY["gov.ssa.ssi.amount.individual"]
+    assert reformed["amounts"] == [individual]
+    assert len(trace["amounts"]) == 1 and trace["amounts"] != [individual]
 
     # Controls: each kind of gap would show on these traces.
     target = "ssi_countable_income"

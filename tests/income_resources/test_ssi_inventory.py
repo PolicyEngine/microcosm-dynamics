@@ -3588,19 +3588,35 @@ INVENTED_HIDDEN = """class invented_hidden(Variable):
 """
 
 
-def package_with_named(tmp_path, attribute, value):
-    """An invented package with a federal variable whose ``attribute`` is
-    the literal source ``value``."""
-    package = invented_package(tmp_path)
-    (package / "variables/gov/ssa/ssi/invented_named.py").write_text(
-        f"""class invented_named(Variable):
+INVENTED_NAMED = """class invented_named(Variable):
     value_type = float
     entity = Person
     definition_period = YEAR
-    {attribute} = {value}
 """
+
+
+def package_with_named_lines(tmp_path, lines, files=None):
+    """An invented package with a federal variable, invented_named, whose
+    body ends with ``lines``, and with ``files``, by path below the package,
+    written."""
+    package = invented_package(tmp_path)
+    (package / "variables/gov/ssa/ssi/invented_named.py").write_text(
+        INVENTED_NAMED
+        + "".join(
+            "    " + line.replace("\n", "\n    ") + "\n" for line in lines
+        )
     )
+    for relative, text in (files or {}).items():
+        path = package / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
     return package
+
+
+def package_with_named(tmp_path, attribute, value):
+    """An invented package with a federal variable whose ``attribute`` is
+    the literal source ``value``."""
+    return package_with_named_lines(tmp_path, [f"{attribute} = {value}"])
 
 
 def named_record(package):
@@ -3684,8 +3700,797 @@ def test_defined_for_names_a_dependency_of_any_stem_it_finds(tmp_path):
     assert named_record(package)["dependencies"] == ["invented_age"]
 
 
-def test_name_equal_to_its_own_variable_is_no_dependency(tmp_path):
-    package = package_with_named(
-        tmp_path, "adds", '["invented_named", "invented_age"]'
+@pytest.mark.parametrize(
+    ("attribute", "value"),
+    [
+        ("adds", '["invented_named", "invented_age"]'),
+        ("adds", '("invented_age", "invented_named")'),
+        ("subtracts", '["invented_named"]'),
+        ("defined_for", '"invented_named"'),
+    ],
+)
+def test_name_equal_to_its_own_variable_refuses(tmp_path, attribute, value):
+    """Round 12's M3: the engine's calculation of a variable that its own
+    adds, subtracts or defined_for names never ends, by a cycle error or a
+    recursion error, so the reader refuses the name; see test_ssi_engine."""
+    package = package_with_named(tmp_path, attribute, value)
+    with pytest.raises(
+        ValueError, match=f"^The {attribute} of invented_named names itself$"
+    ):
+        inventory.inventory_release(package)
+
+
+def test_formula_reading_its_own_variable_is_no_dependency(tmp_path):
+    """A formula may read its own variable at another period, as a lagged
+    value; the record leaves that read out of its dependencies."""
+    package = package_with_named_lines(
+        tmp_path,
+        [
+            "def formula(person, period, parameters):\n"
+            '    return person("invented_named", period.last_year) + '
+            'person("invented_age", period)'
+        ],
     )
-    assert named_record(package)["dependencies"] == ["invented_age"]
+    record = named_record(package)
+    assert record["formula_names"] == ["formula"]
+    assert record["dependencies"] == ["invented_age"]
+
+
+# Round 12's M1: the engine's is_input_variable holds a variable to be an
+# input exactly when it has no formula and sets neither adds nor subtracts.
+INVENTED_FLAG = """class invented_flag(Variable):
+    value_type = bool
+    entity = Person
+    definition_period = YEAR
+"""
+INVENTED_AMOUNT = "values:\n  2020-01-01: 3\n"
+INVENTED_AMOUNT_PATH = "parameters/gov/ssa/ssi/invented_amount.yaml"
+INVENTED_LIST_PATH = "parameters/gov/ssa/ssi/invented_list.yaml"
+INVENTED_NODE = "amount:\n  values:\n    2020-01-01: 3\n"
+INVENTED_FORMULA = (
+    "def formula(person, period, parameters):\n"
+    '    return person("invented_age", period)'
+)
+# Forms of invented_named, with the files each needs, and whether the
+# engine holds it to be an input. A defined_for, or a label that equals a
+# file's stem, plays no part; adds or subtracts set, even to an empty list
+# or to parameters alone, makes the variable an aggregate.
+INPUT_RULE_FORMS = {
+    "plain": ([], {}, True),
+    "defined_for_only": (
+        ['defined_for = "invented_flag"', "default_value = 7"],
+        {"variables/input/invented_flag.py": INVENTED_FLAG},
+        True,
+    ),
+    "label_equal_to_a_stem": (
+        ['label = "invented_age"', "default_value = 7"],
+        {},
+        True,
+    ),
+    "formula_only": ([INVENTED_FORMULA], {}, False),
+    "adds_parameters_only": (
+        ['adds = ["gov.ssa.ssi.invented_amount"]'],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        False,
+    ),
+    "string_adds_empty_list": (
+        ['adds = "gov.ssa.ssi.invented_list"', "default_value = 7"],
+        {INVENTED_LIST_PATH: "values:\n  2020-01-01: []\n"},
+        False,
+    ),
+    "adds_empty_list": (["adds = []", "default_value = 7"], {}, False),
+    "subtracts_only": (['subtracts = ["invented_age"]'], {}, False),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(INPUT_RULE_FORMS))
+def test_inputs_are_those_the_engine_holds_to_be_inputs(tmp_path, kind):
+    """Round 12's M1: a variable reads as an input exactly when it has no
+    formula and sets neither adds nor subtracts, as the engine's
+    is_input_variable says; test_ssi_engine checks each form there."""
+    lines, files, engine_input = INPUT_RULE_FORMS[kind]
+    package = package_with_named_lines(tmp_path, lines, files)
+    result = inventory.inventory_release(package)
+    inputs = {row["name"]: row for row in result["inputs"]}
+    assert ("invented_named" in inputs) == engine_input
+    if engine_input:
+        assert inputs["invented_named"]["reason"] == (
+            "No formula or aggregation"
+        )
+
+
+def test_an_inputs_dependencies_resolve_as_an_aggregates_do(tmp_path):
+    """An input's defined_for and its body's literals still name
+    dependencies, which the inventory follows: the engine reads none of
+    them for a value the contract supplies, but each must resolve, and the
+    variable a defined_for names has a record whose type is checked."""
+    lines, files, _ = INPUT_RULE_FORMS["defined_for_only"]
+    result = inventory.inventory_release(
+        package_with_named_lines(tmp_path / "gate", lines, files)
+    )
+    inputs = {row["name"]: row for row in result["inputs"]}
+    assert inputs["invented_named"]["dependencies"] == ["invented_flag"]
+    assert inputs["invented_flag"]["read_by"] == ["invented_named"]
+    lines, files, _ = INPUT_RULE_FORMS["label_equal_to_a_stem"]
+    result = inventory.inventory_release(
+        package_with_named_lines(tmp_path / "label", lines, files)
+    )
+    inputs = {row["name"]: row for row in result["inputs"]}
+    assert inputs["invented_named"]["dependencies"] == ["invented_age"]
+    assert "invented_named" in inputs["invented_age"]["read_by"]
+    package = package_with_named(
+        tmp_path / "absent", "defined_for", '"invented_absent"'
+    )
+    with pytest.raises(
+        ValueError,
+        match="^Unresolved dependency: invented_named: invented_absent$",
+    ):
+        inventory.inventory_release(package)
+
+
+INVENTED_TEXT = """class invented_text(Variable):
+    value_type = str
+    entity = Person
+    definition_period = YEAR
+"""
+# The variable a defined_for names, with its file, and whether the engine
+# can compare it with zero, as it requires when it registers the variable.
+DEFINED_FOR_GATES = {
+    "invented_flag": (
+        {"variables/input/invented_flag.py": INVENTED_FLAG},
+        True,
+    ),
+    "invented_age": ({}, True),
+    "employment_income": ({}, True),
+    "invented_status": (
+        {
+            "variables/input/invented_status.py": INVENTED_ENUM_INPUT.format(
+                possible_values="InventedStatus"
+            )
+        },
+        False,
+    ),
+    "invented_text": (
+        {"variables/input/invented_text.py": INVENTED_TEXT},
+        False,
+    ),
+}
+
+
+@pytest.mark.parametrize("formula", [False, True], ids=["input", "formula"])
+@pytest.mark.parametrize("gate", sorted(DEFINED_FOR_GATES))
+def test_defined_for_names_a_numeric_variable(tmp_path, gate, formula):
+    """The engine refuses to register a variable whose defined_for names an
+    Enum or str variable, which it cannot compare with zero; the reader
+    refuses it too, on an input as on an aggregate."""
+    files, numeric = DEFINED_FOR_GATES[gate]
+    lines = [f'defined_for = "{gate}"'] + ([INVENTED_FORMULA] * formula)
+    package = package_with_named_lines(tmp_path, lines, files)
+    if numeric:
+        assert gate in named_record(package)["dependencies"]
+    else:
+        with pytest.raises(
+            ValueError,
+            match=f"^The defined_for of invented_named names {gate}, which "
+            "is not numeric$",
+        ):
+            inventory.inventory_release(package)
+
+
+# Round 12's M3: names in adds, subtracts and defined_for that the engine
+# reads, or refuses, in a way the file system would not show: (body lines,
+# files, the refusal). The reader refuses each with a ValueError. The first
+# seven are the review's; the engine raises on all but list_item_node_key,
+# whose key inside a YAML node it reads (test_ssi_engine).
+REFUSED_NAMING_FORMS = {
+    "string_empty_part": (
+        ['adds = "gov..ssa.ssi.income.sources.earned"'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    "string_other_case": (
+        ['adds = "gov.ssa.ssi.income.sources.EARNED"'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    "list_names_itself": (
+        ['adds = ["invented_named", "invented_age"]'],
+        {},
+        "The adds of invented_named names itself",
+    ),
+    "defined_for_names_itself": (
+        ['defined_for = "invented_named"'],
+        {},
+        "The defined_for of invented_named names itself",
+    ),
+    "list_item_absent": (
+        ['adds = ["invented_age", "gov.ssa.ssi.absent"]'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    "list_item_folder": (
+        ['adds = ["invented_age", "gov.ssa.ssi.income"]'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    "list_item_node_key": (
+        ['adds = ["invented_age", "gov.invented_node.amount"]'],
+        {"parameters/gov/invented_node.yaml": INVENTED_NODE},
+        "Unresolved adds for invented_named",
+    ),
+    "subtracts_names_itself": (
+        ['subtracts = ["invented_named"]'],
+        {},
+        "The subtracts of invented_named names itself",
+    ),
+    "string_lists_itself": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "  2030-01-01:\n    - invented_named\n"
+            )
+        },
+        "The adds of invented_named names itself",
+    ),
+    "list_item_other_case": (
+        ['adds = ["invented_age", "gov.ssa.ssi.INVENTED_AMOUNT"]'],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        "Unresolved adds for invented_named",
+    ),
+    "list_item_empty_part": (
+        ['subtracts = ["invented_age", "gov.ssa..ssi.invented_amount"]'],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        "Unresolved subtracts for invented_named",
+    ),
+    "list_item_file_beside_folder": (
+        ['adds = ["invented_age", "gov.ssa.ssi.invented_amount"]'],
+        {
+            INVENTED_AMOUNT_PATH: INVENTED_AMOUNT,
+            "parameters/gov/ssa/ssi/invented_amount/rate.yaml": (
+                INVENTED_AMOUNT
+            ),
+        },
+        "Unresolved adds for invented_named",
+    ),
+    "list_item_yaml_beside_yml": (
+        ['adds = ["invented_age", "gov.ssa.ssi.invented_amount"]'],
+        {
+            INVENTED_AMOUNT_PATH: INVENTED_AMOUNT,
+            "parameters/gov/ssa/ssi/invented_amount.yml": INVENTED_AMOUNT,
+        },
+        "Unresolved adds for invented_named",
+    ),
+    # The engine reads each of these, so refusing it is the safe direction
+    # (round 12's N1 and N2).
+    "string_folder": (
+        ['adds = "gov.ssa.ssi.income"'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    "string_node_file": (
+        ['adds = "gov.invented_node"'],
+        {"parameters/gov/invented_node.yaml": INVENTED_NODE},
+        "Unresolved adds for invented_named",
+    ),
+    "string_dated_keys_only": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {INVENTED_LIST_PATH: "2020-01-01:\n  - invented_age\n"},
+        "Unresolved adds for invented_named",
+    ),
+    "string_yml": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            "parameters/gov/ssa/ssi/invented_list.yml": (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+            )
+        },
+        "Unresolved adds for invented_named",
+    ),
+    "string_expected_entry": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "  2030-01-01: expected\n"
+            )
+        },
+        "Unresolved adds for invented_named",
+    ),
+    "string_lists_a_parameter": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "    - gov.ssa.ssi.invented_amount\n"
+            ),
+            INVENTED_AMOUNT_PATH: INVENTED_AMOUNT,
+        },
+        "Unresolved dependency: invented_named: gov.ssa.ssi.invented_amount",
+    ),
+    "list_item_top_level": (
+        ['adds = ["invented_age", "invented_top"]'],
+        {"parameters/invented_top.yaml": INVENTED_AMOUNT},
+        "Unresolved dependency: invented_named: invented_top",
+    ),
+    "string_empty": (['adds = ""'], {}, "Unresolved adds for invented_named"),
+    # The engine builds an abolition parameter for each variable it
+    # calculates, with no file behind it.
+    "list_item_built_parameter": (
+        ['adds = ["invented_age", "gov.abolitions.invented_intermediate"]'],
+        {},
+        "Unresolved adds for invented_named",
+    ),
+    # The engine refuses each of these.
+    "string_empty_values": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {INVENTED_LIST_PATH: "values: {}\n"},
+        "Unresolved adds for invented_named",
+    ),
+    "string_undated_key": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {INVENTED_LIST_PATH: "values:\n  invented:\n    - invented_age\n"},
+        "Unresolved adds for invented_named",
+    ),
+    "string_repeated_key": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "  2020-01-01:\n    - employment_income\n"
+            )
+        },
+        "Unresolved adds for invented_named",
+    ),
+    "string_number": (
+        ['adds = "gov.ssa.ssi.invented_amount"'],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        "Unresolved adds for invented_named",
+    ),
+    "string_skipped_name": (
+        ['adds = "gov.ssa.ssi.index"'],
+        {
+            "parameters/gov/ssa/ssi/index.yaml": (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+            )
+        },
+        "Unresolved adds for invented_named",
+    ),
+    # Round 12's L4: B7, B10 and B19.
+    "defined_for_names_a_parameter": (
+        ['defined_for = "gov.ssa.ssi.invented_amount"', INVENTED_FORMULA],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        "Unresolved dependency: invented_named: gov.ssa.ssi.invented_amount",
+    ),
+    "string_lists_a_class_of_another_stem": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_hidden\n"
+            ),
+            "variables/input/invented_other.py": INVENTED_HIDDEN,
+        },
+        "Unresolved dependency: invented_named: invented_hidden",
+    ),
+    "gate_of_another_stem_beside_adds": (
+        ['adds = ["invented_age"]', 'defined_for = "invented_hidden"'],
+        {"variables/input/invented_other.py": INVENTED_HIDDEN},
+        "Unresolved dependency: invented_named: invented_hidden",
+    ),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(REFUSED_NAMING_FORMS))
+def test_naming_forms_the_engine_reads_otherwise_refuse(tmp_path, kind):
+    """Each name resolves as the engine's parameter tree resolves it, by
+    exact child names, ending at a .yaml file of dated values, or refuses
+    with a ValueError; a KeyError would mean a file read without values."""
+    lines, files, refusal = REFUSED_NAMING_FORMS[kind]
+    package = package_with_named_lines(tmp_path, lines, files)
+    with pytest.raises(ValueError, match=f"^{re.escape(refusal)}$"):
+        inventory.inventory_release(package)
+
+
+# Names the reader admits: (body lines, files, the record's dependencies and
+# its parameter dependencies). The engine reads each the same way.
+ADMITTED_NAMING_FORMS = {
+    "list_item_parameter": (
+        ['adds = ["invented_age", "gov.ssa.ssi.invented_amount"]'],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+        ["invented_age"],
+        ["gov.ssa.ssi.invented_amount"],
+    ),
+    # Round 12's L4: B3, a list item with a period outside gov.
+    "list_item_outside_gov": (
+        ['subtracts = ["invented_age", "household.invented_amount"]'],
+        {"parameters/household/invented_amount.yaml": INVENTED_AMOUNT},
+        ["invented_age"],
+        ["household.invented_amount"],
+    ),
+    # The record lists the union over dates, where the engine reads only
+    # the list at the start of the period it calculates.
+    "string_union_over_dates": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "  2030-01-01:\n    - employment_income\n"
+            )
+        },
+        ["employment_income", "invented_age"],
+        ["gov.ssa.ssi.invented_list"],
+    ),
+    "string_value_mappings": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    value:\n      - invented_age\n"
+            )
+        },
+        ["invented_age"],
+        ["gov.ssa.ssi.invented_list"],
+    ),
+    "string_repeated_item": (
+        ['adds = "gov.ssa.ssi.invented_list"'],
+        {
+            INVENTED_LIST_PATH: (
+                "values:\n  2020-01-01:\n    - invented_age\n"
+                "    - invented_age\n"
+            )
+        },
+        ["invented_age"],
+        ["gov.ssa.ssi.invented_list"],
+    ),
+    # Round 12's L4: B19, as the pinned ssi sets both.
+    "gate_beside_adds": (
+        ['adds = ["invented_age"]', 'defined_for = "invented_flag"'],
+        {"variables/input/invented_flag.py": INVENTED_FLAG},
+        ["invented_age", "invented_flag"],
+        [],
+    ),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(ADMITTED_NAMING_FORMS))
+def test_naming_forms_the_engine_reads_alike_are_read(tmp_path, kind):
+    lines, files, dependencies, parameters = ADMITTED_NAMING_FORMS[kind]
+    package = package_with_named_lines(tmp_path, lines, files)
+    result = inventory.inventory_release(package)
+    record = next(
+        row for row in result["variables"] if row["name"] == "invented_named"
+    )
+    assert record["dependencies"] == dependencies
+    assert record["parameter_dependencies"] == parameters
+    listed = {row["name"] for row in result["parameters"]}
+    assert set(parameters) <= listed
+
+
+@pytest.mark.parametrize(
+    ("place", "text"),
+    [
+        (
+            INVENTED_AMOUNT_PATH,
+            "values:\n  2020-01-01: 3\n  2020-01-01: 4\n",
+        ),
+        (
+            "parameters/gov/ssa/ssi/income/sources/earned.yaml",
+            "values:\n  1975-01-01:\n    - employment_income\n"
+            "  1975-01-01:\n    - pension_income\n",
+        ),
+    ],
+    ids=["ssi_tree", "source_list"],
+)
+def test_parameter_file_that_repeats_a_key_refuses(tmp_path, place, text):
+    """The engine's YAML loader refuses a mapping that repeats a key, where
+    a plain safe load keeps the last."""
+    assert len(yaml.load(text, Loader=yaml.SafeLoader)["values"]) == 1
+    package = package_with_named_lines(tmp_path, [], {place: text})
+    with pytest.raises(ValueError, match="^Repeated or unhashable key"):
+        inventory.inventory_release(package)
+
+
+def test_yml_parameter_file_in_the_ssi_tree_refuses(tmp_path):
+    """The engine loads a .yml file as a parameter, as it does a .yaml one,
+    so the table would leave it out of the federal SSI tree."""
+    package = package_with_named_lines(
+        tmp_path, [], {"parameters/gov/ssa/ssi/invented.yml": INVENTED_AMOUNT}
+    )
+    with pytest.raises(ValueError, match="^Unread .yml parameter file under"):
+        inventory.inventory_release(package)
+
+
+INVENTED_PREFIX_FORMULA = (
+    "def formula(person, period, parameters):\n"
+    '    return person("invented_age", period) * 0 + {read}'
+)
+
+
+@pytest.mark.parametrize(
+    ("read", "files", "listed"),
+    [
+        (
+            "parameters(period).gov.ssa.ssi.invented_amount",
+            {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+            ["gov.ssa.ssi.invented_amount"],
+        ),
+        (
+            'parameters(period).household.invented["rate"]',
+            {
+                "parameters/household/invented/rate.yaml": INVENTED_AMOUNT,
+                "parameters/household/invented/base.yaml": INVENTED_AMOUNT,
+            },
+            ["household.invented.base", "household.invented.rate"],
+        ),
+        ("parameters(period).gov.ssa.ssi.absent", {}, None),
+        (
+            "parameters(period).gov.invented_node.amount",
+            {"parameters/gov/invented_node.yaml": INVENTED_NODE},
+            None,
+        ),
+        (
+            "parameters(period).gov.ssa.ssi.INVENTED_AMOUNT",
+            {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+            None,
+        ),
+    ],
+    ids=["file", "folder", "absent", "node_key", "other_case"],
+)
+def test_formula_parameter_prefix_resolves_by_exact_names(
+    tmp_path, read, files, listed
+):
+    """Round 12's M3: a formula's parameter prefix resolves through the same
+    exact child names, to a .yaml file or a folder, whose files are all
+    listed. One that names nothing there, or a key inside a YAML node,
+    refuses: neither release has one."""
+    package = package_with_named_lines(
+        tmp_path, [INVENTED_PREFIX_FORMULA.format(read=read)], files
+    )
+    if listed is None:
+        prefix = read.removeprefix("parameters(period).")
+        with pytest.raises(
+            ValueError, match=f"^Unresolved parameter {re.escape(prefix)}$"
+        ):
+            inventory.inventory_release(package)
+        return
+    result = inventory.inventory_release(package)
+    names = {row["name"] for row in result["parameters"]}
+    assert set(listed) <= names
+    assert not {name for name in names if name.startswith("household.")} - (
+        set(listed)
+    )
+
+
+# Variables that declare more than one computation mode, which the engine
+# refuses to build, and controls that declare one.
+MIXED_MODE_FORMS = {
+    "formula_and_adds": [INVENTED_FORMULA, 'adds = ["invented_age"]'],
+    "formula_and_subtracts": [
+        INVENTED_FORMULA,
+        'subtracts = ["invented_age"]',
+    ],
+    "formula_and_uprating": [
+        INVENTED_FORMULA,
+        'uprating = "gov.ssa.ssi.invented_amount"',
+    ],
+    "adds_and_uprating": [
+        'adds = ["invented_age"]',
+        'uprating = "gov.ssa.ssi.invented_amount"',
+    ],
+}
+SINGLE_MODE_FORMS = {
+    "formula_and_uprating_none": [INVENTED_FORMULA, "uprating = None"],
+    "adds_and_defined_for": [
+        'adds = ["invented_age"]',
+        'defined_for = "invented_age"',
+    ],
+    "uprating_only": ['uprating = "gov.ssa.ssi.invented_amount"'],
+}
+
+
+@pytest.mark.parametrize("kind", sorted(MIXED_MODE_FORMS))
+def test_variable_that_mixes_computation_modes_refuses(tmp_path, kind):
+    package = package_with_named_lines(
+        tmp_path,
+        MIXED_MODE_FORMS[kind],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+    )
+    with pytest.raises(
+        ValueError,
+        match="^Unread variable invented_named in "
+        "variables/gov/ssa/ssi/invented_named.py$",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("kind", sorted(SINGLE_MODE_FORMS))
+def test_variable_with_one_computation_mode_is_read(tmp_path, kind):
+    package = package_with_named_lines(
+        tmp_path,
+        SINGLE_MODE_FORMS[kind],
+        {INVENTED_AMOUNT_PATH: INVENTED_AMOUNT},
+    )
+    assert named_record(package)["name"] == "invented_named"
+
+
+def test_mixed_modes_refuse_in_a_followed_module_class(tmp_path):
+    """The engine's walk builds every class of a module it loads, so a
+    class outside the closure in a module the closure imports counts."""
+    tools = (
+        INVENTED_TOOLS + "\n\nclass invented_tool_variable(Variable):\n"
+        "    value_type = float\n    entity = Person\n"
+        "    definition_period = YEAR\n"
+        '    adds = ["invented_age"]\n'
+        "    " + INVENTED_FORMULA.replace("\n", "\n    ") + "\n"
+    )
+    package = package_importing_tools(tmp_path, tools)
+    with pytest.raises(
+        ValueError,
+        match="^Unread variable invented_tool_variable in "
+        "variables/invented/invented_tools.py$",
+    ):
+        inventory.inventory_release(package)
+    assert inventory.inventory_release(
+        package_importing_tools(tmp_path / "plain", INVENTED_TOOLS)
+    )
+
+
+INVENTED_TWIN = """class invented_twin(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+"""
+
+
+def test_class_read_from_two_files_refuses(tmp_path):
+    """The engine refuses to register a variable name twice. Before round
+    14 the record kept whichever file the walk read last, and a file whose
+    stem names a class already read was not read at all."""
+    package = package_with_named_lines(
+        tmp_path,
+        ['adds = ["invented_other", "invented_twin"]'],
+        {
+            "variables/input/invented_twin.py": INVENTED_TWIN,
+            "variables/input/invented_other.py": (
+                INVENTED_TWIN.replace("invented_twin", "invented_other")
+                + "\n\n"
+                + INVENTED_TWIN
+            ),
+        },
+    )
+    with pytest.raises(
+        ValueError,
+        match="^Variable invented_twin is defined in "
+        "variables/input/invented_twin.py and "
+        "variables/input/invented_other.py$",
+    ):
+        inventory.inventory_release(package)
+
+
+# Round 12's M2. Runs the reader in a child process under a given hash
+# seed, which -I would ignore, and prints its output or its refusal.
+HASH_SEED_CHILD = """
+import importlib.util, json, sys
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location("ssi_inventory_seeded", sys.argv[1])
+reader = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(reader)
+try:
+    result = reader.inventory_release(Path(sys.argv[2]))
+except ValueError as error:
+    print(f"refused: {error}")
+else:
+    print(json.dumps(result, sort_keys=True))
+"""
+INVENTED_ORDER_SSI = (
+    "def formula(person, period, parameters):\n"
+    '    return person("invented_a", period) + person("invented_f", period)'
+)
+INVENTED_ORDER_A = """class invented_a(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+    def formula(person, period, parameters):
+        return add(person, period, ["invented_c"])
+"""
+INVENTED_ORDER_F = (
+    INVENTED_TWIN.replace("invented_twin", "invented_f")
+    + "\n\n"
+    + INVENTED_TWIN.replace("invented_twin", "invented_c")
+)
+# Layouts whose output the walk's order once decided: (body lines, files).
+HASH_SEED_LAYOUTS = {
+    # The review's: invented_a passes "invented_c" to add, and invented_c
+    # sits in invented_f.py, so the literal counted only if the walk had
+    # read invented_f.py first.
+    "literal_names_a_class_of_another_stem": (
+        [INVENTED_ORDER_SSI],
+        {
+            "variables/input/invented_a.py": INVENTED_ORDER_A,
+            "variables/input/invented_f.py": INVENTED_ORDER_F,
+        },
+    ),
+    # Which of two files the record of invented_c came from, or whether the
+    # second was read at all.
+    "class_in_two_files": (
+        [INVENTED_ORDER_SSI.replace("invented_a", "invented_c")],
+        {
+            "variables/input/invented_c.py": INVENTED_TWIN.replace(
+                "invented_twin", "invented_c"
+            ),
+            "variables/input/invented_f.py": INVENTED_ORDER_F,
+        },
+    ),
+    # Which of six refusals the walk meets first.
+    "six_refusals": (
+        [
+            "def formula(person, period, parameters):\n    return "
+            + " + ".join(
+                f'person("invented_r{index}", period)' for index in range(6)
+            )
+        ],
+        {
+            f"variables/input/invented_r{index}.py": (
+                f"import invented_module_{index}\n\n\n"
+                + INVENTED_TWIN.replace("invented_twin", f"invented_r{index}")
+            )
+            for index in range(6)
+        },
+    ),
+}
+
+
+def seeded_read(package, seed):
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-c",
+            HASH_SEED_CHILD,
+            str(SCRIPT),
+            str(package),
+        ],
+        env={"PYTHONHASHSEED": seed},
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=True,
+    )
+    return completed.stdout
+
+
+@pytest.mark.parametrize("layout", sorted(HASH_SEED_LAYOUTS))
+def test_output_does_not_depend_on_string_hashing(tmp_path, layout):
+    """Round 12's M2: the documented command runs with -I, which leaves the
+    hash seed random. Under four seeds, and in this process, one invented
+    package gives one output, or one refusal."""
+    lines, files = HASH_SEED_LAYOUTS[layout]
+    package = package_with_named_lines(tmp_path, lines, files)
+    outputs = {seeded_read(package, seed) for seed in ("0", "1", "2", "3")}
+    try:
+        here = json.dumps(inventory.inventory_release(package), sort_keys=True)
+    except ValueError as error:
+        here = f"refused: {error}"
+    assert outputs == {here + "\n"}
+
+
+def test_body_literal_counts_by_its_source_alone(tmp_path):
+    """A body literal is a dependency when it equals a file's stem or a
+    class of its own module, whatever the walk has read: so invented_a's
+    "invented_c" is none, a read the header's first limit states."""
+    lines, files = HASH_SEED_LAYOUTS["literal_names_a_class_of_another_stem"]
+    result = inventory.inventory_release(
+        package_with_named_lines(tmp_path, lines, files)
+    )
+    records = {row["name"]: row for row in result["variables"]}
+    assert records["invented_a"]["dependencies"] == []
+    assert "invented_c" not in records
+    lines, files = HASH_SEED_LAYOUTS["class_in_two_files"]
+    with pytest.raises(
+        ValueError,
+        match="^Variable invented_c is defined in "
+        "variables/input/invented_f.py and variables/input/invented_c.py$",
+    ):
+        inventory.inventory_release(
+            package_with_named_lines(tmp_path / "two", lines, files)
+        )
