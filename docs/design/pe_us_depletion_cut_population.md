@@ -146,8 +146,8 @@ Computed from the file without simulation:
   322,945 households have such a person and 29,987 have none. CPS reference
   persons (`A_EXPRRP` 1 or 2) occupy the lowest line in 351,550 of the
   352,932 households. They account for 321,768 of the 322,945 holders,
-  99.6 percent in each channel. The `is_household_head` flag marks
-  321,768 holders too. Microcosm's wealth stage at `8b0c1950`
+  99.6 percent in each channel. The `is_household_head` flag marks the
+  same number of holders. Microcosm's wealth stage at `8b0c1950`
   (`packages/microcosm-build/src/microcosm/build/us_runtime/scf_wealth.py`,
   lines 16-18 and 53) gives each household one draw of its whole asset
   vector, from SCF 2022 or SIPP 2023 with equal probability. Its
@@ -173,9 +173,10 @@ Computed from the file without simulation:
   percent of the time (§12, difference 6).
 - **Synthetic benefit splits.** 21,059 records, all from Microcosm's
   PUF-support channel (`person_support_channel = puf_tax_detail`), carry
-  all four Social Security components at once. For every record,
-  `numpy.round(100 * component / total, 2)` gives retirement 19.69,
-  survivors 44.91, dependents 16.64 and disability 18.76 percent.
+  all four Social Security components at once. For every record, each
+  component's float64 share of the four-component total gives
+  `numpy.round(100 * share, 2)` equal to retirement 19.69, survivors
+  44.91, dependents 16.64 and disability 18.76 percent.
   They hold 10.3 percent of beneficiaries' weight. No other record has
   more than one positive component. The PUF-support stage splits a
   predicted total equally when its donor basis is zero
@@ -189,10 +190,10 @@ Computed from the file without simulation:
 
 ### 2.3 What the frame is and is not calibrated to
 
-- **Calibrated** (this build, 6,102 targets, solved under PE-US 2.2.1):
-  the `national_state` target surface, which keeps the 6,102 national and
-  state targets of the 33,250 compiled and drops the 27,148
-  congressional-district targets (`build_manifest.json`,
+- **Calibrated** (this build's 6,102 targets, which Microcosm solved
+  under PE-US 2.2.1): the `national_state` target surface, which keeps the
+  6,102 national and state targets of the 33,250 Microcosm compiled and
+  drops the 27,148 congressional-district targets (`build_manifest.json`,
   `calibration.target_surface_selection`). By source, from
   `us_source_coverage.json`: IRS SOI 4,619, Census population 936, CMS
   Medicaid 135, SSA 111, USDA SNAP 104, CMS ACA 102, Census state tax
@@ -650,7 +651,7 @@ and the SSI change outside the universe's marital units (§13).
 2. **Asset placement.** Each household's assets sit on its
    lowest-`A_LINENO` person; other members hold none. CPS reference
    persons account for 99.6 percent of holders (microcosm#1215). Rows R3
-   and R4 test two alternative resource rules.
+   and R4 test two alternative resource rules for this placement.
 3. **No resource deeming in PE-US 2.18.0** (§4.1). Row R3 applies the
    spousal rule; the parent-to-child rule is not applied in any row.
 4. **The fund of a dependent's benefit is unknown.** PE-US's single
@@ -668,8 +669,8 @@ and the SSI change outside the universe's marital units (§13).
    Security Bulletin 66(4), Table 1, row Married, column All, 2022).
    The frame's other beneficiaries aged 62 and over run 14.7 percent
    widowed, 9.8 divorced, 4.6 never married and 1.0 separated, and 19.2
-   percent of persons aged 65 and over live alone. This registration
-   compares only the married share with a published figure. The
+   percent of persons aged 65 and over live alone. We compare only the
+   married share with a published figure. The
    all-beneficiary shares reflect this composition, and one-way breakdowns
    do not remove it: composition can also differ within age, sex, race and
    income cells.
@@ -889,8 +890,8 @@ Reported, not graded:
     20260519044505 of the SSI Annual Statistical Report 2024, section 2,
     which holds Table 9), SHA-256
     `850348eb29546c5d6945cd6d7598e265b275b917a912c89efb2f7a76821969ac`;
-  - `registration/sa2-column-checks/`, which holds the script of §16 and
-    what it printed.
+  - `registration/sa2-column-checks/`, which holds the two scripts of
+    §16 and what they printed.
 
   `SHA256SUMS` in that folder fixes the reader reports, the reader
   scripts, the exposure record and the sources; the first comment records
@@ -952,15 +953,17 @@ read, and:
 - One script read the frame's stored columns once, on 2026-11-01, and ran
   no simulation (SHA-256 `c4108a98add6717b0f065e17fe708aeea8b3d97cc4a0ede6d6253336519a826c`). It selected `person_id`, `person_household_id`, `person_marital_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `A_MARITL`, `A_LINENO`, `A_EXPRRP`, `cps_race`, `is_household_head`, the four Social Security components, the three asset columns, `household_id`, `household_weight` and `marital_unit_id` for calculations and output. It printed
   counts, shares, codes and distinct values, and no dollar total; §2.2
-  carries its results. Its HDF reads loaded complete rows, including SSI
-  inputs and take-up flags; its calculations and output used only the
-  columns listed above.
+  carries its results. Its reads loaded every row and column of the
+  person, household and marital-unit tables, among them CPS-reported SSI,
+  the SSI inputs and take-up flags; its calculations and output used only
+  the columns listed above.
 - A second script read the frame's stored columns once, on 2026-11-01,
   and ran no simulation (SHA-256 `87406bfad878e597035c41e823f38060c5b6e09382f55f465e78fc30f4133bac`). It traced the people aged 65 and over who hold a component with no CPS report, and selected `person_household_id`, `person_tax_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `SS_YN`, the four Social Security components, `household_id` and `household_weight` for calculations and output. It printed
   counts, shares and codes, and no dollar amount; §2.2 carries its
-  results. Its HDF reads loaded complete rows, including SSI inputs and
-  take-up flags; its calculations and output used only the columns
-  listed above.
+  results. Its reads loaded every row and column of the person and
+  household tables, among them CPS-reported SSI, the SSI inputs and
+  take-up flags; its calculations and output used only the columns listed
+  above.
 - No simulation has run on this frame for this registration, and nobody
   working on this registration has computed a statistic of §6 on it. The
   release build and the 2.60.4 recertification simulated this frame for
