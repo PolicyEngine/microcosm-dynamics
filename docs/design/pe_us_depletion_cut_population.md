@@ -131,9 +131,15 @@ Computed from the file without simulation:
   (`person_support_channel`: `asec` and `puf_tax_detail`). Among people
   aged 65 and over, 80.7 percent in `asec` report Social Security and
   80.7 percent hold a model component; in `puf_tax_detail`, 76.6 percent
-  report it and 82.6 percent hold a component. So about 6.0 percent of
-  that `puf_tax_detail` group hold a component with no CPS report. The
-  step that gave it to them is not traced here.
+  report it and 82.6 percent hold a component. So 6.0 percent of that
+  `puf_tax_detail` group, 5,461 records and 1.75 million weighted people,
+  hold a component with no CPS report, and no `asec` record at those ages
+  does. All 5,461 hold all four components, so they carry the synthetic
+  split below and row R5 excludes them. None has an `SS_VAL` reporter in
+  their tax unit, all carry `SS_YN` code 2, and nobody aged 65 or over has
+  `SS_VAL` below zero. Microcosm restores components only on PUF-support
+  rows with `SS_VAL > 0`, and its docstring says nonreporters keep the PUF
+  imputation (`puf_support.py:4186-4243` at `8b0c1950`).
 - **Assets.** The frame stores `bank_account_assets`, `stock_assets` and
   `bond_assets`, and they are never negative. Every household has at most
   one person with positive assets, always its lowest-`A_LINENO` person:
@@ -691,7 +697,10 @@ and the SSI change outside the universe's marital units (§13).
 13. **The frame, and through it the universe.** Registration 19's erased
     records carried 11.8 million weighted people, 9.2 million of them aged
     65 and over. This frame holds no such record (§2.2), so its universe
-    keeps those reporters.
+    keeps those reporters. It also keeps PUF-support people with no CPS
+    report who hold the PUF imputation: at ages 65 and over, 5,461
+    records, 1.75 million weighted people and 6.0 percent of that
+    channel's people at those ages. Row R5 excludes all 5,461.
 14. **Size.** This frame holds about 5.5 times Registration 19's persons
     and 6.2 times its households, so its record counts and small-cell
     flags don't compare directly with Registration 19's.
@@ -942,7 +951,11 @@ read, and:
 - One script read the frame's stored columns once, on 2026-11-01, and ran
   no simulation (SHA-256 `c4108a98add6717b0f065e17fe708aeea8b3d97cc4a0ede6d6253336519a826c`). It read `person_id`, `person_household_id`, `person_marital_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `A_MARITL`, `A_LINENO`, `A_EXPRRP`, `cps_race`, `is_household_head`, the four Social Security components, the three asset columns, `household_id`, `household_weight` and `marital_unit_id`. It printed
   counts, shares, codes and distinct values, and no dollar total; §2.2
-  carries what it printed. It read no SSI column and no take-up flag.
+  carries its results. It read no SSI column and no take-up flag.
+- A second script read the frame's stored columns once, on 2026-11-01,
+  and ran no simulation (SHA-256 `87406bfad878e597035c41e823f38060c5b6e09382f55f465e78fc30f4133bac`). It traced the people aged 65 and over who hold a component with no CPS report, and read `person_household_id`, `person_tax_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `SS_YN`, the four Social Security components, `household_id` and `household_weight`. It printed
+  counts, shares and codes, and no dollar amount; §2.2 carries its
+  results. It read no SSI column and no take-up flag.
 - No simulation has run on this frame for this registration, and nobody
   working on this registration has computed a statistic of §6 on it. The
   release build and the 2.60.4 recertification simulated this frame for
