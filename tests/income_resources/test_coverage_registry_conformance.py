@@ -1168,8 +1168,10 @@ def axis_problems(rows, texts):
     the governing clause (quoted from a capture the row cites), and its
     wording must use the family's axis, be a bare date, or come with an
     ``axis_exception`` reason. Without a pin, the effective-date clauses
-    that the two rows' captures print for the boundary must include the
-    family's axis when they name any.
+    that the two rows' captures print for the boundary must all use the
+    family's axis. Where they print clauses on more than one axis, several
+    amendments share the date and only a pin says which one governs
+    (review r4 M-1).
     """
     problems = []
     by_family = {}
@@ -1205,17 +1207,21 @@ def axis_problems(rows, texts):
                     capture_text(capture, texts),
                     (boundary - timedelta(days=1), boundary),
                 )
-            if kinds and axis not in kinds:
+            if len(kinds) > 1:
+                problems.append((right["rule_id"], "mixed kinds need a pin"))
+            elif kinds and axis not in kinds:
                 problems.append((right["rule_id"], sorted(kinds)))
     return problems
 
 
 def test_family_axes_follow_their_boundary_clauses():
-    """Review r3 M3: a family uses the axis its boundary clauses use.
+    """Review r3 M3 and r4 M-1: a family uses the axis its boundary
+    clauses use, and a boundary whose clauses mix axes is pinned.
 
-    At ea599b92 this flags 21 boundaries, among them the insurance
-    termination, agricultural, domestic and family payment boundaries and
-    the taxable-year boundaries the review lists.
+    On ea599b92's registry this checker flags 38 boundaries, among them
+    the insurance termination, agricultural, domestic and family payment
+    boundaries and the taxable-year boundaries round 3 lists; on
+    fd5b7b2a's it flags the 17 unpinned boundaries whose clauses mix axes.
     """
     rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
     assert axis_problems(rows, {}) == []
@@ -1223,42 +1229,98 @@ def test_family_axes_follow_their_boundary_clauses():
         r["rule_id"] for r in rows if "boundary_clause" in r["parameters"]
     ]
     assert sorted(pinned) == [
+        "clergy_1973_1981",
         "clergy_1982_2026",
+        "domestic_service_1995",
+        "electing_church_1984_1985",
         "election_work_1978",
+        "election_work_1995",
+        "federal_1984_1986",
+        "federal_1987_2026",
+        "fishing_crew_share_service_1995",
+        "international_organization_service_1995",
+        "newspaper_service_1996",
+        "nonprofit_1984_2026",
         "nonresident_alien_vocational_service_1987",
         "nonresident_alien_vocational_service_1988_1110",
+        "religious_order_1984_2026",
         "se_clergy_gross_concept_1987_2026",
+        "se_conservation_reserve_2008_2026",
+        "se_foreign_income_1984_2026",
+        "se_health_insurance_2010",
+        "se_health_insurance_2011_2026",
         "se_nonresident_alien_1983_2026",
+        "se_optional_2008_2026",
+        "se_units_1984_1985",
         "state_local_1983_1991",
     ]
+    excepted = [
+        r["rule_id"]
+        for r in rows
+        if "axis_exception" in r["parameters"].get("boundary_clause", {})
+    ]
+    assert sorted(excepted) == [
+        "clergy_1973_1981",
+        "domestic_service_1995",
+        "electing_church_1984_1985",
+        "election_work_1978",
+        "nonresident_alien_vocational_service_1987",
+        "se_units_1984_1985",
+    ]
+
+
+def test_domestic_minor_exclusion_reaches_only_service_after_1994(registry):
+    """Review r4 M-1: 410(a)(21) applies "to services performed after Dec.
+    31, 1994", so a payment-date lookup of 1995 pay for 1994 babysitting
+    must not reach the under-18 exclusion. INVENTED: a 16-year-old's
+    December 1994 babysitting, paid $1,200 on 1995-01-06."""
+    (rule,) = registry.lookup_date("domestic_service", date(1995, 1, 6))
+    minor = next(
+        c
+        for c in rule.cases
+        if c["case_id"] == "minor_not_principal_occupation"
+    )
+    condition = minor["when"]["services_performed_date"]
+    assert not service_date_condition_holds(condition, date(1994, 12, 20))
+    assert service_date_condition_holds(condition, date(1995, 1, 2))
+    clause = rule.parameters["boundary_clause"]
+    assert "services performed after Dec. 31, 1994" in (
+        clause["citation"]["quote"]
+    )
+    assert clause["axis_exception"].strip()
 
 
 @settings(deadline=None)
 @given(
     st.sampled_from(sorted(EFFECTIVE_BASES)),
     st.sampled_from(["payment", "taxable", "service", "none"]),
+    st.sampled_from(["payment", "taxable", "service", "none"]),
     st.booleans(),
     st.booleans(),
 )
 def test_axis_checker_flags_clauses_on_another_axis(
-    axis, wording, pinned, excepted
+    axis, wording, other, pinned, excepted
 ):
-    """The M3 checker is the test's oracle."""
-    clause = {
+    """The M3 and M-1 checker is the test's oracle: an unpinned boundary
+    passes only when every clause printed for it uses the family's axis."""
+    clauses = {
         "payment": "INVENTED amendment applicable to remuneration paid after",
         "taxable": "INVENTED amendment applies to taxable years beginning "
         "after",
         "service": "INVENTED amendment applies to services performed after",
         "none": "INVENTED amendment enacted",
-    }[wording]
-    kind = {
+    }
+    kinds = {
         "payment": "payment_date",
         "taxable": "taxable_year_start",
         "service": "service_date",
         "none": None,
-    }[wording]
+    }
     capture = "INVENTED_note.html"
-    texts = {capture: f"{clause} December 31, 1987."}
+    texts = {
+        capture: f"{clauses[wording]} December 31, 1987. "
+        f"{clauses[other]} December 31, 1987."
+    }
     rows = []
     for start, end in (
         ("1968-01-01", "1987-12-31"),
@@ -1277,13 +1339,17 @@ def test_axis_checker_flags_clauses_on_another_axis(
             }
         )
     if pinned:
-        pin = {"citation": {"capture": capture, "quote": clause}}
+        pin = {"citation": {"capture": capture, "quote": clauses[wording]}}
         if excepted:
             pin["axis_exception"] = "INVENTED reason"
         rows[1]["parameters"]["boundary_clause"] = pin
     flagged = bool(axis_problems(rows, texts))
-    mismatch = kind is not None and kind != axis
-    assert flagged == (mismatch and not (pinned and excepted))
+    if pinned:
+        mismatch = kinds[wording] not in {None, axis}
+        assert flagged == (mismatch and not excepted)
+    else:
+        printed = {kinds[wording], kinds[other]} - {None}
+        assert flagged == (bool(printed) and printed != {axis})
 
 
 QUOTED_CLAUSE = re.compile(r'"([^"]+)"')

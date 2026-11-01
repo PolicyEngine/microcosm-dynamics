@@ -63,7 +63,7 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\"."
+      "effective_basis_description": "Remuneration for agricultural labor paid on or before December 31, 1987. Pub. L. 100-203 section 9002(c), as the 42 U.S.C. 409 notes summarize it, makes the section 9002(a) amendment \"applicable with respect to remuneration for agricultural labor paid after Dec. 31, 1987\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -255,7 +255,7 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 100-203 section 9002, as the 42 U.S.C. 409 notes summarize it, is \"applicable with respect to remuneration paid after Dec. 31, 1987\".",
+      "effective_basis_description": "Pub. L. 100-203 section 9002(c), as the 42 U.S.C. 409 notes summarize it, makes the section 9002(a) amendment \"applicable with respect to remuneration for agricultural labor paid after Dec. 31, 1987\".",
       "ruling_effective_date_axis": {
         "named_options": {
           "services_performed_date": "The ruling's date is tested against the date the services were performed.",
@@ -2079,7 +2079,8 @@
       "occupation",
       "reporting_unit",
       "cash_remuneration",
-      "age"
+      "age",
+      "services_performed_date"
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
@@ -2148,7 +2149,17 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "Effective Date of 1994 Amendment note (Pub. L. 103-387 section 2(a)(3)(B))",
+          "quote": "Amendment by Pub. L. 103\u2013387 applicable to services performed after Dec. 31, 1994"
+        },
+        "axis_exception": "Pub. L. 103-387 dates 410(a)(21) by services performed after Dec. 31, 1994, while its threshold change, which sets this family's 1994 boundary, applies to remuneration paid after Dec. 31, 1993, so the family keeps the payment-date axis. Case minor_not_principal_occupation carries the service date, so a minor's domestic service performed in 1994 and paid in 1995 takes the residual."
+      }
     },
     "worked_examples": [
       {
@@ -2231,7 +2242,8 @@
         "precedence": 2,
         "when": {
           "age": "under 18 during any portion of the year",
-          "occupation": "domestic service is not the individual's principal occupation"
+          "occupation": "domestic service is not the individual's principal occupation",
+          "services_performed_date": "on or after 1995-01-01"
         },
         "consequence": "noncovered",
         "description": "410(a)(21); POMS RS 01402.216 B, for service after 1994."
@@ -3076,7 +3088,16 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "Effective Date of 1994 Amendment note, Pub. L. 103-296 section 303(e)",
+          "quote": "Pub. L. 103\u2013296, title III, \u00a7 303(e) , Aug. 15, 1994 , 108 Stat. 1520 , provided that: \u201cThe amendments made by subsections (a), (b), and (c) [amending this section, section 418 of this title , and section 3121 of Title 26 , Internal Revenue Code ] shall apply with respect to service performed on or after January 1, 1995 .\u201d"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4748,7 +4769,16 @@
       "effective_basis": "payment_date",
       "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\".",
       "crew_test": "normally_made_up_of_fewer_than_10_individuals",
-      "crew_average_role": "deeming_rule_a_crew_averaging_fewer_than_10_is_treated_as_normally_fewer_than_10"
+      "crew_average_role": "deeming_rule_a_crew_averaging_fewer_than_10_is_treated_as_normally_fewer_than_10",
+      "boundary_clause": {
+        "citation": {
+          "capture": "ce1c_plaw104_188.html",
+          "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db",
+          "authority": "Public Law 104-188, August 20, 1996, 110 Stat. 1762-1763",
+          "location": "section 1116(a)(3)(A)",
+          "quote": "The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6089,6 +6119,15 @@
             ]
           }
         }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "location": "Effective Date of 1994 Amendment note (Pub. L. 103-296 section 319(c))",
+          "quote": "Amendment by section 319(b)(1), (3) of Pub. L. 103\u2013296 applicable with respect to service performed after calendar quarter following calendar quarter in which Aug. 15, 1994 , occurs"
+        }
       }
     },
     "worked_examples": [],
@@ -6658,6 +6697,15 @@
               "newspaper_service_arrangement"
             ]
           }
+        }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "ce1c_usc2024_26_3508.html",
+          "sha256": "f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0",
+          "authority": "26 U.S.C. 3508, United States Code 2024 edition",
+          "location": "Effective Date of 1996 Amendment note (Pub. L. 104-188 section 1118(b))",
+          "quote": "Pub. L. 104\u2013188, title XI, \u00a71118(b), Aug. 20, 1996, 110 Stat. 1764, provided that: \"The amendments made by this section shall apply to services performed after December 31, 1995.\""
         }
       }
     },

@@ -1742,7 +1742,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 98-21 section 323(b)(2)(B), as the 42 U.S.C. 411 notes summarize it, \"is effective with respect to taxable years beginning after Dec. 31, 1981, and before Jan. 1, 1984\"."
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1881,7 +1881,16 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 98-21 section 323(c)(2), as the 42 U.S.C. 411 notes summarize it, makes the section 323(b)(2)(A) amendment \"applicable to taxable years beginning after Dec. 31, 1983\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "uscode_2024_42_411.html",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "location": "Effective and Termination Dates of 1983 Amendment note (Pub. L. 98-21 section 323(c)(2))",
+          "quote": "Amendment by section 323(b)(2)(A) of Pub. L. 98\u201321 applicable to taxable years beginning after Dec. 31, 1983"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2615,7 +2624,16 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+      "effective_basis_description": "26 U.S.C. 162(l)(4), as Pub. L. 111-240 section 2042(a) amended it, again disallows the deduction \"for taxable years beginning before January 1, 2010, or after December 31, 2010\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "uscode_2024_26_162.html",
+          "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+          "authority": "26 USC 162, official 2024 United States Code section granule",
+          "location": "162(l)(4), as amended by Pub. L. 111-240 section 2042(a)",
+          "quote": "for purposes of chapter 2 for taxable years beginning before January 1, 2010, or after December 31, 2010."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2734,7 +2752,16 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+      "effective_basis_description": "Pub. L. 111-240 section 2042(b), as the 26 U.S.C. 162 notes set it out, \"shall apply to taxable years beginning after December 31, 2009\", and section 2042(a) limits the change by inserting \"for taxable years beginning before January 1, 2010, or after December 31, 2010\" into 162(l)(4).",
+      "boundary_clause": {
+        "citation": {
+          "capture": "uscode_2024_26_162.html",
+          "sha256": "3a126484e15aa01bd376f193754f2fa5f107aeb2da4d25b839b29358d8f0524a",
+          "authority": "26 USC 162, official 2024 United States Code section granule",
+          "location": "Effective Date of 2010 Amendment note (Pub. L. 111-240 section 2042(b))",
+          "quote": "Pub. L. 111\u2013240, title II, \u00a72042(b), Sept. 27, 2010, 124 Stat. 2560, provided that: \"The amendments made by this section [amending this section] shall apply to taxable years beginning after December 31, 2009.\""
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,

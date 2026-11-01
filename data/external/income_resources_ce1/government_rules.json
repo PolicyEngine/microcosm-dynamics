@@ -768,7 +768,17 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "location": "Effective Date of 1972 Amendment note, Pub. L. 92-603 sections 121(c), 124(c) and 140(c)",
+          "quote": "Pub. L. 92\u2013603, title I, \u00a7 121(c) , Oct. 30, 1972 , 86 Stat. 1354 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 , Internal Revenue Code ] shall apply only with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 124(c) , Oct. 30, 1972 , 86 Stat. 1357 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 140(c) , Oct. 30, 1972 , 86 Stat. 1366 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d"
+        },
+        "axis_exception": "Pub. L. 92-603 sections 121(c), 124(c) and 140(c) date the 1972 amendments to 411(a)(7) by taxable years, while this family's exclusions (410(a)(8)(A), 411(c)(4)-(5)) and its 1982 cantor boundary key on service, so the family keeps the service-date axis. No case outcome changes here; the foreign-ministry computation belongs to self_employment_clergy_gross_concept, which uses the taxable-year axis, so a fiscal-year minister whose taxable year began in 1972 takes that family's earlier row for the whole year."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1972,7 +1982,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "The family uses the taxable-year axis because Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) begins the election, for \"service performed after December 31, 1983\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2131,7 +2141,17 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "This row starts where Pub. L. 98-369 section 2603(e) applies the church election amendments to \"service performed after December 31, 1983\" (pinned with an axis_exception in boundary_clause). The family keeps the taxable-year axis because Pub. L. 99-514 section 1882(b)(3) makes 411(i) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "location": "Effective Date of 1984 Amendment note, Pub. L. 98-369 section 2603(e)",
+          "quote": "Pub. L. 98\u2013369, div. B, title VI, \u00a7 2603(e) , July 18, 1984 , 98 Stat. 1130 , provided that: \u201cThe amendments made by this section [amending this section and section 411 of this title and sections 1402 and 3121 of Title 26 and enacting provisions set out as a note under section 3121 of Title 26 ] shall apply to service performed after December 31, 1983 .\u201d"
+        },
+        "axis_exception": "Pub. L. 98-369 section 2603(e) applies the church employer election amendments to service performed after December 31, 1983, while the family's 1986 boundary (411(i)) applies to remuneration paid or derived in taxable years beginning after Dec. 31, 1985, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 classifies electing-church service performed after December 31, 1983 by this row's cases, and earlier service by the earlier row."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2399,7 +2419,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\"."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3005,6 +3025,15 @@
           "location": "Pub. L. 98-369 section 2601(e) note, Services Performed for Nonprofit Organizations by Federal Employees",
           "quote": "service performed in the employ of a nonprofit organization described in section 501(c)(3) of the Internal Revenue Code of 1986 [ 26 U.S.C. 501(c)(3) ] by an employee who is required by law to be subject to subchapter III of chapter 83 of title 5, United States Code, with respect to such service, shall be considered to be service performed in the employ of an instrumentality of the United States"
         }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "location": "Effective Date of 1983 Amendment note (Pub. L. 98-21 section 101(d))",
+          "quote": "Amendment by section 101(a) of Pub. L. 98\u201321 effective with respect to service performed after Dec. 31, 1983"
+        }
       }
     },
     "worked_examples": [],
@@ -3417,6 +3446,15 @@
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "location": "Pub. L. 98-369 section 2601(e) note, Services Performed for Nonprofit Organizations by Federal Employees",
           "quote": "service performed in the employ of a nonprofit organization described in section 501(c)(3) of the Internal Revenue Code of 1986 [ 26 U.S.C. 501(c)(3) ] by an employee who is required by law to be subject to subchapter III of chapter 83 of title 5, United States Code, with respect to such service, shall be considered to be service performed in the employ of an instrumentality of the United States"
+        }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "ce1r1_usc2024_5_8331.html",
+          "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc",
+          "authority": "5 U.S.C. 8331, official United States Code 2024 edition historical notes",
+          "location": "Effective Date of 1986 Amendment note (Pub. L. 99-335 section 702(a))",
+          "quote": "Amendment by Pub. L. 99\u2013335 effective Jan. 1, 1987, see section 702(a) of Pub. L. 99\u2013335"
         }
       }
     },
@@ -4357,7 +4395,16 @@
             "1983"
           ]
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_410.html",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "location": "Effective Date of 1983 Amendment note (Pub. L. 98-21 section 102(c))",
+          "quote": "Amendment by section 102(a) of Pub. L. 98\u201321 effective with respect to service performed after Dec. 31, 1983"
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -5084,6 +5131,15 @@
               "clergy_or_religious_exemption"
             ]
           }
+        }
+      },
+      "boundary_clause": {
+        "citation": {
+          "capture": "uscode_119_120_26_3121.html",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "location": "Effective Date of 1983 Amendment note, Pub. L. 98-21 section 102(c)",
+          "quote": "The amendments made by the preceding provisions of this section [amending this section and section 410 of Title 42] shall be effective with respect to service performed after December 31, 1983"
         }
       }
     },

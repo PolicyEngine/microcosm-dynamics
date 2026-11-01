@@ -307,7 +307,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date."
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -428,7 +428,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date."
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -621,7 +621,7 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The 26 U.S.C. 1402 notes apply the 1986 amendments to remuneration paid or \"derived in taxable years beginning after December 31, 1985\"."
+      "effective_basis_description": "Pub. L. 101-239 section 10204(a)(2), as the 26 U.S.C. 1402 notes set it out, applies the 1402(g)(3) amendment \"with respect to taxable years beginning after December 31, 1989\"."
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -1529,7 +1529,7 @@
       "partnership_assignment": "partner whose distributive share it is",
       "statutory_text_amendment_date": "2004-03-02",
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\"."
+      "effective_basis_description": "Pub. L. 108-203 section 425 states no effective date; the row starts on the act's enactment date (\"Approved March 2, 2004.\"), and the captures don't settle how the change applies to a taxable year that began before that date."
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_2004_2026",
@@ -1796,7 +1796,16 @@
             "2008"
           ]
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "Effective Date of 2008 Amendment note (Pub. L. 110-246 section 15301(c))",
+          "quote": "Amendment by section 15301(b) of Pub. L. 110\u2013246 applicable to payments made after Dec. 31, 2007"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_conservation_reserve_2008_2026",
@@ -4219,7 +4228,16 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 110-246 section 15352(c), as the 42 U.S.C. 411 notes summarize it, makes the section 15352(b)(1), (2) amendment \"applicable to taxable years beginning after Dec. 31, 2007\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "Effective Date of 2008 Amendment note (Pub. L. 110-246 section 15352(c))",
+          "quote": "Amendment by section 15352(b)(1), (2) of Pub. L. 110\u2013246 applicable to taxable years beginning after Dec. 31, 2007"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_optional_2008_2026",
@@ -5241,7 +5259,7 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\"."
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1968_1983",
@@ -5431,7 +5449,7 @@
         "church_at_least_400_without_ordinary_loss": "combined_earnings"
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\".",
+      "effective_basis_description": "This row starts where Pub. L. 98-369 section 2603(e), as the 42 U.S.C. 411 notes summarize it, makes former 411(a)(13) \"applicable to service performed after Dec. 31, 1983\" (pinned with an axis_exception in boundary_clause); it ends where Pub. L. 99-514 section 1882(b)(3) makes the 1986 rules \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
       "named_options": [
         {
           "group": "units_1984_1985_church_floor",
@@ -5445,7 +5463,17 @@
           "status": "statutory_text_retained_not_operational",
           "explanation": "Former 411(a)(13), quoted in the 1994 Code, states the $100 per-employer gate without the instructions' combined floors; it is retained as the reading CE1 does not apply where they differ."
         }
-      ]
+      ],
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "location": "Effective Date of 1984 Amendment note (Pub. L. 98-369 section 2603(e))",
+          "quote": "Amendment by section 2603(c)(1), (d)(1) of Pub. L. 98\u2013369 applicable to service performed after Dec. 31, 1983"
+        },
+        "axis_exception": "Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to service performed after December 31, 1983, while the family's units, minimums and later boundaries (411(i) from 1986, 411(a)(11) from 1990) run by taxable year, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 applies this row's church cases to remuneration for electing-church service performed after December 31, 1983."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1984_1985",
@@ -5607,7 +5635,7 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\"."
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1986_1989",
@@ -5833,7 +5861,7 @@
       ],
       "factor_history_support": "Public Law 98-21 section 124(a) sets the post-1989 12.4 percent plus 2.9 percent rates underlying section 411(a)(11); the 2011 and 2012 Schedule SE forms expressly retain the 92.35 percent base factor during those temporary rate-cut years.",
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-272 section 13303, as the 42 U.S.C. 411 notes summarize it, applies to remuneration paid or \"derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 98-21 section 124(d)(2), as the 42 U.S.C. 411 notes summarize it, makes the section 124(c)(3) amendment (411(a)(11)) \"applicable to taxable years beginning after Dec. 31, 1989\"."
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1990_2026",
