@@ -4397,3 +4397,32 @@ def test_invented_range_line_and_unranged_line_still_date_differently():
         "source_date_1": "2031-03-01",
         "source_date_2": "2031-06-30",
     }
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # A year that only the bare, unmarked or unlinked reading shows.
+        "<p>Payment levels for 20<sup>1</sup>31</p>",
+        "<p>Payment levels for 20<a href='x.html#fn1'>1</a>31</p>",
+        "<p>Payment levels for 20<a href='x.html'>1</a>31</p>",
+        # A date that only the unlinked reading shows, in the year in force.
+        "<p>Payment levels as of Mar<a href='x.html'>1</a>ch 1, 2030</p>",
+    ],
+)
+def test_invented_date_or_year_only_a_marker_free_reading_shows_is_unread(
+    fragment,
+):
+    """The unread-date net reads a line's dates and years in its joined,
+    bare, unmarked and unlinked readings, so a marker or short link that
+    splits a year or date hides neither."""
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+def test_invented_date_inside_a_longer_link_is_read():
+    """Only a link whose text has a marker's size leaves the unlinked
+    reading, so a date sentence whose date a longer link holds dates the
+    chart."""
+    payload = invented_dated("<a href='x.html'>January 1, 2031</a>")
+    assert invented_selector(payload)[2] == "2031-01-01"
