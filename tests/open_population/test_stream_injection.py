@@ -4127,6 +4127,8 @@ def test_pruning_keeps_each_hint_whole(place):
         "exec('pass')",
         "exec('x = 1')",
         "exec(code)",
+        "exec()",
+        "'exec()'",
         "eval('int')",
         "'int'",
         "eval('exec(\"pass\")')",
