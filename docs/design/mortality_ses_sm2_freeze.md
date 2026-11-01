@@ -285,10 +285,13 @@ before its band is fully supported is recorded and never fitted.
 
 - **Reference population (reference, not a target) [frozen here].** The
   Census Bureau's ACS 1-year PUMS person files for each knot year
-  2010–2024, with person weights and the 80 replicate weights. The 2020
-  file carries experimental weights and is used and labeled as such. §6
-  defines the population built from them. No ACS file was opened in this
-  job, and their URLs were not checked here (§11.6).
+  2010–2024, with their person weights and replicate weights. NCHS built
+  its 2020 education denominators from the 2020 1-year PUMS (NVSR 72(10)
+  internet tables, p. 2), and the fit uses that file too; the fit job
+  records any data-quality note the Census Bureau attaches to it. §6
+  defines the population built from these files. No ACS file or ACS
+  documentation was opened in this job, and their URLs were not checked
+  here (§11.6).
 - **Baseline [frozen, S0.1 §1.1].** OACT's TR 2026 single-age, sex and
   year `q` through the pinned accessor `data/tr2026.death_probability`,
   historical through 2023 and Alternative II from 2024, ages 0–120 with
@@ -570,8 +573,9 @@ age, and an assumption that the effects add on the log scale.
 ### 6.2 The reference population `R_ref(t)` [frozen here]
 
 For each knot year `t` (2010–2024), `R_ref(t)` is the weighted ACS 1-year
-PUMS population of that year, every person in households and group
-quarters, with these attributes:
+PUMS population of that year: every person record the file holds,
+including group-quarters records where the file carries them (the fit job
+records which it does), with these attributes:
 
 - **Sex and single age.** Ages at or above the year's top code (read from
   that year's data dictionary) share the top-coded group's composition.
@@ -600,10 +604,15 @@ quarters, with these attributes:
   targets are evaluated on the subpopulation with positive Social
   Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
   every other target on the whole population.
-- **What the proxy is not.** Social Security income also includes spouse,
-  survivor and disabled-worker benefits, Railroad Retirement, the effects
-  of claiming age and any WEP reduction, none of which OACT's AIME
-  quintile carries. §6.6 lists what that leaves unidentified.
+- **What the proxy is not.** A benefit amount is not an AIME. Study 129
+  itself names two reasons they part: a worker who claims at 62 takes a
+  larger reduction than one who waits (p. 7), and dually entitled
+  beneficiaries receive a partial spouse benefit on top of their own
+  (p. 8, note 1). This job did not read the ACS documentation, so it
+  makes no claim about which benefit types the ACS income item covers;
+  the fit job reads each year's data dictionary and records that
+  definition before building `Q̃` (§11.6). §6.6 lists what the gap leaves
+  unidentified.
 
 ### 6.3 Joint marginal calibration [frozen here]
 
@@ -682,13 +691,13 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
 ### 6.6 What stays unidentified
 
 - **The dependence between OACT's AIME quintile and education or race.**
-  The Social Security income quintile stands in for it. Spouse and
-  survivor benefits tie many women's income to a husband's earnings;
-  claiming age moves benefits by roughly the actuarial adjustment while
-  leaving the AIME unchanged; disabled-worker and converted benefits,
-  Railroad Retirement and WEP enter the income but not OACT's population
-  (M-E4). No public source settles which way these move the estimated
-  dependence.
+  The Social Security income quintile stands in for it. Benefits that do
+  not follow the worker's own AIME move the proxy away from OACT's
+  quintile: claiming-age reductions (Study 129 p. 7), spouse benefits for
+  the dually entitled (p. 8, note 1), and any benefit type the ACS item
+  covers that OACT's population excludes (M-E4; the item's definition is
+  the fit job's to record, §6.2). No public source settles which way
+  these move the estimated dependence.
 - **Interactions.** The model assumes the three effects add on the log
   scale. No public source has all three jointly with modern deaths. The
   fit job reports NHIS's education × race interaction terms at 65+ as a
