@@ -555,8 +555,9 @@ def test_a_zero_at_an_extreme_exponent_gives_the_plain_zero_results(
 
 # Zero exponents from the ordinary band to the top, and from the bottom
 # band, where the rule before this fix asked for more than MAX_PREC digits
-# and so raised at once. The band between, where it asked for gigabytes,
-# stays out, so a regression fails fast instead of exhausting the host.
+# and so raised at once. The band between, where that rule could ask for
+# gigabytes, stays out, so a regression fails fast instead of exhausting
+# the host.
 _ZERO_EXPONENTS = st.one_of(
     st.integers(-10_000, MAX_EMAX), st.integers(MIN_ETINY, 8 - MAX_PREC)
 )

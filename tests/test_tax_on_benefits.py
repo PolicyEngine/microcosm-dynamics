@@ -703,7 +703,7 @@ def test_split_that_could_overflow_is_refused_by_name():
             allocate_liabilities(
                 Decimal(f"-9E+{MAX_EMAX}"),
                 Decimal(f"9E+{MAX_EMAX}"),
-                Decimal(0),
+                Decimal(f"9E+{MAX_EMAX}"),
             )
         assert _context_state(active) == before
 
