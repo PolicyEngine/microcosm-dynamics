@@ -2,12 +2,12 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 199,
+  "confirmed_mutation_count": 233,
   "counts_by_layer": {
     "g_deductions": 18,
-    "g_preflight": 126,
+    "g_preflight": 149,
     "g_savings": 12,
-    "r2": 42,
+    "r2": 53,
     "shared_provenance": 1
   },
   "environment_contract": {
@@ -11342,6 +11342,1942 @@
         }
       },
       "layer": "g_preflight"
+    },
+    {
+      "id": "round9-can_move_adds_unentitled",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "    entitled = [b for b in record.beneficiaries if month in b.entitled_months]\n",
+          "after": "    entitled = list(record.beneficiaries)\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[child",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[survivor"
+      ],
+      "failed_test_count": 2,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_adds_unentitled.log",
+        "sha256": "8e7baf6782209ea1cca3a877c204eddbe425952f7296fbf4d3ad04f6422757c2",
+        "failure_summary": "2 failed, 208 passed in 11.87s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_any_benefit_type",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)\n",
+          "after": ""
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[a"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_any_benefit_type.log",
+        "sha256": "254357a7e2d236defdd8b08058582dad09ff3e468112c3d53307371cf6766d9a",
+        "failure_summary": "1 failed, 209 passed in 12.55s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_any_rate",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        and b.gross_rates[month - 1] < b.original_rates[month - 1]\n",
+          "after": ""
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_an_unreduced_survivor_needs_no_family_facts"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_any_rate.log",
+        "sha256": "fa85447148a5ac45275bab66d10582e5e080704aeb645d12e8ecbb00f6d0056e",
+        "failure_summary": "1 failed, 209 passed in 11.45s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_any_record",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "    if record.kind is not RecordKind.DECEASED:\n        return False\n    context = record.family_months.get(month)\n",
+          "after": "    context = record.family_months.get(month)\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_living_workers_record_has_no_care_minimum"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_any_record.log",
+        "sha256": "306c2bd5af81aca564224269798e7de044b10a5e24a3f75e5e274917722e2537",
+        "failure_summary": "1 failed, 209 passed in 11.24s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_counts_the_deductee",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        b.beneficiary_id not in deductees\n        and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)\n",
+          "after": "        b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[the"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_counts_the_deductee.log",
+        "sha256": "fedaacc384014658afa2b195c8efdf71df8fb57a5bf180a799c815956acdc0ad",
+        "failure_summary": "1 failed, 209 passed in 11.58s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_equal_rate",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        and b.gross_rates[month - 1] < b.original_rates[month - 1]\n",
+          "after": "        and b.gross_rates[month - 1] <= b.original_rates[month - 1]\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_an_unreduced_survivor_needs_no_family_facts"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_equal_rate.log",
+        "sha256": "40dcf9b2203a8f876c17e149117da9a32596f1330df6e04f4fca12589cb6ea76",
+        "failure_summary": "1 failed, 209 passed in 11.17s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_needs_no_child",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "    return any(\n        b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)\n        for b in entitled\n    ) and any(\n",
+          "after": "    return any(\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[no",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[child"
+      ],
+      "failed_test_count": 2,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_needs_no_child.log",
+        "sha256": "e49848f2988f12905a4b7a4b21c163b0336747d6f219ad2d4fdc263e91a3a662",
+        "failure_summary": "2 failed, 208 passed in 11.77s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_no_context",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        return bool(g._current_caregivers(context.beneficiaries))\n",
+          "after": "        return False\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_no_context.log",
+        "sha256": "95d183f879ba22023cfdf6370f46c0dde27e14a14c5700279975ee62cfa41256",
+        "failure_summary": "1 failed, 209 passed in 11.33s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-can_move_widow_type_only",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "        and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)\n",
+          "after": "        and b.benefit_types[month - 1] is BenefitType.WIDOW\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_reduced_survivor_beside_a_child_needs_the_family_facts[BenefitType.DWB]"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/can_move_widow_type_only.log",
+        "sha256": "5ecb377d4342b607ebd8c8792f6ec7ebc696a88210e826d772615ae0e309be0b",
+        "failure_summary": "1 failed, 209 passed in 12.45s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-cap_drops_before_1983",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "    UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,\n    UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,\n}\n",
+          "after": "    UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,\n}\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-0.10-0.20-1981]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-0.10-0.20-1982]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-400-400.10-1981]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-400-400.10-1982]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-1000-1000.10-1981]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[0-1000-1000.10-1982]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[8-0.10-0.20-1981]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[8-0.10-0.20-1982]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[8-400-400.10-1981]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_rib_above_its_pia_is_an_input_error_before_1983[8-400-400.10-1982]"
+      ],
+      "failed_test_count": 14,
+      "log": {
+        "path": "scratch/review/round9-mutations/cap_drops_before_1983.log",
+        "sha256": "4630db61ec66757860af3f86126c77d391fe7c77f0fdfc1868fad1155ad46fff",
+        "failure_summary": "14 failed, 196 passed in 11.70s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-caregivers_any_flag",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        if member.role in _WIDOW_ROLES\n        and isinstance(member.child_in_care, str)\n",
+          "after": "        if member.role in _WIDOW_ROLES\n        and member.child_in_care is not None\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_leaves_a_family_with_no_care_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_with_no_caregiver_an_unbound_month_matches_g"
+      ],
+      "failed_test_count": 7,
+      "log": {
+        "path": "scratch/review/round9-mutations/caregivers_any_flag.log",
+        "sha256": "042afaff1b9653f6580ee7f079f31393feb622b9b0342ccbb96a1f19e4adb9d3",
+        "failure_summary": "7 failed, 203 passed in 24.98s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-caregivers_any_role",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        if member.role in _WIDOW_ROLES\n        and isinstance(member.child_in_care, str)\n",
+          "after": "        if isinstance(member.child_in_care, str)\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_living_workers_divorced_spouse_has_no_care_minimum"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/caregivers_any_role.log",
+        "sha256": "b8ba1ce3f5f0bb8d0578e46819dabb77fe78fa5486ec8e50d7bcface4a8fca50",
+        "failure_summary": "1 failed, 209 passed in 10.75s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-ceiling_never_refuses",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "    if minimum.ceiling > age_adjusted:\n",
+          "after": "    if False:\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_where_it_can_move_the_rate",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_outside_the_maximum_too",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_and_a_partial_event_share_the_partial_refusal",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_refuses_a_partial_month_the_minimum_turns_on"
+      ],
+      "failed_test_count": 5,
+      "log": {
+        "path": "scratch/review/round9-mutations/ceiling_never_refuses.log",
+        "sha256": "49d639ace739d703600fa50f045079512d292ea547c9a73c9c95aa40f01119ca",
+        "failure_summary": "5 failed, 205 passed in 36.65s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-ceiling_refuses_at_equality",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "    if minimum.ceiling > age_adjusted:\n",
+          "after": "    if minimum.ceiling >= age_adjusted:\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_moves_only_the_caregivers_own_money",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_disabled_widow_reaches_the_same_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum"
+      ],
+      "failed_test_count": 17,
+      "log": {
+        "path": "scratch/review/round9-mutations/ceiling_refuses_at_equality.log",
+        "sha256": "0ea59c636ab8db100672820439f2fc50b0005bc8e5629dd7f8643d76634116b8",
+        "failure_summary": "17 failed, 193 passed in 7.88s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-comparison_drops_events",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "                bid: _replace_declared(event, payable=Fraction(0))\n                for bid, event in events.items()\n",
+          "after": "                bid: _replace_declared(event, payable=Fraction(0))\n                for bid, event in ()\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_disabled_widow_reaches_the_same_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_where_it_can_move_the_rate"
+      ],
+      "failed_test_count": 17,
+      "log": {
+        "path": "scratch/review/round9-mutations/comparison_drops_events.log",
+        "sha256": "d87e0153fbba9146c51a128ab89d706c06920d593d25f424fc8d16fe8a0eddc0",
+        "failure_summary": "17 failed, 193 passed in 5.44s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-comparison_drops_households",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            },\n            households,\n            {},\n        )\n        ceiling = highest.by_id()[cid].age_adjusted_rate\n",
+          "after": "            },\n            {},\n            {},\n        )\n        ceiling = highest.by_id()[cid].age_adjusted_rate\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_keeps_a_minimum_it_cannot_change",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_equals_the_better_of_the_two_public_families"
+      ],
+      "failed_test_count": 3,
+      "log": {
+        "path": "scratch/review/round9-mutations/comparison_drops_households.log",
+        "sha256": "926b970fdc29581edca61219bf68f864f0c5266cbb9af56f140f58e3ee5eb3c6",
+        "failure_summary": "3 failed, 207 passed in 32.57s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-comparison_keeps_payable",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "                bid: _replace_declared(event, payable=Fraction(0))\n                for bid, event in events.items()\n",
+          "after": "                bid: event\n                for bid, event in events.items()\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_outside_the_maximum_too",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds"
+      ],
+      "failed_test_count": 2,
+      "log": {
+        "path": "scratch/review/round9-mutations/comparison_keeps_payable.log",
+        "sha256": "a6c3620531c8201bb10c094a08a40b852aec3ff9d75e0fad19315feac7a31d0c",
+        "failure_summary": "2 failed, 208 passed in 25.73s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-deductee_caregiver_compares",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        if member.beneficiary_id not in events\n        and by_id[member.beneficiary_id].entitled\n",
+          "after": "        if by_id[member.beneficiary_id].entitled\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deducted_caregiver_reaches_no_comparison"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/deductee_caregiver_compares.log",
+        "sha256": "de56418d0524f68f4e6aa52f7da472acfa48777d8a54141e94a532cd19db224d",
+        "failure_summary": "1 failed, 209 passed in 12.12s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-every_event_settled",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        settled = all(event.payable == 0 for event in events.values())\n",
+          "after": "        settled = True\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_where_it_can_move_the_rate",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_outside_the_maximum_too",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_and_a_partial_event_share_the_partial_refusal",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_refuses_a_partial_month_the_minimum_turns_on"
+      ],
+      "failed_test_count": 5,
+      "log": {
+        "path": "scratch/review/round9-mutations/every_event_settled.log",
+        "sha256": "358e3c8b6fef2c6591e29bd49e60c8f66bdb4713b961abb331c59fa24113f33e",
+        "failure_summary": "5 failed, 205 passed in 32.32s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-floor_always_ordinary",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            ceiling if settled else ordinary.by_id()[cid].age_adjusted_rate,\n",
+          "after": "            ordinary.by_id()[cid].age_adjusted_rate,\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_moves_only_the_caregivers_own_money",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_disabled_widow_reaches_the_same_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum"
+      ],
+      "failed_test_count": 13,
+      "log": {
+        "path": "scratch/review/round9-mutations/floor_always_ordinary.log",
+        "sha256": "ce3bc40098aeaf9af3009081213b1fef6add85082e28abf8d31d72c5cf433591",
+        "failure_summary": "13 failed, 197 passed in 8.93s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-nh_reaches_the_comparison",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "    if any(worker_deductions.values()):\n        raise _computed(\n            FamilyConfigurationUnsupported,\n            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,\n            \"Concurrent NH reservations and a child-in-care comparison have \"\n",
+          "after": "    if False:\n        raise _computed(\n            FamilyConfigurationUnsupported,\n            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,\n            \"Concurrent NH reservations and a child-in-care comparison have \"\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_nh_reservations_refuse_on_a_comparison"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/nh_reaches_the_comparison.log",
+        "sha256": "356555e41043aff64b254357b3d100f75b34007750111941ba1a6e237607fa6b",
+        "failure_summary": "1 failed, 209 passed in 10.94s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-no_event_settled",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        settled = all(event.payable == 0 for event in events.values())\n",
+          "after": "        settled = False\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_moves_only_the_caregivers_own_money",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_disabled_widow_reaches_the_same_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum"
+      ],
+      "failed_test_count": 13,
+      "log": {
+        "path": "scratch/review/round9-mutations/no_event_settled.log",
+        "sha256": "229e4c9de479de9d877d7d32e7fae0143582cc0fb7cc2ecdbd224b43e39b05ff",
+        "failure_summary": "13 failed, 197 passed in 8.79s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-rerate_skips_floor",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            if minimum is not None:\n                row.mother_father_rate = minimum.floor\n",
+          "after": ""
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1.40-2.10-60-0.80-1-1]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[4-6-60-2.40-3-3]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[1000-1500-60-612.80-750-750]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_deduction_raises_the_care_minimum[0.30-0.40-1-0.10-0.20-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_moves_only_the_caregivers_own_money",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_temporary_deduction_reaches_only_its_own_household",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_disabled_widow_reaches_the_same_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_keeps_a_minimum_it_cannot_change",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_equals_the_better_of_the_two_public_families"
+      ],
+      "failed_test_count": 11,
+      "log": {
+        "path": "scratch/review/round9-mutations/rerate_skips_floor.log",
+        "sha256": "b05faa2bd54225801f07f197a0a17ebcf5b86f13d63735ade3355d967f436961",
+        "failure_summary": "11 failed, 199 passed in 8.18s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-rerate_skips_refusal",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            if minimum is not None:\n                _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)\n",
+          "after": ""
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_where_it_can_move_the_rate",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_and_a_partial_event_share_the_partial_refusal",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_refuses_a_partial_month_the_minimum_turns_on"
+      ],
+      "failed_test_count": 4,
+      "log": {
+        "path": "scratch/review/round9-mutations/rerate_skips_refusal.log",
+        "sha256": "2e20b8eca32252987b171871747c99739cbb0e23191db39d649bd00815e2f61e",
+        "failure_summary": "4 failed, 206 passed in 41.79s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-ret_binding_months_only",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "                m not in record.family_maximum_binding_months\n                and not _care_minimum_can_move(record, m, deductees)\n",
+          "after": "                m not in record.family_maximum_binding_months\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_needs_the_family_facts_where_a_minimum_can_move",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_reduced_survivor_beside_a_child_needs_the_family_facts[BenefitType.WIDOW]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_reduced_survivor_beside_a_child_needs_the_family_facts[BenefitType.DWB]"
+      ],
+      "failed_test_count": 4,
+      "log": {
+        "path": "scratch/review/round9-mutations/ret_binding_months_only.log",
+        "sha256": "a6f51090f6d0897389574c517593a9232bff85a293223f9f76e955b5d0f49340",
+        "failure_summary": "4 failed, 206 passed in 12.11s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-ret_every_month_reaches_g",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "before": "                m not in record.family_maximum_binding_months\n                and not _care_minimum_can_move(record, m, deductees)\n",
+          "after": "                False\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_an_unreduced_survivor_needs_no_family_facts",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[no",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[child",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[the",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[survivor",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[a",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_living_workers_record_has_no_care_minimum"
+      ],
+      "failed_test_count": 7,
+      "log": {
+        "path": "scratch/review/round9-mutations/ret_every_month_reaches_g.log",
+        "sha256": "0db11e63aa877ad52eda409ae013909f2a9bdeabcbd6db7b87d75374c09a435b",
+        "failure_summary": "7 failed, 203 passed in 18.82s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round9-settled_any_full_event",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        settled = all(event.payable == 0 for event in events.values())\n",
+          "after": "        settled = any(event.payable == 0 for event in events.values())\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_full_and_a_partial_event_share_the_partial_refusal"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/settled_any_full_event.log",
+        "sha256": "b78fe4b83356998d88123eb68e71ac7f3ab411d5ae91649af6063bdd58ee1d72",
+        "failure_summary": "1 failed, 209 passed in 11.34s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unentitled_caregiver_compares",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        if member.beneficiary_id not in events\n        and by_id[member.beneficiary_id].entitled\n",
+          "after": "        if member.beneficiary_id not in events\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_an_unentitled_caregiver_reaches_no_comparison"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/unentitled_caregiver_compares.log",
+        "sha256": "4f93702d091873616f9d9feff12ecfef25f57a53c0c794970e540a11db27fb1f",
+        "failure_summary": "1 failed, 209 passed in 11.58s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_keeps_whole_dollars",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "                auxiliary_payable=payable,\n                whole_dollar_auxiliary=_whole_dollars_validated(payable),\n            )\n        results.append(_computed(BeneficiaryBenefit, **values))\n",
+          "after": "                auxiliary_payable=payable,\n            )\n        results.append(_computed(BeneficiaryBenefit, **values))\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_equals_the_better_of_the_two_public_families",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum"
+      ],
+      "failed_test_count": 4,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_keeps_whole_dollars.log",
+        "sha256": "85cbaecb6f59a4077dd443a517d8ffd5b67f145fcbbea4566752da9e53ec7df7",
+        "failure_summary": "4 failed, 206 passed in 9.08s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_no_offset",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "                if old.own_benefit is None\n",
+          "after": "                if True\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_takes_the_offset_after_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[100-3000-750-650]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[100-1500-715-615]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[800-1500-715-0]"
+      ],
+      "failed_test_count": 4,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_no_offset.log",
+        "sha256": "7fd36819e2c902b59613cdf39ade1906e62c426029fa71158e3803deee0bf06f",
+        "failure_summary": "4 failed, 206 passed in 12.28s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_offset_unclipped",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "                else max(Fraction(0), age_adjusted - old.own_benefit)\n",
+          "after": "                else age_adjusted - old.own_benefit\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[800-1500-715-0]"
+      ],
+      "failed_test_count": 1,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_offset_unclipped.log",
+        "sha256": "b326c9d050dc60b719bae0f56f1fb4f6d47c1e32ef4ff65ce9a25dad98046451",
+        "failure_summary": "1 failed, 209 passed in 10.99s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_skips_minimum",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "        elif bid in care_minimums:\n",
+          "after": "        elif False:\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_deduction_on_one_caregiver_raises_the_others_minimum",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_outside_the_maximum_too",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_equals_the_better_of_the_two_public_families",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum"
+      ],
+      "failed_test_count": 5,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_skips_minimum.log",
+        "sha256": "dc7c1a24630f2263a7a5421e9c6db067151a0b5f0ea8b963dde3e7a147c2200a",
+        "failure_summary": "5 failed, 205 passed in 9.35s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_skips_refusal",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            age_adjusted = max(old.age_adjusted_rate, minimum.floor)\n            _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)\n",
+          "after": "            age_adjusted = max(old.age_adjusted_rate, minimum.floor)\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_refuses_outside_the_maximum_too",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds"
+      ],
+      "failed_test_count": 2,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_skips_refusal.log",
+        "sha256": "fe6250c608f8a9b3ee96306fe3bdcb0ac958d8949d5fd7f7d0820c1a5ef00eb8",
+        "failure_summary": "2 failed, 208 passed in 27.14s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round9-unrated_row_takes_floor_alone",
+      "round": 9,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "before": "            age_adjusted = max(old.age_adjusted_rate, minimum.floor)\n",
+          "after": "            age_adjusted = minimum.floor\n"
+        }
+      ],
+      "command": [
+        "python",
+        "scratch/review/run_round9_named.py",
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-rf",
+        "tests/test_track_b_ret_ledger_fix_round_9.py",
+        "tests/test_track_b_ret_ledger_fix_round_8.py"
+      ],
+      "outer_command": [
+        "python",
+        "scratch/review/round9_mutate.py"
+      ],
+      "environment": {
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/trackb-round9",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/trackb-round9",
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1"
+      },
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_each_caregiver_compares_alone",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[100-1500-715-615]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset[800-1500-715-0]",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_the_minimum_equals_the_better_of_the_two_public_families",
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_a_partial_deduction_computes_or_refuses_within_bounds"
+      ],
+      "failed_test_count": 5,
+      "log": {
+        "path": "scratch/review/round9-mutations/unrated_row_takes_floor_alone.log",
+        "sha256": "35fbaa56939c06d432640392b3fd7590f4c04b38b225b1b3c63220d26c2ad891",
+        "failure_summary": "5 failed, 205 passed in 20.02s"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+          "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+        }
+      },
+      "layer": "g_preflight"
     }
   ],
   "restoration_verification_snapshot": {
@@ -11409,5 +13345,11 @@
   "round_8_restoration_snapshot": {
     "src/populace_dynamics/track_b/gross_benefits.py": "96ef26ad39fc7f26d2e1f93659928821a6edc7e13c32844866527c74c131b38a",
     "src/populace_dynamics/track_b/ret_ledger.py": "78c24f9f94ab8cf90efcd0ca5c5b92686fd0cad71911594e204517313135c999"
+  },
+  "round_9_head": "aa86a4da87dde6664d5475a197632ca685579e1e",
+  "round_9_note": "34 fresh one-line semantic mutations failed named tests in tests/test_track_b_ret_ledger_fix_round_9.py and tests/test_track_b_ret_ledger_fix_round_8.py on the final test bytes. A first pass of 35 killed 24. Ten survivors gained tests before this run. A second pass caught two of those new cases testing nothing, because fra_month=0 sets a worker past full retirement age, and each of them now asserts the deduction. The eleventh survivor, can_move_any_context, always reaches G on a month with a context and no caregiver. It changes no outcome, and test_with_no_caregiver_an_unbound_month_matches_g holds the two answers together, so it stays out of this count. The session ran these in copied source trees, and production sources stayed unchanged. Earlier records remain historical.",
+  "round_9_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+    "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
   }
 }

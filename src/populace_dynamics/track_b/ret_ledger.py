@@ -1145,6 +1145,30 @@ def _divorced_excluded(b: RETBeneficiary, month: int) -> bool:
     )
 
 
+def _care_minimum_can_move(record, month, deductees):
+    """Whether another person's deduction can raise a 402(q)(5)(D) minimum.
+
+    G settles it where a context names the caregiver. Without one, any
+    reduced surviving-spouse rate beside an entitled child stays open, and the
+    caller's refusal names the missing facts.
+    """
+    if record.kind is not RecordKind.DECEASED:
+        return False
+    context = record.family_months.get(month)
+    if context is not None:
+        return bool(g._current_caregivers(context.beneficiaries))
+    entitled = [b for b in record.beneficiaries if month in b.entitled_months]
+    return any(
+        b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)
+        for b in entitled
+    ) and any(
+        b.beneficiary_id not in deductees
+        and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)
+        and b.gross_rates[month - 1] < b.original_rates[month - 1]
+        for b in entitled
+    )
+
+
 def _check_settled_family_facts(record: RecordYear) -> None:
     """Compare declarations only where G can establish the underlying fact.
 
@@ -1556,7 +1580,10 @@ def apply_ret_year(
         # RS 02501.155A.2: charge every worker against their own adjusted
         # rate first. Redistribute only after all that month's workers have
         # been charged, so changing beneficiary order cannot change excess.
-        for m in sorted(record.family_maximum_binding_months):
+        # 402(q)(5)(D) reads this month's deductions with or without a
+        # binding actual maximum, because a surviving divorced caregiver
+        # sits outside it and the mother or father it compares with inside.
+        for m in range(1, 13):
             deductees = {
                 k: net[k, m]
                 for k in people
@@ -1568,6 +1595,11 @@ def apply_ret_year(
                 m in b.entitled_months and b.original_rates[m - 1] > 0
                 for k, b in people.items()
                 if k not in deductees
+            ):
+                continue
+            if (
+                m not in record.family_maximum_binding_months
+                and not _care_minimum_can_move(record, m, deductees)
             ):
                 continue
             if m not in record.family_months:

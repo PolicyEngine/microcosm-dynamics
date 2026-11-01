@@ -191,12 +191,12 @@ def test_delayed_credits_can_lift_a_history_rib_past_its_pia(reason):
     _assert_preflight_neutral(case)
 
 
-def test_a_month_before_1983_leaves_the_rate_unsettled_past_the_pia():
+def test_a_month_before_1983_keeps_the_pia_cap():
     pia = F("333.30")
     case = _rib_record(
         pia, pia + F(1, 10), reason=OWN_HISTORY, cohort=1915, year=1982
     )
-    _assert_refusal(case, OWN_HISTORY)
+    _assert_invalid(case)
 
 
 @given(

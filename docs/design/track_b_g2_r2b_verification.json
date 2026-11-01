@@ -13243,5 +13243,83 @@
       ]
     }
   },
-  "round_8_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_8. Earlier heads, counts and commands remain historical."
+  "round_8_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_8. Earlier heads, counts and commands remain historical.",
+  "round_9": {
+    "reviewed_head": "aa86a4da87dde6664d5475a197632ca685579e1e",
+    "workspace": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-g2-20261023",
+    "verification_class": "statutory_conformance",
+    "admitted_scope": "Invented declarations and captured published examples only; no population, behavioral or forecast claim.",
+    "fixed_by": "the session, because review lanes were queued and lane clocks run slowly",
+    "named_test_gate": {
+      "selection": "tests/test_track_b_*.py",
+      "result": "14261 passed, 7 skipped in 966.46s (0:16:06)",
+      "environment": "both data roots set to a nonexistent path"
+    },
+    "failing_first": {
+      "reviewed_head": "aa86a4da87dde6664d5475a197632ca685579e1e",
+      "module": "tests/test_track_b_ret_ledger_fix_round_9.py",
+      "result": "34 failed, 28 passed in 28.15s"
+    },
+    "cross_head": {
+      "r2_stable_rows": 240,
+      "r3_stable_rows": 240,
+      "identical_declared_output_bytes": true,
+      "stable_sha256": "799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55"
+    },
+    "conformance_report_sha256": "b5dfc011181eb5fdaf795719ae7557dbc23d0a680058f24c6a5aa03ba28f2a70",
+    "conformance_report_change": "One new named refusal witness, care_minimum_partial_deduction, with its counts. Lattice rows stay identical.",
+    "tier_policy": "Left to CI; no local whole-suite collection.",
+    "final_source_sha256": {
+      "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
+      "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+    },
+    "final_test_sha256": {
+      "tests/test_track_b_ret_ledger_fix_round_4.py": "02c5c86b64070f9e7350868f8d94dcc9233bedc32cbcae32b3264f9ae570d1bb",
+      "tests/test_track_b_ret_ledger_fix_round_5.py": "c86ef045d797e31d6db09ef11bc7fbfbcf7c1fa54d32f04e7b6b42e8b813c9cd",
+      "tests/test_track_b_ret_ledger_fix_round_6.py": "8ec899e262d6e242f67f860e1722f465882573bbcb481b8459f2ff13946f92b0",
+      "tests/test_track_b_ret_ledger_fix_round_7.py": "6f8f1cdc4f90e594759225870e1ec36a905fa1cd6eea7d142747ac13bec066c4",
+      "tests/test_track_b_ret_ledger_fix_round_8.py": "ca0e937eedf4fd5aaad8279775bf9af78b37e3f2ee9f45161d591bc4c638802b",
+      "tests/test_track_b_ret_ledger_fix_round_9.py": "258d3f13850d639c5f261d1091debed016946b15aaaaf4631db6d63a842629c4"
+    },
+    "mutations": {
+      "count": 34,
+      "ids": [
+        "round9-can_move_adds_unentitled",
+        "round9-can_move_any_benefit_type",
+        "round9-can_move_any_rate",
+        "round9-can_move_any_record",
+        "round9-can_move_counts_the_deductee",
+        "round9-can_move_equal_rate",
+        "round9-can_move_needs_no_child",
+        "round9-can_move_no_context",
+        "round9-can_move_widow_type_only",
+        "round9-cap_drops_before_1983",
+        "round9-caregivers_any_flag",
+        "round9-caregivers_any_role",
+        "round9-ceiling_never_refuses",
+        "round9-ceiling_refuses_at_equality",
+        "round9-comparison_drops_events",
+        "round9-comparison_drops_households",
+        "round9-comparison_keeps_payable",
+        "round9-deductee_caregiver_compares",
+        "round9-every_event_settled",
+        "round9-floor_always_ordinary",
+        "round9-nh_reaches_the_comparison",
+        "round9-no_event_settled",
+        "round9-rerate_skips_floor",
+        "round9-rerate_skips_refusal",
+        "round9-ret_binding_months_only",
+        "round9-ret_every_month_reaches_g",
+        "round9-settled_any_full_event",
+        "round9-unentitled_caregiver_compares",
+        "round9-unrated_row_keeps_whole_dollars",
+        "round9-unrated_row_no_offset",
+        "round9-unrated_row_offset_unclipped",
+        "round9-unrated_row_skips_minimum",
+        "round9-unrated_row_skips_refusal",
+        "round9-unrated_row_takes_floor_alone"
+      ]
+    }
+  },
+  "round_9_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_9. Earlier heads, counts and commands remain historical."
 }

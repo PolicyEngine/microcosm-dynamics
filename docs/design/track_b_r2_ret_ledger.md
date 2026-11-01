@@ -538,9 +538,10 @@ prior year's amount or relabelled as a statutory coverage refusal.
 5. **Other workers' charging.** After NH charging, charge each auxiliary
    or survivor's excess against that person's remaining benefit only.
    Do not charge an already exhausted month again. When this frees
-   binding family-maximum room for another beneficiary, readjust through
-   G using that month's declared `RETFamilyMonth` statutory and household
-   facts. Without those facts, retain the named refusal
+   binding family-maximum room for another beneficiary, or can raise a
+   child-in-care minimum with or without a binding maximum, readjust
+   through G using that month's declared `RETFamilyMonth` statutory and
+   household facts. Without those facts, retain the named refusal
    `deduction_readjustment_requires_family_context` (20 CFR
    404.434(b)(2)-(3); RS 02501.095B.3-4, .155A.3-4;
    GN 02603.020-.050).
@@ -831,7 +832,7 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Protested partial current-year suspension | `PROTEST_PARTIAL_SUSPENSION` / `protested_partial_work_suspension` | RS 02501.100B.3 requires a different provisional path |
 | Auxiliary/survivor own deduction with a binding maximum and complete monthly G facts | Supported full/partial permanent deductions and full estimated suspensions | Act 203(a)(4); RS 02501.155A.2–4; GN 02603.050C/D |
 | Separate-household nondeductees | Final increases are paid; estimated increases wait unless in the worker's household | RS 02501.160; GN 02603.090 |
-| Binding readjustment without monthly G facts | `FAMILY_CONTEXT_REQUIRED` / `deduction_readjustment_requires_family_context` | Reduced rates do not identify original age and dual-entitlement facts |
+| Binding readjustment, or a month where a child-in-care minimum can move, without monthly G facts | `FAMILY_CONTEXT_REQUIRED` / `deduction_readjustment_requires_family_context` | Reduced rates do not identify original age and dual-entitlement facts |
 | NH reservation combined with auxiliary age reduction | G `deduction_age_work_interaction` | GN 02603.050C/D reserves both amounts; current captures do not settle the interacting reduced-rate derivation |
 | Two-record entitlement with actual or estimated excess | `TWO_RECORD_EARNINGS` / `excess_earnings_on_two_records` | RS 02501.145-.150 require coordinated records |
 | Noncovered foreign work | `FOREIGN_WORK` / `noncovered_foreign_work` | Act 203(c); 20 CFR 404.417-.418 |
@@ -2152,6 +2153,7 @@ member separately.
 | `SAVINGS_CLAUSE`, `SAVINGS_CLAUSE_HISTORY_UNKNOWN`, `SAVINGS_CLAUSE_MEMBERSHIP_CHANGE`, `SAVINGS_CLAUSE_RATE_PROCEDURE` | None for F1–F6 | RS 00630.400 says "Any person's benefit may not exceed the original benefit (OB)" and adds "the new PIA in a life case" to the savings maximum. The refusal concerns carried allocation/rate procedure rather than the ordinary OB, NH own benefit or raw own-benefit entitlement. |
 | `PRISONER_SUSPENSION`, `DRUG_ADDICTION_SUSPENSION`, `FOREIGN_WORK_DEDUCTION`, `PENALTY_DEDUCTION`, `MARITIME_DEDUCTION`, `ELECTION_CERTIFICATE_SUSPENSION` | None | GN 02603.040 calls these "deductions" and suspensions. GN 02603.050B first applies the maximum, then deductions, then redistribution. They do not alter the pre-reduction facts F1–F6. |
 | `DEDUCTION_AGE_WORK_INTERACTION`, `SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION` | None | GN 02603.050A and C concern deduction exceptions and reserved age reductions during redistribution. The unresolved composition changes family cash after the original rates and entitlement tests. |
+| `CARE_MINIMUM_PARTIAL_DEDUCTION` | None | RS 00615.340 compares "the amount a mother and father would receive", and no capture carries a partial deduction to that comparison. The refusal says nothing about an F1–F6 fact. |
 | Deferred `ADMINISTRATIVE_FINALITY`, `DIB_AFTER_REDUCED_RIB`, `WORKERS_COMPENSATION_OFFSET` | Same scoped facts as the named condition | Deferring a known reason does not turn its potentially lawful monetary difference into an input error. |
 
 Maximum binding and auxiliary gross deliberately stay after G. Maximum
@@ -2525,9 +2527,10 @@ question than the ordinary upper bound. `_PIA_CAP_KEEPING_HOLDS` lists the
 holds that leave that answer alone: the reduction-only holds, money history
 among them, and a delayed-credit hold on a record with no credits. Finality
 keeps its row, because it can protect a rate above the PIA. So do positive
-delayed credits, which add to the base. A month before 1983 keeps its row,
-because the fact table leaves F3 open there. A rate at or below the PIA keeps
-its row under a history hold, and round 7's reasoning for it stands.
+delayed credits, which add to the base. This round also kept a row for a month
+before 1983, because the fact table leaves F3 open there, and round 9 corrects
+that. A rate at or below the PIA keeps its row under a history hold, and
+round 7's reasoning for it stands.
 
 **A zero threshold fails every RIB.** Act 202(g)(1)(C) needs a mother's or
 father's own RIB below three-quarters of the PIA, so at PIA $0 no nonnegative
@@ -2580,7 +2583,9 @@ its old name claimed more than its comment did.
 - **Modern cohorts keep the WIB route.** RS 00615.005A.8 ends that carryover for
   a DIB for workers born January 2, 1928 or later with onsets on or after
   January 1, 1990. The schema omits the onset, so the rule can't show that
-  every filling fails. A loose refusal moves no money.
+  every filling fails for most cohorts. A birth from 1990 on rules out an
+  earlier onset by itself, so a later round could tighten those cohorts. A
+  loose refusal moves no money.
 - **The exact rate under a history stays refused.** The PIA cap says what a rate
   can't be, and it computes nothing.
 - **No money moved.** This round changes classification only.
@@ -2593,7 +2598,7 @@ its old name claimed more than its comment did.
 | --- | --- |
 | With no delayed credits, no history admits a RIB above its PIA, declared or implied by a known cohort | `test_history_leaves_a_rib_at_or_below_its_pia`; `test_a_known_cohort_keeps_the_pia_cap_with_no_declaration`; `test_no_other_hold_lifts_a_known_cohort_past_the_pia`; Hypothesis `test_no_history_admits_a_rib_above_its_pia` |
 | The cap leaves every rate at or below the PIA its row, and the preflight changes nothing about it | `test_a_rate_at_the_pia_keeps_its_history_row`; round 7's Hypothesis `test_history_keeps_every_rate_in_its_scope` |
-| Finality, positive delayed credits and a month before 1983 keep a rate above the PIA | `test_finality_can_lift_a_rib_past_its_pia`; `test_a_deferred_finality_can_lift_a_rib_past_its_pia`; `test_delayed_credits_can_lift_a_history_rib_past_its_pia`; `test_a_month_before_1983_leaves_the_rate_unsettled_past_the_pia` |
+| Finality and positive delayed credits keep a rate above the PIA | `test_finality_can_lift_a_rib_past_its_pia`; `test_a_deferred_finality_can_lift_a_rib_past_its_pia`; `test_delayed_credits_can_lift_a_history_rib_past_its_pia` |
 | A zero threshold fails every RIB on every filling, and only a zero threshold does | `test_a_zero_pia_fails_a_known_cohorts_rib`; `test_a_zero_pia_fails_a_rib_with_early_credits`; `test_a_zero_threshold_settles_every_actual_rib_test`; `test_only_a_zero_threshold_settles_a_rib_with_early_credits`; Hypothesis `test_only_a_zero_threshold_rules_out_a_history_rib` |
 | A positive threshold, a deemed PIA and finality each keep their row | `test_a_positive_threshold_keeps_the_own_history_row`; `test_early_credits_keep_their_row_on_a_positive_threshold`; `test_a_deemed_pia_keeps_a_known_cohorts_history_open`; `test_finality_keeps_a_zero_threshold_row`; `test_a_deferred_finality_keeps_a_zero_threshold_row` |
 | A route opens the month after its first month, on its own age and date, and no route opens before September 1965 | `test_each_route_dates_the_first_reduced_dib`; Hypothesis `test_the_floor_matches_month_counts_written_from_the_sources`; round 7's Hypothesis `test_f2_matches_a_table_written_from_the_sources` |
@@ -2606,3 +2611,113 @@ and 96 of the module's 148 tests fail against `fbe491d4`. A first pass killed
 38 of 39. The survivor let a positive threshold settle F6 under an early
 delayed-credit hold, which changes that fact and no outcome, and
 `test_only_a_zero_threshold_settles_a_rib_with_early_credits` now kills it.
+
+## PR 563 round 9: the child-in-care minimum under a month's deductions
+
+GPT-6.1 Sol reviewed `aa86a4da` and asked for changes, with two medium
+findings. Both reproduced. The first underpaid a supported widow(er) through G
+and through RET. The second kept a counted row for a RIB no filling can make
+lawful, and round 8's own exception caused it.
+
+### What changed
+
+**The minimum reads the month.** Act 202(q)(5)(D) holds a widow's or widower's
+benefit at the amount the person would have had "had he or she been entitled
+for such month to mother's or father's insurance benefits". RS 00615.340 says
+"they cannot receive less than the amount a mother and father would receive".
+G took that comparison from the family before the month's deductions. When a
+child's deduction freed room under the maximum, a mother or father took that
+room and the widow(er) did not:
+
+| PIA | Maximum | Reduction | Rate at `aa86a4da` | Rate now |
+| --- | --- | --- | --- | --- |
+| $1.40 | $2.10 | 60 of 60 | $0.80 | $1.00 |
+| $4.00 | $6.00 | 60 of 60 | $2.40 | $3.00 |
+| $1,000 | $1,500 | 60 of 60 | $612.80 | $750 |
+| $0.30 | $0.40 | 1 of 60 | $0.10 | $0.20 |
+
+`_care_minimums_after_deductions` now builds the comparison family and runs
+that month's events and households through the same readjustment. A temporary
+deduction in another household frees nothing, so that widow(er) stays at $500
+in the third row. Each caregiver compares alone, so a deduction on one can
+raise the other's minimum. A deductee keeps G's ordinary minimum, because GN
+02603.050B.3 redistributes only to people "not subject to a deduction", in
+either family.
+
+**The minimum reaches a rate nothing else re-rates.** A surviving divorced
+spouse sits outside the actual maximum (403(a)(3)(C)), while the mother or
+father the spouse compares with sits inside it (RS 00615.682). So the actual
+maximum can stay unbound while the comparison binds. At PIA $2.70 and maximum
+$4.10 the spouse's $1.90 becomes $2.00. `_readjust_deduction_rows` has a branch
+for that row, and it takes the own-benefit offset after the minimum.
+
+**RET reads the minimum on an unbound month.** `apply_ret_year` reached G only
+on a month in `family_maximum_binding_months`, so the $2.00 above never reached
+the ledger. `_care_minimum_can_move` now sends such a month to G. Where a
+context names the people, it asks for a caregiver. Without one, a reduced
+widow(er) or disabled widow(er) beside an entitled child stays open, and the
+existing `FAMILY_CONTEXT_REQUIRED` refusal names the missing facts. Both
+reproductions from the review now pay $1 and $2.
+
+**A partial deduction refuses where it can move the rate.** An event's
+`payable` belongs to the actual family's rate, and no capture carries a partial
+amount to a comparison rate. The ordinary comparison gives the lowest minimum
+the month can have. Treating every event as full gives the highest. Between the
+two, `care_minimum_partial_deduction` refuses by name and keeps the row and its
+weight. A rate at or above the highest minimum computes, because every reading
+then agrees.
+
+**A month before 1983 keeps the PIA cap.** Round 8 kept a row above the PIA for
+a month before 1983, because the fact table leaves F3 open there. RS 00615.101
+says "Round the result down to the next dime for benefits after 5/82 and up to
+the next dime for benefits prior to 6/82", and upward rounding can't pass a PIA
+that G already holds to dimes. RS 00615.005C.2 subtracts a money reduction from
+that PIA. So `PAYMENT_MONTH_BEFORE_1983` joins `_PIA_CAP_KEEPING_HOLDS`, and
+$0.20 on PIA $0.10 in 1981 or 1982 now raises before `evaluate_ret` and leaves
+no row. So do $400.10 on PIA $400 and $1,000.10 on PIA $1,000. The exact rate
+stays refused, and finality and positive delayed credits keep their rows.
+
+### What stayed
+
+- **A dual comparison keeps its fixed rate.** A dual row takes no redistribution
+  in the actual family, and the comparison treats a dual mother or father the
+  same way. So a deduction doesn't raise a dual caregiver's minimum.
+- **Number-holder reservations stay refused.** A reservation beside a comparison
+  raises `deduction_age_work_interaction`. A survivor record has no living
+  number holder, so this guards the public entry only.
+- **R3 reads a declared month.** `ARFClaim.mother_father_rate_months` stays a
+  caller's declaration, so a month this round raises reaches R3 through that
+  declaration.
+- **One trigger stays a skip.** With a context and no caregiver, RET still skips
+  G on an unbound month. Always reaching G changes no outcome, and
+  `test_with_no_caregiver_an_unbound_month_matches_g` holds the two answers
+  together, so that mutation counts as equivalent and stays out of the ledger.
+- **Sol's `needs_max` items need no new call.** Each one keeps a standing ruling
+  or resolves inside these fixes. Sol read the child-in-care minimum as settled
+  by the sources, and a named refusal for the partial case adopts no reading.
+
+### New executed invariants
+
+| Invariant | Executing tests in `test_track_b_ret_ledger_fix_round_9.py` |
+| --- | --- |
+| The minimum equals the better of the reduced rate and what a mother or father receives this month, under this month's events and households | `test_a_full_deduction_raises_the_care_minimum`; `test_a_temporary_deduction_reaches_only_its_own_household`; Hypothesis `test_the_minimum_equals_the_better_of_the_two_public_families` |
+| The minimum moves only the caregiver's own money, and leaves the maximum accounting alone | `test_the_minimum_moves_only_the_caregivers_own_money` |
+| The rule reaches a caregiver outside the maximum and a disabled widow(er) | `test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum`; `test_a_disabled_widow_reaches_the_same_minimum` |
+| Each caregiver compares alone, and a deductee keeps the ordinary minimum | `test_each_caregiver_compares_alone`; `test_a_deduction_on_one_caregiver_raises_the_others_minimum`; `test_a_deducted_caregiver_keeps_the_ordinary_minimum` |
+| Only a current, entitled, undeducted widow(er) reaches a comparison | `test_a_deducted_caregiver_reaches_no_comparison`; `test_an_unentitled_caregiver_reaches_no_comparison`; `test_a_living_workers_divorced_spouse_has_no_care_minimum` |
+| A dual caregiver takes the offset after the minimum, and the offset stops at zero | `test_a_dual_caregiver_takes_the_offset_after_the_minimum`; `test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset` |
+| A partial deduction computes only where every amount between the two bounds agrees, and otherwise refuses with its row and weight | Hypothesis `test_any_partial_amount_stays_between_the_two_bounds`; Hypothesis `test_a_partial_deduction_computes_or_refuses_within_bounds`; `test_a_partial_deduction_refuses_where_it_can_move_the_rate`; `test_ret_refuses_a_partial_month_the_minimum_turns_on` |
+| RET pays the minimum with or without a binding maximum | `test_ret_pays_the_minimum_on_a_binding_month`; `test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum` |
+| RET asks for family facts exactly where a minimum can move | `test_a_reduced_survivor_beside_a_child_needs_the_family_facts`; `test_no_minimum_can_move_on_these_records`; `test_an_unreduced_survivor_needs_no_family_facts`; `test_a_living_workers_record_has_no_care_minimum` |
+| With no caregiver, an unbound RET month equals G | Hypothesis `test_with_no_caregiver_an_unbound_month_matches_g` |
+| With no delayed credits, no RIB exceeds its PIA in any month, 1981 and 1982 included | `test_a_rib_above_its_pia_is_an_input_error_before_1983`; `test_money_history_keeps_the_same_cap_before_1983` |
+| Before 1983, delayed credits, finality and a rate at or below the PIA keep their refusal | `test_delayed_credits_keep_the_refusal_before_1983`; `test_finality_keeps_its_refusal_before_1983`; `test_a_rate_at_or_below_the_pia_keeps_the_refusal_before_1983` |
+| Each quotation above sits in its capture | `test_the_captures_carry_each_quoted_rule` |
+
+Thirty-four fresh mutations each fail a named test on the final test bytes,
+and 34 of the module's 62 tests fail against `aa86a4da`. A first pass of 35
+killed 24. Ten of the eleven survivors showed test gaps, and new tests closed
+them. A second pass caught two of those new cases testing nothing: they set
+`fra_month=0`, past full retirement age, so no deduction applied. The older
+survivor-alone test had the same flaw. Each of them now asserts the deduction.
+The eleventh survivor stays out of the ledger as equivalent, as above.

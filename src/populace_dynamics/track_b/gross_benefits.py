@@ -495,6 +495,7 @@ class UnsupportedReason(Enum):
     #: Deferred coverage: no NH-reservation/age-reduction allocation
     #: procedure has been derived; no competing authoritative algorithms.
     DEDUCTION_AGE_WORK_INTERACTION = "deduction_age_work_interaction"
+    CARE_MINIMUM_PARTIAL_DEDUCTION = "care_minimum_partial_deduction"
     SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION = (
         "sole_full_deduction_zero_dual_composition"
     )
@@ -1802,6 +1803,7 @@ _PREFLIGHT_FACT_UNSETTLERS = {
     UnsupportedReason.MARITIME_DEDUCTION: frozenset(),
     UnsupportedReason.ELECTION_CERTIFICATE_SUSPENSION: frozenset(),
     UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION: frozenset(),
+    UnsupportedReason.CARE_MINIMUM_PARTIAL_DEDUCTION: frozenset(),
     UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: frozenset(),
 }
 # These holds can only lower an NH rate (402(q)(2), 224; 20 CFR 404.408(c)(1),
@@ -1836,8 +1838,11 @@ _PRIOR_REDUCED_BENEFIT_HOLDS = _PRE_1978_HISTORY_HOLDS | {
 # raw own PIA (F5), which no reduction history changes.
 _OWN_RIB_AMOUNT_TEST_ROLES = _WIDOW_ROLES | {Role.MOTHER_FATHER, Role.PARENT}
 # With no delayed credits, none of these can lift an own RIB past its PIA.
+# RS 00615.101 rounds a reduced RIB up to the next dime before 6/82, and a
+# dime rounding cannot pass a PIA that G already holds to dimes.
 _PIA_CAP_KEEPING_HOLDS = _NH_REDUCTION_ONLY_HOLDS | {
     UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
+    UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
 }
 
 
@@ -3905,6 +3910,12 @@ def _mother_father_care_rate(
     is applied by the actual widow computation. Other care flags are
     cleared so this comparison cannot recursively compare widow floors.
     """
+    comparison = _mother_father_comparison(beneficiaries, caregiver)
+    result = _family_benefits(state, comparison, payment_month, params)
+    return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
+
+
+def _mother_father_comparison(beneficiaries, caregiver):
     comparison = []
     for member in beneficiaries:
         if member.beneficiary_id == caregiver.beneficiary_id:
@@ -3922,8 +3933,7 @@ def _mother_father_care_rate(
             comparison.append(_replace_declared(member, child_in_care=False))
         else:
             comparison.append(member)
-    result = _family_benefits(state, comparison, payment_month, params)
-    return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
+    return comparison
 
 
 def _refuse_widow_drc_savings_clause(
@@ -4568,6 +4578,8 @@ def family_benefits_after_deductions(
     Concurrent NH reservations and auxiliary age reductions have deferred
     allocation coverage and refuse as ``deduction_age_work_interaction``;
     no procedure has been derived for that combination.
+    A widow(er) with a child in care keeps the mother or father amount for
+    this month, under these same events (402(q)(5)(D)).
     R2 owns earnings, charge order, grace years and permanent determinations.
     """
     if standalone is not True:
@@ -4661,6 +4673,124 @@ def _after_deductions(
     }
     if not events and not any(worker_deductions.values()):
         return baseline
+    return _readjusted_for_events(
+        state,
+        beneficiaries,
+        payment_month,
+        params,
+        baseline,
+        events,
+        households,
+        worker_deductions,
+    )
+
+
+def _current_caregivers(beneficiaries):
+    """Widow(er)s whom 402(q)(5)(D) compares with a mother or father."""
+    return [
+        member
+        for member in beneficiaries
+        if member.role in _WIDOW_ROLES
+        and isinstance(member.child_in_care, str)
+    ]
+
+
+@dataclass(frozen=True)
+class _CareMinimum:
+    """A month's 402(q)(5)(D) minimum: what it sets and how high it can go."""
+
+    floor: Fraction
+    ceiling: Fraction
+
+
+def _care_minimums_after_deductions(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+):
+    """402(q)(5)(D): the minimum "for such month", with its deductions.
+
+    RS 00615.340 compares what a mother or father would receive, so the
+    comparison family takes this month's events and households. A deductee
+    keeps its rate in either family (GN 02603.050B.3), so its own minimum
+    stays G's ordinary one.
+
+    An event's ``payable`` belongs to the actual family's rate, and no source
+    carries a partial amount to a comparison rate. Treating every event as
+    full gives the highest minimum the month can reach, and the ordinary
+    minimum is the lowest. The two bound any reading, and a rate between
+    them refuses (``_refuse_unsettled_care_minimum``).
+    """
+    by_id = baseline.by_id()
+    caregivers = [
+        member
+        for member in _current_caregivers(beneficiaries)
+        if member.beneficiary_id not in events
+        and by_id[member.beneficiary_id].entitled
+    ]
+    if not caregivers:
+        return {}
+    if any(worker_deductions.values()):
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
+            "Concurrent NH reservations and a child-in-care comparison have "
+            "deferred allocation coverage",
+        )
+    minimums = {}
+    for caregiver in caregivers:
+        cid = caregiver.beneficiary_id
+        comparison = _mother_father_comparison(beneficiaries, caregiver)
+        ordinary = _family_benefits(state, comparison, payment_month, params)
+        highest = _readjusted_for_events(
+            state,
+            comparison,
+            payment_month,
+            params,
+            ordinary,
+            {
+                bid: _replace_declared(event, payable=Fraction(0))
+                for bid, event in events.items()
+            },
+            households,
+            {},
+        )
+        ceiling = highest.by_id()[cid].age_adjusted_rate
+        settled = all(event.payable == 0 for event in events.values())
+        minimums[cid] = _CareMinimum(
+            ceiling if settled else ordinary.by_id()[cid].age_adjusted_rate,
+            ceiling,
+        )
+    return minimums
+
+
+def _refuse_unsettled_care_minimum(minimum, age_adjusted, beneficiary_id):
+    if minimum.ceiling > age_adjusted:
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.CARE_MINIMUM_PARTIAL_DEDUCTION,
+            "A partial deduction leaves the child-in-care comparison open "
+            "where it can change this rate; no source carries a partial "
+            "amount to the mother or father family",
+            beneficiary_id=beneficiary_id,
+        )
+
+
+def _readjusted_for_events(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+):
     subject = [
         row for row in baseline.beneficiaries if row.subject_to_family_maximum
     ]
@@ -4706,6 +4836,16 @@ def _after_deductions(
         events,
         households,
         worker_deductions,
+        _care_minimums_after_deductions(
+            state,
+            beneficiaries,
+            payment_month,
+            params,
+            baseline,
+            events,
+            households,
+            worker_deductions,
+        ),
     )
     result = _readjust_deduction_rows(*arguments, disregard_full)
     zero_dual = {
@@ -4755,6 +4895,7 @@ def _readjust_deduction_rows(
     events,
     households,
     worker_deductions,
+    care_minimums,
     disregard_full,
 ):
     """Use GN 02603.050C-D with one explicit A.1 disregard decision."""
@@ -4869,14 +5010,12 @@ def _readjust_deduction_rows(
                 rate=rate,
                 counted=rate,
             )
-            if (
-                isinstance(member.child_in_care, str)
-                and member.role in _WIDOW_ROLES
-            ):
-                row.mother_father_rate = _mother_father_care_rate(
-                    state, beneficiaries, member, payment_month, params
-                )
+            minimum = care_minimums.get(bid)
+            if minimum is not None:
+                row.mother_father_rate = minimum.floor
             age_adjusted, payable = _reduce_and_offset(row, state, params)
+            if minimum is not None:
+                _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)
             values.update(
                 family_maximum_rate=rate,
                 counted_against_maximum=rate + worker_deductions.get(bid, 0),
@@ -4899,6 +5038,23 @@ def _readjust_deduction_rows(
                 whole_dollar_auxiliary=_whole_dollars_validated(payable),
                 deduction=nh_deduction,
                 reserved_work_deduction=nh_deduction,
+            )
+        elif bid in care_minimums:
+            # 402(q)(5)(D) also reaches a rate no redistribution re-rates. A
+            # surviving divorced caregiver sits outside the actual maximum,
+            # while the mother or father it compares with sits inside.
+            minimum = care_minimums[bid]
+            age_adjusted = max(old.age_adjusted_rate, minimum.floor)
+            _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)
+            payable = (
+                age_adjusted
+                if old.own_benefit is None
+                else max(Fraction(0), age_adjusted - old.own_benefit)
+            )
+            values.update(
+                age_adjusted_rate=age_adjusted,
+                auxiliary_payable=payable,
+                whole_dollar_auxiliary=_whole_dollars_validated(payable),
             )
         results.append(_computed(BeneficiaryBenefit, **values))
     family = {

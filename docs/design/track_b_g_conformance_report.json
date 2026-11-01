@@ -315,6 +315,7 @@
     },
     "refused_by_reason": {
       "administrative_finality": 9831,
+      "care_minimum_partial_deduction": 0,
       "combined_family_maximum": 4860,
       "deduction_age_work_interaction": 0,
       "deemed_or_putative_spouse": 9720,
@@ -563,12 +564,13 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 38,
-      "rows": 38,
+      "refused": 39,
+      "rows": 39,
       "supported": 0
     },
     "refused_by_reason": {
       "administrative_finality": 1,
+      "care_minimum_partial_deduction": 1,
       "combined_family_maximum": 1,
       "deduction_age_work_interaction": 1,
       "deemed_or_putative_spouse": 1,
@@ -613,6 +615,12 @@
         "description": "Declared finality protection",
         "id": "administrative_finality",
         "reason": "administrative_finality",
+        "status": "refused"
+      },
+      {
+        "description": "No source carries a partial deduction to a child-in-care comparison",
+        "id": "care_minimum_partial_deduction",
+        "reason": "care_minimum_partial_deduction",
         "status": "refused"
       },
       {

@@ -340,7 +340,10 @@ For one worker's record and one benefit month:
      mother or father would receive after the maximum, when that is larger
      (RS 00615.340; .010). The comparison uses the mother/father 75-percent
      OB under 202(g)(2), its maximum share and any settled dual-entitlement
-     redistribution; the actual widow's own-benefit offset follows.
+     redistribution; the actual widow's own-benefit offset follows. After a
+     deduction the comparison takes the month's events and households
+     (402(q)(5)(D); RS 00615.340), and a partial deduction refuses where it
+     can change the rate.
 6. **Dual entitlement** (402(k)(3)(A)). The auxiliary benefit is reduced, but
    not below zero, by the own benefit after 402(q).
    - An aged spouse entitled to the own benefit in or before the spouse
@@ -673,6 +676,7 @@ G never falls back to a single-worker computation.
 | `parisi_redistribution_ambiguous` | Own delayed credits, an actually limiting RIB-LIM after maximum and age reduction, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
 | `sole_full_deduction_zero_dual_composition` | GN 02603.050 A.1's sole full permanent deduction and A.2's zero dual rate admit different subject payments depending on composition order; equal-payment cases compute |
+| `care_minimum_partial_deduction` | A partial deduction beside a child-in-care widow(er), where the highest minimum the month can reach exceeds the computed rate. No capture carries a partial amount to the mother or father comparison (402(q)(5)(D); RS 00615.340) |
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
 | `savings_clause_403a5` | Under explicit `LITERAL_REFUSAL`, a governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
@@ -2685,6 +2689,7 @@ $83.50 child rates and $83 whole-dollar payments.
 | Missing election certificate | `election_certificate_suspension` |
 | Concurrent subject number-holder reservations and subject age reductions | `deduction_age_work_interaction` |
 | Sole full permanent subject deduction and zero dual rows whose A.1/A.2 compositions change payment | `sole_full_deduction_zero_dual_composition` |
+| A partial deduction that can change a child-in-care minimum | `care_minimum_partial_deduction` |
 | Combined maxima; multiple auxiliary records | Existing named refusals remain |
 
 The computation first obtains the ordinary G maximum-adjusted rates and
