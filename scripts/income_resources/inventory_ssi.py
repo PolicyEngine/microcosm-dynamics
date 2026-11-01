@@ -61,12 +61,15 @@ them. Nor does it follow a formula's code. A record's dependencies are what
 a variable's adds, subtracts and defined_for name: a defined_for, and a list
 item without a period, names a variable; a string names a parameter, whose
 lists of names the record reads as their union over every date, where the
-engine reads only the list at the start of the period it calculates; and a
+engine reads only the list at the start of the period it calculates and
+skips a date marked expected, which the union keeps when it holds a list;
+and a
 list item with a period names a parameter, which the record lists among its
 parameter dependencies. They are also the first argument of an entity
 accessor call, and the string literals of the variable's body and of the
-federal SSI helpers whose names it calls that equal a file's stem or the
-name of a class in the same module, by the source alone, whatever the walk
+federal SSI helpers whose names it calls that equal the stem of a file
+whose name has no leading underscore or the name of a variable class in
+the same module, by the source alone, whatever the walk
 has read and whatever its module binds those names to. A formula's read of
 its own variable, which may be at another period, is no dependency. So a
 formula that reaches a variable through a function or constant its module
@@ -84,8 +87,8 @@ resolves by the same exact child names to a .yaml file, or to a folder
 whose .yaml files are all listed, or the inventory refuses. In the safe
 direction, the resolution refuses several forms the engine reads, none of
 which either release has: a key inside a YAML node; a folder or a .yml file
-that a string names; a file of dated keys without values; an expected
-entry; a parameter whose listed names hold a period; a list item without a
+that a string names; a file of dated keys without values; a bare expected
+string; a parameter whose listed names hold a period; a list item without a
 period that names only a parameter; an empty string; and a parameter the
 engine builds rather than loads, such as ``gov.abolitions.<name>``. An
 oracle test checks the pinned release's records against the engine's trace
@@ -108,9 +111,11 @@ only the pinned-engine oracle covers them. The engine also loads every file
 under ``parameters/``, and one it cannot load stops it, while the reader
 reads only the files it lists or resolves. Nor does the reader check every
 rule the engine applies as it loads a variable: it admits a variable class
-with no label, which stops the engine's walk. A release the engine does not
-load gives no record to compare, and only the pinned-engine oracle shows
-that the pinned release loads. Python's source loader can also
+with no label, a formula name the engine cannot parse, a class bound a
+second time at module level and a metadata.yaml in a parameter folder that
+a name passes through, each of which stops the engine. A release the engine
+does not load gives no record to compare, and only the pinned-engine oracle
+shows that the pinned release loads. Python's source loader can also
 run a module's cached bytecode instead of its source: the file that
 ``importlib.util.cache_from_source`` names, in ``__pycache__`` or under
 ``sys.pycache_prefix`` when that is set. It runs a timestamp file whose
@@ -1129,9 +1134,9 @@ def parameter_file(package: Path, name: str) -> dict[str, Any]:
 
 
 def parameter_files(folder: Path) -> set[Path]:
-    """Every ``.yaml`` file under ``folder``. A ``.yml`` file there, which
-    the engine also loads as a parameter and the table would leave out,
-    refuses."""
+    """Every ``.yaml`` file under ``folder``. A ``.yml`` file there refuses:
+    the engine also loads one as a parameter, unless its stem is ``index``
+    or ``reference``, and the table would leave it out."""
     if any(folder.rglob("*.yml")):
         raise ValueError(f"Unread .yml parameter file under {folder}")
     return set(folder.rglob("*.yaml"))
@@ -1141,9 +1146,10 @@ def parameter_values(package: Path, name: str) -> list[str]:
     """The variable names a string ``adds`` or ``subtracts`` reads: the
     union, over the dated values of the parameter it names, of each list of
     names. Each dated value must be a list of strings, or a mapping whose
-    ``value`` is one; an ``expected`` entry, which the engine skips, and
-    any other value raise a ValueError. The engine reads only the list at
-    the start of the period it calculates."""
+    ``value`` is one; a bare ``expected`` string, which the engine skips,
+    and any other value raise a ValueError. A mapping marked ``expected``
+    that holds a list joins the union, though the engine skips that date.
+    The engine reads only the list at the start of the period it calculates."""
     names = set()
     for dated in parameter_file(package, name)["values"].values():
         value = dated.get("value") if isinstance(dated, dict) else dated
@@ -1365,7 +1371,8 @@ def parse_variables(
                         f"Unresolved {attr} for {node.name}"
                     ) from error
                 # The engine's calculation of a variable that its own adds,
-                # subtracts or defined_for names never ends.
+                # subtracts or defined_for names at the period never ends.
+                # A self-name on any date refuses, in the safe direction.
                 if node.name in listed:
                     raise ValueError(f"The {attr} of {node.name} names itself")
                 dependencies.update(listed)

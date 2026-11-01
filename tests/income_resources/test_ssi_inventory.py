@@ -3961,8 +3961,9 @@ REFUSED_NAMING_FORMS = {
         },
         "Unresolved adds for invented_named",
     ),
-    # The engine reads each of these, so refusing it is the safe direction
-    # (round 12's N1 and N2).
+    # The engine reads these shapes when the child names a variable, so
+    # refusing them is the safe direction (round 12's N1 and N2). With
+    # the children below it raises, as ENGINE_REFUSED_NAMING pins.
     "string_folder": (
         ['adds = "gov.ssa.ssi.income"'],
         {},
