@@ -45,15 +45,22 @@ the interpreter would match file names without regard to case, as
 API, the one policyengine_core name a closure module may import
 (``Simulation``), and reflection through objects they export, including the
 implicit calls that operators, iteration and attribute or item reads make on
-them. Nor does it follow a formula's code: the record's dependencies are the
-variable names among the string literals of a variable's body and of the
-federal SSI helpers whose names it calls, whatever its module binds those
-names to, so a formula that reaches a variable through a function or
-constant its module binds, through a parameter's values or through a name it
-builds reads a variable the record does not list. An oracle test checks the
+them. Nor does it follow a formula's code. A record's dependencies are what
+a variable's adds, subtracts and defined_for name, with the values of a
+parameter a string adds or subtracts names; the first argument of an entity
+accessor call; and the string literals of its body and of the federal SSI
+helpers whose names it calls that equal a file's stem, whatever its module
+binds those names to. So a formula that reaches a variable through a
+function or constant its module binds, through a parameter's values or
+through a name it builds reads a variable the record does not list, and so
+does one that passes a literal to anything but an accessor when the class
+of that name sits in a file of another stem. A boundary's dependencies are
+bypassed, so a literal defined_for on a boundary, which the engine applies
+when it runs the boundary's adds, stays unread. An oracle test checks the
 pinned release's records against the engine's trace over invented
-households; a code path those households don't reach, and any other release,
-stay outside that test.
+households, without a reform and under the reform the runner passes; a code
+path those households don't reach, the dataset route's simulation and any
+other release stay outside that test.
 The engine's directory walk also runs every module under
 ``policyengine_us/variables`` outside the closure, and such a module can
 change what the engine loads; the reader does not read those modules, and
@@ -986,7 +993,9 @@ def parse_variables(
     stem names more than one file refuses, since the reader could not say
     which the engine's variable comes from. So does a variable, other than
     a boundary, whose adds, subtracts or defined_for is not a literal that
-    ``names_variables`` admits.
+    ``names_variables`` admits. The engine reads what those attributes name
+    whatever file defines it, so a name the index misses stays a dependency,
+    which ``inventory_release`` refuses as unresolved.
     """
     # Folder listings the import system cached may predate this read.
     importlib.machinery.PathFinder.invalidate_caches()
@@ -1105,11 +1114,35 @@ def parse_variables(
                     prefix = parameter_path(item, aliases)
                     if prefix:
                         parameter_dependencies.add(prefix)
-            for attr in ("adds", "subtracts"):
-                value = expression(attrs.get(attr))
-                if isinstance(value, str) and value.startswith("gov."):
+            for attr, kinds in NAMING_ATTRIBUTES.items():
+                if attr not in attrs or not names_variables(
+                    attrs[attr], kinds
+                ):
+                    continue
+                value = ast.literal_eval(attrs[attr])
+                if attr == "defined_for":
+                    dependencies.add(value)
+                elif not isinstance(value, str):
+                    # The engine reads an item that names no variable as a
+                    # parameter, and no variable's name holds a period.
+                    for item in value:
+                        (
+                            parameter_dependencies
+                            if "." in item
+                            else dependencies
+                        ).add(item)
+                else:
+                    # The engine reads a string as a parameter that lists
+                    # the variables to sum.
+                    try:
+                        names_listed = parameter_values(package, value)
+                    except FileNotFoundError as error:
+                        raise ValueError(
+                            f"Unresolved {attr} for {node.name}"
+                        ) from error
                     parameter_dependencies.add(value)
-                    dependencies.update(parameter_values(package, value))
+                    dependencies.update(names_listed)
+            dependencies.discard(node.name)
             records[node.name] = {
                 "name": node.name,
                 "path": path.relative_to(package).as_posix(),

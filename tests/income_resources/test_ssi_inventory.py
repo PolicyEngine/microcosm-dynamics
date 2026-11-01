@@ -3578,3 +3578,114 @@ def test_list_attribute_bound_twice_refuses_inventory(tmp_path, attribute):
         ValueError, match=f"Unresolved {attribute} for invented_ssi"
     ):
         inventory.inventory_release(package)
+
+
+INVENTED_HIDDEN = """class invented_hidden(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+    default_value = 7
+"""
+
+
+def package_with_named(tmp_path, attribute, value):
+    """An invented package with a federal variable whose ``attribute`` is
+    the literal source ``value``."""
+    package = invented_package(tmp_path)
+    (package / "variables/gov/ssa/ssi/invented_named.py").write_text(
+        f"""class invented_named(Variable):
+    value_type = float
+    entity = Person
+    definition_period = YEAR
+    {attribute} = {value}
+"""
+    )
+    return package
+
+
+def named_record(package):
+    result = inventory.inventory_release(package)
+    return next(
+        row for row in result["variables"] if row["name"] == "invented_named"
+    )
+
+
+@pytest.mark.parametrize(
+    "where",
+    [
+        "variables/input/invented_other.py",
+        "variables/input/_invented_hidden.py",
+    ],
+)
+@pytest.mark.parametrize(
+    ("attribute", "value"),
+    [
+        ("adds", '["invented_hidden"]'),
+        ("adds", '("invented_hidden",)'),
+        ("subtracts", '["invented_hidden"]'),
+        ("defined_for", '"invented_hidden"'),
+    ],
+)
+def test_named_variable_the_stem_index_misses_refuses(
+    tmp_path, attribute, value, where
+):
+    """The engine's walk registers each class by its own name from every
+    file it loads, underscore names included, and the reader's index holds
+    file stems. A name these attributes give stays a dependency whatever
+    the index holds, so it refuses and never reads as an input."""
+    package = package_with_named(tmp_path, attribute, value)
+    (package / where).write_text(INVENTED_HIDDEN)
+    with pytest.raises(
+        ValueError,
+        match="Unresolved dependency: invented_named: invented_hidden",
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("attribute", ["adds", "subtracts"])
+def test_string_attribute_reads_any_parameter_path(tmp_path, attribute):
+    """The engine reads a string adds or subtracts as a parameter of variable
+    names, wherever that parameter sits."""
+    package = package_with_named(
+        tmp_path, attribute, '"household.invented_sources"'
+    )
+    path = package / "parameters/household/invented_sources.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_text("values:\n  1975-01-01:\n    - invented_age\n")
+    record = named_record(package)
+    assert record["dependencies"] == ["invented_age"]
+    assert "household.invented_sources" in record["parameter_dependencies"]
+
+
+@pytest.mark.parametrize("attribute", ["adds", "subtracts"])
+def test_string_attribute_that_names_no_parameter_refuses(tmp_path, attribute):
+    package = package_with_named(tmp_path, attribute, '"household.absent"')
+    with pytest.raises(
+        ValueError, match=f"Unresolved {attribute} for invented_named"
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("attribute", ["adds", "subtracts"])
+def test_list_item_with_a_period_names_a_parameter(tmp_path, attribute):
+    """The engine sums a list item that names no variable as a parameter."""
+    package = package_with_named(
+        tmp_path, attribute, '["invented_age", "gov.ssa.ssi.invented_amount"]'
+    )
+    path = package / "parameters/gov/ssa/ssi/invented_amount.yaml"
+    path.write_text("values:\n  1975-01-01: 1\n")
+    record = named_record(package)
+    assert record["dependencies"] == ["invented_age"]
+    assert "gov.ssa.ssi.invented_amount" in record["parameter_dependencies"]
+
+
+def test_defined_for_names_a_dependency_of_any_stem_it_finds(tmp_path):
+    package = package_with_named(tmp_path, "defined_for", '"invented_age"')
+    assert named_record(package)["dependencies"] == ["invented_age"]
+
+
+def test_name_equal_to_its_own_variable_is_no_dependency(tmp_path):
+    package = package_with_named(
+        tmp_path, "adds", '["invented_named", "invented_age"]'
+    )
+    assert named_record(package)["dependencies"] == ["invented_age"]

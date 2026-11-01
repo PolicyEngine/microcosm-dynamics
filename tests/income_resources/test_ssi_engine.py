@@ -25,11 +25,12 @@ from populace_dynamics.income_resources.ssi.records import (
 )
 from populace_dynamics.income_resources.ssi.runner import (
     DEFAULT_PYTHON,
+    OVERRIDABLE_PARAMETERS,
     PYTHON_ENV,
     SSIRunner,
 )
 
-from .ssi_invented import INVENTED_INPUTS, invented_case
+from .ssi_invented import INVENTED_INPUTS, INVENTED_POLICY, invented_case
 from .test_ssi_inventory import (
     ADMITTED_AGE_FORMS,
     ADMITTED_FORMS,
@@ -1315,37 +1316,47 @@ import sys
 from policyengine_us import Simulation
 
 job = json.load(sys.stdin)
-names, parameters, edges = set(), set(), set()
 
 
-def walk(node):
+def walk(node, names, parameters, edges):
     names.add(node.name)
     parameters.update(row.name for row in node.parameters)
     for child in node.children:
         edges.add((node.name, child.name))
-        walk(child)
+        walk(child, names, parameters, edges)
 
 
-for case in job["cases"]:
-    simulation = Simulation(situation=case, trace=True)
-    for name, period in job["targets"]:
-        simulation.calculate(name, period)
-    for tree in simulation.tracer.trees:
-        walk(tree)
-json.dump(
-    {
+def trace(**options):
+    names, parameters, edges = set(), set(), set()
+    response = 0.0
+    for case in job["cases"]:
+        simulation = Simulation(situation=case, trace=True, **options)
+        for name, period in job["targets"]:
+            simulation.calculate(name, period)
+        for tree in simulation.tracer.trees:
+            walk(tree, names, parameters, edges)
+        values = simulation.calculate(
+            "labor_supply_behavioral_response", job["year"]
+        )
+        response = max(response, float(abs(values).max()))
+    return {
         "variables": sorted(names),
         "parameters": sorted(parameters),
         "edges": sorted(edges),
-    },
-    sys.stdout,
+        "response": response,
+    }
+
+
+json.dump(
+    {"plain": trace(), "reform": trace(reform=job["reform"])}, sys.stdout
 )
 """
 
 # The engine's own route for three inputs, which no record names. At start
 # a simulation moves each one's values to its _before_lsr variable
 # (policyengine_us/system.py), and each input's adds then sum that and a
-# behavioral response, which is 0 without a reform.
+# behavioral response. Without a reform the response returns 0 at once.
+# Under one, as the runner always passes, it reads its elasticities first.
 ENGINE_INPUT_ROUTE = frozenset(
     {
         "employment_income_before_lsr",
@@ -1357,9 +1368,10 @@ ENGINE_INPUT_ROUTE = frozenset(
         "sstb_self_employment_income_behavioral_response",
     }
 )
-# The engine reads gov.abolitions.<name> before it calculates any variable
-# (policyengine_core/simulations/simulation.py), so a trace holds one for
-# each variable and these are no formula's dependency.
+ENGINE_RESPONSE_PREFIX = "gov.simulation.labor_supply_responses."
+# The engine reads gov.abolitions.<name> before it calculates each variable
+# that has one (policyengine_core/simulations/simulation.py), and these are
+# no formula's dependency.
 ENGINE_GATE_PREFIX = "gov.abolitions."
 TRACE_YEAR = "2026"
 
@@ -1514,8 +1526,9 @@ INVENTED_TRACE_CASES = (
 )
 
 
-def trace_gaps(inventory, trace):
-    """Every way the engine's trace and the inventory disagree."""
+def trace_gaps(inventory, trace, engine_prefixes=(ENGINE_GATE_PREFIX,)):
+    """Every way the engine's trace and the inventory disagree, apart from
+    parameters under ``engine_prefixes``, which only the engine reads."""
     records = {row["name"]: row for row in inventory["variables"]}
     inputs = {row["name"] for row in inventory["inputs"]}
     bypassed = inputs | set(inventory["explicit_formula_boundaries"])
@@ -1536,7 +1549,7 @@ def trace_gaps(inventory, trace):
         "parameters": sorted(
             name
             for name in trace["parameters"]
-            if not name.startswith(ENGINE_GATE_PREFIX)
+            if not name.startswith(engine_prefixes)
             and not any(
                 name == parameter or name.startswith(f"{parameter}.")
                 for parameter in parameters
@@ -1548,10 +1561,12 @@ def trace_gaps(inventory, trace):
 def test_engine_trace_reads_only_what_the_inventory_lists():
     """Differential: the record's dependencies come from a static read of
     string literals, so a formula could reach a variable the record leaves
-    out. Over invented households, with every input the contract names set,
-    the pinned engine's tracer reads exactly the listed variables and the
-    named route for three inputs, and every edge and parameter it reads is
-    on the record."""
+    out. Over invented households, with every input the contract names set
+    and only the federal SSI variables calculated, the pinned engine's tracer
+    reads exactly the listed variables and the named route for three inputs,
+    and every edge and parameter it reads is on the record. So it does under
+    the reform of every override the runner admits, apart from the elasticity
+    parameters the route then reads, which leave the response at 0."""
     python = Path(os.environ.get(PYTHON_ENV, str(DEFAULT_PYTHON))).expanduser()
     if not python.is_file():
         pytest.skip(f"SSI0 interpreter absent: {python}")
@@ -1559,14 +1574,25 @@ def test_engine_trace_reads_only_what_the_inventory_lists():
         CONTRACT_PATH.with_name("inventory.json").read_text()
     )
     assert {row["name"] for row in inventory["inputs"]} == set(INVENTED_INPUTS)
+    assert set(INVENTED_POLICY) == OVERRIDABLE_PARAMETERS
+    assert not any(
+        name.startswith(ENGINE_RESPONSE_PREFIX)
+        for name in OVERRIDABLE_PARAMETERS
+    )
     job = {
         "cases": INVENTED_TRACE_CASES,
+        "year": TRACE_YEAR,
+        "reform": {
+            name: {f"{TRACE_YEAR}-01-01.2100-12-31": value}
+            for name, value in INVENTED_POLICY.items()
+        },
         "targets": [
             [
                 row["name"],
                 f"{TRACE_YEAR}-01" if row["period"] == "MONTH" else TRACE_YEAR,
             ]
             for row in inventory["variables"]
+            if row["path"].startswith("variables/gov/ssa/ssi/")
         ],
     }
     completed = subprocess.run(
@@ -1577,13 +1603,26 @@ def test_engine_trace_reads_only_what_the_inventory_lists():
         timeout=1800,
         check=True,
     )
-    trace = json.loads(completed.stdout)
-    assert trace_gaps(inventory, trace) == {
-        "unlisted": [],
-        "unread": [],
-        "edges": [],
-        "parameters": [],
-    }
+    traces = json.loads(completed.stdout)
+    trace = traces["plain"]
+    no_gaps = {"unlisted": [], "unread": [], "edges": [], "parameters": []}
+    assert trace_gaps(inventory, trace) == no_gaps
+    assert trace["response"] == 0
+    reformed = traces["reform"]
+    assert (
+        trace_gaps(
+            inventory,
+            reformed,
+            (ENGINE_GATE_PREFIX, ENGINE_RESPONSE_PREFIX),
+        )
+        == no_gaps
+    )
+    assert reformed["response"] == 0
+    # The reformed trace took the route's other branch.
+    gated = trace_gaps(inventory, reformed)["parameters"]
+    assert gated and all(
+        name.startswith(ENGINE_RESPONSE_PREFIX) for name in gated
+    )
 
     # Controls: each kind of gap would show on these traces.
     target = "ssi_countable_income"
