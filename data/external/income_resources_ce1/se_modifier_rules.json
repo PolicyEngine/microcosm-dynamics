@@ -1069,10 +1069,10 @@
     }
   },
   {
-    "rule_id": "se_territorial_residency_1968_2026",
-    "family": "self_employment_territorial_residency",
+    "rule_id": "se_nonresident_alien_1968_1983",
+    "family": "self_employment_nonresident_alien",
     "effective_start": "1968-01-01",
-    "effective_end": "2026-12-31",
+    "effective_end": "1983-04-19",
     "citations": [
       {
         "capture": "uscode_2024_42_411.html",
@@ -1085,16 +1085,46 @@
         "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
         "authority": "42 USC 411, official 1994 United States Code edition",
         "location": "411(b) territorial-resident sentence"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), lead-in",
+        "quote": "(other than a nonresident alien individual, except as provided by an agreement under section 433 of this title)"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), final residency sentence",
+        "quote": "An individual who is not a citizen of the United States but who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa shall not, for the purpose of this subsection, be considered to be a nonresident alien individual."
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "1960 amendment note, subsec. (b)",
+        "quote": "individuals who are not citizens of the United States but who are residents of Guam or American Samoa shall not, for the purposes of this subsection, be considered to be nonresident alien individuals"
+      },
+      {
+        "capture": "lii_26_3121.html",
+        "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+        "authority": "26 U.S.C. 3121 (LII capture, historical notes)",
+        "location": "Pub. L. 98-21 section 322(c) effective-date note",
+        "quote": "shall be effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]"
       }
     ],
     "trigger_facts": [
       "citizenship",
       "country_of_residence",
-      "residence_period"
+      "residence_period",
+      "nonresident_alien_status",
+      "taxable_year_start"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not treated as a nonresident alien for the self-employment-income definition.",
+    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
     "parameters": {
       "jurisdictions": [
         "Puerto Rico",
@@ -1102,8 +1132,7 @@
         "Guam",
         "American Samoa"
       ],
-      "nonresident_alien_treatment_disapplied": true,
-      "scope": "411(b) residency exception only; does not by itself establish coverage of a service or repeal another exclusion.",
+      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, for all self-employment income; other families decide what the net earnings are.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1181,16 +1210,248 @@
             "1960"
           ]
         }
-      ]
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\"."
     },
     "worked_examples": [],
     "rare_exclusion": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "territorial_resident",
+        "precedence": 1,
+        "when": {
+          "citizenship": "not a citizen of the United States",
+          "country_of_residence": "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "nonresident_alien_individual"
+        ],
+        "description": "411(b)'s final sentence: such an individual \"shall not, for the purpose of this subsection, be considered to be a nonresident alien individual\" (Guam and American Samoa since Pub. L. 86-778 section 103(h), taxable years after 1960)."
+      },
+      {
+        "case_id": "nonresident_alien_individual",
+        "precedence": 2,
+        "when": {
+          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+        },
+        "consequence": "noncovered",
+        "description": "411(b) leaves out of self-employment income the net earnings derived by \"a nonresident alien individual\". The section 433 agreement exception, which Pub. L. 98-21 section 322(b)(1) inserted, applies only to taxable years beginning on or after April 20, 1983 (section 322(c)), so no agreement lifts the exclusion here."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "A noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for 411(b); this family changes nothing else; apply the other families."
+      "description": "Not a nonresident alien individual for the taxable year, so 411(b) does not exclude the net earnings; apply the other families."
+    }
+  },
+  {
+    "rule_id": "se_nonresident_alien_1983_2026",
+    "family": "self_employment_nonresident_alien",
+    "effective_start": "1983-04-20",
+    "effective_end": "2026-12-31",
+    "citations": [
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), final residency sentence; Public Law 86-778 section 103(h) added Guam/American Samoa in 1960"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(b) territorial-resident sentence"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), lead-in",
+        "quote": "(other than a nonresident alien individual, except as provided by an agreement under section 433 of this title)"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(b), final residency sentence",
+        "quote": "An individual who is not a citizen of the United States but who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa shall not, for the purpose of this subsection, be considered to be a nonresident alien individual."
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "1960 amendment note, subsec. (b)",
+        "quote": "individuals who are not citizens of the United States but who are residents of Guam or American Samoa shall not, for the purposes of this subsection, be considered to be nonresident alien individuals"
+      },
+      {
+        "capture": "lii_26_3121.html",
+        "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+        "authority": "26 U.S.C. 3121 (LII capture, historical notes)",
+        "location": "Pub. L. 98-21 section 322(c) effective-date note",
+        "quote": "shall be effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "1983 amendment note, subsec. (b)",
+        "quote": "inserted \", except as provided by an agreement under section 433 of this title\" after \"non-resident alien individual\""
+      }
+    ],
+    "trigger_facts": [
+      "citizenship",
+      "country_of_residence",
+      "residence_period",
+      "nonresident_alien_status",
+      "taxable_year_start"
+    ],
+    "consequence": "covered",
+    "identification_class": "awaiting_ce2",
+    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income, except as a section 433 agreement provides; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+    "parameters": {
+      "jurisdictions": [
+        "Puerto Rico",
+        "Virgin Islands",
+        "Guam",
+        "American Samoa"
+      ],
+      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, for all self-employment income; other families decide what the net earnings are.",
+      "code_edition_evidence": [
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "later_text_and_source_credit_comparison",
+          "scope": "Supports only the identified later-edition historical notes or source-credit comparison; it does not establish that later section text was in force in earlier years.",
+          "contemporaneous_code_status": "unavailable",
+          "unavailable_contemporaneous_edition_labels": [
+            1964,
+            1970,
+            1976,
+            1982,
+            1988
+          ],
+          "primary_history_citations": [],
+          "primary_history_citation_status": "no_separate_row_specific_act_poms_cfr_reference",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Historical comparison only, related to 411(b); Amendments entries: 1960; Effective Date of 1960 Amendment; section text and source credit; no earlier effective-date claim"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 1994,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_1994_42_411.html",
+            "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+            "authority": "42 U.S.C. 411, official United States Code 1994 edition label",
+            "location": "Section text as printed: 411(b)"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        },
+        {
+          "title": 42,
+          "section": 411,
+          "edition_year": 2024,
+          "support_kind": "section_text_as_printed",
+          "scope": "Supports the cited section text as printed in this named edition. The row's act, POMS and amendment-note citations separately establish effective dates and exceptions; this edition label alone does not establish the entire rule window.",
+          "citation": {
+            "capture": "uscode_2024_42_411.html",
+            "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+            "authority": "42 U.S.C. 411, official United States Code 2024 edition label",
+            "location": "Section text as printed: 411(b)"
+          },
+          "section_references_verified_present": [
+            "411(b)"
+          ],
+          "historical_note_headings_verified_present": [
+            "Effective Date of 1960 Amendment"
+          ],
+          "amendment_year_entries_verified_present": [
+            "1960"
+          ]
+        }
+      ],
+      "effective_basis": "taxable_year_start",
+      "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_26_3121.html",
+          "sha256": "f18d8a59469a924b01e3c5d845b12455a0f33512981f828f9dd4d67d0b6f0304",
+          "authority": "26 U.S.C. 3121 (LII capture, historical notes)",
+          "location": "Pub. L. 98-21 section 322(c) effective-date note",
+          "quote": "shall be effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]"
+        }
+      }
+    },
+    "worked_examples": [],
+    "rare_exclusion": null,
+    "open_reason": null,
+    "cases": [
+      {
+        "case_id": "territorial_resident",
+        "precedence": 1,
+        "when": {
+          "citizenship": "not a citizen of the United States",
+          "country_of_residence": "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "nonresident_alien_individual"
+        ],
+        "description": "411(b)'s final sentence: such an individual \"shall not, for the purpose of this subsection, be considered to be a nonresident alien individual\" (Guam and American Samoa since Pub. L. 86-778 section 103(h), taxable years after 1960)."
+      },
+      {
+        "case_id": "section_433_agreement",
+        "precedence": 2,
+        "when": {
+          "nonresident_alien_status": "an agreement under section 433 makes the net earnings of this nonresident alien self-employment income for the taxable year"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "nonresident_alien_individual"
+        ],
+        "description": "411(b), \"except as provided by an agreement under section 433\", inserted by Pub. L. 98-21 section 322(b)(1) for taxable years beginning on or after April 20, 1983 (section 322(c))."
+      },
+      {
+        "case_id": "nonresident_alien_individual",
+        "precedence": 3,
+        "when": {
+          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+        },
+        "consequence": "noncovered",
+        "description": "411(b): self-employment income is the net earnings derived by an individual \"(other than a nonresident alien individual, except as provided by an agreement under section 433 of this title)\"."
+      }
+    ],
+    "open_alternatives": [],
+    "residual_default": {
+      "consequence": "covered",
+      "description": "Not a nonresident alien individual for the taxable year, so 411(b) does not exclude the net earnings; apply the other families."
     }
   },
   {

@@ -1228,6 +1228,7 @@ def test_family_axes_follow_their_boundary_clauses():
         "nonresident_alien_vocational_service_1987",
         "nonresident_alien_vocational_service_1988_1110",
         "se_clergy_gross_concept_1987_2026",
+        "se_nonresident_alien_1983_2026",
         "state_local_1983_1991",
     ]
 
@@ -1309,7 +1310,8 @@ def test_date_axis_descriptions_quote_a_cited_capture(registry):
         for span in spans:
             assert any(span in text for text in texts), (rule.rule_id, span)
         checked += 1
-    assert checked == 56
+    # r4 M-4 adds the two self_employment_nonresident_alien rows.
+    assert checked == 58
 
 
 OPTION_RECORDS = re.compile(r"(^|_)(named_options|named_alternatives)$")
@@ -3655,6 +3657,83 @@ def test_fishing_crew_test_is_normally_under_ten(registry, crew):
     }
     decided = rule.resolve(cases_met(rule, facts))
     assert decided.get("case_id") == expected
+
+
+# INVENTED self-employed people, by the phrases stating their 411(b)
+# facts (review r4 M-4): (year, facts, outcome).
+NONRESIDENT_SELF_EMPLOYED = {
+    "nonresident_alien_1978": (
+        1978,
+        {"nonresident_alien_status": "nonresident alien individual"},
+        "noncovered",
+    ),
+    "nonresident_alien_2010": (
+        2010,
+        {"nonresident_alien_status": "nonresident alien individual"},
+        "noncovered",
+    ),
+    # Before 1983-04-20 no agreement exception exists.
+    "agreement_before_1983": (
+        1980,
+        {
+            "nonresident_alien_status": (
+                "nonresident alien individual",
+                "an agreement under section 433 makes",
+            )
+        },
+        "noncovered",
+    ),
+    "agreement_after_1983": (
+        1995,
+        {
+            "nonresident_alien_status": (
+                "nonresident alien individual",
+                "an agreement under section 433 makes",
+            )
+        },
+        "covered",
+    ),
+    "guam_resident_noncitizen": (
+        1970,
+        {
+            "nonresident_alien_status": "nonresident alien individual",
+            "citizenship": "not a citizen of the United States",
+            "country_of_residence": "Guam",
+        },
+        "covered",
+    ),
+    "citizen": (2000, {"citizenship": "a citizen"}, "covered"),
+}
+
+
+@pytest.mark.parametrize("person", sorted(NONRESIDENT_SELF_EMPLOYED))
+def test_nonresident_alien_net_earnings_follow_411b(registry, person):
+    """411(b): self-employment income is the net earnings of an individual
+    "(other than a nonresident alien individual, except as provided by an
+    agreement under section 433 of this title)", the agreement clause from
+    taxable years beginning on or after 1983-04-20 (Pub. L. 98-21 section
+    322(c)); a noncitizen resident of Puerto Rico, the Virgin Islands,
+    Guam or American Samoa is not a nonresident alien (review r4 M-4)."""
+    year, facts, expected = NONRESIDENT_SELF_EMPLOYED[person]
+    (rule,) = registry.lookup("self_employment_nonresident_alien", year)
+    assert resolved_consequence(rule, facts) == expected
+    # The clergy rows read a plain nonresident alien or citizen the same
+    # way; their exceptions sit in the case text, which phrases can't test.
+    if person in {
+        "nonresident_alien_1978",
+        "nonresident_alien_2010",
+        "citizen",
+    }:
+        clergy = next(
+            r
+            for r in registry.rules
+            if r.family == "clergy_religious_service"
+            and r.effective_start.year <= year <= r.effective_end.year
+        )
+        ministry = {**facts, "ministerial_service": "qualifying ministry"}
+        assert (
+            "nonresident_alien_ministry" in cases_met(clergy, ministry)
+        ) == (expected == "noncovered")
 
 
 PUBLIC_OFFICERS = {

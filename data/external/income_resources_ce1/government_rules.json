@@ -504,10 +504,10 @@
         "case_id": "nonresident_alien_ministry",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
           "ministerial_service": "qualifying ministry or order duties",
-          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+          "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
         }
       },
       {
@@ -1060,10 +1060,10 @@
         "case_id": "nonresident_alien_ministry",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
           "ministerial_service": "qualifying ministry or order duties",
-          "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+          "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
         }
       },
       {
@@ -1782,10 +1782,10 @@
         "case_id": "nonresident_alien_ministry",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+        "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
           "ministerial_service": "qualifying ministry or order duties",
-          "nonresident_alien_status": "nonresident alien individual for the taxable year, and no agreement under section 433 covers the earnings"
+          "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
         }
       },
       {
