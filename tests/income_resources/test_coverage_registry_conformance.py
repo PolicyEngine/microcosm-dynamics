@@ -3888,6 +3888,7 @@ STATE_EMPLOYEE = (
     "employee of a State, a political subdivision or a wholly owned "
     "instrumentality"
 )
+ELECTION_WORKER = "election official or election worker"
 GRANDFATHERED_FEDERAL = (
     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 "
     "and has been performed continuously"
@@ -4019,6 +4020,7 @@ REQUIRED_CONDITION_FAILURES = {
                 "section_218_position": "below the statutory amount",
                 "public_retirement_system_participation": phrase,
                 "government_level": STATE_EMPLOYEE,
+                "election_work": ELECTION_WORKER,
             },
             None,
         )
@@ -4315,6 +4317,13 @@ def test_state_and_local_exclusions_name_the_level_their_law_reaches(
                     STATE_LOCAL_LEVEL
                 ), key
                 assert "government_level" in ties[case["case_id"]], key
+                if family == "election_work":
+                    # 418(c)(8) and 410(a)(7)(F)(iv) reach only election
+                    # officials and election workers.
+                    assert case["when"].get("election_work") == (
+                        ELECTION_WORKER
+                    ), key
+                    assert "election_work" in ties[case["case_id"]], key
     assert len(limited) == 22
     office = next(
         r for r in registry.rules if r.rule_id == "se_public_office_1968_2026"
@@ -4378,7 +4387,7 @@ STATE_LOCAL_CASE_FACTS = {
     },
     # A poll worker whose position no agreement covers ((F)(iv)).
     ("state_local_1991_2026", "mandatory_rule_election_worker"): {
-        "election_work": "election official or election worker",
+        "election_work": ELECTION_WORKER,
         "section_218_position": "not covered",
     },
     # A position paid only by fees, outside any agreement ((F)(v)).
@@ -4390,7 +4399,10 @@ STATE_LOCAL_CASE_FACTS = {
     },
     # Poll workers before mandatory coverage, by their agreement position.
     **{
-        (rule_id, case_id): {"section_218_position": position}
+        (rule_id, case_id): {
+            "section_218_position": position,
+            "election_work": ELECTION_WORKER,
+        }
         for rule_id in ("election_work_1968", "election_work_1978")
         for case_id, position in (
             ("agreement_with_lower_threshold", LOWER_AGREEMENT_AMOUNT),
@@ -4405,6 +4417,7 @@ STATE_LOCAL_CASE_FACTS = {
     **{
         (rule_id, case_id): {
             "section_218_position": position,
+            "election_work": ELECTION_WORKER,
             **(
                 {"public_retirement_system_participation": membership}
                 if membership
@@ -4461,6 +4474,34 @@ def test_state_and_local_cases_reach_only_their_level(registry, key, employer):
         assert "case_id" not in decided
         assert decided["consequence"] == "covered"
         assert rule.residual_default["consequence"] == "covered"
+
+
+# Round 5: an INVENTED State or local employee whose work is not election
+# work, holding every other fact of an election case.
+NON_ELECTION_WORK = "a county clerk's office work, not election work"
+ELECTION_CASE_KEYS = sorted(
+    key for key in STATE_LOCAL_CASE_FACTS if key[0].startswith("election_")
+)
+
+
+@pytest.mark.parametrize(
+    "key", ELECTION_CASE_KEYS, ids=["-".join(k) for k in ELECTION_CASE_KEYS]
+)
+def test_election_cases_reach_only_election_work(registry, key):
+    """Round 5: 418(c)(8) and 410(a)(7)(F)(iv) reach service "by election
+    officials or election workers". Other State or local work that reaches
+    the election family takes its residual, not the election threshold or
+    exclusion; the section 218 family decides that work."""
+    rule_id, _ = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    facts = {
+        **STATE_LOCAL_CASE_FACTS[key],
+        "government_level": STATE_EMPLOYEE,
+        "election_work": NON_ELECTION_WORK,
+    }
+    decided = rule.resolve(cases_met(rule, facts))
+    assert "case_id" not in decided
+    assert decided["consequence"] == "covered"
 
 
 PUBLIC_OFFICE_ELECTION = (

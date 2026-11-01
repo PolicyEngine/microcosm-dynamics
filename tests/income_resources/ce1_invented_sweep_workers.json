@@ -323,7 +323,8 @@
    "facts": {
     "section_218_position": "not covered",
     "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -336,7 +337,8 @@
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
     ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "noncovered"
   },
@@ -346,7 +348,8 @@
    "facts": {
     "section_218_position": "not covered",
     "public_retirement_system_participation": "not a member of any retirement system",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -359,7 +362,8 @@
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
     ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -369,7 +373,8 @@
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
     "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -378,7 +383,8 @@
    "worker": "INVENTED: Cy, a 1993 poll worker under an agreement with no election worker exclusion.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered"
   },
@@ -388,7 +394,8 @@
    "facts": {
     "section_218_position": "not covered",
     "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -401,7 +408,8 @@
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
     ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "noncovered"
   },
@@ -411,7 +419,8 @@
    "facts": {
     "section_218_position": "not covered",
     "public_retirement_system_participation": "not a member of any retirement system",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -424,7 +433,8 @@
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
     ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -434,7 +444,8 @@
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
     "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered_above_threshold"
   },
@@ -443,7 +454,8 @@
    "worker": "INVENTED: Cy, a 2016 poll worker under an agreement with no election worker exclusion.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
    },
    "expected": "covered"
   },

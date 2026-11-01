@@ -2483,18 +2483,21 @@
         "scope": {
           "cases": {
             "agreement_with_lower_threshold": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_statutory_threshold": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement": [
+              "election_work",
               "government_level"
             ]
           }
         }
       },
-      "scope": "Service for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); special territorial histories are a separate unresolved family."
+      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2582,7 +2585,8 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C)."
@@ -2592,7 +2596,8 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "418(c)(8); the referenced statutory threshold applies."
@@ -2611,7 +2616,8 @@
         "precedence": 4,
         "when": {
           "section_218_position": "not covered",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
         "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02."
@@ -2741,18 +2747,21 @@
         "scope": {
           "cases": {
             "agreement_with_lower_threshold": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_statutory_threshold": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement": [
+              "election_work",
               "government_level"
             ]
           }
         }
       },
-      "scope": "Service for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); special territorial histories are a separate unresolved family."
+      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2840,7 +2849,8 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C)."
@@ -2850,7 +2860,8 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "418(c)(8); the referenced statutory threshold applies."
@@ -2869,7 +2880,8 @@
         "precedence": 4,
         "when": {
           "section_218_position": "not covered",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
         "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02."
@@ -3060,24 +3072,29 @@
         "scope": {
           "cases": {
             "agreement_with_lower_threshold_member": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_lower_threshold_nonmember": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_statutory_threshold": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement_member": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement_nonmember": [
+              "election_work",
               "government_level"
             ]
           }
         }
       },
-      "scope": "Service for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); special territorial histories are a separate unresolved family."
+      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3166,7 +3183,8 @@
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
           "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -3177,7 +3195,8 @@
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
@@ -3187,7 +3206,8 @@
         "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "418(c)(8); the referenced statutory threshold applies."
@@ -3207,7 +3227,8 @@
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
@@ -3218,7 +3239,8 @@
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
         "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
@@ -3399,24 +3421,29 @@
         "scope": {
           "cases": {
             "agreement_with_lower_threshold_member": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_lower_threshold_nonmember": [
+              "election_work",
               "government_level"
             ],
             "agreement_with_statutory_threshold": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement_member": [
+              "election_work",
               "government_level"
             ],
             "outside_agreement_nonmember": [
+              "election_work",
               "government_level"
             ]
           }
         }
       },
-      "scope": "Service for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); special territorial histories are a separate unresolved family."
+      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3505,7 +3532,8 @@
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
           "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -3516,7 +3544,8 @@
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
@@ -3526,7 +3555,8 @@
         "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "418(c)(8); the referenced statutory threshold applies."
@@ -3546,7 +3576,8 @@
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
         "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
@@ -3557,7 +3588,8 @@
         "when": {
           "section_218_position": "not covered",
           "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
         "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
