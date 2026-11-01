@@ -1,20 +1,16 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** ratified and frozen (`sa1-ratified-1`). This specification is
-  registered in two issue #42 comments, as Registration 18 is (§15).
-  Before the first comment, this file changes only in its version
-  (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
-  `version` and `status`, the changelog (§19) and the ratification
-  record (§20). That file is committed and pushed to branch
-  `pe-us-depletion-cut-population-20261001`, and the first comment
-  records its path, that commit and its SHA-256. That recording is the
-  ratification. Max authorized the registration and the one-shot run in
-  chat on 2026-10-01 (cos decision d806, quoted in §15); his ruling names
-  no ratification mechanism, and merging cannot ratify, because the code
-  stacks on PR #506, which is not merged. Any change to the ratified file
-  ends the registration; a corrected version needs a new registration.
+- **Status:** ratified and frozen (`sa2-ratified-1`). This specification
+  is registered in two issue #42 comments, as Registration 19's was
+  (§15). `sa1-ratified-1`, at commit `7162c660`, governed Registration 19.
+  This version reruns that analysis on a new frame and differs from it
+  only in the lines Registration <<N>>'s first comment names. That
+  comment records this file's path, commit and SHA-256, and that
+  recording is the ratification. Max authorized the rerun (§15). Any
+  change to the ratified file ends the registration; a corrected version
+  needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-ratified-1`.
+  version `sa2-ratified-1`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -40,8 +36,9 @@
     `LAW_YEAR_NOTE`, which describes households.)
   - *Static: no behavioral response.*
   - *Registered one-shot, not blind: registered after PR #506's
-    illustrative results and after real-data diagnostics on this frame
-    were seen (issue #42, Registration 19).*
+    illustrative results, real-data diagnostics on the earlier frame,
+    Registration 19's full results and the microcosm#1178 diagnostics
+    (issue #42, Registration <<N>>).*
   - *Headline basis: potential federal SSI replacement, as if everyone
     eligible takes SSI up, under the row's modeled resource test; shares
     count cut beneficiaries by replacement of their marital unit's
@@ -91,17 +88,21 @@ block more or less often than R3 (§7).
 ### 2.1 The frame
 
 - **Repository:** Hugging Face dataset `policyengine/populace-us`, file
-  `populace_us_2024.h5`, tag `populace-us-2024-spm-20260909`, which
-  resolves to commit `9a814a3b3b53c0ecd6e1737b6ec862c31300ef6f`. The run
+  `populace_us_2024.h5`, tag
+  `populace-us-2024-b5db384-8b0c1950b65f-20261024T083103Z`, which
+  resolves to commit `15cefac484174ae0ee11a82b164f58023ad05c84`. The run
   downloads by commit, not by tag.
-- **Bytes:** 826,917,837. **SHA-256:**
-  `6496cc4393d4d3c6574f76eca231de5898c803b9067645591fd5c4d3e65aee84`.
+- **Bytes:** 2,509,287,855. **SHA-256:**
+  `2d9c8586c45c32e5ca27357317f4de93b526cc51dd28b15b71ed43e47e142e79`.
   The run refuses any other bytes.
-- PE-US 2.18.0's own default dataset URI names this blob by the
-  `-20260909` tag (`PEUS/system.py:64`, SHA-256 at `:72-74`). The same
-  blob is tagged `populace-us-2024-spm-20260915`, the default of
-  policyengine.py's certified US bundle (origin/main `6a9c878`, certified
-  there for PE-US 2.2.1).
+- **Build.** Microcosm built this file from commit
+  `8b0c1950b65f5ede42c9db85a38870484216df04`, under PE-US 2.2.1 and
+  policyengine-core 3.32.5. Its `built_at` reads 2026-10-26T21:49:25Z;
+  the tag's stamp marks when the release stage started
+  (`tools/route_a/route_a.sh:576` at that commit).
+- PE-US 2.18.0's own default dataset URI names Registration 19's file
+  (`PEUS/system.py:64`, SHA-256 at `:72-74`), not this one, so the run
+  passes this frame by path.
 - **Why not the pinned w1 frame.** The frame this repository pins for
   gate W1 (`src/populace_dynamics/data/deployment_frame.py:43-62`,
   revision `populace-us-2024-sparse-l0-refit-57k-71a0887-national-only-20260701`)
@@ -167,17 +168,26 @@ Computed from the file without simulation:
 
 ### 2.3 What the frame is and is not calibrated to
 
-- **Calibrated** (parent build
-  `populace-us-2024-buildp-sparse-rmloss100-cae8640-20260728T011454Z`,
-  5,659 targets, solved under PE-US 1.764.6): Social Security dollars by
-  type against SSA's Annual Statistical Supplement 2025 (calendar 2024);
-  IRS SOI taxable Social Security amounts and returns, nationally and by
-  state; SSI dollars nationally and by state, and SSI recipients by state
-  and by age group (December 2024); household net worth (Federal Reserve
-  Z.1).
+- **Calibrated** (this build, 6,102 targets, solved under PE-US 2.2.1):
+  the `national_state` target surface, which keeps the 6,102 national and
+  state targets of the 33,250 compiled and drops the 27,148
+  congressional-district targets (`build_manifest.json`,
+  `calibration.target_surface_selection`). By source, from
+  `us_source_coverage.json`: IRS SOI 4,619, Census population 936, CMS
+  Medicaid 135, SSA 111, USDA SNAP 104, CMS ACA 102, Census state tax
+  collections 44, HHS TANF 30, JCT 11, CBO 5, BEA 2, and one each from
+  CMS Medicare, HHS LIHEAP and the Federal Reserve. The SSA targets are
+  the national Social Security dollars in total and by type and national
+  SSI dollars (Annual Statistical Supplement 2025, calendar 2024); SSI
+  dollars by state and SSI recipients by state; and SSI recipients in
+  three age groups (December 2024). IRS SOI includes taxable Social
+  Security amounts, nationally and by state. The Federal Reserve target
+  is household net worth (Z.1). This sentence names targets and states no
+  fit.
 - **Not calibrated:** liquid asset holdings (bank, stock, bond), counts
   of Social Security beneficiaries, counts of people receiving both
-  Social Security and SSI, and marital composition.
+  Social Security and SSI, and the marital composition of beneficiaries.
+  No target of Microcosm's compiler at that commit binds any of these.
 - Hence the FRAME-RELATIVE label. Shares are reported as the frame's
   shares; weighted counts are reported but labelled frame-relative.
 
@@ -511,7 +521,7 @@ row and scenario.
 ## 9. Uncertainty and small cells
 
 - **Interval.** A household bootstrap with 500 replicates. Households
-  are all 57,240 households of the frame, sorted by `household_id`
+  are all 352,932 households of the frame, sorted by `household_id`
   ascending (H of them). One generator,
   `numpy.random.default_rng(20261001)`, is created once; for replicate
   *b* = 0, …, 499, in order,
@@ -591,7 +601,7 @@ and the SSI change outside the universe's marital units (§13).
 
 ## 11. Outputs
 
-- `runs/pe_us_depletion_cut_population_v1.json` and its `.env.json`
+- `runs/pe_us_depletion_cut_population_sa2.json` and its `.env.json`
   sidecar, created exclusively. The artifact begins with `header` (the
   five labels) and records `data_provenance: registered_real`, the
   publication block (§14), the registration pointer, the registered
@@ -602,7 +612,7 @@ and the SSI change outside the universe's marital units (§13).
   §10, the diagnostics of §13, the named differences of §12, the Modal
   app, function-call and image IDs, the marker contents, timings and
   peak memory.
-- `docs/analysis/pe_us_depletion_cut_population_20261001/`: a Markdown
+- `docs/analysis/pe_us_depletion_cut_population_sa2/`: a Markdown
   report and one chart (estimands 1 and 2 by cell for the headline row),
   PNG and SVG, each carrying the labels.
 - A pin test, in the same local commit, fixes the registration URL, the
@@ -638,10 +648,10 @@ and the SSI change outside the universe's marital units (§13).
    alone, are underrepresented in the frame. The all-beneficiary shares
    reflect this skew, and one-way breakdowns do not remove it: composition
    can also differ within age, sex, race and income cells.
-7. **Model versions.** The weights were solved under PE-US 1.764.6; the
-   data release declares compatibility with policyengine-us 2.0.0 (core
-   3.32.5); policyengine.py certifies it for 2.2.1; the run uses 2.18.0
-   (core 3.32.11).
+7. **Model versions.** Microcosm solved the weights under PE-US 2.2.1,
+   and the data release declares compatibility with policyengine-us 2.2.1
+   and core 3.32.5 only. The run uses 2.18.0 (core 3.32.11), outside that
+   declaration.
 8. **Year.** 2026 law, a 2024 frame extended by PE-US; asset inputs grow
    with CPI-U while the limits stay at $2,000 and $3,000.
 9. **Take-up.** The headline assumes everyone eligible takes SSI up; row
@@ -659,6 +669,14 @@ and the SSI change outside the universe's marital units (§13).
     (`PEUS/variables/gov/ssa/ssi/ssi_if_takes_up.py:25-38`). A cut that
     ends deeming can therefore lower modeled SSI. Labels describe PE-US's
     modeled response, including this discrepancy.
+13. **The frame, and through it the universe.** Registration 19's erased
+    records carried 11.8 million weighted people, 9.2 million of them aged
+    65 and over. The run measures and reports the new count.
+14. **Size.** This frame holds about 5.5 times Registration 19's persons
+    and 6.2 times its households, so its record counts and small-cell
+    flags don't compare directly with Registration 19's.
+15. **Sequence.** This registration follows Registration 19's results,
+    which the session that set it up has read.
 
 ## 13. Unscored diagnostics and context
 
@@ -688,17 +706,27 @@ Reported, not graded:
   weighted counts of beneficiaries and of beneficiaries receiving SSI
   (both `ssi_if_takes_up` and `ssi`, baseline, asset test as encoded) are
   reported beside them.
+- The share of the model's 2026 SSI recipients who also have Social
+  Security, aged 65 and over and aged 18-64, under `ssi` and under
+  `ssi_if_takes_up` (baseline, asset test as encoded), beside SSA's
+  December 2024 figures from the SSI Annual Statistical Report 2024,
+  Table 9: 57.1 percent (1,410,664 of 2,469,103) and 27.3 percent
+  (1,080,790 of 3,951,866).
+- Registration 19's published headline statistics beside this run's, cell
+  by cell. The run reads Registration 19's artifact for that table alone.
+- For microcosm#1184: the share of blocked beneficiaries in marital units
+  where someone reports SSI in the CPS (`SSI_VAL > 0`), and `B` and
+  `B_cond` if those units never blocked.
 
 ## 14. Rules
 
 - **One shot.** No numerical threshold exists and none may be added.
 - **No pre-run computation on the frame.** Nothing loads the frame
-  through PolicyEngine-US outside the one shot. Container resources are
-  set from the reader lane's disclosed smoke measurement (§16) and from a
-  dry run of the registered entry point, at the registered commit, on an
-  invented dataset with the frame's entity counts (57,240 households,
-  166,321 persons). The second registration comment posts that dry run's
-  timings and peak memory.
+  through PolicyEngine-US outside the one shot, so container resources
+  come from a dry run of the registered entry point, at the registered
+  commit, on an invented dataset with the frame's entity counts (352,932
+  households, 907,863 persons). The second registration comment posts
+  that dry run's timings and peak memory.
 - **One disclosed re-execution** is allowed, only for an external
   infrastructure failure (for example a failed container or exhausted
   memory) before the `phase-statistics` marker (§15). It follows an
@@ -706,13 +734,13 @@ Reported, not graded:
   of `started`; the container refuses if that marker exists. Nobody reads
   the failed attempt's child outputs, which are deleted unread. A failure
   after `phase-statistics`, or any failure of the re-execution, ends
-  Registration 19 and is reported as a refusal is.
+  Registration <<N>> and is reported as a refusal is.
 - **No tuning and no rerun otherwise.** A code or specification change is
   a new registered version and needs a new registration.
 - **No-drop.** Every row, scenario, cell and statistic is computed and
   kept, including undefined or invalid values with their reason.
 - **Refusal.** Failure of any check under §10's refusals ends
-  Registration 19; a corrected version needs a new registration. Failure
+  Registration <<N>>; a corrected version needs a new registration. Failure
   of a row-validity check invalidates only rows R3 and R4, as §10 says,
   and is not a refusal. The runner writes a refusal
   record (check number and name, the number of failing persons, the phase
@@ -740,16 +768,17 @@ Reported, not graded:
 
 ## 15. Topology and authorization
 
-- **Code.** The registered commit descends from PR #506's head at
-  registration, `363d9e81a8fa787c690085308d4f2e0602aed07a`. Before the
+- **Code.** The registered commit descends from `master`, which holds
+  Registration 19's registered commit,
+  `3ba0d020e9ac47934f1e6fcc22d3deaec2e15d73`, and PR #506's head at
+  Registration 19, `363d9e81a8fa787c690085308d4f2e0602aed07a`. Before the
   second comment it is pushed to `PolicyEngine/microcosm-dynamics` on
-  branch `pe-us-depletion-cut-population-20261001` and tagged with the
-  annotated tag `registration-19-sa1`. Later changes to PR #506 do not
-  change the registered run; the run-complete comment names any later
+  branch `pe-us-depletion-cut-population-sa2` and tagged with the
+  annotated tag `registration-<<N>>-sa2`. Later changes to `master` do
+  not change the registered run; the run-complete comment names any later
   change to the functions this run imports. Any merge carrying the
-  registered commit uses a merge commit, never squash or rebase. Unlike
-  Registrations 13-17, which ran at `master` commits, this commit is not
-  on `master`.
+  registered commit uses a merge commit, never squash or rebase. Like
+  Registration 19's, this commit is not on `master` when it runs.
 - **Comments.** The first issue #42 comment fixes this specification: it
   restates the rows, statistics, cells and rules, and records the
   ratified file's path, commit and SHA-256. Its URL is the run's
@@ -761,8 +790,8 @@ Reported, not graded:
   comment recorded, the SHA-256 of the Modal runner script and both
   requirement files, the volume name, the invented dry run's timings and
   peak memory, and the registered-commit review (§20). Immediately before the first comment, the drafter
-  re-reads the last issue #42 comment; if 19 has been taken, the number
-  in the labels, the block and the exposures file is changed first.
+  re-reads the last issue #42 comment and sets the next free number in
+  this file, the labels, the block and the exposures file.
 - **Entry point.** `scripts/run_pe_us_depletion_cut_population_registered.py`
   refuses: a registration pointer that is not an issue #42 comment URL; a
   commit that is not a full 40-character SHA or is not HEAD; a tree that
@@ -772,8 +801,9 @@ Reported, not graded:
   the volume marker below is the one-shot guard.
 - **Real-frame guard.** The population code refuses to load any file
   whose SHA-256 is the frame's, and refuses a `Microsimulation` built
-  without an explicit `dataset=` (PE-US 2.18.0 defaults to this frame:
-  `PEUS/system.py:64, 444-450`), unless the registered entry point calls
+  without an explicit `dataset=` (PE-US 2.18.0 defaults to Registration
+  19's frame: `PEUS/system.py:64, 444-450`), unless the registered entry
+  point calls
   it after its preflight passes. Tests and CI use invented datasets only,
   and a test asserts that the guard refuses.
 - **Platform.** Modal, workspace `policyengine`, following the runner of
@@ -797,23 +827,18 @@ Reported, not graded:
   child process. The artifact and sidecar are created exclusively on the
   volume; the copy committed to the repository must equal the volume copy
   byte for byte.
-- **Authorization.** Cos decision d806, ruled 2026-10-01T18:14, records
-  Max's words in chat verbatim: "Max in chat 2026-10-01 (Claude session
-  45a0ea0e): 'Register the analysis first, the way this repo registers
-  tests: cells, population, the 22% OASI cut, and the 17% OASDI
-  sensitivity.' 'Run the cut on a population that carries assets, through
-  PolicyEngine-US.' 'Label results as frame-relative unless calibrated to
-  national totals.' 'Open a PR, get an independent review, and keep
-  published numbers behind Max's go (cos add-decision).' 'Run
-  compute-heavy work on Modal.' Authorizes the #42 registration and the
-  one-shot run; publication of numbers needs a separate go." Max's ruling
-  fixes the population, the two cuts, the cell dimensions, the label
-  rule, the platform, the independent review and the publication hold.
-  Every other choice here is the orchestrating session's, made after the
-  exposures of §16: the frame, the headline row and its SSI measure, rows
+- **Authorization.** <<AUTHORIZATION: Max's words and the decision id,
+  as this bullet quoted d806 for Registration 19.>> Cos decision d806,
+  which authorized Registration 19, fixed the population, the two cuts,
+  the cell dimensions, the label rule, the platform, the independent
+  review and the publication hold. Every other choice carries over from
+  Registration 19, where the orchestrating session made it after the
+  exposures that §16 lists: the headline row and its SSI measure, rows
   R2-R5, the replacement measure and tolerance, the quintile concept, the
   bootstrap, the small-cell rule, and ratification by registration
-  comment. The independent reviews are recorded in §20.
+  comment. This rerun's session chose the frame, on the coordinator's
+  pin, and the changes the first comment names. The independent reviews
+  are recorded in §20.
 - **Evidence folder:** `EV/pe-us-depletion-cut-population-20261001/`,
   holding the reader reports (`understand/`) and scripts
   (`scratch-readers/`), the spec reviews (`spec-review/`), the exposure
@@ -829,7 +854,13 @@ Reported, not graded:
     Security Bulletin 66(4)), SHA-256
     `c8671a359b71212219a0f5c8480c5eddadb2d5da1c2609af239319e8d0b230e2`;
   - `sources/lii_416_1163.html`, SHA-256
-    `f3ba220819cd3b71d083b4f1e5c591c65cef4a9415da9164a362a2ef6ff16c2d`.
+    `f3ba220819cd3b71d083b4f1e5c591c65cef4a9415da9164a362a2ef6ff16c2d`;
+  - `registration/sources/ssi_asr_2024_sect02.html` (Wayback capture
+    20260908072440 of the SSI Annual Statistical Report 2024, section 2,
+    which holds Table 9), SHA-256
+    `850348eb29546c5d6945cd6d7598e265b275b917a912c89efb2f7a76821969ac`;
+  - `registration/sa2-column-checks/`, which holds the script of §16 and
+    what it printed.
 
   `SHA256SUMS` in that folder fixes the reader reports, the reader
   scripts, the exposure record and the sources; the first comment records
@@ -879,6 +910,17 @@ Reported, not graded:
   comparator, and the orchestrating session's exposures would make its
   forecast uninformative.
 
+The bullets above describe Registration 19 and its frame, and they carry
+over. Registration <<N>>'s first comment states what this rerun's session
+read, and:
+
+- This rerun's session read Registration 19's public results and the
+  microcosm#1178 diagnostics.
+- <<COLUMN CHECKS: the script's hash, the columns it reads and what it
+  printed.>>
+- No simulation has run on this frame for this registration, and nobody
+  has computed a statistic of §6 on it.
+
 ## 17. Worked cases (invented)
 
 PR #506's household A: one person aged 68, retired-worker benefit $743 a
@@ -916,13 +958,13 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-ratified-1",
+  "version": "sa2-ratified-1",
   "status": "ratified_frozen",
   "decisions": {
     "authorization": {
-      "decision": "d806",
-      "ruled_at": "2026-10-01T18:14",
-      "ruling": "Max in chat 2026-10-01 (Claude session 45a0ea0e): 'Register the analysis first, the way this repo registers tests: cells, population, the 22% OASI cut, and the 17% OASDI sensitivity.' 'Run the cut on a population that carries assets, through PolicyEngine-US.' 'Label results as frame-relative unless calibrated to national totals.' 'Open a PR, get an independent review, and keep published numbers behind Max's go (cos add-decision).' 'Run compute-heavy work on Modal.' Authorizes the #42 registration and the one-shot run; publication of numbers needs a separate go."
+      "decision": "<<DECISION>>",
+      "ruled_at": "<<RULED AT>>",
+      "ruling": "<<RULING>>"
     }
   },
   "blocked_by": [],
@@ -930,10 +972,10 @@ the code's constants.
     "repo_id": "policyengine/populace-us",
     "repo_type": "dataset",
     "filename": "populace_us_2024.h5",
-    "tag": "populace-us-2024-spm-20260909",
-    "revision": "9a814a3b3b53c0ecd6e1737b6ec862c31300ef6f",
-    "bytes": 826917837,
-    "sha256": "6496cc4393d4d3c6574f76eca231de5898c803b9067645591fd5c4d3e65aee84",
+    "tag": "populace-us-2024-b5db384-8b0c1950b65f-20261024T083103Z",
+    "revision": "15cefac484174ae0ee11a82b164f58023ad05c84",
+    "bytes": 2509287855,
+    "sha256": "2d9c8586c45c32e5ca27357317f4de93b526cc51dd28b15b71ed43e47e142e79",
     "period": "2024"
   },
   "pr506_head": "363d9e81a8fa787c690085308d4f2e0602aed07a",
@@ -980,7 +1022,7 @@ the code's constants.
     "FRAME-RELATIVE: Microcosm populace-us-2024 frame; liquid assets are imputed and not calibrated, and beneficiary counts are not calibrated to national totals.",
     "Applied to 2026 law and prices: the cut would not happen in 2026, and this is not a projection.",
     "Static: no behavioral response.",
-    "Registered one-shot, not blind: registered after PR #506's illustrative results and after real-data diagnostics on this frame were seen (issue #42, Registration 19).",
+    "Registered one-shot, not blind: registered after PR #506's illustrative results, real-data diagnostics on the earlier frame, Registration 19's full results and the microcosm#1178 diagnostics (issue #42, Registration <<N>>).",
     "Headline basis: potential federal SSI replacement, as if everyone eligible takes SSI up, under the row's modeled resource test; shares count cut beneficiaries by replacement of their marital unit's combined cut."
   ]
 }
@@ -1030,6 +1072,9 @@ the code's constants.
 - `sa1-ratified-1` (2026-10-02): `sa1-draft-6` with its version and
   status set and the ratification check recorded (§20). No other text
   differs.
+- `sa2-ratified-1` (<<DATE>>): the rerun on the frame of §2.1, in the
+  lines Registration <<N>>'s first comment names. `sa1-ratified-1` stays
+  at commit `7162c660`.
 
 ## 20. Review and ratification record
 
@@ -1070,6 +1115,8 @@ the code's constants.
   from `sa1-draft-6` only in version, status, the block's version and
   status, the changelog and this section; the drafter confirmed that
   with `git diff` before recording the hash.
+- **`sa2-ratified-1`:** <<REVIEW: reviewer, model, findings and
+  outcome.>>
 - **Registered-commit review:** independent reviews of the code at the
   registered commit, completed before the second comment and recorded in
   it (§15), since this file cannot change after ratification.
