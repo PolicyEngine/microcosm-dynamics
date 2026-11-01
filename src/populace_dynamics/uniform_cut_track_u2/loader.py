@@ -107,6 +107,7 @@ from populace_dynamics.uniform_cut_track_u2 import cohort, identity, sources
 __all__ = [
     "ANCHOR_CONCEPTS",
     "PREREGISTRATION_EVIDENCE_PATH",
+    "PREREGISTRATION_EVIDENCE_SHA256",
     "PREREGISTRATION_SCHEMA",
     "U2AuthorizationRefusal",
     "U2FrozenIdentityMismatch",
@@ -188,6 +189,13 @@ PREREGISTRATION_SCHEMA = (
 #: committed; the registered run refuses while it is absent.
 PREREGISTRATION_EVIDENCE_PATH = (
     identity.ROOT / "docs" / "design" / "u2_preregistration_evidence.json"
+)
+#: The SHA-256 of the record the section 20 step-4 pass wrote under d1724
+#: (2026-10-21), as that pass's MANIFEST.md pins it.  The committed record
+#: must be that file byte for byte: any other bytes refuse before they are
+#: parsed (section 20 step 5).
+PREREGISTRATION_EVIDENCE_SHA256 = (
+    "7bc5c3c26ff014271061a8228068c6e71103430ec299048462570476a510b845"
 )
 _EVIDENCE_KEYS: tuple[str, ...] = (
     "schema_version",
@@ -923,7 +931,9 @@ def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
 def read_preregistration_evidence(
     path: Path = PREREGISTRATION_EVIDENCE_PATH,
 ) -> dict[str, Any]:
-    """The committed evidence record; refuses while it is absent."""
+    """The committed evidence record; refuses while it is absent, and
+    refuses any file whose bytes are not the pinned record's
+    (:data:`PREREGISTRATION_EVIDENCE_SHA256`)."""
 
     if not Path(path).is_file():
         raise U2FrozenIdentityMismatch(
@@ -931,8 +941,16 @@ def read_preregistration_evidence(
             "20 step-4 pass has not frozen the PSID file and frame "
             "identities, so a registered run refuses (section 14)"
         )
+    raw = Path(path).read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != PREREGISTRATION_EVIDENCE_SHA256:
+        raise U2FrozenIdentityMismatch(
+            f"the evidence record at {path} has SHA-256 {digest}, not the "
+            f"pinned {PREREGISTRATION_EVIDENCE_SHA256} the step-4 pass wrote "
+            "(section 20 step 5): it is not the committed record"
+        )
     try:
-        record = json.loads(Path(path).read_text(encoding="utf-8"))
+        record = json.loads(raw.decode("utf-8"))
     except ValueError as error:
         raise U2FrozenIdentityMismatch(
             f"the evidence record at {path} is not JSON: {error}"
