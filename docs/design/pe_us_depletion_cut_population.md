@@ -197,8 +197,7 @@ Computed from the file without simulation:
   dollars by state and SSI recipients by state; and SSI recipients in
   three age groups (December 2024). IRS SOI includes taxable Social
   Security amounts, nationally and by state. The Federal Reserve target
-  is household net worth (Z.1). This sentence names targets and states no
-  fit.
+  is household net worth (Z.1).
 - **Not calibrated:** liquid asset holdings (bank, stock, bond), counts
   of Social Security beneficiaries, counts of people receiving both
   Social Security and SSI, and the marital composition of beneficiaries.
