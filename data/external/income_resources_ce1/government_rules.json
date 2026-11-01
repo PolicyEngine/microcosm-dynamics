@@ -2500,6 +2500,55 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
         "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1987 amendment note quoting 410(l)(1) as it read before Pub. L. 100-203 section 9001(a)(1)",
+        "quote": "Prior to amendment, par. (1) read as follows: \u201cExcept as provided in paragraph (4) of this subsection, the term \u2018employment\u2019 shall, notwithstanding the provisions of subsection (a) of this section, include service performed after December 1956 by an individual as a member of a uniformed service on active duty; but such term shall not include any such service which is performed while on leave without pay.\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(2), active duty",
+        "quote": "(2) The term \u201c active duty \u201d means \u201c active duty \u201d as described in paragraph (21) of section 101 of title 38 , except that it shall also include \u201cactive duty for training\u201d as described in paragraph (22) of such section."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1984 amendment note, subsec. (l)(2)",
+        "quote": "Subsec. (l)(2). Pub. L. 98\u2013369, \u00a7 2663(a)(7)(E) , substituted \u201cparagraph (21) of section 101 of title 38 \u201d for \u201csection 102 of the Servicemen\u2019s and Veterans\u2019 Survivor Benefits Act\u201d and \u201cparagraph (22) of such section\u201d for \u201csuch section\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(4)(A), service creditable under the Railroad Retirement Act",
+        "quote": "(4) (A) Paragraph (1) of this subsection shall not apply in the case of any service, performed by an individual as a member of a uniformed service , which is creditable under section 231b(i) of title 45 ."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1974 amendment note, subsec. (l)(4)(A)",
+        "quote": "1974\u2014Subsec. (l)(4)(A). Pub. L. 93\u2013445 substituted \u201c section 231b(i) of title 45 \u201d for \u201c section 228c\u20131 of title 45 \u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "Effective Date of 1974 Amendment note",
+        "quote": "Effective Date of 1974 Amendment Amendment by Pub. L. 93\u2013445 effective Jan. 1, 1975 , see section 603 of Pub. L. 93\u2013445"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(m), member of a uniformed service",
+        "quote": "The term \u201c member of a uniformed service \u201d means any person appointed, enlisted, or inducted in a component of the Army, Navy, Air Force, Marine Corps, or Coast Guard"
       }
     ],
     "trigger_facts": [
@@ -2567,8 +2616,21 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "federal_retirement_system_service",
+        "case_id": "uniformed_service_410l",
         "precedence": 1,
+        "when": {
+          "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 228c-1 (410(l)(1) and (4)(A) as in effect before Pub. L. 93-445)"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "federal_retirement_system_service",
+          "other_federal_retirement_system"
+        ],
+        "description": "42 U.S.C. 410(l)(1) makes this service employment \"notwithstanding the provisions of subsection (a)\", so the 410(a)(5)-(6) exclusions then in force, the retirement-system exclusions among them, do not reach it. 410(l)(4)(A) withholds the rule from service the Railroad Retirement Act credits; the cases ranked below decide that service."
+      },
+      {
+        "case_id": "federal_retirement_system_service",
+        "precedence": 2,
         "consequence": "noncovered",
         "description": "410(a)(6)(A) as in effect in January 1983.",
         "when": {
@@ -2577,7 +2639,7 @@
       },
       {
         "case_id": "statutory_1410_instrumentality",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
         "description": "410(a)(5) as in effect in January 1983.",
         "when": {
@@ -2586,7 +2648,7 @@
       },
       {
         "case_id": "fhlb_retroactive_coverage",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "federal_service": "employee of a Federal home loan bank on 1973-01-01, for service after 1966-12-31, with taxes equal to the 3101 and 3111 taxes on all such employees' service paid by 1973-07-01 or a later agreed date"
         },
@@ -2598,7 +2660,7 @@
       },
       {
         "case_id": "exempt_1950_instrumentality_system",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "noncovered",
         "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
         "when": {
@@ -2607,7 +2669,7 @@
       },
       {
         "case_id": "president_congress_legislative",
-        "precedence": 5,
+        "precedence": 6,
         "consequence": "noncovered",
         "description": "410(a)(6)(C) as in effect in January 1983.",
         "when": {
@@ -2616,7 +2678,7 @@
       },
       {
         "case_id": "federal_penal_inmate",
-        "precedence": 6,
+        "precedence": 7,
         "when": {
           "occupation": "inmate of a penal institution of the United States"
         },
@@ -2625,7 +2687,7 @@
       },
       {
         "case_id": "federal_hospital_student_employee",
-        "precedence": 7,
+        "precedence": 8,
         "when": {
           "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
         },
@@ -2634,7 +2696,7 @@
       },
       {
         "case_id": "temporary_emergency_employee",
-        "precedence": 8,
+        "precedence": 9,
         "when": {
           "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
         },
@@ -2643,7 +2705,7 @@
       },
       {
         "case_id": "other_federal_retirement_system",
-        "precedence": 9,
+        "precedence": 10,
         "when": {
           "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
         },
@@ -2686,6 +2748,55 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
         "location": "note on Pub. L. 92-603 section 125(a), coverage of Federal home loan bank employees"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1987 amendment note quoting 410(l)(1) as it read before Pub. L. 100-203 section 9001(a)(1)",
+        "quote": "Prior to amendment, par. (1) read as follows: \u201cExcept as provided in paragraph (4) of this subsection, the term \u2018employment\u2019 shall, notwithstanding the provisions of subsection (a) of this section, include service performed after December 1956 by an individual as a member of a uniformed service on active duty; but such term shall not include any such service which is performed while on leave without pay.\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(2), active duty",
+        "quote": "(2) The term \u201c active duty \u201d means \u201c active duty \u201d as described in paragraph (21) of section 101 of title 38 , except that it shall also include \u201cactive duty for training\u201d as described in paragraph (22) of such section."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1984 amendment note, subsec. (l)(2)",
+        "quote": "Subsec. (l)(2). Pub. L. 98\u2013369, \u00a7 2663(a)(7)(E) , substituted \u201cparagraph (21) of section 101 of title 38 \u201d for \u201csection 102 of the Servicemen\u2019s and Veterans\u2019 Survivor Benefits Act\u201d and \u201cparagraph (22) of such section\u201d for \u201csuch section\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(4)(A), service creditable under the Railroad Retirement Act",
+        "quote": "(4) (A) Paragraph (1) of this subsection shall not apply in the case of any service, performed by an individual as a member of a uniformed service , which is creditable under section 231b(i) of title 45 ."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1974 amendment note, subsec. (l)(4)(A)",
+        "quote": "1974\u2014Subsec. (l)(4)(A). Pub. L. 93\u2013445 substituted \u201c section 231b(i) of title 45 \u201d for \u201c section 228c\u20131 of title 45 \u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "Effective Date of 1974 Amendment note",
+        "quote": "Effective Date of 1974 Amendment Amendment by Pub. L. 93\u2013445 effective Jan. 1, 1975 , see section 603 of Pub. L. 93\u2013445"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(m), member of a uniformed service",
+        "quote": "The term \u201c member of a uniformed service \u201d means any person appointed, enlisted, or inducted in a component of the Army, Navy, Air Force, Marine Corps, or Coast Guard"
       }
     ],
     "trigger_facts": [
@@ -2754,8 +2865,21 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "federal_retirement_system_service",
+        "case_id": "uniformed_service_410l",
         "precedence": 1,
+        "when": {
+          "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 228c-1 or, for service from 1975-01-01 (Pub. L. 93-445 section 603), 45 U.S.C. 231b(i) (410(l)(1) and (4)(A))"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "federal_retirement_system_service",
+          "other_federal_retirement_system"
+        ],
+        "description": "42 U.S.C. 410(l)(1) makes this service employment \"notwithstanding the provisions of subsection (a)\", so the 410(a)(5)-(6) exclusions then in force, the retirement-system exclusions among them, do not reach it. 410(l)(4)(A) withholds the rule from service the Railroad Retirement Act credits; the cases ranked below decide that service."
+      },
+      {
+        "case_id": "federal_retirement_system_service",
+        "precedence": 2,
         "consequence": "noncovered",
         "description": "410(a)(6)(A) as in effect in January 1983.",
         "when": {
@@ -2764,7 +2888,7 @@
       },
       {
         "case_id": "statutory_1410_instrumentality",
-        "precedence": 2,
+        "precedence": 3,
         "consequence": "noncovered",
         "description": "410(a)(5) as in effect in January 1983.",
         "when": {
@@ -2773,7 +2897,7 @@
       },
       {
         "case_id": "exempt_1950_instrumentality_system",
-        "precedence": 3,
+        "precedence": 4,
         "consequence": "noncovered",
         "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
         "when": {
@@ -2782,7 +2906,7 @@
       },
       {
         "case_id": "president_congress_legislative",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "noncovered",
         "description": "410(a)(6)(C) as in effect in January 1983.",
         "when": {
@@ -2791,7 +2915,7 @@
       },
       {
         "case_id": "federal_penal_inmate",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "occupation": "inmate of a penal institution of the United States"
         },
@@ -2800,7 +2924,7 @@
       },
       {
         "case_id": "federal_hospital_student_employee",
-        "precedence": 6,
+        "precedence": 7,
         "when": {
           "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
         },
@@ -2809,7 +2933,7 @@
       },
       {
         "case_id": "temporary_emergency_employee",
-        "precedence": 7,
+        "precedence": 8,
         "when": {
           "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
         },
@@ -2818,7 +2942,7 @@
       },
       {
         "case_id": "other_federal_retirement_system",
-        "precedence": 8,
+        "precedence": 9,
         "when": {
           "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
         },
@@ -2894,6 +3018,41 @@
         "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
         "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3): the 1988 amendments reach only service on or after November 10, 1988, after this row ends",
         "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988]."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1987 amendment note quoting 410(l)(1) as it read before Pub. L. 100-203 section 9001(a)(1)",
+        "quote": "Prior to amendment, par. (1) read as follows: \u201cExcept as provided in paragraph (4) of this subsection, the term \u2018employment\u2019 shall, notwithstanding the provisions of subsection (a) of this section, include service performed after December 1956 by an individual as a member of a uniformed service on active duty; but such term shall not include any such service which is performed while on leave without pay.\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(2), active duty",
+        "quote": "(2) The term \u201c active duty \u201d means \u201c active duty \u201d as described in paragraph (21) of section 101 of title 38 , except that it shall also include \u201cactive duty for training\u201d as described in paragraph (22) of such section."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1984 amendment note, subsec. (l)(2)",
+        "quote": "Subsec. (l)(2). Pub. L. 98\u2013369, \u00a7 2663(a)(7)(E) , substituted \u201cparagraph (21) of section 101 of title 38 \u201d for \u201csection 102 of the Servicemen\u2019s and Veterans\u2019 Survivor Benefits Act\u201d and \u201cparagraph (22) of such section\u201d for \u201csuch section\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(4)(A), service creditable under the Railroad Retirement Act",
+        "quote": "(4) (A) Paragraph (1) of this subsection shall not apply in the case of any service, performed by an individual as a member of a uniformed service , which is creditable under section 231b(i) of title 45 ."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(m), member of a uniformed service",
+        "quote": "The term \u201c member of a uniformed service \u201d means any person appointed, enlisted, or inducted in a component of the Army, Navy, Air Force, Marine Corps, or Coast Guard"
       }
     ],
     "trigger_facts": [
@@ -3041,8 +3200,22 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "retired_judge_371b_payment",
+        "case_id": "uniformed_service_410l",
         "precedence": 1,
+        "when": {
+          "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 231b(i) (410(l)(1) and (4)(A))"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "defra_2601d_requalification",
+          "grandfathered_continuous_service",
+          "federal_annuitant"
+        ],
+        "description": "42 U.S.C. 410(l)(1) makes this service employment \"notwithstanding the provisions of subsection (a)\", so the 410(a)(5) grandfather, annuitant and section 2601(d) cases, which test the January 1983 text of former 410(a)(5)-(6), do not reach it. 410(l)(4)(A) withholds the rule from service the Railroad Retirement Act credits; the cases ranked below decide that service."
+      },
+      {
+        "case_id": "retired_judge_371b_payment",
+        "precedence": 2,
         "when": {
           "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b) during that service"
         },
@@ -3054,7 +3227,7 @@
       },
       {
         "case_id": "federal_penal_inmate",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "federal_service": "performed in a penal institution of the United States by an inmate thereof"
         },
@@ -3063,7 +3236,7 @@
       },
       {
         "case_id": "federal_hospital_student_employee",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "federal_service": "performed as an employee included under 5 U.S.C. 5351(2) (certain interns, student nurses and other student employees of Federal hospitals), other than as a medical or dental intern or a medical or dental resident in training"
         },
@@ -3072,7 +3245,7 @@
       },
       {
         "case_id": "temporary_emergency_employee",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "federal_service": "performed as an employee serving on a temporary basis in case of fire, storm, earthquake, flood, or other similar emergency"
         },
@@ -3081,7 +3254,7 @@
       },
       {
         "case_id": "official_position_service",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "occupation": "the service itself is performed as President or Vice President; in a position placed in the Executive Schedule under 5 U.S.C. 5312-5317, as a noncareer appointee in the Senior Executive Service or a noncareer member of the Senior Foreign Service, or in a position to which the individual is appointed under 3 U.S.C. 105(a)(1), 106(a)(1) or 107(a)(1) or (b)(1) at a maximum basic pay at or above level V of the Executive Schedule; as a justice, judge, magistrate or bankruptcy referee or judge listed in 410(a)(5)(E) as then in effect; or as a Member, Delegate or Resident Commissioner of or to the Congress"
         },
@@ -3095,7 +3268,7 @@
       },
       {
         "case_id": "defra_2601d_requalification",
-        "precedence": 6,
+        "precedence": 7,
         "when": {
           "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)",
           "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
@@ -3109,7 +3282,7 @@
       },
       {
         "case_id": "legislative_not_retirement_covered_1983",
-        "precedence": 7,
+        "precedence": 8,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
@@ -3123,7 +3296,7 @@
       },
       {
         "case_id": "legislative_lump_sum_after_1983",
-        "precedence": 8,
+        "precedence": 9,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))"
@@ -3137,7 +3310,7 @@
       },
       {
         "case_id": "legislative_ceased_coverage_after_1983",
-        "precedence": 9,
+        "precedence": 10,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))"
@@ -3151,7 +3324,7 @@
       },
       {
         "case_id": "grandfathered_continuous_service",
-        "precedence": 10,
+        "precedence": 11,
         "when": {
           "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
         },
@@ -3160,7 +3333,7 @@
       },
       {
         "case_id": "federal_annuitant",
-        "precedence": 11,
+        "precedence": 12,
         "when": {
           "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
           "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)"
@@ -3170,7 +3343,7 @@
       },
       {
         "case_id": "first_hired_after_1983",
-        "precedence": 12,
+        "precedence": 13,
         "when": {
           "federal_service": "first hired after 1983"
         },
@@ -3252,6 +3425,62 @@
         "authority": "26 U.S.C. 3121, United States Code, 2024 edition, setting out Pub. L. 100-647 section 8015(c)(3) (102 Stat. 3792) as enacted; bracketed words are the Code editors'",
         "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3)",
         "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988]."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(1), service in uniformed services (text from 1988)",
+        "quote": "(l) Service in uniformed services (1) Except as provided in paragraph (4), the term \u201c employment \u201d shall, notwithstanding the provisions of subsection (a) of this section, include\u2014 (A) service performed after December 1956 by an individual as a member of a uniformed service on active duty, but such term shall not include any such service which is performed while on leave without pay, and (B) service performed after December 1987 by an individual as a member of a uniformed service on inactive duty training."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1987 amendment note quoting 410(l)(1) as it read before Pub. L. 100-203 section 9001(a)(1)",
+        "quote": "Prior to amendment, par. (1) read as follows: \u201cExcept as provided in paragraph (4) of this subsection, the term \u2018employment\u2019 shall, notwithstanding the provisions of subsection (a) of this section, include service performed after December 1956 by an individual as a member of a uniformed service on active duty; but such term shall not include any such service which is performed while on leave without pay.\u201d"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "Effective Date of 1987 Amendment note, Pub. L. 100-203 section 9001(d)",
+        "quote": "Effective Date of 1987 Amendment Amendment by section 9001(a)(1) of Pub. L. 100\u2013203 applicable with respect to remuneration paid after Dec. 31, 1987"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(2), active duty",
+        "quote": "(2) The term \u201c active duty \u201d means \u201c active duty \u201d as described in paragraph (21) of section 101 of title 38 , except that it shall also include \u201cactive duty for training\u201d as described in paragraph (22) of such section."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(3), inactive duty training",
+        "quote": "(3) The term \u201c inactive duty training \u201d means \u201c inactive duty training \u201d as described in paragraph (23) of such section 101."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(l)(4)(A), service creditable under the Railroad Retirement Act",
+        "quote": "(4) (A) Paragraph (1) of this subsection shall not apply in the case of any service, performed by an individual as a member of a uniformed service , which is creditable under section 231b(i) of title 45 ."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(m), member of a uniformed service",
+        "quote": "The term \u201c member of a uniformed service \u201d means any person appointed, enlisted, or inducted in a component of the Army, Navy, Air Force, Marine Corps, or Coast Guard"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340 (2024-06-14)",
+        "location": "C.5, student employees with U.S. Army Engineers",
+        "quote": "Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes."
       }
     ],
     "trigger_facts": [
@@ -3463,8 +3692,22 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "retired_judge_371b_payment",
+        "case_id": "uniformed_service_410l",
         "precedence": 1,
+        "when": {
+          "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay, or performed after December 1987 as such a member on inactive duty training (410(l)(1)(B) and (3)); in either case other than service creditable under 45 U.S.C. 231b(i) (410(l)(4)(A))"
+        },
+        "consequence": "covered",
+        "overrides": [
+          "defra_2601d_requalification",
+          "grandfathered_continuous_service",
+          "federal_annuitant"
+        ],
+        "description": "42 U.S.C. 410(l)(1) makes this service employment \"notwithstanding the provisions of subsection (a)\", so the 410(a)(5) grandfather, annuitant and section 2601(d) cases, which test the January 1983 text of former 410(a)(5)-(6), do not reach it. 410(l)(4)(A) withholds the rule from service the Railroad Retirement Act credits; the cases ranked below decide that service. Inactive duty training counts only when performed after December 1987, the date in 410(l)(1)(B) as Pub. L. 100-203 section 9001(a)(1) enacted it."
+      },
+      {
+        "case_id": "retired_judge_371b_payment",
+        "precedence": 2,
         "when": {
           "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b) during that service"
         },
@@ -3476,7 +3719,7 @@
       },
       {
         "case_id": "federal_penal_inmate",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "federal_service": "performed in a penal institution of the United States by an inmate thereof"
         },
@@ -3485,7 +3728,7 @@
       },
       {
         "case_id": "federal_hospital_student_employee",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "federal_service": "performed as an employee included under 5 U.S.C. 5351(2) (certain interns, student nurses and other student employees of Federal hospitals), other than as a medical or dental intern or a medical or dental resident in training"
         },
@@ -3494,7 +3737,7 @@
       },
       {
         "case_id": "temporary_emergency_employee",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "federal_service": "performed as an employee serving on a temporary basis in case of fire, storm, earthquake, flood, or other similar emergency"
         },
@@ -3502,8 +3745,31 @@
         "description": "410(a)(6)(C); not lifted by the 410(a)(5) exceptions."
       },
       {
+        "case_id": "army_corps_2360_student_aide",
+        "precedence": 6,
+        "when": {
+          "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment"
+        },
+        "consequence": "open",
+        "overrides": [
+          "first_hired_after_1983"
+        ],
+        "open_reason": "ARMY_CORPS_2360_LAW_UNCAPTURED: POMS RS 01901.340 C.5 says the services of students whom U.S. Army Corps of Engineers research and development laboratories engage under 10 U.S.C. 2360 contracts as laboratory aides \"are not covered for Social Security or CSRS purposes\", but no capture holds section 2360 or dates it, so CE1 cannot say from which date in a row that begins in 1987 that guidance applies.",
+        "open_alternatives": [
+          {
+            "name": "noncovered_per_poms_c5",
+            "description": "Treat the aides' services as noncovered in every year of the row, following POMS RS 01901.340 C.5."
+          },
+          {
+            "name": "lower_cases_until_2360_law",
+            "description": "Give the guidance no effect before the date the 10 U.S.C. 2360 authority took effect, so the cases ranked below this one (first_hired_after_1983 among them) or the residual decide the earlier years; treat the services as noncovered from that date."
+          }
+        ],
+        "description": "POMS RS 01901.340 C.5, 2024-06-14 edition. No capture holds or dates 10 U.S.C. 2360, so CE1 does not apply the guidance across a row that begins in 1987; capture section 2360 and its history before classifying."
+      },
+      {
         "case_id": "official_position_service",
-        "precedence": 5,
+        "precedence": 7,
         "when": {
           "occupation": "the service itself is performed as President or Vice President; in a position placed in the Executive Schedule under 5 U.S.C. 5312-5317, as a noncareer appointee in the Senior Executive Service or a noncareer member of the Senior Foreign Service, or in a position to which the individual is appointed under 3 U.S.C. 105(a)(1), 106(a)(1) or 107(a)(1) or (b)(1) at a maximum basic pay at or above level V of the Executive Schedule; as a justice, judge, magistrate or bankruptcy referee or judge listed in 410(a)(5)(E) as then in effect; or as a Member, Delegate or Resident Commissioner of or to the Congress"
         },
@@ -3517,7 +3783,7 @@
       },
       {
         "case_id": "after_official_service_from_1988_11_10",
-        "precedence": 6,
+        "precedence": 8,
         "when": {
           "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
         },
@@ -3531,7 +3797,7 @@
       },
       {
         "case_id": "fers_or_fsps_election",
-        "precedence": 7,
+        "precedence": 9,
         "when": {
           "federal_retirement_system": "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System"
         },
@@ -3545,7 +3811,7 @@
       },
       {
         "case_id": "fepca_waiver_reemployed_annuitant",
-        "precedence": 8,
+        "precedence": 10,
         "when": {
           "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act"
         },
@@ -3570,7 +3836,7 @@
       },
       {
         "case_id": "defra_2601d_requalification",
-        "precedence": 9,
+        "precedence": 11,
         "when": {
           "federal_service": "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)",
           "federal_retirement_system": "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services); after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as 410(a)(5)(G)(iii) describes; and again became subject to (or effectively applied for) subchapter III within the period section 2601(d)(1) or (2) allows (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
@@ -3584,7 +3850,7 @@
       },
       {
         "case_id": "legislative_not_retirement_covered_1983",
-        "precedence": 10,
+        "precedence": 12,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
@@ -3598,7 +3864,7 @@
       },
       {
         "case_id": "legislative_lump_sum_after_1983",
-        "precedence": 11,
+        "precedence": 13,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "received, at any time after 1983-12-31, a lump-sum payment under 5 U.S.C. 8342(a) or the corresponding provision of the other Federal retirement system"
@@ -3612,7 +3878,7 @@
       },
       {
         "case_id": "legislative_ceased_coverage_after_1983",
-        "precedence": 12,
+        "precedence": 14,
         "when": {
           "federal_service": "service in the legislative branch other than as a Member, Delegate or Resident Commissioner",
           "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
@@ -3626,7 +3892,7 @@
       },
       {
         "case_id": "grandfathered_continuous_service",
-        "precedence": 13,
+        "precedence": 15,
         "when": {
           "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
         },
@@ -3635,7 +3901,7 @@
       },
       {
         "case_id": "federal_annuitant",
-        "precedence": 14,
+        "precedence": 16,
         "when": {
           "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
           "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)"
@@ -3645,7 +3911,7 @@
       },
       {
         "case_id": "first_hired_after_1983",
-        "precedence": 15,
+        "precedence": 17,
         "when": {
           "federal_service": "first hired after 1983"
         },
@@ -5460,6 +5726,55 @@
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
         "authority": "42 USC 418 current code and amendment notes",
         "location": "418(f)"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(1), optional Medicare coverage of current employees",
+        "quote": "(n) Optional medicare coverage of current employees (1) The Commissioner of Social Security shall, at the request of any State , enter into or modify an agreement with such State under this section for the purpose of extending the provisions of subchapter XVIII, and sections 426 and 426\u20131 of this title, to services performed by employees of such State or any political subdivision thereof who are described in paragraph (2)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(2)(B)",
+        "quote": "(B) who are not otherwise covered under the State \u2019s agreement under this section"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(3)",
+        "quote": "(3) For purposes of sections 426 and 426\u20131 of this title, services covered under an agreement pursuant to this subsection shall be treated as \u201c medicare qualified government employment\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1986 amendment note, subsec. (v)",
+        "quote": "Subsec. (v). Pub. L. 99\u2013272, \u00a7 13205(c) , added subsec. (v)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "Pub. L. 99-272 section 13205(d)(3) effective-date note",
+        "quote": "Pub. L. 99\u2013272, title XIII, \u00a7 13205(d)(3) , Apr. 7, 1986 , 100 Stat. 318 , provided that: \u201cThe amendment made by subsection (c) [amending this section] shall apply to services performed after March 31, 1986 .\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1987 amendment note, subsec. (n)",
+        "quote": "1987\u2014Subsec. (n). Pub. L. 100\u2013203, \u00a7 9023(c) , redesignated subsec. (v) as (n)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(p)(1), Medicare qualified government employment",
+        "quote": "(p) Medicare qualified government employment (1) For purposes of sections 426 and 426\u20131 of this title, the term \u201c medicare qualified government employment\u201d means any service which would constitute \u201cemployment\u201d as defined in subsection (a) of this section but for the application of the provisions of\u2014 (A) subsection (a)(5), or (B) subsection (a)(7)"
       }
     ],
     "trigger_facts": [
@@ -5558,9 +5873,9 @@
         "case_id": "section_218_agreement_coverage",
         "precedence": 1,
         "consequence": "covered",
-        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage. A 418(v) modification (418(n) from Pub. L. 100-203) extends only title XVIII and sections 426 and 426-1, and 418(n)(3) treats the services it covers as Medicare qualified government employment, which 410(p)(1) defines as service that would be employment but for 410(a)(7); such a modification leaves 410(a)(7) excluding the service from OASDI.",
         "when": {
-          "section_218_position": "covered by effective agreement/modification"
+          "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
         }
       },
       {
@@ -5581,7 +5896,7 @@
         "consequence": "noncovered",
         "description": "State/local exclusion applies unless covered transportation or another statutory exception applies.",
         "when": {
-          "section_218_position": "not covered",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       }
@@ -5627,6 +5942,69 @@
         "sha256": "c3d9b005a13dc329e8cdc459e61665901f13afb6f76adf62cf3c1f2ce2f49c41",
         "authority": "SSA State and Local Coverage Handbook, POMS SL 30001.334, revision January 29, 2020",
         "location": "F.1, Examples 1-2, returning MERS members"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(1), optional Medicare coverage of current employees",
+        "quote": "(n) Optional medicare coverage of current employees (1) The Commissioner of Social Security shall, at the request of any State , enter into or modify an agreement with such State under this section for the purpose of extending the provisions of subchapter XVIII, and sections 426 and 426\u20131 of this title, to services performed by employees of such State or any political subdivision thereof who are described in paragraph (2)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(2)(B)",
+        "quote": "(B) who are not otherwise covered under the State \u2019s agreement under this section"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(3)",
+        "quote": "(3) For purposes of sections 426 and 426\u20131 of this title, services covered under an agreement pursuant to this subsection shall be treated as \u201c medicare qualified government employment\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1986 amendment note, subsec. (v)",
+        "quote": "Subsec. (v). Pub. L. 99\u2013272, \u00a7 13205(c) , added subsec. (v)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "Pub. L. 99-272 section 13205(d)(3) effective-date note",
+        "quote": "Pub. L. 99\u2013272, title XIII, \u00a7 13205(d)(3) , Apr. 7, 1986 , 100 Stat. 318 , provided that: \u201cThe amendment made by subsection (c) [amending this section] shall apply to services performed after March 31, 1986 .\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1987 amendment note, subsec. (n)",
+        "quote": "1987\u2014Subsec. (n). Pub. L. 100\u2013203, \u00a7 9023(c) , redesignated subsec. (v) as (n)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(p)(1), Medicare qualified government employment",
+        "quote": "(p) Medicare qualified government employment (1) For purposes of sections 426 and 426\u20131 of this title, the term \u201c medicare qualified government employment\u201d means any service which would constitute \u201cemployment\u201d as defined in subsection (a) of this section but for the application of the provisions of\u2014 (A) subsection (a)(5), or (B) subsection (a)(7)"
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.3, Medicare HI-only agreements in effect on or before July 1, 1991",
+        "quote": "Medicare HI-only coverage obtained under a Section 218 Agreement on or before July 1, 1991, continues after July 1, 1991."
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.4, Medicare HI-only agreements executed after July 1, 1991",
+        "quote": "However, services performed after July 1, 1991 by employees who are not members of a qualified retirement system are covered mandatorily for Social Security."
       }
     ],
     "trigger_facts": [
@@ -5854,9 +6232,9 @@
         "case_id": "section_218_agreement_coverage",
         "precedence": 1,
         "consequence": "covered",
-        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage.",
+        "description": "Coverage follows the agreement including its legally permitted exclusions; retirement-system membership does not defeat agreement coverage. A 418(v) modification (418(n) from Pub. L. 100-203) extends only title XVIII and sections 426 and 426-1, and 418(n)(3) treats the services it covers as Medicare qualified government employment, which 410(p)(1) defines as service that would be employment but for 410(a)(7); such a modification leaves 410(a)(7) excluding the service from OASDI.",
         "when": {
-          "section_218_position": "covered by effective agreement/modification"
+          "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
         }
       },
       {
@@ -5876,7 +6254,7 @@
         "precedence": 3,
         "when": {
           "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency",
-          "section_218_position": "not covered"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
         },
         "consequence": "noncovered",
         "description": "410(a)(7)(F)(i)-(iii) keep these services outside mandatory coverage.",
@@ -5889,7 +6267,7 @@
         "precedence": 4,
         "when": {
           "election_work": "election official or election worker",
-          "section_218_position": "not covered"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
         },
         "consequence": "deferred",
         "description": "410(a)(7)(F)(iv) sets a remuneration threshold for election service; the election family decides.",
@@ -5902,7 +6280,7 @@
         "precedence": 5,
         "when": {
           "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business",
-          "section_218_position": "not covered"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
         },
         "consequence": "deferred",
         "description": "410(a)(7)(F)(v) leaves these fees to self-employment; the public office family decides.",
@@ -5916,8 +6294,8 @@
         "consequence": "covered",
         "description": "Mandatory coverage, including optionals and ineligibles, unless a statutory exclusion applies.",
         "when": {
-          "public_retirement_system_participation": "not a member of an IRS-qualified system",
-          "section_218_position": "not covered",
+          "public_retirement_system_participation": "not a member of any IRS-qualified system",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       },
@@ -5928,7 +6306,7 @@
         "description": "The state/local exclusion remains unless another statutory exception applies.",
         "when": {
           "public_retirement_system_participation": "member of an IRS-qualified system",
-          "section_218_position": "not covered",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
           "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         }
       }

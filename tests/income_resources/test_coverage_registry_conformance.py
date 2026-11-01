@@ -1422,8 +1422,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
         for row in rows
     )
     # r4 M-2 adds NONPROFIT_RETROACTIVE_HIRE_UNSETTLED's two readings to
-    # each pre-1984 nonprofit row.
-    assert described == 44
+    # each pre-1984 nonprofit row; the r4 sweep adds the Army Corps student
+    # aide and the pre-1996 dealer holdings questions.
+    assert described == 46
 
 
 READING_TEXT = {
@@ -3422,9 +3423,16 @@ def cases_met(rule, facts):
 
     def holds(fact, condition):
         phrases = facts.get(fact, ())
-        if isinstance(phrases, str):
+        if isinstance(phrases, (str, bool)):
             phrases = (phrases,)
-        return any(phrase in str(condition) for phrase in phrases)
+        return any(
+            (
+                phrase is condition
+                if isinstance(phrase, bool) or isinstance(condition, bool)
+                else phrase in condition
+            )
+            for phrase in phrases
+        )
 
     return {
         case["case_id"]
@@ -4040,6 +4048,29 @@ def test_failing_a_covered_condition_reaches_an_exclusion(registry, key):
         met = cases_met(rule, facts)
         assert resolved_consequence(rule, facts) == expected
     assert case_id not in met
+
+
+INVENTED_SWEEP_WORKERS = json.loads(
+    (Path(__file__).parent / "ce1_invented_sweep_workers.json").read_text()
+)["workers"]
+
+
+@pytest.mark.parametrize(
+    "worker",
+    INVENTED_SWEEP_WORKERS,
+    ids=[f"{w['rule_id']}-{i}" for i, w in enumerate(INVENTED_SWEEP_WORKERS)],
+)
+def test_swept_rows_resolve_invented_workers_from_their_facts(
+    registry, worker
+):
+    """Review r4 item 9: the exclusion sweep's fact patterns. Each worker
+    named in a sweep finding, and a neighbour whose outcome must not
+    change, resolves from the cases its facts meet."""
+    rule = next(r for r in registry.rules if r.rule_id == worker["rule_id"])
+    assert resolved_consequence(rule, worker["facts"]) == worker["expected"]
+    if "decides" in worker:
+        decided = rule.resolve(cases_met(rule, worker["facts"]))
+        assert decided.get("case_id", "residual") == worker["decides"]
 
 
 PUBLIC_OFFICERS = {

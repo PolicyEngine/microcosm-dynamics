@@ -2745,6 +2745,48 @@
         "authority": "SSA POMS SL 30001.357",
         "location": "NOTE before A",
         "quote": "NOTE: Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system or the services are excluded from mandatory coverage."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(7)(F), closing definition of retirement system",
+        "quote": "for purposes of this subparagraph, except as provided in regulations prescribed by the Secretary of the Treasury, the term \u201c retirement system \u201d has the meaning given such term by section 418(b)(4) of this title"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(4), retirement system",
+        "quote": "(4) The term \u201c retirement system \u201d means a pension, annuity, retirement, or similar fund or system established by a State or by a political subdivision thereof."
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "A, mandatory Social Security coverage from July 2, 1991",
+        "quote": "Beginning July 2, 1991, Section 11332 of Public Law 101-508 mandates Social Security coverage for State and local government employees who are neither members of a qualified retirement system nor covered by a Section 218 Agreement"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, qualified retirement system defined",
+        "quote": "A \u201cqualified retirement system\u201d is a pension plan maintained by a public employer that meets certain criteria established by the Internal Revenue Service (IRS) (see IRS Revenue Procedure 91-40; 26 C.F.R. \u00a7 31.3121(b)(7)-2)"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, mandatory provisions withheld only from qualified-system participants",
+        "quote": "The mandatory Social Security provisions do not apply to any individual employee who participates in a qualified retirement system"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, membership in a system that is not qualified",
+        "quote": "An employee can be a member of a retirement system that does not constitute a qualified retirement system."
       }
     ],
     "trigger_facts": [
@@ -2922,7 +2964,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -2932,7 +2974,7 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
@@ -2960,20 +3002,20 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv))."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
       }
     ],
     "open_alternatives": [],
@@ -3018,6 +3060,48 @@
         "authority": "SSA POMS SL 30001.357",
         "location": "NOTE before A",
         "quote": "NOTE: Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system or the services are excluded from mandatory coverage."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(7)(F), closing definition of retirement system",
+        "quote": "for purposes of this subparagraph, except as provided in regulations prescribed by the Secretary of the Treasury, the term \u201c retirement system \u201d has the meaning given such term by section 418(b)(4) of this title"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(4), retirement system",
+        "quote": "(4) The term \u201c retirement system \u201d means a pension, annuity, retirement, or similar fund or system established by a State or by a political subdivision thereof."
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "A, mandatory Social Security coverage from July 2, 1991",
+        "quote": "Beginning July 2, 1991, Section 11332 of Public Law 101-508 mandates Social Security coverage for State and local government employees who are neither members of a qualified retirement system nor covered by a Section 218 Agreement"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, qualified retirement system defined",
+        "quote": "A \u201cqualified retirement system\u201d is a pension plan maintained by a public employer that meets certain criteria established by the Internal Revenue Service (IRS) (see IRS Revenue Procedure 91-40; 26 C.F.R. \u00a7 31.3121(b)(7)-2)"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, mandatory provisions withheld only from qualified-system participants",
+        "quote": "The mandatory Social Security provisions do not apply to any individual employee who participates in a qualified retirement system"
+      },
+      {
+        "capture": "poms_sl_50001501.html",
+        "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+        "authority": "POMS SL 50001.501 (2020-01-29)",
+        "location": "B, membership in a system that is not qualified",
+        "quote": "An employee can be a member of a retirement system that does not constitute a qualified retirement system."
       }
     ],
     "trigger_facts": [
@@ -3185,7 +3269,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -3195,7 +3279,7 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
         },
         "consequence": "covered_above_threshold",
         "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
@@ -3223,20 +3307,20 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv))."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
       }
     ],
     "open_alternatives": [],

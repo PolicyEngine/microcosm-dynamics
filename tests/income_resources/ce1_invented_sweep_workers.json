@@ -1,0 +1,439 @@
+{
+ "note": "INVENTED fact patterns for the round-4 exclusion sweep of the CE1 coverage registry. No row is a real person or record. Each worker states its facts as phrases; a case holds when, for each fact in its when, one of the worker's phrases is in the condition text (a boolean phrase must equal a boolean condition).",
+ "workers": [
+  {
+   "rule_id": "federal_1968_1972",
+   "worker": "INVENTED: Max, an Army sergeant on active duty in 1970 under military retirement law, with no Railroad Retirement Act credit.",
+   "facts": {
+    "federal_retirement_system": [
+     "established by a law of the United States",
+     "not subject to the Civil Service Retirement System because subject to another retirement system"
+    ],
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1968_1972",
+   "worker": "INVENTED: Ann, a USDA clerk in 1970 who contributes to the Civil Service Retirement System.",
+   "facts": {
+    "federal_retirement_system": "established by a law of the United States",
+    "federal_service": "civilian clerk in an executive department"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1968_1972",
+   "worker": "INVENTED: Ray, a retired Navy chief, works in 1971 as a civilian CSRS clerk at a naval depot.",
+   "facts": {
+    "federal_retirement_system": "established by a law of the United States",
+    "federal_service": "civilian service by a retired member of a uniformed service"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1968_1972",
+   "worker": "INVENTED: Dee works for a Federal Reserve Bank in 1971 and belongs to the bank's own plan.",
+   "facts": {
+    "federal_service": "Federal Reserve Bank employee in the bank's own plan"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1973_1983",
+   "worker": "INVENTED: Max, a Navy petty officer on active duty in 1979, with no Railroad Retirement Act credit.",
+   "facts": {
+    "federal_retirement_system": [
+     "established by a law of the United States",
+     "not subject to the Civil Service Retirement System because subject to another retirement system"
+    ],
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1973_1983",
+   "worker": "INVENTED: Ann, a CSRS clerk at the Commerce Department in 1980.",
+   "facts": {
+    "federal_retirement_system": "established by a law of the United States",
+    "federal_service": "civilian clerk in an executive department"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1973_1983",
+   "worker": "INVENTED: Eve works for a Federal home loan bank in 1975 and belongs to the bank's plan.",
+   "facts": {
+    "federal_service": "Federal home loan bank employee in the bank's own plan"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1973_1983",
+   "worker": "INVENTED: Hank, a federal prison inmate, works in the prison shop in 1976.",
+   "facts": {
+    "occupation": "inmate of a penal institution of the United States"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Max has served on Army active duty without a break since 1979; service in 1985, no Railroad Retirement Act credit.",
+   "facts": {
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+    ]
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1985.",
+   "facts": {
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Lou retired under CSRS in 1981, draws the annuity, and is recalled to Army active duty in 1985.",
+   "facts": {
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+    ],
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Hal retired under CSRS in 1982 and returns in 1985 to a civilian post the January 1983 text excludes.",
+   "facts": {
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Nora, first hired by the Labor Department in 1985 as a civilian analyst.",
+   "facts": {
+    "federal_service": "first hired after 1983"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Hank, a federal prison inmate, works in the prison shop in 1985.",
+   "facts": {
+    "federal_service": "performed in a penal institution of the United States by an inmate thereof"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED: Ray, a retired federal judge sitting by assignment in 1985 and paid under 28 U.S.C. 371(b).",
+   "facts": {
+    "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b)"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Max has served on Army active duty without a break since 1979; service in 1995, no Railroad Retirement Act credit.",
+   "facts": {
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+    ]
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Paula, a Navy reservist since 1980, drills one weekend a month in 1995; her reserve service has run without a break since 1983.",
+   "facts": {
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+     "performed after December 1987 as such a member on inactive duty training"
+    ]
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1995.",
+   "facts": {
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Hal, a CSRS annuitant, is reemployed in 2000 in a civilian post the January 1983 text excludes.",
+   "facts": {
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Ned, a college student, works as a summer 2024 aide at an Army Corps of Engineers R&D laboratory under a 10 U.S.C. 2360 contract.",
+   "facts": {
+    "federal_service": [
+     "first hired after 1983",
+     "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory"
+    ]
+   },
+   "expected": "refuses"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Tia, a civil engineer first hired in 2000 by an Army Corps of Engineers district office.",
+   "facts": {
+    "federal_service": [
+     "first hired after 1983",
+     "civil engineer employed by a U.S. Army Corps of Engineers district"
+    ]
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Ida, a student nurse first hired in 2010 at a VA hospital under 5 U.S.C. 5351(2).",
+   "facts": {
+    "federal_service": [
+     "first hired after 1983",
+     "performed as an employee included under 5 U.S.C. 5351(2)"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Nora, first hired in 2005 as a civilian analyst at the Labor Department.",
+   "facts": {
+    "federal_service": "first hired after 1983"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED: Una, a reemployed CSRS annuitant with an approved FEPCA waiver of offset in 2015.",
+   "facts": {
+    "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset",
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
+   },
+   "expected": "refuses"
+  },
+  {
+   "rule_id": "state_local_1983_1991",
+   "worker": "INVENTED: Yolanda, hired by a county in 1980 and in its retirement system, holds in 1988 a position a 1987 Medicare-only modification reaches.",
+   "facts": {
+    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of the county retirement system"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "state_local_1983_1991",
+   "worker": "INVENTED: Tess, a city clerk in 1988 in an absolute coverage group under the state's 218 agreement.",
+   "facts": {
+    "section_218_position": "covered by effective agreement/modification for OASDI",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "state_local_1983_1991",
+   "worker": "INVENTED: Sam, a county road worker in 1988; his county has no 218 agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "state_local_1983_1991",
+   "worker": "INVENTED: Wendy drives in 1988 for a city transit system partly bought from a private firm in 1945; no agreement.",
+   "facts": {
+    "industry": "covered transportation service under 410(k)",
+    "section_218_position": "not covered",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED: Yolanda, hired in 1980, in a qualified county system, holds in 2000 a position a 1987 Medicare-only modification reaches.",
+   "facts": {
+    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of an IRS-qualified system"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED: Yves, Yolanda's coworker under the same Medicare-only modification, belongs to no retirement system in 2000.",
+   "facts": {
+    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any IRS-qualified system"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED: Zack, in a qualified state system, holds in 2000 a position the state's 218 agreement covers for OASDI.",
+   "facts": {
+    "section_218_position": "covered by effective agreement/modification for OASDI",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of an IRS-qualified system"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED: Cal belongs to a qualified city system in 2000; his position has no agreement coverage.",
+   "facts": {
+    "section_218_position": "not covered",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of an IRS-qualified system"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED: Fay, a county poll worker in 2004, whose position no agreement covers.",
+   "facts": {
+    "section_218_position": "not covered",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "election_work": "election official or election worker"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Flo, a 1993 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Ed, a 1993 poll worker in a qualified city retirement system; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": [
+     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
+     "member of a retirement system of the State, subdivision or instrumentality"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Di, a 1993 poll worker in no retirement system; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": "not a member of any retirement system"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Bo, a 1993 poll worker in a qualified county system, under an agreement with its own lower exclusion amount.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+    "public_retirement_system_participation": [
+     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
+     "member of a retirement system of the State, subdivision or instrumentality"
+    ]
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Ben, a 1993 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED: Cy, a 1993 poll worker under an agreement with no election worker exclusion.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Flo, a 2016 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Ed, a 2016 poll worker in a qualified city retirement system; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": [
+     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
+     "member of a retirement system of the State, subdivision or instrumentality"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Di, a 2016 poll worker in no retirement system; no agreement.",
+   "facts": {
+    "section_218_position": "not covered",
+    "public_retirement_system_participation": "not a member of any retirement system"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Bo, a 2016 poll worker in a qualified county system, under an agreement with its own lower exclusion amount.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+    "public_retirement_system_participation": [
+     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
+     "member of a retirement system of the State, subdivision or instrumentality"
+    ]
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Ben, a 2016 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED: Cy, a 2016 poll worker under an agreement with no election worker exclusion.",
+   "facts": {
+    "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+   },
+   "expected": "covered"
+  }
+ ]
+}
