@@ -34,6 +34,19 @@
         "authority": "42 USC 411, official 1994 United States Code edition",
         "location": "411(a)(5)(A), text as printed before Pub. L. 108-203 section 425(a)",
         "quote": "all of the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the husband unless the wife exercises substantially all of the management and control of such trade or business"
+      },
+      {
+        "capture": "irs_form1040_instructions_1985_extract.pdf",
+        "sha256": "ba28569636f7718decbf72f234446eeda55224fbdfb1a3a8480a9d8d3daa5b35",
+        "authority": "IRS Form 1040 instructions, 1985",
+        "location": "extract page 2 (original PDF page 31), printed page 31, Partnerships"
+      },
+      {
+        "capture": "irs_form1040_instructions_1985_extract.pdf.txt",
+        "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
+        "authority": "IRS Form 1040 instructions, 1985, OCR text",
+        "location": "OCR text of extract page 2 (original PDF page 31, printed page 31), Partnerships",
+        "quote": "include your entire share of earnings from a partnership, including any guaranteed payments"
       }
     ],
     "consequence": "covered",
@@ -78,7 +91,15 @@
         },
         "scope_note": {
           "not_a_coverage_condition": "Says other families make the adjustments and service exclusions before the unit arithmetic (for example self_employment_rental_income, self_employment_capital_gains_and_nol and self_employment_employee_definition, then self_employment_units). It names concepts other families compute."
+        },
+        "taxable_year": {
+          "not_a_coverage_condition": "411(e): the taxable year is the calendar year unless the person's subtitle A taxable year differs; it sets which year an amount falls in, not whether it is net earnings."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the row classifies; no rule in the row's sources turns on its size.",
+        "employee_self_or_mixed": "Employee service enters through trade_or_business's text, which uses 411(c)'s definition (employee service other than (c)(2)(A)-(G) is no trade or business); se_ordinary_employee_1968_2026 decides employee service.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings."
       }
     },
     "rare_exclusion": null,
@@ -129,6 +150,13 @@
         "authority": "42 USC 411, official 2024 United States Code section granule",
         "location": "411(h)(1)(A)",
         "quote": "notwithstanding subsection (a)(3)(A), there shall not be excluded any gain or loss (in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts) from section 1256 contracts or property related to such contracts"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(h)(2)(A)-(B)",
+        "quote": "The term \"options dealer\" has the meaning given such term by section 1256(g)(8) of such Code. (B) The term \"commodities dealer\" means a person who is actively engaged in trading section 1256 contracts and is registered with a domestic board of trade which is designated as a contract market by the Commodities Futures Trading Commission."
       }
     ],
     "consequence": "covered",
@@ -239,7 +267,25 @@
               "property_disposition_type"
             ]
           }
+        },
+        "other_property_dispositions": {
+          "cases": {
+            "excluded_property_gain_or_loss": [
+              "property_disposition_type"
+            ]
+          }
+        },
+        "specified_natural_resource_dispositions": {
+          "cases": {
+            "excluded_property_gain_or_loss": [
+              "property_disposition_type"
+            ]
+          }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The gain, loss or deduction the exclusion removes; 411(a)(3)-(4) set no size condition.",
+        "industry": "411(a)(3)-(4) name no industry; the one industry-like condition, options or commodities dealer status under 411(h)(2), is carried in trade_or_business's text, which states 411(h)(2)(B)'s registration requirement and 411(h)(2)(A)'s reference to section 1256(g)(8)."
       }
     },
     "rare_exclusion": null,
@@ -257,11 +303,11 @@
         "case_id": "options_dealer_from_1984",
         "precedence": 1,
         "when": {
-          "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
+          "trade_or_business": "options dealer (as section 1256(g)(8) defines the term) or commodities dealer (a person actively engaged in trading section 1256 contracts and registered with a domestic board of trade which is designated as a contract market by the Commodities Futures Trading Commission), in a taxable year beginning after 1984-07-18",
           "property_disposition_type": "gain or loss from section 1256 contracts or property related to such contracts, in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts"
         },
         "consequence": "deferred",
-        "description": "411(h)(1)(A): for an options or commodities dealer, \"notwithstanding subsection (a)(3)(A), there shall not be excluded any gain or loss (in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts)\" from section 1256 contracts or related property; 411(h)(2)(B) defines a commodities dealer by active trading. The options dealer family decides.",
+        "description": "411(h)(1)(A): for an options or commodities dealer, \"notwithstanding subsection (a)(3)(A), there shall not be excluded any gain or loss (in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts)\" from section 1256 contracts or related property. 411(h)(2)(B): a commodities dealer is \"a person who is actively engaged in trading section 1256 contracts and is registered with a domestic board of trade which is designated as a contract market by the Commodities Futures Trading Commission\", so an active trader who is not so registered misses this case; 411(h)(2)(A) takes \"options dealer\" from section 1256(g)(8). The options dealer family decides.",
         "overrides": [
           "excluded_property_gain_or_loss"
         ],
@@ -378,7 +424,20 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date.",
+      "unread_trigger_facts": {
+        "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (NOTE N4 on the uncaptured 1882(a) date).",
+        "taxable_year_start": "The taxable-year axis lookup_date reads (effective_basis taxable_year_start)."
+      },
+      "condition_cases": {
+        "general1402g_exemption": {
+          "cases": {
+            "effective_1402g_exemption": [
+              "clergy_or_religious_exemption"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -499,7 +558,12 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date.",
+      "unread_trigger_facts": {
+        "church_employee_service": "Row open; this is the fact 1402(g)(5) turns on once its effective date is settled.",
+        "clergy_or_religious_exemption": "Row open (CHURCH_SECT_1986_EFFECTIVE_BOUNDARY_UNVERIFIED); it has no cases.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads."
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -689,10 +753,21 @@
               "clergy_or_religious_exemption"
             ]
           }
+        },
+        "church1402g_exemption": {
+          "cases": {
+            "effective_1402g_exemption": [
+              "clergy_or_religious_exemption"
+            ]
+          }
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 101-239 section 10204(a)(2), as the 26 U.S.C. 1402 notes set it out, applies the 1402(g)(3) amendment \"with respect to taxable years beginning after December 31, 1989\"."
+      "effective_basis_description": "Pub. L. 101-239 section 10204(a)(2), as the 26 U.S.C. 1402 notes set it out, applies the 1402(g)(3) amendment \"with respect to taxable years beginning after December 31, 1989\".",
+      "unread_trigger_facts": {
+        "church_employee_service": "1402(g)(3) as amended by Pub. L. 101-239 section 10204 applies the exemption to church employee services, so the fact changes no outcome.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads."
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -925,6 +1000,15 @@
             "reason": "The possessions family is open before 1987-12-22 (POSSESSIONS_931_HISTORY_UNVERIFIED: former 931's operative text is not captured), so the deferral refuses."
           }
         ]
+      },
+      "unread_trigger_facts": {
+        "american_employer": "Folded into the citizenship text of foreign_minister_without_qualification ('a citizen who is neither an American employer's employee under 410(e) nor ...'); NOTE N9.",
+        "amount": "The amount the computation includes; the row has no threshold.",
+        "assignment": "Whether a service is assigned or designated ministry (POMS RS 01901.600 A.2.c) is decided by clergy_religious_service through ministerial_service; this row's computation does not depend on it.",
+        "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes (411(a)(7) disregards 107 and 119).",
+        "congregation_predominantly_us_citizens": "Folded into the same citizenship text ('... nor a minister in a foreign country who has a congregation composed predominantly of United States citizens'); NOTE N9.",
+        "ministerial_service": "clergy_religious_service decides whether the service is ministry; this row computes amounts for service 411(c)(4) describes.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads (Pub. L. 92-603 section 140(c))."
       }
     },
     "rare_exclusion": null,
@@ -1025,6 +1109,34 @@
         "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
         "location": "section 9023(b)(1)",
         "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\""
+      },
+      {
+        "capture": "lii_26_1402.html",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+        "authority": "26 USC 1402, pinned LII republication",
+        "location": "Pub. L. 103-296 section 306(a)(1) note",
+        "quote": "an individual performed services described in section 1402(c)(4) of the Internal Revenue Code of 1986 which are subject to tax under section 1401 of such Code"
+      },
+      {
+        "capture": "lii_26_1402.html",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+        "authority": "26 USC 1402, pinned LII republication",
+        "location": "Pub. L. 103-296 section 306(a)(2)-(3) note",
+        "quote": "such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act [ 42 U.S.C. 433 ] was in effect, and \u201c(3) such individual was required to pay contributions on the earnings from such services under the social insurance system of Canada"
+      },
+      {
+        "capture": "lii_26_1402.html",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+        "authority": "26 USC 1402, pinned LII republication",
+        "location": "Pub. L. 103-296 section 306(c) note",
+        "quote": "A certificate referred to in subsection (a) shall be effective for taxable years ending after December 31, 1978 , and before January 1, 1985 ."
+      },
+      {
+        "capture": "lii_26_1402.html",
+        "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af",
+        "authority": "26 USC 1402, pinned LII republication",
+        "location": "Pub. L. 103-296 section 306(d) note",
+        "quote": "any income on which such tax would have been imposed but for such exemption shall not constitute self-employment income under section 211(b) of the Social Security Act ( 42 U.S.C. 411(b) )"
       }
     ],
     "consequence": "covered",
@@ -1174,6 +1286,13 @@
         "retired_clergy_exception_effective_scope": {
           "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the computation includes; no threshold.",
+        "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22 (NOTE N5).",
+        "ministerial_service": "clergy_religious_service decides ministry; this row computes amounts.",
+        "retirement_payment": "Left by decision D5: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads."
       }
     },
     "rare_exclusion": null,
@@ -1209,6 +1328,18 @@
         },
         "consequence": "noncovered",
         "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
+      },
+      {
+        "case_id": "pub_l_103_296_section_306_certificate",
+        "precedence": 3,
+        "when": {
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+        },
+        "consequence": "deferred",
+        "defers_to": [
+          "clergy_religious_service"
+        ],
+        "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way."
       }
     ],
     "open_alternatives": [],
@@ -1317,10 +1448,26 @@
       "condition_cases": {
         "taxable_year_condition": {
           "not_a_coverage_condition": "States the row's window: taxable years that do not include October 1980 (POMS RS 01802.400 A), which the family's date axis applies."
+        },
+        "nonpartnership_assignment": {
+          "cases": {
+            "business_income_treated_as_other_spouses": [
+              "community_property_income",
+              "substantially_all_business_management_and_control"
+            ]
+          }
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979."
+      "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979.",
+      "unread_trigger_facts": {
+        "assignment": "A generic fact other rows use for the post or craft a person works on; former 411(a)(5) assigns by community status and by the wife's management and control, which community_property_income and substantially_all_business_management_and_control carry.",
+        "business_operator_spouse": "Former 411(a)(5)(A) assigns all of a community business's income to the husband unless the wife exercises substantially all of the management and control, whoever carries the business on, so the operator fact decides nothing before the 2004 amendment.",
+        "joint_business_distributive_shares": "Former 411(a)(5)(A) assigns all income of a jointly run community business to one spouse; respective shares matter only under the 2004 text.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
+        "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_1968_1979",
@@ -1496,7 +1643,17 @@
       ],
       "historical_procedure_source_status": "Obsolete RS 01802.410 and RS 01802.470 returned HTTP 404 on plain official requests; their contents were not reconstructed.",
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979."
+      "effective_basis_description": "POMS RS 01802.400 A: SSA dropped the statutory presumption \"effective with taxable years that include October 1980\". For a 12-month taxable year that means a year beginning on or after October 2, 1979.",
+      "unread_trigger_facts": {
+        "assignment": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "business_operator_spouse": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "community_property_income": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "joint_business_distributive_shares": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "partnership_status": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "reporting_unit": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "taxable_year_start": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says.",
+        "trade_or_business": "The row is open (COMMUNITY_INCOME_EDWARDS_PROCEDURE_UNVERIFIED) and has no cases; it refuses whatever this fact says."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_1980_2004_open",
@@ -1676,7 +1833,24 @@
       "partnership_assignment": "partner whose distributive share it is",
       "statutory_text_amendment_date": "2004-03-02",
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 108-203 section 425 states no effective date; the row starts on the act's enactment date (\"Approved March 2, 2004.\"), and the captures don't settle how the change applies to a taxable year that began before that date."
+      "effective_basis_description": "Pub. L. 108-203 section 425 states no effective date; the row starts on the act's enactment date (\"Approved March 2, 2004.\"), and the captures don't settle how the change applies to a taxable year that began before that date.",
+      "unread_trigger_facts": {
+        "assignment": "A generic fact other rows use for the post or craft a person works on; 411(a)(5) assigns by community status, by who carries on the business and by distributive shares, which the cases read.",
+        "joint_business_distributive_shares": "The jointly operated split is carried inside business_operator_spouse's text ('for a jointly operated business, the part that is the other spouse's distributive share'); the size of the shares only sizes the amount.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
+        "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."
+      },
+      "condition_cases": {
+        "nonpartnership_assignment": {
+          "cases": {
+            "business_income_of_other_spouse": [
+              "community_property_income",
+              "business_operator_spouse"
+            ]
+          }
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_community_income_2004_2026",
@@ -1726,10 +1900,38 @@
         "capture": "lii_42_411.html",
         "location": "2008 amendment/effective-date notes for Public Law 110-246 section 15301",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(1), real estate dealer clause",
+        "quote": "unless such rentals are received in the course of a trade or business as a real estate dealer"
+      },
+      {
+        "capture": "cfr_2024_20_4041082.xml",
+        "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+        "authority": "20 CFR 404.1082, official 2024 edition",
+        "location": "404.1082(b)(3)",
+        "quote": "If you are a real estate dealer, but also hold real estate for investment or speculation in addition to real estate you hold for sale to customers, only the rental income from the real estate held for sale to customers and the deductions attributable to it are included in determining your net earnings from self-employment."
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(b)(3)",
+        "quote": "The rental income from real estate you hold for investment or speculation and the deductions attributable to it are not counted in figuring your net earnings from self-employment."
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "edition header",
+        "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition"
       }
     ],
     "consequence": "covered",
-    "description": "Before the 2008 beneficiary exclusion, no capture settles whether a Conservation Reserve payment is rental from real estate or trade-or-business income, so a payment refuses unless both readings agree (a real estate dealer's rent). The window does not imply that the program existed in 1968.",
+    "description": "Before the 2008 beneficiary exclusion, no capture settles whether a Conservation Reserve payment is rental from real estate or trade-or-business income, so a payment refuses unless both readings agree (a real estate dealer's payment from real estate held for sale to customers). The window does not imply that the program existed in 1968.",
     "effective_end": "2007-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_conservation_reserve",
@@ -1833,8 +2035,11 @@
       "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
       "condition_cases": {
         "special_2008_crp_exclusion": {
-          "not_a_coverage_condition": "Records that the beneficiary exclusion Pub. L. 110-246 section 15301 added to 411(a)(1) reaches only payments made after December 31, 2007, past this row's payment-date window. No case here reads benefit_type: a real estate dealer's payment is covered (crp_payment_in_real_estate_dealer_business) and case crp_payment_classification_open decides every other payment."
+          "not_a_coverage_condition": "Records that the beneficiary exclusion Pub. L. 110-246 section 15301 added to 411(a)(1) reaches only payments made after December 31, 2007, past this row's payment-date window. No case here reads benefit_type: a real estate dealer's payment from real estate held for sale to customers is covered (crp_payment_in_real_estate_dealer_business) and case crp_payment_classification_open decides every other payment."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The payment the row classifies; 411(a)(1) sets no size condition."
       }
     },
     "rare_exclusion": null,
@@ -1850,10 +2055,10 @@
         "case_id": "crp_payment_in_real_estate_dealer_business",
         "precedence": 1,
         "consequence": "covered",
-        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
+        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\", and 20 CFR 404.1082(b)(3) (1996 and 2024 editions) includes \"only the rental income from the real estate held for sale to customers\"; as business income it is included. A dealer's payment from real estate held for investment or speculation misses this case: as rent it is excluded under the 1996 edition and open before it (se_rental_income_1968_1996 case dealer_investment_or_speculative_holdings), and as business income it is included, so crp_payment_classification_open decides it. Apply the other families.",
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
-          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer, from real estate the dealer holds for sale to customers"
         }
       },
       {
@@ -1904,6 +2109,34 @@
         "authority": "26 U.S.C. 1402, pinned LII republication",
         "location": "2018 amendment note, subsec. (a)(1) (Pub. L. 115-141 section 401(a)(197))",
         "quote": "substituted \u201csection 1233(a)(2)\u201d for \u201csection 1233(2)\u201d and \u201c 16 U.S.C. 3833(a)(2) \u201d for \u201c 16 U.S.C. 3833(2) \u201d"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(1), real estate dealer clause",
+        "quote": "unless such rentals are received in the course of a trade or business as a real estate dealer"
+      },
+      {
+        "capture": "cfr_2024_20_4041082.xml",
+        "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455",
+        "authority": "20 CFR 404.1082, official 2024 edition",
+        "location": "404.1082(b)(3)",
+        "quote": "If you are a real estate dealer, but also hold real estate for investment or speculation in addition to real estate you hold for sale to customers, only the rental income from the real estate held for sale to customers and the deductions attributable to it are included in determining your net earnings from self-employment."
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(b)(3)",
+        "quote": "The rental income from real estate you hold for investment or speculation and the deductions attributable to it are not counted in figuring your net earnings from self-employment."
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "edition header",
+        "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition"
       }
     ],
     "consequence": "covered",
@@ -1981,6 +2214,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The payment the row classifies; 411(a)(1) sets no size condition.",
+        "retirement_payment": "411(a)(1) names only recipients of 42 U.S.C. 402 or 423 benefits, which benefit_type carries; a pension, annuity or other retirement payment (for example a Railroad Retirement annuity) is no condition."
       }
     },
     "rare_exclusion": null,
@@ -2002,10 +2239,10 @@
         "overrides": [
           "crp_payment_to_beneficiary"
         ],
-        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\"; as business income it is included. Apply the other families.",
+        "description": "Both readings include it: as rent, 411(a)(1) excludes \"such rentals\" only \"unless such rentals are received in the course of a trade or business as a real estate dealer\", and 20 CFR 404.1082(b)(3) (1996 and 2024 editions) includes \"only the rental income from the real estate held for sale to customers\"; as business income it is included. A dealer's payment from real estate held for investment or speculation misses this case: 411(a)(1) puts a 402 or 423 beneficiary's payment among the excluded rentals, whose dealer clause 404.1082(b)(3) confines to real estate held for sale to customers (crp_payment_to_beneficiary), and crp_payment_classification_open decides anyone else's. Apply the other families.",
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
-          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
+          "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer, from real estate the dealer holds for sale to customers"
         }
       },
       {
@@ -2148,7 +2385,15 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Taxable years beginning before January 1, 1988. Pub. L. 100-203 section 9022(c), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to services performed in taxable years beginning on or after January 1, 1988\"."
+      "effective_basis_description": "Taxable years beginning before January 1, 1988. Pub. L. 100-203 section 9022(c), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to services performed in taxable years beginning on or after January 1, 1988\".",
+      "unread_trigger_facts": {
+        "amount": "The director fees the row times; the deeming rule sets no size condition.",
+        "employee_self_or_mixed": "Whether the person serves as an employee is se_ordinary_employee_1968_2026's question (411(c)(2)); this family only assigns director fees to a taxable year.",
+        "industry": "The 1987 provision and 403(f)(5)(E) speak of 'a director of a corporation' in any industry.",
+        "occupation": "The row has no cases: in every year of its window director fees are net earnings for some taxable year, so the director occupation changes timing only.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_director_timing_1968_1987",
@@ -2264,6 +2509,14 @@
         "exception": {
           "not_a_coverage_condition": "Changes only the taxable year to which director fees are assigned: the former 1402(a) paragraph deems the income derived \"in that year, at the time the services were performed, regardless of when the income is actually paid ... (unless it was actually paid and received prior to that year)\". The fees are net earnings in either year, which the covered residual gives."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The director fees the row times; the deeming rule sets no size condition.",
+        "employee_self_or_mixed": "Whether the person serves as an employee is se_ordinary_employee_1968_2026's question (411(c)(2)); this family only assigns director fees to a taxable year.",
+        "industry": "The 1987 provision and 403(f)(5)(E) speak of 'a director of a corporation' in any industry.",
+        "occupation": "The row has no cases: in every year of its window director fees are net earnings for some taxable year, so the director occupation changes timing only.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it."
       }
     },
     "rare_exclusion": null,
@@ -2445,7 +2698,15 @@
             "1987"
           ]
         }
-      ]
+      ],
+      "unread_trigger_facts": {
+        "amount": "The director fees the row times; the deeming rule sets no size condition.",
+        "employee_self_or_mixed": "Whether the person serves as an employee is se_ordinary_employee_1968_2026's question (411(c)(2)); this family only assigns director fees to a taxable year.",
+        "industry": "The 1987 provision and 403(f)(5)(E) speak of 'a director of a corporation' in any industry.",
+        "occupation": "The row has no cases: in every year of its window director fees are net earnings for some taxable year, so the director occupation changes timing only.",
+        "reporting_unit": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_director_timing_1991_2026",
@@ -2816,10 +3077,31 @@
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
         "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
         "location": "411(a)(1)"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(1), real estate dealer clause",
+        "quote": "unless such rentals are received in the course of a trade or business as a real estate dealer"
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(b)(3)",
+        "quote": "The rental income from real estate you hold for investment or speculation and the deductions attributable to it are not counted in figuring your net earnings from self-employment."
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "edition header",
+        "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition"
       }
     ],
     "consequence": "open",
-    "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after 1955 and beginning before 1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf.",
+    "description": "Farm rental income is excluded unless the rental arrangement provides for material participation and the owner or tenant actually participates materially. For taxable years ending after 1955 and beginning before 1974, services performed by an employee or agent count as services of the owner or tenant; an agent may also enter the rental arrangement on that person\u2019s behalf. Rentals a real estate dealer receives in that business from real estate held for sale to customers are not excluded (411(a)(1)); for a dealer's investment or speculative holdings the captures settle the rule only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3), so they are open here.",
     "effective_end": "1973-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_farm_rental_participation",
@@ -2840,7 +3122,7 @@
         "arrangement provides owner/tenant material participation in production or management",
         "actual material participation, including services performed by employee or agent"
       ],
-      "real_estate_dealer_exception": "rentals received in course of real-estate-dealer trade or business are not excluded",
+      "real_estate_dealer_exception": "Rentals received in the course of a real-estate-dealer trade or business from real estate held for sale to customers are not excluded; a dealer's investment or speculative holdings are open (case dealer_investment_holdings_before_1996).",
       "transition_after_1973": {
         "taxable_year_begins_after": "1973-12-31",
         "agent_or_employee_services_count_for_owner_participation": false,
@@ -2920,6 +3202,9 @@
           "cases": {
             "real_estate_dealer_rentals": [
               "real_estate_dealer_status"
+            ],
+            "dealer_investment_holdings_before_1996": [
+              "real_estate_dealer_status"
             ]
           }
         },
@@ -2935,7 +3220,13 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\"."
+      "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
+      "unread_trigger_facts": {
+        "agent_or_employee_participation": "Folded into material_participation's texts, which count 'services an employee or agent performed for that person' (40 FR 29072, 404.1053(c)(5)(i)).",
+        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+        "amount": "The amount the row classifies; no rule in the row's sources turns on its size.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it. (taxable years beginning before 1974). Every such year begins before 1996-04-01, so case dealer_investment_holdings_before_1996 carries no date condition, unlike the 1974 row's."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_material_participation_1968_1973",
@@ -2954,18 +3245,48 @@
         "case_id": "real_estate_dealer_rentals",
         "precedence": 1,
         "when": {
-          "real_estate_dealer_status": "rentals received in the course of a trade or business as a real estate dealer"
+          "real_estate_dealer_status": "rentals a real estate dealer receives in the course of that trade or business from real estate the dealer holds for sale to customers"
         },
         "consequence": "covered",
-        "description": "411(a)(1) does not exclude rentals received in the course of a real estate dealer's business; apply the other families.",
+        "description": "411(a)(1) excludes rentals \"unless such rentals are received in the course of a trade or business as a real estate dealer\", and the farm proviso only lifts that exclusion, so neither a missing participation term nor missing participation excludes these rentals. The text names real estate held for sale to customers, which both readings of case dealer_investment_holdings_before_1996 put in the dealer business; a dealer's investment or speculative holdings take that case. Apply the other families.",
         "overrides": [
           "no_actual_material_participation",
           "arrangement_lacks_participation_term"
         ]
       },
       {
-        "case_id": "no_actual_material_participation",
+        "case_id": "participation_under_required_arrangement",
         "precedence": 2,
+        "when": {
+          "rental_arrangement_requires_material_participation": true,
+          "material_participation": "material participation by the owner or tenant, counting services an employee or agent performed for that person"
+        },
+        "consequence": "covered",
+        "description": "Before 1974 the services of an employee or agent count as the owner's or tenant's; apply the other families."
+      },
+      {
+        "case_id": "dealer_investment_holdings_before_1996",
+        "precedence": 3,
+        "when": {
+          "real_estate_dealer_status": "rentals a real estate dealer receives from real estate the dealer holds for investment or speculation"
+        },
+        "consequence": "open",
+        "open_reason": "RENTAL_DEALER_HOLDINGS_RULE_UNVERIFIED: 411(a)(1) keeps rentals received in the course of a trade or business as a real estate dealer; the rule that a dealer's investment or speculative holdings stay excluded is captured only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3). Where the farm-rental participation conditions fail, the two readings disagree.",
+        "open_alternatives": [
+          {
+            "name": "apply_1996_holdings_rule",
+            "description": "Treat these rentals as a non-dealer's: they stay excluded unless the farm-rental participation conditions hold, as 20 CFR 404.1082(b)(3) (April 1, 1996 edition) provides."
+          },
+          {
+            "name": "statutory_dealer_text_only",
+            "description": "Include them when received in the course of the dealer's trade or business, reading 411(a)(1) without the later regulatory split."
+          }
+        ],
+        "description": "The same open question as se_rental_income_1968_1996 case dealer_investment_or_speculative_holdings and se_material_participation_1974_2026 case dealer_investment_holdings_before_1996; every taxable year this row reaches begins before 1996-04-01, so the case needs no date condition. Ranked below the covered participation case, where both readings include the rentals (before 1974 counting an employee's or agent's services), and above the two noncovered cases, where the readings disagree."
+      },
+      {
+        "case_id": "no_actual_material_participation",
+        "precedence": 4,
         "when": {
           "material_participation": "no material participation by the owner or tenant, counting services an employee or agent performed for that person"
         },
@@ -2974,22 +3295,12 @@
       },
       {
         "case_id": "arrangement_lacks_participation_term",
-        "precedence": 3,
+        "precedence": 5,
         "when": {
           "rental_arrangement_requires_material_participation": false
         },
         "consequence": "noncovered",
         "description": "The farm rental exception requires an arrangement that provides for material participation."
-      },
-      {
-        "case_id": "participation_under_required_arrangement",
-        "precedence": 4,
-        "when": {
-          "rental_arrangement_requires_material_participation": true,
-          "material_participation": "material participation by the owner or tenant, counting services an employee or agent performed for that person"
-        },
-        "consequence": "covered",
-        "description": "Before 1974 the services of an employee or agent count as the owner's or tenant's; apply the other families."
       }
     ],
     "open_alternatives": [],
@@ -3176,7 +3487,11 @@
       },
       "effective_basis": "taxable_year_start",
       "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
-      "real_estate_dealer_exception": "Rentals received in the course of a real-estate-dealer trade or business from real estate held for sale to customers are not excluded; a dealer's investment or speculative holdings are open for taxable years beginning before 1996-04-01 and follow the farm-rental participation conditions after."
+      "real_estate_dealer_exception": "Rentals received in the course of a real-estate-dealer trade or business from real estate held for sale to customers are not excluded; a dealer's investment or speculative holdings are open for taxable years beginning before 1996-04-01 and follow the farm-rental participation conditions after.",
+      "unread_trigger_facts": {
+        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+        "amount": "The amount the row classifies; no rule in the row's sources turns on its size."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_material_participation_1974_2026",
@@ -3311,17 +3626,38 @@
         "capture": "lii_42_411.html",
         "location": "411(j) heading and text; 1997 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j), lead-in",
+        "quote": "any amount received during the taxable year from an insurance company on account of services performed by such individual as an insurance salesman for such company if\u2014"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j)(3)",
+        "quote": "(3) such individual enters into a covenant not to compete against such company which applies to at least the 1-year period beginning on the date of such termination, and"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j)(4)(B)",
+        "quote": "(B) does not depend to any extent on length of service or overall earnings from services performed for such company (without regard to whether eligibility for payment depends on length of service)."
       }
     ],
     "consequence": "covered",
-    "description": "411(j)'s termination-payment rule applies to payments after December 31, 1997. Its heading calls it a codification of treatment, so a payment before 1998 that meets its four conditions is an open question; any other payment falls to the other families.",
+    "description": "411(j)'s termination-payment rule applies to payments after December 31, 1997. Its heading calls it a codification of treatment, so a payment before 1998 from an insurance company that meets its lead-in and four conditions is an open question; any other payment falls to the other families.",
     "effective_end": "1997-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_insurance_termination",
     "identification_class": "awaiting_ce2",
     "open_reason": null,
     "parameters": {
-      "exclusion_411_j_available": false,
+      "exclusion_411_j_in_force": false,
       "code_edition_evidence": [
         {
           "title": 42,
@@ -3377,13 +3713,16 @@
       "effective_basis": "payment_date",
       "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\".",
       "condition_cases": {
-        "exclusion_411_j_available": {
+        "exclusion_411_j_in_force": {
           "cases": {
             "qualifying_termination_payment_before_1998": [
               "insurance_sales_termination_payment"
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "the payment the open case or the residual classifies; 411(j) sets no dollar threshold"
       }
     },
     "rare_exclusion": null,
@@ -3398,10 +3737,10 @@
         "case_id": "qualifying_termination_payment_before_1998",
         "precedence": 1,
         "when": {
-          "insurance_sales_termination_payment": "received after the agreement ends; no services for the company after termination and before the year closes; a covenant not to compete for at least one year; the amount depends primarily on last-year policies or their persistence, and not at all on length of service or overall earnings"
+          "insurance_sales_termination_payment": "received from an insurance company on account of services the individual performed as an insurance salesman for that company, after the individual's agreement to perform those services for the company ends; no services for the company after that termination and before the close of the taxable year; a covenant not to compete against the company that applies to at least the 1-year period beginning on the date of termination; and an amount that depends primarily on policies sold by or credited to the individual's account during the agreement's last year, or on how long those policies remain in force after termination, or both, and does not depend to any extent on length of service or overall earnings from services for the company (whether or not eligibility for the payment depends on length of service)"
         },
         "consequence": "open",
-        "description": "A payment before 1998 that meets 411(j)(1)-(4). The heading calls 411(j) a codification of treatment and its text construes subsection (a), but the 411 notes apply it only to payments after 1997, and no CE1 capture records how 411(a) treated such a payment before 1998; capture that treatment before classifying.",
+        "description": "A payment before 1998 that 411(j)'s lead-in and (1)-(4) describe: from an insurance company for the individual's services as its insurance salesman, with the covenant and amount terms. The heading calls 411(j) a codification of treatment and its text construes subsection (a), but the 411 notes apply it only to payments after 1997, and no CE1 capture records how 411(a) treated such a payment before 1998; capture that treatment before classifying.",
         "open_reason": "INSURANCE_TERMINATION_PRE_1998_TREATMENT_UNCAPTURED: 411(j) is headed \"Codification of treatment of certain termination payments received by former insurance salesmen\" and says \"Nothing in subsection (a) shall be construed as including\" such a payment in net earnings, which presents it as stating how 411(a) already treated the payment; the 411 notes date the amendment \"applicable to payments after Dec. 31, 1997\", and no CE1 capture records the treatment before 1998.",
         "open_alternatives": [
           {
@@ -3418,7 +3757,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "No case holds: the payment does not meet 411(j)'s four conditions, so neither reading excludes it in this family; apply the other families."
+      "description": "No case holds: the payment is not one 411(j) describes (an amount from an insurance company for the individual's services as its insurance salesman that meets 411(j)'s four conditions), so neither reading excludes it in this family; apply the other families."
     }
   },
   {
@@ -3428,6 +3767,27 @@
         "capture": "lii_42_411.html",
         "location": "411(j)(1)-(4); 1997 amendment/effective-date notes",
         "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j), lead-in",
+        "quote": "any amount received during the taxable year from an insurance company on account of services performed by such individual as an insurance salesman for such company if\u2014"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j)(3)",
+        "quote": "(3) such individual enters into a covenant not to compete against such company which applies to at least the 1-year period beginning on the date of such termination, and"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(j)(4)(B)",
+        "quote": "(B) does not depend to any extent on length of service or overall earnings from services performed for such company (without regard to whether eligibility for payment depends on length of service)."
       }
     ],
     "consequence": "deferred",
@@ -3438,11 +3798,12 @@
     "identification_class": "awaiting_ce2",
     "open_reason": null,
     "parameters": {
-      "exclusion_411_j_available": true,
+      "exclusion_411_j_in_force": true,
       "required_conditions": [
+        "payment received from an insurance company on account of services the individual performed as an insurance salesman for that company",
         "payment after termination of company services agreement",
         "no services for company after termination and before end of taxable year",
-        "covenant not to compete for at least one year after termination",
+        "covenant not to compete against the company that applies to at least the 1-year period beginning on the date of termination",
         "payment depends primarily on last-year policies or persistency",
         "payment amount does not depend to any extent on length of service or overall company-service earnings, without regard to whether eligibility for payment depends on length of service"
       ],
@@ -3522,7 +3883,7 @@
             ]
           }
         },
-        "exclusion_411_j_available": {
+        "exclusion_411_j_in_force": {
           "cases": {
             "qualifying_termination_payment": [
               "insurance_sales_termination_payment"
@@ -3531,7 +3892,10 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\"."
+      "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\".",
+      "unread_trigger_facts": {
+        "amount": "the payment the case or the residual classifies; 411(j) sets no dollar threshold"
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -3552,10 +3916,10 @@
         "case_id": "qualifying_termination_payment",
         "precedence": 1,
         "when": {
-          "insurance_sales_termination_payment": "received after the agreement ends; no services for the company after termination and before the year closes; a covenant not to compete for at least one year; the amount depends primarily on last-year policies or their persistence, and not at all on length of service or overall earnings"
+          "insurance_sales_termination_payment": "received from an insurance company on account of services the individual performed as an insurance salesman for that company, after the individual's agreement to perform those services for the company ends; no services for the company after that termination and before the close of the taxable year; a covenant not to compete against the company that applies to at least the 1-year period beginning on the date of termination; and an amount that depends primarily on policies sold by or credited to the individual's account during the agreement's last year, or on how long those policies remain in force after termination, or both, and does not depend to any extent on length of service or overall earnings from services for the company (whether or not eligibility for the payment depends on length of service)"
         },
         "consequence": "noncovered",
-        "description": "411(j)(1)-(4)."
+        "description": "411(j) lead-in and (1)-(4): an amount received \"from an insurance company on account of services performed by such individual as an insurance salesman for such company\", with a covenant \"not to compete against such company which applies to at least the 1-year period beginning on the date of such termination\", whose amount does not depend on length of service \"(without regard to whether eligibility for payment depends on length of service)\"."
       }
     ],
     "open_alternatives": [],
@@ -3624,6 +3988,12 @@
         "special_limited_partner_exclusion": {
           "not_a_coverage_condition": "Records history: Pub. L. 95-216 section 313(c) applies the limited-partner exclusion (then 411(a)(11)) 'with respect to taxable years beginning after December 31, 1977'; the residual already includes the distributive share under the ordinary partnership rule."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "the share the residual passes to the other families; no threshold in this row",
+        "employee_self_or_mixed": "the base definition reads it; 411(a)(12) did not yet exist",
+        "partnership_status": "no limited-partner exclusion exists before taxable years beginning after 1977-12-31 (Pub. L. 95-216 section 313(c)); the residual includes every partner's share under the ordinary rule",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it"
       }
     },
     "rare_exclusion": null,
@@ -3765,7 +4135,12 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 95-216 section 313, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1977\"."
+      "effective_basis_description": "Pub. L. 95-216 section 313, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1977\".",
+      "unread_trigger_facts": {
+        "amount": "the share or payment the cases classify; 411(a)(12) sets no threshold (the minimum applies in other_net_earnings, per threshold_applied_later_in)",
+        "employee_self_or_mixed": "411(a)(12) turns on partnership status (limited partner, 707(c) payment) only; the base definition reads the employee/self-employed split",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it (Pub. L. 95-216 section 313(c): taxable years beginning after 1977-12-31)"
+      }
     },
     "rare_exclusion": {
       "negligible_candidate": null,
@@ -3788,10 +4163,10 @@
         "case_id": "guaranteed_payment_for_services",
         "precedence": 1,
         "when": {
-          "partnership_status": "707(c) guaranteed payment to a limited partner for services actually rendered, established as pay for those services"
+          "partnership_status": "707(c) guaranteed payment to a limited partner, or the part of one, for services actually rendered to or on behalf of the partnership, to the extent established to be in the nature of remuneration for those services"
         },
         "consequence": "covered",
-        "description": "411(a)(12) excepts these payments.",
+        "description": "411(a)(12) excepts guaranteed payments \"for services actually rendered to or on behalf of the partnership to the extent that those payments are established to be in the nature of remuneration for those services\"; a part not so established is case guaranteed_payment_not_for_services.",
         "overrides": [
           "limited_partner_distributive_share"
         ]
@@ -3958,7 +4333,20 @@
           "threshold_ids": [
             "self_employment_optional_upper_limit"
           ]
+        },
+        "farm_deemed_earnings": {
+          "threshold_ids": [
+            "self_employment_optional_lower_limit",
+            "self_employment_optional_upper_limit"
+          ]
         }
+      },
+      "unread_trigger_facts": {
+        "agricultural_service": "selects the farm optional computation, which changes only the amount the self-employment minimum tests; the consequence stays covered_above_threshold",
+        "amount": "the gross income and net earnings the optional limits and the self-employment minimum compare (thresholds self_employment_optional_lower_limit, self_employment_optional_upper_limit, other_net_earnings_minimum)",
+        "partnership_status": "selects the partner clauses (iii)/(iv) of the farm optional computation; amount only",
+        "self_employment_optional_method_election": "the election changes the amount, not the consequence ('may, at his option, be deemed')",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it (Pub. L. 92-603 section 121(c))"
       }
     },
     "rare_exclusion": null,
@@ -4187,7 +4575,20 @@
           "threshold_ids": [
             "self_employment_optional_upper_limit"
           ]
+        },
+        "farm_deemed_earnings": {
+          "threshold_ids": [
+            "self_employment_optional_lower_limit",
+            "self_employment_optional_upper_limit"
+          ]
         }
+      },
+      "unread_trigger_facts": {
+        "agricultural_service": "selects farm versus nonfarm optional computation; amount only, consequence stays covered_above_threshold",
+        "amount": "the gross income and net earnings the $2,400/$1,600 limits and the minimum compare (threshold ids in condition_cases)",
+        "partnership_status": "selects the partner clauses (iii)/(iv); amount only",
+        "self_employment_optional_method_election": "the election changes the amount, not the consequence (case_free_basis)",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it"
       }
     },
     "rare_exclusion": null,
@@ -4698,6 +5099,13 @@
             "self_employment_optional_upper_limit"
           ]
         }
+      },
+      "unread_trigger_facts": {
+        "agricultural_service": "selects farm versus nonfarm optional computation; amount only",
+        "amount": "the gross income and net earnings the 411(k) indexed limits and the minimum compare (thresholds self_employment_optional_lower_limit, self_employment_optional_upper_limit)",
+        "partnership_status": "selects the partner clauses (iii)/(iv); amount only",
+        "self_employment_optional_method_election": "the election changes the amount, not the consequence (case_free_basis)",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it (Pub. L. 110-246 section 15352(c))"
       }
     },
     "rare_exclusion": null,
@@ -4775,6 +5183,12 @@
         "411_h_available": {
           "not_a_coverage_condition": "Records history: the 42 U.S.C. 411 note makes Pub. L. 98-369 section 102(c)(2), which added 411(h), 'applicable to taxable years beginning after July 18, 1984'; the residual already leaves a dealer's section 1256 gains to the capital-gain exclusion, whose options_dealer_from_1984 case needs a later taxable year."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "the gain or loss the other families classify; no threshold here",
+        "industry": "411(h) does not yet apply; the capital-gain family decides a dealer's 1256 gains",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it (411(h) reaches taxable years beginning after 1984-07-18; see NOTE on section 102(f)(3), (g))",
+        "trade_or_business": "411(h) does not yet apply; the capital-gain family decides a dealer's 1256 gains"
       }
     },
     "rare_exclusion": null,
@@ -4899,6 +5313,12 @@
         "included_concept": {
           "not_a_coverage_condition": "Names the items another family selects: the capital-gain family's options_dealer_from_1984 case (property_disposition_type: 'section 1256 contract or related property, in the normal course of dealing') decides which gains reach this row, and every item that reaches it is covered."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "the gain or loss the other families classify; no threshold here",
+        "industry": "same as trade_or_business: the dealer definitions decide which items the capital-gain family routes here; this row excludes nothing",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it",
+        "trade_or_business": "identifies an options or commodities dealer; the capital-gain family's options_dealer_from_1984 case reads property_disposition_type to select the 1256 items, and this case-free row's residual is covered for every item that reaches it"
       }
     },
     "rare_exclusion": null,
@@ -5043,6 +5463,10 @@
         "eligible_exception_unit": {
           "not_a_coverage_condition": "Names the unit the excepted fees join: ordinary (other) net earnings, not church employee income. The self_employment_units family computes that unit and its $400 minimum (unit_id other_net_earnings from 1986); whether the fees stay in trade or business is decided by state_local_fee_basis_office."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the units family's $400 minimum (other_net_earnings_minimum) compares; 411(c)(1) and Pub. L. 90-248 section 122(c) state no amount condition.",
+        "section_218_group": "411(c)(1) asks whether 'such functions are not covered under an agreement ... pursuant to section 418'; section_218_position states that for the position in the relevant period. The coverage-group identity changes no outcome in this row; the section 218 family reads it."
       }
     },
     "rare_exclusion": null,
@@ -5063,17 +5487,18 @@
         "precedence": 1,
         "when": {
           "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees.",
-          "government_level": "state or political subdivision"
+          "government_level": "State or political subdivision",
+          "public_office_fee_basis": "position compensated solely on a fee basis"
         },
         "consequence": "noncovered",
-        "description": "The election exempts fees received in 1968 and every year thereafter. Pub. L. 90-248 section 122(c)(2) lets only an individual in a position the 1968 amendments reach elect, and those amendments reach only a public office of a State or a political subdivision (411(c)(1))."
+        "description": "Pub. L. 90-248 section 122(c)(2): \"any individual who in 1968 is in a position to which the amendments made by such subsections apply may make an irrevocable election not to have such amendments apply to the fees he receives in 1968 and every year thereafter\". Those amendments reach only a position of a State or a political subdivision \"compensated solely on a fee basis\": 411(c)(1)'s public-office exception and 411(c)(2)(E)'s employee rule. So the election displaces nothing for fees received outside such a position (as a contractor, say); they take the other cases or the residual."
       },
       {
         "case_id": "state_local_fee_basis_office",
         "precedence": 2,
         "when": {
           "public_office_functions": "income is for performing the functions of a public office",
-          "government_level": "state or political subdivision",
+          "government_level": "State or political subdivision",
           "public_office_fee_basis": "position compensated solely on a fee basis",
           "section_218_position": "not covered by a Section 218 agreement in the relevant period",
           "public_office_1968_exemption_election": "no applicable election"
@@ -5220,6 +5645,12 @@
         "qualified_joint_venture_411_a_16_available": {
           "not_a_coverage_condition": "Records history: Pub. L. 110-28 added 411(a)(16) 'applicable to taxable years beginning after Dec. 31, 2006'; the residual already sends spouses' joint business income to the partnership and community-income rules, so the flag decides nothing here."
         }
+      },
+      "unread_trigger_facts": {
+        "assignment": "The partnership and community-income families assign spouses' business income in this window; this row decides nothing.",
+        "partnership_status": "No 411(a)(16) before taxable years beginning after 2006-12-31; the partnership and community-income families read it.",
+        "reporting_unit": "The units family's person-taxable-year computation reads it; no 411(a)(16) condition exists in this window.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 110-28 section 8215(c): 'taxable years beginning after December 31, 2006')."
       }
     },
     "rare_exclusion": null,
@@ -5313,6 +5744,7 @@
         }
       ],
       "required_conditions": [
+        "the joint venture involves the conduct of a trade or business",
         "spouses are the only joint-venture members",
         "spouses file a joint return for the taxable year",
         "both spouses materially participate under 469(h), disregarding paragraph (5)",
@@ -5325,7 +5757,8 @@
               "qualified_joint_venture_election",
               "joint_return",
               "partnership_status",
-              "material_participation"
+              "material_participation",
+              "trade_or_business"
             ]
           }
         },
@@ -5335,7 +5768,8 @@
               "qualified_joint_venture_election",
               "joint_return",
               "partnership_status",
-              "material_participation"
+              "material_participation",
+              "trade_or_business"
             ]
           }
         },
@@ -5345,13 +5779,19 @@
               "qualified_joint_venture_election",
               "joint_return",
               "partnership_status",
-              "material_participation"
+              "material_participation",
+              "trade_or_business"
             ]
           }
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 110-28 section 8215, as the 42 U.S.C. 411 notes summarize it, is \"applicable to taxable years beginning after Dec. 31, 2006\"."
+      "effective_basis_description": "Pub. L. 110-28 section 8215, as the 42 U.S.C. 411 notes summarize it, is \"applicable to taxable years beginning after Dec. 31, 2006\".",
+      "unread_trigger_facts": {
+        "assignment": "The output of the case (761(f)(1)(B)-(C): items divided by the spouses' interests, each taken into account as a sole proprietor), not a condition of it.",
+        "reporting_unit": "The units family's person-taxable-year computation reads it; 761(f) states no reporting-unit condition beyond the joint return, which joint_return carries.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 110-28 section 8215(c): 'taxable years beginning after December 31, 2006')."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_joint_venture_2007_2026",
@@ -5374,10 +5814,11 @@
           "qualified_joint_venture_election": "both spouses elect 761(f) treatment",
           "joint_return": true,
           "partnership_status": "the spouses are the only members",
-          "material_participation": "both spouses materially participate under 469(h), disregarding paragraph (5)"
+          "material_participation": "both spouses materially participate under 469(h), disregarding paragraph (5)",
+          "trade_or_business": "the joint venture involves the conduct of a trade or business"
         },
         "consequence": "covered",
-        "description": "411(a)(16) and 761(f): each spouse takes their share into account as a sole proprietor."
+        "description": "411(a)(16) and 761(f): each spouse takes their share into account as a sole proprietor. 761(f)(2) defines a qualified joint venture as \"any joint venture involving the conduct of a trade or business if\" (A)-(C) hold; a joint activity that is no trade or business takes the residual."
       }
     ],
     "open_alternatives": [],
@@ -5478,6 +5919,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "411(c)(3) reaches only service 'as an employee or employee representative'; the case text carries that. The ordinary-employee family (411(c)(2)) reads this fact.",
+        "railroad_covered_employer": "26 U.S.C. 3231's employee definition includes the employer test; railroad_covered_service's text ('service as an employee or employee representative as defined in 26 U.S.C. 3231') carries it by reference."
       }
     },
     "rare_exclusion": null,
@@ -5637,6 +6082,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the units family's minimum compares; 411(a)(9) has no amount condition.",
+        "partnership_status": "411(a)(9) reaches 'amounts received by a partner'; retirement_payment's text (a written partnership plan paying partners generally or a class of partners, until 'the partner's death') and the three partner_* booleans carry partner status."
       }
     },
     "rare_exclusion": {
@@ -5690,6 +6139,27 @@
         "capture": "poms_rs_01804001.html",
         "location": "RS 01804.001 A",
         "sha256": "2cc221fe71fed3acd4dd40d42d83625d8d7dec024fbabccd6eb355c94d206f85"
+      },
+      {
+        "capture": "uscode_1994_42_410.html",
+        "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+        "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+        "location": "410(a)(8)(B)",
+        "quote": "other than service in an unrelated trade or business (within the meaning of section 513(a) of such Code)"
+      },
+      {
+        "capture": "irs_form1040_instructions_1985_extract.pdf.txt",
+        "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
+        "authority": "IRS Form 1040 instructions, 1985, OCR text",
+        "location": "OCR text of extract page 2 (original PDF page 31, printed page 31), Employees of Churches and Qualified Church-Controlled Organizations, Note",
+        "quote": "Note: if you are a minister or member of a religious order, do not use the follawing instructions."
+      },
+      {
+        "capture": "irs_schedule_se_1984.pdf.txt",
+        "sha256": "b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb",
+        "authority": "IRS Schedule SE (Form 1040), 1984, OCR text",
+        "location": "OCR text of page 1, Part I note",
+        "quote": "you are not a minister or a member of a religious order, see the instructions"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -5771,7 +6241,7 @@
       "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\".",
       "church_remuneration_employer_gate_cents": 10000,
       "church_gate_aggregation_scope": "person_employer_taxable_year",
-      "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least 100 dollars in the taxable year",
+      "qualifying_church_remuneration": "gross remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year; remuneration for service before 1984-01-01 counts neither toward the 100 dollars nor in the base",
       "eligible_base_by_case": {
         "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero",
         "church_combined_below_100": "zero",
@@ -5823,7 +6293,32 @@
               "services_performed_date"
             ]
           }
+        },
+        "qualifying_church_remuneration": {
+          "cases": {
+            "church_combined_below_100": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_100_to_399_without_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_at_least_100_with_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ],
+            "church_at_least_400_without_ordinary_loss": [
+              "church_employee_service",
+              "services_performed_date"
+            ]
+          }
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "The ordinary-employee family reads it; the units computation and the fiscal-year-1983 church cases do not depend on it (church_employee_service carries the 411(c)(2)(G) route, its unrelated-business and minister limits and the 1984-01-01 service date).",
+        "reporting_unit": "The units' person-taxable-year aggregation (units.aggregation_scope) reads it.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it; the fiscal-year-1983 church limb is carried by services_performed_date ('on or after 1984-01-01')."
       }
     },
     "rare_exclusion": null,
@@ -5842,9 +6337,9 @@
         "case_id": "church_combined_below_100",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings below $100",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -5853,9 +6348,9 @@
         "case_id": "church_100_to_399_without_ordinary_loss",
         "precedence": 2,
         "consequence": "covered",
-        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -5864,9 +6359,9 @@
         "case_id": "church_at_least_100_with_ordinary_loss",
         "precedence": 3,
         "consequence": "covered",
-        "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -5875,9 +6370,9 @@
         "case_id": "church_at_least_400_without_ordinary_loss",
         "precedence": 4,
         "consequence": "covered",
-        "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)).",
+        "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -5948,6 +6443,27 @@
         "capture": "uscode_1994_42_411.html",
         "location": "411(a)(5), (b)(2); 1986 amendment note quoting former 411(a)(13); effective-date notes",
         "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
+      },
+      {
+        "capture": "uscode_1994_42_410.html",
+        "sha256": "c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b",
+        "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
+        "location": "410(a)(8)(B)",
+        "quote": "other than service in an unrelated trade or business (within the meaning of section 513(a) of such Code)"
+      },
+      {
+        "capture": "irs_form1040_instructions_1985_extract.pdf.txt",
+        "sha256": "55d7184d9d873f93f61d15b3db1e182326fb37d14a561e0cc81937825258be68",
+        "authority": "IRS Form 1040 instructions, 1985, OCR text",
+        "location": "OCR text of extract page 2 (original PDF page 31, printed page 31), Employees of Churches and Qualified Church-Controlled Organizations, Note",
+        "quote": "Note: if you are a minister or member of a religious order, do not use the follawing instructions."
+      },
+      {
+        "capture": "irs_schedule_se_1984.pdf.txt",
+        "sha256": "b87a771e778447dff15cdd51fdc1fddeb6db6c496f6fd642d14b89b3010214cb",
+        "authority": "IRS Schedule SE (Form 1040), 1984, OCR text",
+        "location": "OCR text of page 1, Part I note",
+        "quote": "you are not a minister or a member of a religious order, see the instructions"
       }
     ],
     "consequence": "covered_above_threshold",
@@ -5966,7 +6482,7 @@
         "numerator": 1,
         "denominator": 1
       },
-      "qualifying_church_remuneration": "gross remuneration from each electing-church employer paying at least 100 dollars in the taxable year",
+      "qualifying_church_remuneration": "gross remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year",
       "ordinary_net_earnings": "admissible farm/nonfarm/partnership earnings after their own allowed deductions and ordinary losses, including applicable optional-method amounts",
       "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
       "ordinary_losses_may_offset_church_remuneration": true,
@@ -6138,7 +6654,28 @@
               "amount"
             ]
           }
+        },
+        "qualifying_church_remuneration": {
+          "cases": {
+            "church_combined_below_100": [
+              "church_employee_service"
+            ],
+            "church_100_to_399_without_ordinary_loss": [
+              "church_employee_service"
+            ],
+            "church_at_least_100_with_ordinary_loss": [
+              "church_employee_service"
+            ],
+            "church_at_least_400_without_ordinary_loss": [
+              "church_employee_service"
+            ]
+          }
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "The ordinary-employee family reads it; church_employee_service carries the 411(c)(2)(G) route and its unrelated-business and minister limits.",
+        "reporting_unit": "The historical combined computation's person-taxable-year aggregation reads it.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 99-514 section 1882(b)(3): taxable years beginning after 1985-12-31)."
       }
     },
     "rare_exclusion": null,
@@ -6156,9 +6693,9 @@
         "case_id": "church_combined_below_100",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "Below $100 of combined earnings the instructions stop.",
+        "description": "Below $100 of combined earnings the instructions stop. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings below $100"
         }
       },
@@ -6166,9 +6703,9 @@
         "case_id": "church_100_to_399_without_ordinary_loss",
         "precedence": 2,
         "consequence": "covered",
-        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base.",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss"
         }
       },
@@ -6176,9 +6713,9 @@
         "case_id": "church_at_least_100_with_ordinary_loss",
         "precedence": 3,
         "consequence": "covered",
-        "description": "With an ordinary loss the combined earnings are the base.",
+        "description": "With an ordinary loss the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss"
         }
       },
@@ -6186,9 +6723,9 @@
         "case_id": "church_at_least_400_without_ordinary_loss",
         "precedence": 4,
         "consequence": "covered",
-        "description": "From $400 the combined earnings are the base.",
+        "description": "From $400 the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
         "when": {
-          "church_employee_service": "qualifying electing-church remuneration from an employer paying at least $100 in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss"
         }
       }
@@ -6301,7 +6838,13 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
+      "unread_trigger_facts": {
+        "amount": "The units' thresholds compare it: other_net_earnings_minimum ($400) and church_employee_minimum ($100, 411(i)(2)(B)).",
+        "employee_self_or_mixed": "The ordinary-employee family reads it.",
+        "reporting_unit": "The units' person-taxable-year aggregation reads it.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1986_1989",
@@ -6527,7 +7070,13 @@
       ],
       "factor_history_support": "Public Law 98-21 section 124(a) sets the post-1989 12.4 percent plus 2.9 percent rates underlying section 411(a)(11); the 2011 and 2012 Schedule SE forms expressly retain the 92.35 percent base factor during those temporary rate-cut years.",
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 98-21 section 124(d)(2), as the 42 U.S.C. 411 notes summarize it, makes the section 124(c)(3) amendment (411(a)(11)) \"applicable to taxable years beginning after Dec. 31, 1989\"."
+      "effective_basis_description": "Pub. L. 98-21 section 124(d)(2), as the 42 U.S.C. 411 notes summarize it, makes the section 124(c)(3) amendment (411(a)(11)) \"applicable to taxable years beginning after Dec. 31, 1989\".",
+      "unread_trigger_facts": {
+        "amount": "The units' thresholds compare it after the 411(a)(11) factor: other_net_earnings_minimum ($400) and church_employee_minimum ($100).",
+        "employee_self_or_mixed": "The ordinary-employee family reads it.",
+        "reporting_unit": "The units' person-taxable-year aggregation reads it.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 98-21 section 124(d)(2): taxable years beginning after 1989-12-31)."
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_units_1990_2026",
@@ -6619,6 +7168,13 @@
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "location": "411(a)(7)",
         "quote": "without regard to section 107 (relating to rental value of parsonages), section 119 (relating to meals and lodging furnished for the convenience of the employer), and section 911 (relating to earned income from sources without the United States) of the Internal Revenue Code of 1986"
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Regular Method: Amounts not included in gross income, pension payments",
+        "quote": "Pension payments or retirement allowances you receive for your past ministerial services."
       }
     ],
     "consequence": "covered",
@@ -6767,6 +7323,11 @@
         "retired_clergy_exception_effective_scope": {
           "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the computation includes; no threshold.",
+        "ministerial_service": "clergy_religious_service decides ministry; this row computes amounts.",
+        "taxable_year_start": "The taxable-year axis lookup_date reads."
       }
     },
     "rare_exclusion": null,
@@ -6861,8 +7422,17 @@
         "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
       },
       {
-        "case_id": "church_tax_sheltered_annuity_contributions",
+        "case_id": "past_ministerial_service_pension",
         "precedence": 4,
+        "when": {
+          "retirement_payment": "pension payment or retirement allowance received for past ministerial services"
+        },
+        "consequence": "noncovered",
+        "description": "Publication 517 (2025), Regular Method, lists \"Pension payments or retirement allowances you receive for your past ministerial services\" among the amounts not to include when figuring net earnings from self-employment, from any plan; retired_clergy_benefits covers church-plan benefits under 411(a)(7). The captures show this list in the 2025 edition only, as for church_tax_sheltered_annuity_contributions."
+      },
+      {
+        "case_id": "church_tax_sheltered_annuity_contributions",
+        "precedence": 5,
         "when": {
           "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
         },

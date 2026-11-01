@@ -1233,6 +1233,7 @@ def test_family_axes_follow_their_boundary_clauses():
         "clergy_1982_2026",
         "domestic_service_1995",
         "electing_church_1984_1985",
+        "electing_church_1986_2026",
         "election_work_1978",
         "election_work_1995",
         "federal_1984_1986",
@@ -1427,8 +1428,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # aide and the pre-1996 dealer holdings questions; round 5 adds the
     # pre-1998 insurance termination payment (review r4 low 10); the review
     # r5 fix adds the 3121(k)(4)(C) period of a deemed nonprofit
-    # certificate.
-    assert described == 52
+    # certificate (52); the review r5 sweep adds 16 open cases with two
+    # readings each (84).
+    assert described == 84
 
 
 READING_TEXT = {
@@ -1890,11 +1892,84 @@ def test_closed_rows_naming_a_condition_carry_cases():
             assert cited["capture"] in {c["capture"] for c in row["citations"]}
             text = source_text(CAPTURE_DIRECTORY / cited["capture"])
             assert " ".join(cited["quote"].split()) in text
-    assert len(based) == 9
+    # The review r5 sweep gives the partner-death row a case.
+    assert len(based) == 8
     assert not set(based) & {
         "se_community_income_1968_1979",
         "se_community_income_2004_2026",
     }
+
+
+def unread_trigger_fact_problems(row):
+    """Trigger facts no case reads and no reason names, and reasons for
+    facts a case reads (review r5 item 7).
+
+    A row lists the facts that decide it. A fact no case reads either
+    plays another role (the amount a threshold compares, the taxable-year
+    axis, a fact another family reads) or is a condition no case carries,
+    the gap that hid H-6's federal level. So each unread fact needs its
+    reason in ``parameters.unread_trigger_facts``.
+    """
+    read = {fact for case in row["cases"] for fact in case["when"]}
+    unread = set(row["trigger_facts"]) - read
+    reasons = row["parameters"].get("unread_trigger_facts", {})
+    problems = [(fact, "unread, no reason") for fact in unread - set(reasons)]
+    problems += [(fact, "read by a case") for fact in set(reasons) & read]
+    problems += [
+        (fact, "not a trigger fact")
+        for fact in set(reasons) - set(row["trigger_facts"])
+    ]
+    problems += [
+        (fact, "empty reason")
+        for fact, reason in reasons.items()
+        if not (isinstance(reason, str) and reason.strip())
+    ]
+    return sorted(problems)
+
+
+def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
+    """Review r5 item 7: every trigger fact a row lists is read by one of
+    its cases' `when`, or named with its reason. All four federal rows
+    listed government_level and no case read it until the r5 fix (H-6)."""
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    assert {
+        row["rule_id"]: found
+        for row in rows
+        if (found := unread_trigger_fact_problems(row))
+    } == {}
+    federal = [r for r in rows if r["family"] == "federal_retirement_service"]
+    for row in federal:
+        assert "government_level" not in row["parameters"].get(
+            "unread_trigger_facts", {}
+        )
+    assert (
+        sum(
+            len(row["parameters"].get("unread_trigger_facts", {}))
+            for row in rows
+        )
+        == 378
+    )
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["amount", "government_level", "taxable_year_start"]),
+    st.sampled_from(["no_reason", "reason", "read", "read_and_reason"]),
+)
+def test_unread_trigger_fact_checker_flags_every_gap(fact, state):
+    """The checker is the test's oracle, so its own cases are tested on an
+    INVENTED row."""
+    row = {
+        "trigger_facts": [fact, "occupation"],
+        "cases": [{"when": {"occupation": "INVENTED"}}],
+        "parameters": {},
+    }
+    if state.startswith("read"):
+        row["cases"][0]["when"][fact] = "INVENTED"
+    if state in {"reason", "read_and_reason"}:
+        row["parameters"]["unread_trigger_facts"] = {fact: "INVENTED reason"}
+    flagged = unread_trigger_fact_problems(row)
+    assert bool(flagged) == (state in {"no_reason", "read_and_reason"})
 
 
 @settings(deadline=None)
@@ -1949,6 +2024,7 @@ SCOPE_KEY = re.compile(
     r"limits?|criteria|test|approval|repealed|removed|available)(_|$)"
 )
 SCOPE_KEY_EXEMPT = {
+    "unread_trigger_facts",
     "effective_basis",
     "effective_basis_description",
     "evidence_only_boundaries",
@@ -1968,6 +2044,7 @@ def condition_parameters(parameters):
         path[0]
         for path, _ in parameter_leaves(parameters)
         if path
+        and path[0] not in SCOPE_KEY_EXEMPT
         and not OPTION_RECORDS.search(path[0])
         and CASE_CONDITION_KEY.search(path[-1])
     }
@@ -1978,7 +2055,21 @@ def condition_parameters(parameters):
         and not OPTION_RECORDS.search(key)
         and SCOPE_KEY.search(key)
     }
-    return leaves | scopes
+    # Review r5 item 7: a parameter whose text states a condition in words
+    # (if, when, where, unless, except, requires ...) is a condition too,
+    # whatever its key. section_2601d3_delay named the delay in prose and
+    # no case carried it (H-7); only a "before 1987" text check saw it.
+    worded = {
+        key
+        for key in parameters
+        if key not in PARAMETER_EVIDENCE | SCOPE_KEY_EXEMPT
+        and not OPTION_RECORDS.search(key)
+        and any(
+            isinstance(value, str) and CONDITION_WORDS.search(value)
+            for _, value in parameter_leaves({key: parameters[key]})
+        )
+    }
+    return leaves | scopes | worded
 
 
 def condition_case_problems(row, threshold_ids):
@@ -2047,8 +2138,10 @@ def test_condition_parameters_on_case_rows_name_their_cases():
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
     # The review r5 fix ties the four federal rows' scope and the
-    # church cases se_units_1968_1983 now carries.
-    assert len(tied) == 94
+    # church cases se_units_1968_1983 now carries; its sweep ties three
+    # more (communist 1968, casual 1978 and domestic 1994), and the
+    # condition-word ties three more.
+    assert len(tied) == 100
     assert all(row["open_reason"] is None for row in tied)
     # H-C: the 2018 tribal row's scope parameter names the case that reads
     # federal recognition.
@@ -2135,6 +2228,35 @@ def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
         "two_records",
     } or (not with_cases and tie in {"cases", "missing_fact"})
     assert bool(problems) == (flagged or bad)
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(["unless", "only if", "where", "requires", "if"]),
+    st.sampled_from([None, "cases", "reason"]),
+)
+def test_condition_case_checker_flags_a_worded_condition(word, tie):
+    """Review r5 item 7: a parameter named like a note but stating a
+    condition in words (the H-7 shape) needs a tie, by more than a text
+    check."""
+    row = {
+        "open_reason": None,
+        "cases": [
+            {"case_id": "invented_case", "when": {"amount": "INVENTED"}}
+        ],
+        "parameters": {
+            "invented_delay": f"coverage starts later {word} INVENTED",
+        },
+    }
+    if tie == "cases":
+        row["parameters"]["condition_cases"] = {
+            "invented_delay": {"cases": {"invented_case": ["amount"]}}
+        }
+    elif tie == "reason":
+        row["parameters"]["condition_cases"] = {
+            "invented_delay": {"not_a_coverage_condition": "INVENTED"}
+        }
+    assert bool(condition_case_problems(row, set())) == (tie is None)
 
 
 # Review r3 M1: statutory conditions the review found outside `when`, each
@@ -2598,7 +2720,7 @@ REQUIRED_CONDITIONS = [
                 "medical resident or medical intern",
             ),
             "enrollment": (
-                "regular academic year or a summer session",
+                "regular academic year and summer session",
                 "between semesters",
                 "more than five weeks",
             ),
@@ -2861,6 +2983,7 @@ def test_federal_rows_carry_section_2601_c_d3_and_e(registry, rule_id):
         assert set(ties["cases"]) == {
             "legislative_lump_sum_after_1983",
             "legislative_ceased_coverage_after_1983",
+            "after_official_during_2601d3_delay",
         }
 
 
@@ -3615,11 +3738,12 @@ NONPROFIT_312C_REQUEST = (
 )
 NONPROFIT_COVERED_EMPLOYEE = (
     "listed on the Form SS-15a filed with the certificate; listed on a "
-    "supplemental list, for service on or after the first day of the "
-    "calendar quarter in which that list was filed; hired after the "
-    "certificate was filed; or, after the calendar quarter in which the "
-    "certificate was filed for a 3121(k)(1)(E) group, became a member of "
-    "that group"
+    "supplemental list filed before the end of the twenty-fourth month "
+    "following the calendar quarter in which the certificate was filed, for "
+    "service on or after the first day of the calendar quarter in which that "
+    "list was filed; hired after the certificate was filed; or, after the "
+    "calendar quarter in which the certificate was filed for a 3121(k)(1)(E) "
+    "group, became a member of that group"
 )
 NONPROFIT_NOT_LISTED = (
     "not listed for the service: not on the Form SS-15a filed with the "
@@ -3627,15 +3751,22 @@ NONPROFIT_NOT_LISTED = (
     "service's calendar quarter"
 )
 NONPROFIT_RETRO_HIRE = (
-    "hired after the certificate's effective date and on or before its "
-    "filing date (a certificate effective before it was filed, RS 01901.540 "
-    "C.3.b), and " + NONPROFIT_NOT_LISTED
+    "hired after the certificate's effective date and on or before its filing "
+    "date (a certificate effective before it was filed, RS 01901.540 C.3.b), "
+    "and not listed for the service: not on the Form SS-15a filed with the "
+    "certificate, and not on a supplemental list filed in or before the "
+    "service's calendar quarter and before the end of the twenty-fourth month "
+    "following the calendar quarter in which the certificate was filed"
 )
 NONPROFIT_EXISTING_UNLISTED = (
-    "hired on or before both the certificate's filing date and its "
-    "effective date, a member of the employees or 3121(k)(1)(E) group the "
-    "certificate covers by the end of the calendar quarter in which it was "
-    "filed, and " + NONPROFIT_NOT_LISTED
+    "hired on or before both the certificate's filing date and its effective "
+    "date; had become a member of the employees or 3121(k)(1)(E) group the "
+    "certificate covers by the end of the calendar quarter in which the "
+    "certificate was filed; and not listed for the service: not on the Form "
+    "SS-15a filed with the certificate, and not on a supplemental list filed "
+    "in or before the service's calendar quarter and before the end of the "
+    "twenty-fourth month following the calendar quarter in which the "
+    "certificate was filed"
 )
 NONPROFIT_WAIVER_WORKERS = {
     # INVENTED workers of a 501(c)(3) employer: (waiver facts, concurrence,
@@ -3891,23 +4022,30 @@ ORDER_ACTIVE = (
     "(3121(r)(2)), performing duties required by such order"
 )
 ORDER_OUTSIDE_R2 = (
-    "member of a religious order who has taken a vow of poverty as a "
-    "member of such order but does not perform the tasks usually required "
-    "of an active member of such order, or is considered retired because "
-    "of old age or total disability (outside 3121(r)(2)), performing "
-    "duties required by such order"
+    "member of a religious order who has taken a vow of poverty as a member "
+    "of such order but does not perform the tasks usually required of an "
+    "active member of such order to the extent usually required, or is "
+    "considered retired because of old age or total disability (outside "
+    "3121(r)(2)), performing duties required by such order"
 )
 ACTIVE_VOWED = (ORDER_VOWED, ORDER_ACTIVE)
 RETIRED_VOWED = (ORDER_VOWED, ORDER_OUTSIDE_R2)
-NO_ORDER_ELECTION = "no 3121(r) election in effect for the period"
-ORDER_ELECTION = "effective 3121(r) election covering the period"
+NO_ORDER_ELECTION = (
+    "no 3121(r) election by the member's order, or by the autonomous "
+    "subdivision of it to which the member belongs, in effect for the period"
+)
+ORDER_ELECTION = (
+    "effective 3121(r) election by the member's order, or by the autonomous "
+    "subdivision of it to which the member belongs, covering the period"
+)
 # The election's covered case adds 3121(r)(3)(A)'s retroactive-quarter
 # limb, which a member in a prospective quarter meets too.
 ORDER_ELECTION_APPLIES = (
-    "effective 3121(r) election covering the period; for a retroactive "
-    "quarter, the member was a member when performing the service and was "
-    "living on the first day of the quarter in which the order filed the "
-    "certificate"
+    "effective 3121(r) election by the member's order, or by the autonomous "
+    "subdivision of it to which the member belongs, covering the period; for "
+    "a retroactive quarter, the member was a member when performing the "
+    "service and was living on the first day of the quarter in which the "
+    "certificate was filed"
 )
 ORDER_RETROACTIVE_FAILED = (
     "3121(r) certificate whose designated retroactive period (a quarter "
@@ -4058,8 +4196,8 @@ def test_religious_order_members_resolve_from_their_facts(
 
 # Phrases stating an INVENTED 2018-2026 council member's facts (r4 H-C).
 TRIBAL_COUNCIL_MEMBER = (
-    "service as a member of an Indian tribal council, in that capacity, for "
-    "the tribal government"
+    "service as a member or the head of an Indian tribal council, in that "
+    "capacity, for the tribal government"
 )
 TRIBAL_NOT_INCLUDED = (
     "council-capacity services not included under an effective section "
@@ -4412,9 +4550,10 @@ def test_base_definition_keeps_guaranteed_payments_and_411a5_income(
 # An INVENTED State or local employee, as the State and local cases'
 # government_level states the level (round 5).
 STATE_EMPLOYEE = (
-    "employee of a State, a political subdivision or a wholly owned "
-    "instrumentality, other than the District of Columbia, Guam and "
-    "American Samoa"
+    "employee of a State (one of the 50 States, the Commonwealth of Puerto "
+    "Rico or the Virgin Islands, each a State under 410(h)), of a political "
+    "subdivision or of a wholly owned instrumentality, other than the "
+    "District of Columbia, Guam and American Samoa"
 )
 ELECTION_WORKER = "election official or election worker"
 GRANDFATHERED_FEDERAL = (
@@ -4430,8 +4569,8 @@ LEGISLATIVE_STILL_UNDER_CSRS = (
             "United States"
         ),
         "federal_service": (
-            "service in the legislative branch other than as a Member, "
-            "Delegate or Resident Commissioner",
+            "service in the legislative branch of the Federal Government "
+            "other than as a Member, Delegate or Resident Commissioner",
             GRANDFATHERED_FEDERAL,
         ),
         "federal_retirement_system": (
@@ -4453,22 +4592,23 @@ CRP_PAYMENT = (
     "1233(2) now appears"
 )
 ELECTION_LOWER_AMOUNT = (
-    "covered by a section 218 agreement that excludes election workers "
-    "paid less than an amount the agreement states below the statutory "
-    "amount"
+    "covered for OASDI (old-age, survivors and disability insurance) by a "
+    "section 218 agreement that excludes election workers paid less than an "
+    "amount the agreement states below the statutory amount; a modification "
+    "under 418(v), redesignated 418(n), that extends only Medicare hospital "
+    "insurance does not count"
 )
 ELECTION_NONMEMBER = (
-    "not a member of any retirement system of the State, subdivision or "
-    "instrumentality that is a qualified retirement system under the IRS "
-    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites "
-    "them); an employee who belongs only to a system that fails those "
+    "not a member of any retirement system of the employing State, "
+    "subdivision or instrumentality that is a qualified retirement system "
+    "under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 "
+    "B cites them); an employee who belongs only to a system that fails those "
     "standards meets this condition"
 )
 ELECTION_MEMBER = (
-    "member of a retirement system of the State, subdivision or "
+    "member of a retirement system of the employing State, subdivision or "
     "instrumentality that is a qualified retirement system under the IRS "
-    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites "
-    "them)"
+    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
 )
 REQUIRED_CONDITION_FAILURES = {
     **{
@@ -4561,7 +4701,8 @@ REQUIRED_CONDITION_FAILURES = {
             "tribal_federal_recognition": "federally recognized tribe",
             "tribal_coverage_agreement": (
                 "council-capacity services before the agreement's effective "
-                "date that the tribe asked the agreement to include",
+                "date that the tribe, at the time of the agreement, asked the "
+                "agreement to include",
                 TRIBAL_NOT_INCLUDED,
             ),
             "historical_fica_treatment": (
@@ -4736,7 +4877,10 @@ def test_swept_rows_resolve_invented_workers_from_their_facts(
     rule = next(r for r in registry.rules if r.rule_id == worker["rule_id"])
     assert resolved_consequence(rule, worker["facts"]) == worker["expected"]
     met = cases_met(rule, worker["facts"])
-    if worker["expected"] == "refuses":
+    if worker["expected"] == "refuses" and rule.open_reason is not None:
+        # The whole row is an open legal question.
+        assert worker["decides"] == "row_open"
+    elif worker["expected"] == "refuses":
         # The deciding case is the open one: it ranks first among those met.
         first = min(
             (c for c in rule.cases if c["case_id"] in met),
@@ -4747,6 +4891,28 @@ def test_swept_rows_resolve_invented_workers_from_their_facts(
     else:
         decided = rule.resolve(met)
         assert decided.get("case_id", "residual") == worker["decides"]
+
+
+def test_every_case_and_residual_decides_a_swept_worker():
+    """Review r5 items 6 and 7: the sweep fixture holds, for every case of
+    every row, a worker that case decides, and for every closed row a
+    worker its residual decides (for an open row, a worker it refuses).
+    Under the exact-text oracle, a case narrowed, broadened or reworded
+    then fails at least one worker, and a consequence or rank change fails
+    the worker it decides."""
+    decided = {}
+    for worker in INVENTED_SWEEP_WORKERS:
+        decided.setdefault(worker["rule_id"], set()).add(worker["decides"])
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    missing = {}
+    for row in rows:
+        want = {case["case_id"] for case in row["cases"]}
+        want.add("row_open" if row["open_reason"] else "residual")
+        if gap := want - decided.get(row["rule_id"], set()):
+            missing[row["rule_id"]] = sorted(gap)
+    assert missing == {}
+    assert len(rows) == 119
+    assert sum(len(row["cases"]) for row in rows) == 348
 
 
 PUBLIC_OFFICERS = {
@@ -4821,8 +4987,12 @@ def test_government_level_conditions_name_a_level_of_government():
     ] == []
     # Six before round 5, which adds 20: the 1991 State and local row's
     # three mandatory-rule cases, 16 election cases and the 1968
-    # public-office election. The review r5 fix adds 32 federal cases.
-    assert len(found) == 59
+    # public-office election. The review r5 fix adds 32 federal cases and
+    # the 1977 election pay case (59), then its sweep 8 more: the Army
+    # Corps aide in three federal rows, the 1987 delay open case, and the
+    # federal level on first_hired_after_1983 (both rows),
+    # after_official_service_from_1988_11_10 and fers_or_fsps_election.
+    assert len(found) == 67
 
 
 # Round 5: 410(a)(7) excludes "Service performed in the employ of a State,
@@ -4835,9 +5005,10 @@ def test_government_level_conditions_name_a_level_of_government():
 # these families decide by an exclusion, a threshold or a deferral reaches
 # that level of government and no other.
 STATE_LOCAL_LEVEL = (
-    "employee of a State, a political subdivision or a wholly owned "
-    "instrumentality, other than the District of Columbia, Guam and "
-    "American Samoa"
+    "employee of a State (one of the 50 States, the Commonwealth of Puerto "
+    "Rico or the Virgin Islands, each a State under 410(h)), of a political "
+    "subdivision or of a wholly owned instrumentality, other than the "
+    "District of Columbia, Guam and American Samoa"
 )
 STATE_LOCAL_FAMILIES = {
     "section_218_and_mandatory_state_local": (
@@ -4936,7 +5107,7 @@ def test_state_and_local_exclusions_name_the_level_their_law_reaches(
         "state_local_fee_basis_office",
     ):
         assert cases[case_id]["when"]["government_level"] == (
-            "state or political subdivision"
+            "State or political subdivision"
         )
     assert "government_level" not in cases["public_office_functions"]["when"]
     cited = {c.capture for c in office.citations}
@@ -4965,17 +5136,30 @@ LOWER_AGREEMENT_AMOUNT = (
     "paid less than an amount the agreement states below the statutory "
     "amount"
 )
+MANDATORY_NOT_COVERED = (
+    "not covered for OASDI by any effective agreement/modification, "
+    "including a position that only a Medicare hospital insurance "
+    "modification under 418(v), redesignated 418(n), reaches"
+)
+LOWER_AGREEMENT_AMOUNT_OASDI = (
+    "covered for OASDI (old-age, survivors and disability insurance) by a "
+    "section 218 agreement that excludes election workers paid less than an "
+    "amount the agreement states below the statutory amount; a modification "
+    "under 418(v), redesignated 418(n), that extends only Medicare hospital "
+    "insurance does not count"
+)
+STATUTORY_AGREEMENT_AMOUNT_OASDI = (
+    "covered for OASDI (old-age, survivors and disability insurance) by a "
+    "section 218 agreement that excludes election workers paid less than the "
+    "statutory amount; a modification under 418(v), redesignated 418(n), that "
+    "extends only Medicare hospital insurance does not count"
+)
 STATUTORY_AGREEMENT_AMOUNT = (
     "covered by a section 218 agreement that excludes election workers "
     "paid less than the statutory amount"
 )
 NOT_A_MEMBER = ELECTION_NONMEMBER
 QUALIFIED_MEMBER = ELECTION_MEMBER
-MANDATORY_NOT_COVERED = (
-    "not covered for OASDI by any effective agreement/modification, "
-    "including a position that only a Medicare hospital insurance "
-    "modification under 418(v), redesignated 418(n), reaches"
-)
 # Review r5 M-2: each key's outcome for a State or local employee, as the
 # sources give it, stated here rather than read from the case: 410(a)(7)(F)
 # (ii) excludes the patient's work, (F)(iv) sends the poll worker and (F)(v)
@@ -4995,9 +5179,7 @@ STATE_LOCAL_CASE_FACTS = {
                 "storm, snow, earthquake, flood or similar emergency"
             ),
             "section_218_position": MANDATORY_NOT_COVERED,
-            "public_retirement_system_participation": (
-                "not a member of any IRS-qualified system"
-            ),
+            "public_retirement_system_participation": ELECTION_NONMEMBER,
         },
     ),
     # A county road worker whose position no agreement covers, before
@@ -5016,9 +5198,7 @@ STATE_LOCAL_CASE_FACTS = {
         "noncovered",
         {
             "section_218_position": MANDATORY_NOT_COVERED,
-            "public_retirement_system_participation": (
-                "member of an IRS-qualified system"
-            ),
+            "public_retirement_system_participation": ELECTION_MEMBER,
         },
     ),
     # A poll worker whose position no agreement covers ((F)(iv)).
@@ -5049,19 +5229,34 @@ STATE_LOCAL_CASE_FACTS = {
                 "election_work": ELECTION_WORKER,
             },
         )
-        for rule_id in ("election_work_1968", "election_work_1978")
+        for rule_id, lower, statutory, outside in (
+            (
+                "election_work_1968",
+                LOWER_AGREEMENT_AMOUNT,
+                STATUTORY_AGREEMENT_AMOUNT,
+                "not covered",
+            ),
+            # From 1978 a Medicare-only modification does not count
+            # (review r5 sweep, 418(n)).
+            (
+                "election_work_1978",
+                LOWER_AGREEMENT_AMOUNT_OASDI,
+                STATUTORY_AGREEMENT_AMOUNT_OASDI,
+                MANDATORY_NOT_COVERED,
+            ),
+        )
         for case_id, position, consequence in (
             (
                 "agreement_with_lower_threshold",
-                LOWER_AGREEMENT_AMOUNT,
+                lower,
                 "covered_above_threshold",
             ),
             (
                 "agreement_with_statutory_threshold",
-                STATUTORY_AGREEMENT_AMOUNT,
+                statutory,
                 "covered_above_threshold",
             ),
-            ("outside_agreement", "not covered", "noncovered"),
+            ("outside_agreement", outside, "noncovered"),
         )
     },
     # A 1977 poll worker paid in 1978 (review r5 M-1).
@@ -5096,31 +5291,31 @@ STATE_LOCAL_CASE_FACTS = {
         for case_id, position, membership, consequence in (
             (
                 "agreement_with_lower_threshold_nonmember",
-                LOWER_AGREEMENT_AMOUNT,
+                LOWER_AGREEMENT_AMOUNT_OASDI,
                 NOT_A_MEMBER,
                 "covered_above_threshold",
             ),
             (
                 "agreement_with_lower_threshold_member",
-                LOWER_AGREEMENT_AMOUNT,
+                LOWER_AGREEMENT_AMOUNT_OASDI,
                 QUALIFIED_MEMBER,
                 "covered_above_threshold",
             ),
             (
                 "agreement_with_statutory_threshold",
-                STATUTORY_AGREEMENT_AMOUNT,
+                STATUTORY_AGREEMENT_AMOUNT_OASDI,
                 None,
                 "covered_above_threshold",
             ),
             (
                 "outside_agreement_nonmember",
-                "not covered",
+                MANDATORY_NOT_COVERED,
                 NOT_A_MEMBER,
                 "covered_above_threshold",
             ),
             (
                 "outside_agreement_member",
-                "not covered",
+                MANDATORY_NOT_COVERED,
                 QUALIFIED_MEMBER,
                 "noncovered",
             ),
@@ -5251,43 +5446,38 @@ FEDERAL_LEVEL = (
     "employee of the United States or of an instrumentality of the United "
     "States"
 )
-FED_ANNUITANT = (
-    "receiving an annuity from the Civil Service Retirement and Disability "
-    "Fund, or benefits for employee service under another Federal employee "
-    "retirement system (other than for uniformed services)"
+FED_DELAYED_AFTER_OFFICIAL_SYSTEM = (
+    "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become "
+    "subject to subchapter III (or effectively apply for it) before July 18, "
+    "1984 or within the 30-day period of section 2601(d)(1) or (2), and the "
+    "service is performed before the first month beginning after that 30-day "
+    "period (section 2601(d)(3))"
 )
-FED_ARMY_CORPS_AIDE = (
+FED_DELAYED_AFTER_OFFICIAL_SERVICE = (
+    "performed on or after a date on which the individual performed service "
+    "described in 410(a)(5)(C)-(H), where that service was performed on or "
+    "after 1988-11-10"
+)
+FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE = (
     "performed by a student as an aide in a U.S. Army Corps of Engineers "
     "research and development laboratory under a 10 U.S.C. 2360 contract for "
     "seasonal or part-time student employment"
 )
-FED_DEFRA_OTHERWISE_MEETS = (
-    "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)"
-)
-FED_DEFRA_REQUALIFIED = (
+FED_DEFRA_SYSTEM = (
     "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another "
     "Federal employee retirement system (other than for uniformed services); "
-    "after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the "
-    "dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to "
-    "subchapter III as 410(a)(5)(G)(iii) describes; and again became subject "
-    "to (or effectively applied for) subchapter III within the period section "
-    "2601(d)(1) or (2) allows (an individual contributing a reduced amount by "
-    "reason of the Federal Employees' Retirement Contribution Temporary "
-    "Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section "
-    "2601(c))"
+    "after 1983 received a lump-sum payment under 5 U.S.C. 8342(a), or under "
+    "the corresponding provision of the law establishing the other retirement "
+    "system described in section 2601(d)(1)(A), within the dates of section "
+    "2601(d)(1)(B)(i) or otherwise ceased to be subject to subchapter III as "
+    "410(a)(5)(G)(iii) describes; and again became subject to (or effectively "
+    "applied for) subchapter III within the period section 2601(d)(1) or (2) "
+    "allows (an individual contributing a reduced amount by reason of the "
+    "Federal Employees' Retirement Contribution Temporary Adjustment Act of "
+    "1983 is not subject to it: Pub. L. 98-369 section 2601(c))"
 )
-FED_EMERGENCY_TEMPORARY_1968 = (
-    "employee serving on a temporary basis in case of fire, storm, "
-    "earthquake, flood or other similar emergency"
-)
-FED_EMERGENCY_TEMPORARY_1984 = (
-    "performed as an employee serving on a temporary basis in case of fire, "
-    "storm, earthquake, flood, or other similar emergency"
-)
-FED_EXCLUDED_IN_1983 = (
-    "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
-)
-FED_EXEMPT_1950_SYSTEM_1968 = (
+FED_DEFRA_SERVICE = "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)"
+FED_EXEMPT_1950_SYSTEM_SERVICE = (
     "service for an instrumentality exempt from the former IRC 1410 tax on "
     "1950-12-31 and covered by a retirement system the instrumentality "
     "established, other than service the January 1983 text of former "
@@ -5298,7 +5488,7 @@ FED_EXEMPT_1950_SYSTEM_1968 = (
     "nonappropriated-fund exchange and welfare employees of the Defense "
     "Department and the Coast Guard"
 )
-FED_EXEMPT_1950_SYSTEM_1973 = (
+FED_EXEMPT_1950_SYSTEM_SERVICE_1973 = (
     "service for an instrumentality exempt from the former IRC 1410 tax on "
     "1950-12-31 and covered by a retirement system the instrumentality "
     "established, other than service the January 1983 text of former "
@@ -5308,60 +5498,80 @@ FED_EXEMPT_1950_SYSTEM_1973 = (
     "Marketing Administration committees; and nonappropriated-fund exchange "
     "and welfare employees of the Defense Department and the Coast Guard"
 )
-FED_FEPCA_REEMPLOYED = (
-    "reemployed annuitant with an approved waiver of annuity offset under the "
-    "Federal Employees Pay Comparability Act"
+FED_ANNUITANT_SYSTEM = (
+    "receiving an annuity from the Civil Service Retirement and Disability "
+    "Fund, or benefits for employee service under another Federal employee "
+    "retirement system (other than for uniformed services)"
 )
-FED_GRANDFATHERED_CONTINUOUS = (
-    "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and "
-    "has been performed continuously since December 31, 1983, under the "
-    "continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+FED_ANNUITANT_SERVICE = (
+    "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
 )
-FED_HOSPITAL_STUDENT_1968 = (
-    "employee under 5 U.S.C. 5351(2) (interns, student nurses and other "
-    "student employees of Federal hospitals) other than a medical or dental "
-    "intern or resident in training"
-)
-FED_HOSPITAL_STUDENT_1984 = (
+FED_HOSPITAL_STUDENT_EMPLOYEE_SERVICE = (
     "performed as an employee included under 5 U.S.C. 5351(2) (certain "
     "interns, student nurses and other student employees of Federal "
     "hospitals), other than as a medical or dental intern or a medical or "
     "dental resident in training"
 )
-FED_INMATE_1968 = "inmate of a penal institution of the United States"
-FED_INMATE_1984 = (
+FED_HOSPITAL_STUDENT_EMPLOYEE = (
+    "employee under 5 U.S.C. 5351(2) (interns, student nurses and other "
+    "student employees of Federal hospitals) other than a medical or dental "
+    "intern or resident in training"
+)
+FED_PENAL_INMATE_SERVICE = (
     "performed in a penal institution of the United States by an inmate "
     "thereof"
 )
-FED_OTHER_RETIREMENT_SYSTEM = (
+FED_RETIREMENT_SYSTEM = (
+    "covers this service, and was established by a law of the United States"
+)
+FED_FEPCA_SYSTEM = (
+    "reemployed annuitant with an approved waiver of annuity offset under the "
+    "Federal Employees Pay Comparability Act"
+)
+FED_GRANDFATHERED_SERVICE = (
+    "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and "
+    "has been performed continuously since December 31, 1983, under the "
+    "continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+)
+FED_OTHER_SYSTEM_SYSTEM = (
     "not subject to the Civil Service Retirement System because subject to "
     "another retirement system, other than the Tennessee Valley Authority's"
 )
 FED_PRESIDENT_CONGRESS_LEGISLATIVE = (
     "President/Vice President/Congress/legislative employee"
 )
-FED_RETIRED_JUDGE_371B = (
+FED_RETIRED_JUDGE_371B_PAYMENT = (
     "retired justice or judge performing service under 28 U.S.C. 294 "
     "(assignment to active duty), paid under 28 U.S.C. 371(b) during that "
     "service"
 )
-FED_SECTION_1410_INSTRUMENTALITY = (
+FED_STATUTORY_1410_SERVICE = (
     "instrumentality itself exempt by specific statutory reference to former "
     "IRC 1410"
 )
-FED_US_LAW_SYSTEM = "established by a law of the United States"
+FED_TEMPORARY_EMERGENCY_EMPLOYEE_SERVICE = (
+    "performed as an employee serving on a temporary basis in case of fire, "
+    "storm, earthquake, flood, or other similar emergency"
+)
+FED_TEMPORARY_EMERGENCY_EMPLOYEE = (
+    "employee serving on a temporary basis in case of fire, storm, "
+    "earthquake, flood or other similar emergency"
+)
+# Names the reproduction and delay tests use.
+FED_EMERGENCY_TEMPORARY_1968 = FED_TEMPORARY_EMERGENCY_EMPLOYEE
+FED_GRANDFATHERED_CONTINUOUS = FED_GRANDFATHERED_SERVICE
 FEDERAL_CASE_FACTS = {
+    ("federal_1968_1972", "army_corps_2360_student_aide"): (
+        "refuses",
+        {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
+    ),
     ("federal_1968_1972", "federal_retirement_system_service"): (
         "noncovered",
-        {"federal_retirement_system": FED_US_LAW_SYSTEM},
+        {"federal_retirement_system": FED_RETIREMENT_SYSTEM},
     ),
     ("federal_1968_1972", "statutory_1410_instrumentality"): (
         "noncovered",
-        {"federal_service": FED_SECTION_1410_INSTRUMENTALITY},
-    ),
-    ("federal_1968_1972", "exempt_1950_instrumentality_system"): (
-        "noncovered",
-        {"federal_service": FED_EXEMPT_1950_SYSTEM_1968},
+        {"federal_service": FED_STATUTORY_1410_SERVICE},
     ),
     ("federal_1968_1972", "president_congress_legislative"): (
         "noncovered",
@@ -5369,31 +5579,39 @@ FEDERAL_CASE_FACTS = {
     ),
     ("federal_1968_1972", "federal_penal_inmate"): (
         "noncovered",
-        {"occupation": FED_INMATE_1968},
+        {"federal_service": FED_PENAL_INMATE_SERVICE},
     ),
     ("federal_1968_1972", "federal_hospital_student_employee"): (
         "noncovered",
-        {"occupation": FED_HOSPITAL_STUDENT_1968},
+        {"occupation": FED_HOSPITAL_STUDENT_EMPLOYEE},
     ),
     ("federal_1968_1972", "temporary_emergency_employee"): (
         "noncovered",
-        {"occupation": FED_EMERGENCY_TEMPORARY_1968},
+        {"occupation": FED_TEMPORARY_EMERGENCY_EMPLOYEE},
     ),
     ("federal_1968_1972", "other_federal_retirement_system"): (
         "noncovered",
-        {"federal_retirement_system": FED_OTHER_RETIREMENT_SYSTEM},
+        {"federal_retirement_system": FED_OTHER_SYSTEM_SYSTEM},
+    ),
+    ("federal_1968_1972", "exempt_1950_instrumentality_system"): (
+        "noncovered",
+        {"federal_service": FED_EXEMPT_1950_SYSTEM_SERVICE},
+    ),
+    ("federal_1973_1983", "army_corps_2360_student_aide"): (
+        "refuses",
+        {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1973_1983", "federal_retirement_system_service"): (
         "noncovered",
-        {"federal_retirement_system": FED_US_LAW_SYSTEM},
+        {"federal_retirement_system": FED_RETIREMENT_SYSTEM},
     ),
     ("federal_1973_1983", "statutory_1410_instrumentality"): (
         "noncovered",
-        {"federal_service": FED_SECTION_1410_INSTRUMENTALITY},
+        {"federal_service": FED_STATUTORY_1410_SERVICE},
     ),
     ("federal_1973_1983", "exempt_1950_instrumentality_system"): (
         "noncovered",
-        {"federal_service": FED_EXEMPT_1950_SYSTEM_1973},
+        {"federal_service": FED_EXEMPT_1950_SYSTEM_SERVICE_1973},
     ),
     ("federal_1973_1983", "president_congress_legislative"): (
         "noncovered",
@@ -5401,94 +5619,105 @@ FEDERAL_CASE_FACTS = {
     ),
     ("federal_1973_1983", "federal_penal_inmate"): (
         "noncovered",
-        {"occupation": FED_INMATE_1968},
+        {"federal_service": FED_PENAL_INMATE_SERVICE},
     ),
     ("federal_1973_1983", "federal_hospital_student_employee"): (
         "noncovered",
-        {"occupation": FED_HOSPITAL_STUDENT_1968},
+        {"occupation": FED_HOSPITAL_STUDENT_EMPLOYEE},
     ),
     ("federal_1973_1983", "temporary_emergency_employee"): (
         "noncovered",
-        {"occupation": FED_EMERGENCY_TEMPORARY_1968},
+        {"occupation": FED_TEMPORARY_EMERGENCY_EMPLOYEE},
     ),
     ("federal_1973_1983", "other_federal_retirement_system"): (
         "noncovered",
-        {"federal_retirement_system": FED_OTHER_RETIREMENT_SYSTEM},
+        {"federal_retirement_system": FED_OTHER_SYSTEM_SYSTEM},
     ),
     ("federal_1984_1986", "retired_judge_371b_payment"): (
         "noncovered",
-        {"occupation": FED_RETIRED_JUDGE_371B},
+        {"occupation": FED_RETIRED_JUDGE_371B_PAYMENT},
     ),
     ("federal_1984_1986", "federal_penal_inmate"): (
         "noncovered",
-        {"federal_service": FED_INMATE_1984},
+        {"federal_service": FED_PENAL_INMATE_SERVICE},
     ),
     ("federal_1984_1986", "federal_hospital_student_employee"): (
         "noncovered",
-        {"federal_service": FED_HOSPITAL_STUDENT_1984},
+        {"federal_service": FED_HOSPITAL_STUDENT_EMPLOYEE_SERVICE},
     ),
     ("federal_1984_1986", "temporary_emergency_employee"): (
         "noncovered",
-        {"federal_service": FED_EMERGENCY_TEMPORARY_1984},
+        {"federal_service": FED_TEMPORARY_EMERGENCY_EMPLOYEE_SERVICE},
+    ),
+    ("federal_1984_1986", "army_corps_2360_student_aide"): (
+        "refuses",
+        {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1984_1986", "defra_2601d_requalification"): (
         "noncovered",
         {
-            "federal_retirement_system": FED_DEFRA_REQUALIFIED,
-            "federal_service": FED_DEFRA_OTHERWISE_MEETS,
+            "federal_retirement_system": FED_DEFRA_SYSTEM,
+            "federal_service": FED_DEFRA_SERVICE,
         },
     ),
     ("federal_1984_1986", "grandfathered_continuous_service"): (
         "noncovered",
-        {"federal_service": FED_GRANDFATHERED_CONTINUOUS},
+        {"federal_service": FED_GRANDFATHERED_SERVICE},
     ),
     ("federal_1984_1986", "federal_annuitant"): (
         "noncovered",
         {
-            "federal_retirement_system": FED_ANNUITANT,
-            "federal_service": FED_EXCLUDED_IN_1983,
+            "federal_retirement_system": FED_ANNUITANT_SYSTEM,
+            "federal_service": FED_ANNUITANT_SERVICE,
         },
     ),
     ("federal_1987_2026", "retired_judge_371b_payment"): (
         "noncovered",
-        {"occupation": FED_RETIRED_JUDGE_371B},
+        {"occupation": FED_RETIRED_JUDGE_371B_PAYMENT},
     ),
     ("federal_1987_2026", "federal_penal_inmate"): (
         "noncovered",
-        {"federal_service": FED_INMATE_1984},
+        {"federal_service": FED_PENAL_INMATE_SERVICE},
     ),
     ("federal_1987_2026", "federal_hospital_student_employee"): (
         "noncovered",
-        {"federal_service": FED_HOSPITAL_STUDENT_1984},
+        {"federal_service": FED_HOSPITAL_STUDENT_EMPLOYEE_SERVICE},
     ),
     ("federal_1987_2026", "temporary_emergency_employee"): (
         "noncovered",
-        {"federal_service": FED_EMERGENCY_TEMPORARY_1984},
+        {"federal_service": FED_TEMPORARY_EMERGENCY_EMPLOYEE_SERVICE},
     ),
     ("federal_1987_2026", "army_corps_2360_student_aide"): (
         "refuses",
-        {"federal_service": FED_ARMY_CORPS_AIDE},
+        {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
+    ),
+    ("federal_1987_2026", "after_official_during_2601d3_delay"): (
+        "refuses",
+        {
+            "federal_retirement_system": FED_DELAYED_AFTER_OFFICIAL_SYSTEM,
+            "federal_service": FED_DELAYED_AFTER_OFFICIAL_SERVICE,
+        },
     ),
     ("federal_1987_2026", "fepca_waiver_reemployed_annuitant"): (
         "refuses",
-        {"federal_retirement_system": FED_FEPCA_REEMPLOYED},
+        {"federal_retirement_system": FED_FEPCA_SYSTEM},
     ),
     ("federal_1987_2026", "defra_2601d_requalification"): (
         "noncovered",
         {
-            "federal_retirement_system": FED_DEFRA_REQUALIFIED,
-            "federal_service": FED_DEFRA_OTHERWISE_MEETS,
+            "federal_retirement_system": FED_DEFRA_SYSTEM,
+            "federal_service": FED_DEFRA_SERVICE,
         },
     ),
     ("federal_1987_2026", "grandfathered_continuous_service"): (
         "noncovered",
-        {"federal_service": FED_GRANDFATHERED_CONTINUOUS},
+        {"federal_service": FED_GRANDFATHERED_SERVICE},
     ),
     ("federal_1987_2026", "federal_annuitant"): (
         "noncovered",
         {
-            "federal_retirement_system": FED_ANNUITANT,
-            "federal_service": FED_EXCLUDED_IN_1983,
+            "federal_retirement_system": FED_ANNUITANT_SYSTEM,
+            "federal_service": FED_ANNUITANT_SERVICE,
         },
     ),
 }
@@ -5546,7 +5775,7 @@ def test_federal_exclusions_name_the_level_their_law_reaches(registry):
             assert case["when"].get("government_level") == FEDERAL_LEVEL, key
             assert "government_level" in ties[case["case_id"]], key
     assert sorted(limited) == sorted(FEDERAL_CASE_FACTS)
-    assert len(limited) == 32
+    assert len(limited) == 36
 
 
 FEDERAL_LEVEL_EMPLOYERS = {
@@ -5622,13 +5851,18 @@ def test_federal_rows_leave_non_federal_workers_to_other_families(
 # April 1987. A staffer in the Foreign Service on July 18, 1984 has only
 # (d)(1)'s period, which ended in 1984.
 FED_LEGISLATIVE_STAFF = (
-    "service in the legislative branch other than as a Member, Delegate or "
-    "Resident Commissioner"
+    "service in the legislative branch of the Federal Government other than "
+    "as a Member, Delegate or Resident Commissioner"
 )
 FED_LUMP_SUM_WITH_DELAY = (
-    "received, at any time after 1983-12-31, a lump-sum payment under 5 "
-    "U.S.C. 8342(a) or the corresponding provision of the other Federal "
-    "retirement system" + SECTION_2601D3_CLAUSE
+    "received, at any time after 1983-12-31 and before the service is "
+    "performed, a lump-sum payment under 5 U.S.C. 8342(a) or the "
+    "corresponding provision of the other Federal retirement system; where "
+    "the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and "
+    "did not again become subject to subchapter III (or effectively apply for "
+    "it) before July 18, 1984 or within the 30-day period of section "
+    "2601(d)(1) or (2), the service is performed in or after the first month "
+    "beginning after that 30-day period (section 2601(d)(3))"
 )
 DELAYED_STAFFERS = {
     # Out of Federal employ on 1984-07-18; Commerce 1985-1986; back on
@@ -5699,13 +5933,21 @@ def test_section_2601d3_delay_reaches_service_after_1986(registry, staffer):
 # date. INVENTED: a church secretary paid $80 by an electing church for
 # January 1984 service, in a fiscal year that began 1983-07-01.
 ELECTING_CHURCH_SERVICE = (
-    "service for an electing church or qualified church controlled "
-    "organization, outside an unrelated trade or business, and outside "
-    "ministry or order duties"
+    "service for a church or qualified church-controlled organization that "
+    "has in effect for the service an election under section 3121(w): made "
+    "within the time 3121(w)(2) allows, and not revoked for a period that "
+    "includes the service (a revocation by the Secretary for failure to "
+    "furnish the section 6051 information applies retroactively to the "
+    "beginning of the 2-year period for which it was not furnished); outside "
+    "an unrelated trade or business, and outside ministry or order duties"
 )
 CHURCH_REMUNERATION = (
-    "qualifying electing-church remuneration from an employer paying at "
-    "least $100 in the taxable year"
+    "remuneration for service performed on or after 1984-01-01 in the employ "
+    "of an electing church or qualified church-controlled organization, other "
+    "than service in an unrelated trade or business (section 513(a)), of an "
+    "employee who is not a minister or a member of a religious order, from an "
+    "employer paying at least $100 of such remuneration (for service on or "
+    "after 1984-01-01) in the taxable year"
 )
 
 
@@ -5844,7 +6086,7 @@ PUBLIC_OFFICE_ELECTION_HOLDERS = {
     "county_fee_officer": (
         {
             "public_office_1968_exemption_election": PUBLIC_OFFICE_ELECTION,
-            "government_level": "state or political subdivision",
+            "government_level": "State or political subdivision",
             "public_office_functions": (
                 "income is for performing the functions of a public office"
             ),
@@ -5912,11 +6154,18 @@ TERMINATION_HEADING = (
 )
 TERMINATION_EFFECTIVE = "applicable to payments after Dec. 31, 1997"
 QUALIFYING_TERMINATION_TERMS = (
-    "received after the agreement ends; no services for the company after "
-    "termination and before the year closes; a covenant not to compete for "
-    "at least one year; the amount depends primarily on last-year policies "
-    "or their persistence, and not at all on length of service or overall "
-    "earnings"
+    "received from an insurance company on account of services the individual "
+    "performed as an insurance salesman for that company, after the "
+    "individual's agreement to perform those services for the company ends; "
+    "no services for the company after that termination and before the close "
+    "of the taxable year; a covenant not to compete against the company that "
+    "applies to at least the 1-year period beginning on the date of "
+    "termination; and an amount that depends primarily on policies sold by or "
+    "credited to the individual's account during the agreement's last year, "
+    "or on how long those policies remain in force after termination, or "
+    "both, and does not depend to any extent on length of service or overall "
+    "earnings from services for the company (whether or not eligibility for "
+    "the payment depends on length of service)"
 )
 SERVICE_LENGTH_TERMS = "an amount that grows with length of service"
 TERMINATION_PAYMENTS = {

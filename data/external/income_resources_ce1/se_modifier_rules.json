@@ -28,6 +28,13 @@
         "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
         "authority": "20 CFR 404.1082, official April 1, 1996 edition",
         "location": "404.1082(a)-(e), dealer holdings, occupant services and attributable deductions"
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(d)(2)(i)-(ii), services provided for occupants",
+        "quote": "Payments you receive for renting living quarters where services are also provided to the occupant"
       }
     ],
     "trigger_facts": [
@@ -39,7 +46,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "411(a)(1) excludes rentals from real estate and from personal property leased with it, including crop-share rentals, with their attributable deductions, unless received in the course of a trade or business as a real estate dealer; the farm-arrangement proviso defers to the farm rental participation family. Only the regulatory dealer-holdings, occupant-services and space-payment details stay open.",
+    "description": "411(a)(1) excludes rentals from real estate and from personal property leased with it, including crop-share rentals, with their attributable deductions, unless received in the course of a trade or business as a real estate dealer; the farm-arrangement proviso defers to the farm rental participation family. Only the regulatory dealer-holdings, occupant-services (living quarters, and other space rented with services) and space-payment details stay open.",
     "parameters": {
       "scope": "Historical occupant-services and dealer-holdings detail is unverified. A plain request for the 1968 official CFR section returned no section text.",
       "farm_material_participation_family": "self_employment_farm_rental_participation",
@@ -66,9 +73,16 @@
             ],
             "services_to_occupants_regulatory_detail": [
               "services_to_occupants"
+            ],
+            "services_to_occupants_other_space": [
+              "services_to_occupants"
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "material_participation": "411(a)(1)'s farm proviso is decided by self_employment_farm_rental_participation after farm_rental_arrangement defers; that family reads material participation.",
+        "trade_or_business": "The base definition reads it; 411(a)(1)'s only trade-or-business limb, 'received in the course of a trade or business as a real estate dealer', is carried by real_estate_dealer_status."
       }
     },
     "worked_examples": [],
@@ -148,8 +162,28 @@
         ]
       },
       {
-        "case_id": "farm_rental_arrangement",
+        "case_id": "services_to_occupants_other_space",
         "precedence": 5,
+        "when": {
+          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+        },
+        "consequence": "open",
+        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
+        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNVERIFIED: the occupant-services rule is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2), and there (d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_rental_exclusion",
+            "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes, on the statute alone or on the 1996 rule read as reaching living quarters only."
+          },
+          {
+            "name": "apply_1996_occupant_services_test_to_other_space",
+            "description": "Include the payments in net earnings, reading the April 1, 1996 edition's (d)(2)(ii) test, which speaks of \"rooms or other space\", as reaching any rented space."
+          }
+        ]
+      },
+      {
+        "case_id": "farm_rental_arrangement",
+        "precedence": 6,
         "when": {
           "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
         },
@@ -164,7 +198,7 @@
       },
       {
         "case_id": "real_estate_rentals",
-        "precedence": 6,
+        "precedence": 7,
         "when": {
           "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
         },
@@ -201,6 +235,13 @@
         "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
         "authority": "20 CFR 404.1082, official April 1, 1996 edition",
         "location": "404.1082(a)-(e), dealer holdings, occupant services and attributable deductions"
+      },
+      {
+        "capture": "cfr_1996_20_4041082_r1.txt",
+        "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26",
+        "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+        "location": "404.1082(d)(2)(i)-(ii), services provided for occupants",
+        "quote": "Payments you receive for renting living quarters where services are also provided to the occupant"
       }
     ],
     "trigger_facts": [
@@ -212,7 +253,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Real-estate rentals, personal property leased with the real estate, and their attributable deductions are excluded from NESE, subject to the statutory real-estate-dealer and farm material-participation exceptions.",
+    "description": "Real-estate rentals, personal property leased with the real estate, and their attributable deductions are excluded from NESE, subject to the statutory real-estate-dealer and farm material-participation exceptions. Payments for space other than living quarters, parking, warehouse or storage space rented with occupant services stay open.",
     "parameters": {
       "rental_income_and_attributable_deductions_excluded": true,
       "includes_crop_share_rentals": true,
@@ -220,7 +261,7 @@
       "occupant_services": {
         "verified_regulation_edition": 1996,
         "historical_backcast": false,
-        "current_regulatory_detail": "Services primarily for occupant convenience, beyond customary occupancy services, can make the payments business income; heat/light, common-area cleaning and trash collection alone do not. This text is captured in the 1996 and 2024 editions."
+        "current_regulatory_detail": "Living quarters rented with services primarily for the occupant's convenience, beyond those usually provided with occupancy only, make the payments business income (404.1082(d)(2)); heat/light, common-area cleaning and trash collection alone do not. Whether such services do the same for other space is open (case services_to_occupants_other_space). This text is captured in the 1996 and 2024 editions."
       },
       "farm_material_participation_family": "self_employment_farm_rental_participation",
       "scope": "Income-definition modifier; does not exclude all earnings of a person receiving rents.",
@@ -341,7 +382,21 @@
         },
         "scope": {
           "not_a_coverage_condition": "Describes what the residual already does: a landlord's earnings other than rentals from real estate (or personal property leased with it) match no case and take the covered residual (\"Not rental income from real estate, so 411(a)(1) does not exclude it\")."
+        },
+        "occupant_services": {
+          "cases": {
+            "services_to_occupants": [
+              "services_to_occupants"
+            ],
+            "services_to_occupants_other_space": [
+              "services_to_occupants"
+            ]
+          }
         }
+      },
+      "unread_trigger_facts": {
+        "material_participation": "self_employment_farm_rental_participation reads it after farm_rental_arrangement defers.",
+        "trade_or_business": "The base definition reads it; the dealer limb is carried by real_estate_dealer_status; 404.1082(e)'s split of a non-real-estate business's income needs no extra case (the rental part meets real_estate_rentals, the rest the residual)."
       }
     },
     "worked_examples": [],
@@ -361,10 +416,10 @@
         "case_id": "services_to_occupants",
         "precedence": 2,
         "when": {
-          "services_to_occupants": "services primarily for occupant convenience beyond customary occupancy services"
+          "services_to_occupants": "living quarters rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
         },
         "consequence": "covered",
-        "description": "The services exception in 20 CFR 404.1082(d) applies."
+        "description": "20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\"; (d)(2)(ii) says which services count. Other space rented with services takes services_to_occupants_other_space."
       },
       {
         "case_id": "parking_warehouse_storage_space",
@@ -379,8 +434,28 @@
         ]
       },
       {
-        "case_id": "farm_rental_arrangement",
+        "case_id": "services_to_occupants_other_space",
         "precedence": 4,
+        "when": {
+          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+        },
+        "consequence": "open",
+        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
+        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNSETTLED: 20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", and adds only parking, warehouse and storage space, while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "living_quarters_rule_only",
+            "description": "Only living quarters (and parking, warehouse or storage space) take the (d)(2)(i) inclusion; payments for other space stay rentals from real estate that 411(a)(1) and 404.1082(a) exclude."
+          },
+          {
+            "name": "occupant_services_test_any_space",
+            "description": "(d)(2)(ii)'s test, which speaks of \"rooms or other space\", reaches any rented space: services primarily for the occupant's convenience make the payments net earnings from self-employment, as for living quarters."
+          }
+        ]
+      },
+      {
+        "case_id": "farm_rental_arrangement",
+        "precedence": 5,
         "when": {
           "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
         },
@@ -395,7 +470,7 @@
       },
       {
         "case_id": "real_estate_rentals",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
         },
@@ -510,6 +585,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "trade_or_business": "The base definition (se_base_definition_1968_2026) reads it. 411(a)(2) excludes the named dividends and interest wherever they arise; its only trade-or-business limb, the dealer clause ('received in the course of a trade or business as a dealer in stocks or securities'), is carried by securities_dealer_status in dealer_in_stocks_or_securities."
       }
     },
     "worked_examples": [],
@@ -712,6 +790,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "trade_or_business": "The base definition reads it; the dealer clause is carried by securities_dealer_status in dealer_in_stocks_or_securities; 411(a)(2) states no other trade-or-business condition."
       }
     },
     "worked_examples": [],
@@ -925,6 +1006,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "trade_or_business": "The base definition reads it; the dealer clause is carried by securities_dealer_status in dealer_in_stocks_or_securities; 411(a)(2) states no other trade-or-business condition."
       }
     },
     "worked_examples": [],
@@ -1125,6 +1209,11 @@
         "scope": {
           "not_a_coverage_condition": "States the row's reach: 411(a)(6) changes only how a Puerto Rico resident computes net earnings. Service exclusions and income-source or residence facts belong to the other families, which the covered residual sends the item to."
         }
+      },
+      "unread_trigger_facts": {
+        "country_of_residence": "411(a)(6) names Puerto Rico residents, but its rule (compute as a citizen, 'without regard to the provisions of section 933') excludes nothing for anyone, so residence changes no consequence",
+        "residence_period": "same: 411(a)(6) states no period and excludes nothing",
+        "trade_or_business": "the base definition reads it; 411(a)(6) does not depend on it"
       }
     },
     "worked_examples": [],
@@ -1182,6 +1271,62 @@
         "authority": "26 U.S.C. 3121 (LII capture, historical notes)",
         "location": "Pub. L. 98-21 section 322(c) effective-date note",
         "quote": "shall be effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]"
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
+        "location": "U.S. Citizens and Resident and Nonresident Aliens: Residents of Puerto Rico, the U.S. Virgin Islands, Guam, the Commonwealth of the Northern Mariana Islands (CNMI), and American Samoa",
+        "quote": "If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States."
+      },
+      {
+        "capture": "uscode_2024_26_1402.html",
+        "sha256": "557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275",
+        "authority": "26 U.S.C. 1402, official United States Code 2024 edition label",
+        "location": "1402(b), final residency sentence",
+        "quote": "An individual who is not a citizen of the United States but who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa shall not, for purposes of this chapter be considered to be a nonresident alien individual."
+      },
+      {
+        "capture": "poms_rs_01901320.html",
+        "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
+        "authority": "SSA POMS RS 01901.320(2013-04-03)",
+        "location": "Citations line (the only CNMI dates in the captures, in Covered services 3.a-3.b, concern government employees)",
+        "quote": "Public Law 94-241, Section 606"
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
+        "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+        "quote": "You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country."
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
+        "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+        "quote": "For more information, see Bilateral Social Security (Totalization) Agreements in Pub. 54, Tax Guide for U.S. Citizens and Resident Aliens Abroad."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "section 415, 118 Stat. 530",
+        "quote": "SEC. 415. CLARIFICATION RESPECTING THE FICA AND SECA TAX EXEMPTIONS FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "section 415, 118 Stat. 530",
+        "quote": "are each amended by striking ``to taxes or contributions for similar purposes under'' and inserting ``exclusively to the laws applicable to''."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "approval line",
+        "quote": "Approved March 2, 2004."
       }
     ],
     "trigger_facts": [
@@ -1189,11 +1334,12 @@
       "country_of_residence",
       "residence_period",
       "nonresident_alien_status",
-      "taxable_year_start"
+      "taxable_year_start",
+      "social_security_agreement_coverage"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. Publication 517 (2025) adds the CNMI, a conflict case cnmi_noncitizen_resident leaves open. An individual whom a social security agreement makes subject only to a foreign country's laws is excluded too (case foreign_agreement_sole_coverage).",
     "parameters": {
       "jurisdictions": [
         "Puerto Rico",
@@ -1201,7 +1347,7 @@
         "Guam",
         "American Samoa"
       ],
-      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, for all self-employment income; other families decide what the net earnings are.",
+      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1291,9 +1437,21 @@
             ],
             "nonresident_alien_individual": [
               "nonresident_alien_status"
+            ],
+            "cnmi_noncitizen_resident": [
+              "citizenship",
+              "country_of_residence",
+              "nonresident_alien_status"
+            ],
+            "foreign_agreement_sole_coverage": [
+              "social_security_agreement_coverage"
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text (NOTE in table.md)",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row ends 1983-04-19 because Pub. L. 98-21 section 322(c) dates the section 433 exception to taxable years beginning on or after 1983-04-20"
       }
     },
     "worked_examples": [],
@@ -1301,8 +1459,21 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "territorial_resident",
+        "case_id": "foreign_agreement_sole_coverage",
         "precedence": 1,
+        "when": {
+          "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+        },
+        "consequence": "noncovered",
+        "overrides": [
+          "territorial_resident",
+          "cnmi_noncitizen_resident"
+        ],
+        "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws."
+      },
+      {
+        "case_id": "territorial_resident",
+        "precedence": 2,
         "when": {
           "citizenship": "not a citizen of the United States",
           "country_of_residence": "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa"
@@ -1314,8 +1485,33 @@
         "description": "411(b)'s final sentence: such an individual \"shall not, for the purpose of this subsection, be considered to be a nonresident alien individual\" (Guam and American Samoa since Pub. L. 86-778 section 103(h), taxable years after 1960)."
       },
       {
+        "case_id": "cnmi_noncitizen_resident",
+        "precedence": 3,
+        "when": {
+          "citizenship": "not a citizen of the United States",
+          "country_of_residence": "a resident of the Commonwealth of the Northern Mariana Islands",
+          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+        },
+        "consequence": "open",
+        "overrides": [
+          "nonresident_alien_individual"
+        ],
+        "open_reason": "CNMI_SE_NONRESIDENT_ALIEN_UNSETTLED: 411(b)'s final sentence, and 1402(b)'s, keep a noncitizen resident of \"the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa\" from being a nonresident alien and name no other place, while Publication 517 (2025) lists the Commonwealth of the Northern Mariana Islands with them: \"If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States.\" No CE1 capture holds the law Publication 517 rests on for the CNMI or dates it (POMS RS 01901.320 cites Public Law 94-241 section 606, which no capture holds, and dates only the coverage of CNMI government employees), so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_four_territories",
+            "description": "411(b) and 1402(b) as printed govern: a noncitizen resident of the CNMI who is a nonresident alien for the taxable year stays one, so case nonresident_alien_individual excludes the net earnings; no section 433 agreement applies before taxable years beginning 1983-04-20."
+          },
+          {
+            "name": "publication_517_territorial_resident",
+            "description": "Publication 517 (2025) governs: the individual is treated as a citizen or resident alien for SE tax, so 411(b) does not exclude the net earnings and the other families decide them."
+          }
+        ],
+        "description": "411(b) and 1402(b) name four places; Publication 517 (2025) adds the CNMI. The case requires nonresident-alien status because only then do the two readings differ: a CNMI resident who is a resident alien is covered on both. The text can hold only once a Commonwealth of the Northern Mariana Islands exists, and no capture dates the Commonwealth or its SE rule, so the case carries no date. It ranks above nonresident_alien_individual, which every such worker also meets."
+      },
+      {
         "case_id": "nonresident_alien_individual",
-        "precedence": 2,
+        "precedence": 4,
         "when": {
           "nonresident_alien_status": "nonresident alien individual for the taxable year"
         },
@@ -1326,7 +1522,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Not a nonresident alien individual for the taxable year, so 411(b) does not exclude the net earnings; apply the other families."
+      "description": "No case holds: the individual is not a nonresident alien individual for the taxable year, and no social security agreement makes him subject only to a foreign country's laws, so this family excludes nothing; apply the other families."
     }
   },
   {
@@ -1381,6 +1577,62 @@
         "authority": "42 USC 411, official 2024 United States Code section granule",
         "location": "1983 amendment note, subsec. (b)",
         "quote": "inserted \", except as provided by an agreement under section 433 of this title\" after \"non-resident alien individual\""
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "U.S. Citizens and Resident and Nonresident Aliens: Residents of Puerto Rico, the U.S. Virgin Islands, Guam, the Commonwealth of the Northern Mariana Islands (CNMI), and American Samoa",
+        "quote": "If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States."
+      },
+      {
+        "capture": "uscode_2024_26_1402.html",
+        "sha256": "557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275",
+        "authority": "26 U.S.C. 1402, official United States Code 2024 edition label",
+        "location": "1402(b), final residency sentence",
+        "quote": "An individual who is not a citizen of the United States but who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa shall not, for purposes of this chapter be considered to be a nonresident alien individual."
+      },
+      {
+        "capture": "poms_rs_01901320.html",
+        "sha256": "7e457837fab030bc7dd44aa4e8f527e856d2654e1ace00761bf57ea885c9619b",
+        "authority": "SSA POMS RS 01901.320(2013-04-03)",
+        "location": "Citations line (the only CNMI dates in the captures, in Covered services 3.a-3.b, concern government employees)",
+        "quote": "Public Law 94-241, Section 606"
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+        "quote": "You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country."
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+        "quote": "For more information, see Bilateral Social Security (Totalization) Agreements in Pub. 54, Tax Guide for U.S. Citizens and Resident Aliens Abroad."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "section 415, 118 Stat. 530",
+        "quote": "SEC. 415. CLARIFICATION RESPECTING THE FICA AND SECA TAX EXEMPTIONS FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "section 415, 118 Stat. 530",
+        "quote": "are each amended by striking ``to taxes or contributions for similar purposes under'' and inserting ``exclusively to the laws applicable to''."
+      },
+      {
+        "capture": "govinfo_plaw_108publ203.html",
+        "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35",
+        "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+        "location": "approval line",
+        "quote": "Approved March 2, 2004."
       }
     ],
     "trigger_facts": [
@@ -1388,11 +1640,12 @@
       "country_of_residence",
       "residence_period",
       "nonresident_alien_status",
-      "taxable_year_start"
+      "taxable_year_start",
+      "social_security_agreement_coverage"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income, except as a section 433 agreement provides; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose.",
+    "description": "411(b): the net earnings of a nonresident alien individual are not self-employment income, except as a section 433 agreement provides; a noncitizen resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. Publication 517 (2025) adds the CNMI, a conflict case cnmi_noncitizen_resident leaves open. An individual whom a social security agreement makes subject only to a foreign country's laws is excluded too (case foreign_agreement_sole_coverage).",
     "parameters": {
       "jurisdictions": [
         "Puerto Rico",
@@ -1400,7 +1653,7 @@
         "Guam",
         "American Samoa"
       ],
-      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, for all self-employment income; other families decide what the net earnings are.",
+      "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
       "code_edition_evidence": [
         {
           "title": 42,
@@ -1502,9 +1755,21 @@
             ],
             "nonresident_alien_individual": [
               "nonresident_alien_status"
+            ],
+            "cnmi_noncitizen_resident": [
+              "citizenship",
+              "country_of_residence",
+              "nonresident_alien_status"
+            ],
+            "foreign_agreement_sole_coverage": [
+              "social_security_agreement_coverage"
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one (NOTE in table.md)",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row starts 1983-04-20 (section 322(c))"
       }
     },
     "worked_examples": [],
@@ -1512,8 +1777,21 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "territorial_resident",
+        "case_id": "foreign_agreement_sole_coverage",
         "precedence": 1,
+        "when": {
+          "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+        },
+        "consequence": "noncovered",
+        "overrides": [
+          "territorial_resident",
+          "cnmi_noncitizen_resident"
+        ],
+        "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws."
+      },
+      {
+        "case_id": "territorial_resident",
+        "precedence": 2,
         "when": {
           "citizenship": "not a citizen of the United States",
           "country_of_residence": "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa"
@@ -1526,7 +1804,7 @@
       },
       {
         "case_id": "section_433_agreement",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "nonresident_alien_status": "an agreement under section 433 makes the net earnings of this nonresident alien self-employment income for the taxable year"
         },
@@ -1537,8 +1815,33 @@
         "description": "411(b), \"except as provided by an agreement under section 433\", inserted by Pub. L. 98-21 section 322(b)(1) for taxable years beginning on or after April 20, 1983 (section 322(c))."
       },
       {
+        "case_id": "cnmi_noncitizen_resident",
+        "precedence": 4,
+        "when": {
+          "citizenship": "not a citizen of the United States",
+          "country_of_residence": "a resident of the Commonwealth of the Northern Mariana Islands",
+          "nonresident_alien_status": "nonresident alien individual for the taxable year"
+        },
+        "consequence": "open",
+        "overrides": [
+          "nonresident_alien_individual"
+        ],
+        "open_reason": "CNMI_SE_NONRESIDENT_ALIEN_UNSETTLED: 411(b)'s final sentence, and 1402(b)'s, keep a noncitizen resident of \"the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa\" from being a nonresident alien and name no other place, while Publication 517 (2025) lists the Commonwealth of the Northern Mariana Islands with them: \"If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States.\" No CE1 capture holds the law Publication 517 rests on for the CNMI or dates it (POMS RS 01901.320 cites Public Law 94-241 section 606, which no capture holds, and dates only the coverage of CNMI government employees), so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_four_territories",
+            "description": "411(b) and 1402(b) as printed govern: a noncitizen resident of the CNMI who is a nonresident alien for the taxable year stays one, so case nonresident_alien_individual excludes the net earnings."
+          },
+          {
+            "name": "publication_517_territorial_resident",
+            "description": "Publication 517 (2025) governs: the individual is treated as a citizen or resident alien for SE tax, so 411(b) does not exclude the net earnings and the other families decide them."
+          }
+        ],
+        "description": "411(b) and 1402(b) name four places; Publication 517 (2025) adds the CNMI. The case requires nonresident-alien status because only then do the two readings differ: a CNMI resident who is a resident alien is covered on both. The text can hold only once a Commonwealth of the Northern Mariana Islands exists, and no capture dates the Commonwealth or its SE rule, so the case carries no date. It ranks below section_433_agreement, which covers the earnings on both readings, and above nonresident_alien_individual, which every such worker also meets."
+      },
+      {
         "case_id": "nonresident_alien_individual",
-        "precedence": 3,
+        "precedence": 5,
         "when": {
           "nonresident_alien_status": "nonresident alien individual for the taxable year"
         },
@@ -1549,7 +1852,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Not a nonresident alien individual for the taxable year, so 411(b) does not exclude the net earnings; apply the other families."
+      "description": "No case holds: the individual is not a nonresident alien individual for the taxable year, and no social security agreement makes him subject only to a foreign country's laws, so this family excludes nothing; apply the other families."
     }
   },
   {
@@ -1634,7 +1937,16 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+      "unread_trigger_facts": {
+        "citizenship": "The row is open (no cases); it refuses whatever this fact says.",
+        "country_of_residence": "The row is open (no cases); it refuses whatever this fact says.",
+        "foreign_earned_income_exclusion": "The row is open (no cases); it refuses whatever this fact says.",
+        "residence_period": "The row is open (no cases); it refuses whatever this fact says.",
+        "taxable_year": "The row is open (no cases); it refuses whatever this fact says.",
+        "taxable_year_start": "The row is open (no cases); it refuses whatever this fact says.",
+        "trade_or_business": "The row is open (no cases); it refuses whatever this fact says."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1753,7 +2065,15 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 92-603 section 124, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+      "unread_trigger_facts": {
+        "citizenship": "Pub. L. 92-603 section 124(a) conditions on residence in the United States during the entire taxable year, not on citizenship.",
+        "country_of_residence": "residence_period carries section 124's only condition; the foreign country plays no role.",
+        "foreign_earned_income_exclusion": "The case covers a whole-year United States resident whether or not 911(a)(2) was claimed (with no exclusion there is nothing to disregard); whether such a person could hold a 911(a)(1) exclusion cannot be checked because no capture holds the 1973-1981 text of section 911 (NOTE N11).",
+        "taxable_year": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
+        "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1850,7 +2170,16 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 98-21 section 323(b)(2)(B), as the 42 U.S.C. 411 notes summarize it, \"is effective with respect to taxable years beginning after Dec. 31, 1981, and before Jan. 1, 1984\"."
+      "effective_basis_description": "Pub. L. 98-21 section 323(b)(2)(B), as the 42 U.S.C. 411 notes summarize it, \"is effective with respect to taxable years beginning after Dec. 31, 1981, and before Jan. 1, 1984\".",
+      "unread_trigger_facts": {
+        "citizenship": "The row is open (no cases); it refuses whatever this fact says.",
+        "country_of_residence": "The row is open (no cases); it refuses whatever this fact says.",
+        "foreign_earned_income_exclusion": "The row is open (no cases); it refuses whatever this fact says.",
+        "residence_period": "The row is open (no cases); it refuses whatever this fact says.",
+        "taxable_year": "The row is open (no cases); it refuses whatever this fact says.",
+        "taxable_year_start": "The row is open (no cases); it refuses whatever this fact says.",
+        "trade_or_business": "The row is open (no cases); it refuses whatever this fact says."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2004,8 +2333,17 @@
           "not_a_coverage_condition": "Names the exclusion the covered residual disregards: 411(a)(10) reads \"The exclusion from gross income provided by section 911(a)(1) ... shall not apply\" with no condition, so every individual's 911(a)(1) amount stays in net earnings."
         },
         "scope": {
-          "not_a_coverage_condition": "Names questions other families decide: citizenship and residence through self_employment_nonresident_alien, which reads 411(b)'s nonresident-alien clause and its section 433 agreement exception (case section_433_agreement), and service coverage through the service families. This row's sources state no other agreement rule."
+          "not_a_coverage_condition": "Names questions other families decide: citizenship and residence through self_employment_nonresident_alien, which reads 411(b)'s nonresident-alien clause and its section 433 agreement exception (case section_433_agreement), and service coverage through the service families. The row's sources state other agreement rules too: 411(c)(1) and (c)(2)(E), for State or local fee-basis positions not covered by a section 418 agreement (se_public_office_1968_2026 case state_local_fee_basis_office, se_ordinary_employee_1968_2026 case fee_basis_state_local_position); and in the Pub. L. 98-21 extract, section 322 (service designated as employment under a section 233 agreement, and the 211(b) and 1402(b) nonresident-alien exceptions), section 325 (218(o)) and section 326 (233(e)(2)). None of them conditions 411(a)(10), which disregards the 911(a)(1) exclusion with no condition."
         }
+      },
+      "unread_trigger_facts": {
+        "citizenship": "411(a)(10) disregards the 911(a)(1) exclusion for every individual, with no citizenship condition; se_nonresident_alien_1983_2026 reads 411(b)'s nonresident-alien clause.",
+        "country_of_residence": "411(a)(10) has no residence condition after 1983.",
+        "foreign_earned_income_exclusion": "The amount 411(a)(10) puts back into net earnings; it is the subject of the rule, not a condition of it.",
+        "residence_period": "The whole-year-resident condition of the 1972 text ended for taxable years beginning after 1983 (Pub. L. 98-21 section 323(b)(2)(A), (c)(2)).",
+        "taxable_year": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
+        "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
+        "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."
       }
     },
     "worked_examples": [],
@@ -2116,7 +2454,13 @@
           ],
           "effective_date_note_support": "not_established_for_Public_Law_100_203_section_9023b"
         }
-      ]
+      ],
+      "unread_trigger_facts": {
+        "country_of_residence": "the row is open (open_reason) and refuses every worker; no case reads any fact",
+        "possession_income_exclusion": "the row is open (open_reason) and refuses every worker; no case reads any fact; former 931/932 operative text is not captured",
+        "residence_period": "the row is open (open_reason) and refuses every worker; no case reads any fact",
+        "taxable_year": "the row is open (open_reason) and refuses every worker; no case reads any fact"
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2191,6 +2535,12 @@
           "location": "411(a)(8)",
           "quote": "(8) The exclusion from gross income provided by section 931 of the Internal Revenue Code of 1986 shall not apply;"
         }
+      },
+      "unread_trigger_facts": {
+        "country_of_residence": "decides only whether 931 excludes the income for income-tax purposes; 411(a)(8) sets that exclusion aside whatever the residence",
+        "possession_income_exclusion": "411(a)(8) says the 931 exclusion 'shall not apply' for any individual; no fact about it changes the consequence (case_free_basis)",
+        "residence_period": "same as country_of_residence: a 931 residence test, set aside by 411(a)(8)",
+        "taxable_year": "labels the taxable year; the row starts at enactment 1987-12-22 (no section 9023 effective date)"
       }
     },
     "worked_examples": [],
@@ -2359,7 +2709,10 @@
           }
         }
       },
-      "de_minimis_rule": "26 U.S.C. 7873(c)(2)(A): a de minimis unrelated part of an amount derived through a qualified Indian entity shares the exemption when all the rest is exempt under 7873(a)(1)."
+      "de_minimis_rule": "26 U.S.C. 7873(c)(2)(A): a de minimis unrelated part of an amount derived through a qualified Indian entity shares the exemption when all the rest is exempt under 7873(a)(1).",
+      "unread_trigger_facts": {
+        "trade_or_business": "The base definition reads it; 7873(a)(1) exempts the income whether or not the fishing is a trade or business, and 411(a)(14) excludes whatever 7873 exempts."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2492,7 +2845,13 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
+      "unread_trigger_facts": {
+        "health_insurance_deduction": "the row is open (open_reason) and refuses every worker; no case reads any fact; the 162(l) deduction this family disallows did not exist before taxable years beginning after 1986-12-31 (Pub. L. 99-514 section 1161(b))",
+        "taxable_year": "the row is open (open_reason) and refuses every worker; no case reads any fact",
+        "taxable_year_start": "the row is open (open_reason) and refuses every worker; no case reads any fact; it is also the axis that ends the row at 1986-12-31",
+        "trade_or_business": "the row is open (open_reason) and refuses every worker; no case reads any fact; the base definition reads it"
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2646,6 +3005,12 @@
         "scope": {
           "not_a_coverage_condition": "Names the one deduction 411(a)(15) disallows (\"The deduction under section 162(l) ... shall not be allowed\"); ordinary attributable trade or business deductions stay under self_employment_base_definition. The remark decides no outcome here."
         }
+      },
+      "unread_trigger_facts": {
+        "health_insurance_deduction": "the deduction 411(a)(15) disallows in every individual's computation ('shall not be allowed'); no fact about it changes this family's consequence (case_free_basis)",
+        "taxable_year": "labels the taxable year; the row's boundary uses taxable_year_start",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it",
+        "trade_or_business": "the base definition reads it; this row's disallowance does not depend on it"
       }
     },
     "worked_examples": [],
@@ -2769,6 +3134,12 @@
         "scope": {
           "not_a_coverage_condition": "Limits the row to the 162(l) deduction, which 411(a)(15) disallows in every individual's computation (the row's case_free_basis); the other attributable trade or business deductions it mentions are computed by the base definition, so the scope names another family's concept and states no condition."
         }
+      },
+      "unread_trigger_facts": {
+        "health_insurance_deduction": "the deduction 411(a)(15) disallows in every individual's computation; no fact about it changes this family's consequence",
+        "taxable_year": "labels the taxable year; the row's boundary uses taxable_year_start",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it",
+        "trade_or_business": "the base definition reads it; this row's disallowance does not depend on it"
       }
     },
     "worked_examples": [],
@@ -2902,6 +3273,12 @@
         "named_concepts": {
           "not_a_coverage_condition": "Names two computations. Coverage net earnings follow 411(a)(15), which Pub. L. 111-240 section 2042 did not amend, and the covered residual applies it. Section 2042(a) changed only 162(l)(4), the Title 26 self-employment tax base, which decides no coverage consequence of this family."
         }
+      },
+      "unread_trigger_facts": {
+        "health_insurance_deduction": "411(a)(15), unamended by Pub. L. 111-240 section 2042, disallows it in coverage net earnings; the 2010 Title 26 allowance changes no coverage consequence",
+        "taxable_year": "labels the taxable year; the row's boundary uses taxable_year_start",
+        "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it (section 2042(b): taxable years beginning after 2009-12-31)",
+        "trade_or_business": "the base definition reads it; this row's disallowance does not depend on it"
       }
     },
     "worked_examples": [],
@@ -2931,6 +3308,34 @@
         "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
         "authority": "42 USC 411, official 1994 United States Code edition",
         "location": "411(f), deceased-partner allocation"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(f), first sentence",
+        "quote": "there shall be included so much of the deceased partner's distributive share of the partnership's ordinary income or loss for the partnership taxable year as is not attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which such partner died."
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(f)(1)",
+        "quote": "the ordinary income or loss of the partnership shall be treated as having been realized or sustained ratably over the partnership taxable year"
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(f)(2)",
+        "quote": "the term \"deceased partner's distributive share\" includes the share of his estate or of any other person succeeding, by reason of his death, to rights with respect to his partnership interest."
+      },
+      {
+        "capture": "uscode_2024_42_411.html",
+        "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
+        "authority": "42 USC 411, official 2024 United States Code section granule",
+        "location": "411(a), concluding partnership-year sentence",
+        "quote": "the distributive share which he is required to include in computing his net earnings from self-employment shall be based upon the ordinary net income or loss of the partnership for any taxable year of the partnership (even though beginning prior to 1951) ending within or with his taxable year."
       }
     ],
     "trigger_facts": [
@@ -2941,7 +3346,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "When death closes the partner taxable year within rather than with the partnership year, include the statutorily allocated ordinary share through the death month.",
+    "description": "When death closes the partner taxable year within rather than with the partnership year, include the statutorily allocated ordinary share through the death month. The share for periods from the first day of the month after the death month is not the deceased partner's net earnings (case share_after_death_month).",
     "parameters": {
       "trigger": "Death ends the partner's individual taxable year within, and not with, the partnership taxable year.",
       "excluded_partnership_period_begin": "First day of the calendar month following the month of death",
@@ -3026,33 +3431,59 @@
           ]
         }
       ],
-      "case_free_basis": {
-        "explanation": "411(f) adds a share to the deceased partner's final-year computation; its condition (a taxable year ending within, not with, the partnership year) decides which share enters that computation, not whether any income is excluded.",
-        "citation": {
-          "capture": "uscode_2024_42_411.html",
-          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb",
-          "authority": "42 USC 411, official 2024 United States Code section granule",
-          "location": "411(f)",
-          "quote": "In computing a partner's net earnings from self-employment for his taxable year which ends as a result of his death (but only if such taxable year ends within, and not with, the taxable year of the partnership), there shall be included"
-        }
-      },
       "condition_cases": {
         "excluded_partnership_period_begin": {
-          "not_a_coverage_condition": "Marks where the share 411(f) adds stops: it includes the share \"as is not attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which such partner died\". The date sizes the amount added to the final-year computation, which the residual already states (\"through the month of death\"); it excludes no income from coverage, as case_free_basis records."
+          "cases": {
+            "share_after_death_month": [
+              "partnership_status"
+            ]
+          }
         },
         "scope": {
           "not_a_coverage_condition": "States what the row does not do: 411(f) adds a share of the partnership's \"ordinary income or loss\" to the final year. Whether a capital item counts is decided by the self_employment_capital_gains_and_nol family (se_capital_gain_nol_1968_2026), not here."
+        },
+        "trigger": {
+          "not_a_coverage_condition": "411(f)'s \"ends within, and not with\" condition chooses whether 411(f) or 411(a)'s partner-year sentence includes the share through the month of death; both include it, and neither includes the share case share_after_death_month describes, so it decides no consequence."
+        },
+        "allocation": {
+          "cases": {
+            "share_after_death_month": [
+              "partnership_status"
+            ]
+          }
+        },
+        "deceased_partner_share_includes": {
+          "cases": {
+            "share_after_death_month": [
+              "partnership_status"
+            ]
+          }
         }
+      },
+      "unread_trigger_facts": {
+        "partner_death_date": "case share_after_death_month states the share's period relative to the month of death in its partnership_status text, so the death date is the input that places the share; 411(f) states no other condition on it",
+        "partnership_taxable_year": "411(f)'s 'ends within, and not with' condition chooses between 411(f) and the ordinary partner-year rule for the share through the death month; both include it and neither includes the later share, so the consequence does not depend on it (parameter trigger)",
+        "taxable_year": "the deceased partner's final taxable year, which 411(f) and the partner-year sentence compare with the partnership year; consequence-neutral (see partnership_taxable_year)"
       }
     },
     "worked_examples": [],
     "rare_exclusion": null,
     "open_reason": null,
-    "cases": [],
+    "cases": [
+      {
+        "case_id": "share_after_death_month",
+        "precedence": 1,
+        "when": {
+          "partnership_status": "in computing the deceased partner's own net earnings: the part of his distributive share of the partnership's ordinary income or loss (including the share of his estate or of any other person succeeding, by reason of his death, to rights with respect to his partnership interest) attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which he died"
+        },
+        "consequence": "noncovered",
+        "description": "411(f) includes in the final-year computation only the share \"as is not attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which such partner died\", and 411(a)'s partner-year sentence only a partnership year \"ending within or with his taxable year\", a year that ends at his death. This part meets neither, whichever rule includes the earlier share, so it is not the deceased partner's net earnings; 411(f)(2) counts the share of his estate or successor as his distributive share."
+      }
+    ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "411(f) adds the deceased partner's allocated share through the month of death to the final-year computation; otherwise the ordinary partnership rules apply."
+      "description": "No case holds: 411(f) adds the deceased partner's allocated share through the month of death to the final-year computation; otherwise the ordinary partnership rules apply."
     }
   }
 ]

@@ -69,7 +69,13 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Remuneration for agricultural labor paid on or before December 31, 1987. Pub. L. 100-203 section 9002(c), as the 42 U.S.C. 409 notes summarize it, makes the section 9002(a) amendment \"applicable with respect to remuneration for agricultural labor paid after Dec. 31, 1987\"."
+      "effective_basis_description": "Remuneration for agricultural labor paid on or before December 31, 1987. Pub. L. 100-203 section 9002(c), as the 42 U.S.C. 409 notes summarize it, makes the section 9002(a) amendment \"applicable with respect to remuneration for agricultural labor paid after Dec. 31, 1987\".",
+      "unread_trigger_facts": {
+        "agricultural_service": "Entry fact of the family (the service is agricultural labor). The row's only exclusion, 409(a)(7)(A) noncash pay, reads the medium of pay, not the kind of farm work, and no seasonal hand-harvest exception exists before 1988: Pub. L. 100-647 section 8017(a) took effect \"as if included in amendments made by section 9002\" of Pub. L. 100-203, which applies to agricultural pay \"paid after Dec. 31, 1987\" (lii_42_409.html notes).",
+        "amount": "The cash amount the $150 one-employer test compares (threshold agricultural_employee_cash, employer_employee_year).",
+        "month_or_exposure": "The calendar-year window and the count of days worked that the 20-day alternative compares (threshold agricultural_time_days, whose eligible concept carries the cash-pay-on-a-time-basis condition).",
+        "reporting_unit": "The employer-employee unit the cash and day tests aggregate over (both thresholds are employer_employee_year); no exclusion depends on it."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -322,6 +328,10 @@
         },
         "operative": "services_performed_date",
         "basis": "CE1's ruling: POMS RS 01402.020 A says certain noncash transfers are wages \"Effective August 7, 1995\" without naming the date that test keys to, so the date cases key to the service date, as the from-1995-08-07 case already did. The family's lookup axis is the payment date, since its 1988 boundary keys on remuneration paid after 1987."
+      },
+      "unread_trigger_facts": {
+        "month_or_exposure": "The calendar-year window over which the $150 and $2,500 tests aggregate (thresholds agricultural_employee_cash and agricultural_employer_payroll).",
+        "reporting_unit": "Selects the aggregation unit: employer_employee_year for the $150 test, employer_year for the $2,500 employer-expenditure test. The seasonal case states its $150 condition in its own amount text, so no case needs the unit."
       }
     },
     "worked_examples": [
@@ -806,6 +816,12 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "agricultural_service": "Read by the agricultural_service family the residual defers to for an employee whose arrangement is not 410(a)(16) sharefarming; 410(a)(16) itself turns only on the arrangement's terms, which agricultural_share_arrangement carries.",
+        "assignment": "The worker's post or job assignment. 410(a)(16) and 20 CFR 404.1017(b) test the terms of the arrangement with the owner or tenant, not the post, so no case reads it.",
+        "employee_self_or_mixed": "Chooses between the residual's two deferrals (agricultural_service for an employee, self_employment_base_definition for a self-employed worker). The covered case does not depend on it: 411(c)(2)(B) treats 410(a)(16) service as a trade or business whether or not the worker would otherwise be an employee.",
+        "reporting_unit": "The unit the self-employment families aggregate (the $400 floor applies to the year's whole net earnings; parameter self_employment_threshold_scope); this row tests no amount."
       }
     },
     "worked_examples": [],
@@ -958,6 +974,11 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "unread_trigger_facts": {
+        "amount": "The cash amount the $50 calendar-quarter test compares (threshold casual_cash_quarterly).",
+        "month_or_exposure": "The calendar quarter casual_cash_quarterly aggregates over.",
+        "reporting_unit": "The employer-employee unit of casual_cash_quarterly (employer_employee_quarter); no exclusion depends on it."
       }
     },
     "worked_examples": [],
@@ -1141,6 +1162,13 @@
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "2004 amendment note, subsec. (f)(5)",
         "quote": "2004\u2014Subsec. (f)(5). Pub. L. 108\u2013203 struck out \u201cor is domestic service in a private home of the employer\u201d before period at end."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+        "location": "Effective Date of 1977 Amendment note (Pub. L. 95-216 section 351(d))",
+        "quote": "shall apply with respect to remuneration paid and services rendered after December 31, 1977"
       }
     ],
     "trigger_facts": [
@@ -1149,17 +1177,35 @@
       "month_or_exposure",
       "reporting_unit",
       "cash_remuneration",
-      "domestic_service"
+      "domestic_service",
+      "services_performed_date"
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Nonbusiness nondomestic service cash remuneration must reach $100 in a calendar year from one employer. Noncash pay is excluded. Domestic service and nonbusiness work on a farm operated for profit use their respective rules.",
+    "description": "Nonbusiness nondomestic service cash remuneration must reach $100 in a calendar year from one employer. Noncash pay is excluded. Domestic service and nonbusiness work on a farm operated for profit use their respective rules. Pay for services rendered before 1978 keeps the $50 calendar-quarter test (Pub. L. 95-216 section 351(d)).",
     "parameters": {
       "threshold_id": "casual_cash_annual",
       "farm_for_profit": "agricultural_service",
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "threshold_id_by_case": {
+        "services_rendered_before_1978": "casual_cash_quarterly"
+      },
+      "condition_cases": {
+        "threshold_id_by_case": {
+          "cases": {
+            "services_rendered_before_1978": [
+              "services_performed_date"
+            ]
+          }
+        }
+      },
+      "unread_trigger_facts": {
+        "amount": "The cash amount the $100 calendar-year test compares (threshold casual_cash_annual), or, for services rendered before 1978, the $50 calendar-quarter test of casual_cash_quarterly that threshold_id_by_case names for case services_rendered_before_1978.",
+        "month_or_exposure": "The calendar year casual_cash_annual aggregates over, or the calendar quarter casual_cash_quarterly aggregates over for services rendered before 1978.",
+        "reporting_unit": "The employer-employee unit of casual_cash_annual (employer_employee_year) or, for services rendered before 1978, of casual_cash_quarterly (employer_employee_quarter)."
       }
     },
     "worked_examples": [],
@@ -1250,7 +1296,7 @@
           "domestic_service": "domestic service in a private home of the employer"
         },
         "consequence": "deferred",
-        "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work. This case ranks above farm_operated_for_profit because 409(a)(6)(B) puts \"domestic service in a private home of the employer (including domestic service on a farm operated for profit)\" under the domestic threshold, and POMS RS 01402.216 A says that from January 1, 1995 such employees \"are no longer treated as agricultural employees\". The domestic rows send farm domestic service paid before 1995 on to agricultural_service.",
+        "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work. This case ranks above farm_operated_for_profit because 409(a)(6)(B) puts \"domestic service in a private home of the employer (including domestic service on a farm operated for profit)\" under the domestic threshold, and POMS RS 01402.216 A says that from January 1, 1995 such employees \"are no longer treated as agricultural employees\". domestic_service_1968 sends farm domestic service paid before 1994 on to agricultural_service; for pay in 1994 domestic_service_1994 refuses, because the 409 notes date the change to remuneration paid after 1993 and POMS to January 1, 1995.",
         "defers_to": [
           "domestic_service"
         ]
@@ -1284,6 +1330,15 @@
         },
         "consequence": "noncovered",
         "description": "409(a)(6)(A) excludes noncash pay for nonbusiness work."
+      },
+      {
+        "case_id": "services_rendered_before_1978",
+        "precedence": 5,
+        "when": {
+          "services_performed_date": "before 1978-01-01"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\", so pay in 1978 or later for nonbusiness work rendered before 1978 keeps the $50 calendar-quarter test: threshold casual_cash_quarterly, as threshold_id_by_case names, not this row's annual amount. It ranks below the domestic, farm, business and noncash cases, which decide such service as casual_service_1968 does."
       }
     ],
     "open_alternatives": [],
@@ -1309,6 +1364,13 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "410(a)(2)"
+      },
+      {
+        "capture": "poms_rs_01901220.html",
+        "sha256": "fd39ebaca7c1ea96ac0fcf46f92142356eed890b931b0c5957621067f05f6470",
+        "authority": "SSA POMS RS 01901.220",
+        "location": "B NOTE, alumni club or chapter",
+        "quote": "However, an alumni club or alumni chapter is not a college club, fraternity, or sorority, within the meaning of the law."
       }
     ],
     "trigger_facts": [
@@ -1319,7 +1381,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Domestic service in a local college club or local fraternity/sorority chapter by a student enrolled and regularly attending classes at a school, college, or university is excluded. This regime began in 1951; commercial-enterprise service does not receive this exclusion.",
+    "description": "Domestic service in a local college club or local fraternity/sorority chapter by a student enrolled and regularly attending classes at a school, college, or university is excluded. This regime began in 1951; commercial-enterprise service does not receive this exclusion. An alumni club or alumni chapter is not a college club, fraternity or sorority (POMS RS 01901.220 B NOTE).",
     "parameters": {
       "college_club_or_local_chapter": true,
       "commercial_enterprise_excluded_from_exception": true,
@@ -1404,6 +1466,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "statutory_student_service": "Read by the student_service rows (410(a)(10), service \"in the employ of\" the school where the student is enrolled, text \"service as a student\"). 410(a)(2) turns on domestic service, enrollment and attendance at any school, college or university, and the club's character, which the domestic_service, enrollment and employer_school_nexus texts carry; it does not ask whether the service is \"service as a student\"."
       }
     },
     "worked_examples": [],
@@ -1500,8 +1565,20 @@
         ]
       },
       {
-        "case_id": "enrolled_student_in_local_club",
+        "case_id": "alumni_club_or_chapter",
         "precedence": 2,
+        "when": {
+          "employer_school_nexus": "an alumni club or alumni chapter"
+        },
+        "consequence": "covered",
+        "description": "POMS RS 01901.220 B NOTE: \"an alumni club or alumni chapter is not a college club, fraternity, or sorority, within the meaning of the law\", so 410(a)(2) does not exclude domestic service for it; apply the other families. Some alumni members in a college club or chapter are \"immaterial\" (same NOTE).",
+        "overrides": [
+          "enrolled_student_in_local_club"
+        ]
+      },
+      {
+        "case_id": "enrolled_student_in_local_club",
+        "precedence": 3,
         "when": {
           "domestic_service": "domestic service in a local college club or a local chapter of a college fraternity or sorority",
           "enrollment": "enrolled and regularly attending classes at a school, college or university",
@@ -1660,7 +1737,40 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "organization_classes": {
+          "cases": {
+            "registered_organization_employer": [
+              "communist_organization_registration"
+            ]
+          }
+        },
+        "organization_status_in_any_part_of_service_year": {
+          "cases": {
+            "registered_organization_employer": [
+              "communist_organization_registration"
+            ]
+          }
+        },
+        "original_service_after": {
+          "not_a_coverage_condition": "Former 410(a)(17)(B) 'after June 30, 1956' precedes the 1968 start."
+        },
+        "repeal_date": {
+          "not_a_coverage_condition": "The row's end: Pub. L. 113-295 s.221(b)(1) makes the strike effective on enactment, 2014-12-19; the row ends 2014-12-18."
+        },
+        "repeal_savings": {
+          "not_a_coverage_condition": "s.221(b)(2) preserves pre-enactment treatment for later tax liability; every service in this row is pre-enactment and the exclusion applies to it directly."
+        },
+        "source_disagreement_resolution": {
+          "not_a_coverage_condition": "Records the CFR wording as a source discrepancy after the repeal; no condition inside 1968-2014-12-18."
+        }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (worker 89: a contractor's client is not his employer).",
+        "historical_fica_treatment": "No captured source conditions former 410(a)(17) on how the payor treated the pay.",
+        "services_performed_date": "Former (17)(B) 'after June 30, 1956' precedes the window; the 2014-12-19 repeal is the row's end; the window carries both."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1868,6 +1978,12 @@
         "specific_exclusion_repealed": {
           "not_a_coverage_condition": "Describes what the covered residual already does: Pub. L. 113-295 section 221(a)(99)(C)(ii) amends section 210(a) \"by striking paragraph (17)\", effective on enactment under section 221(b)(1), so this family excludes no service in a window that starts on that date."
         }
+      },
+      "unread_trigger_facts": {
+        "communist_organization_registration": "410(a)(17) is struck from 2014-12-19 (Pub. L. 113-295 s.221(a)(99)(C)(ii), (b)(1)); no case reads it in this window.",
+        "employee_self_or_mixed": "The family excludes nothing in this window.",
+        "historical_fica_treatment": "The family excludes nothing in this window; no source conditions anything on payor treatment.",
+        "services_performed_date": "The window starts on the enactment date; s.221(b)(2) savings reach only pre-enactment items, which belong to the 1968 row."
       }
     },
     "worked_examples": [],
@@ -2011,7 +2127,12 @@
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
+      "unread_trigger_facts": {
+        "amount": "The cash amount the $50 calendar-quarter test compares (threshold domestic_cash_quarterly).",
+        "month_or_exposure": "The calendar quarter domestic_cash_quarterly aggregates over.",
+        "reporting_unit": "The employer-employee-quarter unit (parameter aggregate_key; POMS RS 01402.215 B: \"Do not lump cash payments from different employers\")."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2068,6 +2189,41 @@
         "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
         "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "409(a)(6)(B); 1994 amendment and effective date notes"
+      },
+      {
+        "capture": "uscode_1994_42_409.html",
+        "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27",
+        "authority": "42 USC 409, official 1994 United States Code edition",
+        "location": "409(a)(6)(B) as amended by Pub. L. 103-387",
+        "quote": "(B) Cash remuneration paid by an employer in any calendar year to an employee for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+        "location": "Effective Date of 1994 Amendments note",
+        "quote": "Amendment by Pub. L. 103\u2013387 applicable to remuneration paid after Dec. 31, 1993"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+        "location": "1994 amendment note, former 409(a)(6)(B)",
+        "quote": "does not include service described in section 410(f)(5)"
+      },
+      {
+        "capture": "poms_rs_01402216.html",
+        "sha256": "e535abe2282e2e7f6eab472eab2da2df380b201aaaf44454665e23cfd5ceca05",
+        "authority": "SSA POMS RS 01402.216",
+        "location": "A, farm domestic employees from 1995",
+        "quote": "Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees."
+      },
+      {
+        "capture": "poms_rs_01901200.html",
+        "sha256": "afec731c79bccd9e69440d863c6b76c3079b79eee8da1d58f2a647daa5cc49f5",
+        "authority": "SSA POMS RS 01901.200",
+        "location": "D.1 NOTE",
+        "quote": "NOTE: Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees. Instead they are subject to the new domestic threshold. (This is based on the enactment of P.L. 103-387 effective January 1, 1995 and reinforced with P.L. 108-203)."
       }
     ],
     "trigger_facts": [
@@ -2079,7 +2235,7 @@
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Annual $1,000 employer-employee domestic cash threshold replaces $50 per quarter. For 1994 only, employee earnings credit is retained for cash of $50 or more but less than $1,000 under the transitional provision, although FICA is not due. The benefit-credit channel and taxable channel must retain this distinction.",
+    "description": "Annual $1,000 employer-employee domestic cash threshold replaces $50 per quarter. For 1994 only, employee earnings credit is retained for cash of $50 or more but less than $1,000 under the transitional provision, although FICA is not due. The benefit-credit channel and taxable channel must retain this distinction. Whether farm domestic pay in 1994 takes the domestic or the agricultural rules is an open question.",
     "parameters": {
       "threshold_id": "domestic_cash_annual",
       "tax_threshold": 1000,
@@ -2089,13 +2245,26 @@
         "quarter_of_coverage_threshold": 620,
         "quarter_of_coverage_if_620_to_999": 1
       },
-      "domestic_farm_service": "apply_agricultural_rule_through_1994",
+      "domestic_farm_service": "Unsettled for pay in 1994: the 409 notes apply Pub. L. 103-387's rewrite of 409(a)(6)(B), which includes domestic service described in 410(f)(5), to remuneration paid after Dec. 31, 1993, while POMS RS 01402.216 A and RS 01901.200 D.1 keep domestic employees on farms operated for profit agricultural until January 1, 1995. Case domestic_farm_service_before_1995 refuses (FARM_DOMESTIC_1994_DATE_UNSETTLED).",
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\"."
+      "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
+      "condition_cases": {
+        "domestic_farm_service": {
+          "cases": {
+            "domestic_farm_service_before_1995": [
+              "domestic_service"
+            ]
+          }
+        }
+      },
+      "unread_trigger_facts": {
+        "month_or_exposure": "The calendar year domestic_cash_annual aggregates over (the transition case states its own 1994 window).",
+        "reporting_unit": "The employer-employee-year unit of domestic_cash_annual; the transition case states \"from one employer\" in its own text."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2113,10 +2282,18 @@
         "when": {
           "domestic_service": "domestic service on a farm operated for profit"
         },
-        "consequence": "deferred",
-        "description": "Until 1995 domestic employees on farms operated for profit were agricultural employees (POMS RS 01402.216 A).",
-        "defers_to": [
-          "agricultural_service"
+        "consequence": "open",
+        "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes.",
+        "open_reason": "FARM_DOMESTIC_1994_DATE_UNSETTLED: Pub. L. 103-387 rewrote 409(a)(6)(B) to reach cash pay \"for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)\" (42 U.S.C. 409, 1994 edition), and the 409 notes make the amendment \"applicable to remuneration paid after Dec. 31, 1993\". POMS RS 01402.216 A and RS 01901.200 D.1 say instead that \"Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees\", RS 01901.200 citing \"the enactment of P.L. 103-387 effective January 1, 1995\". No CE1 capture holds section 2(a)(3) of the Act, so the rule for farm domestic pay in 1994 is unsettled and the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_note_reading",
+            "description": "The 409 notes date the whole 1994 rewrite of 409(a)(6)(B), farm domestic parenthetical included, to remuneration paid after December 31, 1993: farm domestic pay in 1994 is domestic service in a private home of the employer, and this row's other cases and residual decide it as they decide other domestic pay in 1994."
+          },
+          {
+            "name": "poms_reading",
+            "description": "POMS RS 01402.216 A and RS 01901.200 D.1 keep domestic employees on farms operated for profit agricultural employees until January 1, 1995, as former 409(a)(6)(B) did (\"does not include service described in section 410(f)(5)\"): 1994 pay defers to agricultural_service, as domestic_service_1968 sends earlier pay."
+          }
         ]
       },
       {
@@ -2185,6 +2362,13 @@
         "sha256": "d52a3a6b5a481a13668586196522e9113f0252fabc61df1d003c95b128d4bd38",
         "authority": "IRS Publication 926 (2026)",
         "location": "Social Security and Medicare Taxes; Not withholding the employee share; employer pays taxes on explicit 2026 $100 weekly cash pay example"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(21)(A)",
+        "quote": "performed in any year by an individual under the age of 18 during any portion of such year"
       }
     ],
     "trigger_facts": [
@@ -2201,7 +2385,7 @@
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Cash wages from one employer in a calendar year must reach the annual domestic threshold; all cash wages then count. Noncash remuneration remains excluded. Domestic work on a farm operated for profit uses this domestic regime from 1995. A worker under age 18 during any part of the year is excluded if domestic service is not the principal occupation; family exclusions apply independently.",
+    "description": "Cash wages from one employer in a calendar year must reach the annual domestic threshold; all cash wages then count. Noncash remuneration remains excluded. Domestic work on a farm operated for profit uses this domestic regime from 1995. A worker under age 18 during any part of the calendar year in which the service is performed is excluded if domestic service is not the principal occupation; family exclusions apply independently.",
     "parameters": {
       "threshold_id": "domestic_cash_annual",
       "domestic_farm_service": "domestic_service",
@@ -2279,6 +2463,14 @@
           "quote": "Amendment by Pub. L. 103\u2013387 applicable to services performed after Dec. 31, 1994"
         },
         "axis_exception": "Pub. L. 103-387 dates 410(a)(21) by services performed after Dec. 31, 1994, while its threshold change, which sets this family's 1994 boundary, applies to remuneration paid after Dec. 31, 1993, so the family keeps the payment-date axis. Case minor_not_principal_occupation carries the service date, so a minor's domestic service performed in 1994 and paid in 1995 takes the residual."
+      },
+      "unread_trigger_facts": {
+        "amount": "The cash amount the annual domestic threshold compares (domestic_cash_annual; 409(a)(6)(B)).",
+        "domestic_service": "Entry fact of the family. From 1995 no case needs it: farm domestic service stays in this regime (parameter domestic_farm_service; POMS RS 01402.216 A), and 410(a)(21) is limited to domestic service in a private home of the employer, which is this family's whole scope.",
+        "enrollment": "Evidence for the occupation text, not a separate condition: IRS Pub. 926 (2026) says \"If the employee is a student, providing household services isn't considered to be their principal occupation\", so an enrolled minor states \"domestic service is not the individual's principal occupation\". NOTE: no other captured edition (Pub. 926 2008-2025 extracts, POMS RS 01402.216 B, RS 01901.200 B) states the student rule, and the case text does not mention it.",
+        "family_service": "Family exclusions are decided independently in the family_service rows (row description: \"family exclusions apply independently\"); no domestic exclusion depends on family relationship.",
+        "month_or_exposure": "The calendar year domestic_cash_annual aggregates over; the minor case reads the year of performance through its own age text.",
+        "reporting_unit": "The employer-employee-year unit of domestic_cash_annual."
       }
     },
     "worked_examples": [
@@ -2361,12 +2553,12 @@
         "case_id": "minor_not_principal_occupation",
         "precedence": 2,
         "when": {
-          "age": "under 18 during any portion of the year",
+          "age": "under 18 during any portion of the calendar year in which the service is performed",
           "occupation": "domestic service is not the individual's principal occupation",
           "services_performed_date": "on or after 1995-01-01"
         },
         "consequence": "noncovered",
-        "description": "410(a)(21); POMS RS 01402.216 B, for service after 1994."
+        "description": "410(a)(21)(A): service \"performed in any year by an individual under the age of 18 during any portion of such year\", the year of performance; POMS RS 01402.216 B, for service after 1994."
       }
     ],
     "open_alternatives": [],
@@ -2404,6 +2596,20 @@
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
         "authority": "42 USC 418 current code and amendment notes",
         "location": "418(c)(8)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(h), State",
+        "quote": "(h) State The term \u201c State \u201d includes the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(1), State",
+        "quote": "(b) Definitions For the purposes of this section\u2014 (1) The term \u201c State \u201d does not include the District of Columbia, Guam, or American Samoa."
       }
     ],
     "trigger_facts": [
@@ -2509,9 +2715,16 @@
           }
         }
       },
-      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families.",
+      "scope": "Service as an election official or election worker (418(c)(8)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_statutory_threshold_paid_after_1977, agreement_with_lower_threshold and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; outside_agreement applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
       "threshold_id_by_case": {
         "agreement_with_statutory_threshold_paid_after_1977": "election_remuneration_annual"
+      },
+      "unread_trigger_facts": {
+        "amount": "The remuneration the row's threshold compares (418(c)(8): 'remuneration paid in a calendar quarter/year'); covered_above_threshold reads it, no case does.",
+        "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
+        "public_retirement_system_participation": "Before 410(a)(7)(F) (service after 1991-07-01) membership does not change the 410(a)(7) exclusion; it matters only to how a 218 coverage group forms (418(d) referendum, divided systems), which section_218_position states.",
+        "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
+        "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
       }
     },
     "worked_examples": [],
@@ -2600,7 +2813,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker",
           "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
         },
@@ -2612,7 +2825,7 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
@@ -2623,7 +2836,7 @@
         "precedence": 3,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
@@ -2643,7 +2856,7 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
@@ -2685,6 +2898,69 @@
         "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
         "authority": "42 USC 418 current code and amendment notes",
         "location": "418(c)(8)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(h), State",
+        "quote": "(h) State The term \u201c State \u201d includes the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(1), State",
+        "quote": "(b) Definitions For the purposes of this section\u2014 (1) The term \u201c State \u201d does not include the District of Columbia, Guam, or American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(1), optional Medicare coverage of current employees",
+        "quote": "(n) Optional medicare coverage of current employees (1) The Commissioner of Social Security shall, at the request of any State , enter into or modify an agreement with such State under this section for the purpose of extending the provisions of subchapter XVIII, and sections 426 and 426\u20131 of this title, to services performed by employees of such State or any political subdivision thereof who are described in paragraph (2)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(2)(B)",
+        "quote": "(B) who are not otherwise covered under the State \u2019s agreement under this section"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(3)",
+        "quote": "(3) For purposes of sections 426 and 426\u20131 of this title, services covered under an agreement pursuant to this subsection shall be treated as \u201c medicare qualified government employment\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1986 amendment note, subsec. (v)",
+        "quote": "Subsec. (v). Pub. L. 99\u2013272, \u00a7 13205(c) , added subsec. (v)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "Pub. L. 99-272 section 13205(d)(3) effective-date note",
+        "quote": "Pub. L. 99\u2013272, title XIII, \u00a7 13205(d)(3) , Apr. 7, 1986 , 100 Stat. 318 , provided that: \u201cThe amendment made by subsection (c) [amending this section] shall apply to services performed after March 31, 1986 .\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1987 amendment note, subsec. (n)",
+        "quote": "1987\u2014Subsec. (n). Pub. L. 100\u2013203, \u00a7 9023(c) , redesignated subsec. (v) as (n)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(p)(1), Medicare qualified government employment",
+        "quote": "(p) Medicare qualified government employment (1) For purposes of sections 426 and 426\u20131 of this title, the term \u201c medicare qualified government employment\u201d means any service which would constitute \u201cemployment\u201d as defined in subsection (a) of this section but for the application of the provisions of\u2014 (A) subsection (a)(5), or (B) subsection (a)(7)"
       }
     ],
     "trigger_facts": [
@@ -2788,7 +3064,14 @@
           }
         }
       },
-      "scope": "Service as an election official or election worker (418(c)(8)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
+      "scope": "Service as an election official or election worker (418(c)(8)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; outside_agreement applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
+      "unread_trigger_facts": {
+        "amount": "The remuneration the row's threshold compares (418(c)(8): 'remuneration paid in a calendar quarter/year'); covered_above_threshold reads it, no case does.",
+        "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
+        "public_retirement_system_participation": "Before 410(a)(7)(F) (service after 1991-07-01) membership does not change the 410(a)(7) exclusion; it matters only to how a 218 coverage group forms (418(d) referendum, divided systems), which section_218_position states. Mandatory coverage begins only with the 1991-07-02 row (parameters.mandatory_nonmember_coverage false).",
+        "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
+        "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2875,43 +3158,43 @@
         "case_id": "agreement_with_lower_threshold",
         "precedence": 1,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C)."
+        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C). A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_with_statutory_threshold",
         "precedence": 2,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "418(c)(8); the referenced statutory threshold applies."
+        "description": "418(c)(8); the referenced statutory threshold applies. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_without_election_exclusion",
         "precedence": 3,
         "when": {
-          "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement with no election worker exclusion; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
         },
         "consequence": "covered",
-        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C)."
+        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C). A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "outside_agreement",
         "precedence": 4,
         "when": {
-          "section_218_position": "not covered",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02."
+        "description": "The state and local exclusion in 410(a)(7) applies; mandatory nonmember coverage begins only 1991-07-02. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI."
       }
     ],
     "open_alternatives": [],
@@ -2998,6 +3281,90 @@
         "authority": "POMS SL 50001.501 (2020-01-29)",
         "location": "B, membership in a system that is not qualified",
         "quote": "An employee can be a member of a retirement system that does not constitute a qualified retirement system."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(h), State",
+        "quote": "(h) State The term \u201c State \u201d includes the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(1), State",
+        "quote": "(b) Definitions For the purposes of this section\u2014 (1) The term \u201c State \u201d does not include the District of Columbia, Guam, or American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(1), optional Medicare coverage of current employees",
+        "quote": "(n) Optional medicare coverage of current employees (1) The Commissioner of Social Security shall, at the request of any State , enter into or modify an agreement with such State under this section for the purpose of extending the provisions of subchapter XVIII, and sections 426 and 426\u20131 of this title, to services performed by employees of such State or any political subdivision thereof who are described in paragraph (2)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(2)(B)",
+        "quote": "(B) who are not otherwise covered under the State \u2019s agreement under this section"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(3)",
+        "quote": "(3) For purposes of sections 426 and 426\u20131 of this title, services covered under an agreement pursuant to this subsection shall be treated as \u201c medicare qualified government employment\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1986 amendment note, subsec. (v)",
+        "quote": "Subsec. (v). Pub. L. 99\u2013272, \u00a7 13205(c) , added subsec. (v)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "Pub. L. 99-272 section 13205(d)(3) effective-date note",
+        "quote": "Pub. L. 99\u2013272, title XIII, \u00a7 13205(d)(3) , Apr. 7, 1986 , 100 Stat. 318 , provided that: \u201cThe amendment made by subsection (c) [amending this section] shall apply to services performed after March 31, 1986 .\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1987 amendment note, subsec. (n)",
+        "quote": "1987\u2014Subsec. (n). Pub. L. 100\u2013203, \u00a7 9023(c) , redesignated subsec. (v) as (n)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(p)(1), Medicare qualified government employment",
+        "quote": "(p) Medicare qualified government employment (1) For purposes of sections 426 and 426\u20131 of this title, the term \u201c medicare qualified government employment\u201d means any service which would constitute \u201cemployment\u201d as defined in subsection (a) of this section but for the application of the provisions of\u2014 (A) subsection (a)(5), or (B) subsection (a)(7)"
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.3, Medicare HI-only agreements in effect on or before July 1, 1991",
+        "quote": "Medicare HI-only coverage obtained under a Section 218 Agreement on or before July 1, 1991, continues after July 1, 1991."
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.4, Medicare HI-only agreements executed after July 1, 1991",
+        "quote": "However, services performed after July 1, 1991 by employees who are not members of a qualified retirement system are covered mandatorily for Social Security."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(7)(F), member of a retirement system of such State, political subdivision or instrumentality",
+        "quote": "(F) service in the employ of a State (other than the District of Columbia, Guam, or American Samoa), of any political subdivision thereof, or of any instrumentality of any one or more of the foregoing which is wholly owned thereby, by an individual who is not a member of a retirement system of such State, political subdivision , or instrumentality"
       }
     ],
     "trigger_facts": [
@@ -3121,7 +3488,13 @@
           }
         }
       },
-      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
+      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold_member and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; agreement_with_lower_threshold_nonmember takes 418(b)(1) for the agreement and 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\", for mandatory coverage; outside_agreement_nonmember applies 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\"; outside_agreement_member applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
+      "unread_trigger_facts": {
+        "amount": "The remuneration the row's threshold compares (418(c)(8): 'remuneration paid in a calendar quarter/year'); covered_above_threshold reads it, no case does.",
+        "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
+        "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
+        "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3208,69 +3581,69 @@
         "case_id": "agreement_with_lower_threshold_nonmember",
         "precedence": 1,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "public_retirement_system_participation": "not a member of any retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
+        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_with_lower_threshold_member",
         "precedence": 2,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "public_retirement_system_participation": "member of a retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
+        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_with_statutory_threshold",
         "precedence": 3,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "418(c)(8); the referenced statutory threshold applies."
+        "description": "418(c)(8); the referenced statutory threshold applies. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_without_election_exclusion",
         "precedence": 4,
         "when": {
-          "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement with no election worker exclusion; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
         },
         "consequence": "covered",
-        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C)."
+        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C). A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "outside_agreement_nonmember",
         "precedence": 5,
         "when": {
-          "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "public_retirement_system_participation": "not a member of any retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
-          "section_218_position": "not covered",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "public_retirement_system_participation": "member of a retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI."
       }
     ],
     "open_alternatives": [],
@@ -3357,6 +3730,90 @@
         "authority": "POMS SL 50001.501 (2020-01-29)",
         "location": "B, membership in a system that is not qualified",
         "quote": "An employee can be a member of a retirement system that does not constitute a qualified retirement system."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(h), State",
+        "quote": "(h) State The term \u201c State \u201d includes the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(b)(1), State",
+        "quote": "(b) Definitions For the purposes of this section\u2014 (1) The term \u201c State \u201d does not include the District of Columbia, Guam, or American Samoa."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(1), optional Medicare coverage of current employees",
+        "quote": "(n) Optional medicare coverage of current employees (1) The Commissioner of Social Security shall, at the request of any State , enter into or modify an agreement with such State under this section for the purpose of extending the provisions of subchapter XVIII, and sections 426 and 426\u20131 of this title, to services performed by employees of such State or any political subdivision thereof who are described in paragraph (2)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(2)(B)",
+        "quote": "(B) who are not otherwise covered under the State \u2019s agreement under this section"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "418(n)(3)",
+        "quote": "(3) For purposes of sections 426 and 426\u20131 of this title, services covered under an agreement pursuant to this subsection shall be treated as \u201c medicare qualified government employment\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1986 amendment note, subsec. (v)",
+        "quote": "Subsec. (v). Pub. L. 99\u2013272, \u00a7 13205(c) , added subsec. (v)."
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "Pub. L. 99-272 section 13205(d)(3) effective-date note",
+        "quote": "Pub. L. 99\u2013272, title XIII, \u00a7 13205(d)(3) , Apr. 7, 1986 , 100 Stat. 318 , provided that: \u201cThe amendment made by subsection (c) [amending this section] shall apply to services performed after March 31, 1986 .\u201d"
+      },
+      {
+        "capture": "lii_42_418.html",
+        "sha256": "9f8e3440e66c41659056c6585d59bc8992e85a26c05f32c64e81484a5ce241b0",
+        "authority": "42 USC 418 current code and amendment notes",
+        "location": "1987 amendment note, subsec. (n)",
+        "quote": "1987\u2014Subsec. (n). Pub. L. 100\u2013203, \u00a7 9023(c) , redesignated subsec. (v) as (n)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(p)(1), Medicare qualified government employment",
+        "quote": "(p) Medicare qualified government employment (1) For purposes of sections 426 and 426\u20131 of this title, the term \u201c medicare qualified government employment\u201d means any service which would constitute \u201cemployment\u201d as defined in subsection (a) of this section but for the application of the provisions of\u2014 (A) subsection (a)(5), or (B) subsection (a)(7)"
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.3, Medicare HI-only agreements in effect on or before July 1, 1991",
+        "quote": "Medicare HI-only coverage obtained under a Section 218 Agreement on or before July 1, 1991, continues after July 1, 1991."
+      },
+      {
+        "capture": "poms_sl_50001570.html",
+        "sha256": "5f803c6f2372f1fcb04bc5db9d2d93683004ae8429c19877a7bff797ed5767f8",
+        "authority": "POMS SL 50001.570 (2015-12-17)",
+        "location": "B.4, Medicare HI-only agreements executed after July 1, 1991",
+        "quote": "However, services performed after July 1, 1991 by employees who are not members of a qualified retirement system are covered mandatorily for Social Security."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(7)(F), member of a retirement system of such State, political subdivision or instrumentality",
+        "quote": "(F) service in the employ of a State (other than the District of Columbia, Guam, or American Samoa), of any political subdivision thereof, or of any instrumentality of any one or more of the foregoing which is wholly owned thereby, by an individual who is not a member of a retirement system of such State, political subdivision , or instrumentality"
       }
     ],
     "trigger_facts": [
@@ -3470,7 +3927,13 @@
           }
         }
       },
-      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) for a State other than the District of Columbia, Guam and American Samoa (418(b)(1); 410(a)(7)(F)), a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)); other service, and special territorial histories, fall to other families."
+      "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold_member and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; agreement_with_lower_threshold_nonmember takes 418(b)(1) for the agreement and 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\", for mandatory coverage; outside_agreement_nonmember applies 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\"; outside_agreement_member applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
+      "unread_trigger_facts": {
+        "amount": "The remuneration the row's threshold compares (418(c)(8): 'remuneration paid in a calendar quarter/year'); covered_above_threshold reads it, no case does.",
+        "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
+        "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
+        "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3557,69 +4020,69 @@
         "case_id": "agreement_with_lower_threshold_nonmember",
         "precedence": 1,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "public_retirement_system_participation": "not a member of any retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
+        "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_with_lower_threshold_member",
         "precedence": 2,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "public_retirement_system_participation": "member of a retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage."
+        "description": "The agreement's own amount is the threshold and a required fact (POMS SL 30001.357 C); a member is outside mandatory coverage. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_with_statutory_threshold",
         "precedence": 3,
         "when": {
-          "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than the statutory amount",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "418(c)(8); the referenced statutory threshold applies."
+        "description": "418(c)(8); the referenced statutory threshold applies. A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "agreement_without_election_exclusion",
         "precedence": 4,
         "when": {
-          "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+          "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement with no election worker exclusion; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
         },
         "consequence": "covered",
-        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C)."
+        "description": "Taxes apply from the first dollar (POMS SL 30001.357 C). A Medicare HI-only modification under 418(v) (418(n) from Pub. L. 100-203; services after March 31, 1986) does not count: it extends only title XVIII and sections 426 and 426-1 (418(n)(1)), and 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding the service from OASDI."
       },
       {
         "case_id": "outside_agreement_nonmember",
         "precedence": 5,
         "when": {
-          "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "public_retirement_system_participation": "not a member of any retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B)."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
-          "section_218_position": "not covered",
-          "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
-          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "public_retirement_system_participation": "member of a retirement system of the employing State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+          "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI."
       }
     ],
     "open_alternatives": [],
@@ -3666,6 +4129,20 @@
         "authority": "SSA POMS RS 01901.250",
         "location": "D, degree of family relationship",
         "quote": "Family employment rules apply to: \u2022 foster or step-relationships (step-relationships are deemed to continue after the death of the natural parent); and \u2022 natural or adoptive relationships."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(3)(B)(i), spouse's condition",
+        "quote": "has a spouse living in the home who has a mental or physical condition which results in such spouse"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(3)(B)(iii), child's condition",
+        "quote": "has not attained age 18 or has a mental or physical condition which requires the personal care and supervision of an adult for at least 4 continuous weeks in the calendar quarter in which the service is rendered"
       }
     ],
     "trigger_facts": [
@@ -3763,6 +4240,11 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "No 410(a)(3) exclusion depends on an amount; the amount reaches the other families' thresholds and the wage base.",
+        "month_or_exposure": "No 410(a)(3) exclusion depends on the period; the parent domestic-care exception states its own 4-continuous-weeks-in-the-quarter test in its family_service text.",
+        "reporting_unit": "No 410(a)(3) exclusion depends on the aggregation unit; partnership and corporation employers are carried by the family_service and incorporation texts."
       }
     },
     "worked_examples": [],
@@ -3789,11 +4271,11 @@
         "case_id": "parent_domestic_care_exception",
         "precedence": 2,
         "when": {
-          "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+          "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse living in the home who, because of a mental or physical condition, is unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or, because of a mental or physical condition, needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
           "services_performed_date": "on or after 1968-01-01"
         },
         "consequence": "covered",
-        "description": "410(a)(3)(B)(i)-(iii); POMS RS 01901.250 C.1.b. Pub. L. 90-248 section 123(c) applies the exception \"with respect to services performed after December 31, 1967\", and POMS C.1 NOTE keeps earlier service excluded: \"For the years 1961 through 1967 inclusive, domestic service by a parent in a private home of a son or daughter is excluded.\" The family keys on the payment date, so the case carries the service date: care given in 1967 and paid in 1968 stays excluded.",
+        "description": "410(a)(3)(B)(i)-(iii); POMS RS 01901.250 C.1.b. Pub. L. 90-248 section 123(c) applies the exception \"with respect to services performed after December 31, 1967\", and POMS C.1 NOTE keeps earlier service excluded: \"For the years 1961 through 1967 inclusive, domestic service by a parent in a private home of a son or daughter is excluded.\" The family keys on the payment date, so the case carries the service date: care given in 1967 and paid in 1968 stays excluded. The spouse's incapacity and an older child's need for care must come from a mental or physical condition (410(a)(3)(B)(i), (iii); POMS RS 01901.250 C.1.b).",
         "overrides": [
           "parent_for_child_nonbusiness_or_domestic"
         ]
@@ -3882,6 +4364,20 @@
         "authority": "SSA POMS RS 01901.250",
         "location": "D, degree of family relationship",
         "quote": "Family employment rules apply to: \u2022 foster or step-relationships (step-relationships are deemed to continue after the death of the natural parent); and \u2022 natural or adoptive relationships."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(3)(B)(i), spouse's condition",
+        "quote": "has a spouse living in the home who has a mental or physical condition which results in such spouse"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a)(3)(B)(iii), child's condition",
+        "quote": "has not attained age 18 or has a mental or physical condition which requires the personal care and supervision of an adult for at least 4 continuous weeks in the calendar quarter in which the service is rendered"
       }
     ],
     "trigger_facts": [
@@ -4032,6 +4528,11 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "No 410(a)(3) exclusion depends on an amount; the amount reaches the other families' thresholds and the wage base.",
+        "month_or_exposure": "No 410(a)(3) exclusion depends on the period; the parent domestic-care exception states its own 4-continuous-weeks-in-the-quarter test in its family_service text.",
+        "reporting_unit": "No 410(a)(3) exclusion depends on the aggregation unit; partnership and corporation employers are carried by the family_service and incorporation texts."
       }
     },
     "worked_examples": [
@@ -4082,10 +4583,10 @@
         "case_id": "parent_domestic_care_exception",
         "precedence": 2,
         "when": {
-          "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms"
+          "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse living in the home who, because of a mental or physical condition, is unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or, because of a mental or physical condition, needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms"
         },
         "consequence": "covered",
-        "description": "410(a)(3)(B)(i)-(iii), from 1968; POMS RS 01901.250.",
+        "description": "410(a)(3)(B)(i)-(iii), from 1968; POMS RS 01901.250. The spouse's incapacity and an older child's need for care must come from a mental or physical condition (410(a)(3)(B)(i), (iii); POMS RS 01901.250 C.1.b).",
         "overrides": [
           "parent_for_child_nonbusiness_or_domestic"
         ]
@@ -4421,7 +4922,20 @@
       },
       "family_service_priority": "Historical effective date remains unverified; neither open alternative is selected.",
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994, and (ii) after December 31, 1984, and before January 1, 1995, unless the payor treated such remuneration (when paid) as being subject to tax under chapter 21 of the Internal Revenue Code of 1986.\" Clause (ii) reaches this window's payments from 1985 through 1988 (historical_cash_and_crew_rules.1985_through_1988); clause (i) reaches none of them.",
+      "unread_trigger_facts": {
+        "age": "the row is open with no cases and refuses every worker; the 410(a)(3)(A) under-18 test is the subject of the open family-service question.",
+        "amount": "the row is open with no cases and refuses every worker; for 1985-1988 it would be compared with the $100 per-trip cap (threshold fishing_additional_cash_per_trip) once closed.",
+        "employee_self_or_mixed": "the row is open with no cases and refuses every worker; 410(a)(20) turns on the share arrangement, not on employee status.",
+        "family_service": "the row is open with no cases and refuses every worker; it is the open question itself (Pub. L. 99-272 s.13303(c)(2) as corrected; no captured effective date).",
+        "fishing_additional_cash_conditions": "the row is open with no cases and refuses every worker; in the closed rows the arrangement text carries the cash conditions.",
+        "fishing_catch_share_arrangement": "the row is open with no cases and refuses every worker; a closed case would read the share, crew and cash conditions here.",
+        "fishing_crew_size": "the row is open with no cases and refuses every worker; in the closed rows the arrangement text carries the crew test.",
+        "historical_fica_treatment": "the row is open with no cases and refuses every worker; it would decide Pub. L. 94-455 s.1207(f)(4)(B) (shares received 1955 to 1976-10-04) and Pub. L. 104-188 s.1116(a)(3)(A)(ii) (pay 1985-1988).",
+        "occupation": "the row is open with no cases and refuses every worker; the arrangement, not an occupation code, is the statutory condition.",
+        "reporting_unit": "the row is open with no cases and refuses every worker; reporting (6050A) is not a coverage condition.",
+        "services_performed_date": "the row is open with no cases and refuses every worker; the row's axis is the payment date; s.1207(f)(4)(A)'s 'services performed after December 31, 1954' precedes the window."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4631,6 +5145,16 @@
           "additional_cash_conditions": [
             "traditional_additional_duties"
           ]
+        },
+        "irc_and_cfr_cash_only_bar": {
+          "crew": "fewer_than_10",
+          "averaging_period": "preceding_4_calendar_quarters",
+          "cash_limit_per_trip": 100,
+          "additional_cash_conditions": [
+            "minimum_catch_contingency",
+            "traditional_additional_duties"
+          ],
+          "barred_additional_pay": "cash_only"
         }
       },
       "additional_named_source_options": {
@@ -4857,7 +5381,7 @@
       ],
       "historical_default_cash_rule": "No cash remuneration apart from the catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies.",
       "source_disagreement_resolution": {
-        "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition, dated only from 1995) is recorded as poms_crew_test and is not operative.",
+        "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition; \"effective with remuneration paid after 1994\", and by its NOTE also for 1985 through 1994 \"unless the remuneration was treated by the payor as wages when paid\") is recorded as poms_crew_test and is not operative. For pay the 1996 amendments reach, 26 U.S.C. 3121(b)(20)(A) bars only \"any cash remuneration\" beyond what it allows, and 20 CFR 404.1031(a)(1) only \"any cash pay\", where 410(a)(20)(A) bars \"any additional compensation\"; that reading is recorded as irc_and_cfr_cash_only_bar (the Code's crew and cash terms; the CFR's other, unamended terms stay in unamended_cfr_cash_prohibition) and is not operative, because a crew member whose only extra pay is non-cash is covered on either reading: in employment under 410(a), or in self-employment under 20 CFR 404.1031(b).",
         "operative_current_text": "conditional_1996_clarification"
       },
       "condition_cases": {
@@ -4901,10 +5425,44 @@
               "fishing_catch_share_arrangement"
             ]
           }
+        },
+        "historical_default_cash_rule": {
+          "cases": {
+            "catch_share_payor_treated_as_fica": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ],
+            "catch_share_1996_clarification": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "source_disagreement_resolution": {
+          "cases": {
+            "catch_share_1996_clarification": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ],
+            "catch_share_payor_treated_as_fica": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ]
+          }
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994, and (ii) after December 31, 1984, and before January 1, 1995, unless the payor treated such remuneration (when paid) as being subject to tax under chapter 21 of the Internal Revenue Code of 1986.\" Clause (ii) reaches this row's payments; historical_fica_treatment carries its payor proviso in cases catch_share_1996_clarification and catch_share_payor_treated_as_fica.",
+      "unread_trigger_facts": {
+        "age": "The under-18 test of 410(a)(3)(A) is carried inside the family_service text of child_under_18_for_parent.",
+        "amount": "The per-trip additional cash compared with threshold fishing_additional_cash_per_trip; the arrangement text of catch_share_1996_clarification states 'cash of at most $100 per trip'.",
+        "employee_self_or_mixed": "410(a)(20) excludes service under the share arrangement whatever the common-law status; the cases read the arrangement.",
+        "fishing_additional_cash_conditions": "Carried by the fishing_catch_share_arrangement texts (amended (A)(i)-(iii) in case 2; former (A)'s no-cash bar in case 3).",
+        "fishing_crew_size": "Carried by the fishing_catch_share_arrangement texts (normally fewer than 10; with the 4-quarter deeming sentence only in case 2).",
+        "occupation": "The arrangement, not an occupation code, is the statutory condition.",
+        "reporting_unit": "Reporting (6050A(a)(5), from 1997) is not a coverage condition.",
+        "services_performed_date": "The row is on the payment-date axis (s.1116(a)(3)(A): 'remuneration paid'); the window carries the date."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -5138,6 +5696,16 @@
           "additional_cash_conditions": [
             "traditional_additional_duties"
           ]
+        },
+        "irc_and_cfr_cash_only_bar": {
+          "crew": "fewer_than_10",
+          "averaging_period": "preceding_4_calendar_quarters",
+          "cash_limit_per_trip": 100,
+          "additional_cash_conditions": [
+            "minimum_catch_contingency",
+            "traditional_additional_duties"
+          ],
+          "barred_additional_pay": "cash_only"
         }
       },
       "additional_named_source_options": {
@@ -5148,7 +5716,7 @@
       },
       "source_disagreement_resolution": {
         "operative_current_text": "current_statute_crew_test",
-        "basis": "Public Law 104-188 section 1116(a)(2) expressly states fewer than 10 and preceding four calendar quarters, with all three additional-cash conditions; inconsistent POMS and older CFR wording remain recorded as named options."
+        "basis": "Public Law 104-188 section 1116(a)(2) expressly states fewer than 10 and preceding four calendar quarters, with all three additional-cash conditions; inconsistent POMS and older CFR wording remain recorded as named options. 26 U.S.C. 3121(b)(20)(A) bars only \"any cash remuneration\" beyond what it allows, and 20 CFR 404.1031(a)(1) only \"any cash pay\", where 410(a)(20)(A) bars \"any additional compensation\"; that reading is recorded as irc_and_cfr_cash_only_bar (the Code's crew and cash terms; the CFR's other, unamended terms stay in unamended_cfr_cash_prohibition) and is not operative, because a crew member whose only extra pay is non-cash is covered on either reading: in employment under 410(a), or in self-employment under 20 CFR 404.1031(b)."
       },
       "crew_average_period": "preceding_4_calendar_quarters",
       "crew_average_comparison": "fewer_than_10",
@@ -5322,6 +5890,13 @@
               "fishing_catch_share_arrangement"
             ]
           }
+        },
+        "source_disagreement_resolution": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
         }
       },
       "effective_basis": "payment_date",
@@ -5336,6 +5911,17 @@
           "location": "section 1116(a)(3)(A)",
           "quote": "The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994"
         }
+      },
+      "unread_trigger_facts": {
+        "age": "The under-18 test of 410(a)(3)(A) is carried inside the family_service text of child_under_18_for_parent.",
+        "amount": "The per-trip additional cash compared with threshold fishing_additional_cash_per_trip; the arrangement text states 'cash of at most $100 per trip'.",
+        "employee_self_or_mixed": "410(a)(20) excludes service under the share arrangement whatever the common-law status.",
+        "fishing_additional_cash_conditions": "Carried by the fishing_catch_share_arrangement text ((A)(i)-(iii)).",
+        "fishing_crew_size": "Carried by the fishing_catch_share_arrangement text (normally fewer than 10, with the 4-quarter deeming sentence).",
+        "historical_fica_treatment": "The payor-treatment proviso of s.1116(a)(3)(A)(ii) reaches only pay before 1995; clause (i) has none (worker 20).",
+        "occupation": "The arrangement, not an occupation code, is the statutory condition.",
+        "reporting_unit": "Reporting is not a coverage condition.",
+        "services_performed_date": "The row is on the payment-date axis; the window carries the date."
       }
     },
     "worked_examples": [],
@@ -5902,6 +6488,10 @@
         "other_eligibility_rules_still_apply": {
           "not_a_coverage_condition": "Restates what this family's covered outcomes already mean: the row excludes nothing beyond 410(a)(11)-(12), and the other families still apply (residual: \"Apply the other families\"), including the self-employment rules the us_citizen_in_united_states case hands the service to."
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(11)-(12) speak of service 'in the employ of'; the case texts say 'employee of'.",
+        "nonresident_alien_status": "Neither 410(a)(11)-(12) nor 411(c)(2)(C) turns on alien residence; 411(c)(2)(C) reads citizenship, which citizenship carries."
       }
     },
     "worked_examples": [],
@@ -5985,6 +6575,13 @@
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "1954 amendment note to subsec. (a)(4)",
         "quote": "made the exclusion with respect to services on non -American vessels or aircraft applicable only if the individual is not a United States citizen or the employer is not an American employer"
+      },
+      {
+        "capture": "irs_pub15_2026.html",
+        "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
+        "authority": "IRS Publication 15 (2026)",
+        "location": "section 15, Aliens: 1. Resident: a. Service performed in the United States",
+        "quote": "(Exempt if any part of service as crew member of foreign vessel or aircraft is performed outside the United States.)"
       }
     ],
     "trigger_facts": [
@@ -6102,7 +6699,11 @@
         }
       },
       "clause_a_employment_test": "410(a)(4)(A) is met when the individual is employed on and in connection with the craft while it is outside the United States; it then reaches that employment's service in the United States too.",
-      "clause_a_gloss_basis": "The in-port reading (\"including service done within the U.S. if some part of the employee's service is done outside the U.S.\") comes from POMS RS 01901.170 B, headed \"1951 THROUGH 1954\"; section A (1955 and later) omits the gloss. The row carries it forward because clause (A)'s words, \"is employed on and in connection with such vessel or aircraft when outside the United States\", did not change; no capture restates the gloss for 1955 and later."
+      "clause_a_gloss_basis": "The in-port reading (\"including service done within the U.S. if some part of the employee's service is done outside the U.S.\") comes from POMS RS 01901.170 B, headed \"1951 THROUGH 1954\"; section A (1955 and later) states the same employment test, \"employed on or in connection with such vessel or aircraft when outside the United States\", without the gloss. IRS Publication 15 (2026) restates the reading for resident aliens in 2026: \"Exempt if any part of service as crew member of foreign vessel or aircraft is performed outside the United States.\" The row applies it to every year from 1968 under clause (A)'s words, \"is employed on and in connection with such vessel or aircraft when outside the United States\", as the captured code prints them; the LII amendment notes list one entry for subsection (a)(4), the 1954 act's, and describe only the clause (B) conditions it added.",
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(4) is an employment exclusion; the case texts state the employment ('employed on and in connection with').",
+        "nonresident_alien_status": "410(a)(4)(B)(i) reads citizenship only ('not a citizen of the United States'), which citizenship carries; alien residence is immaterial."
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6231,6 +6832,13 @@
         "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
         "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
         "location": "410(a)(18);1960 amendment note; Public Law 86-778 section 103(v)(1) effective-date note"
+      },
+      {
+        "capture": "irs_pub15_2026.html",
+        "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
+        "authority": "IRS Publication 15 (2026)",
+        "location": "section 15, Aliens: 2. Nonresidents working in the United States, e.",
+        "quote": "e. Korean resident admitted to Guam under section 101(a)(15)(H)(ii) of the Immigration and Nationality Act."
       }
     ],
     "trigger_facts": [
@@ -6242,7 +6850,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Section 410(a)(18) excludes service performed in Guam by a resident of the Republic of the Philippines temporarily in Guam as a nonimmigrant admitted under 8 USC 1101(a)(15)(H)(ii). Public Law 86-778 section 103(d) added this exclusion for services after 1960. Philippine residence, Guam work location and the specified temporary admission are separate required facts.",
+    "description": "Section 410(a)(18) excludes service performed in Guam by a resident of the Republic of the Philippines temporarily in Guam as a nonimmigrant admitted under 8 USC 1101(a)(15)(H)(ii). Public Law 86-778 section 103(d) added this exclusion for services after 1960. Philippine residence, Guam work location and the specified temporary admission are separate required facts. Note: IRS Publication 15 (2026) also lists a \"Korean resident admitted to Guam under section 101(a)(15)(H)(ii) of the Immigration and Nationality Act\", with \"Exempt if service is performed for purposes specified in section 101(a)(15)(H)(ii) of the Immigration and Nationality Act.\" The 410(a)(18) text this row cites names only a resident of the Republic of the Philippines, and no other CE1 capture states a rule for Korean residents in Guam, so no case reads Korean residence.",
     "parameters": {
       "requires_all": {
         "place_of_work": "Guam",
@@ -6340,6 +6948,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "month_or_exposure": "No 410(a)(18) condition counts months; the exclusion reads place, residence and admission.",
+        "services_performed_date": "Pub. L. 86-778 s.103(v)(1) ('service performed after 1960') precedes the row's 1968 start; the window carries it."
       }
     },
     "worked_examples": [],
@@ -6566,6 +7178,10 @@
         "transferred_federal_employee_exception": {
           "not_a_coverage_condition": "Records that this row has no 410(r) transferred-employee case; the 1995 row carries that exception."
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(15) speaks of service 'in the employ of'; the case text says 'employee of'.",
+        "nonresident_alien_status": "Neither 410(a)(15) nor 411(c)(2)(C) turns on alien residence; citizenship carries 411(c)(2)(C)."
       }
     },
     "worked_examples": [],
@@ -6721,6 +7337,10 @@
           "location": "Effective Date of 1994 Amendment note (Pub. L. 103-296 section 319(c))",
           "quote": "Amendment by section 319(b)(1), (3) of Pub. L. 103\u2013296 applicable with respect to service performed after calendar quarter following calendar quarter in which Aug. 15, 1994 , occurs"
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(15) and 410(r) speak of service 'in the employ of'; the case texts say 'employee of' and 'transferred to the organization'.",
+        "nonresident_alien_status": "Neither 410(a)(15), 410(r) nor 411(c)(2)(C) turns on alien residence; citizenship carries 411(c)(2)(C)."
       }
     },
     "worked_examples": [],
@@ -7026,6 +7646,11 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "direct_seller_contract": "3508(b)(2)(A)(iii) applies only to services after 1995 (Pub. L. 104-188 s.1118(b)); this row ends 1995-12-31. See NOTE N-9 on the 1983+ general clauses (i)-(ii).",
+        "occupation": "The arrangement texts, not an occupation code, carry 410(a)(14)(A)-(B).",
+        "services_performed_date": "No 410(a)(14) or 411(c)(2)(A) date falls inside 1968-1995 (no amendment note for (a)(14) after 1968); the window carries the 1996 boundary."
       }
     },
     "worked_examples": [],
@@ -7304,6 +7929,13 @@
               "newspaper_service_arrangement"
             ]
           }
+        },
+        "source_disagreement_resolution": {
+          "cases": {
+            "section_3508_direct_seller": [
+              "direct_seller_contract"
+            ]
+          }
         }
       },
       "boundary_clause": {
@@ -7314,6 +7946,10 @@
           "location": "Effective Date of 1996 Amendment note (Pub. L. 104-188 section 1118(b))",
           "quote": "Pub. L. 104\u2013188, title XI, \u00a71118(b), Aug. 20, 1996, 110 Stat. 1764, provided that: \"The amendments made by this section shall apply to services performed after December 31, 1995.\""
         }
+      },
+      "unread_trigger_facts": {
+        "occupation": "The arrangement and direct-seller texts, not an occupation code, carry the conditions.",
+        "services_performed_date": "s.1118(b) 'services performed after December 31, 1995' is the row's start; the window carries it."
       }
     },
     "worked_examples": [],
@@ -7508,6 +8144,10 @@
         "other_coverage_rules_required": {
           "not_a_coverage_condition": "Directs the caller to the other families. Before Pub. L. 103-296 section 320 put \"(Q)\" into 410(a)(19), effective with the calendar quarter after August 15, 1994, no paragraph of 410(a) names Q-class service (POMS RS 01901.740 C.3 NOTE: \"Prior to October 1, 1994, individuals with a designation of Q are not exempt from Social Security coverage\"), so this family excludes nothing and the covered residual applies."
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "No paragraph of 410(a) names Q-class service before October 1, 1994 (POMS RS 01901.740 C.3 NOTE; Pub. L. 103-296 section 320(b), effective with the calendar quarter after August 15, 1994), so the row has no case and nothing depends on this fact.",
+        "nonresident_alien_status": "No paragraph of 410(a) names Q-class service before October 1, 1994 (POMS RS 01901.740 C.3 NOTE; Pub. L. 103-296 section 320(b), effective with the calendar quarter after August 15, 1994), so the row has no case and nothing depends on this fact."
       }
     },
     "worked_examples": [],
@@ -7626,6 +8266,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(19) excludes in-program Q service from employment; the qualified-employer limit sits in assignment (POMS RS 01901.740 C.3), and the exclusion does not depend on employee status. A nonresident alien's self-employment income is outside this wage-side row (26 U.S.C. 1402(b) excludes a nonresident alien individual's net earnings, except under a section 233 agreement)."
       }
     },
     "worked_examples": [],
@@ -7819,6 +8462,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "employee_self_or_mixed": "410(a)(19) excludes the service from employment whoever the employer is, so no case depends on it; a nonresident alien's self-employment income is outside this wage-side row (26 U.S.C. 1402(b) excludes a nonresident alien individual's net earnings, except under a section 233 agreement).",
+        "enrollment": "410(a)(19) turns on authorized admission-purpose service, not enrollment: POMS RS 01901.740 C.1.a authorizes F-1 optional practical training, and C.2 reaches J-1 categories (research scholar, au pair, physician) that are not enrolled students (workers 1, 2, 4)."
       }
     },
     "worked_examples": [],
@@ -7994,6 +8641,13 @@
         "excluded_visa_classes": {
           "not_a_coverage_condition": "Records that 410(a)(19) named only the F and J classes until Pub. L. 100-647 section 1001(d)(2)(E) substituted \"(F), (J), or (M)\" for \"(F) or (J)\". The nonresident_alien_service family decides F and J service (case f1_j1_admission_purpose_service); for this family's M-1 service the list means only that nothing is excluded in this window, which the covered residual gives."
         }
+      },
+      "unread_trigger_facts": {
+        "enrollment": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J only, and no reading of Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a) reaches earlier service, so the row has no case and nothing depends on this fact.",
+        "nonresident_alien_status": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J only, and no reading of Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a) reaches earlier service, so the row has no case and nothing depends on this fact.",
+        "services_performed_date": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J only, and no reading of Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a) reaches earlier service, so the row has no case and nothing depends on this fact.",
+        "statutory_student_service": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J only, and no reading of Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a) reaches earlier service, so the row has no case and nothing depends on this fact.",
+        "visa_status": "Before taxable years beginning after December 31, 1986, 410(a)(19) names F and J only, and no reading of Pub. L. 100-647 sections 1001(d)(2)(E) and 1019(a) reaches earlier service, so the row has no case and nothing depends on this fact."
       }
     },
     "worked_examples": [],
@@ -8146,6 +8800,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "enrollment": "M-1 work is authorized only for practical training 'after completion of the student's course of study' (POMS RS 01901.740 C.1.b), so enrollment is no condition of the exclusion.",
+        "services_performed_date": "The row window (1987-01-01..1988-11-09) carries the date: inside it the open case refuses under either start-date reading (m1_exclusion_start_by_reading), so no case needs the date."
       }
     },
     "worked_examples": [],
@@ -8384,6 +9042,10 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "enrollment": "M-1 work is authorized only for practical training 'after completion of the student's course of study' (POMS RS 01901.740 C.1.b), so enrollment is no condition of the exclusion.",
+        "services_performed_date": "The row's effective_start, 1988-11-10 (the enactment date both readings share), carries the date; within the window the exclusion does not depend on it."
       }
     },
     "worked_examples": [],
@@ -8508,6 +9170,11 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the row's threshold compares: cash remuneration from one employer to the statutory home worker in the period (homeworker_cash_quarterly, $50); the common-law case needs no amount (POMS RS 01402.230 B.2).",
+        "month_or_exposure": "The period the threshold aggregates over (calendar quarter, 1951-1977), read by the threshold lookup, not by a case.",
+        "reporting_unit": "The threshold's employer-employee aggregation scope (employer_employee_quarter); no case depends on it."
       }
     },
     "worked_examples": [],
@@ -8661,6 +9328,11 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount the row's threshold compares: cash remuneration from one employer to the statutory home worker in the period (homeworker_cash_annual, $100); the common-law case needs no amount (POMS RS 01402.230 B.2).",
+        "month_or_exposure": "The period the threshold aggregates over (calendar year, from 1978), read by the threshold lookup, not by a case.",
+        "reporting_unit": "The threshold's employer-employee aggregation scope (employer_employee_year); no case depends on it."
       }
     },
     "worked_examples": [],
@@ -8753,6 +9425,20 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "410(a)(13)"
+      },
+      {
+        "capture": "poms_rs_01901760.html",
+        "sha256": "be443d8357027cd98cbd9556a5dc383b9548fb96e4680786583dbadd2c746c78",
+        "authority": "SSA POMS RS 01901.760",
+        "location": "Policy, statement of congressional intent",
+        "quote": "The intent of Congress is to exclude student nurse employment: \u2022 that is part-time; \u2022 when the only service performed is incidental to the student's training; and \u2022 when the remuneration for services is nominal."
+      },
+      {
+        "capture": "irs_pub15_2026.html",
+        "sha256": "38c8b76c77c244e2cce90090816ca595d6038da04134bff5517ccf3141b4f9f4",
+        "authority": "IRS Publication 15 (2026)",
+        "location": "section 15, Students, scholars, trainees, teachers, etc., item 3",
+        "quote": "3. Student nurse performing part-time services for nominal earnings at hospital as incidental part of training."
       }
     ],
     "trigger_facts": [
@@ -8763,7 +9449,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "A student nurse in the employ of a hospital or nurses training school is excluded when enrolled and regularly attending classes in a nurses training school chartered or approved under State law. The exclusion began in 1940. POMS describes part-time training-incidental work for nominal remuneration.",
+    "description": "A student nurse in the employ of a hospital or nurses training school is excluded when enrolled and regularly attending classes in a nurses training school chartered or approved under State law. The exclusion began in 1940. POMS describes part-time training-incidental work for nominal remuneration. Whether the exclusion reaches a student nurse's service that is not part-time, not incidental to training or not for nominal pay is open (case student_nurse_beyond_training_open).",
     "parameters": {
       "required_school_state_approval": true,
       "service_as_student_nurse": true,
@@ -8845,9 +9531,15 @@
           "cases": {
             "enrolled_student_nurse": [
               "employer_school_nexus"
+            ],
+            "student_nurse_beyond_training_open": [
+              "employer_school_nexus"
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "statutory_student_service": "The 410(a)(10) student-service fact; the 410(a)(13) exclusion's capacity test, 'Service performed as a student nurse', sits in occupation, so this row does not need it."
       }
     },
     "worked_examples": [],
@@ -8884,15 +9576,37 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "enrolled_student_nurse",
+        "case_id": "student_nurse_beyond_training_open",
         "precedence": 1,
+        "when": {
+          "employer_school_nexus": "nurses' training school chartered or approved under State law",
+          "enrollment": "enrolled and regularly attending classes in a nurses' training school",
+          "occupation": "student nurse in the employ of a hospital or a nurses' training school whose service is not part-time, not incidental to the student's training, or not for nominal remuneration"
+        },
+        "consequence": "open",
+        "open_reason": "STUDENT_NURSE_SERVICE_BEYOND_TRAINING_UNSETTLED: 42 U.S.C. 410(a)(13) excludes \"Service performed as a student nurse in the employ of a hospital or a nurses\u2019 training school by an individual who is enrolled and is regularly attending classes in a nurses\u2019 training school chartered or approved pursuant to State law\", and POMS RS 01901.760 lists only those conditions (\"Beginning 1/1/40, service performed as a student nurse in the employ of a hospital or nurses' training school is not covered if:\"). POMS RS 01901.760 also says \"The intent of Congress is to exclude student nurse employment: \u2022 that is part-time; \u2022 when the only service performed is incidental to the student's training; and \u2022 when the remuneration for services is nominal.\", and IRS Publication 15 (2026) lists the exemption as \"3. Student nurse performing part-time services for nominal earnings at hospital as incidental part of training.\" No capture settles whether the exclusion reaches a student nurse's service that is not part-time, not incidental to training or not for nominal pay, so such service refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_conditions_reading",
+            "description": "410(a)(13) and the POMS RS 01901.760 condition list govern: enrollment and regular attendance in a nurses' training school chartered or approved under State law, and service as a student nurse for a hospital or nurses' training school, exclude the service whatever its hours, its link to training or its pay, as case enrolled_student_nurse gives (noncovered)."
+          },
+          {
+            "name": "training_incidental_nominal_pay_reading",
+            "description": "The exclusion reaches only the employment POMS RS 01901.760's statement of congressional intent and Publication 15 (2026) item 3 describe: part-time, incidental to the student's training, for nominal pay. Other student nurse service is not excluded by this family and the residual covers it."
+          }
+        ],
+        "description": "Ranked above enrolled_student_nurse, whose texts this worker also meets: 410(a)(13) and the POMS condition list state no limit on hours, training link or pay, while the POMS intent paragraph and Publication 15 (2026) item 3 describe part-time, training-incidental, nominal-pay work."
+      },
+      {
+        "case_id": "enrolled_student_nurse",
+        "precedence": 2,
         "when": {
           "occupation": "student nurse in the employ of a hospital or a nurses' training school",
           "enrollment": "enrolled and regularly attending classes in a nurses' training school",
           "employer_school_nexus": "nurses' training school chartered or approved under State law"
         },
         "consequence": "noncovered",
-        "description": "42 U.S.C. 410(a)(13); POMS RS 01901.760."
+        "description": "42 U.S.C. 410(a)(13); POMS RS 01901.760. Service that is not part-time, not incidental to training or not for nominal pay meets the open case ranked above."
       }
     ],
     "open_alternatives": [],
@@ -8979,6 +9693,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "section_218_group": "The 218 override turns on whether the State's agreement covers these student services, which section_218_position states; the coverage group under which the agreement covers them does not change the outcome."
       }
     },
     "worked_examples": [],
@@ -9142,6 +9859,13 @@
         "authority": "SSA POMS RS 01901.720, TN 62 (08-24)",
         "location": "page header, effective dates",
         "quote": "Effective Dates: 08/15/2024 - Present"
+      },
+      {
+        "capture": "poms_rs_01901720.html",
+        "sha256": "24f1218323f2466578378b929dbe015118ccca9b6f881d6d56b4c2c8de62a423",
+        "authority": "SSA POMS RS 01901.720",
+        "location": "C.3",
+        "quote": "This is true even though the student was enrolled and regularly attending classes in the school during the previous year and expects to return to school the following year."
       }
     ],
     "trigger_facts": [
@@ -9305,6 +10029,9 @@
             ]
           }
         }
+      },
+      "unread_trigger_facts": {
+        "section_218_group": "The 218 override turns on whether the State's agreement covers these student services, which section_218_position states; the coverage group under which the agreement covers them does not change the outcome."
       }
     },
     "worked_examples": [],
@@ -9397,11 +10124,11 @@
         "when": {
           "services_performed_date": "on or after 2024-08-15",
           "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; neither eligible to participate in a retirement plan or annuity established or maintained by the institution nor one who would be eligible to participate if age and service requirements are met, not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern",
-          "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), including holidays, weekends and days between semesters falling within the academic year when classes are not scheduled; the exclusion does not apply to work done during a school break of more than five weeks if the student is not attending school",
+          "enrollment": "enrolled and regularly attending classes, and either (a) the service falls in a period of regular school attendance, including the regular academic year and summer session, and not in a school break of more than five weeks while the student is not attending school (even though the student was enrolled and regularly attending classes in the school during the previous year and expects to return to school the following year), or (b) the service is performed on holidays, weekends, or between semesters falling within the academic year when classes are not scheduled",
           "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it"
         },
         "consequence": "noncovered",
-        "description": "42 U.S.C. 410(a)(10) with POMS RS 01901.720 C.2-C.3, TN 62 (08-24), whose effective dates run from 08/15/2024. A worker failing a C.2 criterion is not a student, and C.3 confines the exclusion to the attendance periods it names, so the residual decides."
+        "description": "42 U.S.C. 410(a)(10) with POMS RS 01901.720 C.2-C.3, TN 62 (08-24), whose effective dates run from 08/15/2024. A worker failing a C.2 criterion is not a student, and C.3 confines the exclusion to the attendance periods it names, so the residual decides. The enrollment text follows C.3's order: attendance periods less a school break of more than five weeks while the student is not attending, or C.3's last sentence, \"Services performed on holidays, weekends, and between semesters falling within the academic year when classes are not scheduled are excluded.\""
       }
     ],
     "open_alternatives": [],
@@ -9452,6 +10179,12 @@
             "cash_tips_monthly"
           ]
         }
+      },
+      "unread_trigger_facts": {
+        "amount": "The amount threshold cash_tips_monthly compares ($20 of cash tips in the month; 409(a)(10)(B)).",
+        "employee_self_or_mixed": "409(a)(10)(B) and 409(f) count only tips an employee receives in the course of employment for an employer; the threshold's eligible concept carries that ('Cash tips received in employment for one employer by an employee in the calendar month'), and the noncash case is a wage exclusion that does not depend on it (see findings N-TIP-1 on non-employees).",
+        "month_or_exposure": "The calendar month the threshold aggregates over, read by the threshold lookup.",
+        "reporting_unit": "The threshold's employer_employee_month scope ('for one employer'); no case depends on it."
       }
     },
     "worked_examples": [],
@@ -9649,6 +10382,11 @@
         "section_418a_agreement_statute_available": {
           "not_a_coverage_condition": "Records history: section 218A (42 U.S.C. 418a) became law on September 20, 2018 (Pub. L. 115-243), after this row ends on 2018-09-19, so no agreement could be in force during the row. A later agreement's reach back into these years is decided by later_418a_retroactive_coverage."
         }
+      },
+      "unread_trigger_facts": {
+        "assignment": "No cited source makes the work assignment a condition beyond council capacity, which tribal_council_service carries ('in that capacity'); separate roles fall to the residual (POMS RS 01901.700 C.1).",
+        "government_level": "The employer is the tribal government, stated inside tribal_council_service ('for the tribal government'); a tribe is not a State or political subdivision, so the level fact adds no condition here.",
+        "services_performed_date": "The service-date axis picks this row (to 2018-09-19); within the row the only date relation, service before a later 218A agreement's effective date, is stated in tribal_coverage_agreement."
       }
     },
     "worked_examples": [],
@@ -9764,6 +10502,34 @@
         "authority": "POMS RS 01901.700",
         "location": "F",
         "quote": "All services performed by employees, including services performed by tribal council members, of a non-federally recognized tribe are covered employment for Social Security and Medicare purposes."
+      },
+      {
+        "capture": "ce1c_plaw115_243.html",
+        "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
+        "authority": "Pub. L. 115-243 (132 Stat. 2894)",
+        "location": "2(a), adding 42 USC 418a(c)(2)",
+        "quote": "``(2) At the request of the Indian tribe at the time of the agreement, such agreement may apply with respect to services performed before such effective date"
+      },
+      {
+        "capture": "ce1c_plaw115_243.html",
+        "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
+        "authority": "Pub. L. 115-243 (132 Stat. 2894)",
+        "location": "2(a), adding 42 USC 418a(b)(1)",
+        "quote": "``(1) The term `member' means, with respect to a tribal council, an individual appointed or elected to serve as a member or the head of the tribal council."
+      },
+      {
+        "capture": "ce1c_poms_rs_01901700.html",
+        "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+        "authority": "POMS RS 01901.700",
+        "location": "C.2, agreement cannot be modified or terminated",
+        "quote": "The agreement applies to all current and future members in tribal council positions, and cannot be modified or terminated."
+      },
+      {
+        "capture": "ce1c_poms_rs_01901700.html",
+        "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+        "authority": "POMS RS 01901.700",
+        "location": "C.2.b, retroactive period the tribe specifies on the agreement",
+        "quote": "SSA will provide retroactive coverage, at the tribe's request, for any specific period that the tribe specifies on the agreement"
       }
     ],
     "trigger_facts": [
@@ -9889,6 +10655,11 @@
         "section_418a_agreement_statute_available": {
           "not_a_coverage_condition": "Records that 418a is law for the whole row: Pub. L. 115-243 was approved September 20, 2018, the row's start. Whether an agreement includes a given service is decided by section_418a_agreement_inclusion, section_418a_retroactive_inclusion and no_section_418a_inclusion."
         }
+      },
+      "unread_trigger_facts": {
+        "assignment": "No cited source makes the work assignment a condition beyond council capacity, which tribal_council_service and the 'council-capacity services' texts carry (418a(a)(1); 410(a)(22) 'as tribal council members').",
+        "government_level": "410(a)(22)'s 'in the employ of an Indian tribal government' is stated inside tribal_council_service ('for the tribal government').",
+        "services_performed_date": "The service-date axis picks this row (from 2018-09-20); the before/after relation to the agreement's effective date (418a(c)(1),(2)) is stated in the tribal_coverage_agreement texts."
       }
     },
     "worked_examples": [],
@@ -9936,9 +10707,9 @@
         "case_id": "section_418a_retroactive_inclusion",
         "precedence": 2,
         "consequence": "covered",
-        "description": "418a(c)(2) as added by Pub. L. 115-243: at the tribe's request the agreement may reach earlier services for which FICA-equivalent amounts were timely paid in good faith and not refunded.",
+        "description": "418a(c)(2) as added by Pub. L. 115-243: \"At the request of the Indian tribe at the time of the agreement\", the agreement may reach earlier services for which FICA-equivalent amounts were timely paid in good faith and not refunded. POMS RS 01901.700 C.2 covers \"any specific period that the tribe specifies on the agreement\" and says the agreement \"cannot be modified\", so a request made after the agreement was executed does not reach earlier services.",
         "when": {
-          "tribal_coverage_agreement": "council-capacity services before the agreement's effective date that the tribe asked the agreement to include",
+          "tribal_coverage_agreement": "council-capacity services before the agreement's effective date that the tribe, at the time of the agreement, asked the agreement to include",
           "historical_fica_treatment": "FICA-equivalent amounts were timely paid in good faith and not subsequently refunded"
         }
       },
@@ -9948,10 +10719,10 @@
         "consequence": "noncovered",
         "when": {
           "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement",
-          "tribal_council_service": "service as a member of an Indian tribal council, in that capacity, for the tribal government",
+          "tribal_council_service": "service as a member or the head of an Indian tribal council, in that capacity, for the tribal government",
           "tribal_federal_recognition": "federally recognized tribe"
         },
-        "description": "410(a)(22) excludes council-member service for an Indian tribal government except services covered under a section 418a agreement, and 418a(b)(2) defines a tribal council as \"the appointed or elected governing body of a federally recognized Indian tribe\". POMS RS 01901.700 F covers every service for a tribe that is not federally recognized, council members included, so this case requires recognition; an unrecognized tribe's council member falls to the residual."
+        "description": "410(a)(22) excludes council-member service for an Indian tribal government except services covered under a section 418a agreement, and 418a(b)(2) defines a tribal council as \"the appointed or elected governing body of a federally recognized Indian tribe\". POMS RS 01901.700 F covers every service for a tribe that is not federally recognized, council members included, so this case requires recognition; an unrecognized tribe's council member falls to the residual. 418a(b)(1) defines a member as \"an individual appointed or elected to serve as a member or the head of the tribal council\"."
       }
     ],
     "open_alternatives": [],

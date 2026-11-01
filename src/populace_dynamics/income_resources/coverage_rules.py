@@ -236,6 +236,9 @@ CE1_FIELD_PURPOSES = (
     # The date remuneration is paid, where an amendment keys on payment and
     # the family on service (election work, 1977 amendment).
     "remuneration_paid_date",
+    # Whether a social security (totalization) agreement leaves a person
+    # subject only to another country's social security laws.
+    "social_security_agreement_coverage",
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 CONSEQUENCES = frozenset(
