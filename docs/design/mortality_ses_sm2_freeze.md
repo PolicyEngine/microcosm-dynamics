@@ -191,9 +191,9 @@ before its band is fully supported is recorded and never fitted.
   male, female) and three education levels: less than high school diploma
   or GED; high school diploma or GED; some college or collegiate degree;
   plus "not stated" in the counts. Rates are per 100,000 population; the
-  population tables print each estimate with its standard error. The
-  2018 and 2020 layouts were read with values masked; 2021 and 2022 come
-  from the report text.
+  population tables print each estimate with its standard error. This job
+  read the 2018, 2020 and 2022 layouts with values masked and the 2019 and
+  2021 titles only; the fit job's loader checks every year's layout.
 - **Limits stated by the source.** No data below 25 (schooling may be
   incomplete) and none at 65 and over ("reporting quality is poorer at
   older ages"); data "about 97% complete" (NVSR 74(4) p. 127). The
@@ -307,3 +307,204 @@ before its band is fully supported is recorded and never fitted.
 
 None of the sources reported beside is an unused holdout: this job read
 them, and SM2 claims no out-of-sample check (§10, `EXPOSURE_UNRESOLVED`).
+
+## 4. Mappings to SM1's `log_relative_risk`
+
+SM1's coefficient is a **conditional** log relative risk against the
+dimension's reference category, for one sex, single age 0–120 and path
+year, added across the three dimensions and then normalized within each
+age × sex × year cell (`mortality_ses/specification.py:199–254`,
+`normalizer.py:328–382`). Every source publishes something else: a
+**marginal** ratio between groups, or between a group and its whole
+population, for a band or a single age. This section maps each published
+quantity to a **marginal target** on a stated scale. Section 6 turns the
+marginal targets into conditional coefficients. Each mapping below is
+**[frozen here]**; each assumption carries its label into every report of
+the fit.
+
+**Common scale.** A target is `T = ln(H_g / H_ref)`, where `H_g` is
+category `g`'s average annual probability of death over the target's ages,
+weighted by the category's population at each single age, and `H_ref` is
+the same for the reference category. Probabilities are annual `q` at the
+start-of-year age that SM1 and the baseline use (`baselines/base.py:19–28`;
+`mortality_ses/model.py:171–184`).
+
+### 4.1 OACT relative mortality ratios (lifetime earnings)
+
+- **M-E1, the target.** For sex `s`, band `B`, year `t` and quintile
+  `k ∈ {q1, q2, q4, q5}`: `L_E(k) = ln RMR_k − ln RMR_q3`, from the printed
+  RMRs of Tables 7–12 or the digitized RMRs of Figures 7–12. Labels map
+  Lowest → `q1`, 2nd → `q2`, 3rd → `q3`, 4th → `q4`, Highest → `q5`.
+  Each RMR divides a quintile's rate by the rate of all retired workers in
+  that sex and band (Study 129 p. 5), so the "Total" denominator cancels
+  in `L_E` and the contrast equals the log ratio of the two quintiles'
+  rates. Its printing interval uses the transformed endpoints of both
+  RMRs (§9.1).
+- **M-E2, a rate ratio as a ratio of annual probabilities (assumption).**
+  Study 129 divides deaths by exposure years, and "Deaths receive a full
+  year of exposure at the age when the death occurs" (p. 5; examples in
+  Appendix B, pp. 13–14). That convention makes each published rate an
+  initial-exposure estimate of an annual probability of death, so this
+  record reads a ratio of two quintiles' rates as a ratio of their annual
+  `q`. It is still an assumption, not a source identity: the source does
+  not call its rates probabilities, and its exposure counts months by age
+  at last birthday.
+- **M-E3, dynamic rank versus frozen rank (assumption).** OACT sorts the
+  retired workers with exposure in each year by AIME within sex and
+  single year of age and cuts quintiles there (pp. 3–4), so survivors are
+  ranked anew at every age; the study notes that people in high quintiles
+  at younger ages move into lower quintiles at older ages (p. 2). SM3's
+  attribute is a frozen partial-career rank (S0.1 §1.2). The fitted
+  coefficients are contrasts between dynamic-rank groups; applying them to
+  frozen-rank attributes is assumption M-E3. No source here identifies the
+  difference between the two contrasts.
+- **M-E4, beneficiaries versus the whole population (assumption).** OACT's
+  population is retired-worker beneficiaries with a PIA, without
+  WEP/totalization or older-formula records and without anyone previously
+  entitled to disability benefits (pp. 3, 11); the 62–64 group consists of
+  workers who claimed before their NRA and are likely less healthy than
+  others that age (p. 6). Applying their contrasts to everyone, including
+  people who never claimed, is assumption M-E4. In the fit, OACT targets
+  apply to the reference population's Social Security recipients aged
+  62–89 (§6.2), the nearest public stand-in; SM1 itself holds DI-origin
+  persons at the baseline `q` (`model.py:124–160`).
+- **M-E5, age basis.** OACT assigns exposure by attained age, month by
+  month (p. 5); SM1 applies the year-`t` `q` at the start-of-year age. The
+  mapping takes band `[a1, a2]` to SM1 ages `a1` to `a2` unchanged and
+  accepts the half-year offset; sensitivity T-E4 (§5) shifts every band
+  down one year.
+- **M-E6, band to single ages.** One coefficient per quintile × sex ×
+  band × knot, constant across the band's single ages; the reference
+  population supplies the within-band composition (§6).
+
+### 4.2 NCHS death rates by education
+
+- **M-D1, the target.** For sex `s`, band `B ∈ {25–34, 35–44, 45–54,
+  55–64}` and year `t`: `L_D(less_than_high_school) = ln q_LTHS − ln q_HS`
+  and `L_D(some_college_or_more) = ln q_SC+ − ln q_HS`, where each `q`
+  comes from the printed rate `m` (per 100,000, divided by 100,000) as
+  `q = m / (1 + m/2)`. That conversion assumes deaths spread evenly over
+  the year of age, the convention `data/life_table.py` uses for its
+  closing rate (lines 21–28). The 25–64 and age-adjusted columns are not
+  targets, because they repeat the band information.
+- **M-D2, the pooled category.** "Some college or collegiate degree"
+  pools SM's `some_college` and `college`. Its target is matched by the
+  model's pooled `q` over both categories, weighted by the reference
+  population, so NCHS identifies one combination of the two coefficients.
+- **M-D3, the split.** NHIS–LMF supplies
+  `ln(h_college / h_some_college)` at attained ages 25–64 by sex, pooled
+  over deaths 2009–2019 and held constant over time (§4.5).
+- **M-D4, ages 65 and over.** NHIS–LMF supplies marginal hazard ratios of
+  `less_than_high_school`, `some_college` and `college` against
+  `high_school` at attained ages 65–74, 75–84 and 85+, by sex, pooled and
+  held constant over time. An NHIS hazard `μ` maps to an annual probability
+  as `q = 1 − exp(−μ)` (constant force within the year).
+- **M-D5, degrees versus years (assumption).** NCHS and NHIS classify by
+  highest diploma or degree; SM3's PSID attribute counts years (<12, 12,
+  13–15, 16–17; S0.1 §1.2). A GED holder or a person with twelve years
+  and no diploma can fall in different SM categories under the two
+  definitions (S0.1 §2.3). This record maps degree-based sources by
+  degree (§8.2) and reports the difference with every result.
+- **Not stated.** NCHS computes category rates from stated education and
+  counts "not stated" deaths only in the totals (Table 14 footnote 3), so
+  the fit adjusts nothing for them and reports their share as a
+  data-quality figure.
+
+### 4.3 NCHS life tables by race and Hispanic origin
+
+- **M-R1, the target.** For sex `s`, single age `a` from 0 to 99, and
+  year `t`: `L_R(g, a) = ln q_g(a) − ln q_NHW(a)` for `g ∈ {Hispanic,
+  NH black}`, from the six-decimal `qx` of the tables in §3.3.
+- **M-R2, age basis.** NCHS's `qx` is the probability of dying between
+  exact ages `x` and `x + 1` (NVSR 75(5) p. 2), the baseline's convention;
+  the mapping is the identity.
+- **M-R3, ages 100–120.** The "100 and older" interval holds no single-age
+  `q`, so it supplies no target (§5).
+- **M-R4, `other_non_hispanic`.** NHIS–LMF supplies the marginal hazard
+  ratio against `white_non_hispanic` at attained ages 25–44, 45–64,
+  65–74, 75–84 and 85+, by sex, pooled and held constant over time (fit).
+  Beside it, for 2019–2024, the record reports `ln` of the ACS-weighted
+  average of the AIAN and Asian NH `q` over the NH white `q`, labeled
+  "partial group: no NHPI, multiracial or other people".
+- **M-R5, bridged and single race (assumption).** 2010–2017 contrasts are
+  bridged-race; 2018 onward are single-race; Hispanic origin does not
+  change (NVSR 75(5) pp. 1–2, 54). SM's categories follow the single-race
+  definitions (§8.2), and the 2017–2018 break is labeled in every path.
+- **M-R6, ratios to the total population.** For the e65 target only
+  (§9.2), each group's `q` is divided by the NCHS total-population `q` at
+  the same age and year.
+- **Properties the source states and every report repeats:** the
+  misclassification adjustment, the Medicare supplement at 66–99 for
+  three groups only, modeled old-age mortality for the other groups, and
+  smoothing above about 85 (§3.3).
+
+### 4.4 Cristia's odds ratios (sensitivity and beside only)
+
+**Log odds ratios never enter as log relative risks.** Cristia's models
+predict death in the next year with the bottom quintile as reference
+(p. 18). Tables 5–6 hold, for each sex and age range, a column with age
+and birth year only (columns 1, 3, 5) and a column that adds race,
+marital status and education (columns 2, 4, 6); the third specification
+in Figure 2 (race and marital status) appears only as a plotted line.
+
+- **M-C1, the reference population [frozen here].** For sex `s` and
+  Cristia age range `b`, the reference population is the single ages in
+  `b`, weighted by the stationary population `Lx` of TR 2026's
+  historical period `q` for 1993 (the midpoint of Cristia's 1983–2003
+  observation years), with equal quintile shares. The ranges are 35–49,
+  50–64 and 65–75. Tables 5–6 print the first range as "30-49", but the
+  sample keeps ages 35–75 only (p. 8); this record reads it as 35–49 and
+  reports the misprint.
+- **M-C2, marginal earnings contrasts (columns 1, 3, 5).** At each age
+  `a` in `b`, solve the intercept `α(a)` so that
+  `0.2 × Σ_k expit(α(a) + ln OR_k) = q_base(s, a, 1993)`, with
+  `OR_q1 = 1`. Then `p_k(a) = expit(α(a) + ln OR_k)`, and the band contrast
+  against `q3` is `ln` of the `Lx`-weighted mean of `p_k` over that of
+  `p_q3`. Quintiles map Bottom → `q1` through Top → `q5`.
+- **M-C3, conditional contrasts (columns 2, 4, 6).** At a named reference
+  profile (white, married, high school graduate, `q3`), solve `α(a)` so
+  that the profile's probability equals `q_base(s, a, 1993)`; compute each
+  category's probability at the profile with only that category changed;
+  take contrasts against SM's reference categories (`q3`, `high_school`,
+  `white_non_hispanic`). Cristia's education reference is less than high
+  school, so the contrast against high school is the difference of two
+  predicted log probabilities.
+- **M-C4, category mapping (assumption).** Cristia's "White", "Black" and
+  "Other Race" map to `white_non_hispanic`, `black_non_hispanic` and
+  `other_non_hispanic`, and "Hispanic" to `hispanic`; Tables 3–4 list the
+  four as one "Race and Ethnicity" block, and this job did not confirm
+  that they are mutually exclusive.
+- **M-C5, marginal group ratios (Tables 3–4).** Directly age-standardized
+  one-year mortality ratios against all same-sex persons in the band
+  (p. 14). Contrasts against a reference category are differences of
+  their logs; they are rate ratios already and need no conversion.
+- **M-C6, uncertainty.** Tables 5–6 print robust z statistics in
+  parentheses, not standard errors (table notes), so
+  `SE(ln OR) = |ln OR| / |z|`; a contrast whose printed z or odds ratio
+  leaves this undefined carries no standard error. Tables 3–4 print no
+  uncertainty. Marital status stays in columns 2, 4 and 6, which adjust
+  for a dimension SM1 does not model.
+
+### 4.5 The NHIS–LMF estimator
+
+**[frozen here]** for the fit job; this job opened no NHIS record.
+
+- **Persons.** Sample adults interviewed 2009–2018 with `ELIGSTAT = 1`,
+  weighted by `SA_WGT_NEW` divided by 10 (ten pooled years).
+- **Time at risk.** From the middle of the interview quarter
+  (`SRVY_YR`, `INTV_QRT`) to the middle of the death quarter (`DODYEAR`,
+  `DODQTR`) for `MORTSTAT = 1`, or to 31 December 2019.
+- **Attained age.** `AGE_P` plus elapsed time. Because birth dates are
+  suppressed, each person-year is split across attained ages on the
+  assumption that birthdays fall uniformly through the year. A person
+  with `AGE_P = 85` (85 or older at interview) contributes only to the
+  85+ band, whose lower bound is then known.
+- **Model.** For each sex, band and dimension, a survey-weighted Poisson
+  regression of deaths on that dimension's category indicators and
+  single-year attained-age indicators, with log person-years as offset.
+  The exponentiated category coefficients are the marginal hazard
+  ratios.
+- **Missing values.** `EDUC1` 97–99, `HISPAN_I` 11 and any race code that
+  §8.2 leaves unclassified drop out of that dimension's estimate only;
+  their counts are reported.
+- **Variance.** §9.3.
