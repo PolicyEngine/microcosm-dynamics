@@ -766,7 +766,8 @@
       "clergy_remuneration",
       "clergy_or_religious_exemption",
       "nonresident_alien_status",
-      "place_of_work"
+      "place_of_work",
+      "foreign_social_insurance_contributions"
     ],
     "consequence": "open",
     "identification_class": "awaiting_ce2",
@@ -777,7 +778,7 @@
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
-      "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect.",
+      "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, on whose earnings Canadian contributions were required; the certificate exempts only that service.",
       "code_edition_evidence": [
         {
           "title": 26,
@@ -934,8 +935,7 @@
         "axis_exception": "Pub. L. 92-603 sections 121(c), 124(c) and 140(c) date the 1972 amendments to 411(a)(7) by taxable years, while this family's exclusions (410(a)(8)(A), 411(c)(4)-(5)) and its 1982 cantor boundary key on service, so the family keeps the service-date axis. No case outcome changes here; the foreign-ministry computation belongs to self_employment_clergy_gross_concept, which uses the taxable-year axis, so a fiscal-year minister whose taxable year began in 1972 takes that family's earlier row for the whole year."
       },
       "unread_trigger_facts": {
-        "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it.",
-        "place_of_work": "411(b) turns on nonresident-alien status, not place; from 1973 411(a)(7) disregards 911 for every nonexempt minister. Case pub_l_103_296_section_306_certificate carries 'in Canada' in its clergy_or_religious_exemption text, so place alone decides nothing."
+        "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it."
       }
     },
     "worked_examples": [],
@@ -1276,14 +1276,16 @@
         "case_id": "pub_l_103_296_section_306_certificate",
         "precedence": 4,
         "when": {
-          "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+          "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
+          "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
         },
         "consequence": "noncovered",
         "overrides": [
           "ministry_without_exemption_or_vow"
         ],
-        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", a minister who performed 1402(c)(4) services \"in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and paid Canadian contributions on the earnings may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\", and the exempt income \"shall not constitute self-employment income under section 211(b)\"."
+        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". The exemption reaches only those services: the individual \"shall be exempt from payment of such tax with respect to services described in paragraphs (1) and (2)\", and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the case reads this service's place and contributions, not the person's: ministry the same minister performs in the United States in the same taxable year is not exempt and reaches ministry_without_exemption_or_vow."
       },
       {
         "case_id": "ministry_without_exemption_or_vow",
@@ -1505,7 +1507,8 @@
       "clergy_remuneration",
       "clergy_or_religious_exemption",
       "nonresident_alien_status",
-      "place_of_work"
+      "place_of_work",
+      "foreign_social_insurance_contributions"
     ],
     "consequence": "open",
     "identification_class": "awaiting_ce2",
@@ -1516,7 +1519,7 @@
       "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
       "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
       "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
-      "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens). Case foreign_agreement_sole_coverage applies Publication 517's exception for a minister whom a social security agreement makes subject only to a foreign country's social security laws. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect.",
+      "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens). Case foreign_agreement_sole_coverage applies Publication 517's exception for a minister whom a social security agreement makes subject only to a foreign country's social security laws. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, on whose earnings Canadian contributions were required; the certificate exempts only that service.",
       "cantor": "Effective January 1, 1982, a cantor is treated as an ordained minister if the cantor and congregation agree on the relationship (RS 01901.600 B.4.b).",
       "code_edition_evidence": [
         {
@@ -1803,8 +1806,7 @@
         }
       },
       "unread_trigger_facts": {
-        "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it.",
-        "place_of_work": "411(b) turns on nonresident-alien status, foreign_agreement_sole_coverage on the agreement and pub_l_103_296_section_306_certificate on the certificate (both clergy_or_religious_exemption texts, the latter naming Canada); place alone decides nothing (Publication 517 Mexico example)."
+        "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it."
       },
       "condition_cases": {
         "cantor": {
@@ -1832,8 +1834,10 @@
               "nonresident_alien_status"
             ],
             "pub_l_103_296_section_306_certificate": [
+              "clergy_or_religious_exemption",
+              "foreign_social_insurance_contributions",
               "ministerial_service",
-              "clergy_or_religious_exemption"
+              "place_of_work"
             ]
           }
         }
@@ -2211,14 +2215,16 @@
         "case_id": "pub_l_103_296_section_306_certificate",
         "precedence": 5,
         "when": {
-          "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+          "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
+          "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
         },
         "consequence": "noncovered",
         "overrides": [
           "ministry_without_exemption_or_vow"
         ],
-        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", a minister who performed 1402(c)(4) services \"in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and paid Canadian contributions on the earnings may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\", and the exempt income \"shall not constitute self-employment income under section 211(b)\"."
+        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". The exemption reaches only those services: the individual \"shall be exempt from payment of such tax with respect to services described in paragraphs (1) and (2)\", and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the case reads this service's place and contributions, not the person's: ministry the same minister performs in the United States in the same taxable year is not exempt and reaches ministry_without_exemption_or_vow."
       },
       {
         "case_id": "ministry_without_exemption_or_vow",

@@ -1966,7 +1966,7 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
             len(row["parameters"].get("unread_trigger_facts", {}))
             for row in rows
         )
-        == 378
+        == 375
     )
 
 

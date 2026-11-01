@@ -1290,7 +1290,6 @@
       "unread_trigger_facts": {
         "amount": "The amount the computation includes; no threshold.",
         "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22 (NOTE N5).",
-        "ministerial_service": "clergy_religious_service decides ministry; this row computes amounts.",
         "retirement_payment": "Left by decision D5: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
         "taxable_year_start": "The taxable-year axis lookup_date reads."
       }
@@ -1304,7 +1303,9 @@
       "clergy_retirement_benefit",
       "ministerial_service",
       "retirement_payment",
-      "taxable_year_start"
+      "taxable_year_start",
+      "place_of_work",
+      "foreign_social_insurance_contributions"
     ],
     "worked_examples": [],
     "cases": [
@@ -1333,13 +1334,16 @@
         "case_id": "pub_l_103_296_section_306_certificate",
         "precedence": 3,
         "when": {
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+          "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
+          "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
         },
         "consequence": "deferred",
         "defers_to": [
           "clergy_religious_service"
         ],
-        "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way."
+        "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The exemption reaches only \"services described in paragraphs (1) and (2)\", 1402(c)(4) services performed in Canada while no section 233 agreement was in effect, on whose earnings Canadian contributions were required, so the case reads this service's place and contributions and the residual computes the earnings of ministry the same minister performs elsewhere. The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way."
       }
     ],
     "open_alternatives": [],

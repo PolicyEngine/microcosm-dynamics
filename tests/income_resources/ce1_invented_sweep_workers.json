@@ -7551,12 +7551,16 @@
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: 1980 (calendar taxable year): United States citizen Baptist pastor serving a congregation in Ontario while no United States-Canada agreement under section 233 was in effect; the ministry was subject to section 1401 tax (no 1402(e) exemption), he paid Canada Pension Plan contributions on the earnings and filed the certificate Pub. L. 103-296 section 306 allows, effective for taxable years ending after 1978-12-31 and before 1985-01-01. Section 306(d): the income 'shall not constitute self-employment income under section 211(b)'.",
    "facts": {
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
     ],
-    "place_of_work": "in a foreign country"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -7775,12 +7779,16 @@
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: 1983 (calendar taxable year): United States citizen Baptist pastor serving a congregation in Ontario while no United States-Canada agreement under section 233 was in effect; the ministry was subject to section 1401 tax (no 1402(e) exemption), he paid Canada Pension Plan contributions on the earnings and filed the certificate Pub. L. 103-296 section 306 allows, effective for taxable years ending after 1978-12-31 and before 1985-01-01. Section 306(d): the income 'shall not constitute self-employment income under section 211(b)'.",
    "facts": {
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
     ],
-    "place_of_work": "in a foreign country"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -8367,22 +8375,36 @@
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED: 1980: Christian Science practitioner practising in Toronto who paid Canada Pension Plan contributions: section 306(a)(1) reaches only services described in 1402(c)(4), and a practitioner's are 1402(c)(5) services, so the section 306 text is false.",
+   "worker": "INVENTED: 1980: Christian Science practitioner practising in Toronto while no section 233 agreement is in effect, with Canada Pension Plan contributions required on the earnings, who files a section 306 certificate anyway: section 306(a)(1) reaches only services described in 1402(c)(4), and a practitioner's are 1402(c)(5) services, so the case just misses.",
    "facts": {
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
-    "place_of_work": "in a foreign country"
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service in the exercise of the profession of a Christian Science practitioner, described in 1402(c)(5), not 1402(c)(4)"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED: 1977: United States citizen pastor in Ontario paying Canada Pension Plan contributions, calendar taxable year 1977: section 306(c) starts with taxable years ending after 1978-12-31, so the section 306 text is false.",
+   "worker": "INVENTED: 1977: United States citizen pastor in Ontario paying Canada Pension Plan contributions, calendar taxable year 1977, who files a section 306 certificate for it: section 306(c) starts with taxable years ending after 1978-12-31, so his certificate is not effective for 1977 and the case just misses.",
    "facts": {
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
-    "place_of_work": "in a foreign country"
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306 for taxable year 1977, which ends before December 31, 1978, so it is not effective for that year"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -8391,18 +8413,34 @@
    "rule_id": "se_clergy_gross_concept_1973_1987",
    "worker": "INVENTED: 1981: the D4 Ontario pastor, with a section 306 certificate for his 1981 calendar taxable year; the clergy family decides the service (section 306(d)).",
    "facts": {
-    "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year, which ends after December 31, 1978 and before January 1, 1985: the individual performed services described in 1402(c)(4) (a minister's or a religious order member's, not a Christian Science practitioner's) that were subject to tax under section 1401, performed them in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect, and was required to pay contributions on the earnings from them under the social insurance system of Canada",
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "deferred",
    "decides": "pub_l_103_296_section_306_certificate"
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
-   "worker": "INVENTED: 1975: United States citizen pastor in Ontario paying Canada Pension Plan contributions, calendar taxable year 1975: before the years section 306(c) reaches, so the deferral just misses and the covered residual computes his earnings.",
+   "worker": "INVENTED: 1975: United States citizen pastor in Ontario paying Canada Pension Plan contributions, calendar taxable year 1975, who files a section 306 certificate for it: before the years section 306(c) reaches, so the deferral just misses and the covered residual computes his earnings.",
    "facts": {
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
-    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306 for taxable year 1975, which ends before December 31, 1978, so it is not effective for that year"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "covered",
    "decides": "residual"
@@ -14809,6 +14847,294 @@
     "taxable_year_start": "2020-01-01"
    },
    "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 H-1): 1981, calendar taxable year: a United States citizen minister with no 1402(e) exemption serves a Windsor, Ontario parish from January to June, while no United States-Canada section 233 agreement is in effect, pays Canada Pension Plan contributions on those earnings, and files a section 306 certificate for 1981. For the Windsor half-year the certificate exempts the service (section 306(a)(1)-(3)).",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "noncovered",
+   "decides": "pub_l_103_296_section_306_certificate"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 H-1): 1981: the same minister's July-December service to a Detroit, Michigan parish, on which he owes no Canadian contributions. The certificate exempts only 'services described in paragraphs (1) and (2)', services performed in Canada, so this service is self-employment.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 H-1, just misses on place): 1981: a United States citizen minister who lives in Windsor, Ontario and serves a Detroit parish, with Canadian contributions required on those earnings and a section 306 certificate filed: the service was not performed in Canada.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1981: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, with a section 306 certificate filed, on whose earnings no Canadian contributions were required: section 306(a)(3) fails.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 H-1, just misses on section 1401 tax): 1981: a minister with an effective 1402(e) exemption serving an Ontario congregation, with Canadian contributions required, who also files a section 306 certificate: his ministry is not 'subject to tax under section 1401' (section 306(a)(1)), so the exemption case decides.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "ministry described in 1402(c)(4) that is not subject to tax under section 1401, because an effective 1402(e) exemption covers it"
+    ],
+    "clergy_or_religious_exemption": [
+     "effective 1402(e) exemption",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1): 1982, calendar taxable year: a United States citizen minister with no 1402(e) exemption serves a Windsor, Ontario parish from January to June, while no United States-Canada section 233 agreement is in effect, pays Canada Pension Plan contributions on those earnings, and files a section 306 certificate for 1982. For the Windsor half-year the certificate exempts the service (section 306(a)(1)-(3)).",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "noncovered",
+   "decides": "pub_l_103_296_section_306_certificate"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1): 1982: the same minister's July-December service to a Detroit, Michigan parish, on which he owes no Canadian contributions. The certificate exempts only 'services described in paragraphs (1) and (2)', services performed in Canada, so this service is self-employment.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1, just misses on place): 1982: a United States citizen minister who lives in Windsor, Ontario and serves a Detroit parish, with Canadian contributions required on those earnings and a section 306 certificate filed: the service was not performed in Canada.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1982: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, with a section 306 certificate filed, on whose earnings no Canadian contributions were required: section 306(a)(3) fails.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1, just misses on section 1401 tax): 1982: a minister with an effective 1402(e) exemption serving an Ontario congregation, with Canadian contributions required, who also files a section 306 certificate: his ministry is not 'subject to tax under section 1401' (section 306(a)(1)), so the exemption case decides.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "ministry described in 1402(c)(4) that is not subject to tax under section 1401, because an effective 1402(e) exemption covers it"
+    ],
+    "clergy_or_religious_exemption": [
+     "effective 1402(e) exemption",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1, just misses on the certificate): 1983: a United States citizen pastor serving an Ontario congregation while no section 233 agreement is in effect, with Canada Pension Plan contributions required, who filed no section 306 certificate.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "filed no Pub. L. 103-296 section 306 certificate"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 H-1, just misses on the agreement): 1984: a United States citizen pastor whose Ontario ministry falls at a time when a United States-Canada agreement under section 233 is in effect (an INVENTED premise; no CE1 capture dates the agreement), with Canadian contributions required and a section 306 certificate filed: section 306(a)(2) fails.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when an agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 H-1): 1982: the Windsor-then-Detroit minister's July-December Detroit ministry, with no Canadian contributions on it: the certificate does not reach it, so the residual computes those earnings.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 H-1, just misses on place): 1983: a Windsor-resident United States citizen minister serving a Detroit parish, Canadian contributions required, certificate filed: the service was not performed in Canada.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1983: ministry in Ontario with a certificate filed and no Canadian contributions required on its earnings.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 H-1, just misses on 1402(c)(4)): 1983: a Christian Science practitioner in Ontario with Canadian contributions required who files a certificate anyway: a practitioner's service is 1402(c)(5) service.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service in the exercise of the profession of a Christian Science practitioner, described in 1402(c)(5), not 1402(c)(4)"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
+    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+   },
+   "expected": "covered",
    "decides": "residual"
   }
  ]
