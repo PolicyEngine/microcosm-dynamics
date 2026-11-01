@@ -1820,7 +1820,9 @@ def parameter_leaves(value, path=()):
 
 def holds_when_record(value):
     if isinstance(value, dict):
-        return "when" in value or any(map(holds_when_record, value.values()))
+        return bool({"when", "if"} & set(value)) or any(
+            map(holds_when_record, value.values())
+        )
     if isinstance(value, (list, tuple)):
         return any(map(holds_when_record, value))
     return False

@@ -1491,6 +1491,8 @@ NESTED_WHEN = {
     "flat": {"when": "INVENTED condition"},
     "listed": [{"when": "INVENTED condition", "base": "INVENTED"}],
     "deep": {"INVENTED": [{"INVENTED": {"when": "INVENTED condition"}}]},
+    # Review r4 M-5: the same record keyed "if" passed the literal guard.
+    "if_keyed": [{"if": "INVENTED condition", "base": "INVENTED"}],
     "plain": {"INVENTED": [{"base": "INVENTED"}]},
 }
 
@@ -1506,9 +1508,11 @@ NESTED_WHEN = {
 @example({"notes": "listed"})
 @example({"case_list": "deep"})
 @example({"notes": "plain"})
+@example({"notes": "if_keyed"})
 @settings(deadline=None)
 def test_cases_live_in_the_schema_not_in_parameters(parameters):
-    """Review r3 M2: no parameter record, at any depth, has a when key."""
+    """Review r3 M2 and r4 M-5: no parameter record, at any depth, has a
+    when or if key."""
     row = invented_row()
     parameters = {
         key: NESTED_WHEN.get(value, value) if isinstance(value, str) else value

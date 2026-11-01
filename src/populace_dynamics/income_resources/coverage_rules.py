@@ -49,8 +49,8 @@ Invariants (property tests in ``tests/income_resources``):
   cases, unless ``parameters.case_free_basis`` explains why the condition
   changes no consequence. That basis is a record of an ``explanation`` and
   a ``citation`` quoting a capture the row itself cites, so it cannot rest
-  on wording alone. No parameter record holds a ``when`` key: conditions
-  with consequences live in the schema's cases.
+  on wording alone. No parameter record holds a ``when`` or ``if`` key:
+  conditions with consequences live in the schema's cases.
 * Cases are ranked rather than required to be mutually exclusive because
   the statutes are drafted as exclusions, exceptions to them and exceptions
   to those exceptions (42 U.S.C. 410(a)(5)(B) with (C)–(H), and Pub. L.
@@ -343,10 +343,15 @@ def _has_chosen_reading(value: Any) -> bool:
     return False
 
 
+# Keys that make a parameter record a hidden case: a condition record
+# (``when``) or the same record under another name (``if``).
+CONDITION_RECORD_KEYS = frozenset({"when", "if"})
+
+
 def _holds_when_record(value: Any) -> bool:
-    """Whether a parameter value nests a record keyed by ``when``."""
+    """Whether a parameter value nests a record keyed ``when`` or ``if``."""
     if isinstance(value, Mapping):
-        return "when" in value or any(
+        return bool(CONDITION_RECORD_KEYS.intersection(value)) or any(
             _holds_when_record(child) for child in value.values()
         )
     if isinstance(value, (list, tuple)):
@@ -571,7 +576,9 @@ def _check_deferral_graph(rules: Iterable[CoverageRule]) -> None:
 
     A family defers when its own law gives no consequence and another
     family's does. Following ``defers_to`` from any row must reach a family
-    that decides, so the family-level deferral graph must be acyclic.
+    with a rule, so the family-level deferral graph must be acyclic. Where
+    that rule is open, the deferral refuses, and the deferring row records
+    it in ``parameters.deferral_exceptions``.
     """
     rules = tuple(rules)
     families = {rule.family for rule in rules}
