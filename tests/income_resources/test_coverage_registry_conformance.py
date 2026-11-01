@@ -2046,7 +2046,8 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     tied = [
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
-    assert len(tied) == 89
+    # The review r5 fix ties the four federal rows' scope.
+    assert len(tied) == 93
     assert all(row["open_reason"] is None for row in tied)
     # H-C: the 2018 tribal row's scope parameter names the case that reads
     # federal recognition.
@@ -4270,6 +4271,10 @@ GRANDFATHERED_FEDERAL = (
 LEGISLATIVE_STILL_UNDER_CSRS = (
     "reaches",
     {
+        "government_level": (
+            "employee of the United States or of an instrumentality of the "
+            "United States"
+        ),
         "federal_service": (
             "service in the legislative branch other than as a Member",
             GRANDFATHERED_FEDERAL,
@@ -4380,7 +4385,13 @@ REQUIRED_CONDITION_FAILURES = {
     },
     ("federal_1987_2026", "after_official_service_from_1988_11_10"): (
         "reaches",
-        {"federal_service": GRANDFATHERED_FEDERAL},
+        {
+            "federal_service": GRANDFATHERED_FEDERAL,
+            "government_level": (
+                "employee of the United States or of an instrumentality of "
+                "the United States"
+            ),
+        },
         "noncovered",
     ),
     **{
@@ -4593,8 +4604,8 @@ def test_government_level_conditions_name_a_level_of_government():
     ] == []
     # Six before round 5, which adds 20: the 1991 State and local row's
     # three mandatory-rule cases, 16 election cases and the 1968
-    # public-office election.
-    assert len(found) == 26
+    # public-office election. The review r5 fix adds 32 federal cases.
+    assert len(found) == 58
 
 
 # Round 5: 410(a)(7) excludes "Service performed in the employ of a State,
@@ -4929,6 +4940,418 @@ def test_election_cases_reach_only_election_work(registry, key):
         "election_work": NON_ELECTION_WORK,
     }
     decided = rule.resolve(cases_met(rule, facts))
+    assert "case_id" not in decided
+    assert decided["consequence"] == "covered"
+
+
+# Review r5 H-6: the conditions of every federal case that excludes or
+# stays open, other than its level, as the INVENTED federal workers
+# below state them. Former 410(a)(5)-(6), and 410(a)(5)-(6) from 1984,
+# reach only service "in the employ of the United States".
+FEDERAL_LEVEL = (
+    "employee of the United States or of an instrumentality of the United "
+    "States"
+)
+FED_ANNUITANT = (
+    "receiving an annuity from the Civil Service Retirement and Disability "
+    "Fund, or benefits for employee service under another Federal employee "
+    "retirement system (other than for uniformed services)"
+)
+FED_ARMY_CORPS_AIDE = (
+    "performed by a student as an aide in a U.S. Army Corps of Engineers "
+    "research and development laboratory under a 10 U.S.C. 2360 contract for "
+    "seasonal or part-time student employment"
+)
+FED_DEFRA_OTHERWISE_MEETS = (
+    "otherwise meets 410(a)(5)(A) and (B)(i) or (B)(ii)"
+)
+FED_DEFRA_REQUALIFIED = (
+    "subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another "
+    "Federal employee retirement system (other than for uniformed services); "
+    "after 1983 received a lump-sum payment under 5 U.S.C. 8342(a) within the "
+    "dates of section 2601(d)(1)(B)(i) or otherwise ceased to be subject to "
+    "subchapter III as 410(a)(5)(G)(iii) describes; and again became subject "
+    "to (or effectively applied for) subchapter III within the period section "
+    "2601(d)(1) or (2) allows (an individual contributing a reduced amount by "
+    "reason of the Federal Employees' Retirement Contribution Temporary "
+    "Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section "
+    "2601(c))"
+)
+FED_EMERGENCY_TEMPORARY_1968 = (
+    "employee serving on a temporary basis in case of fire, storm, "
+    "earthquake, flood or other similar emergency"
+)
+FED_EMERGENCY_TEMPORARY_1984 = (
+    "performed as an employee serving on a temporary basis in case of fire, "
+    "storm, earthquake, flood, or other similar emergency"
+)
+FED_EXCLUDED_IN_1983 = (
+    "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
+)
+FED_EXEMPT_1950_SYSTEM_1968 = (
+    "service for an instrumentality exempt from the former IRC 1410 tax on "
+    "1950-12-31 and covered by a retirement system the instrumentality "
+    "established, other than service the January 1983 text of former "
+    "410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; "
+    "the listed Federal banks and credit associations, Federal Reserve Banks "
+    "(Federal home loan banks only from 1973) and Federal Credit Unions; "
+    "Production and Marketing Administration committees; and "
+    "nonappropriated-fund exchange and welfare employees of the Defense "
+    "Department and the Coast Guard"
+)
+FED_EXEMPT_1950_SYSTEM_1973 = (
+    "service for an instrumentality exempt from the former IRC 1410 tax on "
+    "1950-12-31 and covered by a retirement system the instrumentality "
+    "established, other than service the January 1983 text of former "
+    "410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; "
+    "the listed Federal banks and credit associations, Federal Reserve Banks, "
+    "Federal home loan banks and Federal Credit Unions; Production and "
+    "Marketing Administration committees; and nonappropriated-fund exchange "
+    "and welfare employees of the Defense Department and the Coast Guard"
+)
+FED_FEPCA_REEMPLOYED = (
+    "reemployed annuitant with an approved waiver of annuity offset under the "
+    "Federal Employees Pay Comparability Act"
+)
+FED_GRANDFATHERED_CONTINUOUS = (
+    "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and "
+    "has been performed continuously since December 31, 1983, under the "
+    "continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+)
+FED_HOSPITAL_STUDENT_1968 = (
+    "employee under 5 U.S.C. 5351(2) (interns, student nurses and other "
+    "student employees of Federal hospitals) other than a medical or dental "
+    "intern or resident in training"
+)
+FED_HOSPITAL_STUDENT_1984 = (
+    "performed as an employee included under 5 U.S.C. 5351(2) (certain "
+    "interns, student nurses and other student employees of Federal "
+    "hospitals), other than as a medical or dental intern or a medical or "
+    "dental resident in training"
+)
+FED_INMATE_1968 = "inmate of a penal institution of the United States"
+FED_INMATE_1984 = (
+    "performed in a penal institution of the United States by an inmate "
+    "thereof"
+)
+FED_OTHER_RETIREMENT_SYSTEM = (
+    "not subject to the Civil Service Retirement System because subject to "
+    "another retirement system, other than the Tennessee Valley Authority's"
+)
+FED_PRESIDENT_CONGRESS_LEGISLATIVE = (
+    "President/Vice President/Congress/legislative employee"
+)
+FED_RETIRED_JUDGE_371B = (
+    "retired justice or judge performing service under 28 U.S.C. 294 "
+    "(assignment to active duty), paid under 28 U.S.C. 371(b) during that "
+    "service"
+)
+FED_SECTION_1410_INSTRUMENTALITY = (
+    "instrumentality itself exempt by specific statutory reference to former "
+    "IRC 1410"
+)
+FED_US_LAW_SYSTEM = "established by a law of the United States"
+FEDERAL_CASE_FACTS = {
+    ("federal_1968_1972", "federal_retirement_system_service"): (
+        "noncovered",
+        {"federal_retirement_system": FED_US_LAW_SYSTEM},
+    ),
+    ("federal_1968_1972", "statutory_1410_instrumentality"): (
+        "noncovered",
+        {"federal_service": FED_SECTION_1410_INSTRUMENTALITY},
+    ),
+    ("federal_1968_1972", "exempt_1950_instrumentality_system"): (
+        "noncovered",
+        {"federal_service": FED_EXEMPT_1950_SYSTEM_1968},
+    ),
+    ("federal_1968_1972", "president_congress_legislative"): (
+        "noncovered",
+        {"occupation": FED_PRESIDENT_CONGRESS_LEGISLATIVE},
+    ),
+    ("federal_1968_1972", "federal_penal_inmate"): (
+        "noncovered",
+        {"occupation": FED_INMATE_1968},
+    ),
+    ("federal_1968_1972", "federal_hospital_student_employee"): (
+        "noncovered",
+        {"occupation": FED_HOSPITAL_STUDENT_1968},
+    ),
+    ("federal_1968_1972", "temporary_emergency_employee"): (
+        "noncovered",
+        {"occupation": FED_EMERGENCY_TEMPORARY_1968},
+    ),
+    ("federal_1968_1972", "other_federal_retirement_system"): (
+        "noncovered",
+        {"federal_retirement_system": FED_OTHER_RETIREMENT_SYSTEM},
+    ),
+    ("federal_1973_1983", "federal_retirement_system_service"): (
+        "noncovered",
+        {"federal_retirement_system": FED_US_LAW_SYSTEM},
+    ),
+    ("federal_1973_1983", "statutory_1410_instrumentality"): (
+        "noncovered",
+        {"federal_service": FED_SECTION_1410_INSTRUMENTALITY},
+    ),
+    ("federal_1973_1983", "exempt_1950_instrumentality_system"): (
+        "noncovered",
+        {"federal_service": FED_EXEMPT_1950_SYSTEM_1973},
+    ),
+    ("federal_1973_1983", "president_congress_legislative"): (
+        "noncovered",
+        {"occupation": FED_PRESIDENT_CONGRESS_LEGISLATIVE},
+    ),
+    ("federal_1973_1983", "federal_penal_inmate"): (
+        "noncovered",
+        {"occupation": FED_INMATE_1968},
+    ),
+    ("federal_1973_1983", "federal_hospital_student_employee"): (
+        "noncovered",
+        {"occupation": FED_HOSPITAL_STUDENT_1968},
+    ),
+    ("federal_1973_1983", "temporary_emergency_employee"): (
+        "noncovered",
+        {"occupation": FED_EMERGENCY_TEMPORARY_1968},
+    ),
+    ("federal_1973_1983", "other_federal_retirement_system"): (
+        "noncovered",
+        {"federal_retirement_system": FED_OTHER_RETIREMENT_SYSTEM},
+    ),
+    ("federal_1984_1986", "retired_judge_371b_payment"): (
+        "noncovered",
+        {"occupation": FED_RETIRED_JUDGE_371B},
+    ),
+    ("federal_1984_1986", "federal_penal_inmate"): (
+        "noncovered",
+        {"federal_service": FED_INMATE_1984},
+    ),
+    ("federal_1984_1986", "federal_hospital_student_employee"): (
+        "noncovered",
+        {"federal_service": FED_HOSPITAL_STUDENT_1984},
+    ),
+    ("federal_1984_1986", "temporary_emergency_employee"): (
+        "noncovered",
+        {"federal_service": FED_EMERGENCY_TEMPORARY_1984},
+    ),
+    ("federal_1984_1986", "defra_2601d_requalification"): (
+        "noncovered",
+        {
+            "federal_retirement_system": FED_DEFRA_REQUALIFIED,
+            "federal_service": FED_DEFRA_OTHERWISE_MEETS,
+        },
+    ),
+    ("federal_1984_1986", "grandfathered_continuous_service"): (
+        "noncovered",
+        {"federal_service": FED_GRANDFATHERED_CONTINUOUS},
+    ),
+    ("federal_1984_1986", "federal_annuitant"): (
+        "noncovered",
+        {
+            "federal_retirement_system": FED_ANNUITANT,
+            "federal_service": FED_EXCLUDED_IN_1983,
+        },
+    ),
+    ("federal_1987_2026", "retired_judge_371b_payment"): (
+        "noncovered",
+        {"occupation": FED_RETIRED_JUDGE_371B},
+    ),
+    ("federal_1987_2026", "federal_penal_inmate"): (
+        "noncovered",
+        {"federal_service": FED_INMATE_1984},
+    ),
+    ("federal_1987_2026", "federal_hospital_student_employee"): (
+        "noncovered",
+        {"federal_service": FED_HOSPITAL_STUDENT_1984},
+    ),
+    ("federal_1987_2026", "temporary_emergency_employee"): (
+        "noncovered",
+        {"federal_service": FED_EMERGENCY_TEMPORARY_1984},
+    ),
+    ("federal_1987_2026", "army_corps_2360_student_aide"): (
+        "refuses",
+        {"federal_service": FED_ARMY_CORPS_AIDE},
+    ),
+    ("federal_1987_2026", "fepca_waiver_reemployed_annuitant"): (
+        "refuses",
+        {"federal_retirement_system": FED_FEPCA_REEMPLOYED},
+    ),
+    ("federal_1987_2026", "defra_2601d_requalification"): (
+        "noncovered",
+        {
+            "federal_retirement_system": FED_DEFRA_REQUALIFIED,
+            "federal_service": FED_DEFRA_OTHERWISE_MEETS,
+        },
+    ),
+    ("federal_1987_2026", "grandfathered_continuous_service"): (
+        "noncovered",
+        {"federal_service": FED_GRANDFATHERED_CONTINUOUS},
+    ),
+    ("federal_1987_2026", "federal_annuitant"): (
+        "noncovered",
+        {
+            "federal_retirement_system": FED_ANNUITANT,
+            "federal_service": FED_EXCLUDED_IN_1983,
+        },
+    ),
+}
+FEDERAL_ROWS = (
+    "federal_1968_1972",
+    "federal_1973_1983",
+    "federal_1984_1986",
+    "federal_1987_2026",
+)
+FEDERAL_LEVEL_PASSAGES = {
+    "federal_1968_1972": (
+        "uscode_1994_42_410.html",
+        "(C) Service performed in the employ of the United States or in the "
+        "employ of any instrumentality of the United States, if such service "
+        "is performed",
+    ),
+    "federal_1973_1983": (
+        "uscode_1994_42_410.html",
+        "(C) Service performed in the employ of the United States or in the "
+        "employ of any instrumentality of the United States, if such service "
+        "is performed",
+    ),
+    "federal_1984_1986": (
+        "lii_42_410.html",
+        "(6) Service performed in the employ of the United States or any "
+        "instrumentality of the United States if such service is performed",
+    ),
+    "federal_1987_2026": (
+        "lii_42_410.html",
+        "(6) Service performed in the employ of the United States or any "
+        "instrumentality of the United States if such service is performed",
+    ),
+}
+
+
+def test_federal_exclusions_name_the_level_their_law_reaches(registry):
+    """Review r5 H-6: former 410(a)(5)-(6), and 410(a)(5)-(6) from 1984,
+    reach only service "in the employ of the United States" or of its
+    instrumentalities. So every federal case that excludes or stays open
+    names that level, and the row's scope parameter ties it to the case;
+    a covering case needs no level."""
+    limited = []
+    for rule_id in FEDERAL_ROWS:
+        rule = next(r for r in registry.rules if r.rule_id == rule_id)
+        capture, passage = FEDERAL_LEVEL_PASSAGES[rule_id]
+        assert capture in {c.capture for c in rule.citations}
+        text = source_text(CAPTURE_DIRECTORY / capture)
+        assert " ".join(passage.split()) in text
+        ties = rule.parameters["condition_cases"]["scope"]["cases"]
+        for case in rule.cases:
+            if case["consequence"] not in {"noncovered", "open"}:
+                continue
+            key = (rule_id, case["case_id"])
+            limited.append(key)
+            assert case["when"].get("government_level") == FEDERAL_LEVEL, key
+            assert "government_level" in ties[case["case_id"]], key
+    assert sorted(limited) == sorted(FEDERAL_CASE_FACTS)
+    assert len(limited) == 32
+
+
+FEDERAL_LEVEL_EMPLOYERS = {
+    "federal": FEDERAL_LEVEL,
+    "state_or_local": STATE_EMPLOYEE,
+    "private": PRIVATE_EMPLOYEE,
+    "district_of_columbia": DISTRICT_EMPLOYEE,
+}
+
+
+@pytest.mark.parametrize("employer", sorted(FEDERAL_LEVEL_EMPLOYERS))
+@pytest.mark.parametrize(
+    "key",
+    sorted(FEDERAL_CASE_FACTS),
+    ids=["-".join(key) for key in sorted(FEDERAL_CASE_FACTS)],
+)
+def test_federal_cases_reach_only_federal_service(registry, key, employer):
+    """Review r5 H-6: a worker with every other fact of a federal exclusion
+    meets it only in the employ of the United States. A State or local, a
+    private or a District of Columbia employee with the same facts reaches
+    the row's residual (covered), and the other families decide."""
+    rule_id, case_id = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    expected, facts = FEDERAL_CASE_FACTS[key]
+    worker = {**facts, "government_level": FEDERAL_LEVEL_EMPLOYERS[employer]}
+    met = cases_met(rule, worker)
+    if employer == "federal":
+        assert case_id in met
+        assert resolved_consequence(rule, worker) == expected
+    else:
+        assert resolved_consequence(rule, worker) == "covered"
+        assert "case_id" not in rule.resolve(met)
+
+
+# Review r5 H-6 repros (INVENTED): an Ohio legislature aide in 1975 whose
+# position a 218 agreement covers, and a private flood-cleanup temp in
+# 1972. Neither works for the United States.
+FEDERAL_REPRO_WORKERS = {
+    "ohio_legislature_aide_1975": (
+        1975,
+        {
+            "government_level": STATE_EMPLOYEE,
+            "occupation": FED_PRESIDENT_CONGRESS_LEGISLATIVE,
+        },
+    ),
+    "private_flood_cleanup_temp_1972": (
+        1972,
+        {
+            "government_level": PRIVATE_EMPLOYEE,
+            "occupation": FED_EMERGENCY_TEMPORARY_1968,
+        },
+    ),
+}
+
+
+@pytest.mark.parametrize("worker", sorted(FEDERAL_REPRO_WORKERS))
+def test_federal_rows_leave_non_federal_workers_to_other_families(
+    registry, worker
+):
+    """Review r5 H-6: former 410(a)(6)(C) reaches only "Service performed
+    in the employ of the United States"."""
+    year, facts = FEDERAL_REPRO_WORKERS[worker]
+    (rule,) = registry.lookup("federal_retirement_service", year)
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided["consequence"] == "covered"
+    assert "case_id" not in decided
+
+
+FEDERAL_OTHER_EMPLOYERS = (
+    STATE_EMPLOYEE,
+    PRIVATE_EMPLOYEE,
+    DISTRICT_EMPLOYEE,
+    "employee of the Government of Guam",
+    "member of an Indian tribal council",
+    "employee of a foreign government",
+    "employee of a public international organization",
+    "employee of a railroad carrier",
+)
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(sorted(FEDERAL_CASE_FACTS)),
+    st.sampled_from(FEDERAL_OTHER_EMPLOYERS),
+)
+def test_only_the_federal_level_meets_these_cases(registry, key, employer):
+    """Review r5 H-6 property: a worker with a federal case's other facts
+    meets it in the employ of the United States and, with any other
+    employer, meets no federal case that excludes or stays open and
+    reaches the residual."""
+    rule_id, case_id = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    _, facts = FEDERAL_CASE_FACTS[key]
+    assert case_id in cases_met(
+        rule, {**facts, "government_level": FEDERAL_LEVEL}
+    )
+    met = cases_met(rule, {**facts, "government_level": employer})
+    limited = {
+        c["case_id"]
+        for c in rule.cases
+        if c["consequence"] in {"noncovered", "open"}
+    }
+    assert not limited & met
+    decided = rule.resolve(met)
     assert "case_id" not in decided
     assert decided["consequence"] == "covered"
 

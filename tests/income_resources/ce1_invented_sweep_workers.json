@@ -9,7 +9,8 @@
      "established by a law of the United States",
      "not subject to the Civil Service Retirement System because subject to another retirement system"
     ],
-    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -18,7 +19,8 @@
    "worker": "INVENTED: Ann, a USDA clerk in 1970 who contributes to the Civil Service Retirement System.",
    "facts": {
     "federal_retirement_system": "established by a law of the United States",
-    "federal_service": "civilian clerk in an executive department"
+    "federal_service": "civilian clerk in an executive department",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -27,7 +29,8 @@
    "worker": "INVENTED: Ray, a retired Navy chief, works in 1971 as a civilian CSRS clerk at a naval depot.",
    "facts": {
     "federal_retirement_system": "established by a law of the United States",
-    "federal_service": "civilian service by a retired member of a uniformed service"
+    "federal_service": "civilian service by a retired member of a uniformed service",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -35,7 +38,8 @@
    "rule_id": "federal_1968_1972",
    "worker": "INVENTED: Dee works for a Federal Reserve Bank in 1971 and belongs to the bank's own plan.",
    "facts": {
-    "federal_service": "Federal Reserve Bank employee in the bank's own plan"
+    "federal_service": "Federal Reserve Bank employee in the bank's own plan",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -47,7 +51,8 @@
      "established by a law of the United States",
      "not subject to the Civil Service Retirement System because subject to another retirement system"
     ],
-    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -56,7 +61,8 @@
    "worker": "INVENTED: Ann, a CSRS clerk at the Commerce Department in 1980.",
    "facts": {
     "federal_retirement_system": "established by a law of the United States",
-    "federal_service": "civilian clerk in an executive department"
+    "federal_service": "civilian clerk in an executive department",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -64,7 +70,8 @@
    "rule_id": "federal_1973_1983",
    "worker": "INVENTED: Eve works for a Federal home loan bank in 1975 and belongs to the bank's plan.",
    "facts": {
-    "federal_service": "Federal home loan bank employee in the bank's own plan"
+    "federal_service": "Federal home loan bank employee in the bank's own plan",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -72,7 +79,8 @@
    "rule_id": "federal_1973_1983",
    "worker": "INVENTED: Hank, a federal prison inmate, works in the prison shop in 1976.",
    "facts": {
-    "occupation": "inmate of a penal institution of the United States"
+    "occupation": "inmate of a penal institution of the United States",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -83,7 +91,8 @@
     "federal_service": [
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
      "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -91,7 +100,8 @@
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1985.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983"
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -103,7 +113,8 @@
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
      "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
     ],
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -112,7 +123,8 @@
    "worker": "INVENTED: Hal retired under CSRS in 1982 and returns in 1985 to a civilian post the January 1983 text excludes.",
    "facts": {
     "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -120,7 +132,8 @@
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Nora, first hired by the Labor Department in 1985 as a civilian analyst.",
    "facts": {
-    "federal_service": "first hired after 1983"
+    "federal_service": "first hired after 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -128,7 +141,8 @@
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Hank, a federal prison inmate, works in the prison shop in 1985.",
    "facts": {
-    "federal_service": "performed in a penal institution of the United States by an inmate thereof"
+    "federal_service": "performed in a penal institution of the United States by an inmate thereof",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -136,7 +150,8 @@
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Ray, a retired federal judge sitting by assignment in 1985 and paid under 28 U.S.C. 371(b).",
    "facts": {
-    "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b)"
+    "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b)",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -147,7 +162,8 @@
     "federal_service": [
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
      "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -158,7 +174,8 @@
     "federal_service": [
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
      "performed after December 1987 as such a member on inactive duty training"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -166,7 +183,8 @@
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1995.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983"
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -175,7 +193,8 @@
    "worker": "INVENTED: Hal, a CSRS annuitant, is reemployed in 2000 in a civilian post the January 1983 text excludes.",
    "facts": {
     "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund"
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -186,7 +205,8 @@
     "federal_service": [
      "first hired after 1983",
      "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "refuses"
   },
@@ -197,7 +217,8 @@
     "federal_service": [
      "first hired after 1983",
      "civil engineer employed by a U.S. Army Corps of Engineers district"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -208,7 +229,8 @@
     "federal_service": [
      "first hired after 1983",
      "performed as an employee included under 5 U.S.C. 5351(2)"
-    ]
+    ],
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "noncovered"
   },
@@ -216,7 +238,8 @@
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Nora, first hired in 2005 as a civilian analyst at the Labor Department.",
    "facts": {
-    "federal_service": "first hired after 1983"
+    "federal_service": "first hired after 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "covered"
   },
@@ -225,7 +248,8 @@
    "worker": "INVENTED: Una, a reemployed CSRS annuitant with an approved FEPCA waiver of offset in 2015.",
    "facts": {
     "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset",
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983"
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
    },
    "expected": "refuses"
   },
