@@ -204,12 +204,21 @@ def test_continuous_onset_status_and_dli_equal_plain_quarter_scan(
         established = replace(
             person, current_disability_period_established=True
         )
-        frozen = i.insured_status(
-            established,
-            history(established, month, counts),
-            month,
-            test=i.InsuredTest.DISABILITY,
-        )
+        try:
+            frozen = i.insured_status(
+                established,
+                history(established, month, counts),
+                month,
+                test=i.InsuredTest.DISABILITY,
+            )
+        except i.InsuredConfigurationUnsupported as error:
+            # Only a partial year can move the start away from one filling.
+            assert (
+                error.reason
+                is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
+            )
+            assert any(0 < count < 4 for count in counts.values())
+            return
         expected_start = (
             onset if quarters[0] == first else _quarter_date(quarters[0])
         )

@@ -825,6 +825,109 @@ def _current_period_establishment_unknown(person):
     )
 
 
+def _pre1951_aggregate_possible(
+    person, years, credits, at, exit_month, required
+):
+    """Bound Act 213(c)'s aggregate against one fully insured requirement.
+
+    Post1950 upper credits are counted without period exclusions, and
+    unresolved history or establishment lowers the requirement to six.
+    This can only preserve a route; it never credits a deemed quarter.
+    """
+    before1951 = {year: row for year, row in years.items() if year < 1951}
+    if not before1951:
+        return False
+    wages = sum(
+        (
+            sum(row.quarterly_wages)
+            for row in before1951.values()
+            if row.quarterly_wages is not None
+        ),
+        Fraction(0),
+    )
+    unknown_wages = any(
+        row.provenance is EarningsProvenance.UNKNOWN
+        for row in before1951.values()
+    )
+    rows, _ = _world(person, credits, _qid(at), exit_month, False)
+    post1950 = sum(
+        len(_assign_qcs(*row)) for year, row in rows.items() if year >= 1951
+    )
+    if (
+        person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+        or person.disability_onset is not None
+        and person.disability_onset < _fra_date(person).replace(day=1)
+        and person.current_disability_period_provenance
+        is EarningsProvenance.UNKNOWN
+    ):
+        required = 6
+    # Source conflict us:oasdi-insured-pre1951-seven-elapsed-years
+    return unknown_wages or (
+        wages >= 400 and wages // 400 + post1950 >= required
+    )
+
+
+def _aggregate_could_insure(
+    person, years, credits, at, exit_month, *, onset=True
+):
+    """Whether only the aggregate could be missing for insurance at ``at``.
+
+    Act 223(c)(1)(A) and 216(i)(3)(A) require a "fully insured individual"
+    under section 214, the section Act 213(c) names, and 404.132 applies
+    404.110 with only a different end to the elapsed years. RS 00301.315
+    B.1 alone excludes disability claims. Filing facts stay unmodeled, so
+    a decisive aggregate refuses by name and is never rejected or answered
+    false. Simplified credits never count toward the recent rule.
+    """
+    # Source conflict us:oasdi-insured-simplified-pre1951-disability-scope
+    if not (
+        person.statutory_blindness
+        or _witness(
+            person,
+            credits,
+            at,
+            exit_month,
+            InsuredTest.DISABILITY,
+            onset=onset,
+            ignore_fully_insured=True,
+        )[0]
+    ):
+        return False
+    periods = tuple(
+        (period.start, period.end)
+        for period in person.prior_disability_periods
+    )
+    return _pre1951_aggregate_possible(
+        person,
+        years,
+        credits,
+        at,
+        exit_month,
+        _requirement(person, at, periods, onset=onset, for_disability=True),
+    )
+
+
+def _aggregate_establishment_possible(
+    person, years, credits, horizon, exit_month
+):
+    """Possibility bound: earliest requirement, credits through horizon."""
+    periods = tuple(
+        (period.start, period.end)
+        for period in person.prior_disability_periods
+    )
+    return _pre1951_aggregate_possible(
+        person,
+        years,
+        credits,
+        horizon,
+        exit_month,
+        _requirement(
+            person, person.disability_onset, periods, for_disability=True
+        ),
+    )
+
+
 def _observable_coverage_paths(
     person, years, month, exit_month, kind, lo, quarter, upper, lower
 ):
@@ -833,6 +936,8 @@ def _observable_coverage_paths(
     Act 213(c), 404.110(d), and RS 00301.315 make the pre1951 aggregate
     method available independently of an optional specialist flag. Its
     application, retroactivity and section227 conditions are not declared.
+    DISABILITY compares the recent rule at each event with the same
+    bound; a true ordinary status stays computed.
     RS .315 B.1.a describes the 1967 seven-EY condition; B.1.b removes
     it under the 1990 amendments. 404.110(d)(1)(ii) supplies a June1992
     application exception with section227 conditions. A potentially
@@ -851,27 +956,6 @@ def _observable_coverage_paths(
     ):
         return
     if kind is InsuredTest.FULLY:
-        before1951 = {year: row for year, row in years.items() if year < 1951}
-        if not before1951:
-            return
-        wages = sum(
-            (
-                sum(row.quarterly_wages)
-                for row in before1951.values()
-                if row.quarterly_wages is not None
-            ),
-            Fraction(0),
-        )
-        unknown_wages = any(
-            row.provenance is EarningsProvenance.UNKNOWN
-            for row in before1951.values()
-        )
-        rows, _ = _world(person, upper, _qid(month), exit_month, False)
-        post1950 = sum(
-            len(_assign_qcs(*row))
-            for year, row in rows.items()
-            if year >= 1951
-        )
         periods = tuple(
             (period.start, period.end)
             for period in person.prior_disability_periods
@@ -880,33 +964,37 @@ def _observable_coverage_paths(
         # lower prerequisite would favor the simplified aggregate instead.
         # Use every known period, including a derived current period, and
         # the universal six-QC lower bound for unresolved applicability.
-        required = min(lo[6], _requirement(person, month, periods))
-        if (
-            person.prior_disability_periods_provenance
-            is EarningsProvenance.UNKNOWN
-            or person.disability_onset is not None
-            and person.disability_onset < _fra_date(person).replace(day=1)
-            and person.current_disability_period_provenance
-            is EarningsProvenance.UNKNOWN
-        ):
-            required = 6
-        # Source conflict us:oasdi-insured-pre1951-seven-elapsed-years
-        if unknown_wages or (
-            wages >= 400 and wages // 400 + post1950 >= required
+        if _pre1951_aggregate_possible(
+            person,
+            years,
+            upper,
+            month,
+            exit_month,
+            min(lo[6], _requirement(person, month, periods)),
         ):
             _refuse(
                 InsuredUnsupportedReason.SIMPLIFIED_PRE1951,
                 "Pre1951 wages may establish fully insured status under "
                 "Act213(c); filing and retroactivity facts are unmodeled",
             )
-    elif kind is InsuredTest.DISABILITY and _pre1956_alternate_possible(
-        person, upper, month, exit_month, lower_credits=lower
-    ):
-        _refuse(
-            InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
-            "Onset and QCs allow the RS00301.480 alternate test; "
-            "application conditions are unmodeled",
-        )
+    elif kind is InsuredTest.DISABILITY:
+        if _pre1956_alternate_possible(
+            person, upper, month, exit_month, lower_credits=lower
+        ):
+            _refuse(
+                InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
+                "Onset and QCs allow the RS00301.480 alternate test; "
+                "application conditions are unmodeled",
+            )
+        if not lo[0] and any(
+            _aggregate_could_insure(person, years, upper, event, exit_month)
+            for event in _events(person, month, kind)
+        ):
+            _refuse(
+                InsuredUnsupportedReason.SIMPLIFIED_PRE1951,
+                "Pre1951 wages may supply the disability fully insured "
+                "prerequisite; filing facts are unmodeled",
+            )
 
 
 def _pre1956_alternate_possible(
@@ -1378,7 +1466,7 @@ def _fra_quarter(person):
     return _qid(_fra_date(person))
 
 
-def _last_insured(person, credits, month, exit_month):
+def _last_insured(person, credits, month, exit_month, *, years=None):
     last = None
     if sum(len(fixed) + flexible for fixed, flexible in credits.values()) < 6:
         return None, False
@@ -1410,6 +1498,14 @@ def _last_insured(person, credits, month, exit_month):
         )[0]:
             last = _qend(qid)
             break
+        if years is not None and _aggregate_could_insure(
+            person, years, credits, at, exit_month, onset=False
+        ):
+            _refuse(
+                InsuredUnsupportedReason.SIMPLIFIED_PRE1951,
+                "Pre1951 wages may extend the date last insured; "
+                "filing facts are unmodeled",
+            )
     censored = (
         (exit_month is None or exit_month > month)
         and cap == _qid(month)
@@ -1521,6 +1617,11 @@ def _with_current_period(
                     "First insured start depends on annual placement "
                     "or prior treatment",
                 )
+    return _complete_current_period(person, quarter)
+
+
+def _complete_current_period(person, quarter):
+    fra = _fra_date(person)
     # 416(i)(2)(C), 404.321(a): onset day if insured then, otherwise
     # first day of the first later insured quarter. Application/duration
     # are administrative facts declared by the caller, never inferred.
@@ -1557,6 +1658,195 @@ def _with_current_period(
         prior_disability_periods_convention_id=None,
     )
     return completed, start
+
+
+def _start_fixed(person, credits, start, month, exit_month):
+    """Whether every annual placement insures the favorable first start.
+
+    Without prior periods every window is a suffix ending at the tested
+    quarter. Placing annual QCs as early as possible before that quarter's
+    year and as late as possible in it is therefore the worst filling. If
+    even that filling is insured, no filling starts later, and the
+    favorable start already precedes none. Prior periods retain credited
+    endpoints, so no single worst filling exists and the caller enumerates.
+    """
+    if person.prior_disability_periods:
+        return False
+    rows, _ = _world(person, credits, _qid(month), exit_month, False)
+    worst = dict(credits)
+    for year, (fixed, count, allowed) in rows.items():
+        if count:
+            vacant = sorted(q for q in allowed if q not in fixed)
+            chosen = vacant[-count:] if year == start.year else vacant[:count]
+            worst[year] = (tuple(sorted((*fixed, *chosen))), 0)
+    return _witness(person, worst, start, exit_month, InsuredTest.DISABILITY)[
+        0
+    ]
+
+
+def _start_sensitive_years(person, horizon):
+    """Years whose annual placement can change a first insured quarter.
+
+    A year wholly inside every tested window, and untouched by a period,
+    adds its full count wherever its QCs fall. Only the window's back
+    edges, the onset-to-horizon years and prior-period years can differ.
+    The 12-quarter and age-21 edges belong to 404.130(c) and (d). Recent-rule
+    windows want a back-edge QC late, but an entitlement month can end a
+    CURRENTLY window in that year and want it early, so placement stays
+    enumerated there.
+    """
+    onset = _qid(person.disability_onset)
+    last = _qid(horizon)
+    excluded = sum(
+        _qid(period.end) - _qid(period.start) + 1
+        for period in person.prior_disability_periods
+    )
+    quarters = set(range(onset - 39 - excluded, last - 38))
+    quarters.update(range(onset, last + 1))
+    quarters.update(range(onset - 11 - excluded, last - 10))
+    quarters.add(_qid(_attain(person.birth_date, 21)) + 1)
+    for period in person.prior_disability_periods:
+        quarters.update(range(_qid(period.start), _qid(period.end) + 1))
+    return {quarter // 4 for quarter in quarters}
+
+
+def _period_outcomes(
+    person, completed, start, credits, month, exit_month, kinds, dated
+):
+    """Statuses and date last insured for each ending of one start."""
+    for option in _current_period_completions(person, completed, start, month):
+        statuses = tuple(
+            _decision_witness(option, credits, month, exit_month, kind)[0][0]
+            for kind in kinds
+        )
+        last = (
+            _last_insured(option, credits, month, exit_month)[0]
+            if dated
+            else None
+        )
+        yield statuses, last
+
+
+def _improves(outcome, returned, last_insured):
+    statuses, last = outcome
+    return any(
+        found and not kept
+        for found, kept in zip(statuses, returned, strict=True)
+    ) or (last or date.min) > (last_insured or date.min)
+
+
+def _settle_first_start(
+    person,
+    credits,
+    start,
+    month,
+    exit_month,
+    kinds,
+    returned,
+    *,
+    dated,
+    last_insured,
+):
+    """Refuse a result no filling and its own first start can support.
+
+    Each status above places annual QCs favorably for its own window, and
+    the established start does the same (RS00301.230). The two can rest on
+    different placements. 404.321(a) gives one record one start, and the
+    period's exclusions then shape FULLY, CURRENTLY and the date last
+    insured. When placement or prior treatment can move the start, the
+    result stands only if one filling attains it with the reported start
+    as its own and no filling can improve on it. Flexible credits bound
+    every filling at each possible start, so a bound that allows an
+    improvement refuses by name. Otherwise the search begins at the filling
+    that insures the start, varies the latest years first, and stops at the
+    first filling that attains the result. A year that cannot move the
+    start stays flexible, so each status still places it favorably.
+    """
+    # Source conflict us:oasdi-insured-one-filling-first-start
+    if _start_fixed(person, credits, start, month, exit_month):
+        return
+    horizon = _current_period_start_horizon(person, month)
+    for quarter in range(_qid(start), _qid(horizon) + 1):
+        try:
+            completed, own_start = _complete_current_period(
+                person, _qdate(quarter)
+            )
+        except InvalidFamilyInput:
+            continue
+        if any(
+            _improves(outcome, returned, last_insured)
+            for outcome in _period_outcomes(
+                person,
+                completed,
+                own_start,
+                credits,
+                month,
+                exit_month,
+                kinds,
+                dated,
+            )
+        ):
+            _refuse(
+                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                "First insured start depends on annual placement "
+                "or prior treatment",
+            )
+    witness = set(
+        _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
+    )
+    rows, _ = _world(person, credits, _qid(month), exit_month, False)
+    sensitive = _start_sensitive_years(person, horizon)
+    options = {
+        year: sorted(
+            _assignment_candidates(*row),
+            key=lambda choice: not witness.issuperset(choice),
+        )
+        for year, row in rows.items()
+        if year in sensitive and row[1]
+    }
+    for index, choices in enumerate(product(*options.values())):
+        if index == 4096:
+            _refuse(
+                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                "More than 4096 first-start annual placements",
+            )
+        filling = dict(credits)
+        filling.update(
+            (year, (choice, 0))
+            for year, choice in zip(options, choices, strict=True)
+        )
+        for treatment in (
+            (True, False) if person.prior_disability_periods else (None,)
+        ):
+            try:
+                completed, own_start = _with_current_period(
+                    person,
+                    filling,
+                    month,
+                    exit_month,
+                    use_periods_only=treatment,
+                )
+            except InvalidFamilyInput:
+                continue
+            if own_start == start and (
+                returned,
+                last_insured,
+            ) in _period_outcomes(
+                person,
+                completed,
+                own_start,
+                filling,
+                month,
+                exit_month,
+                kinds,
+                dated,
+            ):
+                return
+    _refuse(
+        InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+        "First insured start depends on annual placement "
+        "or prior treatment",
+    )
 
 
 def _current_period_completions(person, completed, start, month):
@@ -1762,6 +2052,7 @@ def _recent_rule_possible(
                         InsuredTest.DISABILITY,
                         use_periods_only=treatment,
                     )[0]
+                    # Source conflict us:oasdi-insured-flag-first-insured-quarter
                     rule_met = (
                         person.statutory_blindness
                         or ordinary
@@ -1801,6 +2092,7 @@ def _unknown_prior_joint_shortfall(person, rows, horizon, fully_route):
     This is only a necessary-condition proof, never a concrete witness.
     The historical alternate is handled separately by the caller.
     """
+    # Source conflict us:oasdi-insured-unknown-prior-historical-blindness
     options = [_assignment_candidates(*row) for row in rows.values()]
     if prod(map(len, options)) > 4096:
         return False
@@ -1906,6 +2198,8 @@ def _could_establish_current_period(
     insurance for one filling and treatment fixes an overlapping first
     start, including with blindness (404.321(a)). A construction refusal
     preserves possibility until later validation has checked input errors.
+    A decisive pre1951 aggregate is an automatic fully route, with or
+    without its flag; it never counts toward the recent rule.
     """
     if not person.current_disability_period_established:
         return True
@@ -1931,7 +2225,11 @@ def _could_establish_current_period(
         and maximum_qcs < _minimum_current_period_qcs(person)
     ):
         return False
-    fully_route = bool(person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS)
+    fully_route = bool(
+        person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS
+    ) or _aggregate_establishment_possible(
+        person, years, credits, horizon, exit_month
+    )
     if fully_route and person.statutory_blindness:
         return _recent_rule_possible(
             person, credits, horizon, exit_month, lower_credits=lower_credits
@@ -2129,7 +2427,10 @@ def insured_status(
     history changes windows or special eligibility, never this floor.
     With known nonblind history, fully-route flags must retain a recent
     first insured start outside prior quarters, or automatic pre1956
-    alternate. UNKNOWN history also faces a joint optimistic-clock proof
+    alternate. A pre1951 aggregate that could supply a failed fully insured
+    prerequisite is such a route without a flag, and DISABILITY, the
+    start and the date last insured refuse by name when it decides them.
+    UNKNOWN history also faces a joint optimistic-clock proof
     permitting past blindness; survival never claims a concrete history.
     A fully-route flag's start is unknown, including with blindness;
     only ordinary insurance for the same filling and treatment fixes an
@@ -2138,7 +2439,9 @@ def insured_status(
     its prior-period clock and credited endpoints remain unchanged.
     If a clear first start depends on annual placement or prior treatment
     after a favorable overlapping start, retain a named boundary refusal.
-    A first successful filling cannot settle the other requested statuses.
+    A first successful filling cannot settle the other requested statuses:
+    wherever placement or treatment can move the start, one filling with
+    its own start must attain the returned result and none may beat it.
     The pre1956 flag adds no route beyond the automatic alternate. A flag's
     own conditions remain declared facts and are not tested.
     History validation runs first. Uncomputable QC rows use bounded
@@ -2262,9 +2565,36 @@ def insured_status(
                     InsuredUnsupportedReason.UNKNOWN_EARNINGS,
                     "Unknown earnings decide a valid established current period",
                 )
+            # Only an automatic aggregate route can reach this point with
+            # known credits and no ordinary start.
+            if _aggregate_establishment_possible(
+                person,
+                years,
+                upper,
+                _current_period_start_horizon(person, month),
+                coverage_end_month,
+            ):
+                _refuse(
+                    InsuredUnsupportedReason.SIMPLIFIED_PRE1951,
+                    "Pre1951 wages may supply the current period's fully "
+                    "insured prerequisite; filing facts are unmodeled",
+                )
             # With known credits the shared possibility predicate already
             # validated this identical construction before any refusal.
             raise
+        # An aggregate could insure an earlier quarter than the ordinary
+        # first start, and 404.321(a) then moves the period's start.
+        if lo_start is not None and any(
+            _aggregate_could_insure(
+                person, years, upper, _qdate(quarter), coverage_end_month
+            )
+            for quarter in range(_qid(person.disability_onset), _qid(lo_start))
+        ):
+            _refuse(
+                InsuredUnsupportedReason.SIMPLIFIED_PRE1951,
+                "Pre1951 wages may move the first insured start; "
+                "filing facts are unmodeled",
+            )
     if lo_start != hi_start:
         _refuse(
             InsuredUnsupportedReason.UNKNOWN_EARNINGS,
@@ -2436,12 +2766,12 @@ def insured_status(
     dli = None
     if test in (InsuredTest.ALL, InsuredTest.DISABILITY):
         lower_dates = [
-            _last_insured(p, lower, month, coverage_end_month)
+            _last_insured(p, lower, month, coverage_end_month, years=years)
             for p in lo_completions
         ]
         upper_dates = (
             [
-                _last_insured(p, upper, month, coverage_end_month)
+                _last_insured(p, upper, month, coverage_end_month, years=years)
                 for p in hi_completions
             ]
             if unknown
@@ -2462,6 +2792,25 @@ def insured_status(
             # false current status cannot prove a positive DLI lower date.
             lo_date = None
         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)
+    if lo_start is not None:
+        kinds = tuple(
+            kind
+            for kind in (InsuredTest.FULLY, InsuredTest.CURRENTLY)
+            if decisions[kind] is not None
+        )
+        _settle_first_start(
+            person,
+            upper,
+            hi_start,
+            month,
+            coverage_end_month,
+            kinds,
+            tuple(decisions[kind].insured for kind in kinds),
+            dated=dli is not None and not prior_unknown,
+            last_insured=(
+                dli.upper if dli is not None and not prior_unknown else None
+            ),
+        )
     lo_rows, _ = _world(
         lo_person,
         lower,

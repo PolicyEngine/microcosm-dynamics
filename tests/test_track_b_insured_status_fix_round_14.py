@@ -726,7 +726,7 @@ def test_six_qc_special_prior_attack_keeps_unknown_row():
 
 
 def _simplified_prior_basis(flag=None):
-    """A deliberately inadmissible aggregate disability-prior basis."""
+    """A disability prior that only the aggregate could fund."""
     person = _person(
         birth=date(1926, 2, 2),
         disability_onset=date(1989, 1, 15),
@@ -753,10 +753,16 @@ def _simplified_prior_basis(flag=None):
     return person, years, month
 
 
-def test_unchanged_simplified_prior_basis_does_not_insure_disability():
-    """RS 00301.315 B.1 excludes this ordinary-to-aggregate conversion."""
+def test_simplified_prior_basis_keeps_a_named_refusal():
+    """Acts 213(c), 223(c)(1)(A) reach this prior; RS .315 B.1 does not."""
     person, years, month = _simplified_prior_basis()
-    _invalid(person, years, month, test=i.InsuredTest.DISABILITY)
+    _refusal(
+        person,
+        years,
+        month,
+        i.InsuredUnsupportedReason.UNKNOWN_PERIODS,
+        test=i.InsuredTest.DISABILITY,
+    )
 
 
 def test_unchanged_declared_simplified_prior_basis_keeps_named_refusal():

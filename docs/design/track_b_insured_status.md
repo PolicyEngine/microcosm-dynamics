@@ -662,13 +662,13 @@ input. An input error propagates and creates no row.
 | Medicare-qualified government employment | `medicare_government_employment_unsupported` |
 | Earned-basis wages or pre1956 alternate disability | `earned_basis_unsupported`, `disability_before_1956_unsupported` |
 | Fiscal or short taxable-year public declaration | `fiscal_taxable_year_unsupported`, `short_taxable_year_unsupported` |
-| Supplied pre1951 wages, or UNKNOWN pre1951 years, could make a failed fully insured test pass under the simplified method; also an explicit specialist declaration | `simplified_pre1951_unsupported` |
+| Supplied pre1951 wages, or UNKNOWN pre1951 years, could make a failed fully insured test pass under the simplified method, including the fully insured prerequisite of DISABILITY, the current period, its first start and the date last insured; also an explicit specialist declaration | `simplified_pre1951_unsupported` |
 | Positive raw1937 earnings needing half-year/age65 rules | `1937_earnings_allocation_unsupported` |
 | Separate pre1955 agricultural annual wages | `pre1955_agricultural_allocation_unsupported` |
 | Pre1951 self-employment income | `pre1951_self_employment_unsupported` |
 | Earnings require an increment after 2027 | `qc_amount_year_unsupported` |
 | Query before 1968; blind query before 1973; subsequent-special query before May 1983 | `entitlement_before_1968_unsupported`, `blindness_before_1973_unsupported`, `subsequent_special_before_1983_unsupported` |
-| More than 4,096 disability-boundary combinations, or unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
+| More than 4,096 disability-boundary combinations, unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, or a first start that placement or prior treatment can move with no one filling supporting the returned result, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
 
 The round-3 observable-trigger audit covers every `CoverageCondition`.
 An explicit condition continues to refuse under its own reason when the
@@ -840,7 +840,7 @@ to a statutory sentence that does not state it.
 | --- | --- |
 | B1. UNKNOWN annual ordinary QCs range from zero through four, reduced by assignable birth/query/death/exit quarters. Deferred raw-conversion rows use their feasible minimum/maximum fillings only for establishment possibility. Exact annual amounts are monotone in earnings; every calendar year stays in 0–4. | B404.143: "we cannot credit you with more than four QCs for any calendar year"; A213(a)(2)(B)(vi) prohibits duplicate calendar-quarter QCs; B404.146 excludes unbegun/death quarters. Birth/exit are supplied-record premises. Additional-credit regimes retain refusal and cannot escape this bound through an ordinary result. Deferred rows still raise their original conversion refusal after a valid possibility survives; no temporary filling is exposed as a computed status. |
 | B2. Ordinary fully insured requirements lie in 6–40 and exclude only established disability years. Every elapsed-year endpoint uses its relevant candidate year and the historical sex/cohort rule. | B404.110(b)(1), (b)(2), (c), .132; A214(a) says "not counting ... any year any part of which was included in a period of disability". Medical onset without establishment cannot freeze years. Deemed/transitional alternatives are refused before using the ordinary requirement as universal. |
-| B3. A simplified-pre1951 possibility uses the smallest known freeze requirement, or six for unresolved establishment/history, and maximum post1950 ordinary credits without exclusions. UNKNOWN pre1951 raw wages remain potentially decisive. | A213(c) grants "one quarter of coverage for each $400" subject to resulting fully insured status; B404.110(c)-(d); RS .315 B.1-B.2 record alternate historical/application conditions. This is an over-approximation for refusal, not a computed deemed-credit answer. A favorable ordinary witness with a higher requirement cannot narrow it. |
+| B3. A simplified-pre1951 possibility uses the smallest known freeze requirement, or six for unresolved establishment/history, and maximum post1950 ordinary credits without exclusions. UNKNOWN pre1951 raw wages remain potentially decisive. DISABILITY compares the same bound at each quarter where the recent rule holds or blindness removes it. | A213(c) grants "one quarter of coverage for each $400" subject to resulting fully insured status; B404.110(c)-(d); RS .315 B.1-B.2 record alternate historical/application conditions. This is an over-approximation for refusal, not a computed deemed-credit answer. A favorable ordinary witness with a higher requirement cannot narrow it. |
 | B4. An alternate-pre1956 possibility uses maximum feasible QCs and an eligible 1952Q3–1955Q4 start with at least 20 total QCs and at least six continuous credited clock quarters, under favorable all-period use or disregard. It survives unless lower credits establish 20/40 in U10's shared disabled-quarter scan. | RS .480 A requires "at least 20 quarters of coverage" and "all quarters beginning with 03/51 ... are QCs", with "at least six"; B.1 permits the first freeze day 07/01/52 through 12/31/55. RS .132 B.2 applies prior-period exclusions to the continuous alternate clock, retaining credited beginning/ending quarters; C.2 requires all periods used or all disregarded. Candidate starts obey I8/I14's latest permissible horizon, so recovery before July 1952 cannot be rescued by the first alternate start. Exclusion instead obeys U10's earliest shared date, including the two-month offset for declared ends and continuity. A lower-credit ordinary 20/40 witness in that shared interval removes the route for all credit fillings; an upper-only or later witness preserves the named refusal. Unmodeled application conditions can remove candidates but do not prove an input error. An explicit `DISABILITY_BEFORE_1956` flag adds no route beyond this check. A fully-route flag may rely on this same alternate possibility when its ordinary recent rules fail; neither flag adjudicates the alternate's application conditions. |
 | B5. Universal recent, fully-prerequisite, and annual count envelopes use zero through maximum feasible ordinary lifetime/year QCs whenever unknown periods/earnings can switch witnesses. | A213(a)(2)(B)(vi) prohibits double credit; B404.146(d) excludes interiors unless disregarded. Every concrete ordinary assignment is a subset of feasible unique lifetime quarters. The envelope permits every witness, even when adding QCs switches to a lower-count witness. Specialist possibilities remain refusals. |
 | B6. With known earnings and an UNKNOWN ending, returned count bounds include all end-candidate counts admitted by continuity; with entirely known facts they remain exact. | B404.120(b), .130(f), .146(d) distinguish credited endpoints and excluded interiors. All candidate quarters are enumerated, including early endpoints and capped-FRA candidates, subject to any continues-through observation; extrema therefore cover each completion. A continuity date is never inserted as a credited endpoint. No monotonic endpoint-count premise is used. |
@@ -854,6 +854,7 @@ to a statutory sentence that does not state it.
 | B14. Declaring continuity never widens the administrative-end candidate set; every returned status and count envelope remains valid for every retained concrete ending. | C321(c)'s ending events still govern. Set intersection with ends on/after the observation can only remove candidates; it creates neither an ending nor a new credit. The universal envelope remains unchanged where other unknown facts require it. |
 | B15. Ordinary establishment overlap resolution enumerates at most 4,096 unknown-credit fillings after its fixed-date monotonicity, candidate-quarter, six-QC, and minimum-requirement proofs. | C320(b)(2) and C321(a) require one insured beginning consistent with the complete declaration. I13 settles fixed-quarter overlap and I15 settles a known-history nonblind lifetime-QC shortfall before enumeration. If neither settles the declaration, a search beyond the limit returns `disability_boundary_assignments_unsupported`; it asserts neither a concrete filling nor an input error. |
 | B16. A deferred raw-conversion row retains independently computable ordinary credits in its minimum and every enumerated filling, and cannot exceed feasible calendar-quarter credits in its maximum. | A213(d)(2)'s prior-increment floor bounds future annual credits above by the captured 2027 increment applied to the supplied wages plus SE income; the possibility-only lower bound is zero. Raw 1937 allocation remains zero through four because A213(b)'s half-year rule is unresolved. For separate pre1955 agriculture or pre1951 SE, supported quarterly wage credits and supported post1950 calendar-year SE credits remain fixed; unresolved additional allocation can fill only remaining allowed quarters. Both minimum and maximum fillings may violate derived overlap even when a middle filling is valid, so neither endpoint alone proves impossibility. These bounds do not adjudicate a specialist allocation or replace its refusal. |
+| B17. The first-start check refuses when flexible credits allow a better result at any possible start, and it searches at most 4,096 placements of the annual years that can change a first insured quarter. | 404.321(a) gives a record one start, and RS .230 makes placement flexible. A year wholly inside every tested window and untouched by a period adds its full count wherever its QCs fall, so it stays flexible. Without prior periods, an insured worst filling proves no filling starts later, and the check stops. The bound can refuse a declaration that no concrete filling improves, and a search can reach its limit before it attains a result. Both return `disability_boundary_assignments_unsupported`, so the row keeps its weight; neither asserts a filling or an input error. |
 
 The round-5 adversarial audit revisits each row in both directions in
 `scratch/review/round5-premise-audit.md`: a valid filling cannot be rejected,
@@ -1827,18 +1828,8 @@ rather than the retirement calendar in 404.110(b), governs a prior that
 must begin before FRA.
 
 An attempted aggregate-funded blind prior was also executed and minimized.
-It is not a proved lawful no-flag completion: RS 00301.315 B.1 expressly
-says, "The simplified method does not apply to disability claims." The
-general incorporation of 404.110 by 404.132, including the aggregate method
-in paragraph (d), suggests a broader alternative reading. The default
-follows the explicit disability-specific POMS exclusion. The existing
-`SIMPLIFIED_PRE1951` declared condition represents the alternative as a
-named refusal without adjudicating its basis or computing a disability
-period from aggregate credits. The two public controls are
-`test_unchanged_simplified_prior_basis_does_not_insure_disability` and
-`test_unchanged_declared_simplified_prior_basis_keeps_named_refusal`.
-The report gives both source texts and the invented QC difference; no
-payment is computed and no additional statutory approval is requested.
+Round 14 left it an input error, following RS 00301.315 B.1. Round 15
+replaces that reading; the section below gives the sources.
 
 Eleven isolated implementation mutations were caught, including all ten
 requested rules and the additional canonical diagnostic tie rule. Exact
@@ -1863,6 +1854,155 @@ gives the remaining finite bounds; run times and every observed
 disagreement are recorded in `scratch/review/fix-round-14-report.md`.
 DLI, raw earnings, UNKNOWN earnings/ends, foreign routes, and specialist
 flags are outside this oracle's claim.
+
+## Round 15 the aggregate and each filling's own start
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+Session checks found both defects after round 14, before the next review.
+
+### The pre-1951 aggregate on disability routes
+
+Act 223(c)(1)(A) and Act 216(i)(3)(A) each ask whether "he would have been
+a fully insured individual" under section 214. Act 213(c) applies "For
+purposes of sections 414(a) and 415(d)". Section 404.132 says "we use the
+fully insured status requirements in § 404.110, but apply the following
+rules in determining when the period of elapsed years ends", and 404.110(d)
+is one of those requirements. RS 00301.315 B.1 alone says, "The simplified
+method does not apply to disability claims." The statute and the regulation
+therefore reach the disability prerequisite (P1, P2). Filing facts stay
+unmodeled, so the rule credits no deemed quarter. It refuses by name where
+the aggregate could decide an answer, and it never rejects such a
+declaration or answers it false. A row that a defensible reading keeps
+stays a row. Source conflict
+`us:oasdi-insured-simplified-pre1951-disability-scope`.
+
+The executed record is an invented woman born 1926-02-02 with $2,400 in the
+first quarter of each of 1948, 1949 and 1950, 22 later QCs and onset on
+1989-01-15. She has 25 ordinary QCs, or 40 with the aggregate, against 37
+required. At round 14, FULLY refused by name, DISABILITY computed false, and
+an established period raised `InvalidFamilyInput`. All three now retain the
+row with `simplified_pre1951_unsupported`. The boundary is exact: $6,000 in
+total gives 15 + 22 = 37 and refuses, and $5,997 gives 14 + 22 = 36 and
+computes false. The aggregate also reaches a first start that an ordinary
+credit would otherwise date later, and a date last insured that ordinary
+fully insured status would otherwise end sooner. Blindness removes the
+recent rule here as elsewhere. Simplified credits never count toward the
+recent rule, because 404.110(d) applies "For purposes of paragraph (b) of
+this section". A true ordinary status stays computed.
+
+An UNKNOWN-history declaration whose only fully insured route for a prior
+is the aggregate now keeps its row under
+`unknown_prior_disability_periods_decide_status`. The automatic aggregate
+acts as a fully-route condition in the establishment proofs, so its
+six-QC floor and recent-rule scan match the declared flag.
+
+### One filling carries its own start
+
+Each status places annual QCs favorably for its own window, and the
+established start does the same (RS 00301.230). Round 14 stopped those
+placements from mixing only where the favorable start overlapped a prior.
+Random invented declarations found the same mix without overlap, and with
+no prior at all. A woman born 1956-02-02 has annual QCs 1987:2, 1988:4,
+1989:3, 1990:4, 1991:4, 1992:2 and 1994:1, onset 1992-01-15, and a period
+ending 1994-09-30. The 1994 QC must sit in the first insured quarter, so at
+most two later quarters leave the 13-quarter window and CURRENTLY finds at
+most five of the six QCs at 1995-01-01 in every lawful filling. The rule
+took its start from 1994Q1, moved the same QC to 1994Q4 for CURRENTLY, and
+answered true.
+
+404.321(a) gives one record one start, and that period's exclusions then
+shape FULLY, CURRENTLY and the date last insured. Where annual placement or
+prior treatment can move the start, the returned result stands only if one
+filling attains it with the reported start as its own, and no filling can
+improve on it.
+`_settle_first_start` checks the second condition first. Flexible credits
+bound every filling at each possible start, so a bound that allows a better
+status or a later date last insured refuses the row with
+`disability_boundary_assignments_unsupported`. It then looks for an
+attaining filling, starting from the filling that insures the reported
+start and varying the latest years first, because those years conflict
+with the later windows. The first attaining filling ends the search. A year
+that can't move the start stays flexible, so each status still places it
+favorably. The check joins each status to the start, not the statuses to one
+another. This keeps the favorable answer of RS 00301.230 and replaces an
+answer no single record supports.
+
+A status window can also end before the onset. `_events` tests CURRENTLY at
+a declared RIB or DIB entitlement month, so a year at the back edge of a
+recent-rule window can want its QC early for the status and late for the
+start. An invented woman born 1960-02-02 has annual QCs 1990:4, 1991:4,
+1998:3, 1999:2, 2000:1, four in each of 2001 to 2004, and 2005:3, onset
+2010-01-15 and a DIB entitlement month of 2000-01. The 2000 QC reaches the
+20 of 40 at the onset only in 2000Q2 or later, and it reaches six of 13 at
+the entitlement month only in 2000Q1. No filling holds both, so the row
+refuses, and the same record without the entitlement month computes false.
+`_start_sensitive_years` keeps the 40-quarter and 12-quarter back edges, the
+age-21 edge and prior-period years enumerated for this reason. A filling
+whose own start falls later can also hold the status, and it doesn't count:
+the search requires the reported start. `ENTITLEMENT_CONFLICTS` in
+`tests/test_track_b_insured_status_fix_round_15.py` pins one declaration for
+each of those lines.
+
+The bound refuses without enumerating, so it can refuse a declaration that
+no concrete filling improves. That direction is deliberate: the row keeps
+its weight under a named refusal, and proving every filling false would
+cost far more than the row gives back. Bound B17 records the limit.
+
+### Status stress oracle and bounds
+
+`tests/test_track_b_insured_status_status_stress.py` widens the status
+oracle with the same plain arithmetic. Births run from 1940 to 1979, and
+ages at onset from 31 to 58. Onsets start in 1992. Endings, queries,
+annual totals with at most four partial years, and no prior, a clear prior
+or an overlapping prior vary by seed, and blindness holds in a quarter of
+cases. The session ran 28,000 such declarations at round 14's head. It
+found 13 status disagreements and no false rejection, and each of the 13
+had more than one possible first start. The committed test pins all 13
+seeds and generates more. Two more generators add a DIB entitlement month,
+drawn mostly from partial years up to the onset, and ages 22 to 30 at onset
+under 404.130(c) and (d). DLI, the subsequent-special route, UNKNOWN facts
+and flags stay outside its claim. Declared priors are not re-adjudicated.
+
+After the fix, the same 28,000 and 14,000 fresh declarations give no
+disagreement, no false rejection and no computed row without a lawful
+filling. On the 28,000, rows refused by name that have a lawful filling
+rise from 435 to 562. Thirteen of the 127 are the disagreements. The other
+114 computed agreeing answers at round 14, and they are the cost of the
+loose bound: about 1% of computed rows, in a space drawn to hold partial
+years. Rejected rows stay at 15,785.
+
+Five surviving mutations then showed the generator had never drawn an
+entitlement month or an under-31 row. The session widened the oracle with
+both, and it added a stricter check: each true status must hold on a filling
+whose own first start is the reported start. Across 14,000 declarations with
+a DIB entitlement month and 14,000 under-31 declarations, 18,754 rows computed
+and agreed, 349 refused by name with a lawful filling, and 8,894 raised
+`InvalidFamilyInput` with no lawful filling. Nothing disagreed, and no status
+lacked its start. One row the oracle called lawful raised
+`InvalidFamilyInput`. It ends a period in December 1980, the month of its
+onset, so 404.321(b)'s implied recovery precedes the onset on every filling.
+The oracle doesn't model that rule, and the committed generator starts
+onsets in 1981.
+
+The invariants added in this round are executed by these tests:
+
+- every computed status equals the favorable Boolean over lawful fillings,
+  each carried through its own start
+  (`test_status_stress_matches_the_favorable_filling`,
+  `test_status_stress_with_an_entitlement_month`,
+  `test_status_stress_under_31`, and the status oracle's declarations);
+- a reported start is the start of a filling that attains the result, and
+  each true status holds on a filling with that start (the same three
+  properties, `test_status_stress_refuses_a_start_no_filling_supports`,
+  `test_a_moving_start_keeps_a_result_one_filling_attains`,
+  `test_an_entitlement_window_cannot_borrow_the_starts_placement`);
+- raw pre-1951 wages never turn a row into an input error
+  (`test_pre1951_wages_only_add_rows`);
+- a refused FULLY and a met recent rule never compute DISABILITY false
+  (`test_fully_refusal_and_a_met_recent_rule_never_compute_false`);
+- the DISABILITY refusal tracks the exact aggregate
+  (`test_disability_refusal_tracks_the_exact_aggregate`).
 
 ## Not in scope
 
