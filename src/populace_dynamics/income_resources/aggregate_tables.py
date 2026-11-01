@@ -183,25 +183,26 @@ class _HTMLTree(HTMLParser):
 
     The tree is the same under every supported Python. Python 3.13 reads
     only script and style as raw text and 3.14 also xmp, iframe, noembed
-    and noframes, so the set is pinned here to HTML's raw text elements
+    and noframes, so the tree pins the set to HTML's raw text elements
     (noscript is markup, as in HTML with scripting off). Python 3.14 reads
     everything after a ``plaintext`` start tag as text, as HTML does, and
-    3.13 reads it as markup, so a page with one is refused. So is a page
-    holding "<!-->" or "<!--->", an empty comment that HTML closes at that
-    ``>``: 3.14 closes it there, and 3.13 runs on to a later "-->". So is a
-    page whose script text holds "<!--" and then a script start tag
-    (``<script`` and a character Python's ``\\s`` matches, "/" or ">", in
-    any case ``re.IGNORECASE`` matches): HTML's script data escape states
-    may run that script on past its next ``</script>``, and both Pythons
-    end it there. The check refuses more pages than HTML runs on: HTML does
-    not run on when "-->" comes between, ``\\s`` also matches a vertical tab
-    and Unicode spaces such as U+00A0, which do not end the tag name there
-    in HTML, and ``re.IGNORECASE`` matches a long s (ſ) as s and "İ" or "ı"
-    as i, so "<ſcript>" counts too. So is a page with a script, style, xmp,
-    iframe, noembed, noframes, textarea or title start tag that closes
-    itself, as ``<script/>``: HTML ignores that slash, except where it
-    parses svg or math, and reads what follows as the element's text, and
-    both Pythons read it as markup (no pinned capture self-closes one).
+    3.13 reads it as markup, so the tree refuses a page with one. It
+    refuses a page holding "<!-->" or "<!--->", an empty comment that HTML
+    closes at that ``>``: 3.14 closes it there, and 3.13 runs on to a later
+    "-->". It refuses a page whose script text holds "<!--" and then a
+    script start tag (``<script`` and a character Python's ``\\s`` matches,
+    "/" or ">", in any case ``re.IGNORECASE`` matches): HTML's script data
+    escape states may run that script on past its next ``</script>``, and
+    both Pythons end it there. The check refuses more pages than HTML runs
+    on: HTML does not run on when "-->" comes between, ``\\s`` also matches
+    a vertical tab and Unicode spaces such as U+00A0, which do not end the
+    tag name there in HTML, and ``re.IGNORECASE`` matches a long s (ſ) as s
+    and "İ" or "ı" as i, so "<ſcript>" counts too. It refuses a page with a
+    script, style, xmp, iframe, noembed, noframes, textarea or title start
+    tag that closes itself, as ``<script/>``: HTML ignores that slash,
+    except where it parses svg or math, and reads what follows as the
+    element's text, and both Pythons read it as markup (no pinned capture
+    self-closes one).
 
     An ``html`` start tag builds the html element only as the document's
     first content. HTML ignores any later one, apart from adding the
@@ -264,20 +265,21 @@ class _HTMLTree(HTMLParser):
     first ``>`` and which here holds no text; HTML's script data escape
     states, in which a script holding "<!--" and then a script start tag
     may run on past its next ``</script>``: here the script ends there, so
-    a page whose script text holds both is refused (no pinned script does);
+    the tree refuses a page whose script text holds both (no pinned script
+    does);
     and foreign content, the elements inside ``svg`` or ``math``, which
     HTML parses by other rules and which are HTML elements here. Outside an
     HTML integration point such as svg's ``foreignObject``, HTML reads the
     content of a script, style, title or textarea there as markup, ends the
     svg or math at an HTML start tag such as ``h3`` or ``p``, and honours a
     self-closing slash, so in ``<svg><script><h3>Utah</h3></script></svg>``
-    HTML reads a Utah heading that this tree holds as script text. A page
-    whose svg or math holds a raw text or RCDATA element whose text holds
-    "<" is refused, even where HTML reads the same text, as in
-    ``<svg><style>a < b</style></svg>`` or a script in a foreignObject, and
-    the self-closed ones refused above include those HTML closes there, as
-    ``<svg><title/></svg>`` (no pinned svg, all icons, holds either, and no
-    pinned page holds math).
+    HTML reads a Utah heading that this tree holds as script text. The
+    tree refuses a page whose svg or math holds a raw text or RCDATA
+    element whose text holds "<", even where HTML reads the same text, as
+    in ``<svg><style>a < b</style></svg>`` or a script in a foreignObject,
+    and its refusal of a self-closed raw text tag covers those HTML closes
+    there, as ``<svg><title/></svg>`` (no pinned svg, all icons, holds
+    either, and no pinned page holds math).
     """
 
     # HTML's raw text elements; Python versions differ (see above).

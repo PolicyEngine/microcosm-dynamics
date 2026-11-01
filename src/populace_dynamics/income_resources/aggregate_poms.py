@@ -1102,13 +1102,13 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
                 # heading that holds a year outside the years of the dates in
                 # force, or a line under 80 characters that holds a year after
                 # them, as "Payment levels for 2031" in a section dated 2030;
-                # an earlier year in such a line, as one pinned page's note
-                # on a State-administered program for the year before, dates
-                # no chart. A footnote body that opens with its marker, a
-                # block whose whole text is one, and the section's revision
-                # range date no chart. The dates are named line by line, and
-                # the whole text adds only those no single line names, as a
-                # date split across a br.
+                # an earlier year in a short line outside a heading, as one
+                # pinned page's note on a State-administered program for the
+                # year before, dates no chart. A footnote body that opens with
+                # its marker, a block whose whole text is one, and the
+                # section's revision range date no chart. Each line names its
+                # own dates, and the whole text adds only those no single line
+                # names, as a date split across a br.
                 stated: set[str] = set()
                 years: set[str] = set()
                 in_force = {day[:4] for day in dates}
