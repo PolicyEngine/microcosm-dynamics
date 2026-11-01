@@ -1135,8 +1135,8 @@ def parameter_file(package: Path, name: str) -> dict[str, Any]:
 
 def parameter_files(folder: Path) -> set[Path]:
     """Every ``.yaml`` file under ``folder``. A ``.yml`` file there refuses:
-    the engine also loads one as a parameter, unless its stem is ``index``
-    or ``reference``, and the table would leave it out."""
+    the engine also loads one as a parameter, unless its stem is ``index``,
+    ``reference`` or ``__pycache__``, and the table would leave it out."""
     if any(folder.rglob("*.yml")):
         raise ValueError(f"Unread .yml parameter file under {folder}")
     return set(folder.rglob("*.yaml"))

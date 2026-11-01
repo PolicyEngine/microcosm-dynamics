@@ -786,6 +786,26 @@ def test_parameter_tree_rules_are_the_pinned_cores():
     )
 
 
+def test_years_before_2022_end_in_a_counted_refusal():
+    """SSI's income lists start on 1975-01-01 and ``prepare`` accepts 1974,
+    so an earlier year would read no list. On the pinned release the worker
+    stops sooner: each year here before 2022 ends in a counted refusal and
+    no result, and 2022 gives a result. The next PR that moves the pin must
+    recheck this."""
+    runner = invented_runner()
+    years = (1974, 1975, 1984, 1985, 2016, 2017, 2021)
+    *refused, first = runner.run_many(
+        [
+            replace(invented_case(f"INVENTED_{year}"), period=year)
+            for year in (*years, 2022)
+        ]
+    ).outcomes
+    assert {outcome.condition for outcome in refused} == {"RULES_ENGINE_GAP"}
+    assert isinstance(first, SSIResult)
+    assert runner.accounting.accepted == 1
+    assert runner.accounting.refused == len(years)
+
+
 # Runs in the pinned interpreter. It loads each invented module through the
 # engine's own loader and reports the default the engine gives its one new
 # variable. policyengine_core's type defaults and the builtins are restored

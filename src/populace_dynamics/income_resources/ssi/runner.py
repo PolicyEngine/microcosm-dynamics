@@ -2,8 +2,10 @@
 
 Invariants: every chain input is explicit or an opted-in named assumption;
 ownership stays on people; unsupported configurations refuse before any
-calculation; every attempted case remains in the denominator; versions are
-checked inside the separate interpreter before importing policyengine.
+calculation, apart from a year the pinned engine cannot calculate, whose
+worker error ends as a counted refusal; every attempted case remains in
+the denominator; versions are checked inside the separate interpreter
+before importing policyengine.
 Federal rules are never reproduced here. Results include potential SSI and
 SSI conditional on the explicit take-up flag under a frozen annual state;
 neither measures observed payments or December receipt.
