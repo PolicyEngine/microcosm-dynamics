@@ -711,3 +711,210 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
   free; SM1 holds DI-origin persons at baseline in deployment, and S0.1
   frozen text notes that this agrees with OACT's exclusion "in direction"
   without proving equal definitions (S0.1 §2.3).
+
+## 7. Paths over time
+
+### 7.1 Primary path P-PRIMARY (Q6) [frozen here]
+
+- **Knots.** Every calendar year 2010–2024, the same fifteen years for all
+  three dimensions. At each knot `t`, each dimension's targets are its
+  latest observed values at or before `t`; before a dimension's first
+  observation it takes that first observation (hold-first backcast); the
+  three then calibrate jointly on `R_ref(t)` (§6.3). The result is one
+  complete coefficient table per knot (§7.5).
+- **After the last knot.** SM1's `HoldLastCoefficientPath` holds the 2024
+  table for every later year and refuses years before 2010
+  (`specification.py:76–106`). That holding is Q6's primary path: the
+  gradient stays at its last observed level.
+- **Last observed year per dimension.** Lifetime earnings 2022 (Study 129
+  Figures 7–12; the last table year is 2020); education 2022 (NVSR 74(4));
+  race and Hispanic origin 2024 (NVSR 75(5)); the NHIS-based targets are
+  pooled over deaths 2009–2019 and the same at every knot.
+
+| Knot | Lifetime earnings targets | Education targets, 25–64 | Race and Hispanic origin targets |
+|---|---|---|---|
+| 2010 | Table 10 (2010); 80–84 from 2015 and 85–89 from 2020 by backcast | 2018 national, by backcast (`EDU_BACKCAST_HOLD_FIRST`) | NVSR 63(7), bridged race |
+| 2011–2014 | Figures 7–12; 80–84 and 85–89 by backcast | 2018 by backcast | NVSR 64(11), 65(8), 66(3), 66(4), bridged |
+| 2015 | Table 11 (2015); 85–89 by backcast | 2018 by backcast | NVSR 67(7), bridged |
+| 2016–2017 | Figures 7–12; 85–89 by backcast | 2018 by backcast | NVSR 68(4), 68(7), bridged |
+| 2018 | Figures 7–12; 85–89 by backcast | NVSR 69(13) I–7 | NVSR 69(12), single race |
+| 2019 | Figures 7–12; 85–89 by backcast | NVSR 70(8) I–7 | NVSR 70(19) |
+| 2020 | Table 12 (2020) | NVSR 72(10) I–7 | NVSR 71(1) |
+| 2021 | Figures 7–12 | NVSR 73(8) Table 14 | NVSR 72(12) |
+| 2022 | Figures 7–12 | NVSR 74(4) Table 14 | NVSR 74(2) |
+| 2023 | Held at 2022 | Held at 2022 | NVSR 74(6) |
+| 2024 | Held at 2022 | Held at 2022 | NVSR 75(5) |
+
+Every knot also carries the NHIS-based targets (education at 65+, the
+split, `other_non_hispanic`). "Held" means the same published targets are
+imposed again on that year's reference population, so the conditional
+coefficients can still move with the population's composition.
+
+### 7.2 Extracting and digitizing the earnings gradient [frozen here]
+
+- **Tables.** Tables 1–12 of Study 129 and Tables 4–8 of Study 124 are
+  transcribed twice, by two independent text-layer readers (Poppler's
+  `pdftotext -layout` and a second PDF library); the two transcriptions
+  must agree on every printed string, or the job stops and reports the
+  cells.
+- **Figures 7–12 (pp. 33–38).** The series are vector paths (§3.1). The
+  digitizer decompresses each page's content stream, reads the axis tick
+  labels and their positions from the text layer, fits a linear map from
+  page coordinates to RMR on the y-axis and to year on the x-axis (at least
+  three ticks per axis per panel; a tick fit whose worst residual exceeds
+  0.1 percent of the axis range rejects the panel), assigns each polyline
+  to a legend entry by stroke color and dash pattern, and reads the vertex
+  nearest each integer year (within a quarter year). Each point keeps its
+  page, panel, series and page coordinates.
+- **Validation.** At every table year in which a band is printed, the
+  digitized RMR must lie within 0.010 of the printed two-decimal value
+  (the printed value's 0.005 rounding plus a plotting tolerance of
+  0.005). There are 210 such points: 21 band-years × 2 sexes × 5
+  quintiles. Every one must pass; if any fails, the figure years are
+  unavailable (§10, `SOURCE_UNAVAILABLE`), and P-PRIMARY cannot be built.
+- **Digitization half-width.** `δ_dig` is the largest
+  `|digitized − printed|` over the 210 validation points, plus 0.005.
+  Each digitized value then stands for the interval `±δ_dig` around it,
+  which §9 treats like a printing interval.
+- **Which values the fit uses.** Printed table values at 2010, 2015 and
+  2020; digitized values at 2011–2014, 2016–2019 and 2021–2022; only for
+  fully supported bands (§3.1).
+- **Coverage.** With the backcasts, every knot has all six earnings
+  bands, both sexes and all four non-reference quintiles; §5 completes
+  ages 0–61 and 90–120.
+
+### 7.3 Registered sensitivities over time [frozen here]
+
+- **P-TABLE (table only).** Earnings targets from Tables 7–12 alone:
+  2010 for knots 2010–2014, 2015 for 2015–2019, and 2020 for 2020–2024;
+  the other dimensions as in P-PRIMARY. Its last earnings level is 2020,
+  so it cannot become the primary path without amending Q6 (S0.1 §2.3).
+- **P-PRE (pre-pandemic).** From the 2020 knot onward, every dimension's
+  targets hold at their 2019 values. Reason: Study 129 reports that the
+  pandemic changed some groups' spreads in 2020 and 2021 and that the
+  changes "seem to be temporary" (p. 9), while Q6's last observed year
+  for earnings, 2022, falls in that period.
+- **E-S1 (reporting-state education).** Education targets at knots
+  2010–2017 from that year's reporting-state tables (§3.2) instead of the
+  2018 backcast, labeled "not national".
+
+### 7.4 The widening alternative P-WIDEN (Q6) [frozen here]
+
+A custom `CoefficientPath` (`specification.py:62–73`) that equals
+P-PRIMARY at every knot through 2024 and, for `t > 2024`, multiplies every
+non-reference **lifetime-earnings** and **education** coefficient, at every
+age and for both sexes, by
+
+`m(t) = min(1 + g × min(t − 2024, 30), 1.5)`, with `g ≥ 0`.
+
+| Element | Value | Source or reason |
+|---|---|---|
+| Origin | 2024 | P-PRIMARY's last knot, so the alternative departs only where no data exist |
+| Earnings slope `g_E(s, B)` | For each sex and OACT band with at least ten annual points in 2005–2019: the least-squares slope, over those years, of `S(t) / S̄`, where `S(t) = L_E(q1)(t) − L_E(q5)(t)` from the annual figures and `S̄` is its mean over the same years. Bands with fewer points (80–84, five points; 85–89, none) take the pooled slope of 70–74 and 75–79 for the same sex. Ages outside 62–89 take the nearest band's slope | Study 129 calls the gradient's trends "generally, slowly growing" (p. 10); 2005–2019 are the fifteen pre-pandemic years with at least three bands present, and the pandemic years are left out because of p. 9 |
+| Negative slopes | Set to zero: no widening for that sex and band, which then equals P-PRIMARY | The alternative is a widening path; a fitted narrowing is not evidence for it |
+| Education slope `g_D(s)` | `g_E(s, 62–64)` | No national education series longer than five years exists (§3.2); 62–64 is the earnings band nearest NCHS's ages |
+| Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 describes differences between black and white Americans narrowing over time (pp. 1–2); no source here supports a widening race path |
+| Ages | Every age 0–120 (the tails follow §5's rules applied to the multiplied coefficients) | One rule for the whole table |
+| Caps | The multiplier stops growing after 30 years (2054) and never exceeds 1.5 | The source series spans 1995–2022, about 30 years; a trend is not carried further than the data it comes from |
+
+The path's `years` are P-PRIMARY's knots plus 2025–2054; every later year
+returns the 2054 table. SM1 revalidates each returned table and still
+normalizes every cell (Q4), so widening moves deaths between groups and
+never adds deaths. The slopes are computed by the fit job under this
+frozen estimator; this record computes none.
+
+### 7.5 Synchronization
+
+One rule covers every path: all three dimensions share the same knot
+years; at each knot each dimension takes its latest observed targets at
+or before the knot (hold-first before its first observation); the joint
+calibration then yields one complete table holding every dimension ×
+category × sex × single age 0–120, which `RelativeRiskSpec` validates
+(`specification.py:171–197`). No dimension carries its own knot years
+into SM1. **Q11:** SM owns death alignment, so these coefficients assume
+the TR 2026 baseline `q` and nothing downstream aligns deaths a second
+time (design §7.2).
+
+## 8. Schema
+
+### 8.1 Dimensions [frozen here]
+
+S0.1's proposed table is confirmed against `mortality_ses/specification.py`
+(`RiskDimension`, lines 34–59; `RelativeRiskSpec`, lines 145–197) and
+tightened in one respect: each dimension has one unclassified string, and
+the reason a person is unclassified goes in a separate diagnostic column
+`sm_<dimension>_unclassified_reason`, never into the dimension column. SM1
+also treats a missing value as unclassified (`specification.py:224–227`).
+
+| `name` | `column` | `categories`, in this order | `reference` | `unclassified_values` |
+|---|---|---|---|---|
+| `lifetime_earnings` | `sm_lifetime_earnings_quintile` | `q1`, `q2`, `q3`, `q4`, `q5` (lowest to highest) | `q3` | `("unclassified",)` |
+| `education` | `sm_education` | `less_than_high_school`, `high_school`, `some_college`, `college` | `high_school` | `("unclassified",)` |
+| `race_hispanic_origin` | `sm_race_hispanic_origin` | `hispanic`, `white_non_hispanic`, `black_non_hispanic`, `other_non_hispanic` | `white_non_hispanic` | `("unclassified",)` |
+
+### 8.2 Crosswalks [frozen here]
+
+**Education.**
+
+| SM category | Meaning | NCHS death certificate | NHIS `EDUC1` | ACS | SM3's PSID years (S0.1 §1.2) |
+|---|---|---|---|---|---|
+| `less_than_high_school` | No high school diploma or GED | "Less than high school diploma or GED" | 00–12 | Below a regular diploma or GED | Fewer than 12 |
+| `high_school` | Diploma or GED, no college | "High school diploma or GED" | 13–14 | Regular diploma or GED | 12 |
+| `some_college` | Some college without a degree, or an associate degree | Within "Some college or collegiate degree" | 15–17 | Some college, associate degree | 13–15 |
+| `college` | Bachelor's degree or higher | Within "Some college or collegiate degree" | 18–21 | Bachelor's degree or higher | 16–17 (the reader's upper code) |
+| `unclassified` | — | "Not stated" | 96–99 | None after ACS editing | Missing |
+
+The ACS column is semantic: the fit job maps each year's education codes
+from that year's data dictionary and tests that every code lands in
+exactly one category. NHIS codes come from the 2009, 2016 and 2018 person
+layouts (pp. 265, 296, 294).
+
+**Race and Hispanic origin.**
+
+| SM category | NCHS life tables | NHIS (`HISPAN_I`, `RACERPI2`) | ACS | Cristia |
+|---|---|---|---|---|
+| `hispanic` | Hispanic (any race) | `HISPAN_I` 00–10 | Any Hispanic origin | Hispanic |
+| `white_non_hispanic` | NH white (single race from 2018; bridged 2010–2017) | `HISPAN_I` 12 and `RACERPI2` 01 | Not Hispanic, white alone | White |
+| `black_non_hispanic` | NH black | `HISPAN_I` 12 and `RACERPI2` 02 | Not Hispanic, black alone | Black |
+| `other_non_hispanic` | No complete table; AIAN NH and Asian NH (2019–2024) form a partial group | `HISPAN_I` 12 and `RACERPI2` 03–06 (AIAN only, Asian only, not releasable, multiple race) | Not Hispanic, any other race alone or two or more races | Other Race |
+| `unclassified` | — | `HISPAN_I` 11 | None after ACS editing | — |
+
+`HISPAN_I` 10 ("type refused") stays `hispanic`, because its label names a
+Hispanic person whose type is unknown. Code 11 is `unclassified`, because
+the 2018 layout's notes assign it both to Hispanic people whose type was
+not ascertained and to people whose origin was not ascertained (2018
+Sample Adult layout, p. 8); sensitivity X-R1 treats 11 as `hispanic`. The
+public files carry no flag showing whether race or ethnicity was imputed
+(2018 survey description pp. 25–26), so imputed values cannot be
+separated.
+
+**Lifetime earnings.** OACT's Lowest through Highest, Cristia's Bottom
+through Top, the ACS proxy `Q̃` and SM3's PSID quintiles all map to `q1`
+through `q5`. SM3's quintile is `unclassified` when a person has fewer than
+ten observed head or spouse years (S0.1 §1.2).
+
+**How these differ from `estimates/group_breakdown.py`.** That module's
+MINT education dimension (lines 1227–1274) has five bands by years of
+education: `graduate` (more than 16), `bachelor` (16), `associate`
+(14–15), `high_school` (12–13) and `less_than_high_school` (less than 12).
+Its race dimension (lines 1103–1130) uses `hispanic_any_race`,
+`white_non_hispanic`, `black_non_hispanic` and `other_non_hispanic`. SM's
+four education categories are a new crosswalk: SM's `high_school` is 12
+years where MINT's is 12–13, and SM's `some_college` (13–15) and `college`
+(16–17) cut where MINT's bands do not. SM's `hispanic` is the same concept
+as MINT's `hispanic_any_race` under a different string. SM's columns carry
+the `sm_` prefix, SM never reuses MINT's dimension objects, and the fit
+job's tests assert that the two schemes stay separate, so the out-of-scope
+group definitions do not change.
+
+### 8.3 `unclassified_rule` by use [frozen here]
+
+| Use | Rule | Reason |
+|---|---|---|
+| SM2's fit and conformance on `R_ref` | `refuse` | The crosswalk leaves no reference-population person unclassified; one that appears is a construction error |
+| SM2's NHIS estimates | Not through SM1 | §4.5 drops unclassified persons from that dimension's estimate and reports the count |
+| SM3 | `reference` (confirms S0.1 §2.3) | SM3's estimand keeps unclassified persons in the overall ratio and in no group cell (S0.1 §1.1); under `reference` they take zero log risk on that dimension, SM1 still conserves the cell, and the cell log counts them (`specification.py:219–247`; `normalizer.py:17–35`) |
+| Any projection (Track B, the open population) | `refuse` until the frame carries all three attributes and a registration names the rule | `FRAME_ATTRIBUTE_MISSING` (§10) |
+
+A person under 25 classified on lifetime earnings or education needs a
+registration of its own before any use (§5).
