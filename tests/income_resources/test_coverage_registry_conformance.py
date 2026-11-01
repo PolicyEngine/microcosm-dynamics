@@ -3882,6 +3882,12 @@ def test_nonresident_alien_net_earnings_follow_411b(registry, person):
 # phrases. "reaches" names the exclusion (or residual) the failure must
 # reach; "stays_covered" says why failing leaves the worker covered, and
 # by which case (None: either of two covered cases).
+# An INVENTED State or local employee, as the State and local cases'
+# government_level states the level (round 5).
+STATE_EMPLOYEE = (
+    "employee of a State, a political subdivision or a wholly owned "
+    "instrumentality"
+)
 GRANDFATHERED_FEDERAL = (
     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 "
     "and has been performed continuously"
@@ -4012,6 +4018,7 @@ REQUIRED_CONDITION_FAILURES = {
             {
                 "section_218_position": "below the statutory amount",
                 "public_retirement_system_participation": phrase,
+                "government_level": STATE_EMPLOYEE,
             },
             None,
         )
@@ -4208,7 +4215,318 @@ def test_government_level_conditions_name_a_level_of_government():
     assert [
         entry for entry in found if not GOVERNMENT_LEVEL.search(entry[2])
     ] == []
-    assert len(found) == 6
+    # Six before round 5, which adds 20: the 1991 State and local row's
+    # three mandatory-rule cases, 16 election cases and the 1968
+    # public-office election.
+    assert len(found) == 26
+
+
+# Round 5: 410(a)(7) excludes "Service performed in the employ of a State,
+# or any political subdivision thereof, or any instrumentality of any one
+# or more of the foregoing which is wholly owned thereby". Its (F), whose
+# (i)-(v) the 1991 row's mandatory-rule cases apply, reaches "service in
+# the employ of a State (other than the District of Columbia, Guam, or
+# American Samoa)", and for agreements 418(b)(1)'s "State" "does not
+# include the District of Columbia, Guam, or American Samoa". So a case
+# these families decide by an exclusion, a threshold or a deferral reaches
+# that level of government and no other.
+STATE_LOCAL_LEVEL = (
+    "employee of a State, a political subdivision or a wholly owned "
+    "instrumentality, other than the District of Columbia, Guam and "
+    "American Samoa"
+)
+STATE_LOCAL_FAMILIES = {
+    "section_218_and_mandatory_state_local": (
+        "state_local_1968_1983",
+        "state_local_1983_1991",
+        "state_local_1991_2026",
+    ),
+    "election_work": (
+        "election_work_1968",
+        "election_work_1978",
+        "election_work_1991_0702",
+        "election_work_1995",
+    ),
+}
+LEVEL_LIMITED_CONSEQUENCES = {
+    "noncovered",
+    "covered_above_threshold",
+    "deferred",
+}
+LEVEL_PASSAGES = (
+    (
+        "lii_42_410.html",
+        "(7) Service performed in the employ of a State , or any political "
+        "subdivision thereof, or any instrumentality of any one or more of "
+        "the foregoing which is wholly owned thereby",
+    ),
+    (
+        "lii_42_410.html",
+        "(F) service in the employ of a State (other than the District of "
+        "Columbia, Guam, or American Samoa)",
+    ),
+    (
+        "lii_42_418.html",
+        "does not include the District of Columbia, Guam, or American Samoa",
+    ),
+)
+OFFICE_LEVEL_PASSAGES = (
+    (
+        "lii_42_411.html",
+        "other than the functions of a public office of a State or a "
+        "political subdivision thereof",
+    ),
+    (
+        "lii_26_1402.html",
+        "any individual who in 1968 is in a position to which the "
+        "amendments made by such subsections apply",
+    ),
+)
+
+
+def test_state_and_local_exclusions_name_the_level_their_law_reaches(
+    registry,
+):
+    """Round 5: in the section 218 and election families, every case that
+    excludes, sets a threshold or defers names the level 410(a)(7)(F) and
+    418(b)(1) print, and the row's scope parameter ties it to the case. A
+    covering case needs no level: a private worker is covered anyway.
+
+    The 1968 public-office election reaches only the State or local fee
+    positions 411(c)(1) names, so it carries the fee exception's level;
+    the public-office exclusion reaches every office, federal included.
+    """
+    for capture, passage in LEVEL_PASSAGES:
+        text = source_text(CAPTURE_DIRECTORY / capture)
+        assert " ".join(passage.split()) in text
+    limited = []
+    for family, rule_ids in STATE_LOCAL_FAMILIES.items():
+        rules = [r for r in registry.rules if r.family == family]
+        assert sorted(r.rule_id for r in rules) == sorted(rule_ids)
+        for rule in rules:
+            assert "lii_42_410.html" in {c.capture for c in rule.citations}
+            ties = rule.parameters["condition_cases"]["scope"]["cases"]
+            for case in rule.cases:
+                if case["consequence"] not in LEVEL_LIMITED_CONSEQUENCES:
+                    continue
+                key = (rule.rule_id, case["case_id"])
+                limited.append(key)
+                assert case["when"].get("government_level") == (
+                    STATE_LOCAL_LEVEL
+                ), key
+                assert "government_level" in ties[case["case_id"]], key
+    assert len(limited) == 22
+    office = next(
+        r for r in registry.rules if r.rule_id == "se_public_office_1968_2026"
+    )
+    cases = {case["case_id"]: case for case in office.cases}
+    for case_id in (
+        "public_law_90_248_election",
+        "state_local_fee_basis_office",
+    ):
+        assert cases[case_id]["when"]["government_level"] == (
+            "state or political subdivision"
+        )
+    assert "government_level" not in cases["public_office_functions"]["when"]
+    cited = {c.capture for c in office.citations}
+    for capture, passage in OFFICE_LEVEL_PASSAGES:
+        assert capture in cited
+        text = source_text(CAPTURE_DIRECTORY / capture)
+        assert " ".join(passage.split()) in text
+
+
+# Round 5: INVENTED workers who hold every fact of a State or local case
+# but its level. A State or local employee meets the case. A private
+# firm's employee, and an employee of the District of Columbia, which
+# 410(a)(7)(F) and 418(b)(1) leave out, reach the row's residual: these
+# families do not exclude the service, and the other families decide (for
+# the District, the territorial family, which refuses while its history is
+# open).
+PRIVATE_EMPLOYEE = "employee of a private firm"
+DISTRICT_EMPLOYEE = "employee of the District of Columbia government"
+LEVEL_EMPLOYERS = {
+    "state_or_local": STATE_EMPLOYEE,
+    "private": PRIVATE_EMPLOYEE,
+    "district_of_columbia": DISTRICT_EMPLOYEE,
+}
+LOWER_AGREEMENT_AMOUNT = (
+    "covered by a section 218 agreement that excludes election workers "
+    "paid less than an amount the agreement states below the statutory "
+    "amount"
+)
+STATUTORY_AGREEMENT_AMOUNT = (
+    "covered by a section 218 agreement that excludes election workers "
+    "paid less than the statutory amount"
+)
+NOT_A_MEMBER = "not a member of any retirement system"
+QUALIFIED_MEMBER = (
+    "member of a retirement system of the State, subdivision or "
+    "instrumentality that is a qualified retirement system"
+)
+STATE_LOCAL_CASE_FACTS = {
+    # A patient who works in an institution's laundry, in no retirement
+    # system, whose position no agreement covers (410(a)(7)(F)(ii)).
+    ("state_local_1991_2026", "mandatory_rule_exclusions"): {
+        "assignment": (
+            "service in a hospital, home or other institution by a patient "
+            "or inmate"
+        ),
+        "section_218_position": "not covered",
+        "public_retirement_system_participation": (
+            "not a member of any IRS-qualified system"
+        ),
+    },
+    # A poll worker whose position no agreement covers ((F)(iv)).
+    ("state_local_1991_2026", "mandatory_rule_election_worker"): {
+        "election_work": "election official or election worker",
+        "section_218_position": "not covered",
+    },
+    # A position paid only by fees, outside any agreement ((F)(v)).
+    ("state_local_1991_2026", "mandatory_rule_fee_basis_position"): {
+        "public_office_fee_basis": (
+            "position compensated solely on a fee basis"
+        ),
+        "section_218_position": "not covered",
+    },
+    # Poll workers before mandatory coverage, by their agreement position.
+    **{
+        (rule_id, case_id): {"section_218_position": position}
+        for rule_id in ("election_work_1968", "election_work_1978")
+        for case_id, position in (
+            ("agreement_with_lower_threshold", LOWER_AGREEMENT_AMOUNT),
+            (
+                "agreement_with_statutory_threshold",
+                STATUTORY_AGREEMENT_AMOUNT,
+            ),
+            ("outside_agreement", "not covered"),
+        )
+    },
+    # Poll workers from 1991-07-02, by agreement position and membership.
+    **{
+        (rule_id, case_id): {
+            "section_218_position": position,
+            **(
+                {"public_retirement_system_participation": membership}
+                if membership
+                else {}
+            ),
+        }
+        for rule_id in ("election_work_1991_0702", "election_work_1995")
+        for case_id, position, membership in (
+            (
+                "agreement_with_lower_threshold_nonmember",
+                LOWER_AGREEMENT_AMOUNT,
+                NOT_A_MEMBER,
+            ),
+            (
+                "agreement_with_lower_threshold_member",
+                LOWER_AGREEMENT_AMOUNT,
+                QUALIFIED_MEMBER,
+            ),
+            (
+                "agreement_with_statutory_threshold",
+                STATUTORY_AGREEMENT_AMOUNT,
+                None,
+            ),
+            ("outside_agreement_nonmember", "not covered", NOT_A_MEMBER),
+            ("outside_agreement_member", "not covered", QUALIFIED_MEMBER),
+        )
+    },
+}
+
+
+@pytest.mark.parametrize("employer", sorted(LEVEL_EMPLOYERS))
+@pytest.mark.parametrize(
+    "key",
+    sorted(STATE_LOCAL_CASE_FACTS),
+    ids=["-".join(key) for key in sorted(STATE_LOCAL_CASE_FACTS)],
+)
+def test_state_and_local_cases_reach_only_their_level(registry, key, employer):
+    """Round 5: a private worker who reaches a State or local family with
+    every other fact of one of its exclusions, thresholds or deferrals gets
+    the row's residual, not that case (410(a)(7): "Service performed in the
+    employ of a State"); a State or local employee gets the case."""
+    rule_id, case_id = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    case = next(c for c in rule.cases if c["case_id"] == case_id)
+    facts = {
+        **STATE_LOCAL_CASE_FACTS[key],
+        "government_level": LEVEL_EMPLOYERS[employer],
+    }
+    decided = rule.resolve(cases_met(rule, facts))
+    if employer == "state_or_local":
+        assert decided.get("case_id") == case_id
+        assert decided["consequence"] == case["consequence"]
+    else:
+        assert "case_id" not in decided
+        assert decided["consequence"] == "covered"
+        assert rule.residual_default["consequence"] == "covered"
+
+
+PUBLIC_OFFICE_ELECTION = (
+    "Timely irrevocable election under Public Law 90-248 section 122(c)(2)"
+)
+PUBLIC_OFFICE_ELECTION_HOLDERS = {
+    # INVENTED: a county recorder paid only by fees, outside any
+    # agreement, who made the 1968 election.
+    "county_fee_officer": (
+        {
+            "public_office_1968_exemption_election": PUBLIC_OFFICE_ELECTION,
+            "government_level": "political subdivision",
+            "public_office_functions": (
+                "income is for performing the functions of a public office"
+            ),
+            "public_office_fee_basis": (
+                "position compensated solely on a fee basis"
+            ),
+        },
+        "noncovered",
+        "public_law_90_248_election",
+    ),
+    # INVENTED: a federal officer paid by fees whose facts state the same
+    # election. Section 122(c)(2) does not reach the post; 411(c)(1)
+    # excludes its functions.
+    "federal_fee_officer": (
+        {
+            "public_office_1968_exemption_election": PUBLIC_OFFICE_ELECTION,
+            "government_level": "federal",
+            "public_office_functions": (
+                "income is for performing the functions of a public office"
+            ),
+            "public_office_fee_basis": (
+                "position compensated solely on a fee basis"
+            ),
+        },
+        "noncovered",
+        "public_office_functions",
+    ),
+    # INVENTED: a private firm's agent whose facts state the election.
+    "private_agent": (
+        {
+            "public_office_1968_exemption_election": PUBLIC_OFFICE_ELECTION,
+            "government_level": "private firm",
+        },
+        "covered",
+        "residual",
+    ),
+}
+
+
+@pytest.mark.parametrize("holder", sorted(PUBLIC_OFFICE_ELECTION_HOLDERS))
+def test_public_office_1968_election_reaches_only_state_or_local_fees(
+    registry, holder
+):
+    """Round 5: Pub. L. 90-248 section 122(c)(2) lets only "any individual
+    who in 1968 is in a position to which the amendments made by such
+    subsections apply" elect, and those amendments reach a public office of
+    a State or a political subdivision (411(c)(1))."""
+    rule = next(
+        r for r in registry.rules if r.rule_id == "se_public_office_1968_2026"
+    )
+    facts, consequence, via = PUBLIC_OFFICE_ELECTION_HOLDERS[holder]
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided["consequence"] == consequence
+    assert decided.get("case_id", "residual") == via
 
 
 @settings(deadline=None)

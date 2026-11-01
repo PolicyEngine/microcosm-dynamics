@@ -5022,10 +5022,11 @@
         "case_id": "public_law_90_248_election",
         "precedence": 1,
         "when": {
-          "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees."
+          "public_office_1968_exemption_election": "Timely irrevocable election under Public Law 90-248 section 122(c)(2), made by an individual in an affected position in 1968, applies to these fees.",
+          "government_level": "state or political subdivision"
         },
         "consequence": "noncovered",
-        "description": "The election exempts fees received in 1968 and every year thereafter."
+        "description": "The election exempts fees received in 1968 and every year thereafter. Pub. L. 90-248 section 122(c)(2) lets only an individual in a position the 1968 amendments reach elect, and those amendments reach only a public office of a State or a political subdivision (411(c)(1))."
       },
       {
         "case_id": "state_local_fee_basis_office",

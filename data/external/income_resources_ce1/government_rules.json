@@ -6507,6 +6507,15 @@
             "mandatory_nonmember_coverage": [
               "government_level"
             ],
+            "mandatory_rule_election_worker": [
+              "government_level"
+            ],
+            "mandatory_rule_exclusions": [
+              "government_level"
+            ],
+            "mandatory_rule_fee_basis_position": [
+              "government_level"
+            ],
             "qualified_system_member_without_agreement": [
               "government_level"
             ]
@@ -6611,7 +6620,8 @@
         "precedence": 3,
         "when": {
           "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency",
-          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         },
         "consequence": "noncovered",
         "description": "410(a)(7)(F)(i)-(iii) keep these services outside mandatory coverage.",
@@ -6624,7 +6634,8 @@
         "precedence": 4,
         "when": {
           "election_work": "election official or election worker",
-          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         },
         "consequence": "deferred",
         "description": "410(a)(7)(F)(iv) sets a remuneration threshold for election service; the election family decides.",
@@ -6637,7 +6648,8 @@
         "precedence": 5,
         "when": {
           "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business",
-          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+          "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+          "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
         },
         "consequence": "deferred",
         "description": "410(a)(7)(F)(v) leaves these fees to self-employment; the public office family decides.",

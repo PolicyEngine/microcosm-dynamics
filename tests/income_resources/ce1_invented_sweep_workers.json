@@ -322,7 +322,8 @@
    "worker": "INVENTED: Flo, a 1993 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -334,7 +335,8 @@
     "public_retirement_system_participation": [
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
-    ]
+    ],
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "noncovered"
   },
@@ -343,7 +345,8 @@
    "worker": "INVENTED: Di, a 1993 poll worker in no retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "not a member of any retirement system"
+    "public_retirement_system_participation": "not a member of any retirement system",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -355,7 +358,8 @@
     "public_retirement_system_participation": [
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
-    ]
+    ],
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -364,7 +368,8 @@
    "worker": "INVENTED: Ben, a 1993 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -372,7 +377,8 @@
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Cy, a 1993 poll worker under an agreement with no election worker exclusion.",
    "facts": {
-    "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+    "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered"
   },
@@ -381,7 +387,8 @@
    "worker": "INVENTED: Flo, a 2016 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -393,7 +400,8 @@
     "public_retirement_system_participation": [
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
-    ]
+    ],
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "noncovered"
   },
@@ -402,7 +410,8 @@
    "worker": "INVENTED: Di, a 2016 poll worker in no retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "not a member of any retirement system"
+    "public_retirement_system_participation": "not a member of any retirement system",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -414,7 +423,8 @@
     "public_retirement_system_participation": [
      "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
      "member of a retirement system of the State, subdivision or instrumentality"
-    ]
+    ],
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -423,7 +433,8 @@
    "worker": "INVENTED: Ben, a 2016 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards"
+    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered_above_threshold"
   },
@@ -431,7 +442,8 @@
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Cy, a 2016 poll worker under an agreement with no election worker exclusion.",
    "facts": {
-    "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
+    "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
    },
    "expected": "covered"
   },
