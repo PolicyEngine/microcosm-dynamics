@@ -90,14 +90,15 @@ cell's or block's text without its tags; the row-header exemption also
 reads a header cell's `scope` attribute. The nine-digit rule skips comments
 and noscript blocks, whose tracking numbers are not page content. Each
 reading takes time linear in the page's length. A test times invented
-pages of 100 kB to 2.2 MB in the forms found to take quadratic time before
+pages of 100 kB to 4 MB in the forms found to take quadratic time before
 (a long word in a tag, escaped quotes after an unpaired quote in a script,
 unclosed tags and comments, script start tags with no end tag, and table
 rows and cells that name an identifier) and in those where a slower form of
 a linear helper, found in review, does (a hyphenated word in a tag,
 unclosed tags after closed ones, script start tags with no `>`, after end
 tags or before one end tag, identifier rows after rows of digits, scripts
-that end tags close, and unclosed comments before tags).
+that end tags close, empty or each holding a string, and unclosed comments
+before tags).
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier

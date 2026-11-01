@@ -1673,13 +1673,13 @@ def test_identifier_value_window_is_forty_characters(width, refused):
     assert record_bearing_note(body) == refused
 
 
-# Invented pages of 100 kB to 2.1 MB in forms that a quadratic pattern
+# Invented pages of 100 kB to 4 MB in forms that a quadratic pattern
 # reads for minutes: a long word in a tag, plain or hyphenated; escaped
 # quotes after an unpaired quote in a script; tags and comments that never
 # close, alone, after closed tags or before tags; script start tags with
 # no end tag, with no ">", after end tags or before one end tag; scripts
-# that end tags close; and table rows and cells that name an identifier,
-# alone or after rows of digits.
+# that end tags close, empty or each holding a string; and table rows and
+# cells that name an identifier, alone or after rows of digits.
 INVENTED_LONG_PAGES = {
     "long_word_in_tag": "<p " + "a" * 200_000 + ">x</p>",
     "hyphenated_word_in_tag": "<p " + "a-" * 50_000 + ">x</p>",
@@ -1697,6 +1697,7 @@ INVENTED_LONG_PAGES = {
     "unclosed_comments_before_tags": "<!--<b>" * 50_000,
     "script_start_tags_before_end_tag": "<script>" * 50_000 + "</script>",
     "closed_scripts": "<script>x</script>" * 120_000,
+    "closed_scripts_with_strings": '<script>"a"</script>' * 200_000,
     "identifier_rows": (
         "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
     ),
