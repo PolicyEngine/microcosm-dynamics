@@ -492,8 +492,10 @@ class _HTMLTree(HTMLParser):
         open_foreign = self._open_foreign()
         innermost = self._foreign[-1][1].tag if open_foreign else None
         self._end_tag(tag)
+        # An end tag that names the innermost svg or math ends only that
+        # one, since it closes the innermost element of its name.
         ended = open_foreign - self._open_foreign()
-        if ended > 1 or ended and tag != innermost:
+        if ended and tag != innermost:
             # Only its own end tag ends an svg or math as HTML ends it.
             raise TableStructureError(
                 "HTML svg or math ends without its own end tag"

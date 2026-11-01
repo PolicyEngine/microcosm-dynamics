@@ -4528,11 +4528,13 @@ def test_invented_line_without_an_unread_date_or_year_leaves_the_date_read(
         "<p>Payment levels for 2029</p>",
         "<p>Payment levels as of January 1st, 2029</p>",
         "<p>Payment levels as of 01.01.2029</p>",
-        # Each dating word, one only the bare reading shows, and the
+        # Each dating word alone, one only the bare reading shows, and the
         # over-refusal the Limits list names ("Separate" holds "rate").
+        "<p>Payment for 2029</p>",
+        "<p>Benefit level for 2029</p>",
+        "<p>Rules effective in 2029</p>",
+        "<p>Notes as of 2029</p>",
         "<p>Rates for 2029</p>",
-        "<p>Levels as of 2029</p>",
-        "<p>Effective in 2029</p>",
         "<p>Pay<sup>1</sup>ment for 2029</p>",
         "<p>Separate programs for 2029</p>",
     ],
@@ -4733,6 +4735,8 @@ def test_invented_other_leading_markers_leave_the_date_unread(fragment):
         " March 1, 2031</p>",
         "<p>Payment levels as of March 1<br>, 2031</p>",
         "<h5><sup>1</sup>Note<br>Payment levels as of March 1, 2031</h5>",
+        # A split date only the bare reading shows.
+        "<p>Payment levels as of March 1,<br>20<sup>1</sup>31</p>",
     ],
 )
 def test_invented_split_or_heading_date_beside_a_footnote_is_unread(fragment):
@@ -4890,3 +4894,11 @@ def test_invented_line_of_two_revision_ranges_dates_no_chart():
         " 04/01/2031 - Present</p>"
     )
     assert invented_selector(payload)[2] == "2030-01-01"
+
+
+def test_invented_heading_earlier_year_without_a_dating_word_is_unread():
+    """A heading counts a year outside the dates in force whatever words it
+    holds. The review's Q12, ported, counts an h5's earlier year only with
+    a dating word, so this h5 reads under it."""
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with("<h5>Notes for 2029</h5>"))
