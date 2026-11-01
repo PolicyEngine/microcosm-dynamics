@@ -4366,6 +4366,89 @@ def test_class_read_from_two_files_refuses(tmp_path):
         inventory.inventory_release(package)
 
 
+def test_class_read_from_a_stem_file_after_another_file_refuses(tmp_path):
+    """The walk reaches invented_twin.py after invented_other.py has given
+    the class, so the stem file is read only to refuse the name. Mutant
+    O3 of round 14 skipped that read and kept the first file's record."""
+    other_formula = (
+        "    def formula(person, period, parameters):\n"
+        '        return person("invented_twin", period)\n'
+    )
+    package = package_with_named_lines(
+        tmp_path,
+        [
+            "def formula(person, period, parameters):\n"
+            '    return person("invented_other", period)'
+        ],
+        {
+            "variables/input/invented_twin.py": INVENTED_TWIN,
+            "variables/input/invented_other.py": (
+                INVENTED_TWIN
+                + "\n\n"
+                + INVENTED_TWIN.replace("invented_twin", "invented_other")
+                + other_formula
+            ),
+        },
+    )
+    with pytest.raises(
+        ValueError,
+        match="^Variable invented_twin is defined in "
+        "variables/input/invented_other.py and "
+        "variables/input/invented_twin.py$",
+    ):
+        inventory.inventory_release(package)
+
+
+def test_formula_prefix_at_a_yml_file_refuses(tmp_path):
+    """The engine loads .yaml files only, so a prefix that ends at a .yml
+    file outside the federal tree names nothing it reads (mutant P14)."""
+    package = package_with_named_lines(
+        tmp_path,
+        [
+            INVENTED_PREFIX_FORMULA.format(
+                read="parameters(period).household.invented"
+            )
+        ],
+        {"parameters/household/invented.yml": INVENTED_AMOUNT},
+    )
+    with pytest.raises(
+        ValueError, match="^Unread parameter file for household.invented$"
+    ):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize(
+    ("value", "message"),
+    [
+        (
+            '["employment_income"]',
+            "The adds of employment_income names itself",
+        ),
+        ('["gov.ssa.ssi.absent"]', "Unresolved adds for employment_income"),
+    ],
+    ids=["itself", "absent_parameter"],
+)
+def test_boundary_literal_adds_still_refuse(tmp_path, value, message):
+    """A boundary's dependencies are bypassed, but the engine still reads
+    its literal adds, so the naming rules hold there too (mutant B9)."""
+    package = invented_package(tmp_path)
+    path = package / "variables/input/employment_income.py"
+    path.write_text(path.read_text() + f"    adds = {value}\n")
+    with pytest.raises(ValueError, match=f"^{message}$"):
+        inventory.inventory_release(package)
+
+
+@pytest.mark.parametrize("text", ["- 1\n- 2\n", ""], ids=["list", "empty"])
+def test_parameter_file_that_holds_no_mapping_refuses(tmp_path, text):
+    """A file of the SSI tree that holds no mapping refuses with the
+    reader's own ValueError (mutant Z1 raised AttributeError)."""
+    package = package_with_named_lines(
+        tmp_path, [], {"parameters/gov/ssa/ssi/invented_list.yaml": text}
+    )
+    with pytest.raises(ValueError, match="^Unread parameter file "):
+        inventory.inventory_release(package)
+
+
 # Round 12's M2. Runs the reader in a child process under a given hash
 # seed, which -I would ignore, and prints its output or its refusal.
 HASH_SEED_CHILD = """
