@@ -362,8 +362,9 @@ class _HTMLTree(HTMLParser):
     def _open_foreign(self) -> int:
         """How many svg and math elements are open.
 
-        The stack only grows or loses its top, so an entry whose place no
-        longer holds its element was popped, and so was every later one.
+        The stack only grows or loses its top, so when an entry's place no
+        longer holds its element, the tree has popped that element and
+        every later entry's with it.
         """
         while self._foreign:
             place, element = self._foreign[-1]

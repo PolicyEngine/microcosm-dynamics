@@ -164,9 +164,9 @@ blocks, which is never read, so "Utah (continued)" or "Couple" there neither
 names nor resets a State, claimant or date; and text that HTML or CSS
 hides, other than script and style, such as the ``hidden`` attribute, which
 is read as text, so ``Utah<span hidden>x</span> Effective January 1, 2031``
-is read as prose, as "Utahx Effective January 1, 2031" would be. The tree's
-own gaps, HTML's script data escape states and foreign content among them,
-are listed in ``aggregate_tables``, with the pages it refuses for them.
+is read as prose, as "Utahx Effective January 1, 2031" would be.
+``aggregate_tables`` lists the tree's own gaps, HTML's script data escape
+states and foreign content among them, with the pages it refuses for them.
 
 Limits: the nets over-refuse in several places, and no pinned page meets
 any of them.
@@ -231,9 +231,9 @@ These forms also leave the claimant or date before them standing:
   ``<p>Payment levels as of March 1,</p><p>2031</p>`` in a section dated
   2031, names none in either;
 - an effective-date sentence of 80 characters or more, outside a heading,
-  names only the dates in a sentence's date form, so in "Monthly payment
-  levels effective January 1, 2030 and July 1st, 2030" run on past 80
-  characters the second date is dropped;
+  names only the dates in a sentence's date form, so "Monthly payment
+  levels effective January 1, 2030 and July 1st, 2030", run on past 80
+  characters, drops its second date;
 - a line under 80 characters, outside a heading, that holds only years
   before the dates in force and no dating word, as "State-administered
   programs: For Calendar Year 2029 -" in a section dated 2030, leaves the
