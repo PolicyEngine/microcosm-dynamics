@@ -1098,7 +1098,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     function's hint at the first and sixth levels.
     `test_pruning_keeps_each_hint_whole` puts a working check's literal
     under a lambda's default in each of the three annotation places.
-  - `test_scan_trusts_code_in_a_hint_that_reaches_no_class` gives six
+  - `test_scan_trusts_code_in_a_hint_that_reaches_no_class` gives eight
     hints in a module that binds nothing tracked, and
     `test_scan_leaves_expression_literals_in_hints_to_the_hint_checks`
     keeps `ForwardRef` and `eval` hints that name the registry trusted.
@@ -1495,6 +1495,47 @@ section changes and the code does not: `tests/open_population` and
    mutant apart. **Fix:** the mutant paragraph now limits the claim to this
    repository's modules.
 
+### Follow-up to review inject-r4
+
+Review inject-r4's two minor findings first reached this report as wording,
+and the section above records that wording as #591 landed it. This follow-up
+branches from master `6413d842` and fixes both in the code, so the
+`dynamic-code` bullet, limit class 4 and "Deep expressions" no longer state
+either exception. The review's two nits stay stated limits.
+
+1. **Literal statement suites in annotations.** `_embedded` now passes each
+   hint to `_hint_code`. A code call whose literal parses as an expression
+   stays with the hint checks. Any other literal takes `_expanded`, the path
+   a code call outside an annotation takes, with the same memo, depth and
+   `unexpanded` set. `_hint_code` also follows an expression literal one
+   level deeper, to find a suite inside it. `hits()` already walked
+   annotation calls, so a trusted function's sixth-level call reports
+   `dynamic-code` with no change to `walked_hints`. The scan walks no
+   spelled copy, so the real hint stands for it in `unexpanded`, and `_kind`
+   now tests that set first, because a string hint is a constant.
+
+   The fix needed two adjacent changes. `_prune` now keeps each hint whole:
+   with the old pruning, a pruned scan missed a suite that an unpruned scan
+   reported, in a literal under a call the folder does not fold through. A
+   code call on unreadable text spelled in a hint's literal, as in
+   `def g(v: 'exec(S)')`, now reports `dynamic-code` at the hint. Without
+   that, limit class 4 would need a new exception.
+2. **`module_path` recursion.** One loop now unwinds attributes and
+   `sys.modules[...]` subscripts from the outermost link inward, and a
+   second replays the links from the base. A chain that raised
+   `RecursionError` at 1000 links at `6413d842` now passes at 3000.
+
+Six invariants hold for the fixes:
+- A pruned scan and an unpruned scan give the same hits on every source.
+- `module_path` agrees with a recursive reference on every chain the
+  recursion survives.
+- A working check in a hint reports its own kind down to five levels and
+  `dynamic-code` past them, for every mix of `exec` and `eval`.
+- A hint gives every check an `exec` statement gives, with the two
+  exceptions the parity test states.
+- A literal in a hint that parses as an expression stays trusted.
+- On the real tree the scan gives exactly the pinned hit.
+
 ### Commands and results
 
 ```sh
@@ -1723,6 +1764,63 @@ one-minute load under 100:
   `sys.modules` chain gives its check at 200 and 500 links and raises
   `RecursionError` at 1000 and 2000.
 
+For the follow-up to review inject-r4, the main session ran the same
+commands on the host at `35ba6e5c` from 19:11 to 19:53 UTC on 1 November,
+against base `6413d842`. The next commit changes only this report. Each
+process ran under the load-check audit hook and started only at a
+one-minute load under 100:
+- `tests/open_population`: **739 passed and 1 strict xfail** in 71.97 s.
+  The 45 tests this follow-up adds all sit in `test_stream_injection.py`.
+- The other four modules: 104 passed in 4.22 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped. The
+  required command plus those two modules, in one process: **1,073 passed,
+  2 skipped and 1 strict xfail**.
+- Peak RSS was 1.35 GB.
+- The slowest tests took 19.12 s (the real-tree scan), 4.58 s (the census)
+  and 4.31 s (a long chain).
+- Nothing opened a file under a bar, the pattern line named only
+  `baselines/asfr.py` (read by the scan and the census, never displayed),
+  and a call-count hook on the one-process run counted no call to either
+  barred function.
+- `--collect-only -m unit tests/open_population` collects all 740. Black,
+  Ruff and `git diff --check 6413d842` are clean. `git diff --stat
+  6413d842` lists this report and `test_stream_injection.py`, and the
+  sealed-path `git diff --quiet` exits 0.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, and every module's folded values still weigh under 16,384; the
+  heaviest outside `baselines/asfr.py` weighs 10,435. Pruning still keeps
+  the 934,121 of 2,007,909 nodes the Cost bullet gives, so keeping hints
+  whole costs the real tree nothing.
+- Through `repository_sources()`, the scans at `6413d842` and `35ba6e5c`
+  give the same single hit on all 302 modules.
+- Pruned and unpruned, the two scans give the same hits on all 176 invented
+  sources at the base: the 125 spellings, the 20 negatives, the seven
+  accessor cases, nested depths one to seven, ten pruning places and seven
+  long chains. Of the 43 sources this follow-up adds, 16 give the same hits.
+  The 27 that differ are the intended ones: two `sys.modules` chains that
+  raised `RecursionError` and now give their checks, the twelve forced
+  annotations and the thirteen hint cases. The new scan's pruned and
+  unpruned hits agree on all 219.
+- Review inject-r4's two minor findings no longer reproduce on invented
+  sources. The class and argument annotations that gave no hit at
+  `6413d842` report `isinstance` at `35ba6e5c`, and `sys.modules` chains
+  of 1000 and 2000 links that raised `RecursionError` report their check.
+  Its two nits reproduce unchanged, as stated limits.
+
+Thirty-nine mutants of the two fixes ran against the deterministic scan
+tests, after an unmutated control. Twenty-eight touch the annotation fix:
+a dropped hint pass, each annotation place and each pruning place dropped,
+spelled parts unfollowed or uncounted, limits one higher and one lower,
+wrong anchors, wrong line numbers, the unreadable call missed, and
+expression literals expanded as code. Eleven touch `module_path`: no
+`sys.modules` link, any attribute or module taken for it, a carried empty
+path, links replayed in walk order, unresolved names and attributes, a lost
+import base, the recursion restored, and a dropped link. The first sweep, of
+36, left four survivors, and `9d81e218` adds the tests that kill them. The
+second, of all 39 at `9d81e218`, left one: a code call with no argument in a
+hint. `35ba6e5c` adds that spelling, and under that mutant it fails, so all
+39 now fail a test. None of these ran against the real tree.
+
 ### Restricted-files statement
 
 The build read `RESTRICTED-FILES.md` at its pinned hash and the
@@ -1764,3 +1862,11 @@ changes used `--name-only`, `--stat` or `--quiet`, and displayed none of
 master's changed files beyond the two tier files. The real-tree scripts
 read the scanned modules only through the test module's own walk, under
 the audit hook, and printed paths, line numbers, node kinds and counts.
+
+The follow-up to review inject-r4 followed the same rules. The main session
+read `RESTRICTED-FILES.md` at its pinned hash and the coordinator's five
+pending entries before source work, and hashed them again before the review
+brief. Its searches took their file lists from the helper, and its git
+reads that spanned master's changes used `--name-only`, `--stat` or
+`--quiet`. Every probe, differential source and mutant used invented
+inputs.
