@@ -2142,8 +2142,8 @@ member separately.
 | `ELIGIBILITY_BEFORE_1983`, `DI_ENTITLEMENT_BEFORE_JULY_1980` | None | RS 00615.736 gives the historical maximum procedure; RS 00615.740B.2 says DMAX does not apply when "The NH was ever entitled to DIB before July 1980". These maximum histories do not replace role OB or current own-benefit facts. |
 | `PARENT_BENEFIT` | F4/F6 when parent count refuses | RS 00209.001 excludes own RIB "equal to or exceeding the amount of the parent's original benefit (One parent = 82 1/2%; Two parents = 75%)". RS 00209.015 states "Benefit rate equals 75% of the worker's PIA for each month both are entitled." An unresolved entitled-parent count leaves both threshold and OB unsettled. |
 | `DISABLED_WIDOW_UNDER_60` | No additional fact beyond a separately refusing own MBA | RS 00615.310C first says "Determine the WIB OB", then separately determines and subtracts reductions. The historical extra reduction changes gross, not F4's OB. |
-| `DUAL_ENTITLEMENT_SEQUENCE` | F2 below the PIA; F3 below the ordinary rate and F6, each only where historical carryover can change own RIB | 20 CFR 404.411(b) reduces a DIB after a reduced RIB and, for "all individuals born before January 2, 1928" or a disability before 1990, after a WIB. The schema omits the onset, so F2 stays open in every cohort. 404.411(c)(2) reduces an old-age benefit "by the larger of the following" for a person born before January 2, 1928, even one who met every WIB condition "except that the old-age benefit equals or exceeds the primary insurance amount", so no current WIB or auxiliary record needs to appear. Both only lower a rate, so the ordinary rate stays the cap (round 6). RS 00615.005A.8 says "Eliminated the carry-over reduction in RIB or DIB due to WIB before age 62" and applies the RIB change to workers born January 2, 1928 or later. RS 00615.010 preserves the earlier rule: "If there was prior entitlement to a reduced WIB in any month before the month of attainment of age 62 reduce the RIB per RS 00615.160 and RS 00615.170." The schema omits that history. Modern WIB/DWB election instead requires "if all eligibility requirements are met" and preserves "the PIA and the reduction factors remain the same" (RS 00615.315). It does not waive F6. A nonnegative own RIB cannot be less than a zero deemed-death PIA. The spouse raw own-PIA test stays F5. |
-| `REDUCED_BENEFIT_HISTORY_BEFORE_1978` | F2 below the PIA and, within the carryover scope above, F3 below the ordinary rate; each only before cohort 1928 | RS 00615.005C.2 requires historical money reductions. That does not change the original benefit determined before reduction, but the 404.411 rules above carry such a reduction into a later DIB or RIB. RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er), so cohort 1928 reached no reduced benefit before 1978 (round 6). |
+| `DUAL_ENTITLEMENT_SEQUENCE` | F2 below the PIA from the January a cohort can turn 50; F3 below the ordinary rate and F6, each only where historical carryover can change own RIB | 20 CFR 404.411(b) reduces a DIB after a reduced RIB and, for "all individuals born before January 2, 1928" or a disability before 1990, after a WIB. The schema omits the onset, so only age limits F2: no cohort reaches a reduced benefit before 50 (round 7). 404.411(c)(2) reduces an old-age benefit "by the larger of the following" for a person born before January 2, 1928, even one who met every WIB condition "except that the old-age benefit equals or exceeds the primary insurance amount", so no current WIB or auxiliary record needs to appear. Both only lower a rate, so the ordinary rate stays the cap (round 6). RS 00615.005A.8 says "Eliminated the carry-over reduction in RIB or DIB due to WIB before age 62" and applies the RIB change to workers born January 2, 1928 or later. RS 00615.010 preserves the earlier rule: "If there was prior entitlement to a reduced WIB in any month before the month of attainment of age 62 reduce the RIB per RS 00615.160 and RS 00615.170." The schema omits that history. Modern WIB/DWB election instead requires "if all eligibility requirements are met" and preserves "the PIA and the reduction factors remain the same" (RS 00615.315). It does not waive F6, which covers every test of an actual own RIB: widow(er), mother or father, and parent (round 7). A nonnegative own RIB cannot be less than a zero deemed-death PIA. The spouse raw own-PIA test stays F5. |
+| `REDUCED_BENEFIT_HISTORY_BEFORE_1978` | F2 below the PIA and, within the carryover scope above, F3 below the ordinary rate and F6; each only before cohort 1928. Before cohort 1916, or with no cohort, F3 and F6 in both directions | RS 00615.005C.2 requires historical money reductions. That does not change the original benefit determined before reduction, but the 404.411 rules above carry such a reduction into a later DIB or RIB. RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er), so cohort 1928 reached no reduced benefit before 1978 (round 6). A declared money history can exceed today's fraction, so it lifts the F3 cap where it can reach an own RIB, and F6 follows the same amount (round 7). |
 | `INDEPENDENT_DIVORCED_SPOUSE` | None | RS 00202.100 identifies the unfiled NH and requires the applicable WEP PIA; the declared PIA and eligibility facts are still the inputs. |
 | `COMBINED_FAMILY_MAXIMUM`, `MULTIPLE_AUXILIARY_RECORDS`, `DEEMED_SPOUSE`, `NON_AIME_FORMULA_PIA`, `DIB_GUARANTEE_PIA`, `GOVERNMENT_PENSION_OFFSET` | None | The condition table's captured maximum-membership, maximum-formula and payable-offset rules apply equally when the reason is deferred. |
 | `PARISI_AMBIGUOUS`, `PARISI_BEFORE_OCTOBER_1999` | None | RS 00615.768E says the change affects benefits "after reduction for the maximum" and "Beneficiaries will still be limited by the original benefit amount." |
@@ -2351,15 +2351,17 @@ under a prior reduced RIB or workers' compensation, which also skipped the
 direction those sources settle. A DIB of $4.10 on PIA $4 counted as a
 refusal. It now raises. Every NH reduction-only hold, listed in
 `_NH_REDUCTION_ONLY_HOLDS`, leaves equality open below the rate and keeps
-the rate as a cap. Administrative finality alone lifts a cap, because it
-can protect a rate built on another PIA.
+the rate as a cap. Administrative finality lifts a cap, because it can
+protect a rate built on another PIA. Round 7 corrects this paragraph's
+first statement that finality alone does so: a declared pre-1978 money
+history also lifts an own RIB's cap.
 
 **The same class, beyond the findings.** Sol's exploratory probe of a DIB
 after a reduced WIB (404.411(b)) didn't enter its verdict. The session
 tested it and found the same lost row: $398.10 on PIA $400 raised under
 `dual_entitlement_sequence`. F2 now stays open below the PIA for that
-reason in every cohort, because the schema omits the disability onset
-that scopes 404.411(b)(2). `OWN_RIB_HISTORY_BEFORE_1978` and
+reason, because the schema omits the disability onset that scopes
+404.411(b)(2). Round 7 limits this to months a cohort can reach age 50. `OWN_RIB_HISTORY_BEFORE_1978` and
 `REDUCED_BENEFIT_HISTORY_BEFORE_1978` open it too, before cohort 1928 only:
 a later cohort reached age 50 after 1977.
 
@@ -2384,7 +2386,7 @@ a later cohort reached age 50 after 1977.
 | Every rate 404.411(c)(2)(ii) can reach stays a counted refusal, and the preflight changes nothing about it | `test_published_rule_carryover_keeps_its_refusal`; Hypothesis `test_every_carryover_rate_keeps_its_row` |
 | The carryover ends at cohort 1928, reaches only an old-age benefit, and an unknown cohort can't rule it out | `test_carryover_ends_at_cohort_1928`; `test_the_carryover_reaches_only_an_old_age_benefit`; `test_an_unknown_cohort_cannot_rule_out_the_carryover`; `test_a_zero_pia_leaves_no_rate_for_the_carryover_to_lower` |
 | Each NH rate has a cap: a declaration above it raises, and one at or below it keeps its row | `test_a_reducing_hold_bounds_a_dib_at_its_pia`; `test_rib_above_the_canonical_rate_stays_an_input_error`; `test_rib_at_the_canonical_rate_keeps_its_refusal`; `test_workers_compensation_caps_a_rib_at_its_canonical_rate`; Hypothesis `test_every_dib_at_or_below_the_cap_keeps_its_row` |
-| Only finality lifts a cap | `test_finality_still_protects_a_rate_above_the_cap`; `test_finality_still_protects_a_rib_above_the_cap`; `test_only_finality_lifts_an_nh_rate_cap` |
+| Outside round 7's history scope, only finality lifts a cap | `test_finality_still_protects_a_rate_above_the_cap`; `test_finality_still_protects_a_rib_above_the_cap`; `test_only_finality_lifts_an_nh_rate_cap` |
 | Every G refusal reason classifies a lower DIB and a lower RIB against a written-out expectation | `test_each_reason_classifies_a_lower_dib`; `test_each_reason_classifies_a_lower_rib` |
 | Pre-1978 reasons reach only cohorts old enough for a reduced benefit by then | `test_pre_1978_history_reaches_only_cohorts_old_enough_for_it`; `test_an_unknown_cohort_cannot_rule_out_a_pre_1978_history` |
 | Each quotation above sits in its capture | `test_the_captures_carry_each_quoted_rule` |
@@ -2399,3 +2401,100 @@ Thirty-eight fresh mutations, each in a copied source tree, failed named
 tests in the round 6 module. A first pass left two survivors, both test
 gaps, and each gained a test before the final run. Against `a135519f`, 50
 of that module's 224 tests fail.
+
+
+## PR 563 round 7: what a declared history reaches and what age rules out
+
+GPT-6.1 Sol reviewed `3212f823` and asked for changes, with three medium
+findings. All three reproduced, and each one's reading matches its capture.
+Two lost a lawful row by comparing a rate with an amount the declaration had
+already put in doubt. One kept a row that no filling can make lawful.
+
+### What changed
+
+**A declared history reaches past an omitted cohort.** An omitted cohort
+keeps the current formula, and that stays the rule for an undated input. A
+declared `OWN_RIB_HISTORY_BEFORE_1978` or
+`REDUCED_BENEFIT_HISTORY_BEFORE_1978` says more: RS 00615.005C.2's money
+reduction set the amount, and that reduction can exceed today's fraction.
+Take PIA $123.40 at RF 8 in December 1977, every captured COLA through 1999,
+and an upward January 2000 recomputation to PIA $333.30. All sixteen rounding
+paths give $318.50, and today's formula gives $318.40. That declaration
+raised and lost its row. It now keeps its reason with weight 7, in both
+directions. The sources set the scope in `_historical_own_rib_possible`: an
+old-age benefit, a positive PIA, a remaining reduction, and a cohort before
+1916 or none. Cohort 1916 attains 62 no earlier than January 1978, so it
+keeps today's formula as its cap. A DIB keeps its PIA as its cap, because
+this history reaches a DIB only through a 404.411(b) reduction. F6 reads the
+same amount, so it follows the same rule.
+
+**Every test of an actual own RIB shares the carryover.** Act 202(g)(1)(C)
+compares a mother's or father's actual own RIB with three-quarters of the
+PIA, and RS 00209.001 compares a parent's with the parent's OB. Round 6 opened
+the 404.411(c)(2) carryover for widow(er)s alone, though that rule doesn't
+depend on the benefit a person claims now. So a mother with own PIA $400, a
+prior WIB on PIA $300 and a threshold of $360 carries $359.10 against an
+ordinary $373.30. That declaration raised and lost its row. It now keeps
+`dual_entitlement_sequence` with weight 7, in a pre-FRA year too.
+`_OWN_RIB_AMOUNT_TEST_ROLES` lists the roles. A spouse's test reads the raw
+own PIA (F5), which no history changes, and a child's has no amount test.
+`REDUCED_BENEFIT_HISTORY_BEFORE_1978` now opens F6 in the same scope, because
+it carries through the same rule that already opened F3.
+
+**Age rules out a prior reduced benefit.** RS 00615.010 says "DIB is not
+reduced unless there was prior entitlement to reduced RIB (or WIB prior to
+1/90)." RS 00615.005 starts those benefits at 62 and, for a disabled
+widow(er), at 50. A cohort attains 50 no earlier than January of its birth
+year plus 50. So a DIB of $404.90 on PIA $405 for cohort 1975 in 2024 has no
+lawful filling under `dual_entitlement_sequence`. It now raises before
+`evaluate_ret` and leaves no row. A rate at the PIA keeps its named refusal,
+and the PIA stays the cap.
+
+`_PRIOR_REDUCED_BENEFIT_HOLDS` lists the holds that open F2 through a prior
+reduced benefit. A workers' compensation offset and administrative finality
+need no such benefit, so each keeps a young row, even beside a dual
+declaration. Before writing this check, the session read each hold that opens
+F2, as the preflight rule requires, and no other hold can lawfully lower a
+young DIB.
+
+**The floor takes the earliest age on any route.** `DIB_AFTER_REDUCED_RIB`
+names a RIB, which starts at 62. The schema offers no separate declaration
+for a DIB after a reduced WIB under 404.411(b)(2), though, so this round
+applies age 50 to that hold too. From 50 through 61 the row stays a named
+refusal. The direction rule decides this: the rule can't show that a caller
+meant a RIB alone, and a loose refusal moves no money.
+
+### What stayed
+
+- **An undated input with no history hold keeps today's formula.** A
+  carryover or workers' compensation offset can only lower an own RIB:
+  404.411(c)(2) reduces it "by the larger of the following". So
+  `dual_entitlement_sequence` keeps the cap with no cohort.
+- **G still takes entitlement as declared.** An RIB below age 62 computes
+  with no hold, as it did before this round, because G computes payment and
+  not entitlement. Under a carryover hold such a rate keeps a named refusal.
+  An entitlement-age check would reach every record, so it sits outside this
+  fix.
+- **Round 6's generator stays.** `_dib_record` there defaults to cohort 1960
+  in 2024, age 64, which sits above the floor. Round 7's generators sweep
+  both sides.
+- **No money moved.** This round changes classification only.
+- **Sol's `needs_max` items need no new call.** Each one keeps a standing
+  ruling or resolves inside these fixes.
+
+### New executed invariants
+
+| Invariant | Executing tests in `test_track_b_ret_ledger_fix_round_7.py` |
+| --- | --- |
+| Money history lands above today's formula on every rounding path, from the captured COLAs | `test_money_history_lands_above_todays_formula_on_every_path` |
+| A declared history keeps every rate in its scope, in both directions, and the preflight changes nothing about it | `test_declared_history_keeps_a_rate_above_todays_formula`; `test_a_history_reaching_rib_keeps_either_direction`; Hypothesis `test_history_keeps_every_rate_in_its_scope` |
+| Past that scope the cap holds: cohort 1916 on, no remaining reduction, no declared history, and every DIB | `test_a_cohort_past_1915_keeps_todays_formula_as_a_cap`; `test_a_cohort_past_1915_keeps_exact_own_history`; `test_no_remaining_reduction_needs_no_money_history`; `test_only_a_declared_history_reaches_past_an_omitted_cohort`; `test_history_leaves_a_dib_cap_alone`; Hypothesis `test_past_1915_every_reduction_only_hold_keeps_the_cap` |
+| A mother's carried rate keeps its row where the ordinary rate fails her test, in a pre-FRA year too | `test_a_mothers_carried_rib_passes_where_the_ordinary_one_fails`; `test_a_pre_fra_mother_keeps_the_historical_year_row`; `test_a_mothers_own_rib_opens_only_in_each_holds_scope` |
+| Every actual-RIB test shares the carryover, and no other role or a DIB does | `test_every_actual_rib_test_shares_the_carryover`; `test_a_role_with_no_rib_amount_test_stays_settled`; `test_a_disability_own_benefit_faces_no_rib_amount_test`; Hypothesis `test_f6_matches_a_table_written_from_the_sources` |
+| A zero PIA fails every RIB on every filling, a deemed PIA counts as the tested PIA, and a money history needs an old-age benefit with a PIA | `test_a_zero_pia_fails_every_rib_on_every_filling`; `test_a_deemed_pia_keeps_a_history_open_on_a_zero_record_pia`; `test_a_reduced_dib_opens_no_money_history`; `test_a_zero_own_pia_leaves_no_money_history` |
+| Before a cohort can reach 50, a DIB rate equals its PIA or raises and leaves no row | `test_a_cohort_too_young_for_any_reduced_benefit_has_one_dib_rate`; `test_before_age_50_a_dib_below_the_pia_raises`; Hypothesis `test_a_young_dib_rate_equals_its_pia_or_raises` |
+| The floor opens in January of the year a cohort turns 50, and needs a cohort and a month | `test_the_floor_opens_in_january_of_the_year_a_cohort_turns_50`; `test_the_floor_needs_a_cohort_and_a_month`; `test_a_pre_1978_hold_needs_both_the_cohort_and_the_age` |
+| No age limits a hold that needs no prior reduced benefit | `test_a_hold_no_age_limits_keeps_a_young_row`; `test_an_independent_hold_survives_a_young_dual_declaration`; Hypothesis `test_f2_matches_a_table_written_from_the_sources` |
+| Each quotation above sits in its capture | `test_the_captures_carry_each_quoted_rule` |
+
+Forty-two fresh mutations each fail a named test on the final test bytes, and 44 of the module's 158 tests fail against `3212f823`. A first pass killed 39 of 43. One survivor showed that a month comparison added nothing, so the rule now compares years and that mutation went away. The other three exposed test gaps, and each gained a test before this run.

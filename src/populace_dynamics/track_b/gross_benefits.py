@@ -429,6 +429,11 @@ _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR = 1928
 # This cohort reached 50 after 1977, so no benefit reached it reduced by then
 # (RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er)).
 _FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION = 1928
+# RS 00615.005A.4 starts reduced disabled widow(er)'s benefits at age 50. RIB
+# and spouse's benefits start at 62 (A.1, A.2) and aged WIB at 60 (A.3).
+_EARLIEST_REDUCED_BENEFIT_AGE = 50
+# This cohort attains 62 no earlier than January 1978 (RS 00615.005C.2).
+_FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB = 1916
 
 
 # ---------------------------------------------------------------------------
@@ -1384,7 +1389,7 @@ def _refuse_historical_own_rib(
         pia > 0
         and reduction_months > 0
         and birth_year is not None
-        and birth_year < 1916
+        and birth_year < _FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB
     ):
         raise _computed(
             FamilyConfigurationUnsupported,
@@ -1780,7 +1785,7 @@ _PREFLIGHT_FACT_UNSETTLERS = {
         {"F2", "F3", "F6"}
     ),
     UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978: frozenset(
-        {"F2", "F3"}
+        {"F2", "F3", "F6"}
     ),
     UnsupportedReason.PRISONER_SUSPENSION: frozenset(),
     UnsupportedReason.DRUG_ADDICTION_SUSPENSION: frozenset(),
@@ -1792,7 +1797,9 @@ _PREFLIGHT_FACT_UNSETTLERS = {
     UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: frozenset(),
 }
 # These holds can only lower an NH rate (402(q)(2), 224; 20 CFR 404.408(c)(1),
-# 404.411(b)-(c)), so the rate an unheld record would pay stays its cap.
+# 404.411(b)-(c)), so the rate an unheld record would pay stays its cap. Pre-1978
+# money history is the exception for an own RIB, which it can raise above
+# today's formula (_historical_own_rib_possible).
 _NH_REDUCTION_ONLY_HOLDS = frozenset(
     {
         RecordCondition.DIB_AFTER_REDUCED_RIB,
@@ -1804,6 +1811,22 @@ _NH_REDUCTION_ONLY_HOLDS = frozenset(
         UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
     }
 )
+_PRE_1978_HISTORY_HOLDS = frozenset(
+    {
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    }
+)
+# Each opens F2 only through a prior reduced benefit. A workers' compensation
+# offset and administrative finality don't, so no age limits them.
+_PRIOR_REDUCED_BENEFIT_HOLDS = _PRE_1978_HISTORY_HOLDS | {
+    RecordCondition.DIB_AFTER_REDUCED_RIB,
+    UnsupportedReason.DIB_AFTER_REDUCED_RIB,
+    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+}
+# _is_entitled compares these roles' actual own RIB. A spouse's test reads the
+# raw own PIA (F5), which no reduction history changes.
+_OWN_RIB_AMOUNT_TEST_ROLES = _WIDOW_ROLES | {Role.MOTHER_FATHER, Role.PARENT}
 
 
 def _declared_fact_holds(state, beneficiary=None):
@@ -1832,6 +1855,42 @@ def _wib_carryover_possible(own, birth_year):
     )
 
 
+def _historical_own_rib_possible(own, birth_year):
+    """Whether pre-1978 money history could set this own RIB.
+
+    RS 00615.005C.2's money reduction can exceed today's fraction. Undated
+    inputs stay in the current-formula domain, so only a declared history
+    hold reaches an omitted cohort. A zero PIA or no remaining reduction
+    needs no historical reduction amount (_refuse_historical_own_rib).
+    """
+    return (
+        own is not None
+        and own.kind is OwnBenefitKind.OLD_AGE
+        and own.pia > 0
+        and own.reduction_months > 0
+        and (
+            birth_year is None
+            or birth_year < _FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB
+        )
+    )
+
+
+def _prior_reduced_benefit_possible(birth_year, payment_month):
+    """Whether any reduced benefit could precede this payment month.
+
+    RS 00615.010 says "DIB is not reduced unless there was prior entitlement
+    to reduced RIB (or WIB prior to 1/90)." RS 00615.005A.1-A.4 start those
+    benefits no earlier than age 50, and an SSA cohort attains an age no
+    earlier than January of that year. The schema doesn't say which route a
+    hold took, so every hold shares the earliest age of any route.
+    """
+    return (
+        birth_year is None
+        or payment_month is None
+        or payment_month.year >= birth_year + _EARLIEST_REDUCED_BENEFIT_AGE
+    )
+
+
 def _hold_unsettles_fact(
     hold,
     fact,
@@ -1845,18 +1904,38 @@ def _hold_unsettles_fact(
 ):
     if fact not in _PREFLIGHT_FACT_UNSETTLERS[hold]:
         return False
+    if fact in ("F3", "F6") and hold in _PRE_1978_HISTORY_HOLDS:
+        own, cohort, tested_pia = (
+            (state.worker, state.worker_birth_year, state.pia)
+            if beneficiary is None
+            else (
+                beneficiary.own_benefit,
+                beneficiary.birth_year,
+                beneficiary.original_benefit_basis or state.pia,
+            )
+        )
+        # A declared history reaches past the undated current formula, in
+        # either direction. A zero PIA fails every RIB on every filling.
+        if tested_pia > 0 and _historical_own_rib_possible(own, cohort):
+            return True
     if (
         upper_bound
         and hold in _NH_REDUCTION_ONLY_HOLDS
         and fact in ("F2", "F3")
     ):
         return False
-    # 404.411(b) reduces a DIB after a reduced RIB in any cohort and after a
-    # WIB under (b)(2). The schema omits the onset that scopes (b)(2).
-    if fact == "F2" and hold in (
-        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
-        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    # 404.411(b) reduces a DIB after a reduced RIB and after a WIB under
+    # (b)(2). The schema omits the onset that scopes (b)(2), so only age and
+    # the pre-1978 cohort limit a hold that works through either benefit.
+    if (
+        fact == "F2"
+        and hold in _PRIOR_REDUCED_BENEFIT_HOLDS
+        and not _prior_reduced_benefit_possible(
+            state.worker_birth_year, payment_month
+        )
     ):
+        return False
+    if fact == "F2" and hold in _PRE_1978_HISTORY_HOLDS:
         cohort = state.worker_birth_year
         return (
             cohort is None or cohort < _FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION
@@ -1935,7 +2014,10 @@ def _hold_unsettles_fact(
         return state.kind is FamilyKind.SURVIVOR and (
             upper_bound or beneficiary.role in _WIDOW_ROLES
         )
-    if hold is UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE and fact == "F6":
+    if fact == "F6" and hold in (
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    ):
         if beneficiary is None:
             return True
         # RS 00615.005A.8/.010 can change the own RIB before cohort 1928.
@@ -1943,7 +2025,7 @@ def _hold_unsettles_fact(
         # PIA/RFs unchanged (RS 00615.315). A nonnegative RIB cannot be
         # less than a zero deemed-death PIA (402(e)(1)(D)).
         return (
-            beneficiary.role in _WIDOW_ROLES
+            beneficiary.role in _OWN_RIB_AMOUNT_TEST_ROLES
             and (beneficiary.original_benefit_basis or state.pia) > 0
             and _wib_carryover_possible(
                 beneficiary.own_benefit, beneficiary.birth_year
