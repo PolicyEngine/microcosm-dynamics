@@ -3474,6 +3474,23 @@ def test_invented_unread_date_stands_until_a_sentence_dates_the_section():
         "<p>Payment levels effective April 1, 2031</p>"
     )
     assert invented_selector(redated)[2] == "2031-04-01"
+    # The round-11 review's X9: a State heading after the unread date starts
+    # Utah's section afresh, with no date of its own.
+    (afresh,) = describe_poms_tables(
+        invented_payload(
+            "<h3>Nevada</h3>"
+            + invented_definitions([("A", "Invented Nevada definition")])
+            + "<p>Monthly payment levels effective January 1, 2030</p>"
+            "<p>Revised March 1, 2031</p><h3>Utah</h3><h4>Couple</h4>"
+            f"<table>{INVENTED_HEADER}</table>"
+        )
+    )
+    assert (
+        afresh["state"],
+        afresh["claimant_type"],
+        afresh["effective_from"],
+        afresh["date_options"],
+    ) == ("Utah", "couple", None, {"not_stated": None})
 
 
 @pytest.mark.parametrize(
@@ -3651,6 +3668,10 @@ def test_invented_script_with_an_escaped_script_refuses_the_page(script):
         "<script><!-- invented() --></script>",
         "<script><!--<scriptx></script>",
         "<script>var w0 = '<script>';</script>",
+        # The round-11 review's X10 and X11: "<!-" is no escape start, and
+        # a script start tag before "<!--" is none after it.
+        "<script><!-<script></script>",
+        "<script><script>w0<!--</script>",
     ],
 )
 def test_invented_other_scripts_are_read_as_before(script):
@@ -3793,3 +3814,586 @@ def test_invented_range_split_across_a_line_break_dates_from_and_to():
         {},
         "Payment levels effective from March 1, 2031 to June 30, 2031",
     )
+
+
+# Round 12 answers the round-11 review.
+
+
+def invented_padded(opening: str, length: int) -> str:
+    """``opening`` and invented filler, cut to exactly ``length``
+    characters; the filler names no State, claimant word, date or year."""
+    line = (opening + " " + "x" * length)[:length]
+    assert len(line) == length and not line.endswith(" ")
+    return line
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The review's controls P0 and L10, which refused already.
+        "<p>Payment levels as of March 1, 2031</p>",
+        "<p>See also Effective March 1, 2031</p>",
+        # Its Low 1 leaks: a footnote body's line exempted another line of
+        # its block that named the same date (P1); a revision range
+        # exempted the line or block that held it (P2, P2b, P2c); and a
+        # leading longer sup or link to a footnote, or one wrapping the
+        # whole line, made a footnote body (L8, L9, M14, P3e).
+        "<p>Payment levels as of March 1, 2031<br><sup>1</sup>Revised"
+        " March 1, 2031</p>",
+        "<p>Effective Dates: 01/01/2030 - Present<br>Payment levels as of"
+        " March 1, 2031</p>",
+        "<p>Payment levels as of March 1, 2031 (Effective Dates: 03/01/2031"
+        " - Present)</p>",
+        "<h5>Payment levels effective March 1, 2031 (Effective Dates:"
+        " 03/01/2031 - Present)</h5>",
+        "<p><a href='#fn3'>See also</a> Effective March 1, 2031</p>",
+        "<p><sup>Invented note:</sup> Effective March 1, 2031</p>",
+        "<h5><a href='#fn1'>Payment levels as of March 1, 2031</a></h5>",
+        "<h5><a href='#fn2'>Payment levels as of</a> March 1, 2031</h5>",
+    ],
+    ids=["P0", "L10", "P1", "P2", "P2b", "P2c", "L8", "L9", "M14", "P3e"],
+)
+def test_invented_footnote_or_revision_text_exempts_no_other_date(fragment):
+    """Regression (the round-11 review's Low 1): the unread-date net
+    exempted every date that a footnote body or revision line named, across
+    its whole block, and took any leading sup or link to a footnote for a
+    marker, so these lines kept the section's 2030 date silently. Each line
+    now names its own dates, without the revision range's text, and only
+    markers of a marker's size make a footnote body."""
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    ("fragment", "between", "expected"),
+    [
+        # The review's "keep their current outcomes" cases: R15's witness
+        # and a footnote body between two charts, the revision line, and
+        # X7's witness, whose whole text names only the footnote's date.
+        (
+            "<p><a href='0501415010#fn1'>1</a>Revised March 1, 2031</p>"
+            "<h4>Couple</h4>",
+            True,
+            ("Nevada", "couple", "2030-01-01"),
+        ),
+        (
+            "<p><sup>1</sup>Revised March 1, 2031</p><h4>Couple</h4>",
+            True,
+            ("Nevada", "couple", "2030-01-01"),
+        ),
+        (
+            "<p>Effective Dates: 02/03/2041 - Present</p>",
+            False,
+            ("Nevada", "individual", "2030-01-01"),
+        ),
+        (
+            "<div>Invented note<br><sup>1</sup>Revised March 1, 2031</div>",
+            False,
+            ("Nevada", "individual", "2030-01-01"),
+        ),
+        # And the date split across a br, which still refuses.
+        ("<p>Payment levels as of January 1,<br>2031</p>", False, None),
+    ],
+    ids=["R15", "footnote-body", "revision", "X7", "split"],
+)
+def test_invented_footnote_bodies_and_revision_lines_keep_their_outcomes(
+    fragment, between, expected
+):
+    payload = (
+        invented_after_a_chart(fragment)
+        if between
+        else invented_nevada_with(fragment)
+    )
+    if expected is None:
+        with pytest.raises(TableStructureError, match="no effective-date"):
+            describe_poms_tables(payload)
+        return
+    *_, last = describe_poms_tables(payload)
+    assert (
+        last["state"],
+        last["claimant_type"],
+        last["effective_from"],
+    ) == expected
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The review's N9 to N11, and svg's title, a textarea and an xmp.
+        "<svg><script><h3>Utah</h3><h4>Couple</h4></script></svg>",
+        "<svg><style><h3>Utah</h3><h4>Couple</h4></style></svg>",
+        "<math><style><h3>Utah</h3><h4>Couple</h4></style></math>",
+        "<svg><title><h3>Utah</h3><h4>Couple</h4></title></svg>",
+        "<svg><textarea><h3>Utah</h3></textarea></svg>",
+        "<svg><g><xmp><h3>Utah</h3></xmp></g></svg>",
+        # Over-refusals the tree's docstring names: HTML reads these as
+        # text too.
+        "<svg><style>w0 < w1</style></svg>",
+        "<svg><foreignObject><script><h3>Utah</h3></script></foreignObject>"
+        "</svg>",
+    ],
+)
+def test_invented_raw_text_inside_svg_or_math_refuses_the_page(fragment):
+    """Regression (the round-11 review's Low 2): HTML reads markup inside
+    svg or math, so the h3 and h4 of N9 to N11 head Utah's couple chart
+    there, while the tree held them as raw text and charted Nevada's
+    individual one."""
+    with pytest.raises(TableStructureError, match="inside svg or math"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # An icon as the pinned pages' svg elements are, and foreign
+        # content whose raw text holds no "<".
+        "<p>w0<svg><path d='M0 0'/><title>Invented icon</title></svg>w1</p>",
+        "<svg><style>w0</style></svg>",
+        "<math><mi>w0</mi></math>",
+    ],
+)
+def test_invented_svg_or_math_without_markup_in_raw_text_is_read(fragment):
+    assert invented_selector(invented_nevada_with(fragment)) == (
+        "Nevada",
+        "individual",
+        "2030-01-01",
+        [0],
+    )
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The review's N7 and N8, and each other raw text or RCDATA element.
+        "<script/><h3>Utah</h3><h4>Couple</h4></script>",
+        "<script /><h3>Utah</h3><h4>Couple</h4></script>",
+        "<SCRIPT/><h3>Utah</h3><h4>Couple</h4></SCRIPT>",
+        "<style/><h3>Utah</h3><h4>Couple</h4></style>",
+        "<xmp/><h3>Utah</h3><h4>Couple</h4></xmp>",
+        "<iframe/><h3>Utah</h3><h4>Couple</h4></iframe>",
+        "<noembed/><h3>Utah</h3><h4>Couple</h4></noembed>",
+        "<noframes/><h3>Utah</h3><h4>Couple</h4></noframes>",
+        "<textarea/><h3>Utah</h3><h4>Couple</h4></textarea>",
+        "<title/><h3>Utah</h3><h4>Couple</h4></title>",
+        # An over-refusal the tree's docstring names: HTML honours the
+        # slash inside svg.
+        "<svg><title/></svg>",
+    ],
+)
+def test_invented_self_closed_raw_text_tag_refuses_the_page(fragment):
+    """Regression (the round-11 review's Note 2): HTML ignores the slash of
+    ``<script/>`` and holds what follows as the script's text, up to its
+    end tag, while both Pythons read the headings after it as markup, so
+    the chart read as Utah's couple."""
+    with pytest.raises(TableStructureError, match="self-closed raw text"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+def invented_dated(date: str) -> bytes:
+    """Nevada's section, its date sentence reading "effective ``date``"."""
+    return invented_nevada_with("").replace(
+        b"effective January 1, 2030", f"effective {date}".encode(), 1
+    )
+
+
+@pytest.mark.parametrize(
+    ("date", "dates"),
+    [
+        # The review's G1 and G2: a "to" that no date follows.
+        (
+            "from January 1, 2031 apply to facilities licensed after July 1,"
+            " 2030",
+            ("2031-01-01", "2030-07-01"),
+        ),
+        (
+            "from March 1, 2031 to residents of homes licensed before June 30,"
+            " 2031",
+            ("2031-03-01", "2031-06-30"),
+        ),
+        # A "from" that no date follows.
+        (
+            "from the first day of the month after March 1, 2031 to June 30,"
+            " 2031",
+            ("2031-03-01", "2031-06-30"),
+        ),
+    ],
+    ids=["G1", "G2", "from"],
+)
+def test_invented_prose_to_or_from_ends_no_range(date, dates):
+    """Regression (the round-11 review's Low 3): any "to" after "effective
+    from" ended a range, so G1 dated the chart from 2031 to 2030 and G2 to
+    June 30, 2031, silently. A range now needs a date right after "from"
+    and right after "to" or "through", so these name their dates as
+    alternatives."""
+    (context,) = describe_poms_tables(invented_dated(date))
+    assert (context["effective_from"], context["effective_to"]) == (None, None)
+    assert context["date_options"] == {
+        f"source_date_{i + 1}": value for i, value in enumerate(dates)
+    }
+
+
+@pytest.mark.parametrize(
+    "date",
+    [
+        # The review's G4 and Note 5's G6, and a numeric "through" range.
+        "from June 30, 2031 to March 1, 2031",
+        "from March 1, 2031 to March 1, 2031",
+        "from 6/30/2031 through 3/1/2031",
+    ],
+)
+def test_invented_range_that_does_not_end_after_it_starts_refuses(date):
+    """Regression (the round-11 review's Low 3 and Note 5): a reversed range
+    dated the chart from its later date to its earlier one, and a range from
+    a date to the same date dropped its end, silently. Both now refuse; a
+    range meant as one day refuses too, an over-refusal the Limits list
+    names."""
+    with pytest.raises(TableStructureError, match="does not end after it"):
+        describe_poms_tables(invented_dated(date))
+
+
+@pytest.mark.parametrize(
+    "date",
+    [
+        "from March 1, 2031 to June 30, 2031",
+        "from March 1, 2031, to June 30, 2031",
+        # The review's G5: "through" ends a range as "to" does.
+        "from March 1, 2031 through June 30, 2031",
+        "from 3/1/2031 to 6/30/2031",
+    ],
+)
+def test_invented_range_dates_the_chart_from_and_to(date):
+    (context,) = describe_poms_tables(invented_dated(date))
+    assert (
+        context["effective_from"],
+        context["effective_to"],
+        context["date_options"],
+    ) == ("2031-03-01", "2031-06-30", {})
+
+
+def test_invented_range_dates_the_chart_in_its_own_order():
+    """A sentence that names its range's end first, and no other date,
+    dates the chart from the range's start to its end; 858fb546 read its
+    dates in the order the sentence names them, from June 30 to March 1."""
+    (context,) = describe_poms_tables(
+        invented_nevada_with(
+            "<p>Payment levels effective June 30, 2031: effective from March"
+            " 1, 2031 to June 30, 2031</p>"
+        )
+    )
+    assert (context["effective_from"], context["effective_to"]) == (
+        "2031-03-01",
+        "2031-06-30",
+    )
+
+
+@settings(deadline=None, max_examples=150)
+@given(
+    st.dates(min_value=date(2031, 1, 1), max_value=date(2039, 12, 28)),
+    st.dates(min_value=date(2031, 1, 1), max_value=date(2039, 12, 28)),
+    st.sampled_from(["to", "through"]),
+    st.booleans(),
+)
+def test_invented_range_never_ends_before_it_starts(start, end, word, numeric):
+    """Property: a range dates the chart from its start to its end when it
+    ends after it starts, and refuses otherwise, whatever its dates, its
+    word and its date form."""
+
+    def written(day):
+        if numeric:
+            return f"{day.month}/{day.day}/{day.year}"
+        return f"{day:%B} {day.day}, {day.year}"
+
+    payload = invented_dated(f"from {written(start)} {word} {written(end)}")
+    if end <= start:
+        with pytest.raises(TableStructureError, match="does not end after"):
+            describe_poms_tables(payload)
+        return
+    (context,) = describe_poms_tables(payload)
+    assert (
+        context["effective_from"],
+        context["effective_to"],
+        context["date_options"],
+    ) == (start.isoformat(), end.isoformat(), {})
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # The review's F1 to F6 and F8: a later year in a form no sentence
+        # reads, in a heading.
+        "<h5>Payment levels as of January 1st, 2031</h5>",
+        "<h5>Payment levels as of January 1,2031</h5>",
+        "<h5>Payment levels for 2031</h5>",
+        "<h5>Payment levels as of 1/2031</h5>",
+        "<h5>Payment levels as of 01.01.2031</h5>",
+        "<h5>Payment levels as of 2031/01/01</h5>",
+        "<h5>Calendar year 2031 payment levels</h5>",
+        # In a short line, and a year glued to letters.
+        "<p>Payment levels for 2031</p>",
+        "<div>Calendar year 2031 payment levels</div>",
+        "<ul><li>FY2031 levels</li></ul>",
+        # A heading that holds an earlier year.
+        "<h5>Payment levels for 2029</h5>",
+        # Over-refusals the Limits list names: a later year that concerns
+        # something else, and a sentence whose date no sentence reads.
+        "<p>Revised 2031</p>",
+        "<p>Section 2031 rules</p>",
+        "<p>Payment levels effective January 1st, 2031</p>",
+    ],
+)
+def test_invented_year_outside_the_dates_in_force_leaves_the_date_unread(
+    fragment,
+):
+    """Regression (the round-11 review's Low 4): a later year in a date form
+    the net did not read, as "January 1st, 2031" or "Payment levels for
+    2031", left the section's 2030 date standing silently. A heading that
+    holds a year outside the years of the dates in force, and a line under
+    80 characters that holds a later one, now leave the date unread."""
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+def test_invented_any_year_counts_with_no_date_in_force():
+    """With no date in force, as after a sentence that states none, a short
+    line's year of any value leaves the date unread; without one, the chart
+    names no date."""
+    undated = invented_dated("as the invented note says")
+    (context,) = describe_poms_tables(undated)
+    assert context["date_options"] == {"not_stated": None}
+    noted = undated.replace(
+        b"<h4>Individual</h4>", b"<p>Notes for 2029</p><h4>Individual</h4>"
+    )
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(noted)
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        # A year in force, a long line, numbers that are no year, and the
+        # revision range alone.
+        "<p>Payment levels for 2030</p>",
+        f"<p>Payment levels for 2031{INVENTED_LONG_TAIL}</p>",
+        "<p>Section 1611 of the Act</p>",
+        "<p>Invented code 120310</p>",
+        "<p>Effective Dates: 02/03/2041 - Present</p>",
+        "<p><sup>1</sup>Revised 2031</p>",
+        # Limits the docstring names: an earlier year in a short line
+        # outside a heading, as one pinned page holds before a chart; a
+        # two-digit year (the review's F11); and a year split across a br.
+        "<p>Payment levels for 2029</p>",
+        "<h5>Payment levels as of January 1, 31</h5>",
+        "<p>Payment levels for 20<br>31</p>",
+    ],
+)
+def test_invented_other_years_leave_the_date_read(fragment):
+    assert invented_selector(invented_nevada_with(fragment))[2] == (
+        "2030-01-01"
+    )
+
+
+@settings(deadline=None, max_examples=150)
+@given(
+    st.integers(min_value=2031, max_value=2099),
+    st.sampled_from(
+        [
+            "Payment levels as of January 1st, {}",
+            "Payment levels as of January 1,{}",
+            "Payment levels for {}",
+            "Payment levels as of 1/{}",
+            "Payment levels as of 01.01.{}",
+            "Payment levels as of {}/01/01",
+            "Calendar year {} payment levels",
+            "FY{} levels",
+            "Payment levels as of the first of January {}",
+        ]
+    ),
+    st.sampled_from(["p", "h5", "div", "li"]),
+)
+def test_invented_later_year_line_never_charts_the_earlier_date(
+    year, form, tag
+):
+    """Property: after the section's 2030 date sentence, a heading or short
+    line that holds a later year in any of these forms makes the next chart
+    refuse."""
+    line = form.format(year)
+    block = (
+        f"<ul><li>{line}</li></ul>"
+        if tag == "li"
+        else f"<{tag}>{line}</{tag}>"
+    )
+    with pytest.raises(TableStructureError, match="no effective-date sent"):
+        describe_poms_tables(invented_nevada_with(block))
+
+
+@pytest.mark.parametrize(
+    "date",
+    [
+        # The review's L1 and L3: links to a footnote whose href holds no
+        # "fn".
+        "January 1<a href='0501415010#note5'>5</a>, 2031",
+        "January 1<a href='https://www.ssa.gov/invented/0501415010#n5'>5</a>,"
+        " 2031",
+        # A link of a marker's size that is no footnote marker, an
+        # over-refusal the Limits list names.
+        "January <a href='x.html'>1</a>, 2031",
+    ],
+)
+def test_invented_link_of_marker_size_inside_a_date_is_refused(date):
+    """Regression (the round-11 review's Low 5, item 3): a link to a
+    footnote whose href held no "fn" joined the day, so these dated the
+    chart January 15. A link whose text has a marker's size now refuses
+    inside a date, whatever its href holds."""
+    with pytest.raises(TableStructureError, match="reads differently"):
+        describe_poms_tables(invented_dated(date))
+
+
+def test_invented_line_dated_only_without_a_short_link_is_refused():
+    with pytest.raises(TableStructureError, match="reads only without"):
+        describe_poms_tables(
+            invented_nevada_with(
+                "<p>Payment<a href='x.html'>XX</a> levels effective January"
+                " 1, 2031</p>"
+            )
+        )
+
+
+def test_invented_short_link_outside_the_date_leaves_it_read():
+    payload = invented_dated(
+        "January 1, 2031 (see <a href='x.html'>SI</a> 01415.010)"
+    )
+    assert invented_selector(payload)[2] == "2031-01-01"
+
+
+@pytest.mark.parametrize(
+    ("fragment", "message"),
+    [
+        # X5: only the bare reading names Utah.
+        (
+            "<p>Supplements for Utah<sup>1</sup></p><p>Couple</p>",
+            "short line names another State",
+        ),
+        # X15: only the whole text names New Jersey.
+        (
+            "<p>Supplements for New<br>Jersey</p><p>Couple</p>",
+            "short line names another State",
+        ),
+        # X8: a date the reader cannot parse, in the year in force.
+        (
+            "<h5>Payment levels as of February 30, 2030</h5>",
+            "no effective-date sentence states",
+        ),
+        # The 79-character side of the bounds X2, X3 and X4 moved, and of
+        # the whole text's bound for a date split across a br.
+        (
+            f"<p>{invented_padded('Couple notes', 79)}</p>",
+            "lacks state or claimant",
+        ),
+        (
+            f"<p>{invented_padded('Supplements for Utah', 79)}</p>"
+            "<p>Couple</p>",
+            "short line names another State",
+        ),
+        (
+            f"<p>{invented_padded('Payment levels as of March 1, 2031', 79)}"
+            "</p>",
+            "no effective-date sentence states",
+        ),
+        (
+            f"<p>Payment levels as of 3/1/<br>{invented_padded('31', 53)}</p>",
+            "no effective-date sentence states",
+        ),
+        # A leading pair of markers that join into a word longer than a
+        # marker's, an over-refusal the Limits list names.
+        (
+            "<p><sup>12</sup><sup>34</sup>Revised March 1, 2031</p>",
+            "no effective-date sentence states",
+        ),
+    ],
+    ids=["X5", "X15", "X8", "X2-79", "X3-79", "X4-79", "whole-79", "pair"],
+)
+def test_invented_round_11_review_witnesses_are_refused(fragment, message):
+    with pytest.raises(TableStructureError, match=message):
+        describe_poms_tables(invented_nevada_with(fragment))
+
+
+@pytest.mark.parametrize(
+    ("fragment", "expected"),
+    [
+        # The 80-character side: a line of 80 characters, outside a
+        # heading, is no short line to the claimant (X2), State (X3) and
+        # date (X4) nets, and a whole text of 80 characters adds no date
+        # split across its br.
+        (
+            f"<p>{invented_padded('Couple notes', 80)}</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        (
+            f"<p>{invented_padded('Supplements for Utah', 80)}</p>"
+            "<p>Couple</p>",
+            ("Nevada", "couple", "2030-01-01", [0]),
+        ),
+        (
+            f"<p>{invented_padded('Payment levels as of March 1, 2031', 80)}"
+            "</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        (
+            f"<p>{invented_padded('Payment levels for 2031', 80)}</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        (
+            f"<p>Payment levels as of 3/1/<br>{invented_padded('31', 54)}</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        # Limits the docstring names: a claimant in other words (the
+        # review's Note 4) leaves the Individual heading's claimant
+        # standing, and a footnote body's later lines date no chart.
+        (
+            "<h4>Both members eligible</h4>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        (
+            "<h4>Eligible spouses</h4>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+        ("<h4>Married pair</h4>", ("Nevada", "individual", "2030-01-01", [0])),
+        (
+            "<p><sup>1</sup>Revised March 1, 2031<br>Payment levels as of"
+            " March 1, 2031</p>",
+            ("Nevada", "individual", "2030-01-01", [0]),
+        ),
+    ],
+    ids=[
+        "X2-80",
+        "X3-80",
+        "X4-80",
+        "year-80",
+        "whole-80",
+        "both-members",
+        "spouses",
+        "pair",
+        "footnote-block",
+    ],
+)
+def test_invented_round_11_review_witnesses_read(fragment, expected):
+    assert invented_selector(invented_nevada_with(fragment)) == expected
+
+
+def test_invented_range_line_and_unranged_line_still_date_differently():
+    """The review's X6 witness: a range line and a later sentence that names
+    the same two dates without a range date differently, so the dates
+    remain named alternatives; X6, which compared their dates alone, dated
+    the chart from and to."""
+    (context,) = describe_poms_tables(
+        invented_nevada_with(
+            "<p>Payment levels effective from March 1, 2031 to June 30, 2031"
+            + INVENTED_FILLER
+            + "Payment levels effective March 1, 2031 and June 30, 2031</p>"
+        )
+    )
+    assert (context["effective_from"], context["effective_to"]) == (None, None)
+    assert context["date_options"] == {
+        "source_date_1": "2031-03-01",
+        "source_date_2": "2031-06-30",
+    }

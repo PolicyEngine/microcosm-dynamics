@@ -190,9 +190,18 @@ class _HTMLTree(HTMLParser):
     holding "<!-->" or "<!--->", an empty comment that HTML closes at that
     ``>``: 3.14 closes it there, and 3.13 runs on to a later "-->". So is a
     page whose script text holds "<!--" and then a script start tag
-    (``<script`` and a space, "/" or ">"): HTML's script data escape
-    states run that script on past its next ``</script>``, and both Pythons
-    end it there.
+    (``<script`` and a character Python's ``\\s`` matches, "/" or ">", in
+    any case ``re.IGNORECASE`` matches): HTML's script data escape states
+    may run that script on past its next ``</script>``, and both Pythons
+    end it there. The check refuses more pages than HTML runs on: HTML does
+    not run on when "-->" comes between, ``\\s`` also matches a vertical tab
+    and Unicode spaces such as U+00A0, which do not end the tag name there
+    in HTML, and ``re.IGNORECASE`` matches a long s (ſ) as s and "İ" or "ı"
+    as i, so "<ſcript>" counts too. So is a page with a script, style, xmp,
+    iframe, noembed, noframes, textarea or title start tag that closes
+    itself, as ``<script/>``: HTML ignores that slash, except where it
+    parses svg or math, and reads what follows as the element's text, and
+    both Pythons read it as markup (no pinned capture self-closes one).
 
     An ``html`` start tag builds the html element only as the document's
     first content. HTML ignores any later one, apart from adding the
@@ -247,15 +256,28 @@ class _HTMLTree(HTMLParser):
     starts a form that ends the open paragraph (in
     ``<form><p>w0<form>w1</form><p>w2``, HTML's first paragraph reads
     "w0w1" and this tree's "w0"; no pinned capture opens a form inside
-    another); a self-closing slash on a non-void element, which HTML
+    another); a self-closing slash on another non-void element, which HTML
     ignores and which closes the element here; a head or body start tag
     after the page's head, which HTML ignores and which here starts an
     element (no pinned capture has more than one of either); a CDATA
     section in HTML content, which HTML reads as a comment ending at the
-    first ``>`` and which here holds no text; and HTML's script data escape
+    first ``>`` and which here holds no text; HTML's script data escape
     states, in which a script holding "<!--" and then a script start tag
-    runs on past its next ``</script>``: here the script ends there, so a
-    page whose script text holds both is refused (no pinned script does).
+    may run on past its next ``</script>``: here the script ends there, so
+    a page whose script text holds both is refused (no pinned script does);
+    and foreign content, the elements inside ``svg`` or ``math``, which
+    HTML parses by other rules and which are HTML elements here. Outside an
+    HTML integration point such as svg's ``foreignObject``, HTML reads the
+    content of a script, style, title or textarea there as markup, ends the
+    svg or math at an HTML start tag such as ``h3`` or ``p``, and honours a
+    self-closing slash, so in ``<svg><script><h3>Utah</h3></script></svg>``
+    HTML reads a Utah heading that this tree holds as script text. A page
+    whose svg or math holds a raw text or RCDATA element whose text holds
+    "<" is refused, even where HTML reads the same text, as in
+    ``<svg><style>a < b</style></svg>`` or a script in a foreignObject, and
+    the self-closed ones refused above include those HTML closes there, as
+    ``<svg><title/></svg>`` (no pinned svg, all icons, holds either, and no
+    pinned page holds math).
     """
 
     # HTML's raw text elements; Python versions differ (see above).
@@ -267,6 +289,9 @@ class _HTMLTree(HTMLParser):
         "noembed",
         "noframes",
     )
+    # Elements whose content the tree holds as text: the raw text elements
+    # and HTML's RCDATA elements, which both Pythons read as RCDATA.
+    _TEXT_CONTENT = frozenset(CDATA_CONTENT_ELEMENTS) | {"textarea", "title"}
     _VOID = frozenset(
         "area base br col embed hr img input link meta param source track wbr".split()
     )
@@ -400,6 +425,12 @@ class _HTMLTree(HTMLParser):
         self._drop_newline = tag in self._NEWLINE_DROPPING
 
     def handle_startendtag(self, tag, attrs):
+        if tag in self._TEXT_CONTENT:
+            # HTML ignores the slash and reads what follows as the
+            # element's text; both Pythons read it as markup.
+            raise TableStructureError(
+                "HTML self-closed raw text element is not read"
+            )
         self.handle_starttag(tag, attrs)
         if tag not in self._VOID:
             self.handle_endtag(tag)
@@ -477,14 +508,26 @@ def parse_html(payload: bytes | str) -> ET.Element:
     parser.feed(text)
     parser.close()
     for script in parser.root.iter("script"):
-        # After "<!--" and a script start tag, HTML's script data runs on
-        # past the next "</script>" (its double-escaped state), which no
+        # After "<!--" and a script start tag, HTML's script data may run
+        # on past the next "</script>" (its double-escaped state), which no
         # supported Python reads, so the page is refused.
         opened = (script.text or "").find("<!--")
         if opened >= 0 and re.search(
             r"<script[\s/>]", script.text[opened:], re.IGNORECASE
         ):
             raise TableStructureError("HTML script holds an escaped script")
+    for foreign in ("svg", "math"):
+        for outer in parser.root.iter(foreign):
+            # HTML reads markup inside svg or math, so a raw text or RCDATA
+            # element there whose text holds "<" may hide what HTML shows.
+            if any(
+                element.tag in _HTMLTree._TEXT_CONTENT
+                and "<" in (element.text or "")
+                for element in outer.iter()
+            ):
+                raise TableStructureError(
+                    "HTML raw text inside svg or math holds markup"
+                )
     return parser.root
 
 
