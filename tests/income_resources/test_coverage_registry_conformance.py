@@ -1353,7 +1353,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
         + sum(len(case.get("open_alternatives", [])) for case in row["cases"])
         for row in rows
     )
-    assert described == 40
+    # r4 M-2 adds NONPROFIT_RETROACTIVE_HIRE_UNSETTLED's two readings to
+    # each pre-1984 nonprofit row.
+    assert described == 44
 
 
 READING_TEXT = {
@@ -3306,19 +3308,24 @@ def test_failed_conditions_no_longer_exclude(
 def cases_met(rule, facts):
     """Cases whose every `when` condition an INVENTED worker's facts meet.
 
-    ``facts`` maps each trigger fact to a phrase stating the worker's true
-    value. A condition holds when its text contains that phrase; a
-    condition on a fact the pattern leaves out fails. The test then passes
-    these cases to ``resolve``, so a `when` narrowed until no real value
-    meets it changes the outcome (review r4 M-5).
+    ``facts`` maps each trigger fact to a phrase, or a tuple of phrases,
+    stating the worker's true value. A condition holds when its text
+    contains one of them; a condition on a fact the pattern leaves out
+    fails. The test then passes these cases to ``resolve``, so a `when`
+    narrowed until no real value meets it changes the outcome (review r4
+    M-5).
     """
+
+    def holds(fact, condition):
+        phrases = facts.get(fact, ())
+        if isinstance(phrases, str):
+            phrases = (phrases,)
+        return any(phrase in str(condition) for phrase in phrases)
+
     return {
         case["case_id"]
         for case in rule.cases
-        if all(
-            fact in facts and facts[fact] in str(condition)
-            for fact, condition in case["when"].items()
-        )
+        if all(holds(fact, text) for fact, text in case["when"].items())
     }
 
 
@@ -3453,6 +3460,86 @@ def test_nonprofit_waiver_covers_only_listed_or_later_employees(
     ):
         assert any(passage in quote for quote in quotes), passage
     assert "501(c)(3)" in rule.residual_default["description"]
+
+
+# Phrases stating an INVENTED order member's facts (review r4 H-B).
+ORDER_VOW_DUTIES = "qualifying duties of an active member under a vow of"
+ORDER_MEMBERS = {
+    # member: (exemption phrases, place, alien status, citizenship), and
+    # the outcome the sources give.
+    "vow_duties_no_election": (
+        ("no 3121(r) election in effect",),
+        "in the United States",
+        "a United States citizen",
+        "noncovered",
+    ),
+    "election_prospective_quarter": (
+        ("effective 3121(r) election covering the period",),
+        "in the United States",
+        "a United States citizen",
+        "covered",
+    ),
+    "election_retroactive_quarter_conditions_met": (
+        (
+            "effective 3121(r) election covering the period",
+            "for a retroactive quarter, the member was a member when "
+            "performing the service and was living",
+        ),
+        "in the United States",
+        "a United States citizen",
+        "covered",
+    ),
+    # H-B repro: an order files on 1975-02-10 designating 1970-01-01; a
+    # member did order duties in 1971 and died before the filing quarter.
+    "retroactive_quarter_member_died": (
+        ("was not living on the first day of the quarter",),
+        "in the United States",
+        "a United States citizen",
+        "noncovered",
+    ),
+    "retroactive_quarter_not_yet_a_member": (
+        ("was not a member when performing the service",),
+        "in the United States",
+        "a United States citizen",
+        "noncovered",
+    ),
+    "election_noncitizen_abroad": (
+        ("effective 3121(r) election covering the period",),
+        "outside the United States",
+        ("not a United States citizen", "neither a United States citizen"),
+        "noncovered",
+    ),
+}
+
+
+@pytest.mark.parametrize("member", sorted(ORDER_MEMBERS))
+@pytest.mark.parametrize(
+    "rule_id", ["religious_order_1968_1983", "religious_order_1984_2026"]
+)
+def test_religious_order_members_resolve_from_their_facts(
+    registry, rule_id, member
+):
+    """Review r4 H-B, by fact pattern: 3121(r)(3)(A) applies an election to
+    pre-filing quarters "only if the member performing such services was a
+    member at the time such services were performed and is living on the
+    first day of the quarter in which such certificate is filed", so a
+    member who fails it stays excluded by the vow of poverty."""
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    exemption, place, status, expected = ORDER_MEMBERS[member]
+    facts = {
+        "religious_order_service": ORDER_VOW_DUTIES,
+        "clergy_or_religious_exemption": exemption,
+        "place_of_work": place,
+        "citizenship": status,
+        "nonresident_alien_status": status,
+    }
+    assert resolved_consequence(rule, facts) == expected
+    third_party = {
+        "religious_order_service": "ordinary employment for a third party"
+    }
+    assert resolved_consequence(rule, third_party) == "covered"
+    no_vow = {"religious_order_service": "has not taken a vow of poverty"}
+    assert resolved_consequence(rule, no_vow) == "deferred"
 
 
 PUBLIC_OFFICERS = {

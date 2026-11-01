@@ -4562,6 +4562,13 @@
         "authority": "POMS RS 01901.620 (2024-07-02)",
         "location": "B.4",
         "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r)(3)(A)",
+        "quote": "the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed"
       }
     ],
     "trigger_facts": [
@@ -4689,6 +4696,9 @@
           "cases": {
             "vow_duties_with_3121r_election": [
               "clergy_or_religious_exemption"
+            ],
+            "retroactive_quarter_member_condition_failed": [
+              "clergy_or_religious_exemption"
             ]
           }
         }
@@ -4725,7 +4735,7 @@
         "consequence": "noncovered",
         "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
         "when": {
-          "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
+          "clergy_or_religious_exemption": "no 3121(r) election in effect for the period",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
@@ -4742,8 +4752,18 @@
         }
       },
       {
-        "case_id": "vow_duties_with_3121r_election",
+        "case_id": "retroactive_quarter_member_condition_failed",
         "precedence": 3,
+        "when": {
+          "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        },
+        "consequence": "noncovered",
+        "description": "26 U.S.C. 3121(r)(3)(A): where the order designates a date before the quarter of filing, \"the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed\". For this member's pre-filing service no election applies, so the vow-of-poverty exclusion stands."
+      },
+      {
+        "case_id": "vow_duties_with_3121r_election",
+        "precedence": 4,
         "consequence": "covered",
         "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
         "when": {
@@ -4753,7 +4773,7 @@
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -4762,7 +4782,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },
@@ -4839,6 +4859,13 @@
         "authority": "POMS RS 01901.620 (2024-07-02)",
         "location": "B.4",
         "quote": "Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "3121(r)(3)(A)",
+        "quote": "the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed"
       }
     ],
     "trigger_facts": [
@@ -5052,6 +5079,9 @@
           "cases": {
             "vow_duties_with_3121r_election": [
               "clergy_or_religious_exemption"
+            ],
+            "retroactive_quarter_member_condition_failed": [
+              "clergy_or_religious_exemption"
             ]
           }
         }
@@ -5133,7 +5163,7 @@
         "consequence": "noncovered",
         "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
         "when": {
-          "clergy_or_religious_exemption": "no effective 3121(r) election covering the period",
+          "clergy_or_religious_exemption": "no 3121(r) election in effect for the period",
           "religious_order_service": "qualifying duties of an active member under a vow of poverty"
         }
       },
@@ -5150,8 +5180,18 @@
         }
       },
       {
-        "case_id": "vow_duties_with_3121r_election",
+        "case_id": "retroactive_quarter_member_condition_failed",
         "precedence": 3,
+        "when": {
+          "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
+          "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+        },
+        "consequence": "noncovered",
+        "description": "26 U.S.C. 3121(r)(3)(A): where the order designates a date before the quarter of filing, \"the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed\". For this member's pre-filing service no election applies, so the vow-of-poverty exclusion stands."
+      },
+      {
+        "case_id": "vow_duties_with_3121r_election",
+        "precedence": 4,
         "consequence": "covered",
         "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
         "when": {
@@ -5161,7 +5201,7 @@
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -5170,7 +5210,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },
