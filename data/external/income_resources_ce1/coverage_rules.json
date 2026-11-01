@@ -1992,40 +1992,52 @@
     {
       "cases": [
         {
+          "case_id": "vow_of_poverty_order_duties",
+          "consequence": "deferred",
+          "defers_to": [
+            "religious_order_vow_of_poverty"
+          ],
+          "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. The 1967 amendments covered only \"members of religious orders who have not taken a vow of poverty\" (POMS NL 00711.065 1331). 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are.",
+          "precedence": 1,
+          "when": {
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
+          }
+        },
+        {
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
           }
         },
         {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 2,
+          "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
-            "ministerial_service": "qualifying ministry or order duties"
+            "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
-            "ministerial_service": "qualifying ministry or order duties"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2034,7 +2046,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2048,10 +2060,24 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(8)(A)",
+          "quote": "except that this subparagraph shall not apply to service performed by a member of such an order in the exercise of such duties, if an election of coverage under section 3121(r) of the Internal Revenue Code of 1986 is in effect with respect to such order",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
           "capture": "lii_42_411.html",
           "location": "411(b), opening clause",
           "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(4)",
+          "quote": "(4) The performance of service by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry or by a member of a religious order in the exercise of duties required by such order",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -2063,9 +2089,23 @@
         {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
           "capture": "lii_42_411.html",
+          "location": "411(c)(5)",
+          "quote": "(5) The performance of service by an individual in the exercise of his profession as a Christian Science practitioner",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
           "location": "411(c), closing sentence",
           "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him.",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "POMS NL 00711.065 (1999-05-04)",
+          "capture": "poms_nl_00711065.html",
+          "location": "1331",
+          "quote": "The Social Security Amendments of 1967 extended coverage to ministerial services performed by duly ordained, commissioned, or licensed ministers of churches, Christian Science practitioners, and members of religious orders who have not taken a vow of poverty.",
+          "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e"
         },
         {
           "authority": "POMS NL 00711.065 (1999-05-04)",
@@ -2548,40 +2588,52 @@
     {
       "cases": [
         {
+          "case_id": "vow_of_poverty_order_duties",
+          "consequence": "deferred",
+          "defers_to": [
+            "religious_order_vow_of_poverty"
+          ],
+          "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. The 1967 amendments covered only \"members of religious orders who have not taken a vow of poverty\" (POMS NL 00711.065 1331). 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are.",
+          "precedence": 1,
+          "when": {
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
+          }
+        },
+        {
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
           }
         },
         {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 2,
+          "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
-            "ministerial_service": "qualifying ministry or order duties"
+            "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
-            "ministerial_service": "qualifying ministry or order duties"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2590,7 +2642,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2604,10 +2656,24 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(8)(A)",
+          "quote": "except that this subparagraph shall not apply to service performed by a member of such an order in the exercise of such duties, if an election of coverage under section 3121(r) of the Internal Revenue Code of 1986 is in effect with respect to such order",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
           "capture": "lii_42_411.html",
           "location": "411(b), opening clause",
           "quote": "derived by an individual (other than a nonresident alien individual, except as provided by an agreement under section 433 of this title",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(4)",
+          "quote": "(4) The performance of service by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry or by a member of a religious order in the exercise of duties required by such order",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -2619,9 +2685,23 @@
         {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
           "capture": "lii_42_411.html",
+          "location": "411(c)(5)",
+          "quote": "(5) The performance of service by an individual in the exercise of his profession as a Christian Science practitioner",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
           "location": "411(c), closing sentence",
           "quote": "The provisions of paragraph (4) or (5) shall not apply to service (other than service performed by a member of a religious order who has taken a vow of poverty as a member of such order) performed by an individual unless an exemption under section 1402(e) of the Internal Revenue Code of 1986 is effective with respect to him.",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "POMS NL 00711.065 (1999-05-04)",
+          "capture": "poms_nl_00711065.html",
+          "location": "1331",
+          "quote": "The Social Security Amendments of 1967 extended coverage to ministerial services performed by duly ordained, commissioned, or licensed ministers of churches, Christian Science practitioners, and members of religious orders who have not taken a vow of poverty.",
+          "sha256": "fb7b385a1964f45b627781b6f0491246064bc9c1c41c657e3a6fecaa0ab2622e"
         },
         {
           "authority": "POMS NL 00711.065 (1999-05-04)",
@@ -3114,40 +3194,65 @@
     {
       "cases": [
         {
+          "case_id": "vow_of_poverty_order_duties",
+          "consequence": "deferred",
+          "defers_to": [
+            "religious_order_vow_of_poverty"
+          ],
+          "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. Publication 517 (2025): \"You don't need to request a separate exemption.\" 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are.",
+          "precedence": 1,
+          "when": {
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
+          }
+        },
+        {
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
-            "ministerial_service": "qualifying ministry or order duties",
-            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+            "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
+          }
+        },
+        {
+          "case_id": "foreign_agreement_sole_coverage",
+          "consequence": "noncovered",
+          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c) \"FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\", replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a minister subject only to the partner country's laws meets both wordings. The condition can hold only while such an agreement is in effect. The captures hold neither 42 U.S.C. 433 nor 26 U.S.C. 1401(c), so they do not show when the exemption began.",
+          "overrides": [
+            "ministry_without_exemption_or_vow"
+          ],
+          "precedence": 3,
+          "when": {
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
-          "description": "Treat ministry/order earnings as self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 2,
+          "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
+          "precedence": 4,
           "when": {
-            "clergy_or_religious_exemption": "no effective 1402(e) exemption and no applicable poverty vow",
-            "ministerial_service": "qualifying ministry or order duties"
+            "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
-          "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 3,
+          "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it. A Christian Science reader counts as a minister (Publication 517: \"For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.\").",
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
-            "ministerial_service": "qualifying ministry or order duties"
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 4,
+          "precedence": 6,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -3156,7 +3261,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 5,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -3164,15 +3269,71 @@
       ],
       "citations": [
         {
+          "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+          "capture": "govinfo_plaw_108publ203.html",
+          "location": "section 415, 118 Stat. 530",
+          "quote": "SEC. 415. CLARIFICATION RESPECTING THE FICA AND SECA TAX EXEMPTIONS FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER.",
+          "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+        },
+        {
+          "authority": "Public Law 108-203, Social Security Protection Act of 2004",
+          "capture": "govinfo_plaw_108publ203.html",
+          "location": "section 415, 118 Stat. 530",
+          "quote": "are each amended by striking ``to taxes or contributions for similar purposes under'' and inserting ``exclusively to the laws applicable to''.",
+          "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Christian Science Practitioners and Readers",
+          "quote": "Generally, your earnings from services you perform in your profession as a Christian Science practitioner or reader are subject to SE tax.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Christian Science Practitioners and Readers: Readers",
+          "quote": "For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
           "authority": "IRS Publication 517 (2025)",
           "capture": "irs_p517_2025.html",
           "location": "Coverage of Members of the Clergy: Ministers; Ministerial Services: Ministers; Exemption From Self-Employment (SE) Tax: Members of the Clergy and Requesting Exemption-Form 4361 (the text of the PDF edition's printed pages 4-7)",
           "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
         },
         {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+          "quote": "You are a member of a religious order who has taken a vow of poverty.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+          "quote": "You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Members of Religious Orders: Vow of poverty",
+          "quote": "If you are a member of a religious order and have taken a vow of poverty, you are already exempt from paying SE tax on your earnings for ministerial services you perform as an agent of your church or its agencies. You don't need to request a separate exemption.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(8)(A)",
+          "quote": "except that this subparagraph shall not apply to service performed by a member of such an order in the exercise of such duties, if an election of coverage under section 3121(r) of the Internal Revenue Code of 1986 is in effect with respect to such order",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -3183,9 +3344,23 @@
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(4)",
+          "quote": "(4) The performance of service by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry or by a member of a religious order in the exercise of duties required by such order",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
           "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_411.html",
           "location": "411(c)(4)-(5) and closing sentence",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21)",
+          "capture": "lii_42_411.html",
+          "location": "411(c)(5)",
+          "quote": "(5) The performance of service by an individual in the exercise of his profession as a Christian Science practitioner",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
@@ -3509,7 +3684,7 @@
           }
         ],
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens).",
+        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens). Case foreign_agreement_sole_coverage applies Publication 517's exception for a minister whom a social security agreement makes subject only to a foreign country's social security laws.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -13598,11 +13773,8 @@
         },
         {
           "case_id": "order_duties_without_vow",
-          "consequence": "deferred",
-          "defers_to": [
-            "clergy_religious_service"
-          ],
-          "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+          "consequence": "covered",
+          "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
           "precedence": 6,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
@@ -13889,11 +14061,8 @@
         },
         {
           "case_id": "order_duties_without_vow",
-          "consequence": "deferred",
-          "defers_to": [
-            "clergy_religious_service"
-          ],
-          "description": "410(a)(8)(A) excludes the duties from employment and 411(c)(4) treats them by the ministry rules; the clergy and religious family decides.",
+          "consequence": "covered",
+          "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
           "precedence": 6,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
@@ -15725,11 +15894,11 @@
             "self_employment_foreign_911_income",
             "self_employment_possessions_931_income"
           ],
-          "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for qualifying citizens; the foreign income and possessions families decide for anyone else.",
+          "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for a United States citizen who serves as an American employer's employee or \"as a minister in a foreign country who has a congregation composed predominantly of United States citizens\" (1972 amendment note). The citizenship text keeps the statute's words \"in a foreign country\". 410(i) puts Puerto Rico, the Virgin Islands, Guam and American Samoa inside the United States, so a self-employed minister serving there does not qualify, and the place text names those places and the other possessions so that the possessions family, not the residual, decides for him. The foreign income and possessions families decide for anyone who does not qualify.",
           "precedence": 3,
           "when": {
-            "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister to a congregation composed predominantly of United States citizens",
-            "place_of_work": "outside the United States"
+            "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+            "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
           }
         }
       ],
@@ -15751,6 +15920,27 @@
           "capture": "govinfo_statute86_pg1329_extract.pdf",
           "location": "section 140(a)-(c), 86 Stat. 1366; former foreign-clergy qualification and taxable years beginning after 1972",
           "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "1960 amendment note, subsec. (i)",
+          "quote": "Subsec. (i). Pub. L. 86\u2013778, \u00a7 103(f) , included Guam and American Samoa.",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(i)",
+          "quote": "when used in a geographical sense means the States , the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa.",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "1972 amendment note, subsec. (a)",
+          "quote": "struck out provisions of par. (7) relating to citizens of the United States performing the specified services as an employee of an American employer (as defined in section 410(e) of this title ) or as a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
@@ -15990,6 +16180,15 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "boundary_clause": {
+          "citation": {
+            "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+            "capture": "lii_42_411.html",
+            "location": "Effective Date of 1972 Amendment note, Pub. L. 92-603 sections 121(c), 124(c) and 140(c)",
+            "quote": "Pub. L. 92\u2013603, title I, \u00a7 121(c) , Oct. 30, 1972 , 86 Stat. 1354 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 , Internal Revenue Code ] shall apply only with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 124(c) , Oct. 30, 1972 , 86 Stat. 1357 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 140(c) , Oct. 30, 1972 , 86 Stat. 1366 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d",
+            "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+          }
+        },
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [
@@ -16146,12 +16345,33 @@
           }
         },
         {
+          "case_id": "foreign_agreement_sole_coverage",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "Publication 517 (2025) excepts from SE tax a minister who is \"subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country\", and the row's Mexico example turns on it: \"The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax\". The clergy and religious family decides the service (clergy_1982_2026, case foreign_agreement_sole_coverage).",
+          "precedence": 2,
+          "when": {
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+          }
+        },
+        {
           "case_id": "retired_clergy_benefits",
           "consequence": "noncovered",
           "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
+          }
+        },
+        {
+          "case_id": "church_tax_sheltered_annuity_contributions",
+          "consequence": "noncovered",
+          "description": "Publication 517 (2025), Regular Method, says not to include \"Contributions by your church to a tax-sheltered annuity plan set up for you, including any salary reduction contributions (elective deferrals) that aren't included in your gross income\" when figuring net earnings from self-employment. 411(a) starts from \"the gross income, as computed under subtitle A\", and 411(a)(7) sets aside only sections 107, 119 and 911, so an amount subtitle A leaves out of gross income stays out of net earnings. The condition names only amounts left out of the taxable year's gross income, so each year's subtitle A limits decide the amount; the captures show the Publication 517 list for 2025 only.",
+          "precedence": 4,
+          "when": {
+            "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
           }
         }
       ],
@@ -16168,6 +16388,27 @@
           "location": "section 9023(b)(1)",
           "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\"",
           "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+          "quote": "You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Overseas duty: minister in Mexico example",
+          "quote": "The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
+        },
+        {
+          "authority": "IRS Publication 517 (2025)",
+          "capture": "irs_p517_2025.html",
+          "location": "Regular Method: Amounts not included in gross income",
+          "quote": "Don't include the following amounts in gross income when figuring your net earnings from self-employment. Offerings that others made to the church. Contributions by your church to a tax-sheltered annuity plan set up for you, including any salary reduction contributions (elective deferrals) that aren't included in your gross income.",
+          "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82"
         },
         {
           "authority": "IRS Publication 517 (2025)",
@@ -16191,7 +16432,21 @@
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
+          "location": "411(a)(7)",
+          "quote": "without regard to section 107 (relating to rental value of parsonages), section 119 (relating to meals and lodging furnished for the convenience of the employer), and section 911 (relating to earned income from sources without the United States) of the Internal Revenue Code of 1986",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
           "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "411(a), opening clause",
+          "quote": "means the gross income, as computed under subtitle A of the Internal Revenue Code of 1986 , derived by an individual from any trade or business carried on by such individual",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],

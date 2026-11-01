@@ -680,6 +680,27 @@
         "capture": "govinfo_plaw_108publ203.html",
         "location": "section 422(a)-(b), 118 Stat 536; retired parsonage/allowance/church-plan exception applies to years beginning before, on, or after 1994-12-31",
         "sha256": "d9a8612665583247a420061f3fec18164f0987013faf28a319bdec3143254d35"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "1972 amendment note, subsec. (a)",
+        "quote": "struck out provisions of par. (7) relating to citizens of the United States performing the specified services as an employee of an American employer (as defined in section 410(e) of this title ) or as a minister in a foreign country who has a congregation composed predominantly of United States citizens"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(i)",
+        "quote": "when used in a geographical sense means the States , the District of Columbia, the Commonwealth of Puerto Rico , the Virgin Islands, Guam, and American Samoa."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1960 amendment note, subsec. (i)",
+        "quote": "Subsec. (i). Pub. L. 86\u2013778, \u00a7 103(f) , included Guam and American Samoa."
       }
     ],
     "consequence": "covered",
@@ -860,11 +881,11 @@
         "case_id": "foreign_minister_without_qualification",
         "precedence": 3,
         "when": {
-          "place_of_work": "outside the United States",
-          "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister to a congregation composed predominantly of United States citizens"
+          "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States",
+          "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens"
         },
         "consequence": "deferred",
-        "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for qualifying citizens; the foreign income and possessions families decide for anyone else.",
+        "description": "Before 1973 411(a)(7) disregards the 911 and 931 exclusions only for a United States citizen who serves as an American employer's employee or \"as a minister in a foreign country who has a congregation composed predominantly of United States citizens\" (1972 amendment note). The citizenship text keeps the statute's words \"in a foreign country\". 410(i) puts Puerto Rico, the Virgin Islands, Guam and American Samoa inside the United States, so a self-employed minister serving there does not qualify, and the place text names those places and the other possessions so that the possessions family, not the residual, decides for him. The foreign income and possessions families decide for anyone who does not qualify.",
         "defers_to": [
           "self_employment_foreign_911_income",
           "self_employment_possessions_931_income"
@@ -1048,7 +1069,16 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\"."
+      "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
+      "boundary_clause": {
+        "citation": {
+          "capture": "lii_42_411.html",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "location": "Effective Date of 1972 Amendment note, Pub. L. 92-603 sections 121(c), 124(c) and 140(c)",
+          "quote": "Pub. L. 92\u2013603, title I, \u00a7 121(c) , Oct. 30, 1972 , 86 Stat. 1354 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 , Internal Revenue Code ] shall apply only with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 124(c) , Oct. 30, 1972 , 86 Stat. 1357 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d Pub. L. 92\u2013603, title I, \u00a7 140(c) , Oct. 30, 1972 , 86 Stat. 1366 , provided that: \u201cThe amendments made by this section [amending this section and section 1402 of Title 26 ] shall apply with respect to taxable years beginning after December 31, 1972 .\u201d"
+        }
+      }
     },
     "rare_exclusion": null,
     "rule_id": "se_clergy_gross_concept_1973_1987",
@@ -5918,6 +5948,41 @@
         "authority": "Pub. L. 100-203, 101 Stat. 1330-296",
         "location": "section 9023(b)(1)",
         "quote": "by striking \"and section 931 (relating to income from sources within possessions of the United States) of the Internal Revenue Code of 1954\""
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Coverage of Members of the Clergy: exceptions to SE tax",
+        "quote": "You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country."
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Overseas duty: minister in Mexico example",
+        "quote": "The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax and must include $35,000 when figuring net earnings from self-employment."
+      },
+      {
+        "capture": "irs_p517_2025.html",
+        "sha256": "2444fa6cb6ed6a569682989cfd6ca4238984e0c24c0cb72e63bf039c33b01f82",
+        "authority": "IRS Publication 517 (2025)",
+        "location": "Regular Method: Amounts not included in gross income",
+        "quote": "Don't include the following amounts in gross income when figuring your net earnings from self-employment. Offerings that others made to the church. Contributions by your church to a tax-sheltered annuity plan set up for you, including any salary reduction contributions (elective deferrals) that aren't included in your gross income."
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a), opening clause",
+        "quote": "means the gross income, as computed under subtitle A of the Internal Revenue Code of 1986 , derived by an individual from any trade or business carried on by such individual"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(7)",
+        "quote": "without regard to section 107 (relating to rental value of parsonages), section 119 (relating to meals and lodging furnished for the convenience of the employer), and section 911 (relating to earned income from sources without the United States) of the Internal Revenue Code of 1986"
       }
     ],
     "consequence": "covered",
@@ -6131,13 +6196,34 @@
         ]
       },
       {
-        "case_id": "retired_clergy_benefits",
+        "case_id": "foreign_agreement_sole_coverage",
         "precedence": 2,
+        "when": {
+          "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+        },
+        "consequence": "deferred",
+        "defers_to": [
+          "clergy_religious_service"
+        ],
+        "description": "Publication 517 (2025) excepts from SE tax a minister who is \"subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country\", and the row's Mexico example turns on it: \"The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax\". The clergy and religious family decides the service (clergy_1982_2026, case foreign_agreement_sole_coverage)."
+      },
+      {
+        "case_id": "retired_clergy_benefits",
+        "precedence": 3,
         "when": {
           "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
         },
         "consequence": "noncovered",
         "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31."
+      },
+      {
+        "case_id": "church_tax_sheltered_annuity_contributions",
+        "precedence": 4,
+        "when": {
+          "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
+        },
+        "consequence": "noncovered",
+        "description": "Publication 517 (2025), Regular Method, says not to include \"Contributions by your church to a tax-sheltered annuity plan set up for you, including any salary reduction contributions (elective deferrals) that aren't included in your gross income\" when figuring net earnings from self-employment. 411(a) starts from \"the gross income, as computed under subtitle A\", and 411(a)(7) sets aside only sections 107, 119 and 911, so an amount subtitle A leaves out of gross income stays out of net earnings. The condition names only amounts left out of the taxable year's gross income, so each year's subtitle A limits decide the amount; the captures show the Publication 517 list for 2025 only."
       }
     ],
     "open_alternatives": [],

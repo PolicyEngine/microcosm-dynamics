@@ -1244,6 +1244,7 @@ def test_family_axes_follow_their_boundary_clauses():
         "nonresident_alien_vocational_service_1987",
         "nonresident_alien_vocational_service_1988_1110",
         "religious_order_1984_2026",
+        "se_clergy_gross_concept_1973_1987",
         "se_clergy_gross_concept_1987_2026",
         "se_conservation_reserve_2008_2026",
         "se_foreign_income_1984_2026",
@@ -3652,8 +3653,10 @@ def test_religious_order_members_resolve_from_their_facts(
         "religious_order_service": "ordinary employment for a third party"
     }
     assert resolved_consequence(rule, third_party) == "covered"
+    # Without a vow this family excludes nothing; the clergy family, which
+    # defers vow-of-poverty order duties here, decides (r4 sweep).
     no_vow = {"religious_order_service": "has not taken a vow of poverty"}
-    assert resolved_consequence(rule, no_vow) == "deferred"
+    assert resolved_consequence(rule, no_vow) == "covered"
 
 
 # Phrases stating an INVENTED 2018-2026 council member's facts (r4 H-C).

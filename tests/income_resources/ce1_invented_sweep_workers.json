@@ -832,6 +832,413 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Christian Science practitioner in Ohio with no 1402(e) exemption, 1970",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Christian Science practitioner whose 1402(e) exemption is effective, 1971",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Nun under a vow of poverty who teaches in her order's school as an order duty, 1969",
+   "facts": {
+    "religious_order_service": "who has taken a vow of poverty as a member of such order",
+    "ministerial_service": "qualifying ministry, order duties",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Ordained Lutheran pastor in Iowa with no exemption, 1970",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Ordained pastor whose approved 1402(e) exemption is effective, 1971",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Brother of an order without a poverty vow who runs the order's retreat house as an order duty, no exemption, 1970",
+   "facts": {
+    "religious_order_service": "performed by a member who has not taken a vow of poverty",
+    "ministerial_service": "qualifying ministry, order duties",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Nonresident alien priest serving a parish in Texas for six months, 1970",
+   "facts": {
+    "nonresident_alien_status": "nonresident alien individual for the taxable year",
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Army chaplain on active duty, 1970",
+   "facts": {
+    "ministerial_service": "not ministry"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED: Non-citizen pastor who resides in Guam and is no nonresident alien under 411(b)'s final sentence, 1971",
+   "facts": {
+    "nonresident_alien_status": "not a nonresident alien under 411(b)",
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Christian Science practitioner with no exemption, 1976",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Christian Science practitioner with an effective 1402(e) exemption, 1976",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Monk under a vow of poverty who keeps his abbey's farm as an order duty; the order has not elected, 1977",
+   "facts": {
+    "religious_order_service": "who has taken a vow of poverty as a member of such order",
+    "ministerial_service": "qualifying ministry, order duties"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Ordained pastor with no exemption, 1975",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Nonresident alien priest, 1975",
+   "facts": {
+    "nonresident_alien_status": "nonresident alien individual for the taxable year",
+    "ministerial_service": "qualifying ministry"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED: Non-citizen pastor resident in Puerto Rico, 1979",
+   "facts": {
+    "nonresident_alien_status": "not a nonresident alien under 411(b)",
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Christian Science practitioner with no exemption, 2015",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Christian Science practitioner with an approved Form 4361, 2015",
+   "facts": {
+    "ministerial_service": "Christian Science practitioner",
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Sister under a vow of poverty who works in the diocese's business office as an order duty; the order has not elected, 2010",
+   "facts": {
+    "religious_order_service": "who has taken a vow of poverty as a member of such order",
+    "ministerial_service": "qualifying ministry, order duties",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: US-citizen pastor of a congregation in Germany whom the US-Germany agreement makes subject only to German social security law, 2015",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": [
+     "subject only to the social security laws of a foreign country",
+     "no 1402(e) exemption in effect"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: German pastor, a US resident alien, sent to a Chicago parish for two years and kept under German social security law by the agreement, 2016",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": [
+     "subject only to the social security laws of a foreign country",
+     "no 1402(e) exemption in effect"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: US-citizen minister of a US church in Mexico, no agreement with Mexico, 2025",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Nonresident alien priest with no agreement, 2010",
+   "facts": {
+    "nonresident_alien_status": "nonresident alien individual for the taxable year",
+    "ministerial_service": "qualifying ministry"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Nonresident alien priest whom an agreement places in US coverage, 2010",
+   "facts": {
+    "nonresident_alien_status": "an agreement under section 433 makes his net earnings self-employment income",
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Pastor with an approved Form 4361, 2010",
+   "facts": {
+    "ministerial_service": "qualifying ministry",
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED: Air Force chaplain, 2010",
+   "facts": {
+    "ministerial_service": "not ministry"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED: Order member without a poverty vow teaching in the order's school as an order duty, 1975 (the clergy family decides; this family excludes nothing)",
+   "facts": {
+    "religious_order_service": "performed by a member who has not taken a vow of poverty"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED: Vowed nun teaching as an order duty; the order never elected, 1975",
+   "facts": {
+    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED: Vowed brother nursing in the order's US hospital under the order's 1979 election, 1980",
+   "facts": {
+    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "clergy_or_religious_exemption": "effective 3121(r) election covering the period"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED: Order member without a poverty vow doing order duties, 2000",
+   "facts": {
+    "religious_order_service": "performed by a member who has not taken a vow of poverty"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED: Vowed sister doing order duties; no election, 2010",
+   "facts": {
+    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: Self-employed US-citizen minister to a congregation of US citizens on Wake Island, 1971",
+   "facts": {
+    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
+    "place_of_work": "another possession of the United States"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: Self-employed US-citizen minister to a mostly US-citizen congregation in Puerto Rico who is not a Puerto Rico resident, 1971",
+   "facts": {
+    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
+    "place_of_work": "Puerto Rico"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: Self-employed US-citizen minister to a mostly French congregation in Lyon, 1970",
+   "facts": {
+    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
+    "place_of_work": "in a foreign country"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: Resident-alien minister serving a parish in Guam, 1970",
+   "facts": {
+    "citizenship": "not a United States citizen",
+    "place_of_work": "Guam"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: US-citizen minister in Germany employed by an American church board under 410(e), 1971",
+   "facts": {
+    "citizenship": "citizen employed as a minister by an American employer",
+    "place_of_work": "in a foreign country"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: US-citizen pastor of a mostly American congregation in Lyon, 1970",
+   "facts": {
+    "citizenship": "citizen ministering in a foreign country to a mostly US-citizen congregation",
+    "place_of_work": "in a foreign country"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: US-citizen pastor in Ohio, 1970",
+   "facts": {
+    "citizenship": "citizen of the United States",
+    "place_of_work": "Ohio"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1968_1972",
+   "worker": "INVENTED: Minister with an effective 1402(e) exemption, 1970",
+   "facts": {
+    "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: Nonexempt Pastor Kim, whose church puts $6,000 into his 403(b) annuity left out of his gross income, 2025",
+   "facts": {
+    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: Same pastor's $3,000 of elective deferrals that his gross income leaves out, 2025",
+   "facts": {
+    "clergy_remuneration": "salary reduction contributions (elective deferrals)"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: US-citizen minister in Germany whom the agreement makes subject only to German social security law, 2025",
+   "facts": {
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: US-citizen minister of a US church in Mexico, no agreement, 2025",
+   "facts": {
+    "clergy_or_religious_exemption": "no 1402(e) exemption",
+    "clergy_remuneration": "salary for ministry in Mexico"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: Pastor Adams, active and nonexempt, living in the church parsonage, 2025",
+   "facts": {
+    "clergy_remuneration": "fair rental value of a parsonage given to an active minister"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: Retired pastor living in the church parsonage, 2025",
+   "facts": {
+    "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED: Minister with an effective 1402(e) exemption, 2010",
+   "facts": {
+    "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
+   },
+   "expected": "deferred"
   }
  ]
 }
