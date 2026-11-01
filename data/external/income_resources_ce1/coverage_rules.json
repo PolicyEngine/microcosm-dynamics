@@ -14284,11 +14284,11 @@
         {
           "case_id": "vow_duties_without_election",
           "consequence": "noncovered",
-          "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+          "description": "410(a)(8)(A) excludes order duties by \"a member of a religious order\" unless an order election is in effect, and 411(c)'s closing sentence keeps 411(c)(4)'s exclusion from self-employment for every member \"who has taken a vow of poverty as a member of such order\". Neither limits the exclusion to an active member, so a vowed member retired for old age or total disability is excluded too.",
           "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no 3121(r) election in effect for the period",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
           }
         },
         {
@@ -14300,7 +14300,7 @@
             "citizenship": "not a United States citizen",
             "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
             "place_of_work": "outside the United States",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
           }
         },
         {
@@ -14310,24 +14310,34 @@
           "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
+          }
+        },
+        {
+          "case_id": "vowed_member_outside_3121r2_definition",
+          "consequence": "noncovered",
+          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs the tasks of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.",
+          "precedence": 4,
+          "when": {
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
         },
         {
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
-          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
-          "precedence": 4,
+          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor.",
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
           }
         },
         {
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -14336,7 +14346,7 @@
           "case_id": "order_duties_without_vow",
           "consequence": "covered",
           "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -14389,6 +14399,13 @@
         {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
+          "location": "3121(r)(2)",
+          "quote": "For purposes of this subsection, a member of a religious order means any individual who is subject to a vow of poverty as a member of such order and who performs tasks usually required (and to the extent usually required) of an active member of such order and who is not considered retired because of old age or total disability",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
           "location": "3121(r)(3)(A)",
           "quote": "the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
@@ -14401,7 +14418,7 @@
         }
       ],
       "consequence": "covered",
-      "description": "A poverty vow ordinarily excludes coverage; an order's effective 3121(r) election can create covered deemed employment, including statutorily permitted retroactive coverage.",
+      "description": "A poverty vow excludes a member's order duties from employment (410(a)(8)(A)) and self-employment (411(c)(4) and its closing sentence), whether or not the member is active; an order's effective 3121(r) election makes the duties of an active, unretired member (3121(r)(2)) covered deemed employment, including statutorily permitted retroactive coverage.",
       "effective_end": "1983-12-31",
       "effective_start": "1968-01-01",
       "family": "religious_order_vow_of_poverty",
@@ -14501,6 +14518,16 @@
           }
         ],
         "condition_cases": {
+          "election_covers": {
+            "cases": {
+              "vow_duties_with_3121r_election": [
+                "religious_order_service"
+              ],
+              "vowed_member_outside_3121r2_definition": [
+                "religious_order_service"
+              ]
+            }
+          },
           "poverty_vow_self_employment_excluded": {
             "cases": {
               "election_member_abroad_not_covered": [
@@ -14510,6 +14537,9 @@
                 "religious_order_service"
               ],
               "vow_duties_without_election": [
+                "religious_order_service"
+              ],
+              "vowed_member_outside_3121r2_definition": [
                 "religious_order_service"
               ]
             }
@@ -14533,7 +14563,7 @@
           "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
           "threshold_id": "religious_order_deemed_wages_monthly_floor"
         },
-        "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
+        "election_covers": "All current and future members as 3121(r)(2) defines them: subject to a vow of poverty, performing the tasks usually required of an active member, and not considered retired because of old age or total disability. Cases vow_duties_with_3121r_election and vowed_member_outside_3121r2_definition apply that definition; the exclusions without an election reach every vowed member (410(a)(8)(A); 411(c)).",
         "election_irrevocable": true,
         "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: the member must be a United States citizen.",
         "lay_employee_coordination": "Before 1984, former 3121(r)(4) requires an existing 3121(k) waiver to become irrevocable or a new waiver to be filed with an effective date no later than the order coverage election.",
@@ -14585,11 +14615,11 @@
         {
           "case_id": "vow_duties_without_election",
           "consequence": "noncovered",
-          "description": "A poverty vow excludes self-employment and employee employment absent an order election.",
+          "description": "410(a)(8)(A) excludes order duties by \"a member of a religious order\" unless an order election is in effect, and 411(c)'s closing sentence keeps 411(c)(4)'s exclusion from self-employment for every member \"who has taken a vow of poverty as a member of such order\". Neither limits the exclusion to an active member, so a vowed member retired for old age or total disability is excluded too.",
           "precedence": 1,
           "when": {
             "clergy_or_religious_exemption": "no 3121(r) election in effect for the period",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
           }
         },
         {
@@ -14601,7 +14631,7 @@
             "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
             "nonresident_alien_status": "neither a United States citizen nor a resident alien",
             "place_of_work": "outside the United States",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
           }
         },
         {
@@ -14611,24 +14641,34 @@
           "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
+          }
+        },
+        {
+          "case_id": "vowed_member_outside_3121r2_definition",
+          "consequence": "noncovered",
+          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs the tasks of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.",
+          "precedence": 4,
+          "when": {
+            "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
+            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
         },
         {
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
-          "description": "Deemed employee of the order; use the value of perquisites subject to the statutory floor.",
-          "precedence": 4,
+          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor.",
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate",
-            "religious_order_service": "qualifying duties of an active member under a vow of poverty"
+            "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
           }
         },
         {
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -14637,7 +14677,7 @@
           "case_id": "order_duties_without_vow",
           "consequence": "covered",
           "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -14696,6 +14736,13 @@
         {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
+          "location": "3121(r)(2)",
+          "quote": "For purposes of this subsection, a member of a religious order means any individual who is subject to a vow of poverty as a member of such order and who performs tasks usually required (and to the extent usually required) of an active member of such order and who is not considered retired because of old age or total disability",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
           "location": "3121(r)(3)(A)",
           "quote": "the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
@@ -14708,7 +14755,7 @@
         }
       ],
       "consequence": "covered",
-      "description": "An order coverage election can deem poverty vow members covered employees; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
+      "description": "A poverty vow excludes a member's order duties from employment (410(a)(8)(A)) and self-employment (411(c)(4) and its closing sentence), whether or not the member is active; an order coverage election can deem an active, unretired member (3121(r)(2)) a covered employee; mandatory nonprofit coverage removed the prior lay employee waiver coordination.",
       "effective_end": "2026-12-31",
       "effective_start": "1984-01-01",
       "family": "religious_order_vow_of_poverty",
@@ -14903,6 +14950,16 @@
           }
         ],
         "condition_cases": {
+          "election_covers": {
+            "cases": {
+              "vow_duties_with_3121r_election": [
+                "religious_order_service"
+              ],
+              "vowed_member_outside_3121r2_definition": [
+                "religious_order_service"
+              ]
+            }
+          },
           "poverty_vow_self_employment_excluded": {
             "cases": {
               "election_member_abroad_not_covered": [
@@ -14912,6 +14969,9 @@
                 "religious_order_service"
               ],
               "vow_duties_without_election": [
+                "religious_order_service"
+              ],
+              "vowed_member_outside_3121r2_definition": [
                 "religious_order_service"
               ]
             }
@@ -14942,7 +15002,7 @@
           "source": "42 U.S.C. 409(g); 26 U.S.C. 3121(i)(4).",
           "threshold_id": "religious_order_deemed_wages_monthly_floor"
         },
-        "election_covers": "All current and future active members; the statutory definition excludes members retired because of old age or total disability.",
+        "election_covers": "All current and future members as 3121(r)(2) defines them: subject to a vow of poverty, performing the tasks usually required of an active member, and not considered retired because of old age or total disability. Cases vow_duties_with_3121r_election and vowed_member_outside_3121r2_definition apply that definition; the exclusions without an election reach every vowed member (410(a)(8)(A); 411(c)).",
         "election_irrevocable": true,
         "foreign_member": "Case election_member_abroad_not_covered applies POMS RS 01901.620 B.4 to members working outside the United States: from January 1, 1984 the member must be a United States citizen or a resident alien.",
         "lay_employee_coordination": "Former 3121(r)(4) was repealed by Public Law 98-21 section 102(b)(3)(B), effective for services after 1983.",

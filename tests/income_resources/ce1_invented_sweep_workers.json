@@ -1105,7 +1105,10 @@
    "rule_id": "religious_order_1968_1983",
    "worker": "INVENTED: Vowed nun teaching as an order duty; the order never elected, 1975",
    "facts": {
-    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
    "expected": "noncovered"
@@ -1114,7 +1117,10 @@
    "rule_id": "religious_order_1968_1983",
    "worker": "INVENTED: Vowed brother nursing in the order's US hospital under the order's 1979 election, 1980",
    "facts": {
-    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
     "clergy_or_religious_exemption": "effective 3121(r) election covering the period"
    },
    "expected": "covered"
@@ -1131,7 +1137,10 @@
    "rule_id": "religious_order_1984_2026",
    "worker": "INVENTED: Vowed sister doing order duties; no election, 2010",
    "facts": {
-    "religious_order_service": "qualifying duties of an active member under a vow of poverty",
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
    "expected": "noncovered"

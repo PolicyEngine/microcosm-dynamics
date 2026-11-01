@@ -2209,6 +2209,36 @@ REQUIRED_CONDITIONS = [
             "religious_order_1984_2026",
         )
     ],
+    # Review r5 H-1: 3121(r)(2) defines a member "For purposes of this
+    # subsection" only, so the active, unretired member limits the
+    # election's covered case and its noncovered counterpart.
+    *[
+        (
+            rule_id,
+            case_id,
+            {"religious_order_service": (phrase,)},
+            "uscode_119_120_26_3121.html",
+            "who performs tasks usually required (and to the extent usually "
+            "required) of an active member of such order and who is not "
+            "considered retired because of old age or total disability",
+        )
+        for rule_id in (
+            "religious_order_1968_1983",
+            "religious_order_1984_2026",
+        )
+        for case_id, phrase in (
+            (
+                "vow_duties_with_3121r_election",
+                "is not considered retired because of old age or total "
+                "disability",
+            ),
+            (
+                "vowed_member_outside_3121r2_definition",
+                "or is considered retired because of old age or total "
+                "disability",
+            ),
+        )
+    ],
     (
         "se_retired_partner_1968_2026",
         "qualifying_retirement_payment",
@@ -3638,52 +3668,111 @@ def test_nonprofit_waiver_covers_only_listed_or_later_employees(
     assert "501(c)(3)" in rule.residual_default["description"]
 
 
-# Phrases stating an INVENTED order member's facts (review r4 H-B).
-ORDER_VOW_DUTIES = "qualifying duties of an active member under a vow of"
+# An INVENTED order member's facts (review r4 H-B, r5 H-1). 410(a)(8)(A)
+# and 411(c)'s closing sentence reach every member "who has taken a vow of
+# poverty as a member of such order"; 3121(r)(2)'s active, unretired
+# member limits only what the election deems employment.
+ORDER_VOWED = (
+    "member of a religious order who has taken a vow of poverty as a "
+    "member of such order, performing duties required by such order"
+)
+ORDER_ACTIVE = (
+    "member of a religious order who is subject to a vow of poverty as a "
+    "member of such order, performs tasks usually required (and to the "
+    "extent usually required) of an active member of such order and is "
+    "not considered retired because of old age or total disability "
+    "(3121(r)(2)), performing duties required by such order"
+)
+ORDER_OUTSIDE_R2 = (
+    "member of a religious order who has taken a vow of poverty as a "
+    "member of such order but does not perform the tasks usually required "
+    "of an active member of such order, or is considered retired because "
+    "of old age or total disability (outside 3121(r)(2)), performing "
+    "duties required by such order"
+)
+ACTIVE_VOWED = (ORDER_VOWED, ORDER_ACTIVE)
+RETIRED_VOWED = (ORDER_VOWED, ORDER_OUTSIDE_R2)
+NO_ORDER_ELECTION = "no 3121(r) election in effect for the period"
+ORDER_ELECTION = "effective 3121(r) election covering the period"
 ORDER_MEMBERS = {
-    # member: (exemption phrases, place, alien status, citizenship), and
-    # the outcome the sources give.
+    # member: (order service, exemption, place, alien status or
+    # citizenship), the outcome the sources give and the deciding case.
     "vow_duties_no_election": (
-        ("no 3121(r) election in effect",),
+        ACTIVE_VOWED,
+        (NO_ORDER_ELECTION,),
         "in the United States",
         "a United States citizen",
         "noncovered",
+        "vow_duties_without_election",
+    ),
+    # r5 H-1 repro: a nun retired for old age in 1975 does order duties in
+    # 1979, and her order never elected.
+    "retired_member_no_election": (
+        RETIRED_VOWED,
+        (NO_ORDER_ELECTION,),
+        "in the United States",
+        "a United States citizen",
+        "noncovered",
+        "vow_duties_without_election",
+    ),
+    # The same retired nun when her order has an election: 3121(r)(1)(C)
+    # deems only a 3121(r)(2) member's duties to be employment.
+    "retired_member_under_election": (
+        RETIRED_VOWED,
+        (ORDER_ELECTION,),
+        "in the United States",
+        "a United States citizen",
+        "noncovered",
+        "vowed_member_outside_3121r2_definition",
     ),
     "election_prospective_quarter": (
-        ("effective 3121(r) election covering the period",),
+        ACTIVE_VOWED,
+        (ORDER_ELECTION,),
         "in the United States",
         "a United States citizen",
         "covered",
+        "vow_duties_with_3121r_election",
     ),
     "election_retroactive_quarter_conditions_met": (
+        ACTIVE_VOWED,
         (
-            "effective 3121(r) election covering the period",
+            ORDER_ELECTION,
             "for a retroactive quarter, the member was a member when "
             "performing the service and was living",
         ),
         "in the United States",
         "a United States citizen",
         "covered",
+        "vow_duties_with_3121r_election",
     ),
     # H-B repro: an order files on 1975-02-10 designating 1970-01-01; a
     # member did order duties in 1971 and died before the filing quarter.
     "retroactive_quarter_member_died": (
+        ACTIVE_VOWED,
         ("was not living on the first day of the quarter",),
         "in the United States",
         "a United States citizen",
         "noncovered",
+        "retroactive_quarter_member_condition_failed",
     ),
-    "retroactive_quarter_not_yet_a_member": (
+    # r5 H-1: a vowed sister retired for total disability in 1969 does
+    # order duties in 1971 in a quarter the order's 1975 certificate
+    # designates. She was not a 3121(r)(2) member when she did them.
+    "retroactive_quarter_not_a_member": (
+        RETIRED_VOWED,
         ("was not a member when performing the service",),
         "in the United States",
         "a United States citizen",
         "noncovered",
+        "retroactive_quarter_member_condition_failed",
     ),
     "election_noncitizen_abroad": (
-        ("effective 3121(r) election covering the period",),
+        ACTIVE_VOWED,
+        (ORDER_ELECTION,),
         "outside the United States",
         ("not a United States citizen", "neither a United States citizen"),
         "noncovered",
+        "election_member_abroad_not_covered",
     ),
 }
 
@@ -3695,21 +3784,28 @@ ORDER_MEMBERS = {
 def test_religious_order_members_resolve_from_their_facts(
     registry, rule_id, member
 ):
-    """Review r4 H-B, by fact pattern: 3121(r)(3)(A) applies an election to
-    pre-filing quarters "only if the member performing such services was a
-    member at the time such services were performed and is living on the
-    first day of the quarter in which such certificate is filed", so a
-    member who fails it stays excluded by the vow of poverty."""
+    """Review r4 H-B and r5 H-1, by fact pattern. 3121(r)(3)(A) applies an
+    election to pre-filing quarters "only if the member performing such
+    services was a member at the time such services were performed and is
+    living on the first day of the quarter in which such certificate is
+    filed", so a member who fails it stays excluded by the vow of poverty.
+    The vow excludes a retired member's duties too: 3121(r)(2)'s "active"
+    and "not considered retired" define a member only "For purposes of
+    this subsection", the election."""
     rule = next(r for r in registry.rules if r.rule_id == rule_id)
-    exemption, place, status, expected = ORDER_MEMBERS[member]
+    service, exemption, place, status, expected, decides = ORDER_MEMBERS[
+        member
+    ]
     facts = {
-        "religious_order_service": ORDER_VOW_DUTIES,
+        "religious_order_service": service,
         "clergy_or_religious_exemption": exemption,
         "place_of_work": place,
         "citizenship": status,
         "nonresident_alien_status": status,
     }
     assert resolved_consequence(rule, facts) == expected
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided.get("case_id", "residual") == decides
     third_party = {
         "religious_order_service": "ordinary employment for a third party"
     }
@@ -3918,7 +4014,7 @@ REQUIRED_CONDITION_FAILURES = {
                 "clergy_or_religious_exemption": (
                     "was not living on the first day of the quarter"
                 ),
-                "religious_order_service": ORDER_VOW_DUTIES,
+                "religious_order_service": ACTIVE_VOWED,
             },
             "noncovered",
         )
