@@ -2591,6 +2591,15 @@ REQUIRED_CONDITION_ROWS = {
 }
 
 
+def required_condition_id(entry):
+    """A unique test id: row, case, capture and the first required phrase
+    (review r4 low 2; pytest suffixed three duplicate pairs)."""
+    rule_id, case_id, facts, capture, _ = entry
+    phrases = [phrase for fact in sorted(facts) for phrase in facts[fact]]
+    first = phrases[0] if phrases else sorted(facts)[0]
+    return f"{rule_id}-{case_id}-{capture}-{first}"
+
+
 def required_condition_problems(case, captures, facts, capture):
     """Required facts or phrases a case's `when` lacks, and an uncited
     capture. ``facts`` maps each fact to phrases its value must contain."""
@@ -2612,7 +2621,7 @@ def required_condition_problems(case, captures, facts, capture):
 @pytest.mark.parametrize(
     ("rule_id", "case_id", "facts", "capture", "passage"),
     REQUIRED_CONDITIONS,
-    ids=[f"{entry[0]}-{entry[1]}" for entry in REQUIRED_CONDITIONS],
+    ids=[required_condition_id(entry) for entry in REQUIRED_CONDITIONS],
 )
 def test_statutory_conditions_sit_in_their_cases(
     registry, rule_id, case_id, facts, capture, passage

@@ -8876,7 +8876,7 @@
           "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc"
         },
         "regime_start_reason": "Public Law 99-335 section 702(a) makes the FERS Act effective January 1, 1987; 42 U.S.C. 410 amendment notes identify section 304(a) as adding paragraph (a)(5)(H).",
-        "section_2601d3_delay": "Section 2601(d)(3) delays 410(a)(5)(G) coverage only to the first month after the 30-day period of 2601(d)(1), which ends 30 days after July 18, 1984, or of 2601(d)(2), which ends 30 days after a return that must fall within 365 days of service ending before July 18, 1984. Every such month falls before 1987, so the delay changes no case in this row.",
+        "section_2601d3_delay": "Section 2601(d)(3) delays 410(a)(5)(G) coverage to the first month after the 30-day period of 2601(d)(1), which ends 30 days after July 18, 1984, or of 2601(d)(2), which ends 30 days after the individual first returns to legislative-branch service after July 18, 1984, a return that must fall within 365 days after the individual \"was last in the employ of the United States\". The (d)(1) delay, and a (d)(2) delay whose last Federal employment ended by July 18, 1984, end before 1987. A (d)(2) delay runs later only where Federal employment elsewhere continued after that date; this row's legislative_ceased_coverage_after_1983 case does not carry that narrow case.",
         "section_2601e_nonprofit_service": {
           "citation": {
             "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -10762,6 +10762,7 @@
       "open_reason": null,
       "parameters": {
         "clause_a_employment_test": "410(a)(4)(A) is met when the individual is employed on and in connection with the craft while it is outside the United States; it then reaches that employment's service in the United States too.",
+        "clause_a_gloss_basis": "The in-port reading (\"including service done within the U.S. if some part of the employee's service is done outside the U.S.\") comes from POMS RS 01901.170 B, headed \"1951 THROUGH 1954\"; section A (1955 and later) omits the gloss. The row carries it forward because clause (A)'s words, \"is employed on and in connection with such vessel or aircraft when outside the United States\", did not change; no capture restates the gloss for 1955 and later.",
         "code_edition_evidence": [
           {
             "amendment_year_entries_verified_present": [],
@@ -10845,6 +10846,9 @@
                 "place_of_work"
               ]
             }
+          },
+          "clause_a_gloss_basis": {
+            "not_a_coverage_condition": "Records the source of the in-port reading the two noncovered cases already carry in their place_of_work text."
           },
           "exclusion_any_of": {
             "cases": {
@@ -14174,7 +14178,7 @@
         {
           "case_id": "election_member_abroad_not_covered",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if the member must be a United States citizen; otherwise the vow-of-poverty exclusion still applies.",
+          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen; otherwise the vow-of-poverty exclusion still applies.",
           "precedence": 2,
           "when": {
             "citizenship": "not a United States citizen",
@@ -14475,7 +14479,7 @@
         {
           "case_id": "election_member_abroad_not_covered",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4: services of a member working outside the United States are covered under the election only if from January 1, 1984 the member must be a United States citizen or a resident alien; otherwise the vow-of-poverty exclusion still applies.",
+          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen or, from January 1, 1984, a resident alien; otherwise the vow-of-poverty exclusion still applies.",
           "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election covering the period",
@@ -17262,7 +17266,7 @@
           "precedence": 1,
           "when": {
             "community_property_income": "community income or loss under applicable community property laws",
-            "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+            "partnership_status": "the income is the distributive share of the person's spouse as a partner, not the person's own distributive share"
           }
         },
         {
@@ -17572,7 +17576,7 @@
           "precedence": 1,
           "when": {
             "community_property_income": "community income or loss under applicable community property laws",
-            "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+            "partnership_status": "the income is the distributive share of the person's spouse as a partner, not the person's own distributive share"
           }
         },
         {
@@ -18792,7 +18796,7 @@
           "410(a)(11), (12), (15) domestic US citizen service, with the later 410(r) exception",
           "Ministerial/religious 411(c)(4) service",
           "State/local sole-fee uncovered position",
-          "Small-boat fishing under 410(a)(20) from the applicable 1976 law",
+          "Small-boat fishing under 410(a)(20), for taxable years ending after December 31, 1954 (Pub. L. 94-455 section 1207(f)(4)(A))",
           "Electing church under 410(a)(8)(B) from 1984"
         ],
         "general_rule": "employee_service_excluded_under_411(c)(2)",
@@ -26373,9 +26377,9 @@
           "precedence": 3,
           "when": {
             "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it",
-            "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), or on holidays, weekends or between semesters within the academic year when classes are not scheduled; not during a school break of more than five weeks while the student is not attending school",
+            "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), including holidays, weekends and days between semesters falling within the academic year when classes are not scheduled; the exclusion does not apply to work done during a school break of more than five weeks if the student is not attending school",
             "services_performed_date": "on or after 2024-08-15",
-            "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; not eligible to participate in a retirement plan or annuity established or maintained by the institution (or eligible once age and service requirements are met), not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern"
+            "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; neither eligible to participate in a retirement plan or annuity established or maintained by the institution nor one who would be eligible to participate if age and service requirements are met, not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern"
           }
         }
       ],
@@ -26935,7 +26939,7 @@
         },
         "non_federally_recognized_tribes": "ordinary_employment_rules_including_applicable_nonprofit_history",
         "other_employees_or_other_roles": "ordinary_employment_rules; council membership does not exclude separate employee service",
-        "section_418a_agreement_statute_available": false
+        "section_418a_agreement_statute_available": "No section 418a agreement could be in effect during this row: Pub. L. 115-243 enacted 418a on 2018-09-20. A later agreement may reach this row's earlier services (case later_418a_retroactive_coverage)."
       },
       "rare_exclusion": {
         "negligible_candidate": null,

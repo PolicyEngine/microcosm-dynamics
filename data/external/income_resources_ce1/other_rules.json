@@ -5953,9 +5953,13 @@
               "place_of_work"
             ]
           }
+        },
+        "clause_a_gloss_basis": {
+          "not_a_coverage_condition": "Records the source of the in-port reading the two noncovered cases already carry in their place_of_work text."
         }
       },
-      "clause_a_employment_test": "410(a)(4)(A) is met when the individual is employed on and in connection with the craft while it is outside the United States; it then reaches that employment's service in the United States too."
+      "clause_a_employment_test": "410(a)(4)(A) is met when the individual is employed on and in connection with the craft while it is outside the United States; it then reaches that employment's service in the United States too.",
+      "clause_a_gloss_basis": "The in-port reading (\"including service done within the U.S. if some part of the employee's service is done outside the U.S.\") comes from POMS RS 01901.170 B, headed \"1951 THROUGH 1954\"; section A (1955 and later) omits the gloss. The row carries it forward because clause (A)'s words, \"is employed on and in connection with such vessel or aircraft when outside the United States\", did not change; no capture restates the gloss for 1955 and later."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -9249,8 +9253,8 @@
         "precedence": 3,
         "when": {
           "services_performed_date": "on or after 2024-08-15",
-          "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; not eligible to participate in a retirement plan or annuity established or maintained by the institution (or eligible once age and service requirements are met), not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern",
-          "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), or on holidays, weekends or between semesters within the academic year when classes are not scheduled; not during a school break of more than five weeks while the student is not attending school",
+          "statutory_student_service": "service as a student whose main purpose is pursuing a course of study rather than earning a livelihood, carrying at least a half-time academic workload; neither eligible to participate in a retirement plan or annuity established or maintained by the institution nor one who would be eligible to participate if age and service requirements are met, not eligible for reduced tuition, and not classified by the institution as a career employee; not a postdoctoral student, postdoctoral fellow, medical resident or medical intern",
+          "enrollment": "enrolled and regularly attending classes, the service falling in a period of regular school attendance (the regular academic year or a summer session), including holidays, weekends and days between semesters falling within the academic year when classes are not scheduled; the exclusion does not apply to work done during a school break of more than five weeks if the student is not attending school",
           "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it"
         },
         "consequence": "noncovered",
@@ -9427,7 +9431,7 @@
         "effect": "qualifying_prior_services_included_under_executed_agreement",
         "no_new_retroactive_tax_payment_required_by_agreement": true
       },
-      "section_418a_agreement_statute_available": false,
+      "section_418a_agreement_statute_available": "No section 418a agreement could be in effect during this row: Pub. L. 115-243 enacted 418a on 2018-09-20. A later agreement may reach this row's earlier services (case later_418a_retroactive_coverage).",
       "later_2018_agreement_can_validate_qualifying_prior_services": true,
       "code_edition_evidence": [
         {

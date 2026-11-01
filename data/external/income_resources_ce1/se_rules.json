@@ -1329,7 +1329,7 @@
         "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
         "when": {
           "community_property_income": "community income or loss under applicable community property laws",
-          "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+          "partnership_status": "the income is the distributive share of the person's spouse as a partner, not the person's own distributive share"
         }
       },
       {
@@ -1684,7 +1684,7 @@
         "description": "411(a)(5)(B): when any part of a partner's distributive share is community income, all of it counts for the partner and \"no part of such share shall be taken into account in computing the net earnings from self-employment of the spouse of such partner\" (POMS RS 01802.400 B.3).",
         "when": {
           "community_property_income": "community income or loss under applicable community property laws",
-          "partnership_status": "the income is the distributive share of the person's spouse, who is the partner; the person is not"
+          "partnership_status": "the income is the distributive share of the person's spouse as a partner, not the person's own distributive share"
         }
       },
       {
@@ -2480,7 +2480,7 @@
         "410(a)(11), (12), (15) domestic US citizen service, with the later 410(r) exception",
         "Ministerial/religious 411(c)(4) service",
         "State/local sole-fee uncovered position",
-        "Small-boat fishing under 410(a)(20) from the applicable 1976 law",
+        "Small-boat fishing under 410(a)(20), for taxable years ending after December 31, 1954 (Pub. L. 94-455 section 1207(f)(4)(A))",
         "Electing church under 410(a)(8)(B) from 1984"
       ],
       "general_rule": "employee_service_excluded_under_411(c)(2)",
