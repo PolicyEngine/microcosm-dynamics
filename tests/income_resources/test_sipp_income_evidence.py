@@ -1526,6 +1526,8 @@ INVENTED_RULE_TWINS = {
         "<table><tr><th>SSUID</th></tr></table>",
         "<table><tr><th>Variable</th></tr><tr><td>SSUID</td></tr></table>",
     ),
+    "year_floor": ("<p>SSUID in 1899</p>", "<p>SSUID in 1900</p>"),
+    "year_ceiling": ("<p>SSUID in 2100</p>", "<p>SSUID in 2099</p>"),
     "pre_identifier": ("<pre>SSUID. x\n7</pre>", "<p>SSUID. x\n7</p>"),
     "pre_numbers": ("<pre>101 -250 40</pre>", "<p>101 -250 40</p>"),
     "row_of_numbers": (
@@ -1772,9 +1774,9 @@ def test_identifier_value_window_is_forty_characters(width, refused):
 # close, alone, after closed tags or before tags; script start tags with
 # no end tag, with no ">", after end tags or before one end tag; scripts
 # that end tags close, empty or each holding a string; one script of many
-# strings; many quoted attribute values, comments and style strings; and
-# table rows and cells that name an identifier, alone or after rows of
-# digits.
+# strings; many quoted attribute values, comments and style strings, together
+# or the values and strings alone; and table rows and cells that name an
+# identifier, alone or after rows of digits.
 INVENTED_LONG_PAGES = {
     "long_word_in_tag": "<p " + "a" * 200_000 + ">x</p>",
     "hyphenated_word_in_tag": "<p " + "a-" * 50_000 + ">x</p>",
@@ -1797,6 +1799,8 @@ INVENTED_LONG_PAGES = {
     "quoted_values_comments_and_style_strings": (
         '<p a="x"><!-- x --><style>"a"</style>' * 60_000
     ),
+    "quoted_values": '<p a="x">' * 300_000,
+    "style_strings": '<style>"a"</style>' * 150_000,
     "identifier_rows": (
         "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
     ),
@@ -1830,11 +1834,13 @@ def test_guard_reads_long_pages_in_linear_time(kind):
     # such as summing the row once per identifier cell, finding the last
     # ">" again for each match or keeping the closed scripts by list
     # concatenation, runs past the 5 s limit on that host, by its growth or
-    # as measured; the closest measured, attribute values added per tag by
-    # list concatenation, took 7.0 s. The guard runs in a child process
-    # that the operating system stops after 6 s of CPU time, so a slow
-    # pattern fails here instead of stalling the run; CPU time, unlike wall
-    # time, grows little with host load.
+    # as measured. On a quieter host, attribute values added per tag by list
+    # concatenation read the quoted_values page for about 35 s and style
+    # strings added by list concatenation read the style_strings page for
+    # about 9.5 s, where the guard took under 1 s. The guard runs in a child
+    # process that the operating system stops after 6 s of CPU time, so a
+    # slow pattern fails here instead of stalling the run; CPU time, unlike
+    # wall time, grows little with host load.
     child = subprocess.run(
         [
             sys.executable,
