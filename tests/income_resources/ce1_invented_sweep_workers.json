@@ -1299,7 +1299,7 @@
    "worker": "INVENTED: 1975, Texas: Frank is a partner and his wife Gina is not; his share is community income. The item is that share, asked for Gina.",
    "facts": {
     "community_property_income": "community income or loss under applicable community property laws",
-    "partnership_status": "the income is the distributive share of the person's spouse, who is the partner"
+    "partnership_status": "the distributive share of the person's spouse as a partner"
    },
    "expected": "noncovered"
   },
