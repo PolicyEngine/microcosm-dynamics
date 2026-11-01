@@ -4009,6 +4009,23 @@ def test_scan_reads_statement_suites_an_annotation_runs(place, depth):
         ], describe(hits)
 
 
+def test_scan_counts_levels_through_every_mix_of_code_calls():
+    """Any ``exec`` or ``eval`` around a suite is one level, at any place."""
+    for size, place in product(range(7), _FORCED_HINTS):
+        for names in product(("exec", "eval"), repeat=size):
+            code = _wrapped(_SUITE, 1)
+            for name in names:
+                code = f"{name}({code!r})"
+            text = f"{_IMPORT} as R\n{_FORCED_HINTS[place].format(code)}"
+            assert _answers(text) == [True, False]
+            line = 3 if place == "class" else 2
+            kind = "isinstance" if size < 5 else "dynamic-code"
+            hits = scan_sources([_invented(text)])
+            assert [(hit.line, hit.kind) for hit in hits] == [
+                (line, kind)
+            ], describe(hits)
+
+
 _RUN_SUITE = _wrapped(_SUITE, 1)
 _RUN_DEEP_SUITE = _wrapped(_SUITE, 6)
 _ANNOTATED_SUITE = f"class C:\n    v: {_RUN_SUITE}\nC.__annotations__\n"
@@ -4028,6 +4045,10 @@ HINT_CODE_CASES = {
     ),
     "an expression literal around the suite": (
         f"class C:\n    v: eval({_RUN_SUITE!r})\nC.__annotations__\n",
+        [(3, "isinstance")],
+    ),
+    "a padded expression literal around the suite": (
+        f"class C:\n    v: eval({' ' + _RUN_SUITE!r})\nC.__annotations__\n",
         [(3, "isinstance")],
     ),
     "a string hint": (
@@ -4173,51 +4194,51 @@ def _recursive_module_path(scope, node):
     return None
 
 
-_PATH_BASES = st.sampled_from(
-    [
-        "sys",
-        "os",
-        "engine",
-        "rng",
-        "unbound",
-        "__import__('sys')",
-        "__import__('os')",
-        "importlib.import_module('sys')",
-        "(lambda: sys)()",
-        "values[0]",
-    ]
+_PATH_BASES = (
+    "sys",
+    "os",
+    "engine",
+    "rng",
+    "exporter",
+    "unbound",
+    "__import__('sys')",
+    "__import__('')",
+    "importlib.import_module('sys')",
+    "(lambda: sys)()",
+    "values[0]",
 )
-_PATH_LINKS = st.lists(
-    st.sampled_from(
-        [
-            ".modules['sys']",
-            ".modules['os']",
-            ".modules['']",
-            ".modules[key]",
-            ".modules['populace_dynamics.engine.rng']",
-            ".modules",
-            ".path",
-            ".rng",
-            ".ProjectionRNGRegistry",
-            "['sys']",
-            ".other['sys']",
-            "()",
-        ]
-    ),
-    max_size=8,
+_PATH_LINKS = (
+    ".modules['sys']",
+    ".modules['os']",
+    ".modules['']",
+    ".modules[key]",
+    ".modules['populace_dynamics.engine.rng']",
+    ".modules",
+    ".path",
+    ".rng",
+    ".alias",
+    ".ProjectionRNGRegistry",
+    "['sys']",
+    ".other['sys']",
+    "()",
 )
 
 
-@settings(max_examples=500, deadline=None)
-@given(base=_PATH_BASES, links=_PATH_LINKS)
-def test_module_path_agrees_with_a_recursive_walk(base, links):
-    """Unwinding a chain changes no path, and keeps its determinism."""
+def _path_scope():
+    """Bind an invented module, with re-exports for ``_resolve`` to follow."""
     source = _invented(
         "import importlib\nimport os\nimport sys\n"
         "import populace_dynamics.engine as engine\n"
         "from populace_dynamics.engine import rng\n"
+        "import invented_pkg.exporter as exporter\n"
     )
-    scope = _ModuleBindings(source, set(), set(), {}, _FoldMemo(source.path))
+    exports = {
+        ("populace_dynamics.engine", "rng"): "sys",
+        ("invented_pkg.exporter", "alias"): "sys",
+    }
+    scope = _ModuleBindings(
+        source, set(), set(), exports, _FoldMemo(source.path)
+    )
     scope.bind(
         [
             node
@@ -4225,8 +4246,52 @@ def test_module_path_agrees_with_a_recursive_walk(base, links):
             if isinstance(node, _BINDING_NODES)
         ]
     )
+    return scope
+
+
+def _module_paths(scope, base, links):
+    """Give a chain's path by both walks, with a fresh memo for its nodes."""
     chain = ast.parse(base + "".join(links), mode="eval").body
-    assert scope.module_path(chain) == _recursive_module_path(scope, chain)
+    scope.memo = _FoldMemo(scope.source.path)
+    return scope.module_path(chain), _recursive_module_path(scope, chain)
+
+
+def test_module_path_agrees_with_a_recursive_walk_on_short_chains():
+    """Unwinding changes no path on any chain of up to three links."""
+    scope = _path_scope()
+    for size in range(4):
+        for links in product(_PATH_LINKS, repeat=size):
+            for base in _PATH_BASES:
+                unwound, recursive = _module_paths(scope, base, links)
+                assert unwound == recursive, (base, links)
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    base=st.sampled_from(_PATH_BASES),
+    links=st.lists(st.sampled_from(_PATH_LINKS), min_size=4, max_size=8),
+)
+def test_module_path_agrees_with_a_recursive_walk(base, links):
+    """Unwinding changes no path on a longer chain either."""
+    unwound, recursive = _module_paths(_path_scope(), base, links)
+    assert unwound == recursive
+
+
+@pytest.mark.parametrize(
+    "consumer",
+    (
+        "import invented_pkg.exporter as e\nTARGET = e.alias",
+        "from invented_pkg.exporter import alias\nTARGET = alias",
+    ),
+)
+def test_scan_reads_sys_modules_through_a_re_exported_sys(consumer):
+    """A module's ``sys`` still reads ``sys.modules``, by name or attribute."""
+    exporter = _invented("import sys as alias\n", "invented_pkg.exporter")
+    text = f"{consumer}.modules[{REGISTRY_MODULE!r}]\n"
+    hits = scan_sources([exporter, _invented(text)])
+    assert [(hit.line, hit.kind) for hit in hits] == [
+        (2, "module-reference")
+    ], describe(hits)
 
 
 _CHAIN = 3000
@@ -4287,12 +4352,12 @@ LONG_CHAINS = {
         "    return isinstance(x, ProjectionRNGRegistry)  # check\n",
         "isinstance",
     ),
-    "a chain of sys.modules reads to the class": (
+    "a chain of sys.modules reads to the module": (
         "import sys\nimport populace_dynamics.engine.rng\n"
-        "def f(x):\n    return isinstance(x, sys"
+        "def f(x):\n    return isinstance(x, getattr(sys"
         + ".modules['sys']" * (_CHAIN // 2)
-        + ".modules['populace_dynamics.engine.rng'].ProjectionRNGRegistry)"
-        "  # check\n",
+        + ".modules['populace_dynamics.engine.rng'], "
+        "'Projection' + 'RNGRegistry'))  # check\n",
         "isinstance",
     ),
 }

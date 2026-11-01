@@ -918,11 +918,18 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     code passed to `eval`, `exec`, `compile` or `ForwardRef` is parsed and
     scanned with the module, and so is literal code nested in it, down to
     five levels. A call whose literal code would be a sixth level is
-    reported as `dynamic-code` whatever the module binds. Annotations
-    differ. There only the hint checks parse literals, and they read
-    expressions, so a statement suite in an annotation, such as
-    `v: exec("def f(x): ...")`, stays unparsed at every depth and gives no
-    hit (limit class 4).
+    reported as `dynamic-code` whatever the module binds. A code call in
+    an annotation follows the same rules when its literal does not parse
+    as an expression, as in `v: exec("def f(x): ...")`, and the levels
+    count the same way. A literal that does parse as an expression stays
+    with the hint checks, so `ForwardRef("ProjectionRNGRegistry")` stays
+    trusted, and the scan looks inside it only for a suite. The scan
+    never asks whether Python evaluates the annotation, so a local
+    variable's hint, which Python never runs, gives the same hit. Where a
+    sixth level, or a code call on text the folder cannot read, sits in a
+    literal inside an annotation, the scan walks no node that holds it, so
+    the annotation itself reports `dynamic-code`, whatever the module
+    binds.
   - `member-introspection`: a dunder read on, or an introspection call
     such as `inspect.getmodule` or `getattr` on, a member of a module
     through which a class can be reached.
@@ -1001,21 +1008,30 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     exception it allows is the four-digit width rule; with that rule off,
     the folder must agree.
 - **Deep expressions.** The walks that follow class info, instances and
-  module paths keep their own stacks, as the folder and the catch-all do,
-  with one exception: `module_path` still recurses through literal
-  `sys.modules[...]` subscripts. Beside a working check, such a chain
-  passes at 500 links and raises `RecursionError` at 1000. The error stops
-  the scan, so it cannot silently miss a check.
-  `test_scan_reads_long_chains_without_exhausting_recursion` gives seven
-  working checks inside or beside chains 3000 links long: a sum of
-  literals, a union, slices, conditionals, attributes, calls and
-  negations. At `5a4fc14c`, the sum, the union, the slices and the
-  attributes raised `RecursionError` at 1000 links.
+  module paths keep their own stacks, as the folder and the catch-all do.
+  `module_path` unwinds attributes and literal `sys.modules[...]` reads in
+  one loop.
+  `test_scan_reads_long_chains_without_exhausting_recursion` gives nine
+  working checks inside or beside long chains. Seven run 3000 links: a sum
+  of literals, a union, slices, conditionals, attributes, calls and
+  negations. Two run 1500 `sys.modules` reads of two nodes each, so they
+  reach the same depth. One sits beside its check, and the other ends in
+  the module its check takes the class from. At `5a4fc14c`, the sum, the
+  union, the slices and the attributes raised `RecursionError` at 1000
+  links, and at `6413d842` a `sys.modules` chain did too.
+  `test_module_path_agrees_with_a_recursive_walk_on_short_chains` compares
+  `module_path` with a recursive reference on all 26,180 chains of up to
+  three links, invented re-exports included.
+  `test_module_path_agrees_with_a_recursive_walk` does the same on 200
+  Hypothesis chains of four to eight links, and
+  `test_scan_reads_sys_modules_through_a_re_exported_sys` reaches a module
+  through a re-exported `sys`, by name and by attribute.
 - **Cost.** Right after parsing, each literal container of constants is
   replaced by `None` unless a string in it holds either class's or
   module's name in any case, a probe name, or a name a read of a trusted
-  place spells, or the folder could read it. No check can report or bind
-  anything from such a container. The generated data modules of
+  place spells, or the folder could read it, or it sits in an annotation.
+  No check can report or bind anything from such a container. The
+  generated data modules of
   18.5, 11.1 and 1.6 MB are almost all such containers: pruning leaves
   178, 78 and 7 of their 706,994, 251,826 and 85,417 syntax-tree nodes, and
   934,121 of the 2,007,909 in all 302 modules at `a747bafa`. At `9cced8ff`
@@ -1023,7 +1039,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   source changes between the two.
   `test_pruning_leaves_every_invented_scan_unchanged` and
   `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
-  literals, each placed in fourteen positions, folded ones among them)
+  literals, each placed in sixteen positions, folded ones among them)
   check that pruning changes no result. On the host, at a one-minute load near
   100, the real-tree test took 15.0 s and the census test
   4.8 s. A process that parses the tree peaks near
@@ -1066,6 +1082,32 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     a working `isinstance` check in one to seven literal `exec` calls. It
     is reported as `isinstance` down to five levels and as `dynamic-code`
     at six and seven.
+  - `test_scan_reads_statement_suites_an_annotation_runs` hides a working
+    check in class, argument and return annotations, in one, five, six and
+    seven literal `exec` calls, and reads the annotation to run it. Pruned
+    and unpruned, the scan reports `isinstance` down to five levels and
+    `dynamic-code` at six and seven.
+    `test_scan_counts_levels_through_every_mix_of_code_calls` does the same
+    for all 127 mixes of `exec` and `eval` in up to six outer calls, at each
+    of the three places.
+  - `test_scan_reads_code_an_annotation_hides` gives thirteen more working
+    checks: a folded literal, compiled code, an expression literal around
+    the suite, a padded one, three string hints, a keyword-only and a
+    starred argument,
+    a coroutine, an annotation inside literal code, and a trusted
+    function's hint at the first and sixth levels.
+    `test_pruning_keeps_each_hint_whole` puts a working check's literal
+    under a lambda's default in each of the three annotation places.
+  - `test_scan_trusts_code_in_a_hint_that_reaches_no_class` gives six
+    hints in a module that binds nothing tracked, and
+    `test_scan_leaves_expression_literals_in_hints_to_the_hint_checks`
+    keeps `ForwardRef` and `eval` hints that name the registry trusted.
+  - `test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement`
+    wraps each spelling and negative in a hint and in an `exec` statement.
+    The hint gives every check the statement gives, with two exceptions.
+    The catch-all reads the statement's string, so its name hits do not
+    carry over. And a hint that names a tracked class makes a namespace
+    read an `annotation-read`.
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
@@ -1097,8 +1139,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   3. **Files read as data**, a module's own source among them, as with
      `open(__file__)` or `importlib.resources`.
   4. **Code it does not read**: the excluded modules, OP1's own package,
-     scripts, tests, third-party code and literal statement suites inside
-     annotations.
+     scripts, tests and third-party code.
 
   So a clean scan is evidence, not proof. Behaviour is checked
   separately, at run time: on the paths the reader runs and §4's identity
