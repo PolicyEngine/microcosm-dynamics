@@ -120,51 +120,66 @@ block more or less often than R3 (§7).
 
 Computed from the file without simulation:
 
-- 57,240 households; 166,321 persons; 318 person columns. Household
-  weights (`household_weight`) sum to 122,537,092; weighted persons
-  340,077,323. A person's weight is their household's weight.
+- 352,932 households; 907,863 persons; 320 person columns. Household
+  weights (`household_weight`, 2024) sum to 138,098,417; weighted persons
+  340,222,955. The smallest household weight is 0.0088, and no weight
+  falls to zero or below. A person's weight is their household's weight.
 - Social Security beneficiaries are the person records with any of the
   four components above zero; the run reports their count and weight.
-- **Assets.** `bank_account_assets`, `stock_assets` and `bond_assets` are
-  populated and never negative. Every household has at most one person
-  with nonzero assets, always its lowest-`A_LINENO` person, which is the
-  CPS reference person (`A_EXPRRP` 1 or 2) in 56,870 of the 57,240
-  households; 52,637 households have such a person and 4,603 have none.
-  Microcosm's wealth stage at the parent build's commit `cae8640`
-  (`packages/populace-build/src/populace/build/us_runtime/scf_wealth.py`,
-  docstring and line 150; the same code is at origin/main
-  `packages/microcosm-build/src/microcosm/build/us_runtime/scf_wealth.py:50-57, 149-150`)
-  draws each household's whole asset vector once, from SCF 2022 or SIPP
-  2023 with equal probability, by quantile regression forest, and places
-  it on the reference person. The frame's manifests do not record whether
-  the SIPP donor was supplied, so whether these assets are that blend or
-  SCF-only is not confirmed. Household `net_worth` is also imputed.
-- **Demographics.** `age` (top-coded: ages above 79 are only 80 and 85,
-  standing for 80-84 and 85+), `is_female`, `cps_race` (equal to the CPS
-  `PRDTRACE` in every row), `is_hispanic`, and the CPS marital recode
-  `A_MARITL` (codes 1-7) are populated in every row.
-- **SSI inputs.** `meets_ssi_disability_criteria`, `is_blind`,
-  `takes_up_ssi_if_eligible` and `immigration_status_str` are populated.
+- **Reported Social Security.** No record has `SS_VAL > 0` and $0 in all
+  four components, in either of the frame's two channels
+  (`person_support_channel`: `asec` and `puf_tax_detail`). Among people
+  aged 65 and over, 80.7 percent in `asec` report Social Security and
+  80.7 percent hold a model component; in `puf_tax_detail`, 76.6 percent
+  report it and 82.6 percent hold a component. So about 6.0 percent of
+  that `puf_tax_detail` group hold a component with no CPS report. The
+  step that gave it to them is not traced here.
+- **Assets.** The frame stores `bank_account_assets`, `stock_assets` and
+  `bond_assets`, and they are never negative. Every household has at most
+  one person with positive assets, always its lowest-`A_LINENO` person:
+  322,945 households have such a person and 29,987 have none. The lowest
+  line is the CPS reference person (`A_EXPRRP` 1 or 2) in 351,550 of the
+  352,932 households. Of the 322,945 holders, 321,768 are the reference
+  person, 99.6 percent in each channel, and the same number carry
+  `is_household_head`. Microcosm's wealth stage at `8b0c1950`
+  (`packages/microcosm-build/src/microcosm/build/us_runtime/scf_wealth.py`,
+  lines 16-18 and 53) gives each household one draw of its whole asset
+  vector, from SCF 2022 or SIPP 2023 with equal probability. Its
+  docstring names the CPS reference person as the carrier, and its
+  `_household_head_mask` (line 673) picks the lowest line, which is the
+  placement the columns show (microcosm#1215). The build passes the
+  pinned SIPP donor to the blend
+  (`tools/build_us_fiscal_refresh_release.py:13830`), but its manifests
+  and source-coverage record do not state whether the SIPP half ran, so
+  whether these assets are that blend or SCF-only is not confirmed
+  (microcosm#1216). Household `net_worth` is also imputed.
+- **Demographics.** `age` holds whole years from 0 and top-codes: ages
+  above 79 are only 80 and 85, standing for 80-84 and 85+. `cps_race`
+  holds codes 1-26, and the CPS marital recode `A_MARITL` holds codes
+  1-7. The frame also stores `is_female` and `is_hispanic`, which the
+  column checks did not read.
+- **SSI inputs.** The frame stores `meets_ssi_disability_criteria`,
+  `is_blind`, `takes_up_ssi_if_eligible` and `immigration_status_str`,
+  which the column checks did not read.
 - **Marital composition** of beneficiaries aged 62 and over (frame
-  weights): married 85.6 percent, widowed 7.9, divorced 4.0, never
-  married 2.1, separated 0.4. Persons aged 65 and over live alone 9.1
-  percent of the time. Both differ sharply from published figures (§12,
-  difference 6).
-- **Synthetic benefit splits.** 5,924 records (9.8 million weighted),
-  all from Microcosm's PUF-support channel
-  (`person_support_channel = puf_tax_detail`), carry all four Social
-  Security components at once, in the same fixed proportions in every
-  record: retirement 24.96, survivors 37.93, dependents 13.55 and
-  disability 23.56 percent of the person's total. No other record has
+  weights): married 70.0 percent, widowed 14.7, divorced 9.8, never
+  married 4.6, separated 1.0. Persons aged 65 and over live alone 19.2
+  percent of the time (§12, difference 6).
+- **Synthetic benefit splits.** 21,059 records, all from Microcosm's
+  PUF-support channel (`person_support_channel = puf_tax_detail`), carry
+  all four Social Security components at once, in the same fixed
+  proportions in every record: retirement 19.69, survivors 44.91,
+  dependents 16.64 and disability 18.76 percent of the person's total.
+  They hold 10.3 percent of beneficiaries' weight. No other record has
   more than one positive component. The PUF-support stage splits a
   predicted total equally when its donor basis is zero
-  (`puf_support.py:4223` at origin/main; `:2180` at `cae8640`); the
-  frame's shares are not equal, so that step alone does not produce them,
-  and the step that set them is not traced here. The run recomputes these
-  shares as a structural check.
+  (`puf_support.py:4307` at `8b0c1950`); the frame's shares are not
+  equal, so that step alone does not produce them, and the step that set
+  them is not traced here. The run recomputes these shares as a
+  structural check.
 - **Child beneficiaries.** CPS asks income questions only of persons aged
-  15 and over, but the PUF-support channel gives benefits to 25 records
-  aged 0-14 (64,129 weighted, 2024). All are synthetic-split records.
+  15 and over, but the PUF-support channel gives benefits to 67 records
+  aged 0-14 (20,221 weighted, 2024). All are synthetic-split records.
 
 ### 2.3 What the frame is and is not calibrated to
 
@@ -571,9 +586,9 @@ refusal):
    countable resources and the four 2026 components are never negative;
    2026 age equals frame age.
    The records whose four 2024 frame components are all positive number
-   5,924, and for each of them the components, converted to float64 and
+   21,059, and for each of them the components, converted to float64 and
    divided by their sum, give `numpy.round(100 * share, 2)` equal to
-   24.96, 37.93, 13.55 and 23.56 (retirement, survivors, dependents,
+   19.69, 44.91, 16.64 and 18.76 (retirement, survivors, dependents,
    disability).
 6. For every row and cell with `W > 0`, the three labels' shares, under
    both the row's test and no asset test, sum to one within 1e-12. Cells with `W = 0` keep undefined shares with their
@@ -623,31 +638,36 @@ and the SSI change outside the universe's marital units (§13).
 ## 12. Named differences, carried on every output
 
 1. **Frame-relative.** Liquid assets are imputed (one draw per household,
-   SCF 2022 or SIPP 2023 donors by Microcosm's code; the blend is not
-   confirmed for this frame) and not calibrated; beneficiary counts and
-   concurrent SS-SSI receipt are not calibrated.
+   SCF 2022 or SIPP 2023 donors by Microcosm's code; the build's records
+   do not state whether the SIPP half ran, microcosm#1216) and not
+   calibrated; beneficiary counts and concurrent SS-SSI receipt are not
+   calibrated.
 2. **Asset placement.** Each household's assets sit on its
-   lowest-`A_LINENO` person; other members hold none. Rows R3 and R4 are
-   two alternative resource tests addressing this.
+   lowest-`A_LINENO` person; other members hold none. That person is the
+   CPS reference person for 99.6 percent of holders (microcosm#1215).
+   Rows R3 and R4 are two alternative resource tests addressing this.
 3. **No resource deeming in PE-US 2.18.0** (§4.1). Row R3 applies the
    spousal rule; the parent-to-child rule is not applied in any row.
 4. **The fund of a dependent's benefit is unknown.** PE-US's single
    dependents component cannot separate dependents of disabled workers
    (DI) from dependents of retired workers (OASI), so the OASI cut
    reduces both.
-5. **Synthetic splits.** 16.9 percent of beneficiaries (weighted) carry a
-   synthetic fixed-proportion split across all four components (76.4
+5. **Synthetic splits.** 10.3 percent of beneficiaries (weighted) carry a
+   synthetic fixed-proportion split across all four components (81.2
    percent of it in OASI components); row R5 excludes them.
 6. **Marital and living-arrangement composition.** The frame's
-   beneficiaries aged 62 and over are 85.6 percent married. Urban
+   beneficiaries aged 62 and over are 70.0 percent married. Urban
    Institute tabulations of SSA's MINT model (MINTEX), published in
    2005/2006, project 60 percent of Social Security beneficiaries aged 62
    or older in 2022 to be married (Butrica, Cashin and Uccello, Social
    Security Bulletin 66(4), Table 1, row Married, column All, 2022).
-   Widowed, divorced and never-married beneficiaries, and people living
-   alone, are underrepresented in the frame. The all-beneficiary shares
-   reflect this skew, and one-way breakdowns do not remove it: composition
-   can also differ within age, sex, race and income cells.
+   The frame's other beneficiaries aged 62 and over run 14.7 percent
+   widowed, 9.8 divorced, 4.6 never married and 1.0 separated, and 19.2
+   percent of persons aged 65 and over live alone. This registration
+   compares only the married share with a published figure. The
+   all-beneficiary shares reflect this composition, and one-way breakdowns
+   do not remove it: composition can also differ within age, sex, race and
+   income cells.
 7. **Model versions.** Microcosm solved the weights under PE-US 2.2.1,
    and the data release declares compatibility with policyengine-us 2.2.1
    and core 3.32.5 only. The run uses 2.18.0 (core 3.32.11), outside that
@@ -660,7 +680,7 @@ and the SSI change outside the universe's marital units (§13).
     living arrangements.
 11. **Age.** Top-coded at 80-84 and 85+. CPS does not collect a child's
     own Social Security income below age 15; beneficiaries under 15
-    appear only as 25 synthetic PUF-support records, so the frame omits
+    appear only as 67 synthetic PUF-support records, so the frame omits
     or misattributes child beneficiaries.
 12. **The spousal-deeming cap.** When an ineligible spouse's income is
     deemed, 20 CFR 416.1163(e)(2) limits the benefit to the lesser of the
@@ -671,7 +691,8 @@ and the SSI change outside the universe's marital units (§13).
     modeled response, including this discrepancy.
 13. **The frame, and through it the universe.** Registration 19's erased
     records carried 11.8 million weighted people, 9.2 million of them aged
-    65 and over. The run measures and reports the new count.
+    65 and over. This frame holds no such record (§2.2), so its universe
+    keeps those reporters.
 14. **Size.** This frame holds about 5.5 times Registration 19's persons
     and 6.2 times its households, so its record counts and small-cell
     flags don't compare directly with Registration 19's.
@@ -916,10 +937,17 @@ read, and:
 
 - This rerun's session read Registration 19's public results and the
   microcosm#1178 diagnostics.
-- <<COLUMN CHECKS: the script's hash, the columns it reads and what it
-  printed.>>
+- This session read the fit and drift figures in decision records d2181
+  (the release) and d2248 (the recertification), SSI's percent moves
+  between PE-US 2.2.1 and 2.60.4 among them.
+- One script read the frame's stored columns once, on 2026-11-01, and ran
+  no simulation (SHA-256 `c4108a98add6717b0f065e17fe708aeea8b3d97cc4a0ede6d6253336519a826c`). It read `person_id`, `person_household_id`, `person_marital_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `A_MARITL`, `A_LINENO`, `A_EXPRRP`, `cps_race`, `is_household_head`, the four Social Security components, the three asset columns, `household_id`, `household_weight` and `marital_unit_id`. It printed
+  counts, shares, codes and distinct values, and no dollar total; §2.2
+  carries what it printed. It read no SSI column and no take-up flag.
 - No simulation has run on this frame for this registration, and nobody
-  has computed a statistic of §6 on it.
+  working on this registration has computed a statistic of §6 on it. The
+  release build and the 2.60.4 recertification simulated this frame for
+  their own checks.
 
 ## 17. Worked cases (invented)
 
