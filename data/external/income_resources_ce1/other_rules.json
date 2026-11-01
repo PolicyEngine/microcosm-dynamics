@@ -2312,10 +2312,11 @@
         "case_id": "domestic_farm_service_before_1995",
         "precedence": 1,
         "when": {
-          "domestic_service": "domestic service on a farm operated for profit"
+          "domestic_service": "domestic service on a farm operated for profit",
+          "amount": "cash remuneration from one employer in 1994 of less than $1,000"
         },
         "consequence": "open",
-        "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes.",
+        "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes. Both readings exclude noncash pay (noncash_remuneration here; the agricultural family for noncash farm pay) and cover cash pay of $1,000 or more, which meets both families' thresholds, so the case reads cash pay under $1,000 (review r6 M-2).",
         "open_reason": "FARM_DOMESTIC_1994_DATE_UNSETTLED: Pub. L. 103-387 rewrote 409(a)(6)(B) to reach cash pay \"for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)\" (42 U.S.C. 409, 1994 edition), and the 409 notes make the amendment \"applicable to remuneration paid after Dec. 31, 1993\". POMS RS 01402.216 A and RS 01901.200 D.1 say instead that \"Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees\", RS 01901.200 citing \"the enactment of P.L. 103-387 effective January 1, 1995\". No CE1 capture holds section 2(a)(3) of the Act, so the rule for farm domestic pay in 1994 is unsettled and the case refuses.",
         "open_alternatives": [
           {

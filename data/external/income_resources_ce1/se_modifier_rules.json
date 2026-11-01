@@ -162,28 +162,8 @@
         ]
       },
       {
-        "case_id": "services_to_occupants_other_space",
-        "precedence": 5,
-        "when": {
-          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
-        },
-        "consequence": "open",
-        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
-        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNVERIFIED: the occupant-services rule is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2), and there (d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
-        "open_alternatives": [
-          {
-            "name": "statutory_rental_exclusion",
-            "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes, on the statute alone or on the 1996 rule read as reaching living quarters only."
-          },
-          {
-            "name": "apply_1996_occupant_services_test_to_other_space",
-            "description": "Include the payments in net earnings, reading the April 1, 1996 edition's (d)(2)(ii) test, which speaks of \"rooms or other space\", as reaching any rented space."
-          }
-        ]
-      },
-      {
         "case_id": "farm_rental_arrangement",
-        "precedence": 6,
+        "precedence": 5,
         "when": {
           "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
         },
@@ -194,6 +174,26 @@
         ],
         "defers_to": [
           "self_employment_farm_rental_participation"
+        ]
+      },
+      {
+        "case_id": "services_to_occupants_other_space",
+        "precedence": 6,
+        "when": {
+          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+        },
+        "consequence": "open",
+        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked below the farm-rental deferral, whose arrangement the proviso decides, and above real_estate_rentals, whose condition this worker also meets (review r6 M-2).",
+        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNVERIFIED: the occupant-services rule is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2), and there (d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_rental_exclusion",
+            "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes, on the statute alone or on the 1996 rule read as reaching living quarters only."
+          },
+          {
+            "name": "apply_1996_occupant_services_test_to_other_space",
+            "description": "Include the payments in net earnings, reading the April 1, 1996 edition's (d)(2)(ii) test, which speaks of \"rooms or other space\", as reaching any rented space."
+          }
         ]
       },
       {
@@ -434,28 +434,8 @@
         ]
       },
       {
-        "case_id": "services_to_occupants_other_space",
-        "precedence": 4,
-        "when": {
-          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
-        },
-        "consequence": "open",
-        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
-        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNSETTLED: 20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", and adds only parking, warehouse and storage space, while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
-        "open_alternatives": [
-          {
-            "name": "living_quarters_rule_only",
-            "description": "Only living quarters (and parking, warehouse or storage space) take the (d)(2)(i) inclusion; payments for other space stay rentals from real estate that 411(a)(1) and 404.1082(a) exclude."
-          },
-          {
-            "name": "occupant_services_test_any_space",
-            "description": "(d)(2)(ii)'s test, which speaks of \"rooms or other space\", reaches any rented space: services primarily for the occupant's convenience make the payments net earnings from self-employment, as for living quarters."
-          }
-        ]
-      },
-      {
         "case_id": "farm_rental_arrangement",
-        "precedence": 5,
+        "precedence": 4,
         "when": {
           "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
         },
@@ -466,6 +446,26 @@
         ],
         "defers_to": [
           "self_employment_farm_rental_participation"
+        ]
+      },
+      {
+        "case_id": "services_to_occupants_other_space",
+        "precedence": 5,
+        "when": {
+          "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
+        },
+        "consequence": "open",
+        "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked below the farm-rental deferral, whose arrangement the proviso decides, and above real_estate_rentals, whose condition this worker also meets (review r6 M-2).",
+        "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNSETTLED: 20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", and adds only parking, warehouse and storage space, while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "living_quarters_rule_only",
+            "description": "Only living quarters (and parking, warehouse or storage space) take the (d)(2)(i) inclusion; payments for other space stay rentals from real estate that 411(a)(1) and 404.1082(a) exclude."
+          },
+          {
+            "name": "occupant_services_test_any_space",
+            "description": "(d)(2)(ii)'s test, which speaks of \"rooms or other space\", reaches any rented space: services primarily for the occupant's convenience make the payments net earnings from self-employment, as for living quarters."
+          }
         ]
       },
       {

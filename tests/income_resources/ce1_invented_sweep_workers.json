@@ -226,7 +226,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: Ned, a college student, works as a summer 2024 aide at an Army Corps of Engineers R&D laboratory under a 10 U.S.C. 2360 contract.",
+   "worker": "INVENTED: Ned, a college student, works as a summer 2024 aide at an Army Corps of Engineers R&D laboratory under a 10 U.S.C. 2360 contract. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "federal_service": [
      "first hired after 1983",
@@ -234,7 +234,7 @@
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "army_corps_2360_student_aide"
   },
   {
@@ -2682,13 +2682,13 @@
   },
   {
    "rule_id": "federal_1968_1972",
-   "worker": "INVENTED: 1970: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a summer aide in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes', but no capture holds or dates section 2360, so the row refuses (ARMY_CORPS_2360_LAW_UNCAPTURED).",
+   "worker": "INVENTED: 1970: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a summer aide in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes'. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
     "federal_retirement_system": "covered by no retirement system"
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "army_corps_2360_student_aide"
   },
   {
@@ -2714,13 +2714,13 @@
   },
   {
    "rule_id": "federal_1973_1983",
-   "worker": "INVENTED: 1979: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a part-time aide during the school year in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes', but no capture holds or dates section 2360, so the row refuses (ARMY_CORPS_2360_LAW_UNCAPTURED).",
+   "worker": "INVENTED: 1979: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a part-time aide during the school year in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes'. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
     "federal_retirement_system": "covered by no retirement system"
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "army_corps_2360_student_aide"
   },
   {
@@ -3455,7 +3455,7 @@
   },
   {
    "rule_id": "federal_1984_1986",
-   "worker": "INVENTED: College student engaged in summer 1985 as a laboratory aide at a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal student employment, on the laboratory's payroll as a Federal student employee; no earlier Federal service. POMS RS 01901.340 C.5 says not covered; no capture holds or dates 10 U.S.C. 2360, so the open case (added to this row under review r5 M-5, ranked above first_hired_after_1983 as in federal_1987_2026) refuses.",
+   "worker": "INVENTED: College student engaged in summer 1985 as a laboratory aide at a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal student employment, on the laboratory's payroll as a Federal student employee; no earlier Federal service. POMS RS 01901.340 C.5 says not covered. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -3463,7 +3463,7 @@
      "first hired after 1983"
     ]
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "army_corps_2360_student_aide"
   },
   {
@@ -3963,7 +3963,8 @@
     "federal_service": [
      "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner",
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
-     "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
+     "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
+     "legislative-branch service, other than as a Member, Delegate or Resident Commissioner, that would be excluded under 410(a)(5)-(6) as in effect in January 1983, either as service performed continuously since December 31, 1983 (410(a)(5)(B)(i)(I)-(V)) or as service by an individual receiving an annuity from the Civil Service Retirement and Disability Fund or benefits under another Federal employee retirement system (410(a)(5)(B)(ii)), performed on or after a date on which the individual performed service described in 410(a)(5)(G) that was performed on or after 1988-11-10"
     ],
     "federal_retirement_system": [
      "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))"
@@ -4265,7 +4266,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: Career employee subject to CSRS since 1975 who elected FERS under the Federal Employees' Retirement System Open Enrollment Act of 1997, effective in 1998. Classified service: 2000. 410(a)(5)(H)(i) as amended by Pub. L. 105-61. His (H) service on or after 1988-11-10 also makes the after-official text true, and that case, ranked above fers_or_fsps_election, decides (covered either way).",
+   "worker": "INVENTED: Career employee subject to CSRS since 1975 who elected FERS under the Federal Employees' Retirement System Open Enrollment Act of 1997, effective in 1998. Classified service: 2000. 410(a)(5)(H)(i) as amended by Pub. L. 105-61. His (H) service on or after 1988-11-10 also makes the after-official text true, and fers_or_fsps_election, now ranked above that case (review r6 M-2), decides (covered either way).",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -4277,11 +4278,11 @@
     ]
    },
    "expected": "covered",
-   "decides": "after_official_service_from_1988_11_10"
+   "decides": "fers_or_fsps_election"
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: College student engaged in summer 1995 as a laboratory aide at a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal student employment, on the laboratory's payroll as a Federal student employee. POMS RS 01901.340 C.5 says not covered; 10 U.S.C. 2360 and its date are uncaptured, so the case is open.",
+   "worker": "INVENTED: College student engaged in summer 1995 as a laboratory aide at a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal student employment, on the laboratory's payroll as a Federal student employee. POMS RS 01901.340 C.5 says not covered. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -4289,7 +4290,7 @@
      "first hired after 1983"
     ]
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "army_corps_2360_student_aide"
   },
   {
@@ -4347,7 +4348,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: Career employee subject to CSRS since 1975 who elected FERS under section 301 of the Federal Employees' Retirement System Act of 1986, effective 1988-01-01. Classified service: 1990. 410(a)(5)(H)(i). His (H) service on or after 1988-11-10 also makes the after-official text true, and that case, ranked above fers_or_fsps_election, decides (covered either way).",
+   "worker": "INVENTED: Career employee subject to CSRS since 1975 who elected FERS under section 301 of the Federal Employees' Retirement System Act of 1986, effective 1988-01-01. Classified service: 1990. 410(a)(5)(H)(i). His (H) service on or after 1988-11-10 also makes the after-official text true, and fers_or_fsps_election, now ranked above that case (review r6 M-2), decides (covered either way).",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -4359,7 +4360,7 @@
     ]
    },
    "expected": "covered",
-   "decides": "after_official_service_from_1988_11_10"
+   "decides": "fers_or_fsps_election"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -4378,7 +4379,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: Foreign Service officer subject to the Foreign Service Retirement and Disability System since 1975 who elected the Foreign Service Pension System under regulations issued under section 860 of the Foreign Service Act of 1980, effective 1988-01-01. Classified service: 1990. 410(a)(5)(H)(ii) as amended by Pub. L. 100-647 section 8015(b)(1), effective as if included in the FERS Act (section 8015(b)(3)). His (H) service on or after 1988-11-10 also makes the after-official text true, and that case, ranked above fers_or_fsps_election, decides (covered either way).",
+   "worker": "INVENTED: Foreign Service officer subject to the Foreign Service Retirement and Disability System since 1975 who elected the Foreign Service Pension System under regulations issued under section 860 of the Foreign Service Act of 1980, effective 1988-01-01. Classified service: 1990. 410(a)(5)(H)(ii) as amended by Pub. L. 100-647 section 8015(b)(1), effective as if included in the FERS Act (section 8015(b)(3)). His (H) service on or after 1988-11-10 also makes the after-official text true, and fers_or_fsps_election, now ranked above that case (review r6 M-2), decides (covered either way).",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -4390,7 +4391,7 @@
     ]
    },
    "expected": "covered",
-   "decides": "after_official_service_from_1988_11_10"
+   "decides": "fers_or_fsps_election"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -5751,7 +5752,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Ivo, Hana's colleague, same service and organization, filed his 312(c) request on 1980-06-01, after April 15, 1980. Just misses the 312(c) case; the open 3121(k)(4)(C) question decides.",
+   "worker": "INVENTED: Ivo, Hana's colleague, same service and organization, filed his 312(c) request on 1980-06-01, after April 15, 1980. Just misses the 312(c) case; 3121(k)(4)(C) made the deemed certificate inapplicable to his service (the 312(c) note; POMS RS 01901.540 D.8), so it is not employment.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
@@ -5760,7 +5761,7 @@
     ],
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on 1980-06-01, after April 15, 1980"
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "deemed_waiver_k4c_period"
   },
   {
@@ -5776,7 +5777,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Kai, at Hana's college, service 1976 Q1-1977 Q2, filed no 312(c) request. Reach of the open case: whether 3121(k)(4)(C) made the deemed certificate inapplicable is unsettled (no capture holds its text).",
+   "worker": "INVENTED: Kai, at Hana's college, service 1976 Q1-1977 Q2, filed no 312(c) request. The employer stopped paying before 1976-10-19, so 3121(k)(4)(C) made the deemed certificate inapplicable to his service before 1977-07-01 (the 312(c) note; POMS RS 01901.540 D.8): not employment, and he made no 312(c) request.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
@@ -5784,7 +5785,7 @@
      "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
     ]
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "deemed_waiver_k4c_period"
   },
   {
@@ -8262,17 +8263,14 @@
   },
   {
    "rule_id": "clergy_1968_1972",
-   "worker": "INVENTED: 1971: Korean-citizen pastor of a congregation on Saipan, a nonresident alien for the taxable year, no 1402(e) exemption. 411(b) names four places, Publication 517 (2025) adds the CNMI, so the case refuses (M-3). Hypothetical as to date: no capture dates the Commonwealth.",
+   "worker": "INVENTED: 1971: Korean-citizen pastor of a congregation on Saipan, a nonresident alien for the taxable year, no 1402(e) exemption. 411(b) excludes a nonresident alien's earnings. The Commonwealth of the Northern Mariana Islands rests on Public Law 94-241, an Act of the 94th Congress, so in 1971 he can be no resident of it and this row carries no CNMI case (review r6 M-2).",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-    "nonresident_alien_status": [
-     "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
-     "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
-    ],
+    "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
     "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "refuses",
-   "decides": "cnmi_noncitizen_resident_ministry"
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
   },
   {
    "rule_id": "clergy_1968_1972",
@@ -8294,7 +8292,10 @@
      "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
      "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
     ],
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "not shown to have an effective 1402(e) exemption"
+    ]
    },
    "expected": "refuses",
    "decides": "cnmi_noncitizen_resident_ministry"
@@ -8319,7 +8320,10 @@
      "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings",
      "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands, and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
     ],
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "not shown to have an effective 1402(e) exemption"
+    ]
    },
    "expected": "refuses",
    "decides": "cnmi_noncitizen_resident_ministry"
@@ -9028,7 +9032,10 @@
    "facts": {
     "domestic_service": "domestic service on a farm operated for profit",
     "cash_remuneration": "cash remuneration",
-    "amount": "$600 cash from one employer in 1994"
+    "amount": [
+     "$600 cash from one employer in 1994",
+     "cash remuneration from one employer in 1994 of less than $1,000"
+    ]
    },
    "expected": "refuses",
    "decides": "domestic_farm_service_before_1995"
@@ -9039,7 +9046,10 @@
    "facts": {
     "domestic_service": "domestic service on a farm operated for profit",
     "cash_remuneration": "cash remuneration",
-    "amount": "cash remuneration from one employer in 1994 of at least $50 but less than $1,000"
+    "amount": [
+     "cash remuneration from one employer in 1994 of at least $50 but less than $1,000",
+     "cash remuneration from one employer in 1994 of less than $1,000"
+    ]
    },
    "expected": "refuses",
    "decides": "domestic_farm_service_before_1995"
@@ -15236,6 +15246,180 @@
    },
    "expected": "noncovered",
    "decides": "registered_organization_employer"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r6 M-2, just misses on the trigger): 1990: the delayed Senate staffer's colleague, in the same 2601(d)(3) delay months, whose trigger is his own service from 1989 in a position placed in the Executive Schedule (410(a)(5)(D)), not legislative-branch (G) service. Both readings cover his later service: the after-official rule rests on (D) service, which the delay does not reach.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": [
+     "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner",
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
+    ],
+    "federal_retirement_system": [
+     "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))"
+    ]
+   },
+   "expected": "covered",
+   "decides": "after_official_service_from_1988_11_10"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r6 M-2, just misses on the grandfather): 1990: a Senate staffer in the same 2601(d)(3) delay months, after (G) service on or after 1988-11-10, whose Federal service broke for more than a year after 1983, so no lower case excludes him and both readings cover the service.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": [
+     "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner",
+     "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
+     "legislative-branch service performed on or after a date on which the individual performed service described in 410(a)(5)(G) on or after 1988-11-10, by an individual whose service has not been continuous since December 31, 1983 and who receives no Federal annuity"
+    ],
+    "federal_retirement_system": [
+     "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))"
+    ]
+   },
+   "expected": "covered",
+   "decides": "after_official_service_from_1988_11_10"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r6 M-2): 1990: a delayed Senate staffer, grandfathered, who elected FERS effective 1988-01-01 under a provision 410(a)(5)(H) names: the election covers his service on both readings, and fers_or_fsps_election now ranks above the open case.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": [
+     "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner",
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
+     "legislative-branch service, other than as a Member, Delegate or Resident Commissioner, that would be excluded under 410(a)(5)-(6) as in effect in January 1983, either as service performed continuously since December 31, 1983 (410(a)(5)(B)(i)(I)-(V)) or as service by an individual receiving an annuity from the Civil Service Retirement and Disability Fund or benefits under another Federal employee retirement system (410(a)(5)(B)(ii)), performed on or after a date on which the individual performed service described in 410(a)(5)(G) that was performed on or after 1988-11-10"
+    ],
+    "federal_retirement_system": [
+     "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))",
+     "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System"
+    ]
+   },
+   "expected": "covered",
+   "decides": "fers_or_fsps_election"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-2, just misses on the exemption): 1980: the Saipan pastor's colleague, also a noncitizen nonresident alien resident in the CNMI, with an approved 1402(e) exemption: noncovered on both readings, so the CNMI case does not reach him.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "nonresident_alien_status": [
+     "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
+     "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-2): 1980: a noncitizen nonresident alien minister resident in the CNMI whose exemption status the record does not show: the readings differ (411(b) excludes; on the Publication 517 reading the exemption fact is missing), so the CNMI case refuses.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "nonresident_alien_status": [
+     "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
+     "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
+    ],
+    "clergy_or_religious_exemption": [
+     "not established",
+     "not shown to have an effective 1402(e) exemption"
+    ]
+   },
+   "expected": "refuses",
+   "decides": "cnmi_noncitizen_resident_ministry"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-2, just misses on the exemption): 2010: the Saipan pastor's colleague, also a noncitizen nonresident alien resident in the CNMI, with an approved 1402(e) exemption: noncovered on both readings, so the CNMI case does not reach him.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "nonresident_alien_status": [
+     "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings",
+     "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands, and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-2): 2010: a noncitizen nonresident alien minister resident in the CNMI whose exemption status the record does not show: the readings differ (411(b) excludes; on the Publication 517 reading the exemption fact is missing), so the CNMI case refuses.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "nonresident_alien_status": [
+     "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings",
+     "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands, and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
+    ],
+    "clergy_or_religious_exemption": [
+     "not established",
+     "not shown to have an effective 1402(e) exemption"
+    ]
+   },
+   "expected": "refuses",
+   "decides": "cnmi_noncitizen_resident_ministry"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r6 M-2, just misses on amount): Ola, a housekeeper in a farm operator's private home on a farm operated for profit, paid $1,400 cash in 1994: the domestic $1,000 test and the agricultural $150 test are both met, so both readings cover her pay and the open case does not reach her.",
+   "facts": {
+    "domestic_service": "domestic service on a farm operated for profit",
+    "cash_remuneration": "cash remuneration",
+    "amount": "$1,400 cash from one employer in 1994"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r6 M-2): Pia, a farm operator's live-in cook on a farm operated for profit, paid in 1994 only in meals and lodging: noncash pay is excluded on both readings, so noncash_remuneration decides.",
+   "facts": {
+    "domestic_service": "domestic service on a farm operated for profit",
+    "cash_remuneration": "remuneration paid in any medium other than cash"
+   },
+   "expected": "noncovered",
+   "decides": "noncash_remuneration"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED (review r6 M-2): 1979: a vowed sister retired because of old age who still keeps the order's archive as an order duty; the record does not show whether her order elected. Without an election 410(a)(8)(A) excludes the duties; with one, 3121(r) makes only an active member's duties employment, so both readings exclude her.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period"
+   },
+   "expected": "noncovered",
+   "decides": "vowed_member_outside_3121r2_definition"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED (review r6 M-2): 2012: a vowed sister retired because of old age who still keeps the order's archive as an order duty; the record does not show whether her order elected. Without an election 410(a)(8)(A) excludes the duties; with one, 3121(r) makes only an active member's duties employment, so both readings exclude her.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period"
+   },
+   "expected": "noncovered",
+   "decides": "vowed_member_outside_3121r2_definition"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED (review r6 M-2): 1979: a vowed brother, not a United States citizen, doing his order's duties at its mission outside the United States; the record does not show whether his order elected. Both readings exclude the service before 1984.",
+   "facts": {
+    "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+    "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
+    "place_of_work": "outside the United States",
+    "citizenship": "not a United States citizen"
+   },
+   "expected": "noncovered",
+   "decides": "election_member_abroad_not_covered"
   }
  ]
 }

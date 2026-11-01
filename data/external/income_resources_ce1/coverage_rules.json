@@ -2116,36 +2116,10 @@
           }
         },
         {
-          "case_id": "cnmi_noncitizen_resident_ministry",
-          "consequence": "open",
-          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets.",
-          "open_alternatives": [
-            {
-              "description": "nonresident_alien_ministry decides: the earnings are not self-employment income.",
-              "name": "statutory_four_territories"
-            },
-            {
-              "description": "the minister is treated as a citizen or resident alien for SE tax, so the remaining cases decide: ministry_without_exemption_or_vow, effective_1402e_exemption or exemption_status_unknown.",
-              "name": "publication_517_territorial_resident"
-            }
-          ],
-          "open_reason": "CNMI_SE_NONRESIDENT_ALIEN_UNSETTLED: 411(b)'s final sentence, and 1402(b)'s, keep a noncitizen resident of \"the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa\" from being a nonresident alien and name no other place, while Publication 517 (2025) lists the Commonwealth of the Northern Mariana Islands with them: \"If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States.\" No CE1 capture holds the law Publication 517 rests on for the CNMI or dates it (POMS RS 01901.320 cites Public Law 94-241 section 606, which no capture holds, and dates only the coverage of CNMI government employees), so the case refuses.",
-          "overrides": [
-            "nonresident_alien_ministry",
-            "ministry_without_exemption_or_vow",
-            "effective_1402e_exemption"
-          ],
-          "precedence": 2,
-          "when": {
-            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-            "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
-          }
-        },
-        {
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 3,
+          "precedence": 2,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
@@ -2155,7 +2129,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 4,
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2165,7 +2139,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 5,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2175,7 +2149,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 6,
+          "precedence": 5,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2184,7 +2158,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 7,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2433,7 +2407,7 @@
           }
         ],
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b) to a nonresident alien. For a United States citizen abroad, former 411(a)(7) disregarded the 911 and 931 exclusions only for an American employer's employee or a minister to a congregation composed predominantly of United States citizens (POMS NL 00711.065 1331.1); the self_employment_clergy_gross_concept family decides that computation. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places).",
+        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b) to a nonresident alien. For a United States citizen abroad, former 411(a)(7) disregarded the 911 and 931 exclusions only for an American employer's employee or a minister to a congregation composed predominantly of United States citizens (POMS NL 00711.065 1331.1); the self_employment_clergy_gross_concept family decides that computation. No CNMI case: the Commonwealth rests on Public Law 94-241, an Act of the 94th Congress, so no noncitizen was its resident in 1968-1972.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -2758,7 +2732,7 @@
         {
           "case_id": "cnmi_noncitizen_resident_ministry",
           "consequence": "open",
-          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets.",
+          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
           "open_alternatives": [
             {
               "description": "nonresident_alien_ministry decides: the earnings are not self-employment income.",
@@ -2772,11 +2746,11 @@
           "open_reason": "CNMI_SE_NONRESIDENT_ALIEN_UNSETTLED: 411(b)'s final sentence, and 1402(b)'s, keep a noncitizen resident of \"the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa\" from being a nonresident alien and name no other place, while Publication 517 (2025) lists the Commonwealth of the Northern Mariana Islands with them: \"If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States.\" No CE1 capture holds the law Publication 517 rests on for the CNMI or dates it (POMS RS 01901.320 cites Public Law 94-241 section 606, which no capture holds, and dates only the coverage of CNMI government employees), so the case refuses.",
           "overrides": [
             "nonresident_alien_ministry",
-            "ministry_without_exemption_or_vow",
-            "effective_1402e_exemption"
+            "ministry_without_exemption_or_vow"
           ],
           "precedence": 2,
           "when": {
+            "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
           }
@@ -3465,7 +3439,7 @@
         {
           "case_id": "cnmi_noncitizen_resident_ministry",
           "consequence": "open",
-          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets, and below foreign_agreement_sole_coverage, noncovered on both readings.",
+          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets, and below foreign_agreement_sole_coverage, noncovered on both readings. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
           "open_alternatives": [
             {
               "description": "nonresident_alien_ministry decides: the earnings are not self-employment income.",
@@ -3479,11 +3453,11 @@
           "open_reason": "CNMI_SE_NONRESIDENT_ALIEN_UNSETTLED: 411(b)'s final sentence, and 1402(b)'s, keep a noncitizen resident of \"the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa\" from being a nonresident alien and name no other place, while Publication 517 (2025) lists the Commonwealth of the Northern Mariana Islands with them: \"If you are a resident of one of these U.S. territories but not a U.S. citizen, for SE tax purposes you are treated the same as a citizen or resident alien of the United States.\" No CE1 capture holds the law Publication 517 rests on for the CNMI or dates it (POMS RS 01901.320 cites Public Law 94-241 section 606, which no capture holds, and dates only the coverage of CNMI government employees), so the case refuses.",
           "overrides": [
             "nonresident_alien_ministry",
-            "ministry_without_exemption_or_vow",
-            "effective_1402e_exemption"
+            "ministry_without_exemption_or_vow"
           ],
           "precedence": 3,
           "when": {
+            "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands, and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
           }
@@ -4024,6 +3998,7 @@
           "foreign_ministry": {
             "cases": {
               "cnmi_noncitizen_resident_ministry": [
+                "clergy_or_religious_exemption",
                 "ministerial_service",
                 "nonresident_alien_status"
               ],
@@ -5235,7 +5210,7 @@
         {
           "case_id": "domestic_farm_service_before_1995",
           "consequence": "open",
-          "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes.",
+          "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes. Both readings exclude noncash pay (noncash_remuneration here; the agricultural family for noncash farm pay) and cover cash pay of $1,000 or more, which meets both families' thresholds, so the case reads cash pay under $1,000 (review r6 M-2).",
           "open_alternatives": [
             {
               "description": "The 409 notes date the whole 1994 rewrite of 409(a)(6)(B), farm domestic parenthetical included, to remuneration paid after December 31, 1993: farm domestic pay in 1994 is domestic service in a private home of the employer, and this row's other cases and residual decide it as they decide other domestic pay in 1994.",
@@ -5249,6 +5224,7 @@
           "open_reason": "FARM_DOMESTIC_1994_DATE_UNSETTLED: Pub. L. 103-387 rewrote 409(a)(6)(B) to reach cash pay \"for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)\" (42 U.S.C. 409, 1994 edition), and the 409 notes make the amendment \"applicable to remuneration paid after Dec. 31, 1993\". POMS RS 01402.216 A and RS 01901.200 D.1 say instead that \"Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees\", RS 01901.200 citing \"the enactment of P.L. 103-387 effective January 1, 1995\". No CE1 capture holds section 2(a)(3) of the Act, so the rule for farm domestic pay in 1994 is unsettled and the case refuses.",
           "precedence": 1,
           "when": {
+            "amount": "cash remuneration from one employer in 1994 of less than $1,000",
             "domestic_service": "domestic service on a farm operated for profit"
           }
         },
@@ -8562,19 +8538,8 @@
         },
         {
           "case_id": "army_corps_2360_student_aide",
-          "consequence": "open",
-          "description": "POMS RS 01901.340 C.5, 2024-06-14 edition, as federal_1987_2026 holds it. No capture holds or dates 10 U.S.C. 2360, so CE1 does not apply the guidance across a row that begins in 1968; capture section 2360 and its history before classifying. Ranked below uniformed_service_410l and above every former 410(a)(5)-(6) exclusion case.",
-          "open_alternatives": [
-            {
-              "description": "Treat the aides' services as noncovered in every year of the row, following POMS RS 01901.340 C.5.",
-              "name": "noncovered_per_poms_c5"
-            },
-            {
-              "description": "Give the guidance no effect before the date the 10 U.S.C. 2360 authority took effect, so the cases ranked below this one or the covered residual decide the earlier years; treat the services as noncovered from that date.",
-              "name": "lower_cases_until_2360_law"
-            }
-          ],
-          "open_reason": "ARMY_CORPS_2360_LAW_UNCAPTURED: POMS RS 01901.340 C.5 says the services of students whom U.S. Army Corps of Engineers research and development laboratories engage under 10 U.S.C. 2360 contracts as laboratory aides \"are not covered for Social Security or CSRS purposes\", but no capture holds section 2360 or dates it, so CE1 cannot say whether, or from which date, that guidance applies in a row that begins in 1968.",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
           "precedence": 2,
           "when": {
             "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
@@ -8966,19 +8931,8 @@
         },
         {
           "case_id": "army_corps_2360_student_aide",
-          "consequence": "open",
-          "description": "POMS RS 01901.340 C.5, 2024-06-14 edition, as federal_1987_2026 holds it. No capture holds or dates 10 U.S.C. 2360, so CE1 does not apply the guidance across a row that begins in 1973; capture section 2360 and its history before classifying. Ranked below uniformed_service_410l and above every former 410(a)(5)-(6) exclusion case.",
-          "open_alternatives": [
-            {
-              "description": "Treat the aides' services as noncovered in every year of the row, following POMS RS 01901.340 C.5.",
-              "name": "noncovered_per_poms_c5"
-            },
-            {
-              "description": "Give the guidance no effect before the date the 10 U.S.C. 2360 authority took effect, so the cases ranked below this one or the covered residual decide the earlier years; treat the services as noncovered from that date.",
-              "name": "lower_cases_until_2360_law"
-            }
-          ],
-          "open_reason": "ARMY_CORPS_2360_LAW_UNCAPTURED: POMS RS 01901.340 C.5 says the services of students whom U.S. Army Corps of Engineers research and development laboratories engage under 10 U.S.C. 2360 contracts as laboratory aides \"are not covered for Social Security or CSRS purposes\", but no capture holds section 2360 or dates it, so CE1 cannot say whether, or from which date, that guidance applies in a row that begins in 1973.",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
           "precedence": 2,
           "when": {
             "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
@@ -9386,19 +9340,8 @@
         },
         {
           "case_id": "army_corps_2360_student_aide",
-          "consequence": "open",
-          "description": "POMS RS 01901.340 C.5, 2024-06-14 edition. No capture holds or dates 10 U.S.C. 2360, so CE1 does not apply the guidance across a row that begins in 1984; capture section 2360 and its history before classifying.",
-          "open_alternatives": [
-            {
-              "description": "Treat the aides' services as noncovered in every year of the row, following POMS RS 01901.340 C.5.",
-              "name": "noncovered_per_poms_c5"
-            },
-            {
-              "description": "Give the guidance no effect before the date the 10 U.S.C. 2360 authority took effect, so the cases ranked below this one (first_hired_after_1983 among them) or the residual decide the earlier years; treat the services as noncovered from that date.",
-              "name": "lower_cases_until_2360_law"
-            }
-          ],
-          "open_reason": "ARMY_CORPS_2360_LAW_UNCAPTURED: POMS RS 01901.340 C.5 says the services of students whom U.S. Army Corps of Engineers research and development laboratories engage under 10 U.S.C. 2360 contracts as laboratory aides \"are not covered for Social Security or CSRS purposes\", but no capture holds section 2360 or dates it, so CE1 cannot say from which date in a row that begins in 1984 that guidance applies.",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
           "overrides": [
             "first_hired_after_1983"
           ],
@@ -9928,19 +9871,8 @@
         },
         {
           "case_id": "army_corps_2360_student_aide",
-          "consequence": "open",
-          "description": "POMS RS 01901.340 C.5, 2024-06-14 edition. No capture holds or dates 10 U.S.C. 2360, so CE1 does not apply the guidance across a row that begins in 1987; capture section 2360 and its history before classifying.",
-          "open_alternatives": [
-            {
-              "description": "Treat the aides' services as noncovered in every year of the row, following POMS RS 01901.340 C.5.",
-              "name": "noncovered_per_poms_c5"
-            },
-            {
-              "description": "Give the guidance no effect before the date the 10 U.S.C. 2360 authority took effect, so the cases ranked below this one (first_hired_after_1983 among them) or the residual decide the earlier years; treat the services as noncovered from that date.",
-              "name": "lower_cases_until_2360_law"
-            }
-          ],
-          "open_reason": "ARMY_CORPS_2360_LAW_UNCAPTURED: POMS RS 01901.340 C.5 says the services of students whom U.S. Army Corps of Engineers research and development laboratories engage under 10 U.S.C. 2360 contracts as laboratory aides \"are not covered for Social Security or CSRS purposes\", but no capture holds section 2360 or dates it, so CE1 cannot say from which date in a row that begins in 1987 that guidance applies.",
+          "consequence": "noncovered",
+          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
           "overrides": [
             "first_hired_after_1983"
           ],
@@ -9965,12 +9897,27 @@
           }
         },
         {
+          "case_id": "fers_or_fsps_election",
+          "consequence": "covered",
+          "description": "410(a)(5)(H), added by Pub. L. 99-335 section 304(a) and amended generally by Pub. L. 100-647 section 8015(b)(1). The election lifts the grandfather exclusion from its effective date.",
+          "overrides": [
+            "defra_2601d_requalification",
+            "grandfathered_continuous_service",
+            "federal_annuitant"
+          ],
+          "precedence": 8,
+          "when": {
+            "federal_retirement_system": "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System",
+            "government_level": "employee of the United States or of an instrumentality of the United States"
+          }
+        },
+        {
           "case_id": "after_official_during_2601d3_delay",
           "consequence": "open",
-          "description": "Ranked just above after_official_service_from_1988_11_10, whose condition this worker also meets: section 2601(d)(3) delays (G) coverage of the individual's legislative-branch service, while section 8015(c)(3) applies the after-official rule upon (G) service on or after November 10, 1988; which governs the delay months is open.",
+          "description": "The readings differ only where section 2601(d)(3)'s delay of legislative-branch coverage \"by reason of section 210(a)(5)(G)\" meets the 8015(c) after-official rule triggered by (G) service, and the cases below after_official_service_from_1988_11_10 would exclude the service: so the case reads (G) service as the trigger (a trigger in (C)-(F) or (H) rests on no (G) coverage, and both readings cover it), the grandfathered or annuitant service the lower cases exclude (a staffer outside them is covered on both readings), and ranks below fers_or_fsps_election, which covers an elector on both readings (review r6 M-2). Ranked just above after_official_service_from_1988_11_10, whose condition this worker also meets.",
           "open_alternatives": [
             {
-              "description": "Section 2601(d)(3) governs all coverage that rests on 410(a)(5)(G), including the 8015(c) extension that (G) service triggers, so service in the delay months is not lifted out of paragraph (5): the cases ranked below after_official_service_from_1988_11_10 decide it (the (G) cases' own delay clause keeps them off), usually grandfathered_continuous_service (noncovered).",
+              "description": "Section 2601(d)(3) governs all coverage that rests on 410(a)(5)(G), including the 8015(c) extension that (G) service triggers, so service in the delay months is not lifted out of paragraph (5): grandfathered_continuous_service or federal_annuitant excludes it (noncovered).",
               "name": "delay_reaches_8015c3_extension"
             },
             {
@@ -9979,10 +9926,10 @@
             }
           ],
           "open_reason": "SECTION_2601D3_AFTER_OFFICIAL_UNSETTLED: for an individual meeting section 2601(d)(1)(A) and (B) who \"does not again become subject to subchapter III ... within the relevant 30-day period as provided in paragraph (1) or (2)\", Pub. L. 98-369 section 2601(d)(3) says \"social security coverage and taxes by reason of section 210(a)(5)(G) ... shall, with respect to such individual\u2019s service in the legislative branch of the Federal Government, become effective with the first month beginning after such 30-day period\". Pub. L. 100-647 section 8015(c)(1) later lifted paragraph (5) from \"any such service performed on or after any date on which such individual performs\" (C)-(H) service, and section 8015(c)(3) makes that \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) ... on or after the date of the enactment of this Act\" (November 10, 1988), with no word on the 2601(d)(3) delay. No capture says whether the delay holds back the after-official rule for service performed in the delay months, so the case refuses.",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
             "federal_retirement_system": "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))",
-            "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
+            "federal_service": "legislative-branch service, other than as a Member, Delegate or Resident Commissioner, that would be excluded under 410(a)(5)-(6) as in effect in January 1983, either as service performed continuously since December 31, 1983 (410(a)(5)(B)(i)(I)-(V)) or as service by an individual receiving an annuity from the Civil Service Retirement and Disability Fund or benefits under another Federal employee retirement system (410(a)(5)(B)(ii)), performed on or after a date on which the individual performed service described in 410(a)(5)(G) that was performed on or after 1988-11-10",
             "government_level": "employee of the United States or of an instrumentality of the United States"
           }
         },
@@ -9995,24 +9942,9 @@
             "grandfathered_continuous_service",
             "federal_annuitant"
           ],
-          "precedence": 9,
-          "when": {
-            "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
-            "government_level": "employee of the United States or of an instrumentality of the United States"
-          }
-        },
-        {
-          "case_id": "fers_or_fsps_election",
-          "consequence": "covered",
-          "description": "410(a)(5)(H), added by Pub. L. 99-335 section 304(a) and amended generally by Pub. L. 100-647 section 8015(b)(1). The election lifts the grandfather exclusion from its effective date.",
-          "overrides": [
-            "defra_2601d_requalification",
-            "grandfathered_continuous_service",
-            "federal_annuitant"
-          ],
           "precedence": 10,
           "when": {
-            "federal_retirement_system": "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System",
+            "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10",
             "government_level": "employee of the United States or of an instrumentality of the United States"
           }
         },
@@ -14015,19 +13947,8 @@
         },
         {
           "case_id": "deemed_waiver_k4c_period",
-          "consequence": "open",
-          "description": "Ranked above deemed_waiver_all_employees, whose condition this worker also meets: the deemed certificate dates from the first paid quarter (C.2), but 3121(k)(4)(C) took some service in its period before July 1, 1977 back out of it.",
-          "open_alternatives": [
-            {
-              "description": "3121(k)(4)(C) reaches this service, as the 312(c) note and D.8 together describe: it is not employment, so former 410(a)(8)(B) excludes it unless the employee made a timely 312(c) request (case deemed_waiver_section_312c_request).",
-              "name": "section_312c_note_reading"
-            },
-            {
-              "description": "The deemed certificate covers all service from the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2), as case deemed_waiver_all_employees applies, so the service is covered above the remuneration threshold.",
-              "name": "deemed_certificate_period_reading"
-            }
-          ],
-          "open_reason": "NONPROFIT_DEEMED_WAIVER_K4C_TERMS_UNCAPTURED: the Pub. L. 95-216 section 312(c) note says that service for an organization deemed under 3121(k)(4) to have filed a certificate, performed \"on or after the first day of the applicable period described in subparagraph (A)(ii) of such section 3121(k)(4) and before July 1, 1977\", does not constitute employment where \"the waiver certificate which the organization is deemed to have filed is made inapplicable to such service by section 3121(k)(4)(C)\", and POMS RS 01901.540 D.8 describes the 1977 Amendments as \"forgiving the tax liability of organizations through 6/30/77 when the employer stopped paying taxes before 10/19/76\". No CE1 capture holds 3121(k)(4)(C)'s text: the 1977 amendment notes record only that Pub. L. 95-216 section 312(b) added it and inserted \"(subject to subparagraph (C))\" after \"effective\" in (k)(4)(A) and \"(except as provided in paragraph (4)(C))\" after \"services involved\" in (k)(6). So which service it made the deemed certificate inapplicable to is not settled, and the case refuses.",
+          "consequence": "noncovered",
+          "description": "The Pub. L. 95-216 section 312(c) note treats service for an organization deemed under 3121(k)(4) to have filed a certificate, performed \"on or after the first day of the applicable period described in subparagraph (A)(ii) of such section 3121(k)(4) and before July 1, 1977\", as service that \"does not constitute employment ... because the waiver certificate which the organization is deemed to have filed is made inapplicable to such service by section 3121(k)(4)(C)\", and POMS RS 01901.540 D.8 describes the 1977 Amendments as \"forgiving the tax liability of organizations through 6/30/77 when the employer stopped paying taxes before 10/19/76 because no waiver certificates were filed\". The case's condition is that service, so former 410(a)(8)(B) excludes it unless the employee made a timely 312(c) request (deemed_waiver_section_312c_request, ranked above). Ranked above deemed_waiver_all_employees, whose condition this worker also meets: 3121(k)(4)(C) took this service back out of the deemed certificate's period (review r6 M-2 settles the round-5 open case on these two captures).",
           "precedence": 3,
           "when": {
             "nonprofit_coverage_waiver": "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
@@ -16354,11 +16275,10 @@
         {
           "case_id": "election_member_abroad_not_covered",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen; otherwise the vow-of-poverty exclusion still applies.",
+          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen; otherwise the vow-of-poverty exclusion still applies.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
           "precedence": 2,
           "when": {
             "citizenship": "not a United States citizen",
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
             "place_of_work": "outside the United States",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
           }
@@ -16387,10 +16307,9 @@
         {
           "case_id": "vowed_member_outside_3121r2_definition",
           "consequence": "noncovered",
-          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.",
+          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
           "precedence": 5,
           "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
         },
@@ -16641,8 +16560,7 @@
                 "clergy_or_religious_exemption"
               ],
               "vowed_member_outside_3121r2_definition": [
-                "religious_order_service",
-                "clergy_or_religious_exemption"
+                "religious_order_service"
               ]
             }
           },
@@ -16760,10 +16678,9 @@
         {
           "case_id": "election_member_abroad_not_covered",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen or, from January 1, 1984, a resident alien; otherwise the vow-of-poverty exclusion still applies.",
+          "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen or, from January 1, 1984, a resident alien; otherwise the vow-of-poverty exclusion still applies.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
           "precedence": 2,
           "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
             "nonresident_alien_status": "neither a United States citizen nor a resident alien",
             "place_of_work": "outside the United States",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -16793,10 +16710,9 @@
         {
           "case_id": "vowed_member_outside_3121r2_definition",
           "consequence": "noncovered",
-          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.",
+          "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
           "precedence": 5,
           "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
         },
@@ -17148,8 +17064,7 @@
                 "clergy_or_religious_exemption"
               ],
               "vowed_member_outside_3121r2_definition": [
-                "religious_order_service",
-                "clergy_or_religious_exemption"
+                "religious_order_service"
               ]
             }
           },
@@ -20626,9 +20541,25 @@
           }
         },
         {
+          "case_id": "crp_payment_under_farm_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
+          "overrides": [
+            "crp_payment_to_beneficiary"
+          ],
+          "precedence": 2,
+          "when": {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
           "case_id": "crp_payment_classification_open",
           "consequence": "open",
-          "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included.",
+          "description": "The classification decides the outcome: rent is excluded (with its exceptions), business income is included. Ranked below crp_payment_under_farm_arrangement, whose farm-rental proviso decides an arrangement payment (review r6 M-2).",
           "open_alternatives": [
             {
               "description": "The payment is rent for land placed in the reserve: 411(a)(1) excludes it from net earnings, unless it is received in a real estate dealer's business or under the farm-rental proviso.",
@@ -20640,26 +20571,10 @@
             }
           ],
           "open_reason": "CRP_CLASSIFICATION_UNVERIFIED: no capture settles whether a Conservation Reserve payment that 411(a)(1) does not name (before 2008, any such payment; from 2008, one to a recipient not receiving 402 or 423 benefits) is rental from real estate or income from the recipient's trade or business. The 2008 amendment note establishes only when the beneficiary exclusion begins.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423",
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears"
-          }
-        },
-        {
-          "case_id": "crp_payment_under_farm_arrangement",
-          "consequence": "deferred",
-          "defers_to": [
-            "self_employment_farm_rental_participation"
-          ],
-          "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
-          "overrides": [
-            "crp_payment_to_beneficiary"
-          ],
-          "precedence": 3,
-          "when": {
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
           }
         },
         {
@@ -27327,9 +27242,24 @@
           }
         },
         {
+          "case_id": "farm_rental_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 5,
+          "when": {
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
           "case_id": "services_to_occupants_other_space",
           "consequence": "open",
-          "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
+          "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked below the farm-rental deferral, whose arrangement the proviso decides, and above real_estate_rentals, whose condition this worker also meets (review r6 M-2).",
           "open_alternatives": [
             {
               "description": "Treat the payments as rentals from real estate that 411(a)(1) excludes, on the statute alone or on the 1996 rule read as reaching living quarters only.",
@@ -27341,24 +27271,9 @@
             }
           ],
           "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNVERIFIED: the occupant-services rule is captured only from the April 1, 1996 edition of 20 CFR 404.1082(d)(2), and there (d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
-          "precedence": 5,
-          "when": {
-            "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
-          }
-        },
-        {
-          "case_id": "farm_rental_arrangement",
-          "consequence": "deferred",
-          "defers_to": [
-            "self_employment_farm_rental_participation"
-          ],
-          "description": "411(a)(1) proviso; the farm rental participation family decides.",
-          "overrides": [
-            "real_estate_rentals"
-          ],
           "precedence": 6,
           "when": {
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+            "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
           }
         },
         {
@@ -27498,9 +27413,24 @@
           }
         },
         {
+          "case_id": "farm_rental_arrangement",
+          "consequence": "deferred",
+          "defers_to": [
+            "self_employment_farm_rental_participation"
+          ],
+          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "overrides": [
+            "real_estate_rentals"
+          ],
+          "precedence": 4,
+          "when": {
+            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
           "case_id": "services_to_occupants_other_space",
           "consequence": "open",
-          "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked above real_estate_rentals, whose condition this worker also meets.",
+          "description": "20 CFR 404.1082(d)(2)(i) names living quarters (and parking, warehouse and storage space, which the space-payment case takes); services provided with other space are not settled. Ranked below the farm-rental deferral, whose arrangement the proviso decides, and above real_estate_rentals, whose condition this worker also meets (review r6 M-2).",
           "open_alternatives": [
             {
               "description": "Only living quarters (and parking, warehouse or storage space) take the (d)(2)(i) inclusion; payments for other space stay rentals from real estate that 411(a)(1) and 404.1082(a) exclude.",
@@ -27512,24 +27442,9 @@
             }
           ],
           "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNSETTLED: 20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", and adds only parking, warehouse and storage space, while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
-          "precedence": 4,
-          "when": {
-            "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
-          }
-        },
-        {
-          "case_id": "farm_rental_arrangement",
-          "consequence": "deferred",
-          "defers_to": [
-            "self_employment_farm_rental_participation"
-          ],
-          "description": "411(a)(1) proviso; the farm rental participation family decides.",
-          "overrides": [
-            "real_estate_rentals"
-          ],
           "precedence": 5,
           "when": {
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+            "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
           }
         },
         {

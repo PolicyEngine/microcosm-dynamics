@@ -1448,8 +1448,10 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # pre-1998 insurance termination payment (review r4 low 10); the review
     # r5 fix adds the 3121(k)(4)(C) period of a deemed nonprofit
     # certificate (52); the review r5 sweep adds 16 open cases with two
-    # readings each (84).
-    assert described == 84
+    # readings each (84). The review r6 fix settles the Army Corps aide
+    # case in four rows and the (k)(4)(C) case, and drops the 1968-1972
+    # CNMI ministry case (72).
+    assert described == 72
 
 
 READING_TEXT = {
@@ -2319,7 +2321,6 @@ REQUIRED_CONDITIONS = [
         "religious_order_1968_1983",
         "election_member_abroad_not_covered",
         {
-            "clergy_or_religious_exemption": ("3121(r) election",),
             "place_of_work": ("outside the United States",),
             "citizenship": ("not a United States citizen",),
         },
@@ -2331,7 +2332,6 @@ REQUIRED_CONDITIONS = [
         "religious_order_1984_2026",
         "election_member_abroad_not_covered",
         {
-            "clergy_or_religious_exemption": ("3121(r) election",),
             "place_of_work": ("outside the United States",),
             "nonresident_alien_status": ("nor a resident alien",),
         },
@@ -3910,13 +3910,12 @@ NONPROFIT_WAIVER_WORKERS = {
     ),
     # r5 H-4 repro: a clinic pays FICA 1974Q1-1975Q2, stops in 1975Q3 and
     # gets no refund; its 1976Q2 service, with no request. The 312(c) note
-    # and D.8 point to noncovered, but no capture holds 3121(k)(4)(C)'s
-    # terms, so the case refuses with both readings.
+    # and D.8 settle it as noncovered (review r6 M-2).
     "deemed_certificate_k4c_gap": (
         (NONPROFIT_DEEMED, NONPROFIT_K4C_GAP),
         NONPROFIT_EXISTING_UNLISTED,
         {},
-        {1975: ("refuses", "deemed_waiver_k4c_period")},
+        {1975: ("noncovered", "deemed_waiver_k4c_period")},
     ),
     # The same service where the employee filed a timely 312(c) request.
     "deemed_certificate_k4c_gap_with_request": (
@@ -4941,7 +4940,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 349
+    assert sum(len(row["cases"]) for row in rows) == 348
 
 
 PUBLIC_OFFICERS = {
@@ -5482,10 +5481,18 @@ FED_DELAYED_AFTER_OFFICIAL_SYSTEM = (
     "service is performed before the first month beginning after that 30-day "
     "period (section 2601(d)(3))"
 )
+# Review r6 M-2: the open delay case reads (G) service as the trigger and
+# the grandfathered or annuitant service the lower cases exclude.
 FED_DELAYED_AFTER_OFFICIAL_SERVICE = (
-    "performed on or after a date on which the individual performed service "
-    "described in 410(a)(5)(C)-(H), where that service was performed on or "
-    "after 1988-11-10"
+    "legislative-branch service, other than as a Member, Delegate or "
+    "Resident Commissioner, that would be excluded under 410(a)(5)-(6) as in "
+    "effect in January 1983, either as service performed continuously since "
+    "December 31, 1983 (410(a)(5)(B)(i)(I)-(V)) or as service by an "
+    "individual receiving an annuity from the Civil Service Retirement and "
+    "Disability Fund or benefits under another Federal employee retirement "
+    "system (410(a)(5)(B)(ii)), performed on or after a date on which the "
+    "individual performed service described in 410(a)(5)(G) that was "
+    "performed on or after 1988-11-10"
 )
 FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE = (
     "performed by a student as an aide in a U.S. Army Corps of Engineers "
@@ -5591,7 +5598,7 @@ FED_EMERGENCY_TEMPORARY_1968 = FED_TEMPORARY_EMERGENCY_EMPLOYEE
 FED_GRANDFATHERED_CONTINUOUS = FED_GRANDFATHERED_SERVICE
 FEDERAL_CASE_FACTS = {
     ("federal_1968_1972", "army_corps_2360_student_aide"): (
-        "refuses",
+        "noncovered",
         {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1968_1972", "federal_retirement_system_service"): (
@@ -5627,7 +5634,7 @@ FEDERAL_CASE_FACTS = {
         {"federal_service": FED_EXEMPT_1950_SYSTEM_SERVICE},
     ),
     ("federal_1973_1983", "army_corps_2360_student_aide"): (
-        "refuses",
+        "noncovered",
         {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1973_1983", "federal_retirement_system_service"): (
@@ -5679,7 +5686,7 @@ FEDERAL_CASE_FACTS = {
         {"federal_service": FED_TEMPORARY_EMERGENCY_EMPLOYEE_SERVICE},
     ),
     ("federal_1984_1986", "army_corps_2360_student_aide"): (
-        "refuses",
+        "noncovered",
         {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1984_1986", "defra_2601d_requalification"): (
@@ -5717,7 +5724,7 @@ FEDERAL_CASE_FACTS = {
         {"federal_service": FED_TEMPORARY_EMERGENCY_EMPLOYEE_SERVICE},
     ),
     ("federal_1987_2026", "army_corps_2360_student_aide"): (
-        "refuses",
+        "noncovered",
         {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
     ),
     ("federal_1987_2026", "after_official_during_2601d3_delay"): (
