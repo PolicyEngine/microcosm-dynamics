@@ -64,8 +64,11 @@ VALUE_RUN = r"(?<!\d)(?!(?:19|20)\d\d(?!\d))\d{3,}"
 SSUID_DIGITS = 14
 
 
-# A tag opens with a letter, "!" or "/", as in a browser.
+# A tag opens with an ASCII letter, "!" or "/", as in a browser.
 TAG = r"<[A-Za-z!/][^>]*>"
+# A comment as a browser ends it: at "-->" or "--!>", or at the end of the
+# page; "<!-->" and "<!--->" are empty comments.
+COMMENT = r"<!--(?:-?>|.*?(?:--!?>|$))"
 
 
 def _element(names: str) -> str:
@@ -74,18 +77,21 @@ def _element(names: str) -> str:
     return rf"(?is)<({names})\b[^>]*>(.*?)(?:</\1\s*>|$)"
 
 
-def _browser_element(names: str) -> str:
-    """An element of one of ``names`` as a browser starts and ends it, or a
-    tag. The names, the end tag's repeat of the opening's name and a tag's
-    first letter fold ASCII letters only, as a browser's do, so "ſ", the
-    Kelvin sign, "ı" and "İ" match no ASCII letter; ``\\b`` still reads
-    Unicode word characters. The element ends at ``</name`` followed by
-    whitespace, ``/`` or ``>``, through the next ``>``, or at the end of
+def _browser_element(names: str, comment: str = "") -> str:
+    """An element of one of ``names`` as a browser starts and ends it, or,
+    if ``comment`` is given, a comment, or a tag. The names, the end tag's
+    repeat of the opening's name and a tag's first letter fold ASCII
+    letters only, as a browser's do, so "ſ", the Kelvin sign, "ı" and "İ"
+    match no ASCII letter. A name ends where a browser ends it, at
+    whitespace, ``/`` or ``>``, so ``<script-x>``, ``<script.x>`` and
+    ``<scripts>`` open no script. The element ends at ``</name`` followed
+    by whitespace, ``/`` or ``>``, through the next ``>``, or at the end of
     the page."""
     return (
-        rf"(?is)<((?a:{names}))\b[^>]*>(.*?)"
+        rf"(?is)<((?a:{names}))(?=[\t\n\f\r />])[^>]*>(.*?)"
         r"(?:</(?a:\1)(?=[\t\n\f\r />])[^>]*(?:>|$)|$)"
-        rf"|(?a:{TAG})"
+        + (f"|{comment}" if comment else "")
+        + rf"|(?a:{TAG})"
     )
 
 
@@ -98,6 +104,17 @@ BROWSER_SOURCE = re.compile(_browser_element("script|style"))
 # style contents are not shown, and title, textarea and xmp contents are
 # shown as text.
 BROWSER_TEXT = re.compile(_browser_element("script|style|title|textarea|xmp"))
+# The same with comments, and with the elements whose contents a browser
+# with scripting on does not show: iframe, noembed, noframes and noscript,
+# which it reads as raw text, and template, whose contents it parses but
+# does not show.
+BROWSER_VIEW = re.compile(
+    _browser_element(
+        "script|style|title|textarea|xmp|iframe|noembed|noframes|noscript"
+        "|template",
+        COMMENT,
+    )
+)
 # Scripts for their strings, as the round-8 guard read them: any end tag
 # that "(?i)script" matches ends one, where the template's end tag must
 # repeat the opening's name, which Python's re compares in lower case. The
@@ -137,7 +154,9 @@ def _finditer(pattern: re.Pattern, text: str):
     relies on ``(?s)`` in each pattern that can end with ``$``: a match the
     search ends at that ``>`` with ``$`` must, matched again, run on past
     every character after it, line ends included, and without ``(?s)`` it
-    stops at a line end, so ``pattern.match`` returns None."""
+    stops at a line end, so ``pattern.match`` returns None. A comment in
+    ``BROWSER_VIEW`` needs no ``>``, so one can open after the last ``>``
+    too; ``_browser_view`` reads that part itself."""
     end = text.rfind(">") + 1
     for match in pattern.finditer(text, 0, end):
         if match.end() == end:
@@ -216,9 +235,9 @@ def _browser_text(body: str) -> str:
     or the end of the page."""
 
     def shown(match):
-        # Names compare in lower case, which keeps "ſ", "ı" and "İ" apart
-        # from "s" and "i", as a browser's ASCII folding does; casefold
-        # would read "<ſcript>" as a script.
+        # The pattern captures a name in ASCII letters only, so "<ſcript>"
+        # opens no element at all, and lower() and casefold() agree on
+        # every name it captures.
         if match.group(1) and match.group(1).lower() not in {
             "script",
             "style",
@@ -228,6 +247,36 @@ def _browser_text(body: str) -> str:
 
     body = _sub(BROWSER_TEXT, shown, body)
     return " ".join(html.unescape(body).split())
+
+
+def _browser_view(body: str) -> str:
+    """The text a browser with scripting on shows: as ``_browser_text``,
+    but with comments left out where a browser starts and ends them, and
+    with iframe, noembed, noframes, noscript and template contents not
+    shown. A browser reads the first four as raw text, so a ``<script``
+    inside one opens nothing. Template contents end here at the first
+    ``</template>``, and a browser's end at it or later, so no text a
+    browser shows is hidden. A comment that opens after the page's last
+    ``>``, where ``_finditer`` does not search, runs to the end of the
+    page."""
+
+    def shown(match):
+        if match.group(1) and match.group(1).lower() in {
+            "title",
+            "textarea",
+            "xmp",
+        }:
+            return f" {match.group(2)} "
+        return " "
+
+    kept, position = [], 0
+    for match in _finditer(BROWSER_VIEW, body):
+        kept += (body[position : match.start()], shown(match))
+        position = match.end()
+    rest = body[position:]
+    if "<!--" in rest:
+        rest = rest[: rest.index("<!--")] + " "
+    return " ".join(html.unescape("".join(kept) + rest).split())
 
 
 def _rendered_text(body: str) -> str:
@@ -430,15 +479,22 @@ def record_bearing_note(body: str) -> bool:
       between. These two rules read three things, all with entities
       decoded:
 
-      - the text with HTML comments, which are stored though not shown,
-        read twice, each time with a tag counted as a space: once with
-        every span from a ``<`` to the next ``>`` taken for a tag and each
-        script or style element that an end tag closes left out, and once
-        as a browser reads it, where a tag opens only with an ASCII letter,
-        ``!`` or ``/``, script and style contents are left out, and title,
-        textarea and xmp contents are text, each up to ``</`` and its name,
-        folded as ASCII, followed by whitespace, ``/`` or ``>``, or to the
-        end of the page;
+      - the text, read three times, each time with a tag counted as a
+        space. Twice it keeps HTML comments, which are stored though not
+        shown, as text: once with every span from a ``<`` to the next
+        ``>`` taken for a tag and each script or style element that an end
+        tag closes left out, and once as a browser with scripting off
+        reads it, where a tag opens only with an ASCII letter, ``!`` or
+        ``/``, an element's name, folded as ASCII, ends at whitespace,
+        ``/`` or ``>``, script and style contents are left out, and title,
+        textarea and xmp contents are text, each up to ``</`` and its name
+        followed by whitespace, ``/`` or ``>``, or to the end of the page.
+        The third time it reads the text as a browser with scripting on
+        shows it: the same way, but with comments left out where a browser
+        starts and ends them, at ``-->`` or ``--!>``, with ``<!-->`` and
+        ``<!--->`` empty, and with iframe, noembed, noframes, noscript and
+        template contents left out too, so that a script opening inside
+        one of the first four opens nothing;
       - the page source with its tags, attributes and scripts, where the
         40 characters hold no angle bracket (a tag, or a ``<`` or ``>``
         decoded from an entity), quote or equals sign either. href and src
@@ -465,35 +521,49 @@ def record_bearing_note(body: str) -> bool:
     A table row's cells are read whole, so numbers stacked with ``<br>`` in
     one cell are not separate numeric cells. Variable-definition rows may
     name an identifier without a value. The text and the source are each
-    read both ways because the browser's way, alone, would admit some pages
-    that the first way refuses.
+    read more than one way because the browser's way, alone, would admit
+    some pages that the first way refuses, and the text with comments kept
+    reads comment text and noscript contents, which a browser with
+    scripting on does not show.
 
-    These forms are out of scope, so a page that holds only them is stored:
-    a value before its identifier name; ``<br>``-separated CSV text without
-    an identifier; div grids; an identifier name split by a tag or an
-    invisible character, as in ``PN<b></b>UM`` or ``SS&shy;UID``; an
-    identifier name and its value in different attribute values, script
-    strings or style strings, or one of them in a string and the other in
-    script code; a script string after a lone quote mark in a comment, a
-    regular expression or a template literal, which the scan of double- and
-    single-quoted strings takes to open one, as in a comment such as
-    ``// it's``; an identifier and its value split by a tag, quote or
-    equals sign in script or style code outside a quoted string, as in a
-    comparison ``PNUM < 101`` or markup in a ``text/template`` script, or in
-    an unquoted attribute value, as in ``alt=PNUM's-101``; a value inside a
-    tag after an identifier in the text, as in ``PNUM <i 101``; comment
-    marks that the text readings, which read comments as text, take another
-    way than a browser: a comment that holds a script or style opening,
-    which they take to hide the text after the comment up to an end tag,
-    and a tag that ends with ``-->``, as in ``<b-->``, which they take to
-    run on to the next ``>``; nine digits after a comment closed by
-    ``--!>``, which the nine-digit rule reads as still open; a quoted
-    attribute value in an end tag or a ``<!`` declaration, or after a name
-    with marks other than ``_ : . -``, as in ``[alt]``; an attribute value
-    that holds a raw ``>``, which ends its tag; a value in an href or src
-    value, unless it is a run of 14 or more digits; and a cell outside a
-    table's first row and header cells that names an identifier after
-    other words.
+    These forms are out of scope, so a page that holds only them is stored: a
+    value before its identifier name; ``<br>``-separated CSV text without an
+    identifier; div grids; an identifier name split by a tag or an invisible
+    character, as in ``PN<b></b>UM`` or ``SS&shy;UID``, or written in other
+    characters, such as fullwidth letters; text that a style or the ``hidden``
+    attribute hides between an identifier and its value, since a browser hides
+    it by its styles rather than as it parses the page; an identifier name and
+    its value in different attribute values, script strings or style strings,
+    or one of them in a string and the other in script code; a script string
+    after a lone quote mark in a comment, a regular expression or a template
+    literal, which the scan of double- and single-quoted strings takes to open
+    one, as in a comment such as ``// it's``; an identifier and its value split
+    by a tag, quote or equals sign in script or style code outside a quoted
+    string, as in a comparison ``PNUM < 101`` or markup in a ``text/template``
+    script, or in an unquoted attribute value, as in ``alt=PNUM's-101``; a
+    value inside a tag after an identifier in the text, as in ``PNUM <i 101``;
+    a run of digits split by a tag, which the readings count as a space, after
+    a mark the adjacency rule does not allow, as in ``PNUM &gt;1&#49;<th>7``;
+    in noscript contents, which only the text readings that keep comments read
+    there, comment marks that they take another way than a browser with
+    scripting off: a comment that holds a script or style opening, which they
+    take to hide the text after the comment up to an end tag, and a tag that
+    ends with ``-->``, as in ``<b-->``, which they take to run on to the next
+    ``>``; a ``<?`` processing instruction beside an empty comment, as in
+    ``SSUID<!---><?x>7``, both of which a browser drops; contents after a
+    ``<plaintext>`` tag, which a browser shows as text as they stand to the end
+    of the page; a character reference glued to an identifier name in xmp
+    contents, which a browser shows as it stands and the readings decode, as in
+    ``<xmp>&#49;PNUM101</xmp>``; markup inside svg or math, where a browser
+    reads a CDATA section as text and a raw-text element's name as an ordinary
+    element's; markup that a browser ignores inside a select element, such as a
+    style or noembed opening; nine digits after a comment closed by ``--!>``,
+    which the nine-digit rule reads as still open; a quoted attribute value in
+    an end tag or a ``<!`` declaration, or after a name with marks other than
+    ``_ : . -``, as in ``[alt]``; an attribute value that holds a raw ``>``,
+    which ends its tag; a value in an href or src value, unless it is a run of
+    14 or more digits; and a cell outside a table's first row and header cells
+    that names an identifier after other words.
 
     The rules in turn refuse some pages that hold no case record, and such
     a page stops the capture loudly: definition and index tables that name
@@ -512,8 +582,12 @@ def record_bearing_note(body: str) -> bool:
     values named href or src; a malformed tag whose quoted href value holds
     a script opening, as in ``<a href="<script src="/ssuid-2024.js">``,
     where the browser scan of the source removes the href value, which
-    closes at the quote mark before the slug, and reads the slug; and a
-    definition that prints a comparison such as ``PNUM < 101`` in the text.
+    closes at the quote mark before the slug, and reads the slug; a
+    definition that prints a comparison such as ``PNUM < 101`` in the text;
+    and a ``-->`` in a quoted attribute value, as in an arrow
+    ``alt="Next -->"``, after an identifier and before a value in the
+    value's rest, as in ``PNUM<img alt="--> 7">``, since the browser view
+    ends the tag at that ``>`` and reads the rest of the value as text.
     A decimal character reference of more than 4,300 digits makes
     ``html.unescape`` raise, which stops the capture too.
 
@@ -545,7 +619,14 @@ def record_bearing_note(body: str) -> bool:
     # two; quoted values are read one at a time in the same way.
     unwrapped = re.sub(r"<!--|-->", " ", body)
     readings = (
-        (note_text(unwrapped) + ". " + _browser_text(unwrapped), r"[^.]"),
+        (
+            note_text(unwrapped)
+            + ". "
+            + _browser_text(unwrapped)
+            + ". "
+            + _browser_view(body),
+            r"[^.]",
+        ),
         (
             ". ".join(map(html.unescape, _without_link_targets(body))),
             r"[^.<>\"'=]",

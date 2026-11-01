@@ -51,14 +51,20 @@ to store any new page that holds a case record in any of the forms
 The two rules that follow an identifier name read three things, all with
 entities decoded:
 
-- the visible text with HTML comments, read twice, each time with a tag
-  counted as a space: once with every span from a `<` to the next `>` taken
-  for a tag and each script or style element that an end tag closes left
-  out, and once as a browser reads it, where a tag opens only with an
-  ASCII letter, `!` or `/`, script and style contents are left out, and
-  title, textarea and xmp contents are text, each up to `</` and its name,
-  folded as ASCII, followed by whitespace, `/` or `>`, or to the end of the
-  page;
+- the visible text, read three times, each time with a tag counted as a
+  space. Twice it keeps HTML comments as text: once with every span from a
+  `<` to the next `>` taken for a tag and each script or style element
+  that an end tag closes left out, and once as a browser with scripting
+  off reads it, where a tag opens only with an ASCII letter, `!` or `/`, an
+  element's name, folded as ASCII, ends at whitespace, `/` or `>`, script
+  and style contents are left out, and title, textarea and xmp contents
+  are text, each up to `</` and its name followed by whitespace, `/` or
+  `>`, or to the end of the page. The third time it reads the text as a
+  browser with scripting on shows it: the same way, but with comments left
+  out where a browser starts and ends them, at `-->` or `--!>`, with
+  `<!-->` and `<!--->` empty, and with iframe, noembed, noframes, noscript
+  and template contents left out too, so that a script opening inside one
+  of the first four opens nothing;
 - the page source with its tags, attributes and scripts, where the 40
   characters also hold no angle bracket, quote or equals sign. href and src
   values, whose slugs name identifiers without values, are removed first
@@ -75,44 +81,61 @@ entities decoded:
   template literal in a script; and each quoted string in a style, all
   read past their backslash escapes.
 
-The text and the source are each read both ways because the browser's
-way, alone, would admit some pages that the first way refuses. A tag opens
-with a letter, `!` or `/`. The table and preformatted rules read each
+The text and the source are each read more than one way because the
+browser's way, alone, would admit some pages that the first way refuses,
+and the text with comments kept reads comment text and noscript contents,
+which a browser with scripting on does not show. A tag opens with an ASCII
+letter, `!` or `/`. The table and preformatted rules read each
 cell's or block's text without its tags; the row-header exemption also
 reads a header cell's `scope` attribute. The nine-digit rule skips comments
 and noscript blocks, whose tracking numbers are not page content. Each
 reading takes time linear in the page's length. A test times invented
-pages of 100 kB to 2.1 MB in the forms found to take quadratic time before
+pages of 100 kB to 2.2 MB in the forms found to take quadratic time before
 (a long word in a tag, escaped quotes after an unpaired quote in a script,
 unclosed tags and comments, script start tags with no end tag, and table
 rows and cells that name an identifier) and in those where a slower form of
 a linear helper, found in review, does (a hyphenated word in a tag,
-unclosed tags after closed ones, script start tags with no `>` or after end
-tags, and identifier rows after rows of digits).
+unclosed tags after closed ones, script start tags with no `>`, after end
+tags or before one end tag, identifier rows after rows of digits, scripts
+that end tags close, and unclosed comments before tags).
 
 These forms are out of scope: a value before its identifier name;
 `<br>`-separated CSV text without an identifier; div grids; an identifier
 name split by a tag or an invisible character, as in `PN<b></b>UM` or
-`SS&shy;UID`; an identifier name and its value in different attribute
-values, script strings or style strings, or one of them in a string and
-the other in script code; a script string after a lone quote mark in a
-comment, a regular expression or a template literal, which the scan of
-double- and single-quoted strings takes to open one, as in a comment such
-as `// it's`; an identifier and its value split by a tag, quote or equals
-sign in script or style code outside a quoted string, as in a comparison
-`PNUM < 101` or markup in a `text/template` script, or in an unquoted
-attribute value, as in `alt=PNUM's-101`; a value inside a tag after an
-identifier in the text, as in `PNUM <i 101`; comment marks that the text
-readings, which read comments as text, take another way than a browser: a
-comment that holds a script or style opening, which they take to hide the
-text after the comment up to an end tag, and a tag that ends with `-->`,
-as in `<b-->`, which they take to run on to the next `>`; nine digits after
-a comment closed by `--!>`, which the nine-digit rule reads as still open;
-a quoted attribute value in an end tag or a `<!` declaration, or after a
-name with marks other than `_ : . -`, as in `[alt]`; an attribute value
-that holds a raw `>`, which ends its tag; a value in an href or src value,
-unless it is a run of 14 or more digits; and a cell outside a table's first
-row and header cells that names an identifier after other words.
+`SS&shy;UID`, or written in other characters, such as fullwidth letters;
+text that a style or the `hidden` attribute hides between an identifier and
+its value, since a browser hides it by its styles rather than as it parses
+the page; an identifier name and its value in different attribute values,
+script strings or style strings, or one of them in a string and the other
+in script code; a script string after a lone quote mark in a comment, a
+regular expression or a template literal, which the scan of double- and
+single-quoted strings takes to open one, as in a comment such as `// it's`;
+an identifier and its value split by a tag, quote or equals sign in script
+or style code outside a quoted string, as in a comparison `PNUM < 101` or
+markup in a `text/template` script, or in an unquoted attribute value, as
+in `alt=PNUM's-101`; a value inside a tag after an identifier in the text,
+as in `PNUM <i 101`; a run of digits split by a tag, which the readings
+count as a space, after a mark the adjacency rule does not allow, as in
+`PNUM &gt;1&#49;<th>7`; in noscript contents, which only the text readings
+that keep comments read there, comment marks that they take another way
+than a browser with scripting off: a comment that holds a script or style
+opening, which they take to hide the text after the comment up to an end
+tag, and a tag that ends with `-->`, as in `<b-->`, which they take to run
+on to the next `>`; a `<?` processing instruction beside an empty comment,
+as in `SSUID<!---><?x>7`, both of which a browser drops; contents after a
+`<plaintext>` tag, which a browser shows as text as they stand to the end
+of the page; a character reference glued to an identifier name in xmp
+contents, which a browser shows as it stands and the readings decode, as in
+`<xmp>&#49;PNUM101</xmp>`; markup inside svg or math, where a browser reads
+a CDATA section as text and a raw-text element's name as an ordinary
+element's; markup that a browser ignores inside a select element, such as a
+style or noembed opening; nine digits after a comment closed by `--!>`,
+which the nine-digit rule reads as still open; a quoted attribute value in
+an end tag or a `<!` declaration, or after a name with marks other than
+`_ : . -`, as in `[alt]`; an attribute value that holds a raw `>`, which
+ends its tag; a value in an href or src value, unless it is a run of 14 or
+more digits; and a cell outside a table's first row and header cells that
+names an identifier after other words.
 
 The rules in turn refuse some pages that hold no case record, and such a
 page stops the capture loudly:
@@ -136,7 +159,11 @@ page stops the capture loudly:
   removes the href value, which closes at the quote mark before the slug,
   and reads the slug;
 - a definition that prints a comparison such as `PNUM < 101` in the
-  visible text.
+  visible text;
+- a `-->` in a quoted attribute value, as in an arrow `alt="Next -->"`,
+  after an identifier and before a value in the value's rest, as in
+  `PNUM<img alt="--> 7">`: the browser view ends the tag at that `>` and
+  reads the rest of the value as text.
 
 A decimal character reference of more than 4,300 digits makes Python's
 `html.unescape` raise, which stops the capture too.

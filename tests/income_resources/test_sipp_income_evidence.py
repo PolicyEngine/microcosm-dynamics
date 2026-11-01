@@ -1179,6 +1179,116 @@ INVENTED_RECORD_PAGES = {
     "script_end_tag_with_dotted_capital_i": (
         "<script>x</scr\u0130pt><img src=PNUM+101></script>"
     ),
+    # Round 11: a browser ends an element's name at whitespace, "/" or ">",
+    # so each of these openings is an unknown element whose contents a
+    # browser shows, though the script or style after it ends where the
+    # text that leaves out closed scripts would hide them. "\\b" ends a
+    # name at each of these marks, and "\\s" at the vertical tab too.
+    "script_name_with_hyphen": (
+        "<script-x>PNUM <b>101</b></script-x><script>y</script>"
+    ),
+    "script_name_with_period": "<script.x>PNUM <b>101</b><script>y</script>",
+    "script_name_with_null": "<script\x00>PNUM <b>101</b><script>y</script>",
+    "script_name_with_vertical_tab": (
+        "<script\x0b>PNUM <b>101</b><script>y</script>"
+    ),
+    "script_name_with_quote": '<script"x">PNUM <b>101</b><script>y</script>',
+    "script_name_with_equals": "<script=x>PNUM <b>101</b><script>y</script>",
+    "style_name_with_colon": (
+        "<style:x>PNUM <b>101</b></style:x><style>y</style>"
+    ),
+    # Round 11: a browser opens no script at a longer name, and ends one at
+    # "</script" followed by a form feed or a carriage return, which it
+    # reads as a line end; a no-break space ends no name, so the script
+    # runs on, and its contents are read as they stand.
+    "script_name_runs_on": (
+        "<scripts>PNUM <b>101</b></scripts><script>y</script>"
+    ),
+    "script_end_tag_with_form_feed": (
+        "<script>x</script\x0c><p>PNUM <b>101</b></p><script>y</script>"
+    ),
+    "script_end_tag_with_carriage_return": (
+        "<script>x</script\r><p>PNUM <b>101</b></p><script>y</script>"
+    ),
+    "script_end_tag_with_no_break_space": (
+        "<script>x</script\xa0><img src=PNUM+101></script>"
+    ),
+    # Round 11: a comment between an identifier and its value, which a
+    # browser leaves out, holding a period, a closing mark or other text,
+    # commented-out markup, or a script opening, and comments that a
+    # browser ends early: at "<!-->" or "<!--->", which are empty, and at
+    # "--!>".
+    "comment_with_period_between": "<p>PNUM <!-- . --> 101</p>",
+    "end_comment_between": "<p>PNUM<!-- /.label --> 101</p>",
+    "comment_between_identifier_and_digit": "<p>PNUM: <!-- x --> 7</p>",
+    "end_comment_between_paragraphs": "<p>PNUM</p><!-- /.col --><p>101</p>",
+    "commented_out_markup_between": (
+        '<p>PNUM<!-- <span class="label">Person no.</span> --> 101</p>'
+    ),
+    "comment_holding_script_opening": (
+        "<!-- <script> --><p>PNUM <b>101</b></p><script>x</script>"
+    ),
+    "empty_comment_before_value": "<p>PNUM <!-- . --><!--> 101 <!-- --></p>",
+    "empty_dash_comment_before_value": (
+        "<p>PNUM <!-- . --><!---> 101 <!-- --></p>"
+    ),
+    "comment_closed_by_bang": "<p>PNUM <!-- . --!> 101 <!-- --></p>",
+    "tag_ending_with_comment_close": "<b-->PNUM <i>101</i></b>",
+    # Round 11: contents a browser with scripting on does not show,
+    # between an identifier and its value: iframe, noembed, noframes and
+    # noscript contents, which it reads as raw text, so a script opening
+    # there opens nothing, and template contents.
+    "template_between": "<p>PNUM <template>.</template> 101</p>",
+    "iframe_between": "<p>PNUM <iframe>.</iframe> 101</p>",
+    "noembed_between": "<p>PNUM <noembed>.</noembed> 101</p>",
+    "noframes_between": "<p>PNUM <noframes>.</noframes> 101</p>",
+    "noscript_between": "<p>PNUM <noscript>.</noscript> 101</p>",
+    "script_opening_in_iframe": (
+        "<iframe><script></iframe><p>PNUM <b>101</b></p><script>x</script>"
+    ),
+    "script_opening_in_noembed": (
+        "<noembed><script></noembed><p>PNUM <b>101</b></p>"
+        "<script>x</script>"
+    ),
+    "script_opening_in_noframes": (
+        "<noframes><script></noframes><p>PNUM <b>101</b></p>"
+        "<script>x</script>"
+    ),
+    "script_opening_in_noscript": (
+        "<noscript><script></noscript><p>PNUM <b>101</b></p>"
+        "<script>x</script>"
+    ),
+    # Round 11: a noscript block, which a browser with scripting off shows,
+    # read in the text; and the adjacency marks no other page holds.
+    "identifier_in_noscript": "<noscript>PNUM <b>101</b></noscript>",
+    "number_sign_before_digit": "<p>PNUM #7</p>",
+    "bracket_before_digit": "<p>PNUM [7</p>",
+    "apostrophe_before_digit": "<p>PNUM '7</p>",
+    "parenthesis_before_digit": "<p>PNUM (7</p>",
+    # Round 11: round 10's browser-text pages inside a comment or a
+    # noscript block, which the text with comments and noscript contents
+    # reads as a browser with scripting off would, and the browser view
+    # leaves out; and a textarea after a comment, which only the browser
+    # view shows beside the identifier.
+    "comment_holding_script_end_tag_self_closing": (
+        "<!-- <script>x</script/><p>PNUM <b>101</b></p><script>y</script> -->"
+    ),
+    "comment_holding_title_end_tag_with_dotted_capital_i": (
+        "<!-- <title>x</T\u0130TLE>PNUM <i 101</title> -->"
+    ),
+    "comment_holding_textarea_with_encoded_digits": (
+        "<!-- <textarea>PNUM <b &#49;&#48;&#49;</textarea> -->"
+    ),
+    "comment_holding_script_name_with_hyphen": (
+        "<!-- <script-x>PNUM <b>101</b></script-x><script>y</script> -->"
+    ),
+    "noscript_holding_text_lt_long_s": (
+        "<noscript><p>PNUM <\u017f 101></p></noscript>"
+    ),
+    "noscript_holding_xmp_contents": (
+        "<noscript><xmp>PNUM <i 101</xmp></noscript>"
+    ),
+    "textarea_after_comment": "<p>PNUM <!-- . --><textarea>101</textarea></p>",
 }
 # Invented definition-only pages, which name an identifier with no value.
 INVENTED_DEFINITION_PAGES = {
@@ -1313,6 +1423,20 @@ INVENTED_DEFINITION_PAGES = {
     "link_target_after_lt_long_s": (
         "<p><\u017f title=PNUM src=/invented/a.png 101></p>"
     ),
+    # Round 11: a browser opens a script at each of these openings, whose
+    # name ends at a tab, a line end, a form feed, a carriage return, a
+    # space or "/", and shows none of their contents; and a comment that
+    # opens after the page's last ">" runs to its end, so the count in it
+    # is not shown beside the identifier.
+    "script_openings_ended_by_each_mark": (
+        "<script\t>PNUM <b>101</b></script>"
+        "<script\n>PNUM <b>101</b></script>"
+        "<script\x0c>PNUM <b>101</b></script>"
+        "<script\r>PNUM <b>101</b></script>"
+        "<script >PNUM <b>101</b></script>"
+        "<script/>PNUM <b>101</b></script>"
+    ),
+    "comment_after_last_bracket": "<p>SSUID <iframe>.</iframe></p><!-- 101",
 }
 
 # Each refused page and a twin that differs only in the structure one rule
@@ -1474,18 +1598,20 @@ INVENTED_RULE_TWINS = {
     # Round 8: the browser scan of the source, which reads a "<script"
     # inside a quoted value as text; the text as a browser reads it, where
     # a "<" before a space opens no tag and title contents are text; and
-    # template literals and style strings, each read alone.
+    # template literals and style strings, each read alone. Since round
+    # 11 the browser text's pages sit in a comment, which the browser view
+    # leaves out, so that the browser text alone refuses them.
     "browser_scan_of_the_source": (
         '<a href="<script src="PNUM=101">',
         '<a href="<script" src="PNUM=101">',
     ),
     "browser_text_lt_opens_no_tag": (
-        "<p>PNUM < 101</p>",
-        "<p>PNUM <b 101</p>",
+        "<!-- <p>PNUM < 101</p> -->",
+        "<!-- <p>PNUM <b 101</p> -->",
     ),
     "browser_text_title_contents": (
-        "<title>PNUM <i 101</title>",
-        "<p>PNUM <i 101</p>",
+        "<!-- <title>PNUM <i 101</title> -->",
+        "<!-- <p>PNUM <i 101</p> -->",
     ),
     "template_literal_read_alone": (
         "<script>s = `<b>PNUM</b> 101`;</script>",
@@ -1494,6 +1620,26 @@ INVENTED_RULE_TWINS = {
     "style_string_read_alone": (
         '<style>a::after{content:"PNUM (person\'s number) 101"}</style>',
         '<style>a::after{content:"PNUM (person\'s number)" 101}</style>',
+    ),
+    # Round 11: the browser view, which leaves out comments where a browser
+    # starts and ends them, even one that holds a ">", and the contents of
+    # iframe, noembed, noframes, noscript and template elements; and a
+    # browser element's name, which ends only at whitespace, "/" or ">".
+    "browser_view_leaves_out_comments": (
+        "<p>PNUM <!-- . --> 101</p>",
+        "<p>PNUM <b>.</b> 101</p>",
+    ),
+    "browser_view_ends_comments_as_a_browser": (
+        '<p>PNUM<!-- <span class="label">Person no.</span> --> 101</p>',
+        '<p>PNUM<b> <span class="label">Person no.</span> </b> 101</p>',
+    ),
+    "browser_view_hides_raw_text_contents": (
+        "<p>PNUM <iframe>.</iframe> 101</p>",
+        "<p>PNUM <span>.</span> 101</p>",
+    ),
+    "browser_element_name_ends_at_whitespace_slash_or_bracket": (
+        "<script-x>PNUM <b>101</b></script-x><script>y</script>",
+        "<script x>PNUM <b>101</b></script-x><script>y</script>",
     ),
 }
 
@@ -1530,9 +1676,10 @@ def test_identifier_value_window_is_forty_characters(width, refused):
 # Invented pages of 100 kB to 2.1 MB in forms that a quadratic pattern
 # reads for minutes: a long word in a tag, plain or hyphenated; escaped
 # quotes after an unpaired quote in a script; tags and comments that never
-# close, alone or after closed tags; script start tags with no end tag,
-# with no ">" or after end tags; and table rows and cells that name an
-# identifier, alone or after rows of digits.
+# close, alone, after closed tags or before tags; script start tags with
+# no end tag, with no ">", after end tags or before one end tag; scripts
+# that end tags close; and table rows and cells that name an identifier,
+# alone or after rows of digits.
 INVENTED_LONG_PAGES = {
     "long_word_in_tag": "<p " + "a" * 200_000 + ">x</p>",
     "hyphenated_word_in_tag": "<p " + "a-" * 50_000 + ">x</p>",
@@ -1547,6 +1694,9 @@ INVENTED_LONG_PAGES = {
         "</script>" * 20_000 + "<script>" * 20_000
     ),
     "unclosed_comments": "<!--" * 100_000,
+    "unclosed_comments_before_tags": "<!--<b>" * 50_000,
+    "script_start_tags_before_end_tag": "<script>" * 50_000 + "</script>",
+    "closed_scripts": "<script>x</script>" * 120_000,
     "identifier_rows": (
         "<table><tr><td>x</td></tr>" + "<tr><td>PNUM</td></tr>" * 27_000
     ),
@@ -1572,16 +1722,17 @@ print(time.process_time() - start)
 
 @pytest.mark.parametrize("kind", sorted(INVENTED_LONG_PAGES))
 def test_guard_reads_long_pages_in_linear_time(kind):
-    # The guard read each page in under 1.5 s of CPU time, and the
-    # quadratic patterns it replaced, by their growth over a tenth of a
-    # page, would take from about two minutes to over an hour on the same
-    # host. Each page is also long enough that a slower form of a linear
-    # helper found in review, such as summing the row once per identifier
-    # cell or finding the last ">" again for each match, runs past the
-    # limit: by its growth, for 20 s or more. The guard runs in a child
-    # process that the operating system stops after 6 s of CPU time, so a
-    # slow pattern fails here instead of stalling the run; CPU time, unlike
-    # wall time, grows little with host load.
+    # The guard read each page in under 2 s of CPU time on a loaded host,
+    # and the quadratic patterns it replaced, by their growth over a tenth
+    # of a page, would take from about two minutes to over an hour on the
+    # same host. Each page is also long enough that a slower form of a
+    # linear helper found in review, such as summing the row once per
+    # identifier cell, finding the last ">" again for each match or
+    # keeping the closed scripts by list concatenation, runs past the
+    # limit: by its growth, or as measured, for 20 s or more. The guard
+    # runs in a child process that the operating system stops after 6 s of
+    # CPU time, so a slow pattern fails here instead of stalling the run;
+    # CPU time, unlike wall time, grows little with host load.
     child = subprocess.run(
         [
             sys.executable,
@@ -1626,6 +1777,14 @@ LINEAR_TOKENS = (
     "</title>",
     "<noscript>",
     "</noscript>",
+    "<iframe>",
+    "</iframe>",
+    "<template>",
+    "</template>",
+    "<!-->",
+    "--!>",
+    "<script-x>",
+    "<script\x0b>",
     "<table>",
     "<tr>",
     "</tr>",
@@ -1662,10 +1821,11 @@ LINEAR_TOKENS = (
 def test_linear_readings_match_their_patterns(tokens):
     # Each helper that keeps a reading linear gives what the plain pattern
     # gives, on invented text, and so do the attribute pattern, whose names
-    # start only where a run of name characters starts, and the table rules,
+    # start only where a run of name characters starts, the table rules,
     # which read each row and column once, where round 8's guard read them
-    # cell by cell. The examples spell "script" with a long s and with a
-    # dotted capital I, which "(?i)" reads as an s and an i.
+    # cell by cell, and the browser view, which also reads a comment that
+    # opens after the last ">". The examples spell "script" with a long s
+    # and with a dotted capital I, which "(?i)" reads as an s and an i.
     text = "".join(tokens)
     capture = _module("capture_user_notes.py")
     for pattern in (
@@ -1685,6 +1845,19 @@ def test_linear_readings_match_their_patterns(tokens):
         ] == [match.span() for match in pattern.finditer(text)]
     assert capture._without_closed_scripts(text) == (
         capture.CLOSED_SCRIPT.sub(" ", text)
+    )
+
+    def shown(match):
+        if match.group(1) and match.group(1).lower() in {
+            "title",
+            "textarea",
+            "xmp",
+        }:
+            return f" {match.group(2)} "
+        return " "
+
+    assert capture._browser_view(text) == " ".join(
+        html.unescape(capture.BROWSER_VIEW.sub(shown, text)).split()
     )
     assert capture._without_tags(text) == re.sub(r"<[^>]+>", " ", text)
     for pattern, end_tag in (
@@ -1722,8 +1895,9 @@ def test_round_8_guard_fixture_is_frozen():
 # forms the round-9 review found that only one reading refuses, a script
 # in an unclosed tag that runs over lines, is in upper case or holds an end
 # tag in a string, and a double-quoted string across a template literal,
-# with other openings, contents and end tags. A plain random search over
-# tokens found the first forms only after thousands of pages.
+# with other openings, contents and end tags. Random token lists find
+# them rarely: one list found none of the four in 3,000 pages, and 24
+# chunks of the forms found three of them, first after 101 to 526 pages.
 RULE_PARTS = (
     ("", "<a", "<a ", '<a title="<style>">', "<p>"),
     (
@@ -1782,12 +1956,71 @@ RULE_PARTS = (
 )
 @settings(max_examples=300, deadline=None)
 def test_no_page_the_round_8_guard_refuses_is_admitted(parts, noise, place):
-    # The rule of rounds 9 and 10: the guard keeps every reading 085a33b9
+    # The rule of rounds 9 to 11: the guard keeps every reading 085a33b9
     # made, so every page that guard refuses is refused. Invented noise
     # tokens go between two of the parts.
-    page = "".join(parts[:place]) + "".join(noise) + "".join(parts[place:])
-    if _round_8_guard().record_bearing_note(page):
-        assert _module("capture_user_notes.py").record_bearing_note(page)
+    _assert_round_8_rule(
+        "".join(parts[:place]) + "".join(noise) + "".join(parts[place:])
+    )
+
+
+# Tokens of the record forms the parts leave out, for the rule property's
+# second strategy: the adjacency marks, digit runs of each rule's length,
+# comments, preformatted, noscript and table blocks, and quoted values.
+RECORD_TOKENS = (
+    "#",
+    "[",
+    "(",
+    "-",
+    ":",
+    ".",
+    "'",
+    "<pre>",
+    "</pre>",
+    "<b>",
+    "</b>",
+    "<img alt='",
+    "'>",
+    "</table>",
+    "SSUID",
+    " 101",
+    "123",
+    "123456789",
+    "12345678901234",
+)
+
+
+@given(
+    tokens=st.lists(
+        st.sampled_from(LINEAR_TOKENS + RECORD_TOKENS), max_size=30
+    )
+)
+@settings(max_examples=300, deadline=None)
+def test_no_token_page_the_round_8_guard_refuses_is_admitted(tokens):
+    _assert_round_8_rule("".join(tokens))
+
+
+def _assert_round_8_rule(page):
+    # Where the round-8 guard made a reading in a function that the guard
+    # keeps, the two give the same reading: the text, with and without the
+    # comment marks, the text a reader sees and the source split at every
+    # script or style, which the guard returns with its browser scan; and
+    # the guard's quoted values begin with that guard's, before its
+    # template literals and style strings. The browser readings, and the
+    # way record_bearing_note joins the readings and reads them, have no
+    # counterpart in that guard, so only its verdict is compared.
+    capture, round_8 = _module("capture_user_notes.py"), _round_8_guard()
+    unwrapped = re.sub(r"<!--|-->", " ", page)
+    for text in (page, unwrapped):
+        assert capture.note_text(text) == round_8.note_text(text)
+    assert capture._rendered_text(page) == round_8._rendered_text(page)
+    assert capture._without_link_targets(page)[1] == (
+        round_8._without_link_targets(page)
+    )
+    values = round_8._quoted_values(page)
+    assert capture._quoted_values(page)[: len(values)] == values
+    if round_8.record_bearing_note(page):
+        assert capture.record_bearing_note(page)
 
 
 @given(
