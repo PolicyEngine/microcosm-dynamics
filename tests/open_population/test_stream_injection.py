@@ -4069,11 +4069,6 @@ HINT_CODE_CASES = {
         f"{_wrapped(_TRUSTED_HINT, 5)}\n",
         [(2, "dynamic-code")],
     ),
-    "a literal under a call that does not fold": (
-        f"class C:\n    v: (lambda s=[{_RUN_SUITE!r}]: eval(s[0]))()\n"
-        "C.__annotations__\n",
-        [(3, "dynamic-code"), (3, "isinstance")],
-    ),
 }
 
 
@@ -4088,6 +4083,21 @@ def test_scan_reads_code_an_annotation_hides(case):
         assert [(hit.line, hit.kind) for hit in hits] == expected, describe(
             hits
         )
+
+
+@pytest.mark.parametrize("place", tuple(_FORCED_HINTS))
+def test_pruning_keeps_each_hint_whole(place):
+    """A literal in a hint can run, though nothing folds its way to it."""
+    hint = f"(lambda s=[{_RUN_SUITE!r}]: eval(s[0]))()"
+    text = f"{_IMPORT} as R\n{_FORCED_HINTS[place].format(hint)}"
+    assert _answers(text) == [True, False]
+    line = 3 if place == "class" else 2
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == [
+            (line, "dynamic-code"),
+            (line, "isinstance"),
+        ], describe(hits)
 
 
 @pytest.mark.parametrize(
@@ -4120,9 +4130,10 @@ def test_scan_leaves_expression_literals_in_hints_to_the_hint_checks():
 def test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement():
     """An annotation runs a literal suite as an ``exec`` statement does.
 
-    So the hint gives every check the statement gives. The catch-all's
-    name-string hits do not carry over: it reads the string in a statement
-    and skips it in a trusted annotation.
+    So the hint gives every check the statement gives, with two exceptions.
+    The catch-all reads the string in a statement, where it holds a tracked
+    name, and skips it in a trusted annotation. And a hint that names a
+    tracked class makes a namespace read an annotation read.
     """
 
     def checks(text):
@@ -4136,9 +4147,10 @@ def test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement():
     texts = [text for text, _ in SPELLINGS.values()]
     texts += [_REGISTRY_IMPORT + body for body in NEGATIVE_BODIES]
     for text in texts:
-        assert checks(f"exec({text!r})\n") <= checks(
-            f"def g(v: exec({text!r})):\n    pass\n"
-        )
+        plain = checks(f"exec({text!r})\n")
+        hinted = checks(f"def g(v: exec({text!r})):\n    pass\n")
+        added = {hit.kind for hit in hinted - plain}
+        assert plain <= hinted or added == {"annotation-read"}
 
 
 def _recursive_module_path(scope, node):
