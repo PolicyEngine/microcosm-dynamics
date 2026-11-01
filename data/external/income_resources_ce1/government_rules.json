@@ -3664,6 +3664,76 @@
         "authority": "POMS RS 01901.540 (2008-08-29)",
         "location": "D.7",
         "quote": "Organizations not obtaining a refund before 9/9/76 are deemed to have filed a valid waiver covering all employees."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.2",
+        "quote": "the employer is deemed to have filed a waiver effective with the first day of the quarter for which payments were made"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.3.b",
+        "quote": "first day of any of 20 calendar quarters immediately preceding the calendar quarter of filing"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.4",
+        "quote": "Services performed by all employees hired after the effective date of the certificate are mandatorily covered."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.5",
+        "quote": "There is a 24-month waiting period before the termination becomes effective."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO503",
+        "quote": "the employees who signed the SS-15a, as well as those hired afterwards, were covered by Social Security in every calendar quarter in which they earned at least $50"
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO505",
+        "quote": "Employees hired after the request were automatically covered under Social Security."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO506",
+        "quote": "Since you were employed by the organization when Social Security coverage was requested, your service is not counted for Social Security purposes."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO508 c",
+        "quote": "Service performed for this employer prior to that date was not covered."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1976 amendment note, subsec. (a)(8)(B)",
+        "quote": "substituted \u201cis (or is deemed to be) in effect\u201d for \u201cis in effect\u201d in provisions following cl. (iii)"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "1958 amendment note, subsec. (b)(8)(B)",
+        "quote": "made subparagraph applicable with respect to service performed by an employee as a member of a group described in section 3121(k)(1)(E) of this title with respect to which no certificate is in effect"
       }
     ],
     "trigger_facts": [
@@ -3676,7 +3746,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Before mandatory coverage, eligible nonprofit employees require an effective actual or deemed waiver; the separate small-remuneration exclusion applies.",
+    "description": "Before mandatory coverage, service for a 501(c)(3) organization is covered only while an actual or deemed waiver certificate is in effect for it, and under an actual certificate only for employees it reaches; the separate small-remuneration test applies.",
     "parameters": {
       "waiver_effective_date_options": [
         "quarter of filing",
@@ -3757,42 +3827,64 @@
       {
         "case_id": "effective_waiver_concurring_employee",
         "precedence": 1,
-        "consequence": "covered_above_threshold",
-        "description": "Under an actual waiver certificate, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and every employee hired after the certificate's effective date are covered (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1, C.4 and C.6).",
         "when": {
-          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective for the service",
-          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate's effective date"
-        }
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate was filed"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "Under an actual certificate in effect for the service, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and those hired afterwards are covered: NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505, \"Employees hired after the request were automatically covered\" (RS 01901.540 C.1, C.4 and the C.6 NOTE). A worker hired between the filing and the effective date is covered from the effective date. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter)."
       },
       {
         "case_id": "deemed_waiver_all_employees",
         "precedence": 2,
-        "consequence": "covered_above_threshold",
-        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it.",
         "when": {
-          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76)"
-        }
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter)."
+      },
+      {
+        "case_id": "waiver_retroactive_period_hire_unlisted",
+        "precedence": 3,
+        "when": {
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed on the Form SS-15a as filed or amended"
+        },
+        "consequence": "open",
+        "open_reason": "NONPROFIT_RETROACTIVE_HIRE_UNSETTLED: a certificate filed after 1965 may take effect up to 20 quarters before its filing (RS 01901.540 C.3.b). For an employee hired after that effective date and still employed, or already gone, when it was filed, who never signed the Form SS-15a, RS 01901.540 C.4 covers \"all employees hired after the effective date of the certificate\", while NL 00902.500 NPO505 covers only those who signed among \"persons employed at the time of the request\" and NPO506 tells an unsigned employee \"Since you were employed by the organization when Social Security coverage was requested, your service is not counted\". No capture holds the text of former 410(a)(8)(B)'s clauses, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "effective_date_hire_reading",
+            "description": "RS 01901.540 C.4 governs: an employee hired after the certificate's effective date is covered for service in the certificate's period above the remuneration threshold, signed or not."
+          },
+          {
+            "name": "request_date_hire_reading",
+            "description": "NL 00902.500 NPO505 and NPO506 govern: an employee hired before the request who did not sign the Form SS-15a is not covered; only those hired after the request are covered without signing."
+          }
+        ],
+        "description": "Only a certificate effective before its filing date creates this group: for a prospective certificate every employee hired after the effective date was hired after the filing."
       },
       {
         "case_id": "waiver_nonconcurring_existing_employee",
-        "precedence": 3,
-        "consequence": "noncovered",
-        "description": "An actual waiver covers an employee on its filing date only if the employee signed the Form SS-15a (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1), so former 410(a)(8)(B) still excludes this employee's service.",
+        "precedence": 4,
         "when": {
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective",
-          "nonprofit_employee_concurrence": "employed on the certificate's filing date and not listed on the Form SS-15a as filed or amended"
-        }
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, and not listed on the Form SS-15a as filed or amended"
+        },
+        "consequence": "noncovered",
+        "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and C.4 reaches only hires after the effective date, so on every source former 410(a)(8)(B) still excludes this employee's service."
       },
       {
         "case_id": "no_effective_waiver",
-        "precedence": 4,
-        "consequence": "noncovered",
-        "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+        "precedence": 5,
         "when": {
-          "nonprofit_coverage_waiver": "none or terminated",
+          "nonprofit_coverage_waiver": "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
-        }
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(8)(B) excludes service for a 501(c)(3) organization unless a certificate \"is (or is deemed to be) in effect\" for it (1976 amendment note), and the 1958 amendment keeps the exclusion for \"a group described in section 3121(k)(1)(E) ... with respect to which no certificate is in effect\". NPO508 c: \"Service performed for this employer prior to that date was not covered.\""
       }
     ],
     "open_alternatives": [],
@@ -3850,6 +3942,76 @@
         "authority": "POMS RS 01901.540 (2008-08-29)",
         "location": "D.7",
         "quote": "Organizations not obtaining a refund before 9/9/76 are deemed to have filed a valid waiver covering all employees."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.2",
+        "quote": "the employer is deemed to have filed a waiver effective with the first day of the quarter for which payments were made"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.3.b",
+        "quote": "first day of any of 20 calendar quarters immediately preceding the calendar quarter of filing"
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.4",
+        "quote": "Services performed by all employees hired after the effective date of the certificate are mandatorily covered."
+      },
+      {
+        "capture": "poms_rs_01901540.html",
+        "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d",
+        "authority": "POMS RS 01901.540 (2008-08-29)",
+        "location": "C.5",
+        "quote": "There is a 24-month waiting period before the termination becomes effective."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO503",
+        "quote": "the employees who signed the SS-15a, as well as those hired afterwards, were covered by Social Security in every calendar quarter in which they earned at least $50"
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO505",
+        "quote": "Employees hired after the request were automatically covered under Social Security."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO506",
+        "quote": "Since you were employed by the organization when Social Security coverage was requested, your service is not counted for Social Security purposes."
+      },
+      {
+        "capture": "poms_nl_00902500.html",
+        "sha256": "d56c8ed7d3ac0ba4d1084a0c5b551fe2a152d93d4f14b55e237777e868e44cdd",
+        "authority": "POMS NL 00902.500 (2004-05-27)",
+        "location": "NPO508 c",
+        "quote": "Service performed for this employer prior to that date was not covered."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "1976 amendment note, subsec. (a)(8)(B)",
+        "quote": "substituted \u201cis (or is deemed to be) in effect\u201d for \u201cis in effect\u201d in provisions following cl. (iii)"
+      },
+      {
+        "capture": "uscode_119_120_26_3121.html",
+        "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405",
+        "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+        "location": "1958 amendment note, subsec. (b)(8)(B)",
+        "quote": "made subparagraph applicable with respect to service performed by an employee as a member of a group described in section 3121(k)(1)(E) of this title with respect to which no certificate is in effect"
       }
     ],
     "trigger_facts": [
@@ -3862,7 +4024,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Waiver requirement continues; from 1978 the nonprofit small-remuneration rule uses $100 per employer per year.",
+    "description": "Before mandatory coverage, service for a 501(c)(3) organization is covered only while an actual or deemed waiver certificate is in effect for it, and under an actual certificate only for employees it reaches; the separate small-remuneration test applies.",
     "parameters": {
       "waiver_effective_date_options": [
         "quarter of filing",
@@ -3977,42 +4139,64 @@
       {
         "case_id": "effective_waiver_concurring_employee",
         "precedence": 1,
-        "consequence": "covered_above_threshold",
-        "description": "Under an actual waiver certificate, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and every employee hired after the certificate's effective date are covered (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1, C.4 and C.6).",
         "when": {
-          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective for the service",
-          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate's effective date"
-        }
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate was filed"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "Under an actual certificate in effect for the service, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and those hired afterwards are covered: NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505, \"Employees hired after the request were automatically covered\" (RS 01901.540 C.1, C.4 and the C.6 NOTE). A worker hired between the filing and the effective date is covered from the effective date. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year)."
       },
       {
         "case_id": "deemed_waiver_all_employees",
         "precedence": 2,
-        "consequence": "covered_above_threshold",
-        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it.",
         "when": {
-          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76)"
-        }
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+        },
+        "consequence": "covered_above_threshold",
+        "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year)."
+      },
+      {
+        "case_id": "waiver_retroactive_period_hire_unlisted",
+        "precedence": 3,
+        "when": {
+          "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed on the Form SS-15a as filed or amended"
+        },
+        "consequence": "open",
+        "open_reason": "NONPROFIT_RETROACTIVE_HIRE_UNSETTLED: a certificate filed after 1965 may take effect up to 20 quarters before its filing (RS 01901.540 C.3.b). For an employee hired after that effective date and still employed, or already gone, when it was filed, who never signed the Form SS-15a, RS 01901.540 C.4 covers \"all employees hired after the effective date of the certificate\", while NL 00902.500 NPO505 covers only those who signed among \"persons employed at the time of the request\" and NPO506 tells an unsigned employee \"Since you were employed by the organization when Social Security coverage was requested, your service is not counted\". No capture holds the text of former 410(a)(8)(B)'s clauses, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "effective_date_hire_reading",
+            "description": "RS 01901.540 C.4 governs: an employee hired after the certificate's effective date is covered for service in the certificate's period above the remuneration threshold, signed or not."
+          },
+          {
+            "name": "request_date_hire_reading",
+            "description": "NL 00902.500 NPO505 and NPO506 govern: an employee hired before the request who did not sign the Form SS-15a is not covered; only those hired after the request are covered without signing."
+          }
+        ],
+        "description": "Only a certificate effective before its filing date creates this group: for a prospective certificate every employee hired after the effective date was hired after the filing."
       },
       {
         "case_id": "waiver_nonconcurring_existing_employee",
-        "precedence": 3,
-        "consequence": "noncovered",
-        "description": "An actual waiver covers an employee on its filing date only if the employee signed the Form SS-15a (POMS NL 00902.500 NPO503 and NPO505; RS 01901.540 C.1), so former 410(a)(8)(B) still excludes this employee's service.",
+        "precedence": 4,
         "when": {
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) valid and effective",
-          "nonprofit_employee_concurrence": "employed on the certificate's filing date and not listed on the Form SS-15a as filed or amended"
-        }
+          "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+          "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, and not listed on the Form SS-15a as filed or amended"
+        },
+        "consequence": "noncovered",
+        "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and C.4 reaches only hires after the effective date, so on every source former 410(a)(8)(B) still excludes this employee's service."
       },
       {
         "case_id": "no_effective_waiver",
-        "precedence": 4,
-        "consequence": "noncovered",
-        "description": "Former 410(a)(8)(B) excludes services for a 501(c)(3) organization absent an effective actual or deemed certificate.",
+        "precedence": 5,
         "when": {
-          "nonprofit_coverage_waiver": "none or terminated",
+          "nonprofit_coverage_waiver": "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
-        }
+        },
+        "consequence": "noncovered",
+        "description": "Former 410(a)(8)(B) excludes service for a 501(c)(3) organization unless a certificate \"is (or is deemed to be) in effect\" for it (1976 amendment note), and the 1958 amendment keeps the exclusion for \"a group described in section 3121(k)(1)(E) ... with respect to which no certificate is in effect\". NPO508 c: \"Service performed for this employer prior to that date was not covered.\""
       }
     ],
     "open_alternatives": [],

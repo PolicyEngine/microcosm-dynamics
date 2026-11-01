@@ -3303,26 +3303,111 @@ def test_failed_conditions_no_longer_exclude(
     assert rule.resolve(matched)["consequence"] == expected
 
 
+def cases_met(rule, facts):
+    """Cases whose every `when` condition an INVENTED worker's facts meet.
+
+    ``facts`` maps each trigger fact to a phrase stating the worker's true
+    value. A condition holds when its text contains that phrase; a
+    condition on a fact the pattern leaves out fails. The test then passes
+    these cases to ``resolve``, so a `when` narrowed until no real value
+    meets it changes the outcome (review r4 M-5).
+    """
+    return {
+        case["case_id"]
+        for case in rule.cases
+        if all(
+            fact in facts and facts[fact] in str(condition)
+            for fact, condition in case["when"].items()
+        )
+    }
+
+
+def resolved_consequence(rule, facts):
+    """The consequence for a fact pattern, or "refuses" for an open case."""
+    try:
+        return rule.resolve(cases_met(rule, facts))["consequence"]
+    except OpenRuleError:
+        return "refuses"
+
+
+# Phrases stating an INVENTED nonprofit worker's facts (review r4 H-A, M-2).
+NONPROFIT_501C3 = "organization described in 501(c)(3)"
+NONPROFIT_FACTS = {
+    "certificate_in_effect": (
+        "actual waiver certificate (Form SS-15) in effect for the service"
+    ),
+    "deemed_in_effect": (
+        "deemed filed under the 1976 amendments' constructive-filing "
+        "provisions (no refund before 9/9/76), in effect for the service"
+    ),
+    "none_filed": "none filed or deemed filed",
+    "before_effective_date": (
+        "the service falls before the certificate's effective date"
+    ),
+    "before_first_paid_quarter": (
+        "before the first day of the first quarter for which the taxes were "
+        "paid"
+    ),
+    "terminated": "a termination took effect before the service",
+    "other_group_only": (
+        "the only certificate covers another 3121(k)(1)(E) group"
+    ),
+    "listed": "employee listed on the Form SS-15a",
+    "hired_after_filing": "hired after the certificate was filed",
+    "hired_in_retroactive_period": (
+        "hired after the certificate's effective date and on or before its "
+        "filing date"
+    ),
+    "hired_before_both": (
+        "hired on or before both the certificate's filing date and its "
+        "effective date"
+    ),
+}
 NONPROFIT_WAIVER_WORKERS = {
-    # INVENTED workers of a 501(c)(3) employer, by the cases that hold.
+    # INVENTED workers of a 501(c)(3) employer: (waiver, concurrence), the
+    # outcome the sources give.
+    # H-A repro 1: a deemed certificate effective 1974-01-01 (first FICA
+    # quarter 1974Q1) and a nurse's earlier service (RS 01901.540 C.2).
+    "service_before_deemed_certificate": (
+        ("before_first_paid_quarter", "hired_before_both"),
+        "noncovered",
+    ),
+    # H-A repro 2: a certificate filed 1975-08-01 effective 1975-10-01 and
+    # a listed employee's March 1975 service (C.3.a; NPO508 c).
+    "listed_service_before_effective_date": (
+        ("before_effective_date", "listed"),
+        "noncovered",
+    ),
     "listed_existing_employee": (
-        {"effective_waiver_concurring_employee"},
+        ("certificate_in_effect", "listed"),
         "covered_above_threshold",
     ),
-    "hired_after_certificate": (
-        {"effective_waiver_concurring_employee"},
+    # Includes a worker hired between the filing and the effective date,
+    # for service from the effective date (NPO503, NPO505).
+    "hired_after_filing": (
+        ("certificate_in_effect", "hired_after_filing"),
         "covered_above_threshold",
+    ),
+    # M-2 repro: hired 1972-03-01 under a certificate filed 1975-08-01 and
+    # made effective 1971-01-01; never signed (C.4 against NPO505/NPO506).
+    "unlisted_hire_in_retroactive_period": (
+        ("certificate_in_effect", "hired_in_retroactive_period"),
+        "refuses",
     ),
     "unlisted_existing_employee": (
-        {"waiver_nonconcurring_existing_employee"},
+        ("certificate_in_effect", "hired_before_both"),
         "noncovered",
     ),
     "deemed_waiver_employee": (
-        {"deemed_waiver_all_employees"},
+        ("deemed_in_effect", "hired_before_both"),
         "covered_above_threshold",
     ),
-    "no_waiver": ({"no_effective_waiver"}, "noncovered"),
-    "not_a_501c3_employer": (set(), "covered"),
+    "no_certificate": (("none_filed", "hired_before_both"), "noncovered"),
+    "after_termination": (("terminated", "listed"), "noncovered"),
+    "other_group_certificate_only": (
+        ("other_group_only", "listed"),
+        "noncovered",
+    ),
 }
 
 
@@ -3331,28 +3416,42 @@ NONPROFIT_WAIVER_WORKERS = {
 def test_nonprofit_waiver_covers_only_listed_or_later_employees(
     registry, year, worker
 ):
-    """Review r3 H1: NPO503 covers "the employees who signed the SS-15a,
-    as well as those hired afterwards"; NPO505 excludes an existing
-    employee who did not sign; RS 01901.540 D.7 deems a constructive
-    waiver to cover all employees.
+    """Review r3 H1, r4 H-A and M-2, by fact pattern rather than case ID.
+
+    NPO503 covers "the employees who signed the SS-15a, as well as those
+    hired afterwards"; NPO505 and NPO506 exclude an existing employee who
+    did not sign; RS 01901.540 D.7 deems a constructive waiver to cover all
+    employees, effective (C.2) "with the first day of the quarter for which
+    payments were made". Former 410(a)(8)(B) excludes the service unless a
+    certificate "is (or is deemed to be) in effect" for it. The cases are
+    disjoint, so no rank decides between sources.
     """
     (rule,) = registry.lookup("nonprofit_service", year)
-    matched, expected = NONPROFIT_WAIVER_WORKERS[worker]
-    assert rule.resolve(matched)["consequence"] == expected
+    (waiver, concurrence), expected = NONPROFIT_WAIVER_WORKERS[worker]
+    facts = {
+        "nonprofit_organization": NONPROFIT_501C3,
+        "nonprofit_coverage_waiver": NONPROFIT_FACTS[waiver],
+        "nonprofit_employee_concurrence": NONPROFIT_FACTS[concurrence],
+    }
+    assert len(cases_met(rule, facts)) <= 1
+    assert resolved_consequence(rule, facts) == expected
+    # A civic league's worker falls to the residual, whatever its waiver.
+    other_employer = {**facts, "nonprofit_organization": "501(c)(4) league"}
+    if waiver not in {"certificate_in_effect", "deemed_in_effect"}:
+        assert resolved_consequence(rule, other_employer) == "covered"
     cases = {case["case_id"]: case for case in rule.cases}
-    unlisted = cases["waiver_nonconcurring_existing_employee"]["when"]
-    assert "not listed on the Form SS-15a" in (
-        unlisted["nonprofit_employee_concurrence"]
-    )
-    assert unlisted["nonprofit_coverage_waiver"].startswith("actual")
-    assert cases["effective_waiver_concurring_employee"]["when"][
-        "nonprofit_coverage_waiver"
-    ].startswith("actual")
     deemed = cases["deemed_waiver_all_employees"]["when"]
     assert "nonprofit_employee_concurrence" not in deemed
     quotes = {c.quote for c in rule.citations if c.quote}
-    assert any("signed the Form SS-15a" in quote for quote in quotes)
-    assert any("covering all employees" in quote for quote in quotes)
+    for passage in (
+        "signed the Form SS-15a",
+        "covering all employees",
+        "effective with the first day of the quarter for which payments",
+        "hired after the effective date of the certificate",
+        "Service performed for this employer prior to that date",
+        "is (or is deemed to be) in effect",
+    ):
+        assert any(passage in quote for quote in quotes), passage
     assert "501(c)(3)" in rule.residual_default["description"]
 
 
