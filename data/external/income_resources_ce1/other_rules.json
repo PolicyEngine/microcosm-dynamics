@@ -4037,6 +4037,27 @@
         "sha256": "f808068af55a669085dd0ec4f9159271fe7e54b219a9b804645460e9cb18ca8f",
         "authority": "20 CFR 404.1031, April 1, 2024 edition",
         "location": "404.1031(a)(1),(a)(4),(b); retained older no-additional-cash wording"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410 (2023 U.S. Code, govinfo)",
+        "location": "410(a)(20)(C)",
+        "quote": "but only if the operating crew of such boat (or each boat from which the individual receives a share in the case of a fishing operation involving more than one boat) is normally made up of fewer than 10 individuals"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410 (2023 U.S. Code, govinfo)",
+        "location": "410(a), closing sentence",
+        "quote": "the operating crew of a boat shall be treated as normally made up of fewer than 10 individuals if the average size of the operating crew on trips made during the preceding 4 calendar quarters consisted of fewer than 10 individuals"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410 (2023 U.S. Code, govinfo)",
+        "location": "1996 amendment note, subsec. (a)(20)(A)",
+        "quote": "Prior to amendment, subpar. (A) read as follows: \"such individual does not receive any cash remuneration (other than as provided in subparagraph (B)),\"."
       }
     ],
     "trigger_facts": [
@@ -4054,7 +4075,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Qualifying catch-share crew service is wage-excluded and included in other net earnings from self-employment. For remuneration paid in this verified window, the 1996 four-quarter crew clarification and conditional $100 additional cash rule apply unless the payor treated the remuneration as FICA-taxed when paid. Where that exception applies, retain the earlier no-additional-cash and normally-under-ten tests. Family-service exclusions apply first.",
+    "description": "Qualifying catch-share crew service is wage-excluded and included in other net earnings from self-employment. For remuneration paid in this verified window, the 1996 crew deeming sentence and conditional $100 additional cash rule apply unless the payor treated the remuneration as FICA-taxed when paid. Where that exception applies, retain the earlier no-additional-cash-remuneration and normally-under-ten tests. Family-service exclusions apply first.",
     "parameters": {
       "catch_share_conditions": [
         "share_of_catch_or_sale_proceeds",
@@ -4103,10 +4124,12 @@
           "additional_cash_conditions": [
             "contingent_on_a_minimum_catch",
             "solely_for_traditional_additional_duties_such_as_mate_engineer_or_cook"
-          ]
+          ],
+          "crew_test": "normally_made_up_of_fewer_than_10_individuals",
+          "crew_average_role": "deeming_rule_a_crew_averaging_fewer_than_10_is_treated_as_normally_fewer_than_10"
         },
         "if_does_not_apply": {
-          "additional_cash": "none_except_catch_share",
+          "additional_cash": "no_cash_remuneration_except_catch_share",
           "crew_test": "normally_fewer_than_10",
           "four_calendar_quarter_clarification": "not_applied_from_this_1996_amendment"
         }
@@ -4303,7 +4326,7 @@
           ]
         }
       ],
-      "historical_default_cash_rule": "No compensation apart from catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies.",
+      "historical_default_cash_rule": "No cash remuneration apart from the catch share or sale-proceeds share when the payor treated remuneration as FICA-taxable; otherwise the expressly conditional 1996 clarification applies.",
       "source_disagreement_resolution": {
         "basis": "Public Law 104-188 section 1116(a)(3)(A) applies the 1996 amendments to remuneration paid after December 31, 1984, and before January 1, 1995, unless the payor treated it (when paid) as subject to FICA tax. Where they apply, their terms are current_statute_crew_test: fewer than 10 crew averaged over the preceding 4 calendar quarters, and cash of at most $100 per trip that is contingent on a minimum catch and paid for traditional additional duties. Where the payor treated the pay as FICA-taxed, the earlier tests in conditional_1996_clarification.if_does_not_apply govern, as in unamended_cfr_cash_prohibition. POMS RS 01901.280 A.2 (no more than 10 crew over the previous calendar quarter, no minimum-catch condition, dated only from 1995) is recorded as poms_crew_test and is not operative.",
         "operative_current_text": "conditional_1996_clarification"
@@ -4435,17 +4458,17 @@
         "description": "Pub. L. 104-188 section 1116(a)(2)-(3): for remuneration paid after 1984 and before 1995 that the payor did not treat as FICA wages, 410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment.",
         "when": {
           "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax",
-          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew averaged fewer than 10 over the preceding 4 calendar quarters, with no other pay except cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry"
+          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds (or the boats' catch in a fishing operation involving more than one boat) that depends on the amount caught, where the operating crew of the boat (or each boat from which the individual receives a share) is normally made up of fewer than 10 individuals (a crew whose average size on trips made during the preceding 4 calendar quarters was fewer than 10 is treated as normally fewer than 10), with no additional compensation other than cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry"
         }
       },
       {
         "case_id": "catch_share_payor_treated_as_fica",
         "precedence": 3,
         "consequence": "covered",
-        "description": "Where the payor treated the remuneration as FICA wages when paid, the 1996 amendments do not apply, and the earlier test allows no pay apart from the catch share: 410(a)(20) and 411(c)(2)(F) make the service self-employment.",
+        "description": "Where the payor treated the remuneration as FICA wages when paid, the 1996 amendments do not apply. The earlier (A) barred only cash, \"such individual does not receive any cash remuneration (other than as provided in subparagraph (B))\", and had no deeming sentence: 410(a)(20) and 411(c)(2)(F) make the service self-employment.",
         "when": {
           "historical_fica_treatment": "payor treated the remuneration, when paid, as subject to FICA tax",
-          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew is normally fewer than 10, with no pay apart from that share"
+          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds (or the boats' catch in a fishing operation involving more than one boat) that depends on the amount caught, where the operating crew of the boat (or each boat from which the individual receives a share) is normally made up of fewer than 10 individuals, with no cash remuneration apart from that share (former 410(a)(20)(A), before the 1996 amendment)"
         }
       }
     ],
@@ -4502,6 +4525,20 @@
         "sha256": "f808068af55a669085dd0ec4f9159271fe7e54b219a9b804645460e9cb18ca8f",
         "authority": "20 CFR 404.1031, April 1, 2024 edition",
         "location": "404.1031(a)(1),(a)(4),(b); retained older no-additional-cash wording"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410 (2023 U.S. Code, govinfo)",
+        "location": "410(a)(20)(C)",
+        "quote": "but only if the operating crew of such boat (or each boat from which the individual receives a share in the case of a fishing operation involving more than one boat) is normally made up of fewer than 10 individuals"
+      },
+      {
+        "capture": "ce1c_usc2023_42_410.html",
+        "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+        "authority": "42 U.S.C. 410 (2023 U.S. Code, govinfo)",
+        "location": "410(a), closing sentence",
+        "quote": "the operating crew of a boat shall be treated as normally made up of fewer than 10 individuals if the average size of the operating crew on trips made during the preceding 4 calendar quarters consisted of fewer than 10 individuals"
       }
     ],
     "trigger_facts": [
@@ -4519,7 +4556,7 @@
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
-    "description": "Qualifying catch-share crew service is wage-excluded and included in other net earnings from self-employment, subject first to the family-service exclusion. Each boat must normally have fewer than ten crew, with the statutory preceding-four-quarter average test. Additional cash may not exceed $100 per trip, must depend on a minimum catch, and must be solely for traditionally compensated additional duties. This applies to remuneration paid after 1994.",
+    "description": "Qualifying catch-share crew service is wage-excluded and included in other net earnings from self-employment, subject first to the family-service exclusion. Each boat from which the individual receives a share must normally have fewer than ten crew; a crew that averaged fewer than ten over the preceding four quarters is treated as normally under ten. Additional cash may not exceed $100 per trip, must depend on a minimum catch, and must be solely for traditionally compensated additional duties. This applies to remuneration paid after 1994.",
     "parameters": {
       "catch_share_conditions": [
         "share_of_catch_or_sale_proceeds",
@@ -4709,7 +4746,9 @@
         }
       },
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\"."
+      "effective_basis_description": "Pub. L. 104-188 section 1116(a)(3)(A): \"The amendments made by this subsection shall apply to remuneration paid-- (i) after December 31, 1994\".",
+      "crew_test": "normally_made_up_of_fewer_than_10_individuals",
+      "crew_average_role": "deeming_rule_a_crew_averaging_fewer_than_10_is_treated_as_normally_fewer_than_10"
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4808,7 +4847,7 @@
         "case_id": "qualifying_catch_share_arrangement",
         "precedence": 2,
         "when": {
-          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds that depends on the amount caught, on a boat whose operating crew averaged fewer than 10 over the preceding 4 calendar quarters, with no other pay except cash of at most $100 per trip that depends on a minimum catch and is paid solely for traditional additional duties"
+          "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds (or the boats' catch in a fishing operation involving more than one boat) that depends on the amount caught, where the operating crew of the boat (or each boat from which the individual receives a share) is normally made up of fewer than 10 individuals (a crew whose average size on trips made during the preceding 4 calendar quarters was fewer than 10 is treated as normally fewer than 10), with no additional compensation other than cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry"
         },
         "consequence": "covered",
         "description": "410(a)(20) excludes the service from wage employment and 411(c)(2)(F) makes it a trade or business: covered as self-employment."

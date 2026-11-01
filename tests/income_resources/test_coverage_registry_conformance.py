@@ -2128,10 +2128,44 @@ REQUIRED_CONDITIONS = [
                 "contingent on a minimum catch",
                 "solely for additional duties",
                 "preceding 4 calendar quarters",
+                "is normally made up of fewer than 10 individuals",
+                "each boat from which the individual receives a share",
             ),
         },
         "ce1c_plaw104_188.html",
         "which is contingent on a minimum catch",
+    ),
+    # Review r4 M-3: the crew test is "normally made up of fewer than 10",
+    # the average only deems it, and before 1996 (A) barred only cash.
+    (
+        "fishing_crew_share_service_1989",
+        "catch_share_payor_treated_as_fica",
+        {
+            "historical_fica_treatment": ("payor treated",),
+            "fishing_catch_share_arrangement": (
+                "is normally made up of fewer than 10 individuals",
+                "each boat from which the individual receives a share",
+                "no cash remuneration apart from that share",
+            ),
+        },
+        "ce1c_usc2023_42_410.html",
+        "such individual does not receive any cash remuneration (other than "
+        "as provided in subparagraph (B)),",
+    ),
+    (
+        "fishing_crew_share_service_1995",
+        "qualifying_catch_share_arrangement",
+        {
+            "fishing_catch_share_arrangement": (
+                "is normally made up of fewer than 10 individuals",
+                "each boat from which the individual receives a share",
+                "is treated as normally fewer than 10",
+                "$100 per trip",
+            ),
+        },
+        "ce1c_usc2023_42_410.html",
+        "shall be treated as normally made up of fewer than 10 individuals if "
+        "the average size of the operating crew",
     ),
     (
         "tribal_council_service_2018_0920",
@@ -3580,6 +3614,47 @@ def test_tribal_council_2018_resolves_from_its_facts(registry, member):
     assert resolved_consequence(rule, facts) == expected
     staff = {**facts, "tribal_council_service": "council staff"}
     assert resolved_consequence(rule, staff) == "covered"
+
+
+# Phrases stating INVENTED crew members' facts (review r4 M-3): a new
+# boat crewed by 5 has no four-quarter average, and noncash pay did not
+# defeat the pre-1996 test.
+FISHING_CREW = {
+    "new_boat_no_fica": (
+        1991,
+        "did not treat",
+        "is normally made up of fewer than 10 individuals",
+        "catch_share_1996_clarification",
+    ),
+    "noncash_pay_payor_fica": (
+        1991,
+        "payor treated the remuneration",
+        "no cash remuneration apart from that share",
+        "catch_share_payor_treated_as_fica",
+    ),
+    "new_boat_after_1994": (
+        2015,
+        "did not treat",
+        "is normally made up of fewer than 10 individuals",
+        "qualifying_catch_share_arrangement",
+    ),
+}
+
+
+@pytest.mark.parametrize("crew", sorted(FISHING_CREW))
+def test_fishing_crew_test_is_normally_under_ten(registry, crew):
+    """410(a)(20)(C): "is normally made up of fewer than 10 individuals";
+    the closing sentence only deems an average under 10 to meet it. A
+    qualifying crew member reaches the self-employment case, not the
+    residual's ordinary wage rules (review r4 M-3)."""
+    year, fica, arrangement, expected = FISHING_CREW[crew]
+    (rule,) = registry.lookup("fishing_crew_share_service", year)
+    facts = {
+        "historical_fica_treatment": fica,
+        "fishing_catch_share_arrangement": arrangement,
+    }
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided.get("case_id") == expected
 
 
 PUBLIC_OFFICERS = {
