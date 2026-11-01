@@ -4673,8 +4673,12 @@ def test_invented_svg_and_math_vocabulary_is_read(fragment):
         " 2031</p>",
         "<p><a href='#a'>See</a> 2031 payment levels</p>",
         "<p><sup>In</sup> 2031 payment levels rise</p>",
+        # The review's Q7, ported: a footnote word before the leading word
+        # makes no footnote body either, since every word must be one.
+        "<p><sup>1</sup> <sup>As</sup> payment levels as of March 1,"
+        " 2031</p>",
     ],
-    ids=["FB1", "FB2", "FB3", "FB4", "FB5", "FB6", "FB7", "FB8"],
+    ids=["FB1", "FB2", "FB3", "FB4", "FB5", "FB6", "FB7", "FB8", "Q7"],
 )
 def test_invented_leading_word_makes_no_footnote_body(fragment):
     """Regression (the round-12 review's Low 3): any word of one to three
