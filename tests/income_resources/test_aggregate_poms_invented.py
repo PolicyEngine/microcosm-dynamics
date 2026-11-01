@@ -4773,40 +4773,62 @@ def test_invented_date_limits_leave_the_date_standing(fragment, expected):
     )
 
 
+def test_invented_lower_case_effective_dates_stays_a_sentence():
+    """Regression (the round-13 review's E4): only title-case "Effective
+    Dates:" marks the revision range, so a sentence that holds those words
+    in lower case dates the chart."""
+    assert invented_selector(
+        invented_nevada_with(
+            "<p>Monthly payment levels for this State, effective dates:"
+            f" January 1, 2031{INVENTED_LONG_TAIL}</p>"
+        )
+    )[2] == ("2031-01-01")
+
+
+def test_invented_lower_case_effective_dates_keeps_the_state_guard():
+    """Regression (the round-13 review's ES1): such a sentence stays under
+    the State guards, so one that names another State refuses."""
+    with pytest.raises(
+        TableStructureError, match="State changes without a section heading"
+    ):
+        describe_poms_tables(
+            invented_nevada_with(
+                "<p>Monthly payment levels for Utah, effective dates:"
+                f" January 1, 2031{INVENTED_LONG_TAIL}</p>"
+            )
+        )
+
+
 @pytest.mark.parametrize(
-    "line",
+    "before",
     [
-        # The review's Note 4, and the revision range in any case.
-        "effective dates: 03/01/2031 - present",
-        "Effective dates: 03/01/2031 - Present",
-        "EFFECTIVE DATES: 03/01/2031 - PRESENT",
+        "<script>var a='effective dates: 01/01/2029 - present';</script>",
+        "<table><tr><td>EFFECTIVE DATES: 01/01/2029 - 12/31/2029</td></tr>"
+        "</table>",
     ],
+    ids=["V6", "V7"],
 )
-def test_invented_revision_range_in_any_case_dates_no_chart(line):
-    """Regression (the round-12 review's Note 4): the revision range and
-    the date sentence's exclusion of it were case-sensitive, so a
-    lower-case "Effective dates:" line dated the chart March 1, 2031."""
-    payload = invented_nevada_with(f"<p>{line}</p>").replace(
-        b"<p>Effective Dates: 02/03/2040 - Present</p>", b""
+def test_invented_section_revision_dates_read_title_case_only(before):
+    """Regression (the round-13 review's V6 and V7): a range in another
+    case, in a script or a cell, sets no section revision date."""
+    revision = b"<p>Effective Dates: 02/03/2040 - Present</p>"
+    payload = invented_nevada_with("").replace(
+        revision, before.encode() + revision, 1
     )
     (context,) = describe_poms_tables(payload)
     assert (
-        context["effective_from"],
         context["section_effective_from"],
         context["section_effective_to"],
-    ) == ("2030-01-01", "2031-03-01", None)
+    ) == ("2040-02-03", None)
 
 
-def test_invented_lower_case_revision_range_keeps_its_end():
+def test_invented_lower_case_revision_line_counts_as_a_sentence():
+    """A listed limit: the round-12 review's Note 4. The label reads in
+    title case only, so a line in another case dates the chart."""
     payload = invented_nevada_with(
-        "<p>effective dates: 03/01/2031 - 04/01/2031</p>"
-    ).replace(b"<p>Effective Dates: 02/03/2040 - Present</p>", b"")
-    (context,) = describe_poms_tables(payload)
-    assert (
-        context["effective_from"],
-        context["section_effective_from"],
-        context["section_effective_to"],
-    ) == ("2030-01-01", "2031-03-01", "2031-04-01")
+        "<p>Effective dates: 03/01/2031 - Present</p>"
+    )
+    assert invented_selector(payload)[2] == "2031-03-01"
 
 
 @pytest.mark.parametrize(

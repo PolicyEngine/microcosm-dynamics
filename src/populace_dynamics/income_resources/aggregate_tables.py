@@ -261,8 +261,9 @@ class _HTMLTree(HTMLParser):
     ignores and which closes the element here; a head or body start tag
     after the page's head, which HTML ignores and which here starts an
     element (no pinned capture has more than one of either); a CDATA
-    section in HTML content, which HTML reads as a comment ending at the
-    first ``>`` and which here holds no text; HTML's script data escape
+    section, which HTML reads as a comment ending at the first ``>`` in
+    HTML content and as text inside svg or math, and which here holds no
+    text; HTML's script data escape
     states, in which a script holding "<!--" and then a script start tag
     may run on past its next ``</script>``: here the script ends there, so
     the tree refuses a page whose script text holds both (no pinned script
@@ -274,13 +275,18 @@ class _HTMLTree(HTMLParser):
     attribute; it builds any other start tag there, such as section, td or
     form, as a foreign element, which it does not render as a block or
     cell. Inside svg's foreignObject, desc or title, MathML's mi, mo, mn,
-    ms or mtext, or an annotation-xml whose encoding is text/html, it
+    ms or mtext, or an annotation-xml whose encoding is text/html or
+    application/xhtml+xml, it
     builds HTML elements again, and an end tag there, as ``</h5>`` in
     ``<h5><math><mi></h5>``, does not end the heading outside them. The
     tree models none of this, so it refuses a page on which a start tag
     other than an svg or MathML element of ``_FOREIGN_VOCABULARY`` comes
     inside svg or math, or on which svg or math ends other than at its own
-    end tag, the end of the page included. It refuses
+    end tag, the end of the page included. It does not model an HTML
+    element built inside one of those integration points, so in
+    ``<svg><foreignObject><g></svg>`` HTML ignores the end tag and keeps
+    the svg open while the tree ends it, and the blocks and cells after it
+    read here and stay foreign in HTML. It refuses
     ``<svg><h3>Utah</h3></svg>``, whose h3 HTML builds after the svg, as it
     refuses ``<svg><section>Couple</section></svg>`` and ``<svg><td>``,
     which HTML builds as foreign elements. Outside those integration

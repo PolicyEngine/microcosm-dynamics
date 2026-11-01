@@ -117,8 +117,9 @@ sentence or State heading. A heading, or a line under 80 characters, that
 names a date no effective-date sentence of its block or the section states,
 as "Payment levels as of January 1, 2031", "Effective: January 1, 2031" or
 "January 1, 2031", leaves the date unread, and the next chart refuses unless
-a later sentence dates it. So does one that holds a date in a form no
-sentence reads, the section's own date included: an abbreviated month
+a later sentence dates it. So does one that holds a date in any of these
+forms, which no sentence reads, the section's own date included, apart from
+an ISO date that equals a date in force: an abbreviated month
 ("Jan. 1, 2031"), a month and year ("January 2031"), a day before its
 month ("1 January 2031"), an ISO or dashed date ("2031-01-01",
 "1-1-2031"), an ordinal day ("July 1st, 2030", "1st of July"), a comma with
@@ -132,21 +133,25 @@ them, or before them with a dating word ("payment", "level", "effective",
 "as of" or "rate", inside another word too, in any case), as in a section
 dated 2030 "Payment levels for 2031", "FY2031", "Calendar year 2031 payment
 levels", "Payment levels for 2029" or "Rates for 2029"; with no date in
-force, every such year counts. Each line names its own dates, and a block's
-whole text adds those it names more often, in one reading, than its lines
-together do, as a date split across a ``br``, so a footnote line that names
-the same date does not cover a split one. Outside a heading, a footnote
-body dates no chart: a line, or a block's whole text, that opens with
-footnote markers by either marker rule, every word they drop one to three
-digits or footnote signs or a single letter, and holds none after them, as
+force, every such year counts. Each line names its own dates, and a heading's
+whole text, or that of a block under 80 characters, adds those it names more
+often, in one reading, than its lines together do, as a date split across a
+``br``, so a footnote line that names the same date does not cover a split
+one, though a revision range on a line still counts among the lines. Outside
+a heading, a footnote body dates no chart: a line, or a block's whole text,
+that opens with footnote markers by either marker rule, every word they drop
+one to three digits or footnote signs or a single letter, and holds none
+after them, as
 "<sup>1</sup>Revised March 1, 2031" or "<sup>a</sup>Revised March 1, 2031".
 A leading ``sup`` or ``#`` link that holds another word, as
 ``<sup>As of</sup>`` or ``<a href="#new">New</a>``, makes no footnote body.
 A block other than a heading whose whole text is one dates no chart in any
 line, and a heading is never one. Nor does the section's revision range
-("Effective Dates: 02/03/2040 - Present", in any case) date a chart: the
-net drops it from a line before naming the line's dates and years, so the
-rest of the line still names its own.
+("Effective Dates: 02/03/2040 - Present") date a chart: the net drops it
+from a line before naming the line's dates and years, so the rest of the
+line still names its own. The net and the date sentence's exclusion of
+that range read the label in title case only, the form every pinned page
+holds, so "effective dates:" counts as a sentence's words.
 
 Every definition table of a section precedes its first chart; a definition
 table after a chart refuses, because the source does not say which earlier
@@ -242,7 +247,19 @@ These forms also leave the claimant or date before them standing:
 - a line after a footnote body's first line in the same block, outside a
   heading, as the second line of ``<sup>1</sup>Revised March 1, 2031<br>
   Payment levels as of March 1, 2031``, is part of that footnote body and
-  dates no chart.
+  dates no chart;
+- a date in a form that no sentence reads and the list above leaves out
+  names none, as "July 1", "7/1", "July of 2030", "01-Jul-2030" and
+  "1.VII.2030";
+- a date split across a ``br`` in a block of 80 characters or more, outside
+  a heading, names none, since only a shorter block's whole text adds it;
+- a line that holds "Effective Dates:" in title case is no sentence, so
+  "Monthly payment levels effective January 1, 2031 (Effective Dates:
+  01/01/2031 - Present)", at 80 characters or more, names no date;
+- a leading link or ``sup`` of one letter or digit makes a footnote body
+  even where it opens a word or a year, as ``<a href="#top">A</a> new
+  payment level applies from March 1, 2031`` or ``<a href="#y">2</a>031
+  payment levels``, whose date or year dates no chart.
 """
 
 from __future__ import annotations
@@ -632,7 +649,7 @@ def _state_date_line(text: str) -> str | None:
 def _effective_line(text: str) -> bool:
     return (
         "effective" in text.lower()
-        and "effective dates:" not in text.lower()
+        and "Effective Dates:" not in text
         and len(text) < 400
         and bool(
             re.search(r"payments? levels?", text, re.I)
@@ -831,12 +848,10 @@ _DATE_RANGE = re.compile(
     rf",?\s+(?:to|through)\s+(?P<end>(?:{_DATE.pattern}))",
     re.IGNORECASE,
 )
-# The section's revision range, as "Effective Dates: 02/03/2040 - Present",
-# in any case, as ``_effective_line`` excludes it.
+# The section's revision range, as "Effective Dates: 02/03/2040 - Present".
 _REVISION = re.compile(
     r"Effective Dates:\s*(\d{2}/\d{2}/\d{4})\s*-\s*"
-    r"(Present|\d{2}/\d{2}/\d{4})",
-    re.IGNORECASE,
+    r"(Present|\d{2}/\d{2}/\d{4})"
 )
 
 
@@ -891,7 +906,8 @@ def _split_dates(full: list[tuple[str, ...]]) -> set[str]:
     """The dates a block's whole text, without the revision range, names
     more often in one of those readings than its lines together do there,
     as a date split across a ``br``. So a line that names the same date,
-    a footnote body's included, does not cover a split one."""
+    a footnote body's included, does not cover a split one, though a
+    revision range on a line still counts among the lines."""
     whole = _unrevised(full[0])
     split = set()
     for k in _DATE_READINGS:
@@ -961,7 +977,7 @@ def describe_poms_tables(payload: bytes) -> tuple[dict[str, Any], ...]:
     revision_start = _date_string(revision[1]) if revision else None
     revision_end = (
         _date_string(revision[2])
-        if revision and revision[2].lower() != "present"
+        if revision and revision[2] != "Present"
         else None
     )
     state = None
