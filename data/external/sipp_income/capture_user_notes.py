@@ -580,18 +580,20 @@ def record_bearing_note(body: str) -> bool:
     first ``</script>``, as in ``<script><!--<script>.</script> . </script>``
     between an identifier and its value, where every reading ends it at that
     end tag and shows the period; template contents that a browser ends after
-    the first ``</template>``, in a template nested in another or where that
-    end tag sits inside a tag, as in ``<e</template>``, which the views take to
-    end the template there; markup inside svg or math, where a browser reads a
-    CDATA section as text and the name of a raw-text or plaintext element as an
-    ordinary element's; markup that a browser ignores inside a select element,
-    such as a style, noembed or plaintext opening; nine digits after a comment
-    closed by ``--!>``, which the nine-digit rule reads as still open; a quoted
-    attribute value in an end tag or a ``<!`` declaration, or after a name with
-    marks other than ``_ : . -``, as in ``[alt]``; an attribute value that
-    holds a raw ``>``, which ends its tag; a value in an href or src value,
-    unless it is a run of 14 or more digits; and a cell outside a table's first
-    row and header cells that names an identifier after other words.
+    the first ``</template>``, which the views take to end the template, in a
+    template nested in another or wherever a browser does not read that end tag
+    as one: inside a tag, as in ``<e</template>``, a comment, a ``<?``
+    instruction or raw-text contents; markup inside svg or math, where a
+    browser reads a CDATA section as text and the name of a raw-text or
+    plaintext element as an ordinary element's; markup that a browser ignores
+    inside a select element, such as a style, noembed or plaintext opening;
+    nine digits after a comment closed by ``--!>``, which the nine-digit rule
+    reads as still open; a quoted attribute value in an end tag or a ``<!``
+    declaration, or after a name with marks other than ``_ : . -``, as in
+    ``[alt]``; an attribute value that holds a raw ``>``, which ends its tag; a
+    value in an href or src value, unless it is a run of 14 or more digits; and
+    a cell outside a table's first row and header cells that names an
+    identifier after other words.
 
     The rules in turn refuse some pages that hold no case record, and such a
     page stops the capture loudly: definition and index tables that name an
@@ -622,11 +624,12 @@ def record_bearing_note(body: str) -> bool:
     kept takes to open plaintext there, as in ``<!--<plaintext>PNUM<e101>``;
     character references in plaintext contents, which that text decodes, as
     in ``<plaintext>PNUM<!&#49;01>``; a plaintext or xmp opening or a NUL
-    inside svg, math or select, or a NUL after a frameset opening; a NUL
-    after a reference to a control character, such as ``&#4``, which
+    inside svg, math or select, or a NUL after a frameset opening; other markup
+    that a browser ignores inside a select element or after a frameset opening;
+    a reference to a control character, such as ``&#4``, which
     ``html.unescape`` drops; an empty end tag ``</>``, which a browser drops
-    and the readings count as a space, as in ``PNUM</>a567``; and a page
-    that ends inside a tag, whose rest a browser drops, as in
+    and the readings count as a space, as in ``PNUM</>a567``; and a page that
+    ends inside a tag, whose rest a browser drops, as in
     ``<a/b="><plaintext><PNUM>101``.
     A decimal character reference of more than 4,300 digits makes
     ``html.unescape`` raise, which stops the capture too.

@@ -1826,8 +1826,8 @@ print(time.process_time() - start)
 
 @pytest.mark.parametrize("kind", sorted(INVENTED_LONG_PAGES))
 def test_guard_reads_long_pages_in_linear_time(kind):
-    # The guard read each page in at most 2.2 s of CPU time on a loaded
-    # host, under Python 3.13 and 3.14, and the quadratic patterns it
+    # In one run on a loaded host, the guard read each page in at most
+    # 2.2 s of CPU time under Python 3.13 and 3.14. The quadratic patterns it
     # replaced, by their growth over a tenth of a page, would take from
     # about two minutes to over an hour on the same host. Each page is also
     # long enough that a slower form of a linear helper found in review,
@@ -2009,7 +2009,10 @@ def test_linear_readings_match_their_patterns(tokens):
 # it should give: what html5lib, which follows the WHATWG parsing
 # algorithm, shows of each page, with a space at each tag, but for the
 # nested template, which the view ends at its first end tag, as the
-# guard's docstring says. Each of the view's rules changes one of them.
+# guard's docstring says. Each of the view's rules changes one of them,
+# apart from two that the differential property holds: the
+# scripting-off view's comment rule and the rule on a NUL after the last
+# match.
 BROWSER_VIEW_EXAMPLES = {
     "comment": ("<p>a <!-- b --> c</p>", True, "a c"),
     "comment_closed_by_bang": ("<p>a <!-- b --!> c</p>", True, "a c"),
@@ -2228,8 +2231,8 @@ def test_no_token_page_the_round_8_guard_refuses_is_admitted(tokens):
 # none, a separator, a value of 1, 3, 9 or 14 digits, plain or as decimal or
 # hexadecimal character references, and a wrapper that puts it where one
 # reading or rule reads it. A wrapper with two places puts the value in a
-# second cell. The token lists hold no character reference, and rarely a
-# tab or line end between an identifier and a digit inside a value.
+# second cell. The token lists hold few character references, and rarely
+# a tab or line end between an identifier and a digit inside a value.
 RECORD_IDENTIFIERS = ("", "Invented", "SSUID", "PNUM", "pnum", "SSUIDs")
 RECORD_SEPARATORS = (
     "",
