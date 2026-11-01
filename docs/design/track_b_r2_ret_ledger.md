@@ -2105,14 +2105,14 @@ and auxiliary gross remain comparisons against a completed G result.
 | Declared condition | Facts unsettled | Captured quotation and inference |
 | --- | --- | --- |
 | `ADMINISTRATIVE_FINALITY` | F1–F6 for the record | RS 00615.754A.3 says "the rate to the NH is protected by administrative finality and cannot be changed" and requires recording "the PIA and maximum used to arrive at those rates". The second example protects both NH and child on "the protected PIA and maximum". The declared correct PIA need not be the protected-rate basis. |
-| `DIB_AFTER_REDUCED_RIB` | F2 | Captured Act 202(q)(2): "such disability insurance benefit for each month shall be reduced by the amount such old-age insurance benefit would be reduced". This changes the DIB payable rather than its original PIA share. |
-| `WORKERS_COMPENSATION_OFFSET` | F2, F3 | Captured Act 215(g) places rounding "after any reduction under sections 203(a) and 224". GN 02603.050C separately lists the "Workers’ compensation (WC) or public disability benefit (PDB) offset amount" after defining OB. The ordinary own-benefit amount cannot establish the offset amount. |
+| `DIB_AFTER_REDUCED_RIB` | F2 below the PIA | Captured Act 202(q)(2): "such disability insurance benefit for each month shall be reduced by the amount such old-age insurance benefit would be reduced". This changes the DIB payable rather than its original PIA share. It can only lower the rate, so the PIA stays the cap (round 6). |
+| `WORKERS_COMPENSATION_OFFSET` | F2 and F3 below the ordinary rate | Captured Act 215(g) places rounding "after any reduction under sections 203(a) and 224". GN 02603.050C separately lists the "Workers’ compensation (WC) or public disability benefit (PDB) offset amount" after defining OB. The ordinary own-benefit amount cannot establish the offset amount. 20 CFR 404.408(c)(1) says the total "is reduced monthly (but not below zero)", so the ordinary rate stays the cap (round 6). |
 | `DIB_GUARANTEE_PIA` | None | RS 00615.736B.2 begins "To establish a family maximum for a DIB Guarantee PIA". G is supplied the applicable PIA; the refused calculation is its maximum. |
 | `NON_AIME_FORMULA_PIA` | None | RS 00615.740B.1 says "The PIA is an AIME, OS, Special Minimum or Frozen Minimum PIA." The page concerns "determining the total amount of the family maximum benefit"; it does not replace the declared applicable PIA. |
 | `WORKER_NOT_ENTITLED` | None | RS 00202.100 says "the NH is eligible but has not filed for benefits". This changes the declared NH entitlement and permitted roster; those identities are checked separately before money. |
 | `WINDFALL_ELIMINATION_PROVISION` | None | RS 00202.100 says an IEDS "is subject to the number holder’s (NH) WEP PIA although the NH is not yet entitled". The supplied applicable PIA remains the OB basis; unsupported pre-repeal IEDS processing keeps its refusal. |
 | `RATE_PROTECTED_BY_FINALITY` | F4–F6 for that beneficiary | RS 00615.754A.3 directs SSA to document "which rates are protected by administrative finality". Protection is specific to the beneficiary declared with this condition; the NH and other auxiliary facts remain subject to their own settlement checks. |
-| `WIDOW_DRC_SAVINGS_CLAUSE` | F4 for that survivor | RS 00615.712 protects "beneficiaries who were entitled for the month of 5/78"; its example says "the child is protected by the savings clause and the child's rate will remain at $300". The protected rate basis is not silently reconstructed. |
+| `WIDOW_DRC_SAVINGS_CLAUSE` | F4 for a widow(er) on that survivor record, and the OB cap on deductions for anyone on it | RS 00615.712 protects "beneficiaries who were entitled for the month of 5/78"; its example says "the child is protected by the savings clause and the child's rate will remain at $300". Its Step 2 says "The child's original rate is $300", on a PIA that stays $400, so the clause leaves a nonwidow's OB settled (round 6). The widow's rate is $400 or, with DRCs, $410. The capture states no cap on protected cash, so that bound stays open. |
 | `ENTITLED_ON_ANOTHER_RECORD` | None | RS 00615.770: "Maximums from all SSNs that the child is entitled on may be combined on the SSN where payment is actually made." This changes the maximum allocation rather than the role's OB or own-PIA eligibility test. |
 | `DEEMED_OR_PUTATIVE_SPOUSE` | None | RS 00615.684: "The deemed or putative spouse and all other beneficiaries on the record are reduced for the maximum." Its original spouse rate and raw own-PIA test remain the same quantities. |
 | `LEGAL_SPOUSE_WITH_DEEMED_SPOUSE` | None | RS 00615.684: "the legal spouse is paid outside the family maximum" and "the legal spouse will receive the OB" when DMAX applies. This changes maximum membership. |
@@ -2137,17 +2137,17 @@ member separately.
 
 | Held refusal or origin | Facts whose comparison can be unsettled | Captured basis |
 | --- | --- | --- |
-| `_refuse_own_benefit`: reduced own DIB; historical own RIB; pre-1917 delayed credits | The affected own MBA used for F3 or F6; F2 for the NH reduced-DIB reason | Act 202(q)(2) expressly reduces DIB. RS 00615.005C.2 requires the money-history method in "all cases involving single entitlement to actuarially reduced benefits prior to 1/78". RS 00615.692D gives "Before 01/02/17" a "1/12%" monthly credit. The canonical helper refuses rather than fabricating an MBA. |
+| `_refuse_own_benefit`: reduced own DIB; historical own RIB; pre-1917 delayed credits | The affected own MBA used for F3 or F6; F2 below the PIA for the NH reduced-DIB reason and, before cohort 1928, for the own-RIB history reason | Act 202(q)(2) expressly reduces DIB. RS 00615.005C.2 requires the money-history method in "all cases involving single entitlement to actuarially reduced benefits prior to 1/78". RS 00615.692D gives "Before 01/02/17" a "1/12%" monthly credit. The canonical helper refuses rather than fabricating an MBA. |
 | `PAYMENT_MONTH_BEFORE_1983` | Historical own MBA used for F3/F6; nonwidow auxiliary OB in actual pre-1983 months; survivor widow OB before January 1973 | RS 00615.101 says "Round the result down to the next dime for benefits after 5/82 and up to the next dime for benefits prior to 6/82." The captures do not establish unchanged modern dime-floored nonwidow OB throughout G's refused historical interval. RS 00615.005A.2 says "Raised the unreduced benefit amount for widow(er)s to 82 1/2% at age 62." Its A.5 says "Changed WIB to 100% of the deceased worker's PIA" effective January 1973. Actual payment dates determine which exact facts remain unsettled; a deferred payment reason cannot manufacture an earlier date. |
 | `ELIGIBILITY_BEFORE_1983`, `DI_ENTITLEMENT_BEFORE_JULY_1980` | None | RS 00615.736 gives the historical maximum procedure; RS 00615.740B.2 says DMAX does not apply when "The NH was ever entitled to DIB before July 1980". These maximum histories do not replace role OB or current own-benefit facts. |
 | `PARENT_BENEFIT` | F4/F6 when parent count refuses | RS 00209.001 excludes own RIB "equal to or exceeding the amount of the parent's original benefit (One parent = 82 1/2%; Two parents = 75%)". RS 00209.015 states "Benefit rate equals 75% of the worker's PIA for each month both are entitled." An unresolved entitled-parent count leaves both threshold and OB unsettled. |
 | `DISABLED_WIDOW_UNDER_60` | No additional fact beyond a separately refusing own MBA | RS 00615.310C first says "Determine the WIB OB", then separately determines and subtracts reductions. The historical extra reduction changes gross, not F4's OB. |
-| `DUAL_ENTITLEMENT_SEQUENCE` | F6 only where historical carryover can change own RIB | RS 00615.005A.8 says "Eliminated the carry-over reduction in RIB or DIB due to WIB before age 62" and applies the RIB change to workers born January 2, 1928 or later. RS 00615.010 preserves the earlier rule: "If there was prior entitlement to a reduced WIB in any month before the month of attainment of age 62 reduce the RIB per RS 00615.160 and RS 00615.170." The schema omits that history. Modern WIB/DWB election instead requires "if all eligibility requirements are met" and preserves "the PIA and the reduction factors remain the same" (RS 00615.315). It does not waive F6. A nonnegative own RIB cannot be less than a zero deemed-death PIA. The spouse raw own-PIA test stays F5. |
-| `REDUCED_BENEFIT_HISTORY_BEFORE_1978` | No additional fact beyond a separately refusing own MBA | RS 00615.005C.2 requires historical money reductions. That does not change the original benefit determined before reduction. |
+| `DUAL_ENTITLEMENT_SEQUENCE` | F2 below the PIA; F3 below the ordinary rate and F6, each only where historical carryover can change own RIB | 20 CFR 404.411(b) reduces a DIB after a reduced RIB and, for "all individuals born before January 2, 1928" or a disability before 1990, after a WIB. The schema omits the onset, so F2 stays open in every cohort. 404.411(c)(2) reduces an old-age benefit "by the larger of the following" for a person born before January 2, 1928, even one who met every WIB condition "except that the old-age benefit equals or exceeds the primary insurance amount", so no current WIB or auxiliary record needs to appear. Both only lower a rate, so the ordinary rate stays the cap (round 6). RS 00615.005A.8 says "Eliminated the carry-over reduction in RIB or DIB due to WIB before age 62" and applies the RIB change to workers born January 2, 1928 or later. RS 00615.010 preserves the earlier rule: "If there was prior entitlement to a reduced WIB in any month before the month of attainment of age 62 reduce the RIB per RS 00615.160 and RS 00615.170." The schema omits that history. Modern WIB/DWB election instead requires "if all eligibility requirements are met" and preserves "the PIA and the reduction factors remain the same" (RS 00615.315). It does not waive F6. A nonnegative own RIB cannot be less than a zero deemed-death PIA. The spouse raw own-PIA test stays F5. |
+| `REDUCED_BENEFIT_HISTORY_BEFORE_1978` | F2 below the PIA and, within the carryover scope above, F3 below the ordinary rate; each only before cohort 1928 | RS 00615.005C.2 requires historical money reductions. That does not change the original benefit determined before reduction, but the 404.411 rules above carry such a reduction into a later DIB or RIB. RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er), so cohort 1928 reached no reduced benefit before 1978 (round 6). |
 | `INDEPENDENT_DIVORCED_SPOUSE` | None | RS 00202.100 identifies the unfiled NH and requires the applicable WEP PIA; the declared PIA and eligibility facts are still the inputs. |
 | `COMBINED_FAMILY_MAXIMUM`, `MULTIPLE_AUXILIARY_RECORDS`, `DEEMED_SPOUSE`, `NON_AIME_FORMULA_PIA`, `DIB_GUARANTEE_PIA`, `GOVERNMENT_PENSION_OFFSET` | None | The condition table's captured maximum-membership, maximum-formula and payable-offset rules apply equally when the reason is deferred. |
 | `PARISI_AMBIGUOUS`, `PARISI_BEFORE_OCTOBER_1999` | None | RS 00615.768E says the change affects benefits "after reduction for the maximum" and "Beneficiaries will still be limited by the original benefit amount." |
-| `WIDOW_DRC_SAVINGS_CLAUSE`, `WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN` | F4 for the potentially protected survivor | RS 00615.712's protection is specific to May 1978 survivors and can preserve a different original rate basis. Unknown history does not establish absence of that protection. |
+| `WIDOW_DRC_SAVINGS_CLAUSE`, `WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN` | F4 for a widow(er), and the OB cap on deductions for anyone on the survivor record | RS 00615.712's protection is specific to May 1978 survivors. It preserves cash, not a different original rate: the child's OB stays 75% of the PIA. Only a widow(er)'s OB carries DRCs. Unknown history does not establish absence of that protection, so a widow(er)'s OB and protected cash stay open. |
 | `WIDOW_CHILD_IN_CARE_UNKNOWN`, `DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN`, `DIVORCED_SPOUSE_CARE_HISTORY` | None | RS 00615.340 begins with a person already "receiving a reduced widow(er) benefit" and says "The benefit amount is raised for all months the child is in care." RS 00615.201 changes age reduction/conversion when care ends. These change gross or reduction history after OB and entitlement. |
 | `SAVINGS_CLAUSE`, `SAVINGS_CLAUSE_HISTORY_UNKNOWN`, `SAVINGS_CLAUSE_MEMBERSHIP_CHANGE`, `SAVINGS_CLAUSE_RATE_PROCEDURE` | None for F1–F6 | RS 00630.400 says "Any person's benefit may not exceed the original benefit (OB)" and adds "the new PIA in a life case" to the savings maximum. The refusal concerns carried allocation/rate procedure rather than the ordinary OB, NH own benefit or raw own-benefit entitlement. |
 | `PRISONER_SUSPENSION`, `DRUG_ADDICTION_SUSPENSION`, `FOREIGN_WORK_DEDUCTION`, `PENALTY_DEDUCTION`, `MARITIME_DEDUCTION`, `ELECTION_CERTIFICATE_SUSPENSION` | None | GN 02603.040 calls these "deductions" and suspensions. GN 02603.050B first applies the maximum, then deductions, then redistribution. They do not alter the pre-reduction facts F1–F6. |
@@ -2285,7 +2285,7 @@ examples and Hypothesis properties:
 | Canonically matching zero and positive declarations never raise a preflight input error under any condition | Hypothesis `test_matching_declarations_never_raise_input_errors` |
 | Valid outcomes and refusal reasons equal the path with preflight removed, exactly | Hypothesis `test_preflight_changes_no_valid_outcome_or_refusal` |
 | Deferred reason labels do not unsettle unrelated canonical facts, roles, record kinds or actual payment dates | `test_deferred_reason_unsettles_only_the_fact_within_its_scope` |
-| Widow DRC protection applies to survivors; its beneficiary flag leaves a living child's OB settled | `test_widow_drc_condition_on_a_living_child_keeps_ob_settled`; `test_survivor_widow_drc_protection_keeps_its_original_refusal`; explicit Hypothesis example in `test_held_against_unheld_fact_classification` |
+| Widow DRC protection applies to survivors; its beneficiary flag leaves a living child's OB settled; round 6 settles every nonwidow's OB | `test_widow_drc_condition_on_a_living_child_keeps_ob_settled`; `test_survivor_widow_drc_protection_keeps_its_original_refusal`; explicit Hypothesis example in `test_held_against_unheld_fact_classification` |
 | A pre-1973 widow's 82.5% OB preserves the historical refusal; the same declaration contradicts the 100% OB from January 1973 | `test_historical_widow_original_benefit_uses_the_payment_period` |
 | Protection remains local to its declared beneficiary, month and condition union | `test_beneficiary_finality_protects_its_own_unsettled_fact`; `test_one_beneficiary_finality_does_not_protect_the_nh`; `test_protected_auxiliary_does_not_protect_another_auxiliary`; `test_finality_is_resolved_for_each_month`; `test_two_declared_conditions_preserve_finality_protection` |
 | A shared reason does not broaden an explicit condition or hide a later implicit sequence refusal | `test_spouse_sequence_condition_does_not_unsettle_other_own_eligibility`; `test_implicit_widow_history_remains_unsettled_behind_explicit_hold` |
@@ -2306,14 +2306,96 @@ examples and Hypothesis properties:
 Protected eligibility can affect another survivor indirectly: an ordinary
 own-RIB disqualification cannot exclude a finality-protected widow from
 possible May 1978 DRC protection. A protected OB likewise cannot establish
-absence of a larger protected basis. Unknown history therefore retains the
-original finality refusal. An explicit `widow_drc_savings_clause=False`
-settles that absence and leaves the other child's F4 checked. This is a
-dependency through independently unknown history, not a record-wide
-finality exemption (RS 00615.712 and .754A.3).
+absence of a larger protected basis. Unknown history therefore keeps the
+child's OB cap on a deduction open and retains the original finality
+refusal there. An explicit `widow_drc_savings_clause=False` settles that
+absence and applies the cap. The child's own OB stays checked in both
+cases since round 6. This is a dependency through independently unknown
+history, not a record-wide finality exemption (RS 00615.712 and .754A.3).
 
 Maximum binding and auxiliary gross comparisons remain after successful
 G. Public validation still runs once; no monetary rule is reimplemented.
 The exact first-failure evidence, deliberate mutations and adversarial
 cases are recorded in `scratch/review/fix-round-5-report.md` and the
 existing machine-readable verification and mutation records.
+
+## PR 563 round 6: rates a hold can lower
+
+GPT-6.1 Sol reviewed `a135519f` and asked for changes, with three medium
+findings. All three reproduced. Each came from a table that treated a fact
+as wholly open or wholly settled, when the sources settle one direction of
+it. Two kept a row that should raise, and one dropped a row that should stay.
+
+### What changed
+
+**A widow's DRC clause doesn't reach a child's original rate.** Round 5
+read RS 00615.712 as preserving a different original rate basis. The
+capture says otherwise: "The child's original rate is $300", and "The MBR
+will show a PIA of $400.00". The clause protects the adjusted cash. So a
+$3.10 original against OB $3.00 now raises under `True` and under unknown
+history, as it does under `False`. A widow(er) stays open: the same page
+gives her $400 and, with DRCs, $410. No other survivor's OB carries DRCs.
+
+**A prior reduced WIB can lower an NH's own RIB.** 20 CFR 404.411(c)(2)
+keeps the carryover for a person born before January 2, 1928, and reaches
+someone never entitled to a current WIB because "the old-age benefit
+equals or exceeds the primary insurance amount". Round 5 opened this for
+another person's own RIB (F6) and missed the NH's (F3). So PIA $400,
+deceased PIA $300, first WIB at 60 and RIB at 64 gives $359.10 against an
+ordinary $373.30. That declaration raised and lost its row. It now keeps
+`dual_entitlement_sequence` with weight 7. Cohort 1928 stays settled:
+404.411(c)(1) says "There is no further reduction."
+
+**A reducing hold keeps its cap.** Round 5 skipped the exact DIB comparison
+under a prior reduced RIB or workers' compensation, which also skipped the
+direction those sources settle. A DIB of $4.10 on PIA $4 counted as a
+refusal. It now raises. Every NH reduction-only hold, listed in
+`_NH_REDUCTION_ONLY_HOLDS`, leaves equality open below the rate and keeps
+the rate as a cap. Administrative finality alone lifts a cap, because it
+can protect a rate built on another PIA.
+
+**The same class, beyond the findings.** Sol's exploratory probe of a DIB
+after a reduced WIB (404.411(b)) didn't enter its verdict. The session
+tested it and found the same lost row: $398.10 on PIA $400 raised under
+`dual_entitlement_sequence`. F2 now stays open below the PIA for that
+reason in every cohort, because the schema omits the disability onset
+that scopes 404.411(b)(2). `OWN_RIB_HISTORY_BEFORE_1978` and
+`REDUCED_BENEFIT_HISTORY_BEFORE_1978` open it too, before cohort 1928 only:
+a later cohort reached age 50 after 1977.
+
+### What stayed
+
+- **Protected cash stays a refusal.** A child paid $300.10 on OB $300, and
+  a deduction above that OB, keep the named refusal. The capture states no
+  cap on protected cash, and the direction rule keeps a row the rule can't
+  show is invalid. A stricter proof could drop these rows, and no amount
+  moves either way.
+- **No money moved.** This round changes classification only.
+- **Sol's three new `needs_max` items are these fixes.** Sol called each
+  one source-settled, so none reaches Max.
+
+### New executed invariants
+
+| Invariant | Executing tests in `test_track_b_ret_ledger_fix_round_6.py` |
+| --- | --- |
+| A nonwidow's OB stays settled under widow DRC protection or unknown history, at every scale | `test_child_original_stays_settled_under_widow_drc_protection`; `test_a_child_condition_alone_leaves_the_child_original_settled`; Hypothesis `test_every_child_original_mismatch_errors_under_widow_drc` |
+| The published child rate keeps its refusal, row and weight, unchanged by the preflight | `test_published_child_rate_keeps_its_widow_drc_refusal` |
+| A widow(er)'s OB and protected cash stay open | `test_a_widow_drc_rate_stays_unsettled_for_the_widow_herself`; `test_protected_cash_above_the_original_stays_a_named_refusal`; `test_deduction_cap_stays_open_under_widow_drc_protection` |
+| Every rate 404.411(c)(2)(ii) can reach stays a counted refusal, and the preflight changes nothing about it | `test_published_rule_carryover_keeps_its_refusal`; Hypothesis `test_every_carryover_rate_keeps_its_row` |
+| The carryover ends at cohort 1928, reaches only an old-age benefit, and an unknown cohort can't rule it out | `test_carryover_ends_at_cohort_1928`; `test_the_carryover_reaches_only_an_old_age_benefit`; `test_an_unknown_cohort_cannot_rule_out_the_carryover`; `test_a_zero_pia_leaves_no_rate_for_the_carryover_to_lower` |
+| Each NH rate has a cap: a declaration above it raises, and one at or below it keeps its row | `test_a_reducing_hold_bounds_a_dib_at_its_pia`; `test_rib_above_the_canonical_rate_stays_an_input_error`; `test_rib_at_the_canonical_rate_keeps_its_refusal`; `test_workers_compensation_caps_a_rib_at_its_canonical_rate`; Hypothesis `test_every_dib_at_or_below_the_cap_keeps_its_row` |
+| Only finality lifts a cap | `test_finality_still_protects_a_rate_above_the_cap`; `test_finality_still_protects_a_rib_above_the_cap`; `test_only_finality_lifts_an_nh_rate_cap` |
+| Every G refusal reason classifies a lower DIB and a lower RIB against a written-out expectation | `test_each_reason_classifies_a_lower_dib`; `test_each_reason_classifies_a_lower_rib` |
+| Pre-1978 reasons reach only cohorts old enough for a reduced benefit by then | `test_pre_1978_history_reaches_only_cohorts_old_enough_for_it`; `test_an_unknown_cohort_cannot_rule_out_a_pre_1978_history` |
+| Each quotation above sits in its capture | `test_the_captures_carry_each_quoted_rule` |
+
+Two existing assertions moved, and each now states both sides:
+`test_protected_widow_cannot_be_excluded_from_unknown_drc_history` asserts
+the input error and the finality refusal on the matching child, and
+`_expect_fact_classification` in `test_track_b_ret_ledger_fix_round_4.py`
+keeps an input error for a DIB above the PIA under workers' compensation.
+
+Thirty-eight fresh mutations, each in a copied source tree, failed named
+tests in the round 6 module. A first pass left two survivors, both test
+gaps, and each gained a test before the final run. Against `a135519f`, 50
+of that module's 224 tests fail.

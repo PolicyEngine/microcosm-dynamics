@@ -1151,7 +1151,9 @@ def _check_settled_family_facts(record: RecordYear) -> None:
     Entitlement to the NH benefit is an identity between declarations.
     Money and own-benefit eligibility use G's canonical rules and its
     condition table. A rule's coverage refusal leaves that fact unsettled;
-    an input error always propagates. Whole-family allocations stay after G.
+    an input error always propagates. A hold that can only reduce an NH
+    rate leaves equality open and keeps its cap. Whole-family allocations
+    stay after G.
     """
     people = {b.beneficiary_id: b for b in record.beneficiaries}
     # These identities hold even under protected monetary rates.
@@ -1172,6 +1174,7 @@ def _check_settled_family_facts(record: RecordYear) -> None:
             fact,
             member=None,
             *,
+            upper_bound=False,
             state=state,
             payment_month=payment_month,
             context=context,
@@ -1183,6 +1186,7 @@ def _check_settled_family_facts(record: RecordYear) -> None:
                 payment_month=payment_month,
                 beneficiaries=context.beneficiaries,
                 params=context.params,
+                upper_bound=upper_bound,
             )
 
         if record.kind is not RecordKind.DECEASED:
@@ -1192,15 +1196,16 @@ def _check_settled_family_facts(record: RecordYear) -> None:
                     raise InvalidFamilyInput(
                         "G context does not match RET rates"
                     )
+                declared = nh.gross_rates[month - 1]
                 if record.kind is RecordKind.DISABILITY:
-                    if (
-                        settled("F2")
-                        and nh.gross_rates[month - 1] != state.pia
+                    if (settled("F2") and declared != state.pia) or (
+                        settled("F2", upper_bound=True)
+                        and declared > state.pia
                     ):
                         raise InvalidFamilyInput(
                             "G context does not match RET rates"
                         )
-                elif settled("F3"):
+                elif settled("F3", upper_bound=True):
                     try:
                         gross = g._own_monthly_benefit_validated(
                             state.worker, context.params
@@ -1208,7 +1213,9 @@ def _check_settled_family_facts(record: RecordYear) -> None:
                     except FamilyConfigurationUnsupported:
                         pass
                     else:
-                        if nh.gross_rates[month - 1] != gross:
+                        if declared > gross or (
+                            settled("F3") and declared != gross
+                        ):
                             raise InvalidFamilyInput(
                                 "G context does not match RET rates"
                             )

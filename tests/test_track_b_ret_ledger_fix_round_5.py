@@ -1195,10 +1195,18 @@ def test_protected_widow_cannot_be_excluded_from_unknown_drc_history(
                 )
             },
         )
-        if history is False:
-            _assert_invalid(case)
-        else:
-            _assert_refusal(case, UR.ADMINISTRATIVE_FINALITY)
+        # Round 6: DRC history can't change a child's OB (RS 00615.712).
+        _assert_invalid(case)
+        _assert_refusal(
+            replace(
+                case,
+                beneficiaries=(
+                    case.beneficiaries[0],
+                    _person("c", T.CHILD, 3, 3, 1),
+                ),
+            ),
+            UR.ADMINISTRATIVE_FINALITY,
+        )
         return
 
     def compute():

@@ -426,6 +426,9 @@ _FIRST_METHOD_B_WIDOW_BIRTH_YEAR = 1929
 # RS 00615.005A.8/.010: RIB no longer carries a prior reduced WIB's
 # reduction for SSA cohorts beginning January 2, 1928.
 _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR = 1928
+# This cohort reached 50 after 1977, so no benefit reached it reduced by then
+# (RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er)).
+_FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION = 1928
 
 
 # ---------------------------------------------------------------------------
@@ -1755,7 +1758,7 @@ _PREFLIGHT_FACT_UNSETTLERS = {
     UnsupportedReason.ADMINISTRATIVE_FINALITY: frozenset(
         {"F1", "F2", "F3", "F4", "F5", "F6"}
     ),
-    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE: frozenset({"F6"}),
+    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE: frozenset({"F2", "F3", "F6"}),
     UnsupportedReason.PARISI_AMBIGUOUS: frozenset(),
     UnsupportedReason.PARISI_BEFORE_OCTOBER_1999: frozenset(),
     UnsupportedReason.INDEPENDENT_DIVORCED_SPOUSE: frozenset(),
@@ -1773,8 +1776,12 @@ _PREFLIGHT_FACT_UNSETTLERS = {
     UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN: frozenset(),
     UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY: frozenset(),
     UnsupportedReason.DELAYED_CREDITS_BEFORE_1917: frozenset({"F3", "F6"}),
-    UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978: frozenset({"F3", "F6"}),
-    UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978: frozenset(),
+    UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978: frozenset(
+        {"F2", "F3", "F6"}
+    ),
+    UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978: frozenset(
+        {"F2", "F3"}
+    ),
     UnsupportedReason.PRISONER_SUSPENSION: frozenset(),
     UnsupportedReason.DRUG_ADDICTION_SUSPENSION: frozenset(),
     UnsupportedReason.FOREIGN_WORK_DEDUCTION: frozenset(),
@@ -1784,6 +1791,19 @@ _PREFLIGHT_FACT_UNSETTLERS = {
     UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION: frozenset(),
     UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: frozenset(),
 }
+# These holds can only lower an NH rate (402(q)(2), 224; 20 CFR 404.408(c)(1),
+# 404.411(b)-(c)), so the rate an unheld record would pay stays its cap.
+_NH_REDUCTION_ONLY_HOLDS = frozenset(
+    {
+        RecordCondition.DIB_AFTER_REDUCED_RIB,
+        RecordCondition.WORKERS_COMPENSATION_OFFSET,
+        UnsupportedReason.DIB_AFTER_REDUCED_RIB,
+        UnsupportedReason.WORKERS_COMPENSATION_OFFSET,
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    }
+)
 
 
 def _declared_fact_holds(state, beneficiary=None):
@@ -1795,6 +1815,23 @@ def _declared_fact_holds(state, beneficiary=None):
     return holds
 
 
+def _wib_carryover_possible(own, birth_year):
+    """Whether a prior reduced WIB could lower this own RIB.
+
+    RS 00615.005A.8 ends the carryover for workers born 1/2/28 or later, and
+    20 CFR 404.411(c)(2) keeps it before then, even with no current WIB.
+    """
+    return (
+        own is not None
+        and own.kind is OwnBenefitKind.OLD_AGE
+        and own.pia > 0
+        and (
+            birth_year is None
+            or birth_year < _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR
+        )
+    )
+
+
 def _hold_unsettles_fact(
     hold,
     fact,
@@ -1804,10 +1841,31 @@ def _hold_unsettles_fact(
     payment_month,
     beneficiaries,
     params,
-    original_benefit_upper_bound=False,
+    upper_bound=False,
 ):
     if fact not in _PREFLIGHT_FACT_UNSETTLERS[hold]:
         return False
+    if (
+        upper_bound
+        and hold in _NH_REDUCTION_ONLY_HOLDS
+        and fact in ("F2", "F3")
+    ):
+        return False
+    # 404.411(b) reduces a DIB after a reduced RIB in any cohort and after a
+    # WIB under (b)(2). The schema omits the onset that scopes (b)(2).
+    if fact == "F2" and hold in (
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    ):
+        cohort = state.worker_birth_year
+        return (
+            cohort is None or cohort < _FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION
+        )
+    if fact == "F3" and hold in (
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    ):
+        return _wib_carryover_possible(state.worker, state.worker_birth_year)
     if hold in (
         UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
         UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
@@ -1825,7 +1883,7 @@ def _hold_unsettles_fact(
             return False
         # RS 00209.001/.015: count changes 82.5% to 75%, so uncertainty
         # about exact OB cannot invalidate the one-parent upper bound.
-        if original_benefit_upper_bound:
+        if upper_bound:
             return False
         try:
             _entitled_parent_count(state, beneficiaries, params)
@@ -1871,26 +1929,24 @@ def _hold_unsettles_fact(
         UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
     ):
         # RS 00615.712 protects survivors; a deferred reason cannot
-        # change a living record's original benefits.
-        return state.kind is FamilyKind.SURVIVOR
+        # change a living record's original benefits. DRCs enter only a
+        # widow(er)'s OB: "The child's original rate is $300" on the same
+        # PIA, and the clause protects the child's adjusted cash.
+        return state.kind is FamilyKind.SURVIVOR and (
+            upper_bound or beneficiary.role in _WIDOW_ROLES
+        )
     if hold is UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE and fact == "F6":
         if beneficiary is None:
             return True
-        own = beneficiary.own_benefit
         # RS 00615.005A.8/.010 can change the own RIB before cohort 1928.
         # Modern DWB election still requires eligibility and keeps the
         # PIA/RFs unchanged (RS 00615.315). A nonnegative RIB cannot be
         # less than a zero deemed-death PIA (402(e)(1)(D)).
         return (
             beneficiary.role in _WIDOW_ROLES
-            and own is not None
-            and own.kind is OwnBenefitKind.OLD_AGE
-            and own.pia > 0
             and (beneficiary.original_benefit_basis or state.pia) > 0
-            and (
-                beneficiary.birth_year is None
-                or beneficiary.birth_year
-                < _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR
+            and _wib_carryover_possible(
+                beneficiary.own_benefit, beneficiary.birth_year
             )
         )
     return True
@@ -1904,7 +1960,7 @@ def _fact_is_settled(
     payment_month=None,
     beneficiaries=(),
     params=None,
-    original_benefit_upper_bound=False,
+    upper_bound=False,
 ):
     """Whether ordinary G can establish this fact before a coverage hold.
 
@@ -1912,8 +1968,8 @@ def _fact_is_settled(
     implicit coverage holds apply only to that person. Inspect every
     declared condition even when another condition would refuse first.
     Canonical money helpers may still refuse a fact that passes this test.
-    The upper-bound request permits the conservative one-parent bound
-    without asserting that the exact parent OB or count is settled.
+    An upper-bound request asks only for a cap: the one-parent OB without
+    an exact parent count, or an NH rate a reduction-only hold can lower.
     """
     if beneficiary is not None:
         beneficiary = _with_effective_cohort(beneficiary)
@@ -1927,7 +1983,7 @@ def _fact_is_settled(
             payment_month=payment_month,
             beneficiaries=beneficiaries,
             params=params,
-            original_benefit_upper_bound=original_benefit_upper_bound,
+            upper_bound=upper_bound,
         )
         for hold in holds
     ):
@@ -1984,7 +2040,7 @@ def _fact_is_settled(
             payment_month=payment_month,
             beneficiaries=beneficiaries,
             params=params,
-            original_benefit_upper_bound=original_benefit_upper_bound,
+            upper_bound=upper_bound,
         )
         for hold in holds
     )
@@ -4329,7 +4385,8 @@ def _check_deduction_amount_bounds(
     Ordinary OB bounds gross only when the declared conditions settle
     that upper bound (GN 02603.050A). Administrative finality can protect
     a rate based on another PIA (RS 00615.754A.3); the historical
-    sole-survivor alternative can also exceed ordinary OB (RS 00615.010).
+    sole-survivor alternative can also exceed ordinary OB (RS 00615.010),
+    and RS 00615.712 states no cap on protected cash.
     For a parent, the one-parent OB is the conservative upper bound until
     a supported computation resolves entitlement/count.
     Own-work events need strictly positive withholding after NH reserves;
@@ -4343,7 +4400,7 @@ def _check_deduction_amount_bounds(
             beneficiaries=beneficiaries,
             params=params,
             payment_month=payment_month,
-            original_benefit_upper_bound=True,
+            upper_bound=True,
         ) or _historical_widow_gross_bound_unsettled(
             state, member, payment_month
         ):

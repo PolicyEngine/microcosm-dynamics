@@ -602,10 +602,16 @@ def _spouse_entitlement_case(
     )
 
 
-def _expect_fact_classification(call, fact, held, message):
-    """Round 5: a protected fact retains its precise counted refusal."""
+def _expect_fact_classification(call, fact, held, message, above=False):
+    """Round 5: a protected fact retains its precise counted refusal.
+
+    Round 6: workers' compensation can only lower a rate, so a DIB above
+    the PIA stays an input error.
+    """
     unsettled = held is g.RecordCondition.ADMINISTRATIVE_FINALITY or (
-        held is g.RecordCondition.WORKERS_COMPENSATION_OFFSET and fact == "F2"
+        held is g.RecordCondition.WORKERS_COMPENSATION_OFFSET
+        and fact == "F2"
+        and not above
     )
     if not unsettled:
         _expect_no_row(call, message)
@@ -944,6 +950,7 @@ def test_no_held_coverage_condition_masks_direct_nh_rate_contradiction(
             ("F1" if kind == "original" else "F2"),
             condition,
             "G context does not match RET rates",
+            above=direction > 0,
         )
 
 

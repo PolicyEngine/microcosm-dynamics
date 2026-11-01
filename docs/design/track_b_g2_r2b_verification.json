@@ -12998,5 +12998,84 @@
       "ledger": "docs/design/track_b_g2_r2b_mutations.json"
     }
   },
-  "round_5_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and isolated mutation evidence is under round_5. Earlier heads, counts and commands remain historical. No tier-policy or birth-evidence local run and no whole-suite collection."
+  "round_5_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and isolated mutation evidence is under round_5. Earlier heads, counts and commands remain historical. No tier-policy or birth-evidence local run and no whole-suite collection.",
+  "round_6": {
+    "reviewed_head": "a135519fbfb2a3ebf9fd9c052a4619cdcedff2ca",
+    "workspace": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-g2-20261023",
+    "verification_class": "statutory_conformance",
+    "admitted_scope": "Invented declarations and captured published examples only; no population, behavioral or forecast claim.",
+    "fixed_by": "the session, because every Codex lane was held",
+    "named_test_gate": {
+      "selection": "tests/test_track_b_*.py",
+      "result": "13874 passed, 7 skipped in 838.63s (0:13:58)",
+      "environment": "both data roots set to a nonexistent path"
+    },
+    "failing_first": {
+      "reviewed_head": "a135519fbfb2a3ebf9fd9c052a4619cdcedff2ca",
+      "module": "tests/test_track_b_ret_ledger_fix_round_6.py",
+      "result": "50 failed, 174 passed in 6.29s"
+    },
+    "cross_head": {
+      "r2_stable_rows": 240,
+      "r3_stable_rows": 240,
+      "identical_declared_output_bytes": true,
+      "stable_sha256": "799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55"
+    },
+    "conformance_report_sha256": "17d144575b38bb85080d8cbed28fad470ec93fd6eb6803b48729bb26a78b3d45",
+    "conformance_report_byte_identical": true,
+    "tier_policy": "Left to CI; no local whole-suite collection.",
+    "final_source_sha256": {
+      "src/populace_dynamics/track_b/gross_benefits.py": "2584e41931506885ba34f43b147731f2f5adfb25bc84df6fc17bd134b9564f3d",
+      "src/populace_dynamics/track_b/ret_ledger.py": "9d1dd9caf88ff8d843c8196a4f672ba2d247328132ab16aa326918b2df2df645"
+    },
+    "final_test_sha256": {
+      "tests/test_track_b_ret_ledger_fix_round_4.py": "02c5c86b64070f9e7350868f8d94dcc9233bedc32cbcae32b3264f9ae570d1bb",
+      "tests/test_track_b_ret_ledger_fix_round_5.py": "c86ef045d797e31d6db09ef11bc7fbfbcf7c1fa54d32f04e7b6b42e8b813c9cd",
+      "tests/test_track_b_ret_ledger_fix_round_6.py": "4979b4ae4fc434f540fed293ad1fc44cf0508aaaffa95e7ed3ec00e3c4c9fd6c"
+    },
+    "mutations": {
+      "count": 38,
+      "ids": [
+        "round6-cap_lifts_equality",
+        "round6-cap_never_settled",
+        "round6-cap_scope_f2_only",
+        "round6-cap_scope_f3_only",
+        "round6-carryover_any_kind",
+        "round6-carryover_cohort_1927",
+        "round6-carryover_cohort_1929",
+        "round6-carryover_unknown_cohort_settled",
+        "round6-carryover_unscoped",
+        "round6-carryover_zero_pia",
+        "round6-closure_drops_upper_bound",
+        "round6-dib_cap_inclusive",
+        "round6-dib_no_cap",
+        "round6-drc_settles_cap",
+        "round6-drc_settles_widow",
+        "round6-drc_unsettles_child",
+        "round6-dual_drop_f2",
+        "round6-dual_drop_f3",
+        "round6-f3_scope_skips_dual",
+        "round6-f3_scope_skips_reduced",
+        "round6-only_drop_dual",
+        "round6-only_drop_own",
+        "round6-only_drop_rc_dib",
+        "round6-only_drop_rc_wc",
+        "round6-only_drop_reduced",
+        "round6-only_drop_ur_dib",
+        "round6-only_drop_ur_wc",
+        "round6-own_history_drop_f2",
+        "round6-pre1978_cohort_1927",
+        "round6-pre1978_cohort_1929",
+        "round6-pre1978_unknown_cohort_settled",
+        "round6-pre1978_unscoped",
+        "round6-reduced_history_drop_f2",
+        "round6-reduced_history_drop_f3",
+        "round6-rib_cap_inclusive",
+        "round6-rib_gate_exact",
+        "round6-rib_no_cap",
+        "round6-rib_no_equality"
+      ]
+    }
+  },
+  "round_6_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_6. Earlier heads, counts and commands remain historical."
 }
