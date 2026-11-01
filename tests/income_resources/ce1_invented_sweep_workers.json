@@ -10703,33 +10703,48 @@
   },
   {
    "rule_id": "communist_organization_service_1968",
-   "worker": "INVENTED: employee (bookkeeper) in 1969 of an organization subject during that year to a final Subversive Activities Control Board order requiring it to register as a Communist-front organization: former 410(a)(17).",
+   "worker": "INVENTED: employee (bookkeeper) in 1969 of an organization subject throughout that year to a final Subversive Activities Control Board order requiring it to register as a Communist-front organization: former 410(a)(17), which then tested the calendar quarter.",
    "facts": {
-    "communist_organization_registration": "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+    "services_performed_date": "before 1978-01-01",
+    "communist_organization_registration": [
+     "during any part of the calendar quarter in which the service is performed the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+     "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+    ]
    },
    "expected": "noncovered",
-   "decides": "registered_organization_employer"
+   "decides": "registered_organization_quarter_before_1978"
   },
   {
    "rule_id": "communist_organization_service_1968",
-   "worker": "INVENTED: employee hired in December 1970 of an organization whose final SACB order was in effect only January-March 1970: 'in any year during any part of which'.",
+   "worker": "INVENTED (review r6 H-3): a clerk who works October-December 1970 for an organization whose final SACB order was in effect only January-March 1970. Until Pub. L. 95-216 the test was the quarter, so former 410(a)(17) does not reach her service, though the year test would have.",
    "facts": {
-    "communist_organization_registration": "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+    "services_performed_date": "before 1978-01-01",
+    "communist_organization_registration": [
+     "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+     "the employer was registered or under an effective final order in no part of the calendar quarter in which the service is performed"
+    ]
    },
-   "expected": "noncovered",
-   "decides": "registered_organization_employer"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "communist_organization_service_1968",
    "worker": "INVENTED: JUST MISSES by status: an organization named in an SACB petition that never became a final order and that never registered; its employee, 1971.",
-   "facts": {},
+   "facts": {
+    "services_performed_date": "before 1978-01-01",
+    "communist_organization_registration": "named in a Subversive Activities Control Board petition that never became a final order, and never registered"
+   },
    "expected": "covered",
    "decides": "residual"
   },
   {
    "rule_id": "communist_organization_service_1968",
    "worker": "INVENTED: JUST MISSES by relation: a self-employed printer whose client, not employer, was a registered organization, 1970: (17) excludes only service in the organization's employ.",
-   "facts": {},
+   "facts": {
+    "services_performed_date": "before 1978-01-01",
+    "employee_self_or_mixed": "self-employed; the registered organization is a client, not an employer",
+    "communist_organization_registration": "the worker's client, not an employer of the worker, is registered as a Communist-front organization"
+   },
    "expected": "covered",
    "decides": "residual"
   },
@@ -15182,6 +15197,45 @@
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
+  },
+  {
+   "rule_id": "communist_organization_service_1968",
+   "worker": "INVENTED (review r6 H-3): a clerk who works January-March 1970 for that organization, while its final SACB order is in effect: the quarter test reaches the service.",
+   "facts": {
+    "services_performed_date": "before 1978-01-01",
+    "communist_organization_registration": [
+     "during any part of the calendar quarter in which the service is performed the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+     "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "registered_organization_quarter_before_1978"
+  },
+  {
+   "rule_id": "communist_organization_service_1968",
+   "worker": "INVENTED (review r6 H-3): a clerk who works October-December 1980 for an organization whose final SACB order was in effect only January-March 1980: from 1978 former 410(a)(17) tests the year.",
+   "facts": {
+    "services_performed_date": "on or after 1978-01-01",
+    "communist_organization_registration": [
+     "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+     "the employer was registered or under an effective final order in no part of the calendar quarter in which the service is performed"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "registered_organization_employer"
+  },
+  {
+   "rule_id": "communist_organization_service_1968",
+   "worker": "INVENTED (review r6 H-3, the quarter case's just miss on date): a clerk who works January-March 1980 while the organization's final order is in effect: the quarter text is true, but the service falls after 1977, so the year case decides.",
+   "facts": {
+    "services_performed_date": "on or after 1978-01-01",
+    "communist_organization_registration": [
+     "during any part of the calendar quarter in which the service is performed the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+     "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "registered_organization_employer"
   }
  ]
 }

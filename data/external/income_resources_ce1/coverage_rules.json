@@ -4623,12 +4623,23 @@
     {
       "cases": [
         {
-          "case_id": "registered_organization_employer",
+          "case_id": "registered_organization_quarter_before_1978",
           "consequence": "noncovered",
-          "description": "Former 410(a)(17), for service after 1956-06-30.",
+          "description": "Former 410(a)(17) before Pub. L. 95-216: service performed in any quarter during any part of which the organization is registered or under an effective final order. Section 351(a)(1) \"substituted 'year' for 'quarter'\" only for \"remuneration paid and services rendered after Dec. 31, 1977\", so service before 1978 in a quarter in which the employer was neither registered nor ordered is not excluded, even if the employer was registered in another quarter of that year.",
           "precedence": 1,
           "when": {
-            "communist_organization_registration": "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization"
+            "communist_organization_registration": "during any part of the calendar quarter in which the service is performed the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+            "services_performed_date": "before 1978-01-01"
+          }
+        },
+        {
+          "case_id": "registered_organization_employer",
+          "consequence": "noncovered",
+          "description": "Former 410(a)(17) as Pub. L. 95-216 section 351(a)(1) amended it: service performed \"in any year during any part of which such organization is registered\". The amendment applies \"with respect to remuneration paid and services rendered after Dec. 31, 1977\"; (17) tests the service, so the case reads the service date.",
+          "precedence": 2,
+          "when": {
+            "communist_organization_registration": "during any part of the service year the employer is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front or Communist-infiltrated organization",
+            "services_performed_date": "on or after 1978-01-01"
           }
         }
       ],
@@ -4654,12 +4665,26 @@
         {
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
+          "location": "1977 amendment note, subsecs. (a)(17)(A), (f)(4)(B)",
+          "quote": "Subsecs. (a)(17)(A), (f)(4)(B). Pub. L. 95\u2013216, \u00a7 351(a)(1) , substituted \u201cyear\u201d for \u201cquarter\u201d.",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "Effective Date of 1977 Amendment",
+          "quote": "Amendment by Pub. L. 95\u2013216 applicable with respect to remuneration paid and services rendered after Dec. 31, 1977",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
           "location": "former 410(a)(17); historical amendment notes",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         }
       ],
       "consequence": "covered",
-      "description": "Former section 410(a)(17) excludes employee service in any year during any part of which the employer organization is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front, or Communist-infiltrated organization. The original provision applies after June 30, 1956; the specific exclusion is repealed on December 19, 2014.",
+      "description": "Former section 410(a)(17) excludes employee service in any quarter (from 1978, any year) during any part of which the employer organization is registered, or subject to an effective final Subversive Activities Control Board registration order, as a Communist-action, Communist-front, or Communist-infiltrated organization. The original provision applies after June 30, 1956; the specific exclusion is repealed on December 19, 2014.",
       "effective_end": "2014-12-18",
       "effective_start": "1968-01-01",
       "family": "communist_organization_service",
@@ -4751,13 +4776,21 @@
             "cases": {
               "registered_organization_employer": [
                 "communist_organization_registration"
+              ],
+              "registered_organization_quarter_before_1978": [
+                "communist_organization_registration"
               ]
             }
           },
           "organization_status_in_any_part_of_service_year": {
             "cases": {
               "registered_organization_employer": [
-                "communist_organization_registration"
+                "communist_organization_registration",
+                "services_performed_date"
+              ],
+              "registered_organization_quarter_before_1978": [
+                "communist_organization_registration",
+                "services_performed_date"
               ]
             }
           },
@@ -4800,8 +4833,7 @@
         },
         "unread_trigger_facts": {
           "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (worker 89: a contractor's client is not his employer).",
-          "historical_fica_treatment": "No captured source conditions former 410(a)(17) on how the payor treated the pay.",
-          "services_performed_date": "Former (17)(B) 'after June 30, 1956' precedes the window; the 2014-12-19 repeal is the row's end; the window carries both."
+          "historical_fica_treatment": "No captured source conditions former 410(a)(17) on how the payor treated the pay."
         }
       },
       "rare_exclusion": {

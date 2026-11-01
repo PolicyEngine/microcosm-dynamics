@@ -1966,7 +1966,7 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
             len(row["parameters"].get("unread_trigger_facts", {}))
             for row in rows
         )
-        == 375
+        == 374
     )
 
 
@@ -4941,7 +4941,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 348
+    assert sum(len(row["cases"]) for row in rows) == 349
 
 
 PUBLIC_OFFICERS = {
