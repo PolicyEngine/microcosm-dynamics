@@ -1424,8 +1424,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     )
     # r4 M-2 adds NONPROFIT_RETROACTIVE_HIRE_UNSETTLED's two readings to
     # each pre-1984 nonprofit row; the r4 sweep adds the Army Corps student
-    # aide and the pre-1996 dealer holdings questions.
-    assert described == 48
+    # aide and the pre-1996 dealer holdings questions; round 5 adds the
+    # pre-1998 insurance termination payment (review r4 low 10).
+    assert described == 50
 
 
 READING_TEXT = {
@@ -4568,6 +4569,86 @@ def test_public_office_1968_election_reaches_only_state_or_local_fees(
     decided = rule.resolve(cases_met(rule, facts))
     assert decided["consequence"] == consequence
     assert decided.get("case_id", "residual") == via
+
+
+# Round 5 (review r4 low 10): 411(j) is headed "Codification of treatment
+# of certain termination payments received by former insurance salesmen"
+# and says what subsection (a) "shall be construed as including"; the 411
+# notes date it "applicable to payments after Dec. 31, 1997". INVENTED
+# former agents' termination payments, by the date paid and their terms.
+TERMINATION_HEADING = (
+    "Codification of treatment of certain termination payments received by "
+    "former insurance salesmen"
+)
+TERMINATION_EFFECTIVE = "applicable to payments after Dec. 31, 1997"
+QUALIFYING_TERMINATION_TERMS = (
+    "a covenant not to compete for at least one year; the amount depends "
+    "primarily on last-year policies or their persistence, and not at all "
+    "on length of service or overall earnings"
+)
+SERVICE_LENGTH_TERMS = "an amount that grows with length of service"
+TERMINATION_PAYMENTS = {
+    "qualifying_paid_1995": (
+        date(1995, 6, 1),
+        QUALIFYING_TERMINATION_TERMS,
+        "refuses",
+        "qualifying_termination_payment_before_1998",
+    ),
+    "qualifying_paid_1999": (
+        date(1999, 6, 1),
+        QUALIFYING_TERMINATION_TERMS,
+        "noncovered",
+        "qualifying_termination_payment",
+    ),
+    "service_length_paid_1995": (
+        date(1995, 6, 1),
+        SERVICE_LENGTH_TERMS,
+        "covered",
+        "residual",
+    ),
+    "service_length_paid_1999": (
+        date(1999, 6, 1),
+        SERVICE_LENGTH_TERMS,
+        "deferred",
+        "residual",
+    ),
+}
+
+
+@pytest.mark.parametrize("payment", sorted(TERMINATION_PAYMENTS))
+def test_termination_payments_before_1998_keep_the_codification_open(
+    registry, payment
+):
+    """Review r4 low 10: the heading and construction wording present
+    411(j) as stating how 411(a) already treated a qualifying payment,
+    while its effective date reaches only payments after 1997. No CE1
+    capture records the earlier treatment, so a qualifying payment before
+    1998 refuses with both readings named; other payments resolve."""
+    paid, terms, consequence, via = TERMINATION_PAYMENTS[payment]
+    (rule,) = registry.lookup_date(
+        "self_employment_insurance_termination", paid
+    )
+    met = cases_met(rule, {"insurance_sales_termination_payment": terms})
+    if consequence != "refuses":
+        decided = rule.resolve(met)
+        assert decided["consequence"] == consequence
+        assert decided.get("case_id", "residual") == via
+        return
+    with pytest.raises(OpenRuleError, match="INSURANCE_TERMINATION_PRE_1998"):
+        rule.resolve(met)
+    case = next(c for c in rule.cases if c["case_id"] == via)
+    names = {option["name"] for option in case["open_alternatives"]}
+    assert names == {"effective_date_reading", "codification_reading"}
+    text = source_text(CAPTURE_DIRECTORY / "lii_42_411.html")
+    for passage in (TERMINATION_HEADING, TERMINATION_EFFECTIVE):
+        assert passage in text
+        assert passage in case["open_reason"]
+    later = next(
+        r
+        for r in registry.rules
+        if r.rule_id == "se_insurance_termination_1998_2026"
+    )
+    assert case["when"] == later.cases[0]["when"]
 
 
 @settings(deadline=None)

@@ -20431,17 +20431,38 @@
       "worked_examples": []
     },
     {
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "qualifying_termination_payment_before_1998",
+          "consequence": "open",
+          "description": "A payment before 1998 that meets 411(j)(1)-(4). The heading calls 411(j) a codification of treatment and its text construes subsection (a), but the 411 notes apply it only to payments after 1997, and no CE1 capture records how 411(a) treated such a payment before 1998; capture that treatment before classifying.",
+          "open_alternatives": [
+            {
+              "description": "Apply 411(j) only to payments after December 31, 1997, as its effective date provides: before 1998 this family excludes nothing, and the base definition (411(a)) decides whether the payment is net earnings from self-employment.",
+              "name": "effective_date_reading"
+            },
+            {
+              "description": "Read 411(j) as codifying how 411(a) already treated these payments, so a payment before 1998 that meets its four conditions is not net earnings from self-employment.",
+              "name": "codification_reading"
+            }
+          ],
+          "open_reason": "INSURANCE_TERMINATION_PRE_1998_TREATMENT_UNCAPTURED: 411(j) is headed \"Codification of treatment of certain termination payments received by former insurance salesmen\" and says \"Nothing in subsection (a) shall be construed as including\" such a payment in net earnings, which presents it as stating how 411(a) already treated the payment; the 411 notes date the amendment \"applicable to payments after Dec. 31, 1997\", and no CE1 capture records the treatment before 1998.",
+          "precedence": 1,
+          "when": {
+            "insurance_sales_termination_payment": "received after the agreement ends; no services for the company after termination and before the year closes; a covenant not to compete for at least one year; the amount depends primarily on last-year policies or their persistence, and not at all on length of service or overall earnings"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
-          "location": "1997 amendment/effective-date notes",
+          "location": "411(j) heading and text; 1997 amendment/effective-date notes",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
       "consequence": "covered",
-      "description": "The 411(j) insurance-sales termination-payment exclusion has no application before 1998.",
+      "description": "411(j)'s termination-payment rule applies to payments after December 31, 1997. Its heading calls it a codification of treatment, so a payment before 1998 that meets its four conditions is an open question; any other payment falls to the other families.",
       "effective_end": "1997-12-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_insurance_termination",
@@ -20503,7 +20524,11 @@
         ],
         "condition_cases": {
           "exclusion_411_j_available": {
-            "not_a_coverage_condition": "Records history: Pub. L. 105-34 added 411(j) 'applicable to payments after Dec. 31, 1997', so no payment in this row's range meets it; the residual already applies no 411(j) exclusion and sends the payment to the other families."
+            "cases": {
+              "qualifying_termination_payment_before_1998": [
+                "insurance_sales_termination_payment"
+              ]
+            }
           }
         },
         "effective_basis": "payment_date",
@@ -20513,7 +20538,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "411(j) does not reach payments before 1998, so this family excludes nothing; apply the other families."
+        "description": "No case holds: the payment does not meet 411(j)'s four conditions, so neither reading excludes it in this family; apply the other families."
       },
       "rule_id": "se_insurance_termination_1968_1997",
       "trigger_facts": [
