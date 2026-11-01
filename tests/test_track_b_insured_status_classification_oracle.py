@@ -334,9 +334,10 @@ def _ordinary_routes(
         )
         if len(elapsed) < 12:
             window, needed = _lookback(start, 12, periods, used), 6
-        elif len(elapsed) > 40:
-            window, needed = frozenset(elapsed[-40:]), 20
         else:
+            # Past 40 quarters a filling stays lawful on the Act's whole
+            # period, and the capped reading is 20_of_40 above (source
+            # conflict us:oasdi-insured-subsequent-special-long-period).
             window, needed = frozenset(elapsed), max(6, len(elapsed) // 2)
         if len(used & window) >= needed:
             routes.append("under31" if young else "subsequent_special")
@@ -1084,6 +1085,37 @@ def test_classification_oracle_onset_quarter_and_credited_endpoint(flags):
                 periods=(rule.DisabilityPeriod(date(1960, 1, 1), prior_end),),
             )
         )
+
+
+@pytest.mark.parametrize("flags", FLAG_SETS)
+@pytest.mark.parametrize("last_year_qcs", (1, 2, 3))
+@pytest.mark.parametrize("prior_unknown", (False, True))
+def test_classification_oracle_subsequent_long_period(
+    flags, last_year_qcs, prior_unknown
+):
+    # 41 counted quarters, with 19, 20 or 21 QCs across the whole period.
+    counts = {
+        1981: 3,
+        1982: 3,
+        1984: 4,
+        1985: 4,
+        1986: 4,
+        1987: last_year_qcs,
+    }
+    prior = rule.DisabilityPeriod(
+        date(1983, 1, 15), date(1983, 6, 30), special_insured=True
+    )
+    _check_classification(
+        _declaration(
+            onset=date(1991, 10, 15),
+            end=date(1992, 6, 30),
+            month=date(1992, 12, 1),
+            flags=flags,
+            periods=() if prior_unknown else (prior,),
+            prior_unknown=prior_unknown,
+            counts=counts,
+        )
+    )
 
 
 @pytest.mark.parametrize("flags", FLAG_SETS)

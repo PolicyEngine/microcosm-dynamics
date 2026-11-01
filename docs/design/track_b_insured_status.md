@@ -670,7 +670,8 @@ input. An input error propagates and creates no row.
 | Pre1951 self-employment income | `pre1951_self_employment_unsupported` |
 | Earnings require an increment after 2027 | `qc_amount_year_unsupported` |
 | Query before 1968; blind query before 1973; subsequent-special query before May 1983 | `entitlement_before_1968_unsupported`, `blindness_before_1973_unsupported`, `subsequent_special_before_1983_unsupported` |
-| More than 4,096 disability-boundary combinations, unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, or a first start that placement or prior treatment can move with no one filling supporting the returned result, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
+| A subsequent-special period past 40 counted quarters where half the whole period and 20 of the last 40 give different results | `subsequent_special_long_period_unsupported` |
+| More than 4,096 disability-boundary combinations, unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, a first start that placement or prior treatment can move with no one filling supporting the returned result, or a lower date some ending can't reach on a filling with the reported start, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
 
 The round-3 observable-trigger audit covers every `CoverageCondition`.
 An explicit condition continues to refuse under its own reason when the
@@ -849,14 +850,14 @@ to a statutory sentence that does not state it.
 | B7. DLI lies through query without frozen exit, or through the pre-FRA-quarter/death horizon with frozen coverage; `None` is the bottom bound. A future exit cannot remove query censoring. | RS .148 defines DLI as "the last day in the last quarter" in which status is met and limits the search relative to FRA. B404.146(b) caps credits after death; A216(i)(2)(B) caps new periods. Future undeclared work is not assumed zero. Specialist routes are refused before this ordinary DLI calculation. |
 | B8. For a nonblind ordinary worker with no prior period, no DLI can lie more than 39 quarters after the last credited quarter. | B404.130(b)(2) requires "at least 20 QCs in the 40-quarter period ... ending with that quarter". After 39 later quarters no original QC remains. Blindness and prior-period special/exclusion routes disable this search shortcut; flagged or observable specialist routes refuse. |
 | B9. With unknown periods the disregard DLI is a lower bound and the permitted query/FRA/death horizon is the upper bound; unknown SSPA applicability reduces any positive DLI lower bound to `None`. | C320(a) permits favorable disregard; B404.130(f) permits counting all prior-period quarters; RS .102 B.2 imposes an additional requirement. The bound does not infer a particular recovery or history. Exemption can recover the ordinary upper witness but cannot exceed the calendar horizon. |
-| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. |
+| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. Round 17 requires every ending to reach the lower date on a filling with the reported start, and refuses by name otherwise. |
 | B11. At most 4,096 combinations of disability endpoint assignments are searched exactly, after any applicable impossibility proof. | B404.143(b) and RS .230 permit favorable assignment; B404.130(f) makes credited endpoints decisive. Fixed-overlap, six-QC, and I15's minimum-requirement checks precede `_boundary_variants`, including both alternate-path calls and UNKNOWN-prior-history feasibility. A remaining excess returns `disability_boundary_assignments_unsupported`; computational complexity is neither a statutory impossibility bound nor permission to retain an all-invalid declaration. |
-| B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum and 20/40 ceiling. | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite. A fully-route flag must still leave a recent-rule witness or possible automatic pre1956 alternate where I16 applies; the pre1956 flag adds no route beyond that alternate. Specialist paths retaining possibility receive their named refusal. |
+| B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum. The young-worker window holds at most 39 quarters. A subsequent-special period past 40 quarters computes only where the Act's whole period and 404.130(d)(2)'s 20 of 40 agree (round 17). | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite. A fully-route flag must still leave a recent-rule witness or possible automatic pre1956 alternate where I16 applies; the pre1956 flag adds no route beyond that alternate. Specialist paths retaining possibility receive their named refusal. |
 | B13. Indexed annual QC amounts are at least the prior year's statutory increment and the rounded indexed 1978 amount, with nearest-$10 rounding and $5 ties upward. | A213(d)(2) chooses "the larger of" the prior increment and indexed amount, rounded to "the next higher multiple of $10" at a $5 tie. This exact parameter calculation has no disability or specialist alternative; input-domain checks require positive NAWI and a statutory prior increment. |
 | B14. Declaring continuity never widens the administrative-end candidate set; every returned status and count envelope remains valid for every retained concrete ending. | C321(c)'s ending events still govern. Set intersection with ends on/after the observation can only remove candidates; it creates neither an ending nor a new credit. The universal envelope remains unchanged where other unknown facts require it. |
 | B15. Ordinary establishment overlap resolution enumerates at most 4,096 unknown-credit fillings after its fixed-date monotonicity, candidate-quarter, six-QC, and minimum-requirement proofs. | C320(b)(2) and C321(a) require one insured beginning consistent with the complete declaration. I13 settles fixed-quarter overlap and I15 settles a known-history nonblind lifetime-QC shortfall before enumeration. If neither settles the declaration, a search beyond the limit returns `disability_boundary_assignments_unsupported`; it asserts neither a concrete filling nor an input error. |
 | B16. A deferred raw-conversion row retains independently computable ordinary credits in its minimum and every enumerated filling, and cannot exceed feasible calendar-quarter credits in its maximum. | A213(d)(2)'s prior-increment floor bounds future annual credits above by the captured 2027 increment applied to the supplied wages plus SE income; the possibility-only lower bound is zero. Raw 1937 allocation remains zero through four because A213(b)'s half-year rule is unresolved. For separate pre1955 agriculture or pre1951 SE, supported quarterly wage credits and supported post1950 calendar-year SE credits remain fixed; unresolved additional allocation can fill only remaining allowed quarters. Both minimum and maximum fillings may violate derived overlap even when a middle filling is valid, so neither endpoint alone proves impossibility. These bounds do not adjudicate a specialist allocation or replace its refusal. |
-| B17. The first-start check refuses when flexible credits allow a better result at any possible start, and it searches at most 4,096 placements of the annual years that can change a first insured quarter. | 404.321(a) gives a record one start, and RS .230 makes placement flexible. A year wholly inside every tested window and untouched by a period adds its full count wherever its QCs fall, so it stays flexible. Without prior periods, an insured worst filling proves no filling starts later, and the check stops. The bound can refuse a declaration that no concrete filling improves, and a search can reach its limit before it attains a result. Round 16's longer search for each status's witness can reach the same limit. All return `disability_boundary_assignments_unsupported`, so the row keeps its weight; none asserts a filling or an input error. |
+| B17. The first-start check refuses when flexible credits allow a better result at any possible start, and it searches at most 4,096 placements of the annual years that can change a first insured quarter. | 404.321(a) gives a record one start, and RS .230 makes placement flexible. A year wholly inside every tested window and untouched by a period adds its full count wherever its QCs fall, so it stays flexible. Without prior periods, an insured worst filling proves no filling starts later, and the check stops. The bound can refuse a declaration that no concrete filling improves, and a search can reach its limit before it attains a result. Round 16's longer search for each status's witness and round 17's lower-date search can reach the same limit. All return `disability_boundary_assignments_unsupported`, so the row keeps its weight; none asserts a filling or an input error. |
 
 The round-5 adversarial audit revisits each row in both directions in
 `scratch/review/round5-premise-audit.md`: a valid filling cannot be rejected,
@@ -2145,6 +2146,149 @@ The invariants added in this round are executed by these tests:
   aggregate reaches six or more (`test_the_dli_refusal_tracks_six_aggregate_qcs`,
   `test_aggregate_below_six_ordinary_qcs_refuses_the_dli`,
   `test_aggregate_with_no_ordinary_qc_refuses_the_dli`).
+
+## Round 17 the long subsequent-special period and the lower date
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+Sol's twelfth review of `e9f4140c` raised two mediums, and both reproduced.
+
+### The cap on a long subsequent-special period
+
+Clause (iii) of Act 223(c)(1)(B) and 216(i)(3)(B) asks for "not less than
+one-half of the quarters beginning after such individual attained age 21",
+with no cap. 404.130(d)(2) asks for one-half of the same period "up to a
+maximum of 20 QCs out of 40 calendar quarters", and RS 00301.147 B.2.a repeats
+those words. RS 00301.147's three examples stop at 33 quarters, so no capture
+shows SSA applying the cap. Past 40 counted quarters the sources give two
+readings:
+
+- half the whole period, as the Act says;
+- 20 of the last 40 counted quarters, as 404.130(d)(2) says. Those are the
+  quarters of 404.130(b), so this reading adds nothing to that rule.
+
+A third parse takes 20 QCs anywhere in the period. The session rejected it. It
+drops "out of 40 calendar quarters", and every period in 404.130 ends with the
+tested quarter, so the test would stop asking about recent work. It would also
+refuse RS 00301.147's Mary Brown, whose status the manual prints. Counting the
+prior's quarters under 404.130(f) leaves 20 QCs in 48 quarters at 1983Q2, and
+that parse alone would move the date last insured past 1983-03-31.
+
+Through round 16 the rule took the capped reading without logging it, and the
+stress oracle repeated it. An invented woman born 1960-02-02 has a special
+prior from 1983-01-15 through 1983-06-30, annual QCs 1981:3, 1982:3, four in
+each of 1984 to 1986 and 1987:2, and onset 1991-10-15. The period holds 41
+counted quarters, so the test needs 20, and all 20 QCs sit in it. Its last 40
+quarters hold 19. At `e9f4140c` DISABILITY computed false with a date last
+insured of 1991-09-30, where the Act's reading insures this record through
+1991-12-31.
+With an established period the same record raised `InvalidFamilyInput`, even
+for an age-62 FULLY request.
+
+The rule now computes only where the two readings agree. `_witness` refuses
+with `subsequent_special_long_period_unsupported` when no candidate insures and
+the whole period holds at least half its quarters after dropping an odd
+remainder. The refusal needs no fully insured test: across 166,080 combinations
+of birth, prior and query date, half a long period exceeded the requirement by
+at least 10 QCs, and `test_half_a_long_period_clears_the_fully_insured_count`
+holds that. At 40 counted quarters or fewer the readings match. A FULLY
+request with no established period reads no disability test, so it still
+computes. The refusal reaches a date last insured that the 40-quarter rule
+ends before the Act's reading would, because the date scan calls the same
+witness. It also reaches
+the period that 404.130(f) counts in full, where the prior's quarters take a
+period past 40. `_unknown_prior_joint_shortfall` proves impossibility, so its
+`special_recent` takes the Act's whole period, and its own 40-quarter test
+carries the capped reading. The last-40 form raised an input error on a record
+with fixed QCs from 1965, where the proof's clock holds 21 QCs in 42 quarters
+and only 19 in the last 40. `_minimum_current_period_qcs` already took 20 as a
+ceiling. The session logged this as
+`us:oasdi-insured-subsequent-special-long-period`. It is a statute against a
+regulation, which is the pattern in d1920, so the refusal stands until Max
+rules that pattern.
+
+### The lower date on an unknown ending
+
+Round 16 held the upper date to a filling with the reported start, and left
+the lower date as each ending's favorable placement. An invented woman born
+1960-02-02 has annual QCs 1995:3, four in each of 1996 to 1999, 2000:1, four
+in each of 2001 to 2004 and 2005:3, an established period from 2000-01-01 and
+an UNKNOWN ending. Of 64 placements, 16 keep the 2000Q1 start, and each puts
+the 2000 QC in that quarter. An ending of 2005-12-31 then leaves those
+placements a best date of 2009-12-31. At `e9f4140c` DISABILITY reported a lower
+date of 2010-03-31, which needs that QC after 2000Q1 and so a later start. A
+frozen OP12 exit overstates its lower date the same way.
+
+`_settle_lower_date` now searches fillings that keep the reported start, and
+refuses by name unless each ending reaches the lower date. It runs on the
+lower credits, because a lower date comes from those credits, so an UNKNOWN
+year reaches the same check. UNKNOWN priors reach it too. They include the
+completion with only the listed periods, and that completion holds every
+ending, so the search reads the person with OBSERVED provenance. A mutation
+found that gap in the first version of this fix.
+`_fillings_keeping_start` holds the search that `_settle_first_start` already
+ran.
+
+### Oracle reach and bounds
+
+`test_computed_exactly_when_every_reading_agrees` writes the two readings out
+from the source text, with no production helper, and requires a computed
+result exactly where they agree on the status and the date. The stress
+oracle's `under_31` now takes a reading, and `check` holds a computed result
+to both on every subsequent-special declaration. The classification oracle
+treats a filling as lawful if either reading insures it.
+`test_poms_mary_brown_keeps_a_computed_date_last_insured` and
+`test_twenty_qcs_short_of_half_the_period_compute` hold the rejected parse out
+of the rule. A new
+`check_unknown_ending` exhausts each ending's fillings on the reported start,
+and requires the upper date to equal the best of them and the lower date not
+to exceed the worst.
+
+A probe drew 4,500 stress declarations with an UNKNOWN ending, each with known
+and UNKNOWN priors, and they ran the search 1,440 times. One record needs a
+different filling for each ending, and
+`test_a_record_can_need_a_different_filling_for_each_ending` pins it. No search
+reached an ending with no date, so
+`test_an_ending_with_no_date_reaches_nothing` runs on written-out dates.
+
+A wide search drew 5,100 invented declarations from fresh seeds across the four
+stress generators and both unknown-ending checks, and every check held: 3,014
+computed, 1,903 raised `InvalidFamilyInput`, and 183 refused by name.
+
+All 22 mutations of this round die at the final source bytes
+(`round_17_mutations` in `docs/design/track_b_insured_status_mutations.json`),
+and they ran against every insured status module. They include the three that
+survived Sol's twelfth review: `count_upper_uses_minimum`,
+`fully_count_lower_uses_maximum` and `omit_last_witness_for_ending`. Two early
+mutations, `long_ignores_fully` and `long_drops_ignore_flag`, proved equivalent
+across the 166,080 combinations above, so the clause they changed left the
+source and they left the list. Against `e9f4140c`, 38 of the 261 tests in the
+three changed modules fail.
+
+These tests execute the invariants this round adds:
+
+- a long subsequent-special period computes exactly where both readings
+  agree, and otherwise refuses by name with its row and weight
+  (`test_computed_exactly_when_every_reading_agrees`,
+  `test_a_long_period_refuses_where_its_readings_differ`,
+  `test_a_later_date_last_insured_can_turn_on_a_reading`,
+  `test_counting_the_prior_quarters_reaches_the_same_refusal`, and both
+  oracles);
+- no reading's conflict becomes an input error
+  (`test_an_established_period_keeps_its_row`,
+  `test_an_age_62_fully_request_keeps_its_row`,
+  `test_unknown_prior_history_keeps_its_row_on_the_whole_period`,
+  `test_classification_oracle_subsequent_long_period`);
+- every period ending reaches the reported lower date on a filling with the
+  reported start (`test_every_ending_must_reach_the_lower_date`,
+  `test_a_frozen_exit_reaches_the_same_check`,
+  `test_unknown_years_reach_the_same_check`,
+  `test_unknown_prior_history_reaches_the_same_check`,
+  `test_each_ending_can_reach_the_date_on_its_own_filling`,
+  `test_a_record_can_need_a_different_filling_for_each_ending`,
+  `test_an_ending_with_no_date_reaches_nothing`, `check_unknown_ending`);
+- a fixed start needs no placement search
+  (`test_a_fixed_start_needs_no_placement_search`).
 
 ## Not in scope
 

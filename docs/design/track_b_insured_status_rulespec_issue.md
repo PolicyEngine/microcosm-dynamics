@@ -123,6 +123,12 @@ case inventory, preserving its coverage labels. In particular:
   handling and creditable endpoint quarters. Preserve any source-versus-rule
   discrepancy documented by the Python lane; do not make the compiler
   imitate an erratum to force parity.
+- Past 40 counted quarters a subsequent-special period has two readings:
+  half the whole period under 42 USC 423(c)(1)(B)(iii), and 20 of the last
+  40 quarters under 20 CFR 404.130(d)(2). Execute both, and refuse where
+  they differ. The Python rule logs this as
+  `us:oasdi-insured-subsequent-special-long-period`, and d1920 holds the
+  pattern.
 - Explicitly refuse unsupported deemed, alien, military/railroad, Medicare,
   earned-basis, old-law and totalization inputs. A coverage refusal is not
   evidence that the published person's legal conclusion was negative.

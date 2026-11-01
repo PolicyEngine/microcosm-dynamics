@@ -96,8 +96,16 @@ def recent(use, at, periods, length):
     return count
 
 
-def under_31(birth, use, at, periods, special=False):
-    """404.130(c), (d): half the quarters after age 21, or 6 of 12."""
+LAST_40, WHOLE_PERIOD = READINGS = ("last_40", "whole_period")
+
+
+def under_31(birth, use, at, periods, special=False, reading=LAST_40):
+    """404.130(c), (d): half the quarters after age 21, or 6 of 12.
+
+    Past 40 counted quarters the Act's clause (iii) and 404.130(d)(2) part
+    ways (source conflict us:oasdi-insured-subsequent-special-long-period).
+    A computed result has to hold on both readings.
+    """
     attained_21 = quarter(date(birth.year + 21, birth.month, birth.day))
     if not special and at >= quarter(
         date(birth.year + 31, birth.month, birth.day)
@@ -113,27 +121,34 @@ def under_31(birth, use, at, periods, special=False):
     ]
     if len(elapsed) < 12:
         return recent(use, at, periods, 12) >= 6
+    if len(elapsed) > 40 and reading == WHOLE_PERIOD:
+        held = sum(candidate in use for candidate in elapsed)
+        return held >= len(elapsed) // 2
     credited = sum(candidate in use for candidate in elapsed[-40:])
     return credited >= max(6, min(len(elapsed), 40) // 2)
 
 
-def disability(birth, credits, at, periods, blind, special=False):
+def disability(
+    birth, credits, at, periods, blind, special=False, reading=LAST_40
+):
     use = usable(credits, at, periods)
     fully = len(use) >= requirement(birth, at // 4, periods)
     return fully and (
         blind
         or recent(use, at, periods, 40) >= 20
-        or under_31(birth, use, at, periods, special)
+        or under_31(birth, use, at, periods, special, reading)
     )
 
 
-def last_insured(birth, credits, at, periods, blind, special):
+def last_insured(birth, credits, at, periods, blind, special, reading):
     """Latest quarter through the query that insures a potential onset."""
     return max(
         (
             candidate
             for candidate in range(min(credits, default=at), at + 1)
-            if disability(birth, credits, candidate, periods, blind, special)
+            if disability(
+                birth, credits, candidate, periods, blind, special, reading
+            )
         ),
         default=None,
     )
@@ -148,7 +163,7 @@ def placements(annual):
         yield frozenset(credit for piece in pieces for credit in piece)
 
 
-def lawful_fillings(case):
+def lawful_fillings(case, reading=LAST_40):
     """Exhaust every filling before comparing to a public result.
 
     Each lawful filling gives its first start, three statuses, the best
@@ -176,7 +191,13 @@ def lawful_fillings(case):
                     candidate
                     for candidate in range(quarter(onset), quarter(ending) + 1)
                     if disability(
-                        birth, credits, candidate, used, blind, special
+                        birth,
+                        credits,
+                        candidate,
+                        used,
+                        blind,
+                        special,
+                        reading,
                     )
                 ),
                 None,
@@ -214,7 +235,13 @@ def lawful_fillings(case):
                         (
                             latest,
                             last_insured(
-                                birth, credits, at, periods, blind, special
+                                birth,
+                                credits,
+                                at,
+                                periods,
+                                blind,
+                                special,
+                                reading,
                             ),
                         ),
                     ),
@@ -227,7 +254,13 @@ def lawful_fillings(case):
                     currently_best[0],
                     any(
                         disability(
-                            birth, credits, candidate, used, blind, special
+                            birth,
+                            credits,
+                            candidate,
+                            used,
+                            blind,
+                            special,
+                            reading,
                         )
                         for candidate in range(quarter(onset), at + 1)
                     ),
@@ -240,8 +273,10 @@ def lawful_fillings(case):
     return found
 
 
-def public(case):
+def public(case, **options):
     observed = rule.EarningsProvenance.OBSERVED
+    unknown_end = case.get("unknown_end", False)
+    unknown_prior = case.get("unknown_prior", False)
     person = rule.Person(
         case["birth"],
         sex=rule.Sex.FEMALE,
@@ -249,15 +284,21 @@ def public(case):
         disability_onset=case["onset"],
         current_disability_period_established=True,
         current_disability_period_provenance=observed,
-        current_disability_period_end=case["ending"],
-        current_disability_period_end_provenance=observed,
+        current_disability_period_end=(
+            None if unknown_end else case["ending"]
+        ),
+        current_disability_period_end_provenance=(
+            rule.EarningsProvenance.UNKNOWN if unknown_end else observed
+        ),
         prior_disability_periods=tuple(
             rule.DisabilityPeriod(
                 a, b, special_insured=case.get("special", False)
             )
             for a, b in case["prior"]
         ),
-        prior_disability_periods_provenance=observed,
+        prior_disability_periods_provenance=(
+            rule.EarningsProvenance.UNKNOWN if unknown_prior else observed
+        ),
         sspa211_applies=False,
         sspa211_provenance=observed,
         dib_entitlement_month=case.get("entitlement"),
@@ -270,7 +311,7 @@ def public(case):
         )
         for year in range(case["birth"].year, case["month"].year + 1)
     }
-    return rule.insured_status(person, years, case["month"])
+    return rule.insured_status(person, years, case["month"], **options)
 
 
 def declaration(seed):
@@ -443,29 +484,94 @@ def check_diagnostics(case, result, fillings):
 
 
 def check(case):
-    fillings = lawful_fillings(case)
+    worlds = tuple(
+        lawful_fillings(case, reading)
+        for reading in (READINGS if case.get("special") else READINGS[:1])
+    )
     try:
         result = public(case)
     except rule.InsuredConfigurationUnsupported:
         return "refused"
     except InvalidFamilyInput as error:
-        assert not fillings, (case, error)
+        assert not any(worlds), (case, error)
         return "invalid"
-    assert fillings, (case, "computed an impossible establishment", result)
     actual = tuple(
         getattr(result, name).insured
         for name in ("fully", "currently", "disability")
     )
-    expected = tuple(
-        any(filling[index] for filling in fillings) for index in (1, 2, 3)
-    )
-    assert actual == expected, (case, actual, expected, result)
     start = quarter(result.current_disability_period_start)
-    for index, insured in enumerate(actual, 1):
-        assert not insured or any(
-            filling[0] == start and filling[index] for filling in fillings
-        ), (case, actual, start, fillings)
-    check_diagnostics(case, result, fillings)
+    for fillings in worlds:
+        assert fillings, (case, "computed an impossible start", result)
+        expected = tuple(
+            any(filling[index] for filling in fillings) for index in (1, 2, 3)
+        )
+        assert actual == expected, (case, actual, expected, result)
+        for index, insured in enumerate(actual, 1):
+            assert not insured or any(
+                filling[0] == start and filling[index] for filling in fillings
+            ), (case, actual, start, fillings)
+        check_diagnostics(case, result, fillings)
+    return "computed"
+
+
+def quarter_end(value):
+    year, number = divmod(value, 4)
+    month = 3 * number + 3
+    return date(year, month, calendar.monthrange(year, month)[1])
+
+
+def check_unknown_ending(case, unknown_prior=False):
+    """Each ending's best date on the reported start must fit the range.
+
+    UNKNOWN priors include the completion with none, which ``case`` then
+    declares, so its dates must also fit, though the upper end only bounds them.
+    """
+    try:
+        result = public(
+            {**case, "unknown_end": True, "unknown_prior": unknown_prior},
+            test=rule.InsuredTest.DISABILITY,
+        )
+    except rule.InsuredConfigurationUnsupported:
+        return "refused"
+    except InvalidFamilyInput:
+        return "invalid"
+    if result.current_disability_period_start is None:
+        return "no start"
+    start = quarter(result.current_disability_period_start)
+    endings = [
+        quarter_end(candidate)
+        for candidate in range(start, quarter(case["month"]) + 1)
+    ]
+    best = []
+    for ending in (*endings, date(case["birth"].year + 70, 12, 31)):
+        own = [
+            filling[6]
+            for filling in lawful_fillings({**case, "ending": ending})
+            if filling[0] == start
+        ]
+        assert own or unknown_prior, (case, ending, result)
+        if own:
+            best.append(max(-1 if found is None else found for found in own))
+    if not best:
+        return "no filling"
+    lower, upper = result.dli.lower, result.dli.upper
+    assert (-1 if lower is None else quarter(lower)) <= min(best), (
+        case,
+        best,
+        result.dli,
+    )
+    if unknown_prior:
+        assert upper is None or quarter(upper) >= max(best), (
+            case,
+            best,
+            result.dli,
+        )
+    else:
+        assert (-1 if upper is None else quarter(upper)) == max(best), (
+            case,
+            best,
+            result.dli,
+        )
     return "computed"
 
 
@@ -529,3 +635,46 @@ def test_status_stress_under_31(seed):
 @given(seed=st.integers(0, 2**32 - 1))
 def test_status_stress_subsequent_special(seed):
     check(subsequent_declaration(seed))
+
+
+def test_status_stress_a_lower_date_rests_on_the_reported_start():
+    # A 2005Q4 ending reaches 2009Q4 and no later on the 2000Q1 start.
+    case = {
+        "birth": date(1960, 2, 2),
+        "onset": date(2000, 1, 1),
+        "ending": date(2005, 12, 31),
+        "month": date(2010, 1, 1),
+        "blind": False,
+        "prior": (),
+        "annual": {
+            1995: 3,
+            1996: 4,
+            1997: 4,
+            1998: 4,
+            1999: 4,
+            2000: 1,
+            2001: 4,
+            2002: 4,
+            2003: 4,
+            2004: 4,
+            2005: 3,
+        },
+    }
+    assert check_unknown_ending(case) == "refused"
+
+
+@settings(max_examples=40, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_unknown_ending(seed):
+    case = declaration(seed)
+    check_unknown_ending({**case, "month": date(case["onset"].year + 2, 1, 1)})
+
+
+@settings(max_examples=40, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_unknown_ending_and_prior(seed):
+    case = {**declaration(seed), "prior": ()}
+    check_unknown_ending(
+        {**case, "month": date(case["onset"].year + 2, 1, 1)},
+        unknown_prior=True,
+    )

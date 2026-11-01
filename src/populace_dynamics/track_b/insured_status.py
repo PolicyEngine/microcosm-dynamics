@@ -195,6 +195,7 @@ class InsuredUnsupportedReason(Enum):
     HISTORICAL_ENTITLEMENT = "entitlement_before_1968_unsupported"
     HISTORICAL_BLINDNESS = "blindness_before_1973_unsupported"
     HISTORICAL_SUBSEQUENT = "subsequent_special_before_1983_unsupported"
+    SUBSEQUENT_LONG_PERIOD = "subsequent_special_long_period_unsupported"
     ASSIGNMENT_COMPLEXITY = "disability_boundary_assignments_unsupported"
 
 
@@ -1238,6 +1239,7 @@ def _witness(
 ):
     end = _qid(at)
     best = None
+    long_period = False
     # Source conflict us:oasdi-insured-prior-disability-favorable-disregard
     # CFR404.130(f): consider all prior periods or disregard all, favorably.
     for use_periods in (
@@ -1332,6 +1334,16 @@ def _witness(
                         )
                     elif len(elapsed) > 40:
                         window, required = elapsed[-40:], 20
+                        # Source conflict
+                        # us:oasdi-insured-subsequent-special-long-period
+                        # Half of over 40 quarters clears the fully count.
+                        long_period = long_period or (
+                            len(
+                                set(_assignment(rows, elapsed, boundary))
+                                & set(elapsed)
+                            )
+                            >= len(elapsed) // 2
+                        )
                     else:
                         window, required = elapsed, max(6, len(elapsed) // 2)
                     candidates.append(
@@ -1366,6 +1378,16 @@ def _witness(
                 )
                 if best is None or score > best[0]:
                     best = score, candidate
+    # Clause (iii) of Act 223(c)(1)(B) and 216(i)(3)(B) counts the whole period
+    # after age 21. 404.130(d)(2) caps it at "20 QCs out of 40 calendar
+    # quarters", and each 404.130 period ends with the tested quarter, so the
+    # cap repeats the 40-quarter rule.
+    if long_period and not best[1][0]:
+        _refuse(
+            InsuredUnsupportedReason.SUBSEQUENT_LONG_PERIOD,
+            "Readings of the subsequent-special cap differ on a period "
+            "of more than 40 quarters",
+        )
     return best[1]
 
 
@@ -1762,6 +1784,56 @@ def _improves(outcome, returned, last_insured):
     ) or (last or date.min) > (last_insured or date.min)
 
 
+def _fillings_keeping_start(
+    person, credits, start, month, exit_month, favored
+):
+    """Each annual placement and treatment that keeps the reported start."""
+    horizon = _current_period_start_horizon(person, month)
+    witness = set(
+        _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
+    )
+    rows, _ = _world(person, credits, _qid(month), exit_month, False)
+    sensitive = _start_sensitive_years(person, horizon)
+    options = {
+        year: sorted(
+            _assignment_candidates(*row),
+            key=lambda choice: (
+                len(set(choice) - witness),
+                len(set(choice) - favored),
+                choice,
+            ),
+        )
+        for year, row in rows.items()
+        if year in sensitive and row[1]
+    }
+    for index, choices in enumerate(product(*options.values())):
+        if index == 4096:
+            _refuse(
+                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                "More than 4096 first-start annual placements",
+            )
+        filling = dict(credits)
+        filling.update(
+            (year, (choice, 0))
+            for year, choice in zip(options, choices, strict=True)
+        )
+        for treatment in (
+            (True, False) if person.prior_disability_periods else (None,)
+        ):
+            try:
+                completed, own_start = _with_current_period(
+                    person,
+                    filling,
+                    month,
+                    exit_month,
+                    use_periods_only=treatment,
+                )
+            except InvalidFamilyInput:
+                continue
+            if own_start == start:
+                yield filling, completed
+
+
 def _settle_first_start(
     person,
     credits,
@@ -1831,74 +1903,34 @@ def _settle_first_start(
                 "First insured start depends on annual placement "
                 "or prior treatment",
             )
-    witness = set(
-        _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
-    )
-    rows, _ = _world(person, credits, _qid(month), exit_month, False)
-    sensitive = _start_sensitive_years(person, horizon)
-    options = {
-        year: sorted(
-            _assignment_candidates(*row),
-            key=lambda choice: (
-                len(set(choice) - witness),
-                len(set(choice) - favored),
-                choice,
-            ),
-        )
-        for year, row in rows.items()
-        if year in sensitive and row[1]
-    }
     joint = kept = None
-    for index, choices in enumerate(product(*options.values())):
-        if index == 4096:
-            _refuse(
-                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-                "More than 4096 first-start annual placements",
+    for filling, completed in _fillings_keeping_start(
+        person, credits, start, month, exit_month, favored
+    ):
+        outcomes = tuple(
+            _period_outcomes(
+                person,
+                completed,
+                start,
+                filling,
+                month,
+                exit_month,
+                kinds,
+                dated,
             )
-        filling = dict(credits)
-        filling.update(
-            (year, (choice, 0))
-            for year, choice in zip(options, choices, strict=True)
         )
-        for treatment in (
-            (True, False) if person.prior_disability_periods else (None,)
+        if joint is None and any(
+            outcome[:2] == (returned, last_insured) for outcome in outcomes
         ):
-            try:
-                completed, own_start = _with_current_period(
-                    person,
-                    filling,
-                    month,
-                    exit_month,
-                    use_periods_only=treatment,
-                )
-            except InvalidFamilyInput:
-                continue
-            if own_start != start:
-                continue
-            outcomes = tuple(
-                _period_outcomes(
-                    person,
-                    completed,
-                    own_start,
-                    filling,
-                    month,
-                    exit_month,
-                    kinds,
-                    dated,
-                )
-            )
-            if joint is None and any(
-                outcome[:2] == (returned, last_insured) for outcome in outcomes
-            ):
-                joint = filling
-            if joint is not None and reported is None:
-                return None, ()
-            if reported is not None:
-                kept = _keep_favorable(kept, outcomes)
-            if joint is not None and _witness_ranks(kept) == _witness_ranks(
-                reported
-            ):
-                return joint, kept
+            joint = filling
+        if joint is not None and reported is None:
+            return None, ()
+        if reported is not None:
+            kept = _keep_favorable(kept, outcomes)
+        if joint is not None and _witness_ranks(kept) == _witness_ranks(
+            reported
+        ):
+            return joint, kept
     # Every ending must still agree once each keeps the reported start.
     if joint is None or any(
         entry[0][0] != insured
@@ -1911,6 +1943,50 @@ def _settle_first_start(
             "or prior treatment",
         )
     return joint, kept
+
+
+def _settle_lower_date(
+    person, credits, start, month, exit_month, lowest, favored
+):
+    """Refuse a lower date that some period ending cannot reach.
+
+    Each ending's favorable date can rest on a placement that moves the
+    reported start (404.321(a), RS00301.230). A lower bound speaks for every
+    ending, so each needs a filling that keeps the start and reaches it.
+    UNKNOWN priors include the completion with only the listed periods, and
+    that completion holds every ending.
+    """
+    person = replace(
+        person, prior_disability_periods_provenance=EarningsProvenance.OBSERVED
+    )
+    # Source conflict us:oasdi-insured-one-filling-first-start
+    if _start_fixed(person, credits, start, month, exit_month):
+        return
+    reached = None
+    for filling, completed in _fillings_keeping_start(
+        person, credits, start, month, exit_month, favored
+    ):
+        found = tuple(
+            last or date.min
+            for _, last, _ in _period_outcomes(
+                person,
+                completed,
+                start,
+                filling,
+                month,
+                exit_month,
+                (),
+                True,
+            )
+        )
+        reached = found if reached is None else tuple(map(max, reached, found))
+        if min(reached) >= lowest:
+            return
+    _refuse(
+        InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+        "A period ending cannot reach the lower date last insured "
+        "with the reported first start",
+    )
 
 
 def _current_period_completions(person, completed, start, month):
@@ -2203,9 +2279,9 @@ def _unknown_prior_joint_shortfall(person, rows, horizon, fully_route):
             elapsed = tuple(q for q in counted if q >= first)
             if len(elapsed) < 12:
                 window, required = counted[-12:], 6
-            elif len(elapsed) > 40:
-                window, required = elapsed[-40:], 20
             else:
+                # Source conflict
+                # us:oasdi-insured-subsequent-special-long-period
                 window, required = elapsed, max(6, len(elapsed) // 2)
             return len(set(window) & assigned) >= required
 
@@ -2879,6 +2955,11 @@ def insured_status(
             True,
             include_zero=True,
         )
+        favored = frozenset(
+            quarter
+            for row in favored_rows.values()
+            for quarter in _assign_qcs(*row)
+        )
         kinds = tuple(
             kind
             for kind in (InsuredTest.FULLY, InsuredTest.CURRENTLY)
@@ -2901,14 +2982,20 @@ def insured_status(
                 if unknown or prior_unknown
                 else tuple(candidates[kind] for kind in kinds)
             ),
-            favored=frozenset(
-                quarter
-                for row in favored_rows.values()
-                for quarter in _assign_qcs(*row)
-            ),
+            favored=favored,
         )
         for kind, witnesses in zip(kinds, settled, strict=False):
             decisions[kind] = _status_decision(witnesses, witnesses)
+        if dli is not None and dli.lower is not None:
+            _settle_lower_date(
+                person,
+                lower,
+                lo_start,
+                month,
+                coverage_end_month,
+                dli.lower,
+                favored,
+            )
     lo_rows, _ = _world(
         lo_person,
         placement or lower,

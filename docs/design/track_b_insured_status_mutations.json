@@ -5829,5 +5829,500 @@
     "tests/test_track_b_insured_status_status_stress.py": "73ba47c4de99479bfb416bb82dd807d5b03a3f4529a378e4802ded2053adec7d"
   },
   "round_16_replay": "Write round_16_runner_source to scratch/review/run_round16_named.py. For each round_16_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command. Mutations apply only in memory.",
-  "round_16_final_source_sha256": "3fed28da694474236b63ff99a1d42576994de87a81297ba6f416f4d6fdd2a25e"
+  "round_16_final_source_sha256": "3fed28da694474236b63ff99a1d42576994de87a81297ba6f416f4d6fdd2a25e",
+  "round_17_mutations": [
+    {
+      "name": "drop_long_refusal",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "    if long_period and not best[1][0]:\n",
+          "after": "    if False:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-drop_long_refusal.json",
+      "log": "scratch/review/round17-mutation-drop_long_refusal.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-drop_long_refusal.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_long_period_refuses_where_its_readings_differ[None-1991]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "refuse_even_when_insured",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "    if long_period and not best[1][0]:\n",
+          "after": "    if long_period:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-refuse_even_when_insured.json",
+      "log": "scratch/review/round17-mutation-refuse_even_when_insured.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-refuse_even_when_insured.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_twenty_of_forty_needs_no_reading"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "long_threshold_twenty",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                            >= len(elapsed) // 2\n",
+          "after": "                            >= 20\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-long_threshold_twenty.json",
+      "log": "scratch/review/round17-mutation-long_threshold_twenty.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-long_threshold_twenty.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_twenty_qcs_short_of_half_the_period_compute"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "long_threshold_above_half",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                            >= len(elapsed) // 2\n",
+          "after": "                            >= len(elapsed) // 2 + 1\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-long_threshold_above_half.json",
+      "log": "scratch/review/round17-mutation-long_threshold_above_half.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-long_threshold_above_half.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_long_period_refuses_where_its_readings_differ[None-1991]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "long_counts_last_40",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                                & set(elapsed)\n",
+          "after": "                                & set(elapsed[-40:])\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-long_counts_last_40.json",
+      "log": "scratch/review/round17-mutation-long_counts_last_40.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-long_counts_last_40.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_long_period_refuses_where_its_readings_differ[None-1991]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "long_keeps_last_treatment",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "long_period = long_period or (",
+          "after": "long_period = ("
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-long_keeps_last_treatment.json",
+      "log": "scratch/review/round17-mutation-long_keeps_last_treatment.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-long_keeps_last_treatment.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_long_period_refuses_where_its_readings_differ[None-1991]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "long_keeps_excluded_world_only",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                        long_period = long_period or (\n",
+          "after": "                        long_period = long_period or use_periods and (\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-long_keeps_excluded_world_only.json",
+      "log": "scratch/review/round17-mutation-long_keeps_excluded_world_only.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-long_keeps_excluded_world_only.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_counting_the_prior_quarters_reaches_the_same_refusal"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "proof_keeps_last_40",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                window, required = elapsed, max(6, len(elapsed) // 2)\n            return len(set(window) & assigned) >= required\n",
+          "after": "                window, required = elapsed[-40:], max(6, min(40, len(elapsed)) // 2)\n            return len(set(window) & assigned) >= required\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-proof_keeps_last_40.json",
+      "log": "scratch/review/round17-mutation-proof_keeps_last_40.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-proof_keeps_last_40.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_unknown_prior_history_keeps_its_row_on_the_whole_period"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "drop_lower_settlement",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "        if dli is not None and dli.lower is not None:\n",
+          "after": "        if False:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-drop_lower_settlement.json",
+      "log": "scratch/review/round17-mutation-drop_lower_settlement.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-drop_lower_settlement.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_every_ending_must_reach_the_lower_date[None-None]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "lower_skips_unknown_prior",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "        if dli is not None and dli.lower is not None:\n",
+          "after": "        if dli is not None and dli.lower is not None and not prior_unknown:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-lower_skips_unknown_prior.json",
+      "log": "scratch/review/round17-mutation-lower_skips_unknown_prior.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-lower_skips_unknown_prior.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_unknown_prior_history_reaches_the_same_check[None]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "lower_keeps_unknown_provenance",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "    person = replace(\n        person, prior_disability_periods_provenance=EarningsProvenance.OBSERVED\n    )\n    # Source conflict us:oasdi-insured-one-filling-first-start\n    if _start_fixed(person, credits, start, month, exit_month):\n        return\n",
+          "after": "    # Source conflict us:oasdi-insured-one-filling-first-start\n    if _start_fixed(person, credits, start, month, exit_month):\n        return\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-lower_keeps_unknown_provenance.json",
+      "log": "scratch/review/round17-mutation-lower_keeps_unknown_provenance.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-lower_keeps_unknown_provenance.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_unknown_prior_history_reaches_the_same_check[None]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "lower_uses_upper_world",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                person,\n                lower,\n                lo_start,\n                month,\n                coverage_end_month,\n                dli.lower,\n",
+          "after": "                person,\n                upper,\n                lo_start,\n                month,\n                coverage_end_month,\n                dli.lower,\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-lower_uses_upper_world.json",
+      "log": "scratch/review/round17-mutation-lower_uses_upper_world.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-lower_uses_upper_world.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_unknown_years_reach_the_same_check"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "lower_tests_upper_date",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                coverage_end_month,\n                dli.lower,\n                favored,\n",
+          "after": "                coverage_end_month,\n                dli.upper,\n                favored,\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-lower_tests_upper_date.json",
+      "log": "scratch/review/round17-mutation-lower_tests_upper_date.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-lower_tests_upper_date.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_record_can_need_a_different_filling_for_each_ending"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "any_ending_reaches",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "        if min(reached) >= lowest:\n",
+          "after": "        if max(reached) >= lowest:\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-any_ending_reaches.json",
+      "log": "scratch/review/round17-mutation-any_ending_reaches.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-any_ending_reaches.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_every_ending_must_reach_the_lower_date[None-None]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "each_filling_alone",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "        reached = found if reached is None else tuple(map(max, reached, found))\n",
+          "after": "        reached = found\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-each_filling_alone.json",
+      "log": "scratch/review/round17-mutation-each_filling_alone.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-each_filling_alone.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_each_ending_can_reach_the_date_on_its_own_filling"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "undated_ending_counts",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "            last or date.min\n            for _, last, _ in _period_outcomes(\n",
+          "after": "            last or date.max\n            for _, last, _ in _period_outcomes(\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-undated_ending_counts.json",
+      "log": "scratch/review/round17-mutation-undated_ending_counts.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-undated_ending_counts.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_an_ending_with_no_date_reaches_nothing"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "lower_skips_fixed_start",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "    if _start_fixed(person, credits, start, month, exit_month):\n        return\n",
+          "after": ""
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-lower_skips_fixed_start.json",
+      "log": "scratch/review/round17-mutation-lower_skips_fixed_start.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-lower_skips_fixed_start.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_fixed_start_needs_no_placement_search"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "any_start_counts",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "            if own_start == start:\n                yield filling, completed\n",
+          "after": "            yield filling, completed\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-any_start_counts.json",
+      "log": "scratch/review/round17-mutation-any_start_counts.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-any_start_counts.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_every_ending_must_reach_the_lower_date[None-None]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "outcomes_undated",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "                exit_month,\n                (),\n                True,\n            )\n        )\n        reached =",
+          "after": "                exit_month,\n                (),\n                False,\n            )\n        )\n        reached ="
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-outcomes_undated.json",
+      "log": "scratch/review/round17-mutation-outcomes_undated.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-outcomes_undated.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_a_record_can_need_a_different_filling_for_each_ending"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "count_upper_uses_minimum",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "            max(w[1] for w in witnesses),\n",
+          "after": "            min(w[1] for w in witnesses),\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-count_upper_uses_minimum.json",
+      "log": "scratch/review/round17-mutation-count_upper_uses_minimum.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-count_upper_uses_minimum.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status.py::test_decided_despite_unknown_reports_range_and_unknown_years"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "fully_count_lower_uses_maximum",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "            min(w[7] for w in witnesses),\n",
+          "after": "            max(w[7] for w in witnesses),\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-fully_count_lower_uses_maximum.json",
+      "log": "scratch/review/round17-mutation-fully_count_lower_uses_maximum.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-fully_count_lower_uses_maximum.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_3_periods.py::test_ongoing_period_completion_status_and_count_bounds_are_sound"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    },
+    {
+      "name": "omit_last_witness_for_ending",
+      "source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04",
+      "changes": [
+        {
+          "before": "    found = tuple(zip(*(outcome[2] for outcome in outcomes), strict=True))\n",
+          "after": "    found = tuple(zip(*(outcome[2] for outcome in outcomes[:-1]), strict=True))\n"
+        }
+      ],
+      "spec_path": "scratch/review/round17-mutation-omit_last_witness_for_ending.json",
+      "log": "scratch/review/round17-mutation-omit_last_witness_for_ending.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round17 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round17 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND17_MUTATION=scratch/review/round17-mutation-omit_last_witness_for_ending.json .venv/bin/python scratch/review/run_round17_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py tests/test_track_b_insured_status_status_stress.py tests/test_track_b_insured_status_classification_oracle.py tests/test_track_b_insured_status_fix_round_16.py tests/test_track_b_insured_status_status_oracle.py tests/test_track_b_insured_status.py tests/test_track_b_insured_status_contract.py tests/test_track_b_insured_status_fix_round_10.py tests/test_track_b_insured_status_fix_round_10_proof.py tests/test_track_b_insured_status_fix_round_11.py tests/test_track_b_insured_status_fix_round_12.py tests/test_track_b_insured_status_fix_round_13.py tests/test_track_b_insured_status_fix_round_14.py tests/test_track_b_insured_status_fix_round_15.py tests/test_track_b_insured_status_fix_round_2.py tests/test_track_b_insured_status_fix_round_3_coverage.py tests/test_track_b_insured_status_fix_round_3_periods.py tests/test_track_b_insured_status_fix_round_3_validation.py tests/test_track_b_insured_status_fix_round_4_docs.py tests/test_track_b_insured_status_fix_round_4_endings.py tests/test_track_b_insured_status_fix_round_4_routes.py tests/test_track_b_insured_status_fix_round_5_continuity.py tests/test_track_b_insured_status_fix_round_5_possibility.py tests/test_track_b_insured_status_fix_round_5_sspa.py tests/test_track_b_insured_status_fix_round_6_ordering.py tests/test_track_b_insured_status_fix_round_6_routes.py tests/test_track_b_insured_status_fix_round_7.py tests/test_track_b_insured_status_fix_round_8.py tests/test_track_b_insured_status_fix_round_9.py tests/test_track_b_insured_status_mutations.py tests/test_track_b_insured_status_period_declarations.py tests/test_track_b_insured_status_qc.py tests/test_track_b_insured_status_sources.py",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_status_stress.py::test_status_stress_year_counts_follow_the_returned_filling[5000026]"
+      ],
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      }
+    }
+  ],
+  "round_17_runner_source": "\"\"\"Run named invented-data conformance tests with open-event auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport sys\n\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\nBARRED = {\n    \"gates.yaml\", \"adjusted_poverty.py\", \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_cola_comparison.md\", \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\", \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\", \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\"POPULACE_DYNAMICS_PSID_DIR\", \"POPULACE_DYNAMICS_EPUF_DIR\"):\n        assert os.environ[name] == \"/nonexistent/trackb-round17\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND16_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = os.environ.get(\"TRACKB_ROUND17_MUTATION\")\n    if spec_path:\n        spec = json.loads(Path(spec_path).read_text())\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\"MUTATION\", spec[\"name\"], flush=True)\n    import pytest\n\n    try:\n        return pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+  "round_17_note": "Round 17 ran 22 named mutations at the final source bytes against every insured status test module, and all 22 die. count_upper_uses_minimum, fully_count_lower_uses_maximum and omit_last_witness_for_ending survived Sol's twelfth review and die here. long_ignores_fully and long_drops_ignore_flag proved equivalent across 166,080 combinations of birth, prior and query date, because half a long period exceeded the fully insured requirement by at least 10 QCs, so the clause and both mutations left, and test_half_a_long_period_clears_the_fully_insured_count holds the bound. proof_keeps_last_40 gained an edge test. lower_runs_with_unknown_prior exposed a real gap in the first version of this fix, and lower_skips_unknown_prior and lower_keeps_unknown_provenance replace it. lower_skips_fixed_start gained a record test. A probe drew 4,500 stress declarations with an UNKNOWN ending, each with known and UNKNOWN priors, and they ran the search 1,440 times. One record needs a different filling for each ending, so each_filling_alone dies on that record as well as on a written-out one. No search reached an ending with no date, so undated_ending_counts dies only on written-out dates.",
+  "round_17_test_sha256": {
+    "tests/test_track_b_insured_status_fix_round_17.py": "93042d14522bfcdc78a6525624ef7e903fa71531e6dbed9e68e61ed85ca27ef2",
+    "tests/test_track_b_insured_status_status_stress.py": "939636d32fd8281dcc428d8b5cba4c1a48ca0dcf00f56535175066001cd885f2",
+    "tests/test_track_b_insured_status_classification_oracle.py": "73c350cad6c47d4d1ebb205bcf946469e144aa1052dd54dcd5eb9bfe33bc5cbc"
+  },
+  "round_17_replay": "Write round_17_runner_source to scratch/review/run_round17_named.py. For each round_17_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command. Mutations apply only in memory.",
+  "round_17_final_source_sha256": "e66a554124b389e2d5abfed66ad4eef317cc6bf40ed09d055e5bed4389e32d04"
 }
