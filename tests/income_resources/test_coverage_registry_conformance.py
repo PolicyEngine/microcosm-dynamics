@@ -1425,8 +1425,10 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # r4 M-2 adds NONPROFIT_RETROACTIVE_HIRE_UNSETTLED's two readings to
     # each pre-1984 nonprofit row; the r4 sweep adds the Army Corps student
     # aide and the pre-1996 dealer holdings questions; round 5 adds the
-    # pre-1998 insurance termination payment (review r4 low 10).
-    assert described == 50
+    # pre-1998 insurance termination payment (review r4 low 10); the review
+    # r5 fix adds the 3121(k)(4)(C) period of a deemed nonprofit
+    # certificate.
+    assert described == 52
 
 
 READING_TEXT = {
@@ -3543,115 +3545,285 @@ def resolved_consequence(rule, facts):
         return "refuses"
 
 
-# Phrases stating an INVENTED nonprofit worker's facts (review r4 H-A, M-2).
-NONPROFIT_501C3 = "organization described in 501(c)(3)"
-NONPROFIT_FACTS = {
-    "certificate_in_effect": (
-        "actual waiver certificate (Form SS-15) in effect for the service"
-    ),
-    "deemed_in_effect": (
-        "deemed filed under the 1976 amendments' constructive-filing "
-        "provisions (no refund before 9/9/76), in effect for the service"
-    ),
-    "none_filed": "none filed or deemed filed",
-    "before_effective_date": (
-        "the service falls before the certificate's effective date"
-    ),
-    "before_first_paid_quarter": (
-        "before the first day of the first quarter for which the taxes were "
-        "paid"
-    ),
-    "terminated": "a termination took effect before the service",
-    "other_group_only": (
-        "the only certificate covers another 3121(k)(1)(E) group"
-    ),
-    "listed": "employee listed on the Form SS-15a",
-    "hired_after_filing": "hired after the certificate was filed",
-    "hired_in_retroactive_period": (
-        "hired after the certificate's effective date and on or before its "
-        "filing date"
-    ),
-    "hired_before_both": (
-        "hired on or before both the certificate's filing date and its "
-        "effective date"
-    ),
-}
+# An INVENTED nonprofit worker's facts (review r4 H-A, M-2; r5 H-2 to H-4),
+# as the texts of the conditions the worker meets.
+NONPROFIT_501C3 = (
+    "employer is an organization described in 501(c)(3) and exempt under "
+    "501(a), whose service former 410(a)(8)(B) excluded"
+)
+NONPROFIT_IN_EFFECT = (
+    "actual waiver certificate (Form SS-15) in effect for the service: the "
+    "service falls on or after the certificate's effective date (RS "
+    "01901.540 C.3) and before any termination took effect (C.5), and the "
+    "certificate covers the employee's group where the organization divided "
+    "its employees under 3121(k)(1)(E)"
+)
+NONPROFIT_DEEMED = (
+    "certificate deemed filed under the 1976 amendments' constructive-filing "
+    "provisions (no refund before 9/9/76), in effect for the service: the "
+    "service falls on or after the first day of the first quarter for which "
+    "the taxes were paid (RS 01901.540 C.2)"
+)
+NONPROFIT_NOT_IN_EFFECT = (
+    "no actual or deemed certificate in effect for this service: none filed "
+    "or deemed filed; the service falls before the certificate's effective "
+    "date (for a deemed certificate, before the first day of the first "
+    "quarter for which the taxes were paid); a termination took effect "
+    "before the service; or the only certificate covers another "
+    "3121(k)(1)(E) group"
+)
+NONPROFIT_K4C_GAP = (
+    "certificate deemed filed under 3121(k)(4) (the 1976 amendments' "
+    "constructive filing), where the organization stopped paying the taxes "
+    "before October 19, 1976, and the service falls before July 1, 1977, "
+    "on or after the first day of the deemed certificate's applicable "
+    "period and after the last calendar quarter for which the organization "
+    "paid the taxes"
+)
+NONPROFIT_312C_REQUEST = (
+    "the employee filed a request under Pub. L. 95-216 section 312(c) on or "
+    "before April 15, 1980, with full payment of the employee taxes (or an "
+    "installment arrangement under 3121(k)(8))"
+)
+NONPROFIT_COVERED_EMPLOYEE = (
+    "listed on the Form SS-15a filed with the certificate; listed on a "
+    "supplemental list, for service on or after the first day of the "
+    "calendar quarter in which that list was filed; hired after the "
+    "certificate was filed; or, after the calendar quarter in which the "
+    "certificate was filed for a 3121(k)(1)(E) group, became a member of "
+    "that group"
+)
+NONPROFIT_NOT_LISTED = (
+    "not listed for the service: not on the Form SS-15a filed with the "
+    "certificate, and not on a supplemental list filed in or before the "
+    "service's calendar quarter"
+)
+NONPROFIT_RETRO_HIRE = (
+    "hired after the certificate's effective date and on or before its "
+    "filing date (a certificate effective before it was filed, RS 01901.540 "
+    "C.3.b), and " + NONPROFIT_NOT_LISTED
+)
+NONPROFIT_EXISTING_UNLISTED = (
+    "hired on or before both the certificate's filing date and its "
+    "effective date, a member of the employees or 3121(k)(1)(E) group the "
+    "certificate covers by the end of the calendar quarter in which it was "
+    "filed, and " + NONPROFIT_NOT_LISTED
+)
 NONPROFIT_WAIVER_WORKERS = {
-    # INVENTED workers of a 501(c)(3) employer: (waiver, concurrence), the
-    # outcome the sources give.
+    # INVENTED workers of a 501(c)(3) employer: (waiver facts, concurrence,
+    # other facts), and per year the outcome the sources give and the
+    # deciding case.
     # H-A repro 1: a deemed certificate effective 1974-01-01 (first FICA
     # quarter 1974Q1) and a nurse's earlier service (RS 01901.540 C.2).
     "service_before_deemed_certificate": (
-        ("before_first_paid_quarter", "hired_before_both"),
-        "noncovered",
+        (NONPROFIT_NOT_IN_EFFECT,),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
     ),
     # H-A repro 2: a certificate filed 1975-08-01 effective 1975-10-01 and
     # a listed employee's March 1975 service (C.3.a; NPO508 c).
     "listed_service_before_effective_date": (
-        ("before_effective_date", "listed"),
-        "noncovered",
+        (NONPROFIT_NOT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
     ),
     "listed_existing_employee": (
-        ("certificate_in_effect", "listed"),
-        "covered_above_threshold",
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {
+            year: (
+                "covered_above_threshold",
+                "effective_waiver_concurring_employee",
+            )
+            for year in (1975, 1980)
+        },
     ),
     # Includes a worker hired between the filing and the effective date,
     # for service from the effective date (NPO503, NPO505).
     "hired_after_filing": (
-        ("certificate_in_effect", "hired_after_filing"),
-        "covered_above_threshold",
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {
+            year: (
+                "covered_above_threshold",
+                "effective_waiver_concurring_employee",
+            )
+            for year in (1975, 1980)
+        },
+    ),
+    # r5 H-2 repro: a certificate filed 1974-03-01 and effective
+    # 1974-01-01; a clerk employed since 1970 signs a supplemental list
+    # filed 1975-05-15. Her 1974Q3 service: the 1958 (k)(1) note covers a
+    # supplemental-list employee only from the first day of that list's
+    # filing quarter.
+    "supplemental_list_service_before_its_quarter": (
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {
+            year: ("noncovered", "waiver_nonconcurring_existing_employee")
+            for year in (1975, 1980)
+        },
+    ),
+    # The same clerk's service from 1975-04-01.
+    "supplemental_list_service_from_its_quarter": (
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {
+            year: (
+                "covered_above_threshold",
+                "effective_waiver_concurring_employee",
+            )
+            for year in (1975, 1980)
+        },
+    ),
+    # r5 H-3 repro: a nurse hired in 1972 into a State-system position
+    # moves in 1976 into the non-system group the 1973 certificate covers
+    # (1958 (a)(8)(B) note).
+    "group_joiner_after_filing_quarter": (
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {
+            year: (
+                "covered_above_threshold",
+                "effective_waiver_concurring_employee",
+            )
+            for year in (1975, 1980)
+        },
     ),
     # M-2 repro: hired 1972-03-01 under a certificate filed 1975-08-01 and
     # made effective 1971-01-01; never signed (C.4 against NPO505/NPO506).
     "unlisted_hire_in_retroactive_period": (
-        ("certificate_in_effect", "hired_in_retroactive_period"),
-        "refuses",
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_RETRO_HIRE,
+        {},
+        {
+            year: ("refuses", "waiver_retroactive_period_hire_unlisted")
+            for year in (1975, 1980)
+        },
     ),
     "unlisted_existing_employee": (
-        ("certificate_in_effect", "hired_before_both"),
-        "noncovered",
+        (NONPROFIT_IN_EFFECT,),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {
+            year: ("noncovered", "waiver_nonconcurring_existing_employee")
+            for year in (1975, 1980)
+        },
     ),
     "deemed_waiver_employee": (
-        ("deemed_in_effect", "hired_before_both"),
-        "covered_above_threshold",
+        (NONPROFIT_DEEMED,),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {
+            year: ("covered_above_threshold", "deemed_waiver_all_employees")
+            for year in (1975, 1980)
+        },
     ),
-    "no_certificate": (("none_filed", "hired_before_both"), "noncovered"),
-    "after_termination": (("terminated", "listed"), "noncovered"),
+    # r5 H-4 repro: a clinic pays FICA 1974Q1-1975Q2, stops in 1975Q3 and
+    # gets no refund; its 1976Q2 service, with no request. The 312(c) note
+    # and D.8 point to noncovered, but no capture holds 3121(k)(4)(C)'s
+    # terms, so the case refuses with both readings.
+    "deemed_certificate_k4c_gap": (
+        (NONPROFIT_DEEMED, NONPROFIT_K4C_GAP),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {1975: ("refuses", "deemed_waiver_k4c_period")},
+    ),
+    # The same service where the employee filed a timely 312(c) request.
+    "deemed_certificate_k4c_gap_with_request": (
+        (NONPROFIT_DEEMED, NONPROFIT_K4C_GAP),
+        NONPROFIT_EXISTING_UNLISTED,
+        {"historical_fica_treatment": NONPROFIT_312C_REQUEST},
+        {
+            1975: (
+                "covered_above_threshold",
+                "deemed_waiver_section_312c_request",
+            )
+        },
+    ),
+    "no_certificate": (
+        (NONPROFIT_NOT_IN_EFFECT,),
+        NONPROFIT_EXISTING_UNLISTED,
+        {},
+        {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
+    ),
+    "after_termination": (
+        (NONPROFIT_NOT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
+    ),
     "other_group_certificate_only": (
-        ("other_group_only", "listed"),
-        "noncovered",
+        (NONPROFIT_NOT_IN_EFFECT,),
+        NONPROFIT_COVERED_EMPLOYEE,
+        {},
+        {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
     ),
 }
+NONPROFIT_WORKER_YEARS = sorted(
+    (worker, year)
+    for worker, (*_, outcomes) in NONPROFIT_WAIVER_WORKERS.items()
+    for year in outcomes
+)
 
 
-@pytest.mark.parametrize("worker", sorted(NONPROFIT_WAIVER_WORKERS))
-@pytest.mark.parametrize("year", [1975, 1980])
+@pytest.mark.parametrize(
+    ("worker", "year"),
+    NONPROFIT_WORKER_YEARS,
+    ids=[f"{worker}-{year}" for worker, year in NONPROFIT_WORKER_YEARS],
+)
 def test_nonprofit_waiver_covers_only_listed_or_later_employees(
     registry, year, worker
 ):
-    """Review r3 H1, r4 H-A and M-2, by fact pattern rather than case ID.
+    """Review r3 H1, r4 H-A and M-2, r5 H-2 to H-4, by fact pattern.
 
     NPO503 covers "the employees who signed the SS-15a, as well as those
     hired afterwards"; NPO505 and NPO506 exclude an existing employee who
-    did not sign; RS 01901.540 D.7 deems a constructive waiver to cover all
-    employees, effective (C.2) "with the first day of the quarter for which
-    payments were made". Former 410(a)(8)(B) excludes the service unless a
-    certificate "is (or is deemed to be) in effect" for it. The cases are
-    disjoint, so no rank decides between sources.
+    did not sign; the 1958 (k)(1) note covers a supplemental-list employee
+    only from the first day of that list's filing quarter, and the 1958
+    (a)(8)(B) note covers an employee who joins the certificate's
+    3121(k)(1)(E) group after its filing quarter. RS 01901.540 D.7 deems a
+    constructive waiver to cover all employees, effective (C.2) "with the
+    first day of the quarter for which payments were made", and the Pub. L.
+    95-216 section 312(c) note takes some of that service before July 1,
+    1977 back out under 3121(k)(4)(C), whose text no capture holds. Former
+    410(a)(8)(B) excludes the service unless a certificate "is (or is
+    deemed to be) in effect" for it.
     """
     (rule,) = registry.lookup("nonprofit_service", year)
-    (waiver, concurrence), expected = NONPROFIT_WAIVER_WORKERS[worker]
+    waiver, concurrence, other, outcomes = NONPROFIT_WAIVER_WORKERS[worker]
+    expected, decides = outcomes[year]
     facts = {
         "nonprofit_organization": NONPROFIT_501C3,
-        "nonprofit_coverage_waiver": NONPROFIT_FACTS[waiver],
-        "nonprofit_employee_concurrence": NONPROFIT_FACTS[concurrence],
+        "nonprofit_coverage_waiver": waiver,
+        "nonprofit_employee_concurrence": concurrence,
+        **other,
     }
-    assert len(cases_met(rule, facts)) <= 1
+    met = cases_met(rule, facts)
+    actual = {
+        "effective_waiver_concurring_employee",
+        "waiver_retroactive_period_hire_unlisted",
+        "waiver_nonconcurring_existing_employee",
+        "no_effective_waiver",
+    }
+    # The actual-certificate cases are disjoint, so no rank decides
+    # between sources there.
+    assert len(met & actual) <= 1
     assert resolved_consequence(rule, facts) == expected
+    if expected != "refuses":
+        assert rule.resolve(met).get("case_id", "residual") == decides
+    else:
+        assert decides in met
     # A civic league's worker falls to the residual, whatever its waiver.
     other_employer = {**facts, "nonprofit_organization": "501(c)(4) league"}
-    if waiver not in {"certificate_in_effect", "deemed_in_effect"}:
-        assert resolved_consequence(rule, other_employer) == "covered"
+    assert resolved_consequence(rule, other_employer) == "covered"
     cases = {case["case_id"]: case for case in rule.cases}
     deemed = cases["deemed_waiver_all_employees"]["when"]
     assert "nonprofit_employee_concurrence" not in deemed
@@ -3663,8 +3835,15 @@ def test_nonprofit_waiver_covers_only_listed_or_later_employees(
         "hired after the effective date of the certificate",
         "Service performed for this employer prior to that date",
         "is (or is deemed to be) in effect",
+        "whose name appears on a supplemental list only with respect to "
+        "service performed by the employee for the period beginning with "
+        "the first day of the calendar quarter in which the supplemental "
+        "list is filed",
+        "became a member of such group",
     ):
         assert any(passage in quote for quote in quotes), passage
+    if year < 1978:
+        assert any("3121(k)(4)(C)" in quote for quote in quotes)
     assert "501(c)(3)" in rule.residual_default["description"]
 
 

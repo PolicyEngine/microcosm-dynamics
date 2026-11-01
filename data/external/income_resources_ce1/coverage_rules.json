@@ -12268,20 +12268,57 @@
         {
           "case_id": "effective_waiver_concurring_employee",
           "consequence": "covered_above_threshold",
-          "description": "Under an actual certificate in effect for the service, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and those hired afterwards are covered: NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505, \"Employees hired after the request were automatically covered\" (RS 01901.540 C.1, C.4 and the C.6 NOTE). A worker hired between the filing and the effective date is covered from the effective date. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter).",
+          "description": "Under an actual certificate in effect for the service, these employees are covered: those who signed the List of Concurring Employees (Form SS-15a) filed with the certificate, and those hired afterwards (NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505; RS 01901.540 C.1, C.4). An employee added by a supplemental list (the C.6 NOTE's amendment within 24 months) is covered only for service from the first day of the calendar quarter in which that list was filed (1958 (k)(1) note). An employee who, after the quarter in which the certificate was filed for a 3121(k)(1)(E) group, became a member of that group is covered too: the 1958 (a)(8)(B) note makes the exclusion inapplicable to her service during the certificate's period. A worker hired between the filing and the effective date is covered from the effective date. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter).",
           "precedence": 1,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate was filed"
+            "nonprofit_employee_concurrence": "listed on the Form SS-15a filed with the certificate; listed on a supplemental list, for service on or after the first day of the calendar quarter in which that list was filed; hired after the certificate was filed; or, after the calendar quarter in which the certificate was filed for a 3121(k)(1)(E) group, became a member of that group",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
+          }
+        },
+        {
+          "case_id": "deemed_waiver_section_312c_request",
+          "consequence": "covered_above_threshold",
+          "description": "The Pub. L. 95-216 section 312(c) note: where service for an organization deemed under 3121(k)(4) to have filed a certificate, performed before July 1, 1977, is not employment because 3121(k)(4)(C) makes the deemed certificate inapplicable to it, the remuneration \"shall, upon the request of such individual (filed on or before April 15, 1980\", with the taxes, be deemed remuneration for employment; POMS RS 01901.540 D.8 says the same. On either reading of the open case below the service is then covered, subject to former 410(a)(10)(A)'s $50 quarterly test (threshold nonprofit_remuneration_quarter), which the note's \"would constitute employment ... in the absence of such section 3121(k)(4)(C)\" keeps.",
+          "overrides": [
+            "deemed_waiver_k4c_period"
+          ],
+          "precedence": 2,
+          "when": {
+            "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on or before April 15, 1980, with full payment of the employee taxes (or an installment arrangement under 3121(k)(8))",
+            "nonprofit_coverage_waiver": "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
+          }
+        },
+        {
+          "case_id": "deemed_waiver_k4c_period",
+          "consequence": "open",
+          "description": "Ranked above deemed_waiver_all_employees, whose condition this worker also meets: the deemed certificate dates from the first paid quarter (C.2), but 3121(k)(4)(C) took some service in its period before July 1, 1977 back out of it.",
+          "open_alternatives": [
+            {
+              "description": "3121(k)(4)(C) reaches this service, as the 312(c) note and D.8 together describe: it is not employment, so former 410(a)(8)(B) excludes it unless the employee made a timely 312(c) request (case deemed_waiver_section_312c_request).",
+              "name": "section_312c_note_reading"
+            },
+            {
+              "description": "The deemed certificate covers all service from the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2), as case deemed_waiver_all_employees applies, so the service is covered above the remuneration threshold.",
+              "name": "deemed_certificate_period_reading"
+            }
+          ],
+          "open_reason": "NONPROFIT_DEEMED_WAIVER_K4C_TERMS_UNCAPTURED: the Pub. L. 95-216 section 312(c) note says that service for an organization deemed under 3121(k)(4) to have filed a certificate, performed \"on or after the first day of the applicable period described in subparagraph (A)(ii) of such section 3121(k)(4) and before July 1, 1977\", does not constitute employment where \"the waiver certificate which the organization is deemed to have filed is made inapplicable to such service by section 3121(k)(4)(C)\", and POMS RS 01901.540 D.8 describes the 1977 Amendments as \"forgiving the tax liability of organizations through 6/30/77 when the employer stopped paying taxes before 10/19/76\". No CE1 capture holds 3121(k)(4)(C)'s text, so which service it made the deemed certificate inapplicable to is not settled, and the case refuses.",
+          "precedence": 3,
+          "when": {
+            "nonprofit_coverage_waiver": "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
           "case_id": "deemed_waiver_all_employees",
           "consequence": "covered_above_threshold",
           "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter).",
-          "precedence": 2,
+          "precedence": 4,
           "when": {
-            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
@@ -12299,21 +12336,21 @@
             }
           ],
           "open_reason": "NONPROFIT_RETROACTIVE_HIRE_UNSETTLED: a certificate filed after 1965 may take effect up to 20 quarters before its filing (RS 01901.540 C.3.b). For an employee hired after that effective date and still employed, or already gone, when it was filed, who never signed the Form SS-15a, RS 01901.540 C.4 covers \"all employees hired after the effective date of the certificate\", while NL 00902.500 NPO505 covers only those who signed among \"persons employed at the time of the request\" and NPO506 tells an unsigned employee \"Since you were employed by the organization when Social Security coverage was requested, your service is not counted\". No capture holds the text of former 410(a)(8)(B)'s clauses, so the case refuses.",
-          "precedence": 3,
+          "precedence": 5,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed on the Form SS-15a as filed or amended",
+            "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed for the service: not on the Form SS-15a filed with the certificate, and not on a supplemental list filed in or before the service's calendar quarter",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
           "case_id": "waiver_nonconcurring_existing_employee",
           "consequence": "noncovered",
-          "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and C.4 reaches only hires after the effective date, so on every source former 410(a)(8)(B) still excludes this employee's service.",
-          "precedence": 4,
+          "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and a supplemental list only from the first day of the calendar quarter in which it was filed (1958 (k)(1) note). C.4 reaches only hires after the effective date, and the 1958 (a)(8)(B) note only employees who joined the certificate's 3121(k)(1)(E) group after its filing quarter. So on every source former 410(a)(8)(B) still excludes this employee's service.",
+          "precedence": 6,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, and not listed on the Form SS-15a as filed or amended",
+            "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, a member of the employees or 3121(k)(1)(E) group the certificate covers by the end of the calendar quarter in which it was filed, and not listed for the service: not on the Form SS-15a filed with the certificate, and not on a supplemental list filed in or before the service's calendar quarter",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
@@ -12321,7 +12358,7 @@
           "case_id": "no_effective_waiver",
           "consequence": "noncovered",
           "description": "Former 410(a)(8)(B) excludes service for a 501(c)(3) organization unless a certificate \"is (or is deemed to be) in effect\" for it (1976 amendment note), and the 1958 amendment keeps the exclusion for \"a group described in section 3121(k)(1)(E) ... with respect to which no certificate is in effect\". NPO508 c: \"Service performed for this employer prior to that date was not covered.\"",
-          "precedence": 5,
+          "precedence": 7,
           "when": {
             "nonprofit_coverage_waiver": "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
@@ -12329,6 +12366,13 @@
         }
       ],
       "citations": [
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "1958 amendment note, subsec. (a)(8)(B)",
+          "quote": "inserted provisions making subparagraph inapplicable to service performed during the period for which a certificate is in effect if such service is performed by an employee who, after the calendar quarter in which the certificate was filed with respect to a group described in section 3121(k)(1)(E) of the Internal Revenue Code of 1954 became a member of such group",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
@@ -12425,6 +12469,13 @@
           "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d"
         },
         {
+          "authority": "POMS RS 01901.540 (2008-08-29)",
+          "capture": "poms_rs_01901540.html",
+          "location": "D.8",
+          "quote": "forgiving the tax liability of organizations through 6/30/77 when the employer stopped paying taxes before 10/19/76 because no waiver certificates were filed",
+          "sha256": "815e3dd52e2b58cecb666df37cd337c5110d6eca8c4f583188f9edc76f16e12d"
+        },
+        {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
           "location": "1958 amendment note, subsec. (b)(8)(B)",
@@ -12434,7 +12485,21 @@
         {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
+          "location": "1958 amendment note, subsec. (k)(1)",
+          "quote": "made the certificate effective in the case of services performed by an employee whose name appears on a supplemental list only with respect to service performed by the employee for the period beginning with the first day of the calendar quarter in which the supplemental list is filed",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
           "location": "3121(r), 1977 amendment and effective-date notes",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
+          "location": "Pub. L. 95-216 section 312(c) note",
+          "quote": "because the waiver certificate which the organization is deemed to have filed is made inapplicable to such service by section 3121(k)(4)(C) of such Code, but would constitute employment (as so defined) in the absence of such section 3121(k)(4)(C), the remuneration paid for such service shall, upon the request of such individual (filed on or before April 15, 1980",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         }
       ],
@@ -12492,9 +12557,37 @@
             ]
           }
         ],
+        "concurrence_list": "The Form SS-15a filed with the certificate lists the concurring employees; the list may be amended by a supplemental list within 24 months after the calendar quarter in which the certificate is filed (RS 01901.540 C.6 NOTE; 1958 (k)(1) note), and a supplemental list makes the certificate effective for an employee on it only from the first day of the calendar quarter in which it is filed. An employee who joins the certificate's 3121(k)(1)(E) group after its filing quarter is covered without signing (1958 (a)(8)(B) note).",
         "condition_cases": {
+          "concurrence_list": {
+            "cases": {
+              "effective_waiver_concurring_employee": [
+                "nonprofit_employee_concurrence"
+              ],
+              "waiver_nonconcurring_existing_employee": [
+                "nonprofit_employee_concurrence"
+              ],
+              "waiver_retroactive_period_hire_unlisted": [
+                "nonprofit_employee_concurrence"
+              ]
+            }
+          },
           "other_exclusions_still_apply": {
             "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+          },
+          "waiver_history": {
+            "cases": {
+              "deemed_waiver_all_employees": [
+                "nonprofit_coverage_waiver"
+              ],
+              "deemed_waiver_k4c_period": [
+                "nonprofit_coverage_waiver"
+              ],
+              "deemed_waiver_section_312c_request": [
+                "nonprofit_coverage_waiver",
+                "historical_fica_treatment"
+              ]
+            }
           }
         },
         "other_exclusions_still_apply": true,
@@ -12532,6 +12625,7 @@
       "rule_id": "nonprofit_1968_1977",
       "trigger_facts": [
         "amount",
+        "historical_fica_treatment",
         "month_or_exposure",
         "nonprofit_coverage_waiver",
         "nonprofit_employee_concurrence",
@@ -12545,20 +12639,22 @@
         {
           "case_id": "effective_waiver_concurring_employee",
           "consequence": "covered_above_threshold",
-          "description": "Under an actual certificate in effect for the service, the employees who signed the List of Concurring Employees (Form SS-15a), as filed or amended within the time allowed, and those hired afterwards are covered: NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505, \"Employees hired after the request were automatically covered\" (RS 01901.540 C.1, C.4 and the C.6 NOTE). A worker hired between the filing and the effective date is covered from the effective date. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year).",
+          "description": "Under an actual certificate in effect for the service, these employees are covered: those who signed the List of Concurring Employees (Form SS-15a) filed with the certificate, and those hired afterwards (NPO503, \"the employees who signed the SS-15a, as well as those hired afterwards, were covered\"; NPO505; RS 01901.540 C.1, C.4). An employee added by a supplemental list (the C.6 NOTE's amendment within 24 months) is covered only for service from the first day of the calendar quarter in which that list was filed (1958 (k)(1) note). An employee who, after the quarter in which the certificate was filed for a 3121(k)(1)(E) group, became a member of that group is covered too: the 1958 (a)(8)(B) note makes the exclusion inapplicable to her service during the certificate's period. A worker hired between the filing and the effective date is covered from the effective date. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year).",
           "precedence": 1,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "employee listed on the Form SS-15a as filed or amended, or hired after the certificate was filed"
+            "nonprofit_employee_concurrence": "listed on the Form SS-15a filed with the certificate; listed on a supplemental list, for service on or after the first day of the calendar quarter in which that list was filed; hired after the certificate was filed; or, after the calendar quarter in which the certificate was filed for a 3121(k)(1)(E) group, became a member of that group",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
           "case_id": "deemed_waiver_all_employees",
           "consequence": "covered_above_threshold",
-          "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year).",
+          "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year). 3121(k)(4)(C)'s window, which the Pub. L. 95-216 section 312(c) note dates \"before July 1, 1977\", closed before this row begins.",
           "precedence": 2,
           "when": {
-            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)",
+            "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
@@ -12579,18 +12675,18 @@
           "precedence": 3,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed on the Form SS-15a as filed or amended",
+            "nonprofit_employee_concurrence": "hired after the certificate's effective date and on or before its filing date (a certificate effective before it was filed, RS 01901.540 C.3.b), and not listed for the service: not on the Form SS-15a filed with the certificate, and not on a supplemental list filed in or before the service's calendar quarter",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
         {
           "case_id": "waiver_nonconcurring_existing_employee",
           "consequence": "noncovered",
-          "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and C.4 reaches only hires after the effective date, so on every source former 410(a)(8)(B) still excludes this employee's service.",
+          "description": "An actual waiver covers an employee hired before it was filed only if the employee signed the Form SS-15a (NPO503, NPO505, NPO506; RS 01901.540 C.1), and a supplemental list only from the first day of the calendar quarter in which it was filed (1958 (k)(1) note). C.4 reaches only hires after the effective date, and the 1958 (a)(8)(B) note only employees who joined the certificate's 3121(k)(1)(E) group after its filing quarter. So on every source former 410(a)(8)(B) still excludes this employee's service.",
           "precedence": 4,
           "when": {
             "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
-            "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, and not listed on the Form SS-15a as filed or amended",
+            "nonprofit_employee_concurrence": "hired on or before both the certificate's filing date and its effective date, a member of the employees or 3121(k)(1)(E) group the certificate covers by the end of the calendar quarter in which it was filed, and not listed for the service: not on the Form SS-15a filed with the certificate, and not on a supplemental list filed in or before the service's calendar quarter",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
@@ -12611,6 +12707,13 @@
           "capture": "lii_42_409.html",
           "location": "409(a)(14), 409(g), 1977 amendment and effective-date notes",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "1958 amendment note, subsec. (a)(8)(B)",
+          "quote": "inserted provisions making subparagraph inapplicable to service performed during the period for which a certificate is in effect if such service is performed by an employee who, after the calendar quarter in which the certificate was filed with respect to a group described in section 3121(k)(1)(E) of the Internal Revenue Code of 1954 became a member of such group",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
@@ -12711,6 +12814,13 @@
         {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
+          "location": "1958 amendment note, subsec. (k)(1)",
+          "quote": "made the certificate effective in the case of services performed by an employee whose name appears on a supplemental list only with respect to service performed by the employee for the period beginning with the first day of the calendar quarter in which the supplemental list is filed",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
           "location": "3121(r), 1977 amendment and effective-date notes",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         },
@@ -12768,9 +12878,30 @@
             ]
           }
         ],
+        "concurrence_list": "The Form SS-15a filed with the certificate lists the concurring employees; the list may be amended by a supplemental list within 24 months after the calendar quarter in which the certificate is filed (RS 01901.540 C.6 NOTE; 1958 (k)(1) note), and a supplemental list makes the certificate effective for an employee on it only from the first day of the calendar quarter in which it is filed. An employee who joins the certificate's 3121(k)(1)(E) group after its filing quarter is covered without signing (1958 (a)(8)(B) note).",
         "condition_cases": {
+          "concurrence_list": {
+            "cases": {
+              "effective_waiver_concurring_employee": [
+                "nonprofit_employee_concurrence"
+              ],
+              "waiver_nonconcurring_existing_employee": [
+                "nonprofit_employee_concurrence"
+              ],
+              "waiver_retroactive_period_hire_unlisted": [
+                "nonprofit_employee_concurrence"
+              ]
+            }
+          },
           "other_exclusions_still_apply": {
             "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+          },
+          "waiver_history": {
+            "cases": {
+              "deemed_waiver_all_employees": [
+                "nonprofit_coverage_waiver"
+              ]
+            }
           }
         },
         "named_options": [
