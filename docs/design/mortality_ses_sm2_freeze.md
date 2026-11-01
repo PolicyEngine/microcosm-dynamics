@@ -508,3 +508,197 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   §8.2 leaves unclassified drop out of that dimension's estimate only;
   their counts are reported.
 - **Variance.** §9.3.
+
+## 5. Age support and tails
+
+SM1 needs a coefficient for every category, sex and single age 0–120 in
+every path year (`specification.py:171–197`). No source covers all of
+them. **A source gap never becomes an empirical zero effect**: every age
+outside a source's support takes a named extrapolation, fixed below
+**[frozen here]** before any fit, and each sensitivity is a registered
+alternative reported beside the primary, never a replacement for it.
+Extrapolations act on the fitted conditional coefficients (§6), not on
+the marginal targets.
+
+| Dimension | Ages the fit's sources support | Primary rule below | Primary rule above | Registered sensitivities |
+|---|---|---|---|---|
+| Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 2, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5) |
+| Education | 25–64 (NCHS bands); 65–74, 75–84 and 85+ (NHIS–LMF) | `TAIL_D_HOLD_25_DOWN`: ages 0–24 take the 25–34 coefficient | The 85+ band runs to 120 | T-D1: ages 65–120 take the 55–64 coefficients, with no NHIS input, to show how much the 65+ coefficients rest on NHIS |
+| Race and Hispanic origin: `hispanic`, `black_non_hispanic` | Single ages 0–99 | None needed | `TAIL_R_HOLD_99_UP`: ages 100–120 take the age-99 coefficient; the "100 and older" interval is not read as a contrast | T-R1: a taper from the age-99 value to zero at age 110, labeled as T-E3 |
+| `other_non_hispanic` | 25–44, 45–64, 65–74, 75–84, 85+ (NHIS–LMF) | `TAIL_O_HOLD_25_DOWN`: ages 0–24 take the 25–44 coefficient | 85+ runs to 120 | T-R2: for 2019–2024, the partial AIAN-and-Asian composite (M-R4) replaces NHIS at every age, labeled "partial group" |
+
+- **T-E2, Cristia's age shape.** For each sex and non-reference quintile
+  `k`, let `c_b(k)` be Cristia's marginal log contrast against `q3` in age
+  range `b` (M-C2). Ages 50–61 take the 62–64 coefficient times
+  `c_50–64(k) / c_65–75(k)`, and ages 25–49 times
+  `c_35–49(k) / c_65–75(k)`. A ratio is replaced by the pooled
+  least-squares slope over the four quintiles when `|z| < 2` for the
+  quintile's 65–75 odds ratio, and every ratio is bounded to `[0.5, 3]`;
+  both guards are fixed here to keep a ratio of small numbers from
+  driving the sensitivity.
+- **Ages under 25.** Lifetime earnings and completed education are not
+  yet formed for most people under 25, and SM3's population starts at 50.
+  The held values below 25 exist because SM1's table must be complete; a
+  frame that classifies a person under 25 on either dimension must
+  register that use first (§8.3).
+- **The baseline's top.** Ages 100–120 multiply a baseline `q` that is
+  already large, and SM1 caps each probability at one and conserves the
+  cell's deaths by recomputing the factor over the uncapped rows
+  (`normalizer.py:338–356`). Capped cells are logged, and §9.1 checks the
+  logs.
+
+## 6. Joint route
+
+### 6.1 The identification problem
+
+The sources publish marginal contrasts: OACT's earnings ratios do not
+hold education or race fixed; NCHS's education rates do not hold earnings
+or race fixed; NCHS's life tables do not hold earnings or education
+fixed. SM1 adds conditional log relative risks. When two dimensions vary
+together within a cell, the model's implied marginal contrast for one of
+them equals its own coefficient **plus** a composition term from the
+other dimensions' coefficients, weighted by how the other dimensions'
+categories spread across its categories. Adding marginal contrasts as
+coefficients therefore reproduces the marginal targets only in a
+population where the three dimensions are independent within every cell.
+Correlation can make the sum overshoot or undershoot, and its direction
+depends on the joint distribution; it is not known in advance (S0.1
+§2.3). Turning marginal targets into conditional coefficients needs a
+**reference joint distribution** of the three attributes by sex and single
+age, and an assumption that the effects add on the log scale.
+
+### 6.2 The reference population `R_ref(t)` [frozen here]
+
+For each knot year `t` (2010–2024), `R_ref(t)` is the weighted ACS 1-year
+PUMS population of that year, every person in households and group
+quarters, with these attributes:
+
+- **Sex and single age.** Ages at or above the year's top code (read from
+  that year's data dictionary) share the top-coded group's composition.
+- **Education and race and Hispanic origin.** From the ACS education,
+  Hispanic-origin and race items through the crosswalk in §8.2.
+- **A lifetime-earnings quintile proxy `Q̃`.** At ages 62–89, among
+  persons with positive Social Security income, `Q̃` is the weighted
+  quintile of that income within sex and single age; weight that straddles
+  a quintile boundary is split so each quintile holds exactly one fifth.
+  This is the public stand-in for OACT's AIME quintile (M-E3, M-E4): both
+  rank people within sex and single age, and both rank by a quantity tied
+  to the worker's benefit (OACT notes that ranking by AIME or by PIA is
+  equivalent within a birth year, Study 129 p. 2, note 2).
+- **The dependence model.** On persons with positive Social Security
+  income aged 62–84, for each sex and age group `G ∈ {62–69, 70–79,
+  80–84}`, a weighted ordered logit
+  `P(Q̃ ≤ k | d, r, a) = expit(c_k(a) − λ_D,G[d] − λ_R,G[r])`,
+  with `λ_D[high_school] = λ_R[white_non_hispanic] = 0` and cut points
+  by single age. Ages 85 and over use `G = 80–84`; ages below 62 use
+  `G = 62–69`.
+- **The joint weights.** At sex `s`, age `a` and year `t`,
+  `w(k, d, r) = P(d, r | s, a, t) × P(k | d, r)`: the first factor is the
+  ACS weighted share among all persons; the second comes from the ordered
+  logit with cut points `c_k(s, a, t)` recomputed so that every quintile
+  holds exactly one fifth of the full population at that age. OACT
+  targets are evaluated on the subpopulation with positive Social
+  Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
+  every other target on the whole population.
+- **What the proxy is not.** Social Security income also includes spouse,
+  survivor and disabled-worker benefits, Railroad Retirement, the effects
+  of claiming age and any WEP reduction, none of which OACT's AIME
+  quintile carries. §6.6 lists what that leaves unidentified.
+
+### 6.3 Joint marginal calibration [frozen here]
+
+For each knot `t` and sex `s`, the unknowns are:
+
+| Block | Unknowns | Targets |
+|---|---|---|
+| Lifetime earnings | 4 non-reference quintiles × 6 bands = 24 | 24 OACT contrasts (M-E1), including backcast copies (§3.1) |
+| Education, 25–64 | `less_than_high_school` and `some_college` per NCHS band (8), plus one split `δ_s`, with `college = some_college + δ_s` in every band | 4 bands × 2 NCHS contrasts (M-D1, M-D2) plus the NHIS split (M-D3) = 9 |
+| Education, 65+ | 3 non-reference categories × 3 bands = 9 | 9 NHIS contrasts (M-D4) |
+| `hispanic`, `black_non_hispanic` | 2 × 100 single ages = 200 | 200 NCHS contrasts (M-R1) |
+| `other_non_hispanic` | 5 bands | 5 NHIS contrasts (M-R4) |
+
+That is 247 equations in 247 unknowns per knot and sex. Coefficients at
+ages outside these blocks follow §5. Each target's implied value is
+computed by expanding `R_ref(t)` into rows, one per (quintile, education,
+race) combination at each single age, with weight `w`, applying the
+candidate coefficients and SM1's `normalize_probabilities` cell by cell
+against the baseline `q`, and averaging the normalized probabilities over
+the target's ages and subpopulation (§4, common scale).
+
+- **Solver.** Newton's method on the full system, started from the
+  plain-addition coefficients (JR-A); convergence when every implied
+  target is within `1 × 10⁻¹⁰` of its target in log units. A second start
+  from all-zero coefficients must reach the same solution within
+  `1 × 10⁻⁹`.
+- **Failure.** If either start fails to converge, or the two disagree,
+  the knot's calibration fails. That is a gate failure, not a tuning
+  opportunity (§10, `GATE_FAIL_OR_REGRESSION_FAIL`), and whether it
+  happens is an outcome this record does not predict (row S2-17).
+
+### 6.4 Candidate routes
+
+| Route | What it identifies | Reference distribution it needs | Where it comes from without PSID | What the public NHIS–LMF can and cannot supply | How it can go wrong |
+|---|---|---|---|---|---|
+| **JR-A: plain addition of marginals** | Each dimension's marginal contrast in its own source population; nothing joint | None; it assumes the three attributes are independent within every cell | Not needed | Not needed. It could check the education × race association, which this route ignores | Double counting wherever the dimensions vary together in the same direction of risk, and the reverse where they vary in opposite directions; the size depends on the deployment population and goes unmeasured |
+| **JR-B: education × race joint, earnings independent** | Education and race coefficients adjusted for each other; the earnings coefficient equals OACT's marginal contrast | `P(d, r \| s, a)` | ACS PUMS (§6.2), with `λ = 0` | Can supply the education × race association in its own population as a check; cannot supply anything about earnings | Counts the earnings–education and earnings–race overlap twice |
+| **JR-C: full joint calibration with a public earnings proxy (primary)** | Conditional coefficients that reproduce every marginal target on one named population, given the proxy's dependence and log-additivity | `P(k, d, r \| s, a)` | ACS PUMS with the Social Security income quintile and the ordered logit (§6.2) | Supplies the education targets at 65+, the split and `other_non_hispanic`; cannot supply the earnings dependence | The proxy's dependence differs from the AIME quintile's (§6.6); effects interact rather than add; the dependence in the deployment population (PSID cohorts) differs from the ACS's |
+| **JR-D: Cristia-bridged shrinkage** | The 1983–2003 ratio of mutually adjusted to marginal contrasts in SIPP–SSA data at 35–75, carried to modern marginals | None named; it is implicit in Cristia's sample | Cristia's Tables 3–6 | Nothing | The ratio may not carry across two to four decades and a different population; columns 2, 4, 6 also adjust for marital status; rounded z statistics; it reproduces no modern marginal on any named population, so no e65 can be checked |
+| **JR-E: NHIS direct joint model** | Education and race hazard ratios adjusted for each other in NHIS's 2009–2019 population; earnings as JR-B | The NHIS sample itself | NHIS–LMF | Supplies everything for education × race at attained ages 25+; cannot supply earnings, single ages above 84 at interview, or deaths after 2019 | Does not reproduce NCHS's targets (different population, years and reporting); survey precision; the earnings overlap as JR-B |
+| **JR-F: PSID reference population (not available)** | As JR-C, with the deployment population's own joint distribution | The PSID cohort's lifetime-earnings × education × race distribution | — | — | PSID use follows the project's data-access record. This record does not use it; §12 sends the underlying principle to Max |
+
+**JR-D's definition [frozen here].** For dimension `X`, sex `s` and
+Cristia age range `b`, `κ_X(s, b)` is the weighted least-squares slope,
+through the origin, of Cristia's conditional log contrasts (M-C3) on its
+marginal log contrasts (M-C2 for earnings, M-C5 for education and race),
+across the dimension's non-reference categories, with weights equal to
+the categories' shares in Cristia's Table 1 where it prints them and
+equal weights otherwise; `κ` is bounded to `[0, 1]`. JR-D's coefficients
+are `κ` times JR-A's, and ages outside 35–75 take the nearest range's `κ`.
+
+### 6.5 Choice
+
+**Primary: JR-C.** Sensitivities: JR-A (labeled "plain addition of
+marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
+1.5, JR-D and JR-E. Reasons:
+
+1. **Q5 asks for one model.** "Education and race and Hispanic origin are
+   further dimensions of the same model" calls for coefficients that hold
+   the other dimensions fixed. JR-A and JR-B set some of that adjustment
+   to zero by construction, and JR-D borrows it from another era.
+2. **It makes S0.1's e65 conformance computable.** S0.1 requires a fixed
+   reference population and marginalization for the e65 target (§2.5).
+   Only routes that calibrate on a named population can reproduce a
+   marginal target there; JR-C reproduces all of them on one population.
+3. **Its inputs are public and current.** The ACS covers every knot year
+   and is the same survey NCHS uses for its education denominators
+   (NVSR 74(4) p. 132).
+4. **It measures what the others assume.** JR-A and JR-B fix the
+   earnings–education/race dependence at zero; JR-C estimates it with a
+   stated proxy, and the `λ` sensitivities and JR-D bracket it.
+5. **Q5's primacy of earnings stays visible.** Every route keeps OACT's
+   contrasts as the earnings targets; no route lets an education or race
+   source move them.
+
+### 6.6 What stays unidentified
+
+- **The dependence between OACT's AIME quintile and education or race.**
+  The Social Security income quintile stands in for it. Spouse and
+  survivor benefits tie many women's income to a husband's earnings;
+  claiming age moves benefits by roughly the actuarial adjustment while
+  leaving the AIME unchanged; disabled-worker and converted benefits,
+  Railroad Retirement and WEP enter the income but not OACT's population
+  (M-E4). No public source settles which way these move the estimated
+  dependence.
+- **Interactions.** The model assumes the three effects add on the log
+  scale. No public source has all three jointly with modern deaths. The
+  fit job reports NHIS's education × race interaction terms at 65+ as a
+  diagnostic; it does not gate on them.
+- **The dynamic-versus-frozen rank difference** (M-E3), and the
+  degree-versus-years education difference (M-D5).
+- **The earnings gradient below 62 and above 89, and every tail in §5.**
+- **The time paths of the NHIS-based coefficients.** NHIS's pooled
+  2009–2019 contrasts hold constant across the knots.
+- **DI origin.** The fit treats every reference-population member as
+  free; SM1 holds DI-origin persons at baseline in deployment, and S0.1
+  frozen text notes that this agrees with OACT's exclusion "in direction"
+  without proving equal definitions (S0.1 §2.3).
