@@ -3542,6 +3542,46 @@ def test_religious_order_members_resolve_from_their_facts(
     assert resolved_consequence(rule, no_vow) == "deferred"
 
 
+# Phrases stating an INVENTED 2018-2026 council member's facts (r4 H-C).
+TRIBAL_2018_MEMBERS = {
+    "recognized_tribe_no_agreement": (
+        "federally recognized tribe",
+        "not included under an effective section 418a agreement",
+        "noncovered",
+    ),
+    # H-C repro: a council member of an unrecognized tribe in 2020.
+    "unrecognized_tribe_no_agreement": (
+        "a tribe that is not federally recognized",
+        "not included under an effective section 418a agreement",
+        "covered",
+    ),
+    "recognized_tribe_agreement": (
+        "federally recognized tribe",
+        "performed on or after the effective date of an effective section "
+        "418a agreement",
+        "covered",
+    ),
+}
+
+
+@pytest.mark.parametrize("member", sorted(TRIBAL_2018_MEMBERS))
+def test_tribal_council_2018_resolves_from_its_facts(registry, member):
+    """Review r4 H-C: 418a(b)(2) defines a tribal council as "the appointed
+    or elected governing body of a federally recognized Indian tribe", and
+    POMS RS 01901.700 F covers every service of a tribe that is not."""
+    (rule,) = registry.lookup_date("tribal_council_service", date(2020, 6, 1))
+    recognition, agreement, expected = TRIBAL_2018_MEMBERS[member]
+    facts = {
+        "tribal_council_service": "service as a member of an Indian tribal "
+        "council, in that capacity",
+        "tribal_federal_recognition": recognition,
+        "tribal_coverage_agreement": agreement,
+    }
+    assert resolved_consequence(rule, facts) == expected
+    staff = {**facts, "tribal_council_service": "council staff"}
+    assert resolved_consequence(rule, staff) == "covered"
+
+
 PUBLIC_OFFICERS = {
     # INVENTED officers, by the cases whose conditions hold for them.
     "salaried_state_officer": ({"public_office_functions"}, "noncovered"),

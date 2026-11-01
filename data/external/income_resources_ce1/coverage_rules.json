@@ -24491,10 +24491,12 @@
         {
           "case_id": "no_section_418a_inclusion",
           "consequence": "noncovered",
+          "description": "410(a)(22) excludes council-member service for an Indian tribal government except services covered under a section 418a agreement, and 418a(b)(2) defines a tribal council as \"the appointed or elected governing body of a federally recognized Indian tribe\". POMS RS 01901.700 F covers every service for a tribe that is not federally recognized, council members included, so this case requires recognition; an unrecognized tribe's council member falls to the residual.",
           "precedence": 3,
           "when": {
             "tribal_council_service": "service as a member of an Indian tribal council, in that capacity, for the tribal government",
-            "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement"
+            "tribal_coverage_agreement": "council-capacity services not included under an effective section 418a agreement",
+            "tribal_federal_recognition": "federally recognized tribe"
           }
         }
       ],
@@ -24503,6 +24505,13 @@
           "authority": "Public Law 115-243, September 20, 2018, 132 Stat. 2894-2896",
           "capture": "ce1c_plaw115_243.html",
           "location": "2(a), adding 42 USC 418a(a)-(d) ; 2(b)(1), adding 410(a)(22)",
+          "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5"
+        },
+        {
+          "authority": "Pub. L. 115-243 (132 Stat. 2894)",
+          "capture": "ce1c_plaw115_243.html",
+          "location": "2(a), adding 42 USC 418a(b)(2)",
+          "quote": "The term `tribal council' means the appointed or elected governing body of a federally recognized Indian tribe.",
           "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5"
         },
         {
@@ -24516,6 +24525,13 @@
           "capture": "ce1c_poms_rs_01901700.html",
           "location": "C.1 NOTE",
           "quote": "We use earnings posted for members of Indian tribal councils for tax years 2005 and earlier in applicable benefit computations.",
+          "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df"
+        },
+        {
+          "authority": "POMS RS 01901.700",
+          "capture": "ce1c_poms_rs_01901700.html",
+          "location": "F",
+          "quote": "All services performed by employees, including services performed by tribal council members, of a non-federally recognized tribe are covered employment for Social Security and Medicare purposes.",
           "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df"
         },
         {
@@ -24597,6 +24613,14 @@
           }
         ],
         "condition_cases": {
+          "applies_to": {
+            "cases": {
+              "no_section_418a_inclusion": [
+                "tribal_council_service",
+                "tribal_federal_recognition"
+              ]
+            }
+          },
           "benefit_credit_posting_rule": {
             "not_a_coverage_condition": "POMS RS 01901.700 C.1's NOTE uses earnings already posted for tax years 2005 and earlier in benefit computations. Every year it reaches falls before this row's 2018-09-20 start, so no case reads historical_earnings_posting and the row does not list the fact; tribal_council_service_1968 records the rule with its posting fact."
           },
@@ -24607,6 +24631,9 @@
                 "historical_fica_treatment"
               ]
             }
+          },
+          "non_federally_recognized_tribes": {
+            "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F covers an unrecognized tribe's council members, and no_section_418a_inclusion requires a federally recognized tribe, so they fall to the residual."
           }
         },
         "default_council_service": "noncovered_without_agreement",
@@ -24660,7 +24687,7 @@
       },
       "residual_default": {
         "consequence": "covered",
-        "description": "Not council-member service, so 410(a)(22) does not exclude it; apply the other families."
+        "description": "Not council-member service for a federally recognized tribe, so 410(a)(22) does not exclude it (POMS RS 01901.700 C.1 and F); apply the other families."
       },
       "rule_id": "tribal_council_service_2018_0920",
       "trigger_facts": [
