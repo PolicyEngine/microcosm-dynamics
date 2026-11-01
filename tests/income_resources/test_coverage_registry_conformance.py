@@ -2564,7 +2564,10 @@ REQUIRED_CONDITIONS = [
             "agreement_with_lower_threshold_nonmember",
             {
                 "section_218_position": ("below the statutory amount",),
-                "public_retirement_system_participation": ("not a member",),
+                "public_retirement_system_participation": (
+                    "not a member, through this employment",
+                    "a statewide system included",
+                ),
             },
             "poms_sl_30001357.html",
             "Beginning July 2, 1991, services optionally excluded from "
@@ -2581,7 +2584,8 @@ REQUIRED_CONDITIONS = [
             {
                 "section_218_position": ("below the statutory amount",),
                 "public_retirement_system_participation": (
-                    "member of a retirement system",
+                    "member, through this employment, of a qualified",
+                    "a statewide system included",
                 ),
             },
             "poms_sl_30001357.html",
@@ -4617,17 +4621,23 @@ ELECTION_LOWER_AMOUNT = (
     "under 418(v), redesignated 418(n), that extends only Medicare hospital "
     "insurance does not count"
 )
+# Review r6 H-2: membership of "a retirement system of such State,
+# political subdivision, or instrumentality" (410(a)(7)(F)) includes a
+# statewide system that covers a subdivision employee's position.
 ELECTION_NONMEMBER = (
-    "not a member of any retirement system of the employing State, "
-    "subdivision or instrumentality that is a qualified retirement system "
-    "under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 "
-    "B cites them); an employee who belongs only to a system that fails those "
-    "standards meets this condition"
+    "not a member, through this employment, of any qualified retirement "
+    "system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL "
+    "50001.501 B cites them) that covers the position, whether the State (a "
+    "statewide system included), the political subdivision or the "
+    "instrumentality maintains it; an employee who belongs only to a system "
+    "that fails those standards meets this condition"
 )
 ELECTION_MEMBER = (
-    "member of a retirement system of the employing State, subdivision or "
-    "instrumentality that is a qualified retirement system under the IRS "
-    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)"
+    "member, through this employment, of a qualified retirement system "
+    "(the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B "
+    "cites them) that covers the position, whether the State (a statewide "
+    "system included), the political subdivision or the instrumentality "
+    "maintains it"
 )
 REQUIRED_CONDITION_FAILURES = {
     **{
