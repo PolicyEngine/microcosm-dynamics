@@ -8,27 +8,38 @@ supply the rules.
 
 The deterministic lattice contains more than 3,000 declarations, with at most
 two UNKNOWN credit years (each completed by every permitted quarter subset, up
-to sixteen), two observed prior periods, and one UNKNOWN prior period. UNKNOWN
+to sixteen), two observed prior periods, and bounded UNKNOWN histories. UNKNOWN
 history is completed by the empty history and every one-period quarter interval
 from the first possible credited quarter through the onset quarter, with the
 end clamped before the onset day. Each start must itself be insured. Special
 provenance is admitted only for an under31 witness without 20/40. Earlier
 blindness may supply insurance through fully insured status even when current
-blindness is absent. A second bounded class combines a blind prefix from birth
-through the quarter before the first QC with every later insured special
-interval. This is an explicit bound: arbitrary two-period histories and three
-or more UNKNOWN periods are not exhausted. Named negative examples have
-separate impossibility proofs that exclude additional periods; a bounded search
-alone is not such a proof.
+blindness is absent. Two bounded classes combine a blind prefix with a later
+special prior: the existing flagged prefix from birth through the quarter
+before the first QC, and every fully insured blind start with a prefix ending
+immediately before each later insured special start. Each class includes every
+possible special ending. Thus no-flag blind prefixes must establish ordinary
+fully insured status at their own starts. This is an explicit bound: arbitrary
+gapped two-period histories, arbitrary other two-period
+histories and three or more UNKNOWN periods are not exhausted. Named negative
+examples have separate impossibility proofs that exclude additional periods;
+a bounded search alone is not such a proof.
 
 UNKNOWN endings enumerate every month end through query, plus the statutory
-FRA/death cap. Modern queries are at most four elapsed quarters after onset;
-historical queries are in 1968 or 1973 and have known endings. Annual totals
-have at most two partly credited observed years; selected cases have at most
-192 complete annual placements each. Raw earnings, foreign credits, credit-
-adding flags, complex boundary refusals, administrative application facts and
-SSPA211 are outside this oracle. Declarations use female sex; the male fully
-insured transition for cohorts born before 1913 is outside the bound. The
+FRA/death cap. Modern queries are at most four elapsed quarters after onset.
+Historical boundary queries are in 1968 or 1973; the no-flag historical blind
+controls query in 1977 or 1996. These historical cases have known endings.
+Annual totals have at most two partly credited observed years; selected cases
+have at most 192 complete annual placements each. A fully-route flag's first
+quarter is a free fact: every candidate start, the quarter before onset, and a
+quarter after
+the start horizon are enumerated. UNKNOWN histories also admit every possible
+historical start and a sentinel before birth. One common flag start governs
+both prior and current insurance; an established prior does not backdate it.
+Raw earnings, foreign credits, credit-adding flags, complex boundary refusals,
+administrative application facts and SSPA211 are outside this oracle.
+Declarations use female sex; the male fully insured transition for cohorts
+born before 1913 is outside the bound. The
 separate round 13 regression module covers credit-adding routes. Known prior
 periods are declared established facts and are not re-adjudicated. This oracle
 checks declaration classification, not coherence across separate assignment
@@ -51,7 +62,6 @@ from hypothesis import strategies as st
 from populace_dynamics.track_b import insured_status as rule
 from populace_dynamics.track_b.gross_benefits import count_family_outcomes
 
-pytestmark = pytest.mark.unit
 OBSERVED = rule.EarningsProvenance.OBSERVED
 UNKNOWN = rule.EarningsProvenance.UNKNOWN
 WEIGHT = Fraction(17, 9)
@@ -299,13 +309,13 @@ def _lookback(start, number, periods, credits):
 
 @lru_cache(maxsize=32768)
 def _ordinary_routes(
-    person, credits, start, periods, fully_flag, *, special=False
+    person, credits, start, periods, fully_from, *, special=False
 ):
     """All routes for one fixed placement, start and prior treatment."""
     used = _usable(credits, start, periods)
-    fully = fully_flag or len(used) >= _fully_needed(
-        person, _quarter_date(start), periods
-    )
+    fully = (fully_from is not None and start >= fully_from) or len(
+        used
+    ) >= _fully_needed(person, _quarter_date(start), periods)
     if not fully:
         return ()
     if person.statutory_blindness:
@@ -413,20 +423,24 @@ def _alternate(case, credits, start, periods, prior):
     return len(used) >= 20 and len(continuous) >= 6 and set(continuous) <= used
 
 
-def _unknown_priors(case, credits, fully_flag):
+def _unknown_priors(case, credits, fully_from):
     person = case.person
     yield ()
     if not credits:
         return
     stop = _quarter(person.disability_onset)
-    for first in range(min(credits), stop + 1):
-        routes = _ordinary_routes(person, credits, first, (), fully_flag)
+    first_candidate = (
+        _quarter(person.birth_date) if fully_from is not None else min(credits)
+    )
+    blind_person = replace(person, statutory_blindness=True)
+    for first in range(first_candidate, stop + 1):
+        routes = _ordinary_routes(person, credits, first, (), fully_from)
         blind_prior = _ordinary_routes(
-            replace(person, statutory_blindness=True),
+            blind_person,
             credits,
             first,
             (),
-            fully_flag,
+            fully_from,
         )
         if not routes and not blind_prior:
             continue
@@ -454,43 +468,70 @@ def _unknown_priors(case, credits, fully_flag):
                     ),
                 )
 
-    # The two-period bound also admits a historical blind prefix ending
-    # just before the first credited quarter, followed by a special prior.
-    # With a fully flag the prefix needs no own QCs. Its earliest start is
-    # the birth quarter; its end preserves every QC and removes every
-    # earlier elapsed quarter, so this is the favorable prefix representative.
-    if not fully_flag or min(credits) >= _quarter(
-        _attained(person.birth_date, 31)
-    ):
-        return
+    special_stop = min(stop, _quarter(_attained(person.birth_date, 31)) - 1)
+    # Preserve the existing favorable birth prefix. Its gap before the later
+    # special start leaves all six QCs available to establish that start.
+    birth_quarter = _quarter(person.birth_date)
     prefix_end = _quarter_date(min(credits)) - timedelta(days=1)
-    if prefix_end < person.birth_date:
-        return
-    prefix = EnumeratedPeriod(person.birth_date, prefix_end)
-    for first in range(
-        min(credits),
-        min(stop, _quarter(_attained(person.birth_date, 31)) - 1) + 1,
+    if prefix_end >= person.birth_date and _ordinary_routes(
+        blind_person, credits, birth_quarter, (), fully_from
     ):
-        routes = _ordinary_routes(
-            person, credits, first, (prefix,), fully_flag
-        )
-        if "under31" not in routes or "20_of_40" in routes:
+        prefix = EnumeratedPeriod(person.birth_date, prefix_end)
+        for first in range(min(credits), special_stop + 1):
+            yield from _special_after_prefix(
+                case, credits, fully_from, prefix, first
+            )
+
+    # The added two-period class covers contiguous blind-then-special periods.
+    # Each blind start must independently be fully insured, including when
+    # no flag exists; current nonblindness says nothing about that prior.
+    for blind_first in range(first_candidate, special_stop):
+        if not _ordinary_routes(
+            blind_person, credits, blind_first, (), fully_from
+        ):
             continue
-        for last in range(first, stop + 1):
-            end = min(
-                _month_end(
-                    _quarter_date(last).replace(
-                        month=(_quarter_date(last).month + 2)
-                    )
-                ),
-                person.disability_onset - timedelta(days=1),
+        for first in range(
+            max(min(credits), blind_first + 1), special_stop + 1
+        ):
+            prefix = EnumeratedPeriod(
+                max(person.birth_date, _quarter_date(blind_first)),
+                _quarter_date(first) - timedelta(days=1),
             )
-            yield (
-                prefix,
-                EnumeratedPeriod(
-                    _quarter_date(first), end, special_insured=True
-                ),
+            yield from _special_after_prefix(
+                case, credits, fully_from, prefix, first
             )
+
+
+def _special_after_prefix(case, credits, fully_from, prefix, first):
+    person = case.person
+    routes = _ordinary_routes(person, credits, first, (prefix,), fully_from)
+    if "under31" not in routes or "20_of_40" in routes:
+        return
+    for last in range(first, _quarter(person.disability_onset) + 1):
+        end = min(
+            _month_end(
+                _quarter_date(last).replace(
+                    month=(_quarter_date(last).month + 2)
+                )
+            ),
+            person.disability_onset - timedelta(days=1),
+        )
+        yield (
+            prefix,
+            EnumeratedPeriod(_quarter_date(first), end, special_insured=True),
+        )
+
+
+def _flag_starts(case, horizon):
+    if not set(case.person.conditions) & set(FULLY_FLAGS):
+        return (None,)
+    onset = _quarter(case.person.disability_onset)
+    first = (
+        _quarter(case.person.birth_date) - 1
+        if case.person.prior_disability_periods_provenance is UNKNOWN
+        else onset - 1
+    )
+    return tuple(range(first, horizon + 2))
 
 
 def _has_valid_filling(case):
@@ -514,59 +555,89 @@ def _enumerated_filling(case):
     # UNKNOWN establishment always has the absent-period completion.
     if person.current_disability_period_established is not True:
         return True
-    fully_flag = bool(set(person.conditions) & set(FULLY_FLAGS))
     for credits in _placements(case):
-        histories = (
-            _unknown_priors(case, credits, fully_flag)
-            if person.prior_disability_periods_provenance is UNKNOWN
-            else (person.prior_disability_periods,)
-        )
-        for prior in histories:
-            for ending in _endings(case):
-                starts = range(
-                    _quarter(person.disability_onset),
-                    _start_horizon(case, ending) + 1,
+        # Every nonblind route needs at least six actual QCs, regardless of
+        # a flag's start or any deletion of elapsed quarters by a prior.
+        if not person.statutory_blindness and len(credits) < 6:
+            continue
+        # After age 31 fewer than twenty QCs require a special prior. With
+        # UNKNOWN history, no QC before age 31 excludes every such prior;
+        # a blind prior alone never supplies special provenance.
+        age31 = _quarter(_attained(person.birth_date, 31))
+        if (
+            not person.statutory_blindness
+            and len(credits) < 20
+            and _quarter(person.disability_onset) >= age31
+            and not any(
+                p.special_insured for p in person.prior_disability_periods
+            )
+            and (
+                person.prior_disability_periods_provenance is OBSERVED
+                or not any(q < age31 for q in credits)
+            )
+        ):
+            continue
+        for ending in _endings(case):
+            horizon = _start_horizon(case, ending)
+            for fully_from in _flag_starts(case, horizon):
+                histories = (
+                    _unknown_priors(case, credits, fully_from)
+                    if person.prior_disability_periods_provenance is UNKNOWN
+                    else (person.prior_disability_periods,)
                 )
-                for periods in ((prior, ()) if prior else ((),)):
-                    # 404.321(a) fixes the first insured quarter. A later
-                    # clear quarter cannot repair an already insured but
-                    # overlapping onset quarter for this same filling.
-                    first_ordinary = next(
-                        (
-                            start
-                            for start in starts
-                            if _ordinary_routes(
-                                person,
-                                credits,
-                                start,
-                                periods,
-                                fully_flag,
-                                special=any(p.special_insured for p in prior),
-                            )
-                        ),
-                        None,
-                    )
-                    if first_ordinary is not None and not any(
-                        _quarter(p.start) <= first_ordinary <= _quarter(p.end)
-                        for p in prior
+                for prior in histories:
+                    if _history_has_clear_start(
+                        case, credits, prior, horizon, fully_from
                     ):
                         return True
-                    for start in starts:
-                        if any(
-                            _quarter(p.start) <= start <= _quarter(p.end)
-                            for p in prior
-                        ):
-                            continue
-                        if _alternate(case, credits, start, periods, prior):
-                            return True
     return False
 
 
-def _check_classification(case):
-    possible = _has_valid_filling(case)
-    rows = []
+def _history_has_clear_start(case, credits, prior, horizon, fully_from):
+    person = case.person
+    starts = range(
+        _quarter(person.disability_onset),
+        horizon + 1,
+    )
+    for periods in ((prior, ()) if prior else ((),)):
+        # 404.321(a) fixes the first insured quarter. A later
+        # clear quarter cannot repair an already insured but
+        # overlapping onset quarter for this fixed filling, treatment and f.
+        first_ordinary = next(
+            (
+                start
+                for start in starts
+                if _ordinary_routes(
+                    person,
+                    credits,
+                    start,
+                    periods,
+                    fully_from,
+                    special=any(p.special_insured for p in prior),
+                )
+            ),
+            None,
+        )
+        if first_ordinary is not None and not any(
+            _quarter(p.start) <= first_ordinary <= _quarter(p.end)
+            for p in prior
+        ):
+            return True
+        for start in starts:
+            if any(
+                _quarter(p.start) <= start <= _quarter(p.end) for p in prior
+            ):
+                continue
+            if _alternate(case, credits, start, periods, prior):
+                return True
+    return False
+
+
+@lru_cache(maxsize=16384)
+def _public_rows(case):
+    """Keep the public observation for direct metamorphic lattice checks."""
     try:
-        rows.append(
+        return (
             rule.evaluate_insured_status(
                 "classification-oracle",
                 WEIGHT,
@@ -577,9 +648,16 @@ def _check_classification(case):
                     test=rule.InsuredTest.FULLY,
                     coverage_end_month=case.exit_month,
                 ),
-            )
+            ),
         )
     except rule.InvalidFamilyInput:
+        return ()
+
+
+def _check_classification(case):
+    possible = _has_valid_filling(case)
+    rows = _public_rows(case)
+    if not rows:
         assert not possible, f"oracle found a concrete filling: {case!r}"
     else:
         assert possible, f"oracle found no valid filling: {case!r}"
@@ -655,6 +733,30 @@ def test_classification_oracle_modern_lattice(flags):
                 age, total, placement, flags, blind, "none", established
             )
         )
+
+
+def test_classification_oracle_modern_lattice_fully_flags_only_relax():
+    """Every modern unflagged row survives each of the four fully flags."""
+    for age, total, placement, blind, established in product(
+        (24, 29, 42, 60),
+        (0, 5, 6, 19, 20, 24),
+        ("old", "recent"),
+        (False, True),
+        (False, True, None),
+    ):
+        case = _modern_case(
+            age, total, placement, (), blind, "none", established
+        )
+        if _public_rows(case):
+            for flag in FULLY_FLAGS:
+                assert _public_rows(
+                    replace(
+                        case,
+                        person=replace(
+                            case.person, conditions=frozenset((flag,))
+                        ),
+                    )
+                ), (case, flag)
 
 
 @pytest.mark.parametrize("flags", FLAG_SETS)
@@ -1106,7 +1208,81 @@ def test_classification_oracle_blind_fully_flag_still_has_one_first_start(
         blind=True,
         periods=(rule.DisabilityPeriod(date(1999, 1, 1), date(2000, 1, 14)),),
     )
+    assert _has_valid_filling(case)
+    _check_classification(case)
+    row = rule.evaluate_insured_status(
+        "free-flag-start",
+        WEIGHT,
+        lambda: rule.insured_status(
+            case.person,
+            _history(case),
+            case.month,
+            test=rule.InsuredTest.FULLY,
+        ),
+    )
+    assert row.unsupported.reason is getattr(
+        rule.InsuredUnsupportedReason, flag.name
+    )
+    assert count_family_outcomes((row,)).weight == WEIGHT
+
+
+@pytest.mark.parametrize("flag", FULLY_FLAGS)
+def test_classification_oracle_blind_ordinary_onset_cannot_be_delayed(flag):
+    """Ordinary fully insurance fixes this overlapping start for every f."""
+    case = _declaration(
+        birth=date(1960, 2, 2),
+        flags=(flag,),
+        blind=True,
+        periods=(rule.DisabilityPeriod(date(1999, 1, 1), date(2000, 1, 14)),),
+        counts=tuple((year, 4) for year in range(1980, 1990)),
+    )
     assert not _has_valid_filling(case)
+    with pytest.raises(rule.InvalidFamilyInput):
+        rule.insured_status(case.person, _history(case), case.month)
+    _check_classification(case)
+
+
+@pytest.mark.parametrize("two_priors", (False, True))
+def test_classification_oracle_no_flag_historical_blind_prior(two_priors):
+    """A blind start with six ordinary QCs can precede a special prior."""
+    year = 1995 if two_priors else 1976
+    case = _declaration(
+        birth=date(1951, 2, 2),
+        onset=date(year, 1, 15),
+        end=date(year, 12, 31),
+        month=date(year + 1, 1, 1),
+        prior_unknown=True,
+        fixed=(
+            1970 * 4 + 1,
+            1972 * 4 + 1,
+            1972 * 4 + 2,
+            1972 * 4 + 3,
+            1973 * 4,
+            1973 * 4 + 1,
+            1976 * 4,
+        ),
+    )
+    assert _has_valid_filling(case)
+    _check_classification(case)
+
+
+@pytest.mark.parametrize("flag", FULLY_FLAGS)
+def test_classification_oracle_free_flag_start_preserves_disregard(flag):
+    """A recent-only overlapping quarter is not an insured first start."""
+    case = _declaration(
+        birth=date(1924, 1, 2),
+        onset=date(1985, 2, 15),
+        end=date(1985, 12, 31),
+        month=date(1985, 12, 1),
+        flags=(flag,),
+        periods=(rule.DisabilityPeriod(date(1979, 1, 1), date(1985, 1, 31)),),
+        fixed=(
+            *range(1951 * 4, 1954 * 4 + 1),
+            *range(1975 * 4 + 1, 1978 * 4),
+        ),
+        counts=((1978, 4), (1984, 4), (1985, 4)),
+    )
+    assert _has_valid_filling(case)
     _check_classification(case)
 
 

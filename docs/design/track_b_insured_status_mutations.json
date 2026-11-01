@@ -4367,5 +4367,367 @@
   "round_13_note": "Sixteen isolated in-memory mutations were caught against the final source. Every run used named invented-data tests with nonexistent data roots, bounded threads, zero restricted opens and zero spawned-process audit events. Original source bytes were checked unchanged after each mutation. Oracle route-removal controls, coupled prior/current checks, first-start and annual-placement repairs, and the DISABILITY carried-filling repair all bite.",
   "round_13_oracle_test_sha256": "4ffa46ffb24f7b8793eb2395a08e9f7c1eea4f784019dc8f3e17351a7f25718e",
   "round_13_replay": "Write round_13_runner_source to scratch/review/run_round13_named.py. For each record, write name/source_sha256/changes to its spec_path, then execute its exact command. Each mutation applies only in memory and the runner verifies unchanged source bytes.",
-  "round_13_final_source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d"
+  "round_13_final_source_sha256": "1234c1cf5f199b92a102d71ad3c41f7a177ca242df626a97eaf6b4e9b889771d",
+  "round_14_mutations": [
+    {
+      "name": "restore_current_nonblindness_in_emptiness",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "            replace(plain, statutory_blindness=True),",
+          "after": "            plain,"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness",
+      "spec_path": "scratch/review/round14-mutation-restore_current_nonblindness_in_emptiness.json",
+      "log": "scratch/review/round14-mutation-restore_current_nonblindness_in_emptiness.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-restore_current_nonblindness_in_emptiness.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness > scratch/review/round14-mutation-restore_current_nonblindness_in_emptiness.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[single-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[single-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[coverage-end-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[coverage-end-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[claiming-age-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[claiming-age-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[subsequent-special-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unknown_prior_history_keeps_historical_blindness[subsequent-special-InsuredTest.DISABILITY]"
+      ],
+      "pytest_summary": "8 failed in 26.74s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "break_at_recent_only_overlapping_quarter",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "                    if ordinary:\n                        break",
+          "after": "                    if rule_met:\n                        break"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start",
+      "spec_path": "scratch/review/round14-mutation-break_at_recent_only_overlapping_quarter.json",
+      "log": "scratch/review/round14-mutation-break_at_recent_only_overlapping_quarter.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-break_at_recent_only_overlapping_quarter.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start > scratch/review/round14-mutation-break_at_recent_only_overlapping_quarter.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[ordinary-query-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[ordinary-query-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[ordinary-query-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[ordinary-query-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[coverage-end-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[coverage-end-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[coverage-end-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[coverage-end-CoverageCondition.SIMPLIFIED_PRE1951]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[claiming-age-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[claiming-age-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[claiming-age-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_recent_only_overlap_does_not_disprove_flagged_start[claiming-age-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "pytest_summary": "12 failed in 31.71s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "never_stop_at_ordinary_overlap",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "                    if ordinary:\n                        break",
+          "after": "                    if False:\n                        break"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start",
+      "spec_path": "scratch/review/round14-mutation-never_stop_at_ordinary_overlap.json",
+      "log": "scratch/review/round14-mutation-never_stop_at_ordinary_overlap.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-never_stop_at_ordinary_overlap.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start > scratch/review/round14-mutation-never_stop_at_ordinary_overlap.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_unchanged_1962_ordinary_overlap_fixes_start[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "pytest_summary": "4 failed in 5.79s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "mix_treatments_for_ordinary_start",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "                        InsuredTest.DISABILITY,\n                        use_periods_only=treatment,\n                    )[0]\n                    rule_met",
+          "after": "                        InsuredTest.DISABILITY,\n                    )[0]\n                    rule_met"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start",
+      "spec_path": "scratch/review/round14-mutation-mix_treatments_for_ordinary_start.json",
+      "log": "scratch/review/round14-mutation-mix_treatments_for_ordinary_start.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-mix_treatments_for_ordinary_start.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start > scratch/review/round14-mutation-mix_treatments_for_ordinary_start.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start[CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start[CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start[CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_one_treatment_overlaps_and_the_other_leaves_a_clear_start[CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "pytest_summary": "4 failed, 1 passed in 12.29s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "restore_onset_only_blind_flag_branch",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "    if fully_route and person.statutory_blindness:\n        return _recent_rule_possible(\n            person, credits, horizon, exit_month, lower_credits=lower_credits\n        )",
+          "after": "    if fully_route and person.statutory_blindness:\n        return _outside_prior_periods(person, _qid(person.disability_onset))"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal",
+      "spec_path": "scratch/review/round14-mutation-restore_onset_only_blind_flag_branch.json",
+      "log": "scratch/review/round14-mutation-restore_onset_only_blind_flag_branch.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-restore_onset_only_blind_flag_branch.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal > scratch/review/round14-mutation-restore_onset_only_blind_flag_branch.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[True-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[True-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[True-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[True-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "pytest_summary": "4 failed, 4 passed in 4.34s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "remove_blind_all_clear_fast_path",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "            if person.statutory_blindness:\n                return True\n            return any(",
+          "after": "            return any("
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal",
+      "spec_path": "scratch/review/round14-mutation-remove_blind_all_clear_fast_path.json",
+      "log": "scratch/review/round14-mutation-remove_blind_all_clear_fast_path.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-remove_blind_all_clear_fast_path.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal > scratch/review/round14-mutation-remove_blind_all_clear_fast_path.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[False-CoverageCondition.DEEMED_FULLY_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[False-CoverageCondition.TRANSITIONAL_INSURED]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[False-CoverageCondition.EARNED_BASIS]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_blind_flagged_zero_qcs_keep_named_refusal[False-CoverageCondition.SIMPLIFIED_PRE1951]"
+      ],
+      "pytest_summary": "4 failed, 4 passed in 4.64s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "return_first_successful_filling",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "                _refuse(\n                    InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,\n                    \"First insured start depends on annual placement \"\n                    \"or prior treatment\",\n                )",
+          "after": "                return _with_current_period(\n                    person, filling, month, exit_month,\n                    use_periods_only=treatment,\n                )"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status",
+      "spec_path": "scratch/review/round14-mutation-return_first_successful_filling.json",
+      "log": "scratch/review/round14-mutation-return_first_successful_filling.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-return_first_successful_filling.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status > scratch/review/round14-mutation-return_first_successful_filling.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.DISABILITY]"
+      ],
+      "pytest_summary": "12 failed in 6.70s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "reject_clear_filling_instead_of_refusing",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "                _refuse(\n                    InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,\n                    \"First insured start depends on annual placement \"\n                    \"or prior treatment\",\n                )",
+          "after": "                raise InvalidFamilyInput(\n                    \"First insured start depends on annual placement \"\n                    \"or prior treatment\"\n                )"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status",
+      "spec_path": "scratch/review/round14-mutation-reject_clear_filling_instead_of_refusing.json",
+      "log": "scratch/review/round14-mutation-reject_clear_filling_instead_of_refusing.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-reject_clear_filling_instead_of_refusing.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status > scratch/review/round14-mutation-reject_clear_filling_instead_of_refusing.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[ordinary-query-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[coverage-end-InsuredTest.DISABILITY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.ALL]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.FULLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.CURRENTLY]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_first_successful_placement_cannot_settle_status[claiming-age-InsuredTest.DISABILITY]"
+      ],
+      "pytest_summary": "12 failed in 10.38s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "let_search_refusal_escape_possibility",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "        _with_current_period(plain, credits, horizon, exit_month)\n    except InsuredConfigurationUnsupported:\n        return True\n    except InvalidFamilyInput:",
+          "after": "        _with_current_period(plain, credits, horizon, exit_month)\n    except InvalidFamilyInput:"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_search_refusal_waits_for_later_input_validation",
+      "spec_path": "scratch/review/round14-mutation-let_search_refusal_escape_possibility.json",
+      "log": "scratch/review/round14-mutation-let_search_refusal_escape_possibility.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-let_search_refusal_escape_possibility.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_search_refusal_waits_for_later_input_validation > scratch/review/round14-mutation-let_search_refusal_escape_possibility.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_search_refusal_waits_for_later_input_validation"
+      ],
+      "pytest_summary": "1 failed in 3.48s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "skip_overlap_placement_search",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "    if use_periods_only is None and not _outside_prior_periods(\n        person, _qid(quarter)\n    ):",
+          "after": "    if False and use_periods_only is None and not _outside_prior_periods(\n        person, _qid(quarter)\n    ):"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_round_thirteen_annual_start_needs_named_refusal",
+      "spec_path": "scratch/review/round14-mutation-skip_overlap_placement_search.json",
+      "log": "scratch/review/round14-mutation-skip_overlap_placement_search.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-skip_overlap_placement_search.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_round_thirteen_annual_start_needs_named_refusal > scratch/review/round14-mutation-skip_overlap_placement_search.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_round_thirteen_annual_start_needs_named_refusal"
+      ],
+      "pytest_summary": "1 failed in 2.21s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    },
+    {
+      "name": "remove_canonical_boundary_ties",
+      "source_sha256": "cd059a32b8267b9d62913ff4a61285a643c08c095c14bebeff69c49b7a9b4e4e",
+      "changes": [
+        {
+          "before": "    options = [tuple(sorted(_assignment_candidates(*rows[y]))) for y in years]\n",
+          "after": "    options = [_assignment_candidates(*rows[y]) for y in years]\n"
+        }
+      ],
+      "node": "tests/test_track_b_insured_status_fix_round_14.py::test_assignment_and_treatment_order_leave_public_result_unchanged",
+      "spec_path": "scratch/review/round14-mutation-remove_canonical_boundary_ties.json",
+      "log": "scratch/review/round14-mutation-remove_canonical_boundary_ties.log",
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round14 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round14 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD TRACKB_ROUND14_MUTATION=scratch/review/round14-mutation-remove_canonical_boundary_ties.json /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python scratch/review/run_round14_named.py -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_insured_status_fix_round_14.py::test_assignment_and_treatment_order_leave_public_result_unchanged > scratch/review/round14-mutation-remove_canonical_boundary_ties.log 2>&1",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_14.py::test_assignment_and_treatment_order_leave_public_result_unchanged[True-False]",
+        "tests/test_track_b_insured_status_fix_round_14.py::test_assignment_and_treatment_order_leave_public_result_unchanged[True-True]"
+      ],
+      "pytest_summary": "2 failed, 1 passed in 6.63s",
+      "audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "killed": true,
+      "source_restored": true,
+      "restoration": "Mutation executes only in the imported module namespace; the runner asserts implementation bytes unchanged on exit."
+    }
+  ],
+  "round_14_runner_source": "\"\"\"Run named invented-data conformance tests with open-event auditing.\"\"\"\n\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport sys\n\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\nBARRED = {\n    \"gates.yaml\", \"adjusted_poverty.py\", \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_cola_comparison.md\", \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\", \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\", \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\"POPULACE_DYNAMICS_PSID_DIR\", \"POPULACE_DYNAMICS_EPUF_DIR\"):\n        assert os.environ[name] == \"/nonexistent/trackb-round14\"\n    assert sys.argv[1:]\n    assert all(\n        not argument.startswith(\"tests/\") or \".py\" in argument\n        for argument in sys.argv[1:]\n    )\n    sys.addaudithook(audit)\n    from populace_dynamics.track_b import insured_status as insured\n\n    source_path = Path(insured.__file__)\n    original = source_path.read_bytes()\n    baseline_path = os.environ.get(\"TRACKB_ROUND14_SOURCE\")\n    if baseline_path:\n        baseline = Path(baseline_path).read_bytes()\n        exec(compile(baseline, str(source_path), \"exec\"), insured.__dict__)\n        print(\"BASELINE\", hashlib.sha256(baseline).hexdigest(), flush=True)\n    spec_path = os.environ.get(\"TRACKB_ROUND14_MUTATION\")\n    if spec_path:\n        spec = json.loads(Path(spec_path).read_text())\n        assert hashlib.sha256(original).hexdigest() == spec[\"source_sha256\"]\n        source = original.decode()\n        for change in spec[\"changes\"]:\n            assert source.count(change[\"before\"]) == 1, change[\"before\"]\n            source = source.replace(change[\"before\"], change[\"after\"], 1)\n        exec(compile(source, str(source_path), \"exec\"), insured.__dict__)\n        print(\"MUTATION\", spec[\"name\"], flush=True)\n    import pytest\n\n    try:\n        return pytest.main(sys.argv[1:])\n    finally:\n        assert source_path.read_bytes() == original\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+  "round_14_note": "All ten requested mutations and the canonical diagnostic tie mutation were killed by named public tests. Each run used nonexistent data roots, one thread per library, in-memory mutation only, unchanged implementation bytes, zero restricted opens and zero spawned-process audit events.",
+  "round_14_test_sha256": {
+    "tests/test_track_b_insured_status_fix_round_14.py": "b3a75d40c6f7830d5afa3d930b700c981bf4e39d1f29d66b5d7ed1fa405484e7",
+    "tests/test_track_b_insured_status_classification_oracle.py": "9b04808e9eb81fc2d7ccc4835fffed84837900c11284bd278c8336a0ad2215d2",
+    "tests/test_track_b_insured_status_status_oracle.py": "4b603ca88ea6b52e518dcc93ef08d67ed49f7604aa1894a3b50baedf47aa2b61"
+  },
+  "round_14_replay": "Write round_14_runner_source to scratch/review/run_round14_named.py. For each round_14_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command. Mutations apply only in memory.",
+  "round_14_final_source_sha256": "677f7f812f92ac0b072265b7ea664d046986bcc92c21339140ff4dd737b28048",
+  "round_14_final_source_note": "Rewrapped two docstring lines after the mutation runs; code unchanged."
 }

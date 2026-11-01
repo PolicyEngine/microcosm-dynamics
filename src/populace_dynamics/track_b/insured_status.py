@@ -37,7 +37,8 @@ unknown prior histories and stop at six QCs for blindness. Foreign credits
 preserve an unmodeled route before every credit-count proof; no totalization
 minimum or eligibility rule is claimed here. Fully-insured-only flags cannot
 bypass a failed recent-rule scan under upper credits, but retain a possible
-pre1956 alternate. Blindness and unknown prior history disable that scan.
+pre1956 alternate. Blindness removes the recent-credit requirement;
+UNKNOWN prior history skips the known-history scan.
 After the stronger minimum proof, every route within the declared credit
 envelope requires six QCs feasible by the immutable start horizon, except
 blindness with a fully-insured-only flag. UNKNOWN prior history cannot
@@ -47,11 +48,13 @@ credited endpoints remain eligible for its continuous clock.
 UNKNOWN prior history also obeys a joint optimistic-clock proof: even
 deleting every removable uncredited quarter cannot rescue a declaration
 whose same credits fail the current route. Past blindness is allowed as
-an unresolved prior basis. Known-history fully-route scans keep the first
-insured start for each filling; a later clear quarter cannot repair an
-overlapping first start. Blind fully-route declarations start at onset.
-When construction resolves an annual-placement overlap, its selected
-filling and prior treatment also supply the DISABILITY output witness.
+an unresolved prior basis, including in the earliest-prior emptiness proof.
+Known-history fully-route scans fix the first start only when ordinary
+insurance holds for that filling and prior treatment. A flag's first
+fully insured quarter is unknown, including for blindness. When a clear
+first start depends on annual placement or prior treatment after a favorable
+overlapping start, construction retains a named refusal rather than
+selecting a filling that could change another returned status.
 The declared pre1956 flag adds no route beyond the automatic alternate.
 Flag-specific conditions remain declared facts rather than adjudicated rules.
 Short DIB-entitled prior periods remain possible. Observable specialist credit
@@ -1098,7 +1101,8 @@ def _world(
 
 def _boundary_variants(rows, periods):
     years = sorted({q // 4 for pair in periods for q in pair} & rows.keys())
-    options = [_assignment_candidates(*rows[y]) for y in years]
+    # Canonical ties keep diagnostic witnesses independent of enumeration.
+    options = [tuple(sorted(_assignment_candidates(*rows[y]))) for y in years]
     if prod(map(len, options)) > 4096:
         _refuse(
             InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
@@ -1286,9 +1290,11 @@ def _unknown_prior_history_is_empty(
     (404.320(b)(2), 404.321(a)), and fit before onset and FRA. Act216(i)
     (2)(A) also permits a single DIB-entitled month; 404.315(a)(4) waives
     waiting in specified cases. No five-month premise is safe here.
-    Upper-credit witnesses
-    deliberately overapproximate possibility. A surviving quarter proves
-    no actual history; it only prevents an invalid-input conclusion.
+    Historical blindness is possible regardless of current blindness
+    (404.130(e)); every earliest-prior witness therefore permits it.
+    Upper-credit witnesses deliberately overapproximate possibility. A
+    surviving quarter proves no actual history; it only prevents an
+    invalid-input conclusion.
     """
     if person.disability_onset is None:
         return False
@@ -1340,7 +1346,7 @@ def _unknown_prior_history_is_empty(
         ):
             return False
         if _witness(
-            plain,
+            replace(plain, statutory_blindness=True),
             credits,
             start,
             exit_month,
@@ -1463,7 +1469,7 @@ def _period_end_unknown(person, month):
 
 
 def _with_current_period(
-    person, credits, month, exit_month, *, use_periods_only=None, resolved=None
+    person, credits, month, exit_month, *, use_periods_only=None
 ):
     if not person.current_disability_period_established:
         return person, None
@@ -1484,9 +1490,9 @@ def _with_current_period(
     if use_periods_only is None and not _outside_prior_periods(
         person, _qid(quarter)
     ):
-        # One annual placement and prior treatment must supply the first
-        # clear insured start. A favorable onset assignment that overlaps
-        # a prior cannot disprove a different, later first assignment.
+        # A clear first start proves possibility, not a status shared by
+        # every filling. Keep the row when annual placement or treatment
+        # changes that start (404.321(a); RS00301.230).
         rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
         options = [_assignment_candidates(*row) for row in rows.values()]
         if prod(map(len, options)) > 4096:
@@ -1501,16 +1507,20 @@ def _with_current_period(
             }
             for treatment in (True, False):
                 try:
-                    return _with_current_period(
+                    _with_current_period(
                         person,
                         filling,
                         month,
                         exit_month,
                         use_periods_only=treatment,
-                        resolved=resolved,
                     )
                 except InvalidFamilyInput:
                     continue
+                _refuse(
+                    InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                    "First insured start depends on annual placement "
+                    "or prior treatment",
+                )
     # 416(i)(2)(C), 404.321(a): onset day if insured then, otherwise
     # first day of the first later insured quarter. Application/duration
     # are administrative facts declared by the caller, never inferred.
@@ -1546,8 +1556,6 @@ def _with_current_period(
         prior_disability_periods_provenance=EarningsProvenance.OBSERVED,
         prior_disability_periods_convention_id=None,
     )
-    if resolved is not None and use_periods_only is not None:
-        resolved.update(credits=credits, treatment=use_periods_only)
     return completed, start
 
 
@@ -1614,8 +1622,9 @@ def _flagged_establishment_possible(person, years):
     the six-QC recent floor by the start horizon, including UNKNOWN prior
     history. UNKNOWN histories also face the joint optimistic-clock proof.
     With known history they additionally need a first insured start clear
-    of prior quarters, or the automatic pre1956 alternate. Blindness
-    supplies insurance at onset and cannot delay that first start. The
+    of prior quarters, or the automatic pre1956 alternate. A flag's start
+    is unknown: only ordinary insurance for one filling and treatment
+    fixes an overlapping first start, including with blindness. The
     pre1956 flag adds
     no route beyond the automatic alternate (RS00301.480 A/B.1); that
     alternate still requires twenty QCs. No flag's own conditions are
@@ -1690,17 +1699,21 @@ def _recent_rule_possible(
 ):
     """404.130(b)-(d) possibility, relaxing only the fully prerequisite.
 
-    A single filling must first qualify outside every supplied prior
-    quarter (404.321(a)). A later clear quarter cannot repair an earlier
-    insured start overlapping a prior. Enumerate annual placements and
-    every unresolved lower filling, retaining favorable prior treatment.
-    Complexity cannot disprove a specialist declaration.
+    For one filling and treatment, an overlapping quarter fixes the first
+    start only if ordinary disability insurance holds without a flag
+    (404.321(a)). A recent-only witness cannot date a flag's unknown fully
+    insured status. Blindness has no recent test (404.130(e)). Enumerate
+    annual placements and unresolved lower fillings, retaining favorable
+    prior treatment. Complexity cannot disprove a specialist declaration;
+    this deliberately permits loose refusals rather than losing lawful rows.
     """
     try:
         candidates = range(_qid(person.disability_onset), _qid(horizon) + 1)
         if all(
             _outside_prior_periods(person, quarter) for quarter in candidates
         ):
+            if person.statutory_blindness:
+                return True
             return any(
                 _witness(
                     person,
@@ -1741,17 +1754,30 @@ def _recent_rule_possible(
                 for quarter in range(
                     _qid(person.disability_onset), _qid(horizon) + 1
                 ):
-                    if _witness(
+                    ordinary = _witness(
                         person,
                         filling,
                         _qdate(quarter),
                         exit_month,
                         InsuredTest.DISABILITY,
-                        ignore_fully_insured=True,
                         use_periods_only=treatment,
-                    )[0]:
-                        if _outside_prior_periods(person, quarter):
-                            return True
+                    )[0]
+                    rule_met = (
+                        person.statutory_blindness
+                        or ordinary
+                        or _witness(
+                            person,
+                            filling,
+                            _qdate(quarter),
+                            exit_month,
+                            InsuredTest.DISABILITY,
+                            ignore_fully_insured=True,
+                            use_periods_only=treatment,
+                        )[0]
+                    )
+                    if rule_met and _outside_prior_periods(person, quarter):
+                        return True
+                    if ordinary:
                         break
     except InsuredConfigurationUnsupported:
         return True
@@ -1876,7 +1902,10 @@ def _could_establish_current_period(
     route. The alternate's start must itself clear prior-period overlap.
     UNKNOWN prior histories face an optimistic joint clock that permits
     past blindness and dominates every number of real prior periods.
-    Fully-route starts obey 404.321(a), including onset with blindness.
+    A fully-route flag's starting quarter is unknown. Only ordinary
+    insurance for one filling and treatment fixes an overlapping first
+    start, including with blindness (404.321(a)). A construction refusal
+    preserves possibility until later validation has checked input errors.
     """
     if not person.current_disability_period_established:
         return True
@@ -1904,7 +1933,9 @@ def _could_establish_current_period(
         return False
     fully_route = bool(person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS)
     if fully_route and person.statutory_blindness:
-        return _outside_prior_periods(person, _qid(person.disability_onset))
+        return _recent_rule_possible(
+            person, credits, horizon, exit_month, lower_credits=lower_credits
+        )
     # 404.130(b)-(d) and RS00301.480 retain at least six QCs even
     # when UNKNOWN prior history changes the window or special route.
     rows, _ = _world(person, credits, _qid(horizon), exit_month, False)
@@ -1951,6 +1982,8 @@ def _could_establish_current_period(
     )
     try:
         _with_current_period(plain, credits, horizon, exit_month)
+    except InsuredConfigurationUnsupported:
+        return True
     except InvalidFamilyInput:
         pass
     else:
@@ -1978,6 +2011,8 @@ def _could_establish_current_period(
         lower.update({year: ((), 0) for year in unknown})
     try:
         _with_current_period(plain, lower, horizon, exit_month)
+    except InsuredConfigurationUnsupported:
+        return True
     except InvalidFamilyInput:
         pass
     else:
@@ -2029,6 +2064,8 @@ def _could_establish_current_period(
         filling.update(zip(unknown, choices, strict=True))
         try:
             _with_current_period(plain, filling, horizon, exit_month)
+        except InsuredConfigurationUnsupported:
+            return True
         except InvalidFamilyInput:
             continue
         return True
@@ -2094,12 +2131,14 @@ def insured_status(
     first insured start outside prior quarters, or automatic pre1956
     alternate. UNKNOWN history also faces a joint optimistic-clock proof
     permitting past blindness; survival never claims a concrete history.
-    Blind fully-route insurance fixes the first start at onset. The
-    alternate must use one
+    A fully-route flag's start is unknown, including with blindness;
+    only ordinary insurance for the same filling and treatment fixes an
+    overlapping first quarter. The alternate must use one
     start clearing fixed overlap, the horizon and its 1955 date limit;
     its prior-period clock and credited endpoints remain unchanged.
-    A resolved annual start supplies the same filling and prior treatment
-    to the DISABILITY output, rather than a new favorable onset assignment.
+    If a clear first start depends on annual placement or prior treatment
+    after a favorable overlapping start, retain a named boundary refusal.
+    A first successful filling cannot settle the other requested statuses.
     The pre1956 flag adds no route beyond the automatic alternate. A flag's
     own conditions remain declared facts and are not tested.
     History validation runs first. Uncomputable QC rows use bounded
@@ -2184,7 +2223,6 @@ def insured_status(
     # established period never existed (404.320(a),404.130(f)). Unknown
     # prior periods cannot be mixed selectively with the current period.
     uncertain_current_start = False
-    lo_resolution, hi_resolution = {}, {}
     if prior_unknown:
         lo_person = hi_person = person
         lo_start = hi_start = None
@@ -2207,7 +2245,6 @@ def insured_status(
                 lower,
                 month,
                 coverage_end_month,
-                resolved=lo_resolution,
             )
             hi_person, hi_start = (
                 _with_current_period(
@@ -2215,7 +2252,6 @@ def insured_status(
                     upper,
                     month,
                     coverage_end_month,
-                    resolved=hi_resolution,
                 )
                 if unknown
                 else (lo_person, lo_start)
@@ -2276,19 +2312,10 @@ def insured_status(
         lo_candidates = [
             _decision_witness(
                 p,
-                (
-                    lo_resolution.get("credits", lower)
-                    if kind is InsuredTest.DISABILITY
-                    else lower
-                ),
+                lower,
                 month,
                 coverage_end_month,
                 kind,
-                use_periods_only=(
-                    lo_resolution.get("treatment")
-                    if kind is InsuredTest.DISABILITY
-                    else None
-                ),
             )
             for p in decision_lo_people
         ]
@@ -2296,19 +2323,10 @@ def insured_status(
             [
                 _decision_witness(
                     p,
-                    (
-                        hi_resolution.get("credits", upper)
-                        if kind is InsuredTest.DISABILITY
-                        else upper
-                    ),
+                    upper,
                     month,
                     coverage_end_month,
                     kind,
-                    use_periods_only=(
-                        hi_resolution.get("treatment")
-                        if kind is InsuredTest.DISABILITY
-                        else None
-                    ),
                 )
                 for p in decision_hi_people
             ]

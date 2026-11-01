@@ -287,7 +287,7 @@ def test_unestablished_alternate_keeps_prior_treatment(established):
 
 
 def test_disability_witness_uses_the_legal_annual_start_filling():
-    """The same placement must supply the start and disability witness."""
+    """An unresolved annual start retains its row through a named refusal."""
     person = _person(
         disability_onset=date(2000, 2, 15),
         conditions=(),
@@ -309,9 +309,11 @@ def test_disability_witness_uses_the_legal_annual_start_filling():
             person, years, month, test=i.InsuredTest.DISABILITY
         ),
     )
-    assert row.unsupported is None
-    assert row.result.current_disability_period_start == date(2000, 4, 1)
-    assert row.result.disability.qualifying_quarter == date(2000, 4, 1)
+    assert row.result is None
+    assert (
+        row.unsupported.reason
+        is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
+    )
     counts = count_family_outcomes((row,))
-    assert counts.rows == 1 and counts.unsupported_rows == 0
-    assert counts.weight == WEIGHT and counts.unsupported_weight == 0
+    assert counts.rows == counts.unsupported_rows == 1
+    assert counts.weight == counts.unsupported_weight == WEIGHT
