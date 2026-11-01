@@ -918,3 +918,233 @@ group definitions do not change.
 
 A person under 25 classified on lifetime earnings or education needs a
 registration of its own before any use (§5).
+
+## 9. Conformance procedure: `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP`
+
+**[frozen here]** throughout, unless a step names S0.1. The procedure runs
+on P-PRIMARY under JR-C. Sensitivities run the same steps and report;
+they do not gate. Its order:
+
+1. Pin every input: source files at the hashes in §13 and the fit job's
+   manifest, module versions, the seed (§9.3), and the reference
+   population files.
+2. Build P-PRIMARY's fifteen tables (§7.1) and validate each with
+   `RelativeRiskSpec`.
+3. Run the deterministic reconstruction checks (§9.1).
+4. Compute the e65 residuals (§9.2) and every family member's
+   simultaneous bound (§9.3, §9.4).
+5. Run the invariants (§9.6).
+6. Apply the pass conjunction (§9.5).
+
+### 9.1 Deterministic reconstruction checks (tier A)
+
+These run at the point estimate and carry no Monte Carlo error. Any
+failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
+
+- **A1, exact printing intervals.** For a target built from two printed
+  values `r_k` and `r_ref` with half-width `h`, the interval for
+  `L = ln r_k − ln r_ref` uses the transformed endpoints of both:
+  `[ln(r_k − h) − ln(r_ref + h), ln(r_k + h) − ln(r_ref − h)]`. The
+  approximation `h / r` is never used as a log tolerance (S0.1 §2.5). The
+  half-widths are 0.005 for an RMR; 0.0000005 for a six-decimal `qx`;
+  0.05 per 100,000 for an NCHS education rate, carried through
+  `q = m / (1 + m/2)`; `δ_dig` (§7.2) for a digitized RMR; and zero for an
+  NHIS estimate this project computes. The model-implied contrast must lie
+  inside the interval widened by **ε = 1 × 10⁻⁶** in log units on each
+  side. ε is the only extra residual tolerance this record sets: it covers
+  the solver's `1 × 10⁻¹⁰` convergence and floating-point accumulation,
+  and it cannot relax e65's limit. Where `r − h ≤ 0` leaves an endpoint
+  undefined, that side of the interval is unbounded and the check applies
+  to the other side only.
+- **A2, the source agrees with itself.** For every quintile, band, sex and
+  table year, the interval for `ln(rate_k / rate_q3)` from Tables 1–6
+  (four-decimal rates) must overlap the interval for `L_E(k)` from Tables
+  7–12. A failure means a transcription error, not a source finding.
+- **A3, digitization.** All 210 validation points pass (§7.2).
+- **A4, two transcriptions agree** on every printed string (§7.2).
+- **A5, SM1's cell log on `R_ref`.** At every knot, no cell is
+  infeasible, every feasible cell conserves its deaths, and the counts of
+  capped rows are reported (`normalizer.py:17–35`).
+- **A6, coverage.** Every knot's table holds every dimension × category ×
+  sex × age 0–120 once, with zero reference coefficients
+  (`specification.py:171–197`).
+
+### 9.2 Life expectancy at 65 [frozen here; limit frozen, S0.1 §2.5]
+
+- **Reference population and marginalization.** For group `g` of a
+  dimension, sex `s`, knot `t` and single age `a`: `h_g(a)` is the
+  average of SM1's normalized probabilities over `g`'s rows of `R_ref(t)`
+  (the other two dimensions' categories weighted by `w`), within the
+  target's subpopulation: Social Security recipients at 62–89 for OACT
+  targets and the whole population otherwise, and the whole population at
+  every age above the subpopulation's range. `h_all(a)` is the same
+  average over every row of that subpopulation. The fitted group
+  probability is `q_F,g(a) = q_base(s, a, t) × h_g(a) / h_all(a)`.
+- **The target.** `q_T,g(a) = min(1, q_base(s, a, t) × ρ_g(a))`, with
+  `ρ_g` the source's ratio of group `g` to its whole population: for OACT,
+  the RMR of `g`'s band at the knot (after backcasts and holds; above 89
+  the 85–89 RMR); for `hispanic`, `white_non_hispanic` and
+  `black_non_hispanic`, `q_g(a) / q_total(a)` from the knot's NCHS tables
+  (M-R6), holding the age-99 ratio above 99; for `other_non_hispanic`, the
+  NHIS hazard ratio for `a`'s band times `q_NHW(a) / q_total(a)`.
+- **Closing rule.** Both life expectancies come from
+  `data/life_table.life_expectancy(q[0..120], 65)`, the backward recursion
+  with the constant-terminal-`q` closing at the last age
+  (`life_table.py:17–37, 181–203`). The module calls that closing "a
+  builder default awaiting ratification" (lines 30–31); this record fixes
+  it for SM2's e65 only.
+- **The limit.** `|e65(q_F,g) − e65(q_T,g)| ≤ 0.1` year, **the design's
+  limit, which stays at 0.1 year** (design §5.3), for every earnings
+  quintile and every race and Hispanic-origin group, both sexes, at every
+  knot. Education has no e65 target: NCHS stops at 64 and S0.1 applies the
+  limit to earnings groups and NCHS life-table targets; education's
+  targets are contrasts under §9.1 and §9.3.
+
+### 9.3 Uncertainty
+
+S0.1 froze the requirements (§2.5): simultaneous 95 percent bounds,
+Bonferroni over the family; NHIS resampling that respects strata, PSUs
+and family clusters; ACS replicate weights for its denominators;
+shared-source covariance; rounding, random variation, survey sampling and
+linkage sensitivity kept apart; no independent-person bootstrap; no
+complete-count rate treated as free of uncertainty. This record
+implements them as four components, each reported on its own and then
+combined.
+
+| Component | Source | How it is drawn or computed |
+|---|---|---|
+| U1, rounding and digitization | Every printed value; every digitized RMR | Uniform within the printing interval of §9.1, independently for each printed cell; uniform within `±δ_dig` for each digitized value |
+| U2, random mortality variation | NCHS education | Poisson on the printed death counts, combined with the ACS term as in Formula 9 (NVSR 74(4) p. 132) |
+| | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too |
+| | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so this component cannot be built from the source (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available |
+| U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
+| | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for the 2009–2015 design (`STRAT_P`, `PSU_P`) and the 2016–2018 design (`PSTRAT`, `PPSU`), with the two periods' strata kept distinct. Families lie inside PSUs, so each family cluster and each person's whole history stay together |
+| U4, linkage and perturbation sensitivity | NHIS–LMF | Discrete alternative fits, not draws: NHIS weights replaced by the original sample-adult weight with ineligible persons dropped; `HISPAN_I` 11 coded `hispanic` (X-R1). Each alternative's conformance is reported; neither gates |
+
+**What OACT's open U2 means.** Every Monte Carlo draw refits the model to
+that draw's targets (§9.4), so a source's random variation moves target
+and fit together and reaches a residual only through capping, composition
+and tails. OACT targets' conformance verdict therefore stands on U1 and
+U3. Two things do not: the lifetime-earnings coefficient intervals that
+SM2 hands to SM3 and SM4, which are labeled "OACT random variation not
+included", and the Study 129 versus Study 124 comparison, which is
+reported but cannot trigger `GRADIENT_SOURCES_INCONSISTENT` (§10).
+
+**The engine.**
+
+- **Monte Carlo draws** cover U1, U2 and NHIS's part of U3: `B = 2,000`
+  draws, each a full refit of every knot and sex (§6.3) followed by every
+  family member's residual. The seed is
+  `numpy.random.SeedSequence(2026110101)`, spawned into one child stream
+  per component and source in the order of §3's tables.
+- **ACS replicates** cover the ACS part of U3: one refit per replicate,
+  with the Monte Carlo inputs at their point values.
+- **Combination.** For family member `k`,
+  `SD_k = sqrt(Var_MC,k + Var_ACS,k)`, treating ACS sampling as independent
+  of the other components. NCHS's education denominators are ACS too, and
+  they sit inside `Var_ACS` with the reference population.
+- **Shared-source covariance.** Each draw perturbs each printed source
+  value once, and every target, refit and e65 in that draw uses that same
+  value: the `q3` RMR enters four contrasts; an NH white `qx` enters two
+  race contrasts and every race e65 target; an ACS replicate enters the
+  reference population and NCHS's denominators together.
+- **The simultaneous bound.** `r̂_k ± z × SD_k`, with
+  `z = Φ⁻¹(1 − 0.025 / 6,884) ≈ 4.486`, the two-sided 95 percent
+  Bonferroni bound over the family (§9.4). If a member's Monte Carlo
+  draws have skewness above 1 in absolute value, its bound uses the
+  first-order Cornish–Fisher quantile `z + (z² − 1) γ / 6` in place of `z`.
+- **Monte Carlo error.** For each member, the Monte Carlo standard error
+  of the bound's half-width, `z × SD_MC,k / sqrt(2(B − 1))`, must be below
+  one tenth of the member's tolerance `τ_k`: less than 0.01 year for e65,
+  and less than `ε / 10` for a contrast. If it is not, `B` doubles, up to
+  32,000; if the rule still fails, the member is inconclusive. Tier A has
+  no simulation error.
+
+### 9.4 The critical family: 6,884 targets [frozen here]
+
+| Block | Count | Tolerance `τ` |
+|---|---:|---|
+| OACT contrasts (M-E1): 63 observed band-years in 2010–2022 (four bands × 13 years, 80–84 × 8, 85–89 × 3) × 2 sexes × 4 quintiles | 504 | ε |
+| e65 by earnings quintile: 5 × 2 sexes × 15 knots | 150 | 0.1 year |
+| NCHS education contrasts (M-D1, M-D2): 5 years × 2 sexes × 4 bands × 2 contrasts | 80 | ε |
+| NHIS education contrasts at 65+ (M-D4): 3 × 3 bands × 2 sexes | 18 | ε |
+| NHIS `college`/`some_college` split (M-D3): 2 sexes | 2 | ε |
+| NCHS race contrasts (M-R1): 2 groups × 100 ages × 2 sexes × 15 years | 6,000 | ε |
+| e65 by race and Hispanic-origin group: 4 × 2 sexes × 15 knots | 120 | 0.1 year |
+| NHIS `other_non_hispanic` contrasts (M-R4): 5 bands × 2 sexes | 10 | ε |
+| **Total** | **6,884** | |
+
+- **Joint-survey targets.** The 30 NHIS targets are in the family; they
+  are the only survey-estimated targets.
+- **One member per published or estimated quantity.** A target imposed at
+  several knots (a backcast copy, a held target or an NHIS target) is one
+  member, tested by its largest absolute residual across the knots that
+  impose it. The e65 targets differ by knot, because the baseline does, so
+  each knot's is a member.
+- **What the contrast members test.** For a contrast, the residual is the
+  model-implied contrast minus the draw's target after that draw's refit.
+  Because §6.3's system is exactly identified, a contrast member shows
+  whether every refit reproduces its targets: a reconstruction check. The
+  e65 members compare two different constructions (the model on the
+  reference population against the source's ratios on the baseline), so
+  they also test composition, capping and tails.
+- **Not in the family.** The sensitivities of §5, §6.5 and §7.3, and the
+  sources reported beside the fit.
+
+### 9.5 Pass conjunction
+
+SM2 is admitted, labeled "calibrated, not validated", only if all of
+these hold:
+
+1. every tier A check passes (§9.1);
+2. every one of the 6,884 members has its simultaneous bound inside
+   `±τ_k`, with the Monte Carlo rule met (§9.3);
+3. every invariant of §9.6 holds;
+4. no condition in §10 blocks.
+
+A member whose point residual lies inside `±τ_k` but whose bound crosses
+it is **inconclusive**; a member whose point residual lies outside fails.
+An inconclusive member makes its dimension inconclusive (e65 by quintile
+and OACT contrasts: lifetime earnings; education contrasts: education;
+race contrasts, race e65 and `other_non_hispanic`: race and Hispanic
+origin). **A bound too wide to judge never passes.** The record publishes
+each dimension's status; SM2 passes as a whole only when all three pass,
+because SM1 needs all three.
+
+### 9.6 Invariants (design §6)
+
+- **Life tables.** Every fitted group life table (`q_F,g` for each knot,
+  sex and group) satisfies `data/life_table.py`'s invariants:
+  `period_life_table` and `life_expectancy` agree; survivorship and
+  person-years are nonnegative and nonincreasing with age; changing the
+  radix changes no life expectancy; raising any `q` cannot raise life
+  expectancy at an earlier age (`life_table.py:39–51`).
+- **Registered ordering.** For each sex and knot: if the earnings e65
+  targets rise strictly from `q1` to `q5`, the fitted e65 must rise the
+  same way; if the targets do not (Study 129 reports exceptions for women
+  at 62–64 in some years before 2010, p. 8), the check reports "source
+  unordered" and does not fail. NHIS's education hazards at 65+ follow the
+  same rule (`less_than_high_school` ≥ `high_school` ≥ `some_college` ≥
+  `college` in the targets implies the same in the fit). Race and
+  Hispanic origin carry no registered ordering.
+- **Permutation invariance.** Refitting with every input table's rows
+  and the reference population's rows permuted gives coefficients equal
+  within `1 × 10⁻¹²` in log units.
+- **SM1.** Each table passes `RelativeRiskSpec`; SM1's cell conservation
+  holds on `R_ref` at every knot; SM1's own test modules pass unchanged.
+
+## 10. Named conditions
+
+Every fallback below is fixed now, before any outcome. **Nothing is tuned
+so that sources agree** (S0.1 §2.5, frozen).
+
+| Condition | Trigger for SM2 | What it stops | Fallback |
+|---|---|---|---|
+| `GRADIENT_SOURCES_INCONSISTENT` | Two comparable sources disagree beyond SM2's fit tolerance. "Comparable": the same SM category definitions and sex, overlapping ages, calendar windows that overlap at least half the shorter one, and populations that differ at most in institutional coverage. Assessed: (a) Study 129 against Study 124 at table years 1995–2015, bands 62–84; (b) NCHS life tables against NHIS–LMF for `hispanic` and `black_non_hispanic` at 25–84. Not assessed: OACT against Cristia (different years, ages and earnings measures), NCHS education against NHIS at 25–64 (their windows share two of NCHS's five years), and `other_non_hispanic` against the partial composite (different groups). Metric: the difference in temporary life expectancy over the pair's shared ages, each built by applying the source's ratios to the same TR 2026 baseline year; triggered when its simultaneous 95 percent bound, Bonferroni over the assessed comparisons, excludes ±0.1 year | Nothing about SM2's admission. OACT stays primary for earnings and NCHS for race; the other source stays a registered sensitivity; the disagreement is published with the fit. Pair (a) has no random-variation term (§9.3), so a disagreement it finds is reported and does not trigger | None needed |
+| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation or a figure cannot be read; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge; (v) any source file's hash differs from §13 or the fit job's manifest | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest year, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024 only (earlier knots then have no `other_non_hispanic` source and are reported unavailable); all labeled, none admitted. (iv) JR-B, labeled, not admitted |
+| `EXPOSURE_UNRESOLVED` | Any report calls a comparison with a source reported beside the fit out of sample or a holdout, or describes a later role as blind to these sources | That claim | None: every SM2 source is an exposed target (§1) |
+| `FRAME_ATTRIBUTE_MISSING` | A frame that would use SM2's coefficients lacks a dimension's column; the Microcosm frame lacks education (design §7.2) | Use of the coefficients on that frame; closed-cohort work continues, labeled | None. The reference population's missing lifetime earnings is a declared proxy (§6.2), not this condition |
+| `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the cell and any complement that reveals it are suppressed | Suppression |
+| `CELL_CONSERVATION_BROKEN` | SM1's cell log on `R_ref` at any knot shows an infeasible cell, or a feasible cell that does not conserve deaths | SM2's admission | None |
+| `GATE_FAIL_OR_REGRESSION_FAIL` | A tier A check fails; a family member's point residual lies outside `±τ`; a knot's calibration fails to converge or converges to two solutions (§6.3); an invariant fails; an SM1 test regresses | SM2's admission and everything resting on it: SM3's registration on these coefficients and SM4's use of them. The result is published with no seed selection and no tolerance relief; a new attempt needs a new registered version and enters the lane's attempt ledger (design §8) | None |
+| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission; the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5) |
