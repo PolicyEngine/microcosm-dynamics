@@ -7,7 +7,7 @@ import hashlib
 import importlib.util
 import json
 from copy import deepcopy
-from decimal import Decimal, localcontext
+from decimal import ROUND_HALF_UP, Decimal, localcontext
 from pathlib import Path
 
 import pytest
@@ -390,6 +390,106 @@ def test_literal_branch_uses_recorded_count_and_fallback():
     assert compare.mint_interval(cell, "L")["missing_xlsx"] is True
 
 
+def test_reading_s_counts_no_decimal_for_an_integral_stored_double():
+    """Review r1b finding 1: repr's ".0" is not a stored decimal.
+
+    INVENTED cell values. Under a non-percent format the shortest string
+    of the double -17.0 is "-17", with no decimal, so the HTML display is
+    registered, and reading L with the same count agrees.
+    """
+    cell = {
+        "html_value": "-17",
+        "html_decimals": 0,
+        "xlsx_raw": "-17",
+        "xlsx_number_format": "0",
+    }
+    shortest = compare.mint_interval(cell)
+    assert shortest["branch"] == "html"
+    assert shortest["stored_decimals_pct"] == 0
+    assert shortest["stored_value_pct"] == D("-17")
+    assert (shortest["value"]["lower"], shortest["value"]["upper"]) == (
+        D("-17.5"),
+        D("-16.5"),
+    )
+    literal = compare.mint_interval(
+        {**cell, "xlsx_value_pct": "-17", "xlsx_decimals_pct": 0}, "L"
+    )
+    assert literal["branch"] == "html"
+    assert literal["value"] == shortest["value"]
+    finer = compare.mint_interval(
+        {**cell, "html_value": "-17.0", "html_decimals": 1}
+    )
+    assert finer["branch"] == "html"
+    assert finer["stored_decimals_pct"] == 0
+    assert (finer["value"]["lower"], finer["value"]["upper"]) == (
+        D("-17.05"),
+        D("-16.95"),
+    )
+
+
+@st.composite
+def invented_shortest_decimals(draw):
+    """INVENTED decimal strings, each the shortest form of its double.
+
+    At most 15 significant digits survive a round trip through a binary64
+    double, so ``repr`` of the double has exactly these digits (and a
+    ".0" when the value is integral). No zero ends a fraction.
+    """
+    places = draw(st.integers(0, 10))
+    if places:
+        coefficient = 10 * draw(st.integers(0, 10**14 - 1)) + draw(
+            st.integers(1, 9)
+        )
+    else:
+        coefficient = draw(st.integers(0, 10**15 - 1))
+    sign = draw(st.sampled_from((1, -1)))
+    return format(D(sign * coefficient).scaleb(-places), "f")
+
+
+@given(
+    text=invented_shortest_decimals(),
+    percent=st.booleans(),
+    html_places=st.integers(0, 6),
+)
+@settings(max_examples=300, deadline=None)
+def test_reading_s_counts_the_shortest_string_of_the_stored_double(
+    text, percent, html_places
+):
+    """Reading S's count is the shortest string's, so S and L agree.
+
+    The HTML display is the stored value rounded half-up to
+    ``html_places``, so the XLSX branch applies exactly when the shortest
+    string, shifted two places for a percent format, has more decimals.
+    """
+    value = D(text)
+    places = max(0, -value.as_tuple().exponent)
+    stored = value.scaleb(2) if percent else value
+    stored_places = max(0, places - 2) if percent else places
+    with localcontext() as context:
+        context.prec = compare.PRECISION
+        display = stored.quantize(
+            D(1).scaleb(-html_places), rounding=ROUND_HALF_UP
+        )
+    cell = invented_cell(
+        html_display=str(display),
+        html_value=str(display),
+        html_decimals=html_places,
+        xlsx_raw=text,
+        xlsx_number_format="0.0%" if percent else "0.00",
+        xlsx_value_pct=format(stored, "f"),
+        xlsx_decimals_pct=stored_places,
+    )
+    shortest = compare.mint_interval(cell)
+    assert shortest["stored_decimals_pct"] == stored_places
+    assert shortest["stored_value_pct"] == stored
+    assert shortest["branch"] == (
+        "xlsx" if stored_places > html_places else "html"
+    )
+    literal = compare.mint_interval(cell, "L")
+    for key in ("value", "branch", "stored_decimals_pct"):
+        assert literal[key] == shortest[key]
+
+
 def test_interval_subtraction_and_null_propagation():
     left = compare._interval(D(2), D(1), D(3))
     right = compare._interval(D(6), D(4), D(8))
@@ -573,6 +673,62 @@ def test_wrong_oact_footer_refuses_without_substitution():
     record["oact"]["footer_verbatim"] = "INVENTED wrong vintage"
     with pytest.raises(ValueError, match="footer"):
         compare.build_comparison(invented_artifact(), record)
+
+
+@pytest.mark.parametrize(
+    "footer",
+    [
+        compare.OACT_FOOTER + ".\n",
+        compare.OACT_FOOTER + ". ",
+        compare.OACT_FOOTER.replace(" ", "\xa0") + ".",
+    ],
+    ids=["trailing_newline", "trailing_space", "no_break_spaces"],
+)
+def test_oact_footer_accepts_transcribed_whitespace(footer):
+    """Review r1b finding 2: whitespace after the period is not refused."""
+    record = invented_comparator()
+    record["oact"]["footer_verbatim"] = footer
+    compare.build_comparison(invented_artifact(), record)
+
+
+FOOTER_TOKENS = compare.OACT_FOOTER.split()
+FOOTER_SPACES = (" ", "  ", "\t", "\n", "\r\n", "\xa0", " ", " ")
+
+
+@given(
+    gaps=st.lists(
+        st.sampled_from(FOOTER_SPACES),
+        min_size=len(FOOTER_TOKENS) - 1,
+        max_size=len(FOOTER_TOKENS) - 1,
+    ),
+    lead=st.sampled_from(("",) + FOOTER_SPACES),
+    tail=st.sampled_from(("",) + FOOTER_SPACES),
+    periods=st.integers(0, 2),
+    changed=st.one_of(st.none(), st.integers(0, len(FOOTER_TOKENS) - 1)),
+)
+@settings(max_examples=150, deadline=None)
+def test_oact_footer_check_ignores_only_whitespace_and_final_periods(
+    gaps, lead, tail, periods, changed
+):
+    """Any whitespace run and final periods pass; a changed word refuses.
+
+    INVENTED transcriptions of the registered footer: whitespace of any
+    kind and length between, before and after its words, and up to two
+    final periods. Changing one word (an appended "X") always refuses.
+    """
+    tokens = list(FOOTER_TOKENS)
+    if changed is not None:
+        tokens[changed] += "X"
+    words = "".join(
+        token + gap for token, gap in zip(tokens, [*gaps, ""], strict=True)
+    )
+    record = invented_comparator()
+    record["oact"]["footer_verbatim"] = lead + words + "." * periods + tail
+    if changed is None:
+        compare.build_comparison(invented_artifact(), record)
+    else:
+        with pytest.raises(ValueError, match="footer"):
+            compare.build_comparison(invented_artifact(), record)
 
 
 @pytest.mark.parametrize(

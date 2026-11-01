@@ -225,7 +225,11 @@ def mint_interval(cell, reading="S"):
             double = float(raw)
             if not math.isfinite(double):
                 raise ValueError("nonfinite stored MINT double")
-            stored = Decimal(repr(double))
+            # repr gives the shortest round-trip digits but writes an
+            # integral double with a non-significant ".0". normalize()
+            # drops it, so the count is that of the shortest decimal
+            # string that denotes the double (review r1b, finding 1).
+            stored = Decimal(repr(double)).normalize()
             if _percent_format(number_format):
                 stored = stored.scaleb(2)
             stored_decimals = max(0, -stored.as_tuple().exponent)
@@ -396,7 +400,13 @@ def build_comparison(artifact, comparator):
         comparator.get(key) or {} for key in ("oact", "pwbm", "mint5")
     )
     footer = oact.get("footer_verbatim")
-    if footer is not None and footer.rstrip(".").strip() != OACT_FOOTER:
+    # Whitespace runs, no-break spaces included, and final periods are
+    # transcription details, not words of the footer (review r1b, 2).
+    if (
+        footer is not None
+        and " ".join(footer.replace("\xa0", " ").split()).rstrip(".")
+        != OACT_FOOTER
+    ):
         raise ValueError("OACT footer does not match registration")
     for key in (
         "footer_matches_registration",

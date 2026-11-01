@@ -147,7 +147,9 @@ Comparison arithmetic uses `Decimal` for printed and stored decimal
 strings. Four-corner tests check containment, monotonicity and positive
 denominators; interval subtraction is `[a,b]-[c,d]=[a-d,b-c]`. Seal files
 are checked before comparison, and the artifact is checked against its
-sidecar. No acceptance threshold, pass band or verdict is computed.
+sidecar. The OACT footer check compares words only: it ignores whitespace
+runs, no-break spaces included, and final periods, and refuses any other
+difference. No acceptance threshold, pass band or verdict is computed.
 
 ## Disclosures for the second registration comment
 
@@ -218,8 +220,12 @@ the population run, together with the registered commit and exact command.
     Worker-path bounds instead allow propagated dime losses plus the
     final claim-factor dime floor, scaled by that person's benefit level.
     No universal tolerance is asserted for dual entitlement.
-16. MINT reading S uses the shortest decimal representation of the stored
-    double, shifted two places for a percent format. Both half-up and
+16. MINT reading S uses the shortest decimal string that denotes the
+    stored double, shifted two places for a percent format. Python's
+    `repr` supplies the shortest round-trip digits, and
+    `Decimal.normalize()` drops the non-significant `.0` that `repr`
+    writes after an integral double, so an integral double counts no
+    decimal (item 21). Both half-up and
     half-even rounding are checked against the HTML precision, and the
     matching modes are reported. If either mode matches and the stored
     value has more decimals, the XLSX branch applies; otherwise HTML
@@ -262,6 +268,36 @@ the population run, together with the registered commit and exact command.
     thereafter, 2.8% in every 2011–2029 year; M1 adds 2010 at 2.8%.
     N minus N_model therefore compares printed TR 2026 COLAs against
     the model's derived TR 2008 ultimate-CPI continuation.
+20. The context item sets two beneficiary counts side by side and scales
+    neither (`scaling_applied: false`). The model's count is the mean,
+    over C0's draws (K = 20 in the registered run), of C0's `weight_base`:
+    the summed R0 weight of S_base, everyone alive in the 2030 projected
+    state with a positive calendar-2030 baseline benefit, at every age
+    (`runner.py`, `context_beneficiary_count.model_mean`; null with a
+    reason if a draw lacks it). The Trustees count is the committed TR
+    2026 snapshot's Table IV.B4 cell in row `Intermediate:` 2030 and
+    column `Beneficiaries b (in thousands)` / `OASDI c`, which
+    `nulls.py`'s `extract_context_count` multiplies by 1000 to give
+    persons. It counts OASDI
+    beneficiaries of all ages, so it includes groups the closed cohort
+    lacks: the registration names people under 50 in 2030 and post-2010
+    immigrants, and item 12 lists the model's other omissions.
+21. The cleared builder brief defines reading S as the shortest decimal
+    string that denotes the stored double, but its worked formula,
+    `s = repr(float(xlsx_raw))`, disagrees with that definition for an
+    integral double: `repr` writes it with a trailing `.0`, which the
+    formula counts as one stored decimal. Under a non-percent format, and
+    an HTML display with no decimal, such a cell could take the XLSX
+    branch and register an interval one tenth as wide as the display's.
+    The code implements the definition (item 16); percent formats and
+    non-integral doubles keep their counts. Review
+    r1b found the discrepancy: Subfleet job
+    `20261025-004712-mgf-f0b-review-r1b`, report SHA-256
+    `01478a4bb3874e386ecd2ddc5c81df96975be3015d32b1836489a9257db5bbd9`.
+    The fix lands before the registered commit. Its tests are
+    `test_compare.py::test_reading_s_counts_no_decimal_for_an_integral_stored_double`
+    and the property
+    `::test_reading_s_counts_the_shortest_string_of_the_stored_double`.
 
 The pre-run nulls in percent units are N = -2.9011704027652740478515625,
 N_model = -2.8899919721197439019598290221155817992219312710473,

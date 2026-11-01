@@ -15,9 +15,9 @@ from populace_dynamics import scenario_benefits as sb
 from populace_dynamics.acola_track import statistics as ac
 from populace_dynamics.estimates import cola_age_profile as a7
 from populace_dynamics.ss import benefits as ss_benefits
+from populace_dynamics.ss.params import SSAParameters
 from populace_dynamics.track_a_v2 import estimands as v2
 from populace_dynamics.track_a_v2.matrix import UNION_STATISTIC
-from tests.cola_track_a.test_assembly import invented_params
 
 
 def record(
@@ -75,6 +75,35 @@ def normalized(records, draws=(0, 1)):
         allow_membership_difference=True,
     )
     return a7._normalize(records, config), config
+
+
+def invented_params() -> SSAParameters:
+    """INVENTED oracle parameters: 4 percent wage growth from 1951.
+
+    A copy of ``tests.cola_track_a.test_assembly.invented_params``, kept
+    here so this module does not import that legacy test module, which
+    blind roles may not run (its tests read a closed design document).
+    """
+    return SSAParameters(
+        nawi={
+            year: 2_800.0 * 1.04 ** (year - 1951) for year in range(1951, 2061)
+        },
+        wage_base={1937: 3_000.0, 1975: 14_100.0, 1990: 51_300.0},
+        pia_factors=(0.9, 0.32, 0.15),
+        fra_months_by_birth_year=[(1900, 792), (1955, 804)],
+        early_monthly_rates=(5 / 900, 5 / 1200),
+        early_first_bracket_months=36,
+        pe_us_revision="INVENTED",
+        delayed_credit_by_birth_year=[(1900, 0.08)],
+    )
+
+
+def invented_baseline():
+    """INVENTED uniform 2.8 percent COLA path; every reform rate stays >0."""
+    return sb.COLASeries(
+        by_determination_year={year: 0.028 for year in range(1979, 2031)},
+        provenance={"invented": True},
+    )
 
 
 @pytest.mark.parametrize(
@@ -574,7 +603,13 @@ def test_accounting_identity_and_cut_bound_on_invented_components(atoms, cut):
         assert cell[ac.P] == pytest.approx(
             cell[ac.RATIO_OF_SCENARIO_MEANS], abs=1e-11
         )
-    assert 0 <= sum(cell["group_shares"].values()) <= 1.000000000001
+    # Both groups are positive, so T_base = T_base,OASI + T_base,DI makes
+    # their shares sum to one, and the component totals reproduce T_s.
+    assert sum(cell["group_shares"].values()) == pytest.approx(1, rel=1e-12)
+    for scenario in ("base", "reform"):
+        assert sum(
+            totals[scenario] for totals in cell["component_totals"].values()
+        ) == pytest.approx(cell[f"T_{scenario}"], rel=1e-12)
 
 
 @given(
@@ -611,26 +646,136 @@ def test_mint_order_falling_share_and_individual_cut_bounds(atoms):
     json.dumps(result, allow_nan=False)
 
 
-@given(st.integers(0, 999), st.integers(0, 999))
-@settings(max_examples=30, deadline=None)
-def test_larger_cut_weakly_lowers_p_and_every_individual_change(a, b):
-    low, high = sorted((a, b))
-    smaller, larger = panel(), panel()
-    for records, cut in ((smaller, low), (larger, high)):
-        for row in records:
-            row["benefit_reform"] = row["benefit_base"] * (1 - cut / 1000)
-            for values in row["benefit_components"].values():
-                values["reform"] = values["base"] * (1 - cut / 1000)
-    results = [
-        ac.summarize_cost(r, draw_indices=(0, 1), floor_seeds=(0, 1))
-        for r in (smaller, larger)
-    ]
-    assert (
-        results[1]["statistics"][ac.P]["mean"]
-        <= results[0]["statistics"][ac.P]["mean"]
+def code_benefit_records(people, reduction, first_year):
+    """Annual 2030 benefits that the scenario code computes for people.
+
+    Each INVENTED person holds one benefit from the code's own path
+    functions: an old-age or DI worker, or a spouse or widow(er) with no
+    own record, so nobody is dually entitled. The fixture does no benefit
+    arithmetic beyond the annual factor of 12.
+    """
+    params, baseline = invented_params(), invented_baseline()
+    reform = sb.COLAReform(
+        annual_reduction=reduction,
+        first_reduced_determination_year=first_year,
     )
-    for a_row, b_row in zip(smaller, larger, strict=True):
-        assert b_row["benefit_reform"] <= a_row["benefit_reform"]
+    records = []
+    for pid, (kind, eligible, lag, pia, factor, weight) in enumerate(
+        people, 1
+    ):
+        entitled = min(2030, eligible + lag)
+        if kind in ("retired_worker", "disabled_worker"):
+            clock = (
+                sb.WorkerClock.at_age_62(
+                    eligible - 62, entitlement_year=entitled
+                )
+                if kind == "retired_worker"
+                else sb.WorkerClock.at_di_onset(
+                    eligible, entitlement_year=entitled
+                )
+            )
+            path = sb.worker_scenario_paths(
+                eligibility_pia=pia,
+                claim_age_factor=(
+                    factor / 100 if kind == "retired_worker" else 1.0
+                ),
+                clock=clock,
+                baseline=baseline,
+                reform=reform,
+            )
+        else:
+            worker = sb.WorkerClock.at_age_62(
+                eligible - 62, entitlement_year=eligible
+            )
+            shared = {
+                "entitlement_year": entitled,
+                "params": params,
+                "baseline": baseline,
+                "reform": reform,
+            }
+            path = (
+                sb.spouse_scenario_paths(
+                    worker_eligibility_pia=pia,
+                    worker_clock=worker,
+                    own=None,
+                    months_early=4 * lag,
+                    **shared,
+                )
+                if kind == "spouse"
+                else sb.widow_scenario_paths(
+                    deceased_eligibility_pia=pia,
+                    deceased_clock=worker,
+                    deceased_claim_age_factor=factor / 100,
+                    own=None,
+                    survivor_months_early=4 * lag,
+                    **shared,
+                )
+            )
+        records.append(
+            record(
+                pid,
+                weight=weight,
+                base=12 * path.baseline_monthly_by_payment_year[2030],
+                reform=12 * path.reform_monthly_by_payment_year[2030],
+                component=kind,
+            )
+        )
+    return records
+
+
+INVENTED_PERSON = st.tuples(
+    st.sampled_from(
+        ("retired_worker", "disabled_worker", "spouse", "aged_widow")
+    ),
+    st.integers(1990, 2030),  # eligibility year
+    st.integers(0, 9),  # years to entitlement; a quarter of months early
+    st.integers(100, 4000),  # eligibility PIA
+    st.integers(70, 100),  # claim-age factor, percent
+    st.integers(1, 100),  # weight
+)
+
+
+@given(
+    people=st.lists(INVENTED_PERSON, min_size=1, max_size=6),
+    cuts=st.tuples(st.integers(0, 200), st.integers(0, 200)),
+    firsts=st.tuples(
+        st.sampled_from((2010, 2011, 2027)),
+        st.sampled_from((2010, 2011, 2027)),
+    ),
+)
+@settings(max_examples=40, deadline=None)
+def test_larger_or_earlier_cut_weakly_lowers_p_and_every_benefit(
+    people, cuts, firsts
+):
+    """Monotonicity on the code's own per-person output (review r1b, 4).
+
+    A larger annual reduction, or an earlier first reduced determination
+    year, weakly lowers every individual 2030 benefit that the scenario
+    code computes, outside dual entitlement, and P with it.
+    """
+    smaller, larger = (cut / 10_000 for cut in sorted(cuts))
+    earlier, later = sorted(firsts)
+    runs = {
+        "smaller": code_benefit_records(people, smaller, later),
+        "larger": code_benefit_records(people, larger, later),
+        "earlier": code_benefit_records(people, smaller, earlier),
+    }
+    for stronger in ("larger", "earlier"):
+        for weak, strong in zip(runs["smaller"], runs[stronger], strict=True):
+            assert strong["benefit_base"] == weak["benefit_base"] > 0
+            assert (
+                strong["benefit_reform"]
+                <= weak["benefit_reform"]
+                <= weak["benefit_base"]
+            )
+    p = {
+        name: ac.summarize_cost(rows, draw_indices=(0,), floor_seeds=(0, 1))[
+            "per_draw"
+        ][0][ac.P]
+        for name, rows in runs.items()
+    }
+    assert p["larger"] <= p["smaller"] <= 0
+    assert p["earlier"] <= p["smaller"]
 
 
 def test_component_membership_can_disappear_without_refusing_cost_split():
