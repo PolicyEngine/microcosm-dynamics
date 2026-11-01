@@ -3804,6 +3804,244 @@ def test_nonresident_alien_net_earnings_follow_411b(registry, person):
         ) == (expected == "noncovered")
 
 
+# Review r4 M-5: for each REQUIRED_CONDITIONS entry on a covered case,
+# an INVENTED worker who meets the case except for its condition, by fact
+# phrases. "reaches" names the exclusion (or residual) the failure must
+# reach; "stays_covered" says why failing leaves the worker covered, and
+# by which case (None: either of two covered cases).
+GRANDFATHERED_FEDERAL = (
+    "would be excluded under 410(a)(5)-(6) as in effect in January 1983 "
+    "and has been performed continuously"
+)
+LEGISLATIVE_STILL_UNDER_CSRS = (
+    "reaches",
+    {
+        "federal_service": (
+            "service in the legislative branch other than as a Member",
+            GRANDFATHERED_FEDERAL,
+        ),
+        "federal_retirement_system": (
+            "subject throughout to subchapter III at the full contribution"
+        ),
+    },
+    "noncovered",
+)
+DESIGNATED_ORGANIZATION = (
+    "employee of a public international organization designated"
+)
+REQUIRED_CONDITION_FAILURES = {
+    **{
+        (rule_id, "vow_duties_with_3121r_election"): (
+            "reaches",
+            {
+                "clergy_or_religious_exemption": (
+                    "was not living on the first day of the quarter"
+                ),
+                "religious_order_service": ORDER_VOW_DUTIES,
+            },
+            "noncovered",
+        )
+        for rule_id in (
+            "religious_order_1968_1983",
+            "religious_order_1984_2026",
+        )
+    },
+    (
+        "se_conservation_reserve_2008_2026",
+        "crp_payment_in_real_estate_dealer_business",
+    ): (
+        "reaches",
+        {
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "real_estate_dealer_status": "not a real estate dealer",
+            "benefit_type": "recipient is receiving benefits",
+        },
+        "noncovered",
+    ),
+    **{
+        key: (
+            "stays_covered",
+            "A crew member outside 410(a)(20)'s terms is in employment: the "
+            "residual applies the ordinary wage rules, so the pay stays "
+            "covered as wages instead of 411(c)(2)(F) self-employment.",
+            facts,
+            "residual",
+        )
+        for key, facts in (
+            (
+                (
+                    "fishing_crew_share_service_1989",
+                    "catch_share_1996_clarification",
+                ),
+                {
+                    "historical_fica_treatment": "did not treat",
+                    "fishing_catch_share_arrangement": "a $150 cash bonus",
+                },
+            ),
+            (
+                (
+                    "fishing_crew_share_service_1989",
+                    "catch_share_payor_treated_as_fica",
+                ),
+                {
+                    "historical_fica_treatment": "payor treated the",
+                    "fishing_catch_share_arrangement": "a $50 cash bonus",
+                },
+            ),
+            (
+                (
+                    "fishing_crew_share_service_1995",
+                    "qualifying_catch_share_arrangement",
+                ),
+                {"fishing_catch_share_arrangement": "a flat $80 per trip"},
+            ),
+        )
+    },
+    (
+        "tribal_council_service_2018_0920",
+        "section_418a_retroactive_inclusion",
+    ): (
+        "reaches",
+        {
+            "tribal_council_service": "service as a member of an Indian "
+            "tribal council, in that capacity",
+            "tribal_federal_recognition": "federally recognized tribe",
+            "tribal_coverage_agreement": (
+                "before the agreement's effective date that the tribe asked",
+                "not included under an effective section 418a agreement",
+            ),
+            "historical_fica_treatment": "never paid",
+        },
+        "noncovered",
+    ),
+    **{
+        (rule_id, case_id): LEGISLATIVE_STILL_UNDER_CSRS
+        for rule_id, case_id in (
+            ("federal_1984_1986", "legislative_not_retirement_covered_1983"),
+            ("federal_1984_1986", "legislative_lump_sum_after_1983"),
+            ("federal_1984_1986", "legislative_ceased_coverage_after_1983"),
+            ("federal_1987_2026", "legislative_not_retirement_covered_1983"),
+            ("federal_1987_2026", "legislative_ceased_coverage_after_1983"),
+        )
+    },
+    ("federal_1987_2026", "after_official_service_from_1988_11_10"): (
+        "reaches",
+        {"federal_service": GRANDFATHERED_FEDERAL},
+        "noncovered",
+    ),
+    **{
+        (rule_id, case_id): (
+            "stays_covered",
+            "Membership decides which amount applies, not whether pay is "
+            "covered: POMS SL 30001.357's NOTE covers a nonmember unless "
+            "410(a)(7)(F)(iv) excepts the pay, and a member's pay is "
+            "covered when the agreement's amount is met.",
+            {
+                "section_218_position": "below the statutory amount",
+                "public_retirement_system_participation": phrase,
+            },
+            None,
+        )
+        for rule_id in ("election_work_1991_0702", "election_work_1995")
+        for case_id, phrase in (
+            (
+                "agreement_with_lower_threshold_nonmember",
+                "member of a retirement system",
+            ),
+            (
+                "agreement_with_lower_threshold_member",
+                "not a member of a retirement system",
+            ),
+        )
+    },
+    **{
+        (rule_id, "us_citizen_in_united_states"): (
+            "reaches",
+            {
+                "citizenship": "a citizen of Canada",
+                "place_of_work": "United States",
+                "international_organization_service": (
+                    DESIGNATED_ORGANIZATION
+                ),
+            },
+            "noncovered",
+        )
+        for rule_id in (
+            "international_organization_service_1968",
+            "international_organization_service_1995",
+        )
+    },
+    (
+        "international_organization_service_1995",
+        "transferred_federal_employee_410r",
+    ): (
+        "reaches",
+        {
+            "federal_service": "no Federal service before joining",
+            "citizenship": "a citizen of Canada",
+            "international_organization_service": DESIGNATED_ORGANIZATION,
+        },
+        "noncovered",
+    ),
+    **{
+        (rule_id, "statutory_homeworker"): (
+            "reaches",
+            {
+                "occupation": "home worker who invested substantially in "
+                "facilities",
+                "employee_self_or_mixed": "independent contractor",
+            },
+            "deferred",
+        )
+        for rule_id in (
+            "statutory_homeworker_service_1968",
+            "statutory_homeworker_service_1978",
+        )
+    },
+}
+COVERED_CONSEQUENCES = {"covered", "covered_above_threshold"}
+
+
+def test_every_covered_required_condition_names_its_failure():
+    """Review r4 M-5: each REQUIRED_CONDITIONS entry on a covered case says
+    what its condition's failure reaches."""
+    covered = set()
+    for rule_id, case_id, *_ in REQUIRED_CONDITIONS:
+        row = REQUIRED_CONDITION_ROWS[rule_id]
+        case = next(c for c in row["cases"] if c["case_id"] == case_id)
+        if case["consequence"] in COVERED_CONSEQUENCES:
+            covered.add((rule_id, case_id))
+    assert set(REQUIRED_CONDITION_FAILURES) == covered
+    assert len(covered) == 22
+
+
+@pytest.mark.parametrize(
+    "key",
+    sorted(REQUIRED_CONDITION_FAILURES),
+    ids=["-".join(key) for key in sorted(REQUIRED_CONDITION_FAILURES)],
+)
+def test_failing_a_covered_condition_reaches_an_exclusion(registry, key):
+    """Review r4 M-5: a condition that changes no outcome is vacuous. The
+    worker who fails it misses the covered case and reaches the exclusion
+    the sources give, or the entry says why the worker stays covered."""
+    rule_id, case_id = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    kind, *rest = REQUIRED_CONDITION_FAILURES[key]
+    if kind == "stays_covered":
+        reason, facts, via = rest
+        assert reason.strip()
+        met = cases_met(rule, facts)
+        decided = rule.resolve(met)
+        assert decided["consequence"] in COVERED_CONSEQUENCES
+        if via is not None:
+            assert decided.get("case_id", "residual") == via
+    else:
+        facts, expected = rest
+        met = cases_met(rule, facts)
+        assert resolved_consequence(rule, facts) == expected
+    assert case_id not in met
+
+
 PUBLIC_OFFICERS = {
     # INVENTED officers, by the cases whose conditions hold for them.
     "salaried_state_officer": ({"public_office_functions"}, "noncovered"),

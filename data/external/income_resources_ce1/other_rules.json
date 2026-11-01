@@ -2922,7 +2922,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -2960,7 +2960,7 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
         "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv))."
@@ -3185,7 +3185,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
         "description": "Remuneration is covered when it meets the agreement's amount for the agreement's period or, through mandatory coverage of optionally excluded service (POMS SL 30001.357 NOTE: \"Beginning July 2, 1991, services optionally excluded from coverage under a Section 218 Agreement may be mandatorily covered unless the employee is a member of a public retirement system\"), the statutory annual amount of 410(a)(7)(F)(iv) for the calendar year; only remuneration below both is excluded."
@@ -3223,7 +3223,7 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered",
-          "public_retirement_system_participation": "not a member of a retirement system of the State, subdivision or instrumentality"
+          "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality"
         },
         "consequence": "covered_above_threshold",
         "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv))."
